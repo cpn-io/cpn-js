@@ -1,0 +1,53 @@
+{
+    "name": "CPN",
+    "uri": "https://github.com/cpn-io/MODEL",
+    "associations": [],
+    "types": [
+        {
+            "name": "BaseElement",
+            "isAbstract": true,
+            "properties": [
+                {
+                    "name": "id",
+                    "isAttr": true,
+                    "type": "String",
+                    "isId": true
+                },
+                {
+                    "name": "documentation",
+                    "type": "Documentation",
+                    "isMany": true
+                },
+                {
+                    "name": "extensionDefinitions",
+                    "type": "ExtensionDefinition",
+                    "isMany": true,
+                    "isReference": true
+                },
+                {
+                    "name": "extensionElements",
+                    "type": "ExtensionElements"
+                }
+            ]
+        },
+        {
+            "name": "Place",
+            "superClass": [
+                "BaseElement"
+            ]
+        },
+        {
+            "name": "Transition",
+            "superClass": [
+                "BaseElement"
+            ]
+        },
+        {
+            "name": "Connection",
+            "superClass": [
+                "BaseElement"
+            ]
+        }
+    ],
+    "prefix": "cpn"
+}

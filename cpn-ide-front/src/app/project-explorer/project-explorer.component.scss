@@ -1,0 +1,26 @@
+.tree-project {
+  font-weight: 700;
+}
+
+label.node {
+  margin: 0;
+  padding: 3px 5px;
+}
+
+.navbar-sm {
+  input {
+    width: 80px;
+    border: none;
+    padding: 2px 4px;
+  }
+
+  .btn-close i {
+    color: gray;
+    margin: 0 !important;
+  }
+}
+
+.dropdown-menu-fixed {
+  position: fixed !important;
+}
+

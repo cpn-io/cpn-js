@@ -1,0 +1,1593 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<workspaceElements>
+<generator format="6" tool="Access/CPN" version="1.0.0"/>
+<cpnet>
+<globbox>
+<block id="idblock104">
+<id>Parameters</id>
+<globref id="id72676238">
+<id>orderTime</id>
+<ml>4.5</ml>
+</globref>
+<globref id="id8447541">
+<id>maxOrders</id>
+<ml>1000</ml>
+</globref>
+<globref id="id41563468">
+<id>supplyMin</id>
+<ml>1.5</ml>
+</globref>
+<globref id="id89457845">
+<id>supplyMax</id>
+<ml>5.0</ml>
+</globref>
+<globref id="id31127128">
+<id>orderSize</id>
+<ml>3</ml>
+</globref>
+</block>
+<block id="idblock105">
+<id>Types</id>
+<color id="id230525317">
+<id>UNIT</id>
+<unit/>
+</color>
+<color id="id18684108">
+<id>BOOL</id>
+<bool/>
+</color>
+<color id="id108644396">
+<id>INT</id>
+<int/>
+</color>
+<color id="id85145689">
+<id>INTINF</id>
+<intinf/>
+</color>
+<color id="id69419194">
+<id>TIME</id>
+<time/>
+</color>
+<color id="id149902351">
+<id>REAL</id>
+<real/>
+</color>
+<color id="id162160350">
+<id>STRING</id>
+<string/>
+</color>
+<color id="id221081055">
+<id>OrderID</id>
+<timed/>
+<alias>
+<id>INT</id>
+</alias>
+</color>
+<color id="id169276089">
+<id>MenuItem</id>
+<timed/>
+<alias>
+<id>STRING</id>
+</alias>
+</color>
+<color id="id159469097">
+<id>MenuItems</id>
+<list>
+<id>MenuItem</id>
+</list>
+</color>
+<color id="id30953641">
+<id>Order</id>
+<timed/>
+<product>
+<id>OrderID</id>
+<id>MenuItems</id>
+</product>
+</color>
+<color id="id52003119">
+<id>OrderSupp</id>
+<product>
+<id>OrderID</id>
+<id>MenuItem</id>
+<id>INT</id>
+</product>
+</color>
+<color id="id22928949">
+<id>OxS</id>
+<timed/>
+<product>
+<id>Order</id>
+<id>STRING</id>
+</product>
+</color>
+<color id="id210645642">
+<id>Employee</id>
+<timed/>
+<alias>
+<id>STRING</id>
+</alias>
+</color>
+<color id="id42117866">
+<id>TimeInt</id>
+<product>
+<id>REAL</id>
+<id>REAL</id>
+</product>
+</color>
+<color id="id101425637">
+<id>CookRule</id>
+<product>
+<id>MenuItem</id>
+<id>MenuItems</id>
+<id>TimeInt</id>
+</product>
+</color>
+</block>
+<block id="idblock106">
+<id>Variables</id>
+<var id="id205076214">
+<type>
+<id>OrderID</id>
+</type>
+<id>oid</id>
+<id>oid2</id>
+</var>
+<var id="id172847959">
+<type>
+<id>MenuItem</id>
+</type>
+<id>it</id>
+</var>
+<var id="id62298046">
+<type>
+<id>MenuItems</id>
+</type>
+<id>its</id>
+</var>
+<var id="id134664809">
+<type>
+<id>STRING</id>
+</type>
+<id>s</id>
+</var>
+<var id="id249470646">
+<type>
+<id>INT</id>
+</type>
+<id>i</id>
+</var>
+<var id="id147127661">
+<type>
+<id>Employee</id>
+</type>
+<id>e</id>
+</var>
+</block>
+<block id="idblock107">
+<id>Functions</id>
+<ml id="id46108808">val P_HIGH = 100;</ml>
+<ml id="id1179105">val P_NORMAL = 1000;</ml>
+<ml id="id124118368">val P_LOW = 10000;</ml>
+<ml id="id25856685">val vCookBook = [
+
+("Burger", ["Patty", "Bread", "Bread", "Sauce", "Vegetable"], (5.0,7.0)),
+("Double Burger", ["Patty", "Patty", "Bread", "Bread", "Sauce", "Vegetable"], (7.0,9.0)),
+("Cheese Burger", ["Patty", "Patty", "Bread", "Cheese", "Sauce", "Vegetable"], (7.0,9.0)),
+
+("Fries", ["Potatoes", "Sauce"], (1.0,2.0)),
+
+("Burger Menu", ["Burger", "Fries", "Drink"], (2.0,3.0)),
+("Double Burger Menu", ["Double Burger", "Fries", "Drink"], (2.0,3.0)),
+("Cheese Burger Menu", ["Cheese Burger", "Fries", "Drink"], (2.0,3.0))
+
+];</ml>
+<ml id="id150775599">val vMenu = [
+"Burger", "Burger",
+"Double Burger",  "Double Burger",  
+"Cheese Burger", 
+"Fries", "Fries", "Fries", "Fries", 
+"Drink",
+"Burger Menu", "Burger Menu", 
+"Double Burger Menu", "Double Burger Menu", 
+"Cheese Burger Menu"];</ml>
+<ml id="id16237978">val vEmployees = ["Cook", "Cook", "Waiter", "Waiter"];</ml>
+<ml id="id239543733">val vAbility = [
+("Cook", ["Burger", "Cheese Burger", "Double Burger"]),
+("Waiter", ["Burger Menu", "Cheese Burger Menu",
+                  "Double Burger Menu", "Fries"])
+];</ml>
+<ml id="id234764887">fun chooseItem () =
+(* picks a random item from the menu *)
+let 
+  val c = discrete(1,length vMenu)
+in
+  List.nth(vMenu, c-1) 
+end;</ml>
+<ml id="id83410736">fun chooseOrder (0) = []
+(* creates an order of i randomly picked menu items *)
+| chooseOrder(i : INT) = chooseItem()::chooseOrder(i-1);</ml>
+<ml id="id97714884">fun deliverSuppItems(it, 0) = []
+| deliverSuppItems(it, i:INT) = it::deliverSuppItems(it,i-1);</ml>
+</block>
+</globbox>
+<page id="id225887253">
+<pageattr name="Main"/>
+<place id="id140419121">
+<ellipse h="40.0" w="116.0"/>
+<posattr x="-199.0" y="-42.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Blue" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Blue"/>
+<text>placed
+order</text>
+<type id="id140419121a">
+<posattr x="-137.0" y="-65.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>Order</text>
+</type>
+<initmark id="id140419121b">
+<posattr x="-123.0" y="-18.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</initmark>
+</place>
+<place id="id1959678">
+<ellipse h="40.0" w="116.0"/>
+<posattr x="-195.0" y="-210.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Purple" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Purple"/>
+<text>food</text>
+<type id="id1959678a">
+<posattr x="-133.0" y="-233.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Purple" thick="0" type="Solid"/>
+<textattr bold="false" colour="Purple"/>
+<text>Order</text>
+</type>
+<initmark id="id1959678b">
+<posattr x="-119.0" y="-186.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Purple" thick="0" type="Solid"/>
+<textattr bold="false" colour="Purple"/>
+<text/>
+</initmark>
+</place>
+<place id="id48155609">
+<ellipse h="40.0" w="104.0"/>
+<posattr x="-546.0" y="-42.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Blue" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Blue"/>
+<text>ordered
+ingredient</text>
+<type id="id48155609a">
+<posattr x="-472.0" y="-65.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>OrderSupp</text>
+</type>
+<initmark id="id48155609b">
+<posattr x="-474.0" y="-18.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</initmark>
+</place>
+<place id="id145491158">
+<ellipse h="40.0" w="116.0"/>
+<posattr x="-546.0" y="-210.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Purple" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Purple"/>
+<text>delivered
+ingredient</text>
+<type id="id145491158a">
+<posattr x="-484.0" y="-233.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Purple" thick="0" type="Solid"/>
+<textattr bold="false" colour="Purple"/>
+<text>Order</text>
+</type>
+<initmark id="id145491158b">
+<posattr x="-470.0" y="-186.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Purple" thick="0" type="Solid"/>
+<textattr bold="false" colour="Purple"/>
+<text/>
+</initmark>
+</place>
+<trans id="id251437332">
+<box h="264.0" w="174.0"/>
+<posattr x="0.0" y="-126.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Blue" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Blue"/>
+<text>Customer</text>
+<cond id="id251437332a">
+<posattr x="-36.0" y="-150.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Black" thick="0" type="Solid"/>
+<textattr bold="false" colour="Black"/>
+<text/>
+</cond>
+<time id="id251437332b">
+<posattr x="36.0" y="-102.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Black" thick="0" type="Solid"/>
+<textattr bold="false" colour="Black"/>
+<text/>
+</time>
+<code id="id251437332c">
+<posattr x="36.0" y="-126.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Black" thick="0" type="Solid"/>
+<textattr bold="false" colour="Black"/>
+<text/>
+</code>
+<subst portsock="(id178785733,id140419121)(id182789621,id1959678)" subpage="id25261370">
+<subpageinfo id="id251437332e" name="Customer">
+<posattr x="-36.0" y="-150.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Black" thick="0" type="Solid"/>
+<textattr bold="false" colour="Black"/>
+<text>Customer</text>
+</subpageinfo>
+</subst>
+</trans>
+<trans id="id86723766">
+<box h="266.0" w="172.0"/>
+<posattr x="-714.0" y="-126.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Blue" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Blue"/>
+<text>Supplier</text>
+<cond id="id86723766a">
+<posattr x="-750.0" y="-150.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Black" thick="0" type="Solid"/>
+<textattr bold="false" colour="Black"/>
+<text/>
+</cond>
+<time id="id86723766b">
+<posattr x="-678.0" y="-102.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Black" thick="0" type="Solid"/>
+<textattr bold="false" colour="Black"/>
+<text/>
+</time>
+<code id="id86723766c">
+<posattr x="-678.0" y="-126.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Black" thick="0" type="Solid"/>
+<textattr bold="false" colour="Black"/>
+<text/>
+</code>
+<subst portsock="(id252689818,id48155609)(id208948794,id145491158)" subpage="id257800848">
+<subpageinfo id="id86723766e" name="Supplier">
+<posattr x="-750.0" y="-150.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Black" thick="0" type="Solid"/>
+<textattr bold="false" colour="Black"/>
+<text>Supplier</text>
+</subpageinfo>
+</subst>
+</trans>
+<trans id="id142010697">
+<box h="268.0" w="169.0"/>
+<posattr x="-378.0" y="-126.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Red" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Red"/>
+<text>BurgerHeaven</text>
+<cond id="id142010697a">
+<posattr x="-414.0" y="-150.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Black" thick="0" type="Solid"/>
+<textattr bold="false" colour="Black"/>
+<text/>
+</cond>
+<time id="id142010697b">
+<posattr x="-342.0" y="-102.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Black" thick="0" type="Solid"/>
+<textattr bold="false" colour="Black"/>
+<text/>
+</time>
+<code id="id142010697c">
+<posattr x="-342.0" y="-126.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Black" thick="0" type="Solid"/>
+<textattr bold="false" colour="Black"/>
+<text/>
+</code>
+<subst portsock="(id104214488,id140419121)(id213978522,id48155609)(id59238174,id1959678)(id237175596,id145491158)" subpage="id128110243">
+<subpageinfo id="id142010697e" name="BurgerHeaven">
+<posattr x="-414.0" y="-150.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Black" thick="0" type="Solid"/>
+<textattr bold="false" colour="Black"/>
+<text>BurgerHeaven</text>
+</subpageinfo>
+</subst>
+</trans>
+<arc id="id260197204" order="1" orientation="BOTHDIR">
+<transend idref="id251437332"/>
+<placeend idref="id140419121"/>
+<lineattr colour="" thick="1" type="Solid"/>
+<bendpoint serial="1">
+<posattr x="-126.0" y="-42.0"/>
+</bendpoint>
+<annot id="id260197204a">
+<posattr x="361.0" y="-18.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</annot>
+</arc>
+<arc id="id56374658" order="1" orientation="PtoT">
+<transend idref="id251437332"/>
+<placeend idref="id1959678"/>
+<lineattr colour="" thick="1" type="Solid"/>
+<bendpoint serial="1">
+<posattr x="-106.0" y="-210.0"/>
+</bendpoint>
+<annot id="id56374658a">
+<posattr x="396.0" y="-228.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</annot>
+</arc>
+<arc id="id41809607" order="1" orientation="PtoT">
+<transend idref="id86723766"/>
+<placeend idref="id48155609"/>
+<lineattr colour="" thick="1" type="Solid"/>
+<bendpoint serial="1">
+<posattr x="-615.0" y="-42.0"/>
+</bendpoint>
+<annot id="id41809607a">
+<posattr x="-689.0" y="-6.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</annot>
+</arc>
+<arc id="id80625655" order="1" orientation="TtoP">
+<transend idref="id86723766"/>
+<placeend idref="id145491158"/>
+<lineattr colour="" thick="1" type="Solid"/>
+<bendpoint serial="1">
+<posattr x="-614.0" y="-210.0"/>
+</bendpoint>
+<annot id="id80625655a">
+<posattr x="-654.0" y="-218.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Purple" thick="0" type="Solid"/>
+<textattr bold="false" colour="Purple"/>
+<text/>
+</annot>
+</arc>
+<arc id="id142810031" order="1" orientation="PtoT">
+<transend idref="id142010697"/>
+<placeend idref="id140419121"/>
+<lineattr colour="" thick="1" type="Solid"/>
+<bendpoint serial="1">
+<posattr x="-274.0" y="-42.0"/>
+</bendpoint>
+<annot id="id142810031a">
+<posattr x="81.0" y="17.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</annot>
+</arc>
+<arc id="id77104713" order="1" orientation="TtoP">
+<transend idref="id142010697"/>
+<placeend idref="id48155609"/>
+<lineattr colour="" thick="1" type="Solid"/>
+<bendpoint serial="1">
+<posattr x="-485.0" y="-42.0"/>
+</bendpoint>
+<annot id="id77104713a">
+<posattr x="-377.0" y="-19.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</annot>
+</arc>
+<arc id="id172185272" order="1" orientation="TtoP">
+<transend idref="id142010697"/>
+<placeend idref="id1959678"/>
+<lineattr colour="" thick="1" type="Solid"/>
+<bendpoint serial="1">
+<posattr x="-273.0" y="-210.0"/>
+</bendpoint>
+<annot id="id172185272a">
+<posattr x="94.0" y="-201.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Purple" thick="0" type="Solid"/>
+<textattr bold="false" colour="Purple"/>
+<text/>
+</annot>
+</arc>
+<arc id="id229571706" order="1" orientation="PtoT">
+<transend idref="id142010697"/>
+<placeend idref="id145491158"/>
+<lineattr colour="" thick="1" type="Solid"/>
+<bendpoint serial="1">
+<posattr x="-482.0" y="-210.0"/>
+</bendpoint>
+<annot id="id229571706a">
+<posattr x="-358.0" y="-234.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Purple" thick="0" type="Solid"/>
+<textattr bold="false" colour="Purple"/>
+<text/>
+</annot>
+</arc>
+</page>
+<page id="id25261370">
+<pageattr name="Customer"/>
+<place id="id240965129">
+<ellipse h="40.0" w="60.0"/>
+<posattr x="462.0" y="252.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Blue" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Blue"/>
+<text>Orders</text>
+<type id="id240965129a">
+<posattr x="511.0" y="228.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>OrderID</text>
+</type>
+<initmark id="id240965129b">
+<posattr x="498.0" y="275.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>1`0</text>
+</initmark>
+</place>
+<place id="id63119805">
+<ellipse h="40.0" w="60.0"/>
+<posattr x="462.0" y="-84.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Blue" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Blue"/>
+<text>pending
+order</text>
+<type id="id63119805a">
+<posattr x="498.5" y="-107.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>OxS</text>
+</type>
+<initmark id="id63119805b">
+<posattr x="518.0" y="-60.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</initmark>
+</place>
+<place id="id178785733">
+<ellipse h="40.0" w="60.0"/>
+<posattr x="210.0" y="0.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Blue" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Blue"/>
+<text>placed
+order</text>
+<type id="id178785733a">
+<posattr x="252.0" y="-23.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>Order</text>
+</type>
+<initmark id="id178785733b">
+<posattr x="266.0" y="23.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</initmark>
+<port id="id178785733c" type="I/O">
+<posattr x="174.0" y="-24.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Black" thick="0" type="Solid"/>
+<textattr bold="false" colour="Black"/>
+<text/>
+</port>
+</place>
+<place id="id182789621">
+<ellipse h="40.0" w="60.0"/>
+<posattr x="210.0" y="-210.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Purple" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Purple"/>
+<text>food</text>
+<type id="id182789621a">
+<posattr x="252.0" y="-233.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Purple" thick="0" type="Solid"/>
+<textattr bold="false" colour="Purple"/>
+<text>Order</text>
+</type>
+<initmark id="id182789621b">
+<posattr x="266.0" y="-186.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Purple" thick="0" type="Solid"/>
+<textattr bold="false" colour="Purple"/>
+<text/>
+</initmark>
+<port id="id182789621c" type="In">
+<posattr x="174.0" y="-234.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Black" thick="0" type="Solid"/>
+<textattr bold="false" colour="Black"/>
+<text/>
+</port>
+</place>
+<place id="id258223015">
+<ellipse h="40.0" w="60.0"/>
+<posattr x="462.0" y="84.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Blue" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Blue"/>
+<text>order
+ready</text>
+<type id="id258223015a">
+<posattr x="504.0" y="60.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>Order</text>
+</type>
+<initmark id="id258223015b">
+<posattr x="518.0" y="107.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</initmark>
+</place>
+<trans id="id151452889">
+<box h="40.0" w="60.0"/>
+<posattr x="462.0" y="0.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Blue" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Blue"/>
+<text>place
+order</text>
+<cond id="id151452889a">
+<posattr x="423.0" y="31.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Black" thick="0" type="Solid"/>
+<textattr bold="false" colour="Black"/>
+<text/>
+</cond>
+<time id="id151452889b">
+<posattr x="506.5" y="31.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</time>
+<code id="id151452889c">
+<posattr x="526.5" y="-52.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</code>
+<priority id="id151452889d">
+<posattr x="394.0" y="-31.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</priority>
+</trans>
+<trans id="id156777527">
+<box h="40.0" w="60.0"/>
+<posattr x="462.0" y="-210.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Blue" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Blue"/>
+<text>consume</text>
+<cond id="id156777527a">
+<posattr x="423.0" y="-179.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</cond>
+<time id="id156777527b">
+<posattr x="506.5" y="-179.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</time>
+<code id="id156777527c">
+<posattr x="526.5" y="-262.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</code>
+<priority id="id156777527d">
+<posattr x="394.0" y="-241.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</priority>
+</trans>
+<trans id="id256993966">
+<box h="40.0" w="60.0"/>
+<posattr x="320.0" y="-84.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Fucia" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Fucia"/>
+<text>cancel
+order</text>
+<cond id="id256993966a">
+<posattr x="281.0" y="-53.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Fucia" thick="0" type="Solid"/>
+<textattr bold="false" colour="Fucia"/>
+<text/>
+</cond>
+<time id="id256993966b">
+<posattr x="364.5" y="-53.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Fucia" thick="0" type="Solid"/>
+<textattr bold="false" colour="Fucia"/>
+<text/>
+</time>
+<code id="id256993966c">
+<posattr x="384.5" y="-136.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Fucia" thick="0" type="Solid"/>
+<textattr bold="false" colour="Fucia"/>
+<text/>
+</code>
+<priority id="id256993966d">
+<posattr x="252.0" y="-115.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Fucia" thick="0" type="Solid"/>
+<textattr bold="false" colour="Fucia"/>
+<text/>
+</priority>
+</trans>
+<trans id="id239514814">
+<box h="40.0" w="60.0"/>
+<posattr x="462.0" y="168.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Blue" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Blue"/>
+<text>create
+order</text>
+<cond id="id239514814a">
+<posattr x="357.5" y="184.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>[oid &lt;= !maxOrders]</text>
+</cond>
+<time id="id239514814b">
+<posattr x="605.5" y="187.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>@++exponential(1.0/(!orderTime))</text>
+</time>
+<code id="id239514814c">
+<posattr x="526.5" y="116.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</code>
+<priority id="id239514814d">
+<posattr x="394.0" y="137.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</priority>
+</trans>
+<Aux id="id206824698">
+<posattr x="756.0" y="197.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Blue" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Blue"/>
+<label/>
+<text>*****************************
+This page describes the behavior of
+the customer. Do NOT MODIFY this
+page. Use the command below to
+create a reliable simulation report.
+(Right-click&amp;hold &gt; Evaluate ML)
+*****************************</text>
+</Aux>
+<Aux id="id209845773">
+<posattr x="756.0" y="84.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Red" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Red"/>
+<label/>
+<text>CPN'Replications.nreplications 30</text>
+</Aux>
+<arc id="id79704191" order="1" orientation="TtoP">
+<transend idref="id151452889"/>
+<placeend idref="id63119805"/>
+<lineattr colour="" thick="1" type="Solid"/>
+<annot id="id79704191a">
+<posattr x="613.5" y="-41.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>((oid,its), ModelTime.toString (time()))@++30.0</text>
+</annot>
+</arc>
+<arc id="id222599434" order="1" orientation="PtoT">
+<transend idref="id256993966"/>
+<placeend idref="id63119805"/>
+<lineattr colour="" thick="1" type="Solid"/>
+<annot id="id222599434a">
+<posattr x="395.0" y="-95.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Fucia" thick="0" type="Solid"/>
+<textattr bold="false" colour="Fucia"/>
+<text>((oid,its),s)</text>
+</annot>
+</arc>
+<arc id="id77441700" order="1" orientation="PtoT">
+<transend idref="id156777527"/>
+<placeend idref="id63119805"/>
+<lineattr colour="" thick="1" type="Solid"/>
+<annot id="id77441700a">
+<posattr x="500.5" y="-147.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>((oid,its),s)</text>
+</annot>
+</arc>
+<arc id="id111938540" order="1" orientation="PtoT">
+<transend idref="id256993966"/>
+<placeend idref="id178785733"/>
+<lineattr colour="" thick="1" type="Solid"/>
+<bendpoint serial="1">
+<posattr x="210.0" y="-84.0"/>
+</bendpoint>
+<annot id="id111938540a">
+<posattr x="245.0" y="-95.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Fucia" thick="0" type="Solid"/>
+<textattr bold="false" colour="Fucia"/>
+<text>(oid,its)</text>
+</annot>
+</arc>
+<arc id="id264237389" order="1" orientation="PtoT">
+<transend idref="id156777527"/>
+<placeend idref="id182789621"/>
+<lineattr colour="" thick="1" type="Solid"/>
+<annot id="id264237389a">
+<posattr x="286.0" y="-199.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>(oid,its)</text>
+</annot>
+</arc>
+<arc id="id58678447" order="1" orientation="TtoP">
+<transend idref="id151452889"/>
+<placeend idref="id178785733"/>
+<lineattr colour="" thick="1" type="Solid"/>
+<annot id="id58678447a">
+<posattr x="336.0" y="11.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>(oid,its)</text>
+</annot>
+</arc>
+<arc id="id256861240" order="1" orientation="PtoT">
+<transend idref="id239514814"/>
+<placeend idref="id240965129"/>
+<lineattr colour="" thick="1" type="Solid"/>
+<annot id="id256861240a">
+<posattr x="441.5" y="209.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>oid</text>
+</annot>
+</arc>
+<arc id="id211262936" order="1" orientation="TtoP">
+<transend idref="id239514814"/>
+<placeend idref="id240965129"/>
+<lineattr colour="" thick="1" type="Solid"/>
+<annot id="id211262936a">
+<posattr x="496.0" y="208.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>(oid+1)</text>
+</annot>
+</arc>
+<arc id="id26109987" order="1" orientation="TtoP">
+<transend idref="id239514814"/>
+<placeend idref="id258223015"/>
+<lineattr colour="" thick="1" type="Solid"/>
+<annot id="id26109987a">
+<posattr x="596.5" y="127.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>(oid,chooseOrder(discrete(1,!orderSize)))</text>
+</annot>
+</arc>
+<arc id="id24020012" order="1" orientation="PtoT">
+<transend idref="id151452889"/>
+<placeend idref="id258223015"/>
+<lineattr colour="" thick="1" type="Solid"/>
+<annot id="id24020012a">
+<posattr x="490.0" y="42.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>(oid,its)</text>
+</annot>
+</arc>
+</page>
+<page id="id257800848">
+<pageattr name="Supplier"/>
+<place id="id252689818">
+<ellipse h="40.0" w="88.0"/>
+<posattr x="-588.0" y="84.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Blue" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Blue"/>
+<text>ordered
+ingredient</text>
+<type id="id252689818a">
+<posattr x="-520.0" y="60.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>OrderSupp</text>
+</type>
+<initmark id="id252689818b">
+<posattr x="-522.0" y="107.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</initmark>
+<port id="id252689818c" type="In">
+<posattr x="-624.0" y="60.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Black" thick="0" type="Solid"/>
+<textattr bold="false" colour="Black"/>
+<text/>
+</port>
+</place>
+<place id="id208948794">
+<ellipse h="40.0" w="92.0"/>
+<posattr x="-588.0" y="-336.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Purple" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Purple"/>
+<text>delivered
+ingredient</text>
+<type id="id208948794a">
+<posattr x="-534.0" y="-359.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Purple" thick="0" type="Solid"/>
+<textattr bold="false" colour="Purple"/>
+<text>Order</text>
+</type>
+<initmark id="id208948794b">
+<posattr x="-520.0" y="-312.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Purple" thick="0" type="Solid"/>
+<textattr bold="false" colour="Purple"/>
+<text/>
+</initmark>
+<port id="id208948794c" type="Out">
+<posattr x="-624.0" y="-360.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Black" thick="0" type="Solid"/>
+<textattr bold="false" colour="Black"/>
+<text/>
+</port>
+</place>
+<place id="id153626385">
+<ellipse h="40.0" w="76.0"/>
+<posattr x="-756.0" y="-42.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Blue" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Blue"/>
+<text>received</text>
+<type id="id153626385a">
+<posattr x="-692.0" y="-65.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>OrderSupp</text>
+</type>
+<initmark id="id153626385b">
+<posattr x="-694.0" y="-18.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</initmark>
+</place>
+<place id="id67329876">
+<ellipse h="40.0" w="74.0"/>
+<posattr x="-911.0" y="84.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Gray" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Gray"/>
+<text>waiting</text>
+<type id="id67329876a">
+<posattr x="-893.0" y="51.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Gray" thick="0" type="Solid"/>
+<textattr bold="false" colour="Gray"/>
+<text>OrderID</text>
+</type>
+<initmark id="id67329876b">
+<posattr x="-870.0" y="107.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Gray" thick="0" type="Solid"/>
+<textattr bold="false" colour="Gray"/>
+<text>7`0</text>
+</initmark>
+</place>
+<trans id="id65261413">
+<box h="40.0" w="82.0"/>
+<posattr x="-756.0" y="-180.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Blue" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Blue"/>
+<text>deliver
+ingredient</text>
+<cond id="id65261413a">
+<posattr x="-879.0" y="-143.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>[not (mem (map #1 vCookBook) it)]</text>
+</cond>
+<time id="id65261413b">
+<posattr x="-624.5" y="-143.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>@++uniform(!supplyMin,!supplyMax)</text>
+</time>
+<code id="id65261413c">
+<posattr x="-680.5" y="-232.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</code>
+<priority id="id65261413d">
+<posattr x="-835.0" y="-211.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</priority>
+</trans>
+<trans id="id135169673">
+<box h="54.0" w="88.0"/>
+<posattr x="-756.0" y="84.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Blue" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Blue"/>
+<text>receive
+supplier
+order</text>
+<cond id="id135169673a">
+<posattr x="-809.0" y="122.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</cond>
+<time id="id135169673b">
+<posattr x="-697.5" y="122.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</time>
+<code id="id135169673c">
+<posattr x="-677.5" y="25.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</code>
+<priority id="id135169673d">
+<posattr x="-838.0" y="46.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</priority>
+</trans>
+<Aux id="id111059447">
+<posattr x="-1260.0" y="98.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Blue" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Blue"/>
+<label/>
+<text>*****************************
+This page describes the behavior of
+the supplier. Do NOT MODIFY this
+page.
+*****************************</text>
+</Aux>
+<arc id="id27089915" order="1" orientation="TtoP">
+<transend idref="id65261413"/>
+<placeend idref="id208948794"/>
+<lineattr colour="" thick="1" type="Solid"/>
+<bendpoint serial="1">
+<posattr x="-756.0" y="-336.0"/>
+</bendpoint>
+<annot id="id27089915a">
+<posattr x="-848.0" y="-265.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>(oid, deliverSuppItems(it, i))</text>
+</annot>
+</arc>
+<arc id="id248148244" order="1" orientation="PtoT">
+<transend idref="id135169673"/>
+<placeend idref="id252689818"/>
+<lineattr colour="" thick="1" type="Solid"/>
+<annot id="id248148244a">
+<posattr x="-672.0" y="95.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>(oid,it,i)</text>
+</annot>
+</arc>
+<arc id="id13287763" order="1" orientation="TtoP">
+<transend idref="id135169673"/>
+<placeend idref="id153626385"/>
+<lineattr colour="" thick="1" type="Solid"/>
+<annot id="id13287763a">
+<posattr x="-728.0" y="17.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>(oid,it,i)</text>
+</annot>
+</arc>
+<arc id="id220110418" order="1" orientation="PtoT">
+<transend idref="id65261413"/>
+<placeend idref="id153626385"/>
+<lineattr colour="" thick="1" type="Solid"/>
+<annot id="id220110418a">
+<posattr x="-728.0" y="-111.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>(oid,it,i)</text>
+</annot>
+</arc>
+<arc id="id3164025" order="1" orientation="PtoT">
+<transend idref="id135169673"/>
+<placeend idref="id67329876"/>
+<lineattr colour="" thick="1" type="Solid"/>
+<annot id="id3164025a">
+<posattr x="-839.0" y="95.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Gray" thick="0" type="Solid"/>
+<textattr bold="false" colour="Gray"/>
+<text>oid2</text>
+</annot>
+</arc>
+<arc id="id130548499" order="1" orientation="TtoP">
+<transend idref="id65261413"/>
+<placeend idref="id67329876"/>
+<lineattr colour="" thick="1" type="Solid"/>
+<bendpoint serial="1">
+<posattr x="-1008.0" y="-180.0"/>
+</bendpoint>
+<bendpoint serial="2">
+<posattr x="-1008.0" y="84.0"/>
+</bendpoint>
+<annot id="id130548499a">
+<posattr x="-903.0" y="-169.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Gray" thick="0" type="Solid"/>
+<textattr bold="false" colour="Gray"/>
+<text>oid</text>
+</annot>
+</arc>
+</page>
+<page id="id128110243">
+<pageattr name="BurgerHeaven"/>
+<place id="id104214488">
+<ellipse h="40.0" w="60.0"/>
+<posattr x="294.0" y="84.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Blue" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Blue"/>
+<text>placed
+order</text>
+<type id="id104214488a">
+<posattr x="336.0" y="60.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>Order</text>
+</type>
+<initmark id="id104214488b">
+<posattr x="350.0" y="107.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</initmark>
+<port id="id104214488c" type="In">
+<posattr x="258.0" y="60.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Black" thick="0" type="Solid"/>
+<textattr bold="false" colour="Black"/>
+<text/>
+</port>
+</place>
+<place id="id213978522">
+<ellipse h="40.0" w="88.0"/>
+<posattr x="-588.0" y="84.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Blue" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Blue"/>
+<text>ordered
+ingredient</text>
+<type id="id213978522a">
+<posattr x="-520.0" y="60.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text>OrderSupp</text>
+</type>
+<initmark id="id213978522b">
+<posattr x="-522.0" y="107.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Blue" thick="0" type="Solid"/>
+<textattr bold="false" colour="Blue"/>
+<text/>
+</initmark>
+<port id="id213978522c" type="Out">
+<posattr x="-624.0" y="60.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Black" thick="0" type="Solid"/>
+<textattr bold="false" colour="Black"/>
+<text/>
+</port>
+</place>
+<place id="id59238174">
+<ellipse h="40.0" w="60.0"/>
+<posattr x="294.0" y="-336.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Purple" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Purple"/>
+<text>food</text>
+<type id="id59238174a">
+<posattr x="336.0" y="-359.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Purple" thick="0" type="Solid"/>
+<textattr bold="false" colour="Purple"/>
+<text>Order</text>
+</type>
+<initmark id="id59238174b">
+<posattr x="350.0" y="-312.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Purple" thick="0" type="Solid"/>
+<textattr bold="false" colour="Purple"/>
+<text/>
+</initmark>
+<port id="id59238174c" type="Out">
+<posattr x="258.0" y="-360.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Black" thick="0" type="Solid"/>
+<textattr bold="false" colour="Black"/>
+<text/>
+</port>
+</place>
+<place id="id237175596">
+<ellipse h="40.0" w="92.0"/>
+<posattr x="-588.0" y="-336.0"/>
+<fillattr colour="White" filled="false" pattern="filled"/>
+<lineattr colour="Purple" pattern="Solid" thick="1"/>
+<textattr bold="false" colour="Purple"/>
+<text>delivered
+ingredient</text>
+<type id="id237175596a">
+<posattr x="-534.0" y="-359.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Purple" thick="0" type="Solid"/>
+<textattr bold="false" colour="Purple"/>
+<text>Order</text>
+</type>
+<initmark id="id237175596b">
+<posattr x="-520.0" y="-312.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Purple" thick="0" type="Solid"/>
+<textattr bold="false" colour="Purple"/>
+<text/>
+</initmark>
+<port id="id237175596c" type="In">
+<posattr x="-624.0" y="-360.0"/>
+<fillattr colour="White" filled="false" pattern="Solid"/>
+<lineattr colour="Black" thick="0" type="Solid"/>
+<textattr bold="false" colour="Black"/>
+<text/>
+</port>
+</place>
+</page>
+<instances>
+<instance id="id225887253itop" page="id225887253">
+<instance id="id251437332ia" trans="id251437332"/>
+<instance id="id86723766ia" trans="id86723766"/>
+<instance id="id142010697ia" trans="id142010697"/>
+</instance>
+</instances>
+<monitorblock name="Monitors">
+<monitor disabled="false" id="ID1437493105" name="Avg Pending orders" type="0">
+<node idref="id256993966" pageinstanceidref="id251437332ia"/>
+<node idref="id156777527" pageinstanceidref="id251437332ia"/>
+<node idref="id63119805" pageinstanceidref="id251437332ia"/>
+<node idref="id151452889" pageinstanceidref="id251437332ia"/>
+<option name="Disabled" value="false"/>
+<option name="Timed" value="false"/>
+<option name="Logging" value="false"/>
+</monitor>
+<monitor disabled="false" id="ID1437493631" name="Sum Cancelled orders" type="6">
+<node idref="id256993966" pageinstanceidref="id251437332ia"/>
+<option name="Disabled" value="false"/>
+<option name="Timed" value="false"/>
+<option name="Logging" value="false"/>
+</monitor>
+<monitor disabled="false" id="ID1437502549" name="Throughput times order size 1" type="3">
+<node idref="id156777527" pageinstanceidref="id251437332ia"/>
+<declaration name="Predicate">
+<ml id="ID1437502549c">fun pred (bindelem) = 
+let
+  fun predBindElem (Customer'consume (1, {its,oid,s})) = (length its = 1)
+      | predBindElem _ = false
+in
+  predBindElem bindelem  
+end</ml>
+</declaration>
+<declaration name="Observer">
+<ml id="ID1437502549d">fun obs (bindelem) = 
+let
+  fun obsBindElem (Customer'consume (1, {its,oid,s})) = time()-Option.valOf(ModelTime.fromString s)
+      | obsBindElem _ = 0.0
+in
+  obsBindElem bindelem  
+end</ml>
+</declaration>
+<declaration name="Init function">
+<ml id="ID1437502549a">fun init () = 
+  NONE</ml>
+</declaration>
+<declaration name="Stop">
+<ml id="ID1437502549b">fun stop () = 
+  NONE</ml>
+</declaration>
+<option name="Disabled" value="false"/>
+<option name="Timed" value="false"/>
+<option name="Logging" value="false"/>
+</monitor>
+<monitor disabled="false" id="ID1437509178" name="Throughput times order size 2" type="3">
+<node idref="id156777527" pageinstanceidref="id251437332ia"/>
+<declaration name="Predicate">
+<ml id="ID1437509178c">fun pred (bindelem) = 
+let
+  fun predBindElem (Customer'consume (1, {its,oid,s})) = (length its = 2)
+      | predBindElem _ = false
+in
+  predBindElem bindelem  
+end</ml>
+</declaration>
+<declaration name="Observer">
+<ml id="ID1437509178d">fun obs (bindelem) = 
+let
+  fun obsBindElem (Customer'consume (1, {its,oid,s})) = time()-Option.valOf(ModelTime.fromString s)
+      | obsBindElem _ = 0.0
+in
+  obsBindElem bindelem  
+end</ml>
+</declaration>
+<declaration name="Init function">
+<ml id="ID1437509178a">fun init () = 
+  NONE</ml>
+</declaration>
+<declaration name="Stop">
+<ml id="ID1437509178b">fun stop () = 
+  NONE</ml>
+</declaration>
+<option name="Disabled" value="false"/>
+<option name="Timed" value="false"/>
+<option name="Logging" value="false"/>
+</monitor>
+<monitor disabled="false" id="ID1437510504" name="Throughput times order size 3" type="3">
+<node idref="id156777527" pageinstanceidref="id251437332ia"/>
+<declaration name="Predicate">
+<ml id="ID1437510504c">fun pred (bindelem) = 
+let
+  fun predBindElem (Customer'consume (1, {its,oid,s})) = (length its = 3)
+      | predBindElem _ = false
+in
+  predBindElem bindelem  
+end</ml>
+</declaration>
+<declaration name="Observer">
+<ml id="ID1437510504d">fun obs (bindelem) = 
+let
+  fun obsBindElem (Customer'consume (1, {its,oid,s})) = time()-Option.valOf(ModelTime.fromString s)
+      | obsBindElem _ = 0.0
+in
+  obsBindElem bindelem  
+end</ml>
+</declaration>
+<declaration name="Init function">
+<ml id="ID1437510504a">fun init () = 
+  NONE</ml>
+</declaration>
+<declaration name="Stop">
+<ml id="ID1437510504b">fun stop () = 
+  NONE</ml>
+</declaration>
+<option name="Disabled" value="false"/>
+<option name="Timed" value="false"/>
+<option name="Logging" value="false"/>
+</monitor>
+<monitor disabled="false" id="ID1437523361" name="Throughput times with burger menu" type="3">
+<node idref="id156777527" pageinstanceidref="id251437332ia"/>
+<declaration name="Predicate">
+<ml id="ID1437523361c">fun pred (bindelem) = 
+let
+  fun predBindElem (Customer'consume (1, {its,oid,s})) = 
+            (mem its "Burger Menu" orelse mem its "Double Burger Menu" orelse mem its "Cheese Burger Menu")
+      | predBindElem _ = false
+in
+  predBindElem bindelem  
+end</ml>
+</declaration>
+<declaration name="Observer">
+<ml id="ID1437523361d">fun obs (bindelem) = 
+let
+  fun obsBindElem (Customer'consume (1, {its,oid,s})) = time()-Option.valOf(ModelTime.fromString s)
+      | obsBindElem _ = 0.0
+in
+  obsBindElem bindelem  
+end</ml>
+</declaration>
+<declaration name="Init function">
+<ml id="ID1437523361a">fun init () = 
+  NONE</ml>
+</declaration>
+<declaration name="Stop">
+<ml id="ID1437523361b">fun stop () = 
+  NONE</ml>
+</declaration>
+<option name="Disabled" value="false"/>
+<option name="Timed" value="false"/>
+<option name="Logging" value="false"/>
+</monitor>
+<monitor disabled="false" id="ID1437533375" name="Throughput times without burger menu" type="3">
+<node idref="id156777527" pageinstanceidref="id251437332ia"/>
+<declaration name="Predicate">
+<ml id="ID1437533375c">fun pred (bindelem) = 
+let
+  fun predBindElem (Customer'consume (1, {its,oid,s})) = 
+            (not (mem its "Burger Menu" orelse mem its "Double Burger Menu" orelse mem its "Cheese Burger Menu"))
+      | predBindElem _ = false
+in
+  predBindElem bindelem  
+end</ml>
+</declaration>
+<declaration name="Observer">
+<ml id="ID1437533375d">fun obs (bindelem) = 
+let
+  fun obsBindElem (Customer'consume (1, {its,oid,s})) = time()-Option.valOf(ModelTime.fromString s)
+      | obsBindElem _ = 0.0
+in
+  obsBindElem bindelem  
+end</ml>
+</declaration>
+<declaration name="Init function">
+<ml id="ID1437533375a">fun init () = 
+  NONE</ml>
+</declaration>
+<declaration name="Stop">
+<ml id="ID1437533375b">fun stop () = 
+  NONE</ml>
+</declaration>
+<option name="Disabled" value="false"/>
+<option name="Timed" value="false"/>
+<option name="Logging" value="false"/>
+</monitor>
+<monitor disabled="false" id="ID1437544936" name="Throughput times without burgers or fries" type="3">
+<node idref="id156777527" pageinstanceidref="id251437332ia"/>
+<declaration name="Predicate">
+<ml id="ID1437544936c">fun pred (bindelem) = 
+let
+  fun predBindElem (Customer'consume (1, {its,oid,s})) = 
+            (not (mem its "Burger" orelse 
+                    mem its "Double Burger" orelse
+                    mem its "Cheese Burger" orelse 
+                    mem its "Burger Menu" orelse
+                    mem its "Cheese Burger Menu" orelse
+                    mem its "Double Burger Menu" orelse
+                    mem its "Fries"))
+      | predBindElem _ = false
+in
+  predBindElem bindelem  
+end</ml>
+</declaration>
+<declaration name="Observer">
+<ml id="ID1437544936d">fun obs (bindelem) = 
+let
+  fun obsBindElem (Customer'consume (1, {its,oid,s})) = time()-Option.valOf(ModelTime.fromString s)
+      | obsBindElem _ = 0.0
+in
+  obsBindElem bindelem  
+end</ml>
+</declaration>
+<declaration name="Init function">
+<ml id="ID1437544936a">fun init () = 
+  NONE</ml>
+</declaration>
+<declaration name="Stop">
+<ml id="ID1437544936b">fun stop () = 
+  NONE</ml>
+</declaration>
+<option name="Disabled" value="false"/>
+<option name="Timed" value="false"/>
+<option name="Logging" value="false"/>
+</monitor>
+</monitorblock>
+<options>
+<option name="realtimestamp">
+<value>
+<boolean>true</boolean>
+</value>
+</option>
+</options>
+</cpnet>
+</workspaceElements>

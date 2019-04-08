@@ -1,0 +1,21 @@
+export class Message {
+  public static PROJECT_LOAD = 'project.load';
+  public static PAGE_OPEN = 'page.open';
+
+  static SHAPE_SELECT = 'shape.select';
+  static SML_VERIFY = 'sml.verify';
+  static SML_TO_EDITOR = 'sml.to.editor';
+  static MODEL_UPDATE = 'model.update';
+  static XML_UPDATE = 'xml.update';
+  static PROPERTY_UPDATE = 'property.update';
+  static DELETE_PAGE = 'delete.page;';
+  static CHANGE_NAME_PAGE = 'change.name';
+  static UPDATE_GLOBBOX = 'update.globbox';
+  static MODEL_ERROR = 'model.error';
+  static UPDATE_TREE = 'update.tree';
+  static SUBPAGE_CREATE = 'subpage.create';
+  static OPEN_DECLARATION_BLOCK = 'open.declaration.block';
+  static CHANGE_EXPLORER_TREE = 'change.explorer.tree'
+  id: string;
+  data: object;
+}

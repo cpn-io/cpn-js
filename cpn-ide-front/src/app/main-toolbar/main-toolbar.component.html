@@ -1,0 +1,119 @@
+<!--<nav class="navbar navbar-expand-lg navbar-light bg-light shadow" style="border-bottom: 1px solid lightgray">-->
+<nav class="navbar navbar-expand shadow-sm">
+
+  <!--<a class="navbar-brand mb-2" href="#">CPN IDE</a>-->
+
+  <!--<img src="../../assets/img/cpn-logo.svg" class="logo">-->
+  <span class="nav-item">
+    <b>&nbsp;CPN IDE</b>
+  </span>
+
+  <!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button> -->
+
+  <ul class="navbar-nav mr-auto">
+
+
+    <div class="divider"></div>
+
+    <!-- New -->
+    <li class="nav-item" (click)="newCPNet()">
+      <div class="nav-link mb-0">
+        <!--<img src="../../../assets/img/new.png">-->
+        <i class="fas fa-plus"></i>
+        <span>New project</span>
+      </div>
+    </li>
+
+    <div class="divider"></div>
+
+    <!--<li class="nav-item">-->
+    <!--<a class="nav-link disabled" href="#">Project:</a>-->
+    <!--</li>-->
+
+    <!-- Open -->
+    <li class="nav-item">
+      <app-openproject-button></app-openproject-button>
+    </li>
+
+    <!-- Save -->
+    <li class="nav-item">
+      <div class="nav-link mb-0">
+        <!--<img src="../../../assets/img/save.png">-->
+        <i class="far fa-save"></i>
+        <span>Save project</span>
+      </div>
+    </li>
+    <li class="nav-item">
+      <div class="nav-link mb-0" (click)="undoChanges()">
+        <!--<img src="../../../assets/img/save.png">-->
+        <span>Undo</span>
+      </div>
+    </li>
+
+    <!--<div class="divider"></div>-->
+
+    <!--<li class="nav-item">-->
+    <!--<a class="nav-link disabled" href="#">Model:</a>-->
+    <!--</li>-->
+
+    <!--<li class="nav-item">-->
+    <!--<a class="nav-link" href="#">-->
+    <!--<i class="fa fa-play" aria-hidden="true"></i>-->
+    <!--</a>-->
+    <!--</li>-->
+
+    <!--<li class="nav-item">-->
+    <!--<a class="nav-link" href="#">-->
+    <!--<i class="fa fa-stop" aria-hidden="true"></i>-->
+    <!--</a>-->
+    <!--</li>-->
+  </ul>
+
+
+  <!-- <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Link</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Dropdown
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="#">Action</a>
+            <a class="dropdown-item" href="#">Another action</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">Something else here</a>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link disabled" href="#">Disabled</a>
+        </li>
+      </ul>
+      <form class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      </form>
+    </div> -->
+
+
+  <ul class="navbar-nav ml-auto">
+
+    <div class="divider"></div>
+
+    <!-- New -->
+    <li class="nav-item">
+      <!--<a href="../../assets/changes.txt">{{ version }}</a>-->
+      <span>{{ version }}</span>
+      &nbsp;
+    </li>
+
+  </ul>
+
+</nav>

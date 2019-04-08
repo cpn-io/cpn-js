@@ -1,0 +1,19 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../out-tsc/app",
+    "types": [
+      "jquery"
+    ]
+  },
+  "exclude": [
+    "test.ts",
+    "**/*.spec.ts"
+  ],
+  "paths": {
+    "@angular/": [
+      "node_modules/@angular/",
+      "../node_modules/@angular/"
+    ]
+  }
+}

@@ -1,0 +1,93 @@
+* {
+  margin: 0px;
+  padding: 0px;
+}
+
+:host {
+  padding: 10px 10px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  // min-height: calc(100vh - 20px);
+  height: 100%;
+}
+
+.tabs__tab-bar {
+  align-self: center;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: -12px;
+  z-index: 1000;
+  border: 1px solid #c9c9c9;
+}
+
+.tabs__tab {
+  padding: 4px 10px;
+  display: inline-block;
+  background-color: white;
+  cursor: pointer;
+}
+
+.tabs__tab.active {
+  background-color: #6fbbff;
+  color: white;
+}
+
+.overlay {
+  background: #e0e0e0;
+  opacity: 0.5;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 1000;
+}
+
+// ------------------------------------------------------------------------------
+
+::ng-deep {
+  .cpn-tabs {
+    padding: 0 !important;
+    background: #eee !important;
+
+    .tabs__panel {
+      background: white !important;
+      border-radius: 0 !important;
+      border: none !important;
+      box-shadow: none !important;
+
+      top: 0px !important;
+      padding: 0px !important;
+    }
+
+    .tabs__tab-bar {
+      background: #f3f3f3 !important;
+      align-self: flex-start !important;
+      border-radius: 0 !important;
+      border: none !important;
+      margin: 0 !important;
+    }
+
+    div.tabs__tab-bar {
+      border-bottom: 1px solid lightgrey !important;
+    }
+
+    .tabs__tab {
+      background-color: #ddd !important;
+      color: #999 !important;
+      border-right: 1px solid #eee;
+    }
+
+    .tabs__tab.active {
+      background-color: white !important;
+      color: black !important;
+      font-weight: bold !important;
+
+      margin-left: -1px;
+      border-left: 1px solid lightgrey;
+      border-right: 1px solid lightgrey;
+    }
+  }
+}
+

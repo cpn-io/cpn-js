@@ -1,0 +1,21 @@
+* {
+  margin: 0px;
+  padding: 0px;
+}
+
+:host {
+  display: flex;
+  height: 100%;
+}
+
+:host(.hidden) {
+  display: none;
+}
+
+.tabs__panel {
+  background-color: #d7d7d7;
+  width: 100%;
+  box-shadow: inset 0px 0px 0px 1px #c9c9c9;
+  border-radius: 6px;
+  padding: 30px 15px;
+}

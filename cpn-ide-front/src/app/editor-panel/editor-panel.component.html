@@ -1,0 +1,21 @@
+<!-- <button (click)='addTab()'>Add tab</button> -->
+<div style="background: #999; height: 100%;">
+
+  <tabs #tabsComponent class="cpn-tabs"
+        style="background: #999 !important" (currentTabChange)="currentTabChange($event)">
+
+    <ng-template ngFor let-tab [ngForOf]="modelTabArray">
+      <tab [id]="tab.id" [tabTitle]="tab.title">
+        <app-model-editor id="model_editor_{{tab.id}}"></app-model-editor>
+      </tab>
+    </ng-template>
+
+    <ng-template ngFor let-tab [ngForOf]="mlTabArray">
+      <tab [id]="tab.id" [tabTitle]="tab.title">
+        <app-ml-editor id="ml_editor_{{tab.id}}" [project]="tab.project"></app-ml-editor>
+      </tab>
+    </ng-template>
+
+  </tabs>
+
+</div>

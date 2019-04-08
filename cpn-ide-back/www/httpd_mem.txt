@@ -1,0 +1,2 @@
+# disable selinux for apache
+semanage permissive -a httpd_t

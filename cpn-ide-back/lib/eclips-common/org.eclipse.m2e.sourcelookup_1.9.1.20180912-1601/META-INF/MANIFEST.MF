@@ -1,0 +1,57 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: org.eclipse.m2e.sourcelookup;singleton:=true
+Built-By: genie.m2e
+Require-Bundle: org.eclipse.m2e.launching;bundle-version="[1.9.0,1.10.
+ 0)",org.eclipse.m2e.core;bundle-version="[1.9.0,1.10.0)",org.eclipse.
+ m2e.maven.runtime;bundle-version="[1.9.0,1.10.0)",org.eclipse.jdt.cor
+ e;bundle-version="3.7.0",org.eclipse.jdt.debug;bundle-version="3.8.0"
+ ,org.eclipse.jdt.launching;bundle-version="3.9.0",org.eclipse.debug.c
+ ore;bundle-version="3.7.0",org.eclipse.core.runtime;bundle-version="3
+ .7.0",org.eclipse.core.expressions;bundle-version="3.4.400",org.eclip
+ se.debug.ui;bundle-version="3.10.0",org.eclipse.core.resources,com.go
+ ogle.guava;bundle-version="15.0.0",com.google.gson;bundle-version="2.
+ 2.4",org.eclipse.core.variables;bundle-version="3.2.0"
+Bundle-ManifestVersion: 2
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: %Bundle-Vendor
+Import-Package: org.slf4j;version="1.6.2"
+Export-Package: org.eclipse.m2e.sourcelookup.internal.launch;x-friends
+ :="org.eclipse.m2e.sourcelookup.ui,org.eclipse.m2e.binaryproject"
+Bundle-Name: %Bundle-Name
+Bundle-Version: 1.9.1.20180912-1601
+Created-By: Apache Maven 3.5.4
+Build-Jdk: 1.8.0_162
+Eclipse-BundleShape: dir
+
+Name: plugin.xml
+SHA-256-Digest: eJ8DKf9LjH7aJfyodWGXXzYPPo+8IPapvXSQ1JJwJ8A=
+
+Name: org/eclipse/m2e/sourcelookup/internal/launch/MavenArtifactIdenti
+ fier$1.class
+SHA-256-Digest: 1XXadwM2Xn+NcRTFZDeTbmokVrCdST0K4mQPGc1NHNk=
+
+Name: META-INF/maven/org.eclipse.m2e/org.eclipse.m2e.sourcelookup/pom.
+ xml
+SHA-256-Digest: LgxefQ5VsyUyiHr0n6/T5FBtX2TLW0cS7XgDw7p1a34=
+
+Name: org/eclipse/m2e/sourcelookup/internal/launch/MavenArtifactIdenti
+ fier.class
+SHA-256-Digest: fgNH+ERGch1sRn5Xa0N1TvkG3qL9E9FOnDK/oSVfzNI=
+
+Name: org/eclipse/m2e/sourcelookup/internal/launch/MetaInfMavenScanner
+ .class
+SHA-256-Digest: bya29K//dUaTu9d+Jq6NKBaWvByRr1LKOGPYaobsTgg=
+
+Name: META-INF/maven/org.eclipse.m2e/org.eclipse.m2e.sourcelookup/pom.
+ properties
+SHA-256-Digest: JIg6pVEeB+wiCssaj+Lh18lCw6gkzYGtbeeatjo2egk=
+
+Name: org/eclipse/m2e/sourcelookup/internal/launch/MavenSourceLookupPa
+ rticipant.class
+SHA-256-Digest: VjB8BosAsm1xWyd33ZuWYTZj7zumJMKBUUbUpMoOzYc=
+
+Name: org/eclipse/m2e/sourcelookup/internal/launch/MavenSourceContaine
+ rResolver.class
+SHA-256-Digest: ZT8znbVXeePdlYoYFWiFfyhXF3+aaP5dPeVYiZEcJow=
+

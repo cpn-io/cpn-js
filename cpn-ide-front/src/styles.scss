@@ -1,0 +1,241 @@
+/* You can add global styles to this file, and also import other style files */
+// @import './../node_modules/angular-tree-component/dist/angular-tree-component.css';
+// @import "./../node_modules/bootstrap/dist/css/bootstrap.css";
+@import './../node_modules/angular-tree-component/dist/angular-tree-component.css';
+//@import "./../node_modules/bootstrap/dist/css/bootstrap.css";
+// @import "./../node_modules/diagram-js/assets/diagram-js.css";
+@import "./../cpn-js/resources/bpmn-font/css/bpmn.css";
+@import "./../cpn-js/resources/bpmn-font/css/bpmn-codes.css";
+@import "./../cpn-js/resources/bpmn-font/css/bpmn-embedded.css";
+@import "./../cpn-js/resources/diagram-js.css";
+
+html {
+  background: rgb(248, 249, 250);
+}
+
+html, body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 12px;
+
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+// Diagram JS
+// ---------------------------------------------------------------------------------
+.palette-icon-lasso-tool {
+  background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%221.5%22%20stroke-dasharray%3D%225%2C%205%22%20width%3D%2246%22%20height%3D%2246%22%3E%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%2226%22%20height%3D%2226%22%2F%3E%3C%2Fsvg%3E');
+}
+
+.palette-icon-create-shape {
+  background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%221.5%22%20width%3D%2246%22%20height%3D%2246%22%3E%3Crect%20x%3D%2210%22%20y%3D%2213%22%20width%3D%2226%22%20height%3D%2220%22%2F%3E%3C%2Fsvg%3E');
+}
+
+.context-pad-icon-remove {
+  background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%221.5%22%20width%3D%2246%22%20height%3D%2246%22%3E%3Cline%20x1%3D%225%22%20y1%3D%225%22%20x2%3D%2215%22%20y2%3D%2215%22%2F%3E%3Cline%20x1%3D%2215%22%20y1%3D%225%22%20x2%3D%225%22%20y2%3D%2215%22%2F%3E%3C%2Fsvg%3E') !important;
+}
+
+.context-pad-icon-connect {
+  background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%221.5%22%20width%3D%2246%22%20height%3D%2246%22%3E%3Cline%20x1%3D%2215%22%20y1%3D%225%22%20x2%3D%225%22%20y2%3D%2215%22%2F%3E%3C%2Fsvg%3E') !important;
+}
+
+// ---------------------------------------------------------------------------------
+
+// Nav bar separator
+// ---------------------------------------------------------------------------------
+.divider {
+  width: 1px;
+  height: auto;
+  margin: 0 9px;
+  overflow: hidden;
+  background-color: lightgray;
+}
+
+// ---------------------------------------------------------------------------------
+
+// Tables
+// ---------------------------------------------------------------------------------
+.table-small {
+  margin-bottom: 0px;
+}
+
+
+.table-small th {
+  padding: 4px 10px 3px 10px;
+  background: #efefef;
+  font-size: 0.9em;
+  color: #777;
+}
+
+.table-small td {
+  padding: 5px 10px;
+}
+
+.table .valueName {
+  font-size: 0.9em;
+  color: #999;
+}
+
+// Blocks
+// ---------------------------------------------------------------------------------
+
+.blockHeader {
+  padding: 0 10px;
+  padding-top: 5px;
+
+  background: #f3f3f3;
+  height: 27px;
+
+  //color: #777;
+  //font-weight: normal;
+  color: black;
+  font-weight: bold;
+
+  font-size: 0.9em;
+  border-bottom: 1px solid lightgrey;
+  vertical-align: middle;
+
+  cursor: pointer;
+}
+
+.blockHeader .caret {
+  font-size: 1.1em;
+  margin-right: 7px;
+  color: black;
+}
+
+.blockHeader .active {
+}
+
+// ---------------------------------------------------------------------------------
+
+.navbar {
+  padding: 2px 2px !important;
+  border-bottom: 1px solid lightgrey;
+  vertical-align: middle;
+
+  .nav-item {
+    margin: 0 1px;
+  }
+
+  .nav-link {
+    color: black;
+  }
+
+  .nav-link img {
+    padding-right: 5px;
+    vertical-align: top;
+  }
+
+  .nav-link i {
+    margin-right: 7px;
+  }
+
+  .nav-link:hover {
+    cursor: pointer;
+    background: #eee;
+    color: darkorange;
+  }
+}
+
+.navbar-sm {
+  background: #f3f3f3;
+  padding: 3px 1px !important;
+  border-bottom: 1px solid lightgrey;
+  vertical-align: middle;
+  font-size: 0.9em;
+
+  .nav-item {
+    margin: 0;
+    padding: 0 3px;
+  }
+
+  .nav-link {
+    color: #666;
+    padding: 2px;
+  }
+
+  .divider {
+    padding: 0;
+    margin: 0;
+  }
+
+  .nav-link:hover {
+    cursor: pointer;
+    background: #ddd;
+    color: darkorange;
+  }
+}
+
+
+// dropdown
+// ---------------------------------------------------------------------------------
+
+.dropdown-menu {
+  z-index: 10000 !important;
+}
+
+.dropdown-item i {
+  margin-right: 10px;
+}
+
+
+// table
+// ---------------------------------------------------------------------------------
+
+.table-bordered {
+  margin-left: -1px !important;
+  margin-top: -1px !important;
+}
+
+// tree
+// ---------------------------------------------------------------------------------
+
+.node-content-wrapper {
+  padding: 0px !important;
+}
+
+// Workspace container
+// ---------------------------------------------------------------------------------
+.workspace-container {
+  margin-top: -28px;
+  width: 100%;
+  height: 100%;
+
+  .inner {
+    padding-top: 28px;
+    height: 100%;
+  }
+
+  .scroll-y {
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 100%;
+  }
+
+  .pane {
+    z-index: 1;
+  }
+}
+
+.workspace-container-with-tab {
+  margin-top: -55px;
+  width: 100%;
+  height: 100%;
+
+  .inner {
+    padding-top: 55px;
+    height: 100%;
+  }
+
+  .scroll-y {
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 100%;
+  }
+
+  .pane {
+    z-index: 1;
+  }
+}

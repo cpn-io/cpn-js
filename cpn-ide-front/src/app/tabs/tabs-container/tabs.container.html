@@ -1,0 +1,15 @@
+<div class="tabs__tab-bar" style="width:100%">
+
+  <ul class="tabs__tab-bar">
+    <li *ngFor="let tab of tabs" (click)="selectTab(tab)" [hidden] = "tab.isHidden"  class="tabs__tab" [ngClass]="{'active': tab.active == true}">
+      {{ tab.tabTitle }}
+    </li>
+  </ul>
+
+</div>
+
+<div style="position: absolute; width:100%; height:100%; top:26px; border: 0px solid red">
+  <ng-content></ng-content>
+</div>
+
+<div class="overlay" [style.display]="isDisabled()"></div>

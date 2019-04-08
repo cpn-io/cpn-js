@@ -1,0 +1,51 @@
+Manifest-Version: 1.0
+Automatic-Module-Name: org.eclipse.equinox.security.linux.x86_64
+Bundle-SymbolicName: org.eclipse.equinox.security.linux.x86_64;singlet
+ on:=true
+Built-By: genie.releng
+Bundle-ManifestVersion: 2
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Eclipse-PlatformFilter: (& (osgi.os=linux) (osgi.arch=x86_64))
+Eclipse-SourceReferences: scm:git:git://git.eclipse.org/gitroot/equino
+ x/rt.equinox.bundles.git;path="bundles/org.eclipse.equinox.security.l
+ inux.x86_64";tag="I20180827-2000";commitId=a05e887ec911edc1bdde68182c
+ f6a2dbad65915e
+Bundle-Vendor: %providerName
+Fragment-Host: org.eclipse.equinox.security;bundle-version="[1.0.0,2.0
+ .0)"
+Export-Package: org.eclipse.equinox.internal.security.linux;x-internal
+ :=true
+Bundle-Name: %fragmentName
+Bundle-Version: 1.1.100.v20180827-1235
+Bundle-Localization: fragment
+Created-By: Apache Maven 3.3.3
+Build-Jdk: 1.8.0_162
+Eclipse-BundleShape: dir
+
+Name: about.html
+SHA-256-Digest: 7mbS+ztMDS7S5/aYvJ7U49bPd/pcr0CtAylhJdsaxfA=
+
+Name: fragment.properties
+SHA-256-Digest: ZZX4/VeAmZScwgg4WmNJmLZIcn7v9fL8VwQw5/bLcpQ=
+
+Name: org/eclipse/equinox/internal/security/linux/nls/LinuxPasswordPro
+ viderMessages.class
+SHA-256-Digest: BI7vPH16opc/x3FXRHfUlDu8KP64HHsStLWKkbq+3qI=
+
+Name: org/eclipse/equinox/internal/security/linux/LinuxPasswordProvide
+ r.class
+SHA-256-Digest: VMOK3nsQkpaVzp3XF6vNMG1LuUWytG6DS/W4en3zspQ=
+
+Name: fragment.xml
+SHA-256-Digest: oWzjEYBKe14zX69noiOI6JFl0vrI7Zp6pEaAP7z5RQ4=
+
+Name: .api_description
+SHA-256-Digest: MqBQ64AwY8Xg4OeGSh7ORH0Aj6IZMID914ECLiRb95E=
+
+Name: libkeystorelinuxnative.so
+SHA-256-Digest: 1ieRwxSIPygINpxrvZQtQJPmmqQadZmCr/DyvcaorzU=
+
+Name: org/eclipse/equinox/internal/security/linux/nls/messages.propert
+ ies
+SHA-256-Digest: YyjjyBPlsUGy2qNymZiDK/vFa0y+xvs6NIzpueVfbhk=
+

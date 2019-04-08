@@ -1,0 +1,42 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light flex-nowrap" style="border-bottom: 1px solid lightgray">
+  <ul class="navbar-nav mr-auto">
+
+    <li class="nav-item">
+      <a class="nav-link disabled" href="#">Selection:</a>
+    </li>
+
+    <!-- Selection tool -->
+    <li class="nav-item">
+      <a class="nav-link" href="#" (click)="lassoTool()">
+        <i class="fa fa-mouse-pointer" aria-hidden="true"></i>
+      </a>
+    </li>
+
+    <div class="divider"></div>
+
+    <li class="nav-item">
+      <a class="nav-link disabled" href="#">Create:</a>
+    </li>
+
+    <!-- Create place -->
+    <li class="nav-item">
+      <a class="nav-link" href="#" (click)="createPlace()">
+        <i class="far fa-circle" aria-hidden="true"></i>
+      </a>
+    </li>
+
+    <!-- Create transition -->
+    <li class="nav-item">
+      <a class="nav-link" href="#" (click)="createTransition()">
+        <i class="far fa-square" aria-hidden="true"></i>
+      </a>
+    </li>
+
+  </ul>
+
+  <!-- Search -->
+  <!-- <form class="form-inline my-0 my-lg-0">
+  <input class="form-control mr-sm-1" type="search" placeholder="Search" aria-label="Search">
+  <button class="btn btn-outline-success my-0 my-sm-0" type="submit">Search</button>
+</form> -->
+</nav>

@@ -1,0 +1,55 @@
+<div class="split-container" style="overflow-y:hidden;">
+
+  <as-split direction="horizontal" style="overflow-y:hidden">
+
+    <as-split-area [size]="25" style="overflow-y:hidden">
+
+      <as-split direction="vertical">
+
+        <!-- Project explorer -->
+        <as-split-area [size]="50" style="overflow-y:hidden">
+          <!--<div #explorerArea style="height: 100%;"></div>-->
+          <app-project-explorer></app-project-explorer>
+        </as-split-area>
+
+        <!-- Project details -->
+        <as-split-area [size]="50" style="overflow-y:hidden">
+          <!--<div #detailsArea style="height: 100%;"></div>-->
+          <app-project-details></app-project-details>
+        </as-split-area>
+
+      </as-split>
+
+    </as-split-area>
+
+    <as-split-area [size]="55" style="overflow-y:hidden">
+
+      <as-split direction="vertical">
+
+        <!-- Editor -->
+        <as-split-area [size]="70" style="overflow-y:hidden">
+          <!--<div #editorArea style="height: 100%"></div>-->
+          <app-editor-panel></app-editor-panel>
+        </as-split-area>
+
+        <!-- Console -->
+        <as-split-area [size]="30" style="overflow-y:hidden">
+          <!--<div #consoleArea style="height: 100%;"></div>-->
+          <app-project-console></app-project-console>
+        </as-split-area>
+
+      </as-split>
+
+    </as-split-area>
+
+    <!-- <as-split-area [size]="25" style="overflow-y:hidden">
+      <h1>sakdasdalkdsh</h1>
+    </as-split-area> -->
+
+    <as-split-area [size]="20" style="overflow-y:hidden;">
+      <!--<div #propertiesArea style="height: 100%;"></div>-->
+      <app-properties-panel></app-properties-panel>
+    </as-split-area>
+  </as-split>
+
+</div>

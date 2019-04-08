@@ -1,0 +1,3 @@
+Build 1.1.20190405
+
+- add undo changes after create/rename/delete/remove places, transitions

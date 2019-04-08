@@ -1,0 +1,204 @@
+<!--<div style="padding: 4px 10px; background: #ccc; height:26px">-->
+<!--{{title }} {{   nodes.length > 0 ? ' - ' + nodes[0].value : ''}}-->
+<!--</div>-->
+
+<!--<div class="blockHeader">-->
+<!--{{title + (nodes.length > 0 ? ' (id = ' + nodes[0].value + ')' : '')}}-->
+<!--</div>-->
+
+<div class="blockHeader">
+  {{title}}
+</div>
+
+<div style="overflow-y: auto; height:100%; padding-bottom: 50px">
+
+  <!-- commonNodes -->
+  <div *ngFor="let table of tables">
+    <div *ngIf="table.id === 'commonNodes'">
+
+      <table [id]="table.id" class="table table-bordered table-hover table-small">
+        <tr *ngFor="let item of table.data" [ngStyle]="item.hide && {display: 'none'}">
+          <td width="50%" class="valueName">{{ item.name }}</td>
+          <td width="50%" contenteditable='true'>{{ item.value }}</td>
+        </tr>
+      </table>
+
+    </div>
+  </div>
+
+  <div *ngFor="let table of tables">
+
+    <div *ngIf="table.data.length > 0 && table.id !== 'commonNodes'">
+
+      <div class="blockHeader" (click)="hideColapseTable(table, $event)">
+        <span class="caret"><i [ngClass]="table.visible ? 'fas fa-caret-down' : 'fas fa-caret-right'"></i></span>
+        <span
+          [ngClass]="table.visible ? 'active' : ''">{{table.visible ? table.name + ' Details' : table.name + ' Layout'}}</span>
+      </div>
+
+      <table [id]="table.id" [hidden]="!table.visible" class="table table-bordered table-hover table-small">
+        <tr *ngFor="let item of table.data" [ngStyle]="item.hide && {display: 'none'}">
+          <td width="50%" class="valueName">{{ item.name }}</td>
+          <td width="50%" contenteditable='true'>{{ item.value }}</td>
+        </tr>
+      </table>
+
+    </div>
+
+  </div>
+  <!------------------->
+
+
+  <!--<div *ngIf="isPlace || isTrans || isArc">-->
+  <!--<div class="blockHeader" (click)="hideColapseTable('elementTable', $event)">-->
+  <!--&lt;!&ndash;{{title + ' Layout' + (nodes.length > 0 ? ' [' + nodes[0].value + ']' : '')}}&ndash;&gt;-->
+
+  <!--<span class="caret"><i [ngClass]="tables['elementTable'].visible ? 'fas fa-caret-down' : 'fas fa-caret-right'"></i></span>-->
+  <!--<span>{{tables['elementTable'].visible ? title + ' Details' : title + ' Layout'}}</span>-->
+  <!--</div>-->
+
+  <!--<table id="elementTable" hidden='true' class="table table-bordered table-hover table-small">-->
+  <!--<tr>-->
+  <!--<th>Attribute</th>-->
+  <!--<th>Value</th>-->
+  <!--</tr>-->
+  <!--<tr *ngFor="let item of nodes" [ngStyle]="item.hide && {display: 'none'}">-->
+  <!--<td>{{ item.name }}</td>-->
+  <!--<td contenteditable='true'>{{ item.value }}</td>-->
+  <!--&lt;!&ndash;input type="text" name="fname" ng-change="myFunction()" value="{{item.value}}"&ndash;&gt;-->
+  <!--</tr>-->
+  <!--</table>-->
+
+  <!--<div *ngIf="isPlace">-->
+  <!--<div class="blockHeader" (click)="hideColapseTable('typeTable', $event)">-->
+  <!--&lt;!&ndash;{{'Type Layout' + ' [' + type[0].value + ']'}}&ndash;&gt;-->
+  <!--&lt;!&ndash;{{'Type Layout'}}&ndash;&gt;-->
+
+  <!--<span class="caret"><i [ngClass]="tables['typeTable'].visible ? 'fas fa-caret-down' : 'fas fa-caret-right'"></i></span>-->
+  <!--<span>{{tables['typeTable'].visible ? 'Type Details' : 'Type Layout'}}</span>-->
+
+  <!--</div>-->
+  <!--<table id="typeTable" [hidden]="selectedElement === 'type' ? false : true"-->
+  <!--[ngClass]="selectedElement === 'type' ? 'table table-bordered table-hover table-small table-active'  : 'table table-bordered table-hover table-small'">-->
+  <!--<tr>-->
+  <!--<th>Attribute</th>-->
+  <!--<th>Value</th>-->
+  <!--</tr>-->
+  <!--<tr *ngFor="let item of type" [ngStyle]="item.hide && {display: 'none'}">-->
+  <!--<td>{{ item.name }}</td>-->
+  <!--<td contenteditable='true'>{{ item.value }}</td>-->
+  <!--&lt;!&ndash;input type="text" name="fname" ng-change="myFunction()" value="{{item.value}}"&ndash;&gt;-->
+  <!--</tr>-->
+  <!--</table>-->
+
+  <!--<div class="blockHeader" (click)="hideColapseTable('initmarkTable', $event)">-->
+  <!--&lt;!&ndash;{{'Initmark Layout' + ' [' + initmark[0].value + ']'}}&ndash;&gt;-->
+  <!--{{'Initmark Layout'}}-->
+  <!--</div>-->
+  <!--<table id="initmarkTable" [hidden]="selectedElement === 'initmark' ? false : true"-->
+  <!--[ngClass]="selectedElement === 'initmark' ? 'table table-bordered table-hover table-small table-active'  : 'table table-bordered table-hover table-small'">-->
+  <!--<tr>-->
+  <!--<th>Attribute</th>-->
+  <!--<th>Value</th>-->
+  <!--</tr>-->
+  <!--<tr *ngFor="let item of initmark" [ngStyle]="item.hide && {display: 'none'}">-->
+  <!--<td>{{ item.name }}</td>-->
+  <!--<td contenteditable='true'>{{ item.value }}</td>-->
+  <!--&lt;!&ndash;input type="text" name="fname" ng-change="myFunction()" value="{{item.value}}"&ndash;&gt;-->
+  <!--</tr>-->
+  <!--</table>-->
+  <!--</div>-->
+
+  <!--<div *ngIf="isTrans">-->
+  <!--<div class="blockHeader" (click)="hideColapseTable('condTable', $event)">-->
+  <!--&lt;!&ndash;{{'Cond Layout' + ' [' + cond[0].value + ']'}}&ndash;&gt;-->
+  <!--{{'Cond Layout'}}-->
+  <!--</div>-->
+
+  <!--<table id="condTable" [hidden]="selectedElement === 'cond' ? false : true"-->
+  <!--[ngClass]="selectedElement === 'cond' ? 'table table-bordered table-hover table-small table-active'  : 'table table-bordered table-hover table-small'">-->
+  <!--<tr>-->
+  <!--<th>Attribute</th>-->
+  <!--<th>Value</th>-->
+  <!--</tr>-->
+  <!--<tr *ngFor="let item of cond" [ngStyle]="item.hide && {display: 'none'}">-->
+  <!--<td>{{ item.name }}</td>-->
+  <!--<td contenteditable='true'>{{ item.value }}</td>-->
+  <!--&lt;!&ndash;input type="text" name="fname" ng-change="myFunction()" value="{{item.value}}"&ndash;&gt;-->
+  <!--</tr>-->
+  <!--</table>-->
+
+  <!--<div class="blockHeader" (click)="hideColapseTable('timeTable', $event)">-->
+  <!--&lt;!&ndash;{{'Time Layout' + ' [' + time[0].value + ']'}}&ndash;&gt;-->
+  <!--{{'Time Layout'}}-->
+  <!--</div>-->
+  <!--<table id="timeTable" [hidden]="selectedElement === 'time' ? false : true"-->
+  <!--[ngClass]="selectedElement === 'time' ? 'table table-bordered table-hover table-small table-active'  : 'table table-bordered table-hover table-small'">-->
+  <!--<tr>-->
+  <!--<th>Attribute</th>-->
+  <!--<th>Value</th>-->
+  <!--</tr>-->
+  <!--<tr *ngFor="let item of time" [ngStyle]="item.hide && {display: 'none'}">-->
+  <!--<td>{{ item.name }}</td>-->
+  <!--<td contenteditable='true'>{{ item.value }}</td>-->
+  <!--&lt;!&ndash;input type="text" name="fname" ng-change="myFunction()" value="{{item.value}}"&ndash;&gt;-->
+  <!--</tr>-->
+  <!--</table>-->
+
+  <!--<div class="blockHeader" (click)="hideColapseTable('codeTable', $event)">-->
+  <!--&lt;!&ndash;{{'Code Layout' + ' [' + code[0].value + ']'}}&ndash;&gt;-->
+  <!--{{'Code Layout'}}-->
+  <!--</div>-->
+  <!--<table id="codeTable" [hidden]="selectedElement === 'code' ? false : true"-->
+  <!--[ngClass]="selectedElement === 'code' ? 'table table-bordered table-hover table-small table-active'  : 'table table-bordered table-hover table-small'">-->
+  <!--<tr>-->
+  <!--<th>Attribute</th>-->
+  <!--<th>Value</th>-->
+  <!--</tr>-->
+  <!--<tr *ngFor="let item of code" [ngStyle]="item.hide && {display: 'none'}">-->
+  <!--<td>{{ item.name }}</td>-->
+  <!--<td contenteditable='true'>{{ item.value }}</td>-->
+  <!--&lt;!&ndash;input type="text" name="fname" ng-change="myFunction()" value="{{item.value}}"&ndash;&gt;-->
+  <!--</tr>-->
+  <!--</table>-->
+
+  <!--<div class="blockHeader" (click)="hideColapseTable('priorityTable', $event)">-->
+  <!--&lt;!&ndash;{{'Priority Layout' + ' [' + priority[0].value + ']'}}&ndash;&gt;-->
+  <!--{{'Priority Layout'}}-->
+  <!--</div>-->
+  <!--<table id="priorityTable" [hidden]="selectedElement === 'priority' ? false : true"-->
+  <!--[ngClass]="selectedElement === 'priority' ? 'table table-bordered table-hover table-small table-active'  : 'table table-bordered table-hover table-small'">-->
+  <!--<tr>-->
+  <!--<th>Attribute</th>-->
+  <!--<th>Value</th>-->
+  <!--</tr>-->
+  <!--<tr *ngFor="let item of priority" [ngStyle]="item.hide && {display: 'none'}">-->
+  <!--<td>{{ item.name }}</td>-->
+  <!--<td contenteditable='true'>{{ item.value }}</td>-->
+  <!--&lt;!&ndash;input type="text" name="fname" ng-change="myFunction()" value="{{item.value}}"&ndash;&gt;-->
+  <!--</tr>-->
+  <!--</table>-->
+  <!--</div>-->
+
+  <!--<div *ngIf="isArc">-->
+  <!--<div class="blockHeader" (click)="hideColapseTable('annotTable', $event)">-->
+  <!--&lt;!&ndash;{{'Annot Layout' + ' [' + annot[0].value + ']'}}&ndash;&gt;-->
+  <!--{{'Annot Layout'}}-->
+  <!--</div>-->
+
+  <!--<table id="annotTable" [hidden]="selectedElement === 'annot' ? false : true"-->
+  <!--[ngClass]="selectedElement === 'annot' ? 'table table-bordered table-hover table-small table-active'  : 'table table-bordered table-hover table-small'">-->
+  <!--<tr>-->
+  <!--<th>Attribute</th>-->
+  <!--<th>Value</th>-->
+  <!--</tr>-->
+  <!--<tr *ngFor="let item of annot" [ngStyle]="item.hide && {display: 'none'}">-->
+  <!--<td>{{ item.name }}</td>-->
+  <!--<td contenteditable='true'>{{ item.value }}</td>-->
+  <!--&lt;!&ndash;input type="text" name="fname" ng-change="myFunction()" value="{{item.value}}"&ndash;&gt;-->
+  <!--</tr>-->
+  <!--</table>-->
+  <!--</div>-->
+  <!--</div>-->
+
+</div>

@@ -1,4 +1,4 @@
-import {Component, ElementRef, HostListener, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, HostListener, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 
 import {assign} from 'min-dash';
 // import Diagram from 'bpmn-js/lib/Modeler';
@@ -17,7 +17,7 @@ import {ModelService} from '../services/model.service';
   templateUrl: './model-editor.component.html',
   styleUrls: ['./model-editor.component.scss']
 })
-export class ModelEditorComponent implements OnInit {
+export class ModelEditorComponent implements OnInit, OnDestroy {
 
   @ViewChild('container') containerElementRef: ElementRef;
   @Input() id: string;
@@ -52,6 +52,36 @@ export class ModelEditorComponent implements OnInit {
               private modelService: ModelService) {
   }
 
+
+  ngOnDestroy() {
+    // for(let placeIndex of Object.keys(this.placeShapes)) {
+    //   for(let i=0; i < this.placeShapes[placeIndex].labels.length; i++){
+    //     if(Object.values(this.projectService.appSettings).includes(this.placeShapes[placeIndex].labels[i].text)) {
+    //       this.modelService.deleteLabelJsonByCPNElem(this.placeShapes[placeIndex], i, 'place', this.pageId);
+    //     }
+    //   }
+    // }
+    // for(let transIndex of Object.keys(this.transShapes)) {
+    //   for(let i=0; i < this.transShapes[transIndex].labels.length; i++){
+    //     if(Object.values(this.projectService.appSettings).includes(this.transShapes[transIndex].labels[i].text)) {
+    //       this.modelService.deleteLabelJsonByCPNElem(this.transShapes[transIndex], i, 'place', this.pageId);
+    //     }
+    //   }
+    // }
+    // for(let arc of this.arcShapes) {
+    //   for(let i=0; i < arc.labels.length; i++){
+    //     if(Object.values(this.projectService.appSettings).includes(arc.labels[i].text)) {
+    //       this.modelService.deleteLabelJsonByCPNElem(arc, i, 'place', this.pageId);
+    //     }
+    //   }
+    // }
+    this.modelService.clearDefaultLabelValues(this.pageId);
+   // this.diagram.get('eventBus').fire('diagram.clear');
+   // this.diagram.get('eventBus').fire('diagram.destroy');
+
+  }
+
+
   ngOnInit() {
     this.subscripeToAppMessage();
     this.diagram = new Diagram({
@@ -59,9 +89,9 @@ export class ModelEditorComponent implements OnInit {
     });
 
 
-    document.addEventListener('keydown', (event) => {
+   /* document.addEventListener('keydown', (event) => {
       this.f2KeyDownHandler(event);
-    })
+    })*/
 
     var eventBus = this.diagram.get('eventBus');
     eventBus.on('element.click', (event) => {
@@ -254,6 +284,7 @@ export class ModelEditorComponent implements OnInit {
 
     this.elementFactory = this.diagram.get('elementFactory');
     this.dragging = this.diagram.get('dragging');
+    if(this.canvas) this.canvas._clear();
     this.canvas = this.diagram.get('canvas');
     this.modeling = this.diagram.get('modeling');
     this.labelEditingProvider = this.diagram.get('labelEditingProvider');
@@ -1136,7 +1167,7 @@ export class ModelEditorComponent implements OnInit {
    * @param context
    */
   addLabelEvent(event, element, context): boolean {
-    let page = this.jsonPageObject;
+    let page = this.modelService.getPageById(this.pageId);
     let isAdd = false;
     let entry;
     if (element.type === 'cpn:Transition') {
@@ -1309,47 +1340,50 @@ export class ModelEditorComponent implements OnInit {
    * create label by preesing f2 key
    * @param event
    */
-  //@HostListener('document:keydown', ['$event'])
+  @HostListener('window:keydown', ['$event'])
  f2KeyDownHandler(event) {// keyEvent(event: KeyboardEvent) {
-    if (event.keyCode === 9) {
+    if (event.keyCode === 9 && this.projectService.currentPageId === this.pageId) {
       event.stopImmediatePropagation();
       //event.stopPropagation();
       //event.preventDefault();
       let jsonElement;
       let labelStack;
       let labelType;
-      if(!this.tabStack.element || this.curentElement.id !== this.tabStack.element.id) {
-        this.tabStack.element = this.curentElement;
+      if(!this.tabStack.element || this.projectService.getCurrentElement().id !== this.tabStack.element.id) {
+        this.tabStack.element = this.projectService.getCurrentElement();
         this.tabStack.current = undefined;
       }
-      if(this.curentElement.type === 'cpn:Transition') {
-        labelType =  'trans';
+      // if(this.curentElement.type === 'cpn:Transition') {
+      //   labelType =  'trans';
+      //
+      // } else if(this.curentElement.type === 'cpn:Place') {
+      //   labelType =  'place';
+      //
+      // } else if(this.curentElement.type === 'bpmn:SequenceFlow') {
+      //   labelType =  'arc';
+      //
+      // }
+      labelType =  this.modelService.getModelCase( this.tabStack.element.type);
 
-      } else if(this.curentElement.type === 'cpn:Place') {
-        labelType =  'place';
 
-      } else if(this.curentElement.type === 'bpmn:SequenceFlow') {
-        labelType =  'arc';
-
-      }
       labelStack =  this.tabStack.stack[labelType];
-      jsonElement = this.modelService.getJsonElemetOnPage(this.pageId, this.curentElement.id, this.curentElement.type );//this.jsonPageObject[labelType].length ? this.jsonPageObject[labelType].find(elem => { return this.curentElement.id === elem._id }) : this.jsonPageObject[labelType];
-      let lastAddedElement = this.curentElement.labels.find(element => { return Object.values(this.projectService.getAppSettings()).includes(element.text)});
+      jsonElement = this.modelService.getJsonElemetOnPage(this.pageId, this.tabStack.element.id, this.tabStack.element.type );//this.jsonPageObject[labelType].length ? this.jsonPageObject[labelType].find(elem => { return this.curentElement.id === elem._id }) : this.jsonPageObject[labelType];
+      let lastAddedElement = this.tabStack.element.labels.find(element => { return Object.values(this.projectService.getAppSettings()).includes(element.text)});
       if(lastAddedElement) {
         this.canvas._removeElement(lastAddedElement, 'label');
         this.modelService.changeLabelText(jsonElement[Object.keys(labelStack).find(key => labelStack[key] === this.tabStack.current)], null, this.pageId);
-        this.curentElement.labels.splice(this.curentElement.labels.indexOf(lastAddedElement), 1);
+        this.tabStack.element.labels.splice(this.tabStack.element.labels.indexOf(lastAddedElement), 1);
 
       }
 
       if(labelType !== 'arc' && this.tabStack.current === 'edit') {
         this.tabStack.current = this.tabStack.current ? labelStack[this.tabStack.current] : labelStack[Object.keys(labelStack)[Object.keys(labelStack).length - 1]];
-        this.diagram.get('eventBus').fire('element.dblclick',  {element: this.curentElement});
+        this.diagram.get('eventBus').fire('element.dblclick',  {element: this.tabStack.element});
       } else {
         let elemtnForEdit =  this.tabStack.current ? this.tabStack.current : labelStack[Object.keys(labelStack)[Object.keys(labelStack).length - 1]]
         this.tabStack.current =  labelStack[elemtnForEdit];
-        if(labelType !== 'arc') this.addLabelEvent(event, this.curentElement, {type: elemtnForEdit})
-        this.diagram.get('eventBus').fire('element.tab', {element: this.curentElement.labels.find(elem => { return elem.labelType === elemtnForEdit})});
+        if(labelType !== 'arc') this.addLabelEvent(event, this.tabStack.element,  {type: elemtnForEdit})
+        this.diagram.get('eventBus').fire('element.tab', {element: this.tabStack.element.labels.find(elem => { return elem.labelType === elemtnForEdit})});
       }
 
 
@@ -1361,7 +1395,17 @@ export class ModelEditorComponent implements OnInit {
    * @param event
    */
   fireSelectionEvent(event) {
-    this.curentElement = event.element;
+    if(!this.projectService.currentPageId || this.projectService.currentPageId !== this.pageId) this.projectService.currentPageId =  this.pageId;
+    if(this.projectService.getCurrentElement()) {
+      for (let i = 0; i < this.projectService.getCurrentElement().labels.length; i++) {
+        if (Object.values(this.projectService.appSettings).includes(this.projectService.getCurrentElement().labels[i].text)) this.projectService.getCurrentElement().labels.splice(i, 1);
+      }
+      this.modelService.clearDefaultLabelValues(this.pageId);
+    }
+    this.projectService.setCurrentElement(event.element)
+
+
+   // this.curentElement = event.element;
     //  console.log('fireSelectionEvent(), event = ', event);
     if (event.element) {
 
@@ -1372,6 +1416,8 @@ export class ModelEditorComponent implements OnInit {
       //   });
 
       this.eventService.send(Message.SHAPE_SELECT, {element: event.element});
+      //this.curentElement = event.element;
+     // this.tabStack.element = event.element;
     }
   }
 

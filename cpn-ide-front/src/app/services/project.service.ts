@@ -13,6 +13,8 @@ export class ProjectService {
   public modelName = '';
   public projectData = undefined;
   public appSettings = [];
+  private currentSelectedElement;
+  currentPageId;
 
   constructor(private eventService: EventService, private http: HttpClient) {
     console.log('ProjectService instance CREATED!');
@@ -29,6 +31,14 @@ export class ProjectService {
     return this.appSettings;
   }
 
+  setCurrentElement(element) {
+    console.log('Selected element - ' + element.name)
+    this.currentSelectedElement = element;
+  }
+
+  getCurrentElement() {
+    return this.currentSelectedElement;
+  }
 
 
   /**

@@ -661,7 +661,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           });
         }
       } else {
-
+        mlNode.children.push({
+          id: block.ml._id,
+          // id: globref['@attributes'].id,
+          name: block.ml
+        });
       }
     }
     if (block.var) {

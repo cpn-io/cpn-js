@@ -28,6 +28,7 @@ export class ModelService {
       this.modelCase['cpn:Place'] = 'place';
       this.modelCase['cpn:Transition'] = 'trans';
       this.modelCase['bpmn:SequenceFlow'] = 'arc';
+      this.modelCase['bpmn:Process'] = 'trans';
       this.modelCase['place'] = 'place';
       this.modelCase['trans'] = 'trans';
       this.modelCase['arc'] = 'arc';
@@ -58,6 +59,9 @@ export class ModelService {
     if(modelState.page)  this.eventService.send(Message.PAGE_OPEN,   {pageObject: this.getPageById(modelState.page), subPages: this.subPages});
   }
 
+  getModelCase(labelType) {
+    return this.modelCase[labelType];
+  }
 
   public getProjectData() {
     return this.projectData;
@@ -68,7 +72,11 @@ export class ModelService {
   }
 
   getJsonElemetOnPage(pageId, id, type){
-    return this.getPageById(pageId)[this.modelCase[type]].length ? this.getPageById(pageId)[this.modelCase[type]].find(elem => elem._id === id) : this.getPageById(pageId)[this.modelCase[type]];
+    try {
+      return this.getPageById(pageId)[this.modelCase[type]].length ? this.getPageById(pageId)[this.modelCase[type]].find(elem => elem._id === id) : this.getPageById(pageId)[this.modelCase[type]];
+    } catch(e) {
+      return undefined;
+    }
   }
 
 
@@ -252,7 +260,7 @@ export class ModelService {
     //  console.log( JSON.stringify(this.arcShapes));
     var bounds;
     let updatedPlace;
-    if (!(page.place.length === 0 && !page.place._id)) {
+    if (page.place && !(page.place.length === 0 && !page.place._id)) {
       for (let place of page.place) {
         updatedPlace = placeShapes[place._id];
         place.posattr._x = updatedPlace.x + place.ellipse._w / 2;
@@ -293,7 +301,7 @@ export class ModelService {
         }
       }
     }
-    if (!(page.trans.length === 0 && !page.trans._id) ) {
+    if (page.trans && !(page.trans.length === 0 && !page.trans._id) ) {
       let updatedTran;
       if (page.trans.length) {
         for (let tran of page.trans) {
@@ -429,7 +437,7 @@ export class ModelService {
 
       }
     }
-    if (!(page.arc.length === 0 && !page.arc._id) ) {
+    if (page.arc && !(page.arc.length === 0 && !page.arc._id) ) {
       let uodatedCon;
       for (let arc of page.arc) {
         for (let modelArc of arcShapes) {
@@ -573,6 +581,27 @@ export class ModelService {
     } else {
       this.getcpnet().globbox.block.push(block);
     }
+  }
+
+
+  clearDefaultLabelValues(pageId){
+    let page = this.getPageById(pageId);
+    for(let entry of ['place', 'trans', 'arc']) {
+      if(page[entry] instanceof Array) {
+        for(let jsonElem of page[entry]) {
+          for(let labelType of this.labelsEntry[entry]) {
+            if(jsonElem[labelType] && jsonElem[labelType].text && jsonElem[labelType].text.__text && Object.values(this.projectService.appSettings).includes(jsonElem[labelType].text.__text))
+              jsonElem[labelType].text.__text = null;
+          }
+        }
+      } else {
+
+          for(let labelType of this.labelsEntry[entry]) {
+            if(page[entry][labelType] && page[entry][labelType].text && page[entry][labelType].text.__text && Object.values(this.projectService.appSettings).includes(page[entry][labelType].text.__text))
+              page[entry][labelType].text.__text = null;
+          }
+        }
+      }
   }
 
   deleteBlock(id) {

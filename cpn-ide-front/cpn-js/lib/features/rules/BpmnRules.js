@@ -763,6 +763,9 @@ function canCreate(shape, target, source, position) {
 }
 
 function canResize(shape, newBounds) {
+  if(shape.type === 'label') {
+    return false
+  }
   // CPN
   if (is(shape, 'cpn:BaseElement')) {
     return true;

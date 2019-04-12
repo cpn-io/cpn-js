@@ -284,14 +284,15 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       if (!addingElement) {
         addingElement = node.data.id;
       }
-      this.sendChangingElementToDeclarationPanel(node, addingElement, 'add', undefined);
+      //this.sendChangingElementToDeclarationPanel(node, addingElement, 'add', undefined);
+      this.modelService.sendChangingElementToDeclarationPanel(node, addingElement, 'add', undefined, this.getCurrentBlock(node).id, this.treeComponent.treeModel.getState());
     }
 
     // console.log('onAddNode(), new node = ', pageN);
 
   }
 
-  sendChangingElementToDeclarationPanel(node, elementType, action, id) {
+  /*sendChangingElementToDeclarationPanel(node, elementType, action, id) {
     if (elementType === 'Declarations' || elementType === 'block') {
       this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
         node: action === 'rename' ? node : undefined,
@@ -337,7 +338,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         id: id,
         state: this.treeComponent.treeModel.getState()
       });
-    } else if (this.paramsTypes.includes(id)) {
+    } else if (this.modelService.paramsTypes.includes(id)) {
       this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
         node: action === 'rename' ? node : undefined,
         action: action,
@@ -346,7 +347,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         state: this.treeComponent.treeModel.getState()
       });
     }
-  }
+  }*/
 
 
   openNode(event, node) {
@@ -360,7 +361,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   getCurrentBlock(currentNode): any {
     while (currentNode.parent && currentNode.parent.data && currentNode.parent.data.id !== 'Declarations') {
-      if (!this.paramsTypes.includes(currentNode.id) && !this.paramsTypes.includes(currentNode.parent.id)) {
+      if (!this.modelService.paramsTypes.includes(currentNode.id) && !this.modelService.paramsTypes.includes(currentNode.parent.id)) {
         break;
       }
       currentNode = currentNode.parent;
@@ -408,7 +409,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           });
           this.editableNode = null;
         } else {
-          this.sendChangingElementToDeclarationPanel(this.editableNode, this.editableNode.parent.data.id, 'rename', this.editableNode.data.id);
+          //this.sendChangingElementToDeclarationPanel(this.editableNode, this.editableNode.parent.data.id, 'rename', this.editableNode.data.id);
+          this.modelService.sendChangingElementToDeclarationPanel(this.editableNode, this.editableNode.parent.data.id, 'rename', this.editableNode.data.id,  this.getCurrentBlock(this.editableNode).id, this.treeComponent.treeModel.getState());
         }
         //   this.eventService.send(Message.XML_UPDATE, {project: {data: this.currentProjectModel, name: this.modelName}});
       } else if (htmlElement && htmlElement.nodeName === 'TD') {
@@ -484,7 +486,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       parentNod = node.parent;
       this.focusedNode(parentNod);
       // deletingElem = !this.paramsTypes.includes(node.parent.id) ? node.data.id : node.parent.id;
-      this.sendChangingElementToDeclarationPanel(node, node.parent.id, 'delete', node.data.id);
+      //this.sendChangingElementToDeclarationPanel(node, node.parent.id, 'delete', node.data.id);
+      this.modelService.sendChangingElementToDeclarationPanel(node, node.parent.id, 'delete', node.data.id,  this.getCurrentBlock(node).id, this.treeComponent.treeModel.getState());
     }
 
   }
@@ -1135,21 +1138,21 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   canCreate(node): boolean {
     return node && ((node.id === 'Pages' || node.data.type === 'page' || node.id === 'Declarations')
-      || (!this.paramsTypes.includes(node.parent.data.id) && (this.paramsTypes.includes(node.id))));
+      || (!this.modelService.paramsTypes.includes(node.parent.data.id) && (this.modelService.paramsTypes.includes(node.id))));
   }
 
   canEdit(node): boolean {
-    return node && !this.reservedWords.includes(node.data.id) && !this.paramsTypes.includes(node.data.id);
+    return node && !this.reservedWords.includes(node.data.id) && !this.modelService.paramsTypes.includes(node.data.id);
   }
 
   canDelete(node): boolean {
-    return node && !this.reservedWords.includes(node.data.id) && !this.paramsTypes.includes(node.data.id);
+    return node && !this.reservedWords.includes(node.data.id) && !this.modelService.paramsTypes.includes(node.data.id);
   }
 
   canCreateDeclaration(node): boolean {
     return (this.isDeclarationBlock(node)
-      && !this.paramsTypes.includes(node.data.id)
-      && !this.paramsTypes.includes(node.parent.data.id));
+      && !this.modelService.paramsTypes.includes(node.data.id)
+      && !this.modelService.paramsTypes.includes(node.parent.data.id));
   }
 
   autoWidth(event) {

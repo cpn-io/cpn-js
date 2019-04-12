@@ -24,7 +24,7 @@ import {
 import {
   hasPrimaryModifier
 } from 'diagram-js/lib/util/Mouse';
-import DirectEditing from "diagram-js-direct-editing/lib/DirectEditing";
+//import DirectEditing from '../diagram-js-direct-editing/lib/DirectEditing';
 
 
 

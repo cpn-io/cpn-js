@@ -1,4 +1,4 @@
-import DirectEditingModule from 'diagram-js-direct-editing';
+import DirectEditingModule from '../diagram-js-direct-editing';
 import ContextPadModule from 'diagram-js/lib/features/context-pad';
 import SelectionModule from 'diagram-js/lib/features/selection';
 import ConnectModule from 'diagram-js/lib/features/connect';

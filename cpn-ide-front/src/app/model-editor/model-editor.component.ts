@@ -422,11 +422,12 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
     //   });
     // console.log('CANCEL!!!!!!!!');
 
-    this.eventService.send(Message.MODEL_UPDATE, {pageObject: page});
+  //  this.eventService.send(Message.MODEL_UPDATE, {pageObject: page});
   }
 
   changeSubPageName(subpage) {
-    this.eventService.send(Message.CHANGE_NAME_PAGE,  {id: subpage.subpageid, name: subpage.name, changedElement : 'tran'});
+    //this.eventService.send(Message.CHANGE_NAME_PAGE,  {id: subpage.subpageid, name: subpage.name, changedElement : 'tran'});
+    this.modelService.changeSubPageTransitionName(subpage);
   }
 
   /**
@@ -1617,6 +1618,37 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
           }
         }
       }
+
+      //Aux
+      if(pageObject.Aux) {
+        if(pageObject.Aux  instanceof  Array) {
+            for (let aux of pageObject.Aux) {
+              var pos;
+              if (aux.posattr) {
+                // var x = 1.0 * labelNode.posattr["@attributes"].x;
+                // var y = -1.0 * labelNode.posattr["@attributes"].y;
+                var x = 1.0 * aux.posattr._x;
+                var y = -1.0 * aux.posattr._y;
+                pos = {x: x, y: y};
+              }
+
+              var attrs = {stroke: 'black', labelType: aux};
+              if (aux.textattr) {
+                var stroke = aux.stroke || 'black';
+                // var stroke = labelNode.textattr["@attributes"].color || 'black';
+                stroke = this.correctColor[stroke] || stroke;
+
+                attrs = {stroke: stroke, labelType: aux};
+              }
+              let textLabel = typeof aux.text === 'string' ? aux.text : aux.text.__text;
+              let label = this.createLabel(this.canvas.getRootElement(), textLabel, pos, attrs, aux._id);
+              label.hidden = false;
+              this.canvas.addShape(label, this.canvas.getRootElement());
+            }
+
+          }
+        }
+
 
       console.log('modelBounds = ', modelBounds);
 

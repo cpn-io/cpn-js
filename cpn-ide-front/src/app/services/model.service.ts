@@ -19,7 +19,8 @@ export class ModelService {
   private modelCase = [];
   subPages;
   countNewItems = 0;
-  labelsEntry = {trans: ['time', 'code', 'priority', 'edit', 'cond'], place: ['initmark', 'edit', 'type'], arc:  ['annot']}
+  labelsEntry = {trans: ['time', 'code', 'priority', 'edit', 'cond'], place: ['initmark', 'edit', 'type'], arc:  ['annot'], label: ['edit']}
+  paramsTypes = ['ml', 'color', 'var', 'globref'];
 
   constructor(private eventService: EventService, private http: HttpClient, private projectService: ProjectService) {
     console.log('ModelService instance CREATED!');
@@ -32,6 +33,7 @@ export class ModelService {
       this.modelCase['place'] = 'place';
       this.modelCase['trans'] = 'trans';
       this.modelCase['arc'] = 'arc';
+      this.modelCase['label'] = 'label';
     });
 
     this.eventService.on(Message.PAGE_OPEN, (data) => {
@@ -71,14 +73,34 @@ export class ModelService {
     return this.projectData.workspaceElements.cpnet.page.length ? this.projectData.workspaceElements.cpnet.page.find(page => page._id === id) : this.projectData.workspaceElements.cpnet.page ;
   }
 
-  getJsonElemetOnPage(pageId, id, type){
+ /* getJsonElemetOnPage(pageId, id, type){
     try {
       return this.getPageById(pageId)[this.modelCase[type]].length ? this.getPageById(pageId)[this.modelCase[type]].find(elem => elem._id === id) : this.getPageById(pageId)[this.modelCase[type]];
     } catch(e) {
       return undefined;
     }
-  }
+  }*/
 
+
+  getJsonElemetOnPage(pageId, element, type){
+    try {
+      let page = this.getPageById(pageId);
+      let entry;
+      if(type ==='label') {
+        if (element.labelTarget && element.labelTarget.parent){
+          entry  = this.modelCase[element.labelTarget.type];
+          return page[entry].length ? page[entry].find(elem => elem._id === element.labelTarget.id)[element.labelType] : page[entry][element.labelType];
+        } else {
+          return page['Aux'].length ? page['Aux'].find(elem => elem._id === element.labelNodeId) : page['Aux'];
+        }
+      } else {
+        entry  = this.modelCase[type];
+        return page[entry].length ? page[entry].find(elem => elem._id === element) : page[entry];
+      }
+    } catch(e) {
+      return undefined;
+    }
+  }
 
   getcpnet() {
     let cpnet;
@@ -141,6 +163,69 @@ export class ModelService {
     }
   }
 
+  //send changes
+
+  changeSubPageTransitionName(subpage){
+    this.eventService.send(Message.CHANGE_NAME_PAGE,  {id: subpage.subpageid, name: subpage.name, changedElement : 'tran'});
+  }
+
+
+  sendChangingElementToDeclarationPanel(node, elementType, action, id, blockId, state) {
+    if (elementType === 'Declarations' || elementType === 'block') {
+      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
+        node: action === 'rename' ? node : undefined,
+        action: action,
+        element: 'tab',
+        target: blockId,//this.getCurrentBlock(node).id,
+        id: id,
+        state: state //this.treeComponent.treeModel.getState()
+      });
+    } else if (elementType === 'ml') {
+      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
+        node: action === 'rename' ? node : undefined,
+        action: action,
+        element: elementType,
+        target: blockId,//this.getCurrentBlock(node).id,
+        id: id,
+        state: state//this.treeComponent.treeModel.getState()
+      });
+    } else if (elementType === 'color') {
+      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
+        node: action === 'rename' ? node : undefined,
+        action: action,
+        element: elementType,
+        target: blockId,//this.getCurrentBlock(node).id,
+        id: id,
+        state: state//this.treeComponent.treeModel.getState()
+      });
+    } else if (elementType === 'var') {
+      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
+        node: action === 'rename' ? node : undefined,
+        action: action,
+        element: elementType,
+        target: blockId,//this.getCurrentBlock(node).id,
+        id: id,
+        state: state //this.treeComponent.treeModel.getState()
+      });
+    } else if (elementType === 'globref') {
+      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
+        node: action === 'rename' ? node : undefined,
+        action: action,
+        element: elementType,
+        target: blockId, //this.getCurrentBlock(node).id,
+        id: id,
+        state: state //this.treeComponent.treeModel.getState()
+      });
+    } else if (this.paramsTypes.includes(id)) {
+      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
+        node: action === 'rename' ? node : undefined,
+        action: action,
+        target: blockId,//this.getCurrentBlock(node).id,
+        id: id,
+        state: state//this.treeComponent.treeModel.getState()
+      });
+    }
+  }
 
 
   /*for refact*/
@@ -149,7 +234,7 @@ export class ModelService {
   shapeMoveJsonSaver(event, pageId){
     this.saveBackup(this.projectData, pageId)
     let page = this.getPageById(pageId);
-    let jsonMovingElement = this.getJsonElemetOnPage(pageId, event.shape.id, event.shape.type);
+    let jsonMovingElement = this.getJsonElemetOnPage(pageId, event.shape.type === 'label'? event.shape : event.shape.id, event.shape.type);
     this.moveElementInJson(jsonMovingElement, event.shape.type, {x: event.dx, y: -1 * event.dy});
     if(event.shape.type !== 'bpmn:SequenceFlow') {
       if (page.arc instanceof Array) {
@@ -237,6 +322,7 @@ export class ModelService {
 
 
   moveElementInJson(jsonElem, elemntType, delta) {
+
     for(let movingElement of this.labelsEntry[this.modelCase[elemntType]]) {
       if(movingElement !== 'edit') {
         jsonElem[movingElement].posattr._x = parseFloat(jsonElem[movingElement].posattr._x) + delta.x;
@@ -487,6 +573,8 @@ export class ModelService {
 
       }
     }
+
+    this.eventService.send(Message.MODEL_UPDATE, {pageObject: page});
     // this.eventService.send(Message.MODEL_UPDATE, {pageObject:  page});
     //EmitterService.getAppMessageEmitter().emit(
     //  {

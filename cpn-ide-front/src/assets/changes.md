@@ -1,7 +1,7 @@
 Build 1.1.2019041217 
 
-- Added ability to make multi-line tags
-- Added display of notes on the model
+- Added ability to make multi-line tags  RQ-001.md, RQ-002.md
+- Added display of notes(Auxiliary text labels) on the model RQ-004.md
 - Fixed problem with moving labels
 - Removed the ability to change the size of labels
 - label edit field now completely transparent

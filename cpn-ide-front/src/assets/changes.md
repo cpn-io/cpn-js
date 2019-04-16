@@ -1,11 +1,11 @@
 Build 1.1.20190416
 
-- Labels by creating through tab become immediately editable
-- In properties panel added palet for color properries
-- Now there is no need to press Enter to accept changes in the panel.
-- Delete time from version
-- Panel for creating elements is now opened by right mouse button
-- added change the position of labels after resize element
+- Labels by creating through tab become immediately editable 
+- In properties panel added palet for color properries [rq-005](https://github.com/cpn-io/cpn-js/blob/master/development/requirements/RQ-005.md)
+- Now there is no need to press Enter to accept changes in the panel. [issues 34](https://github.com/cpn-io/cpn-js/issues/34)
+- Delete time from version [issues 2](https://github.com/cpn-io/cpn-js/issues/2)
+- Panel for creating elements is now opened by right mouse button [issues 5](https://github.com/cpn-io/cpn-js/issues/5)
+- added change the position of labels after resize element [issues 3](https://github.com/cpn-io/cpn-js/issues/3)
 
 
 

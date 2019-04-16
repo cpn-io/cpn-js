@@ -1,4 +1,4 @@
-Build 1.1.1.1.20190416
+Build 1.1.20190416
 
 - Labels by creating through tab become immediately editable
 - In properties panel added palet for color properries

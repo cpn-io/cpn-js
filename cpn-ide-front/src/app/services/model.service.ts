@@ -232,8 +232,27 @@ export class ModelService {
   shapeResizeJsonSaver(event, pageId) {
     this.saveBackup(this.projectData, pageId)
     let page = this.getPageById(pageId);
+    let form = event.shape.type === 'cpn:Place' ? 'ellipse' : 'box';
     let jsonMovingElement = this.getJsonElemetOnPage(pageId, event.shape.type === 'label' ? event.shape : event.shape.id, event.shape.type);
-    this.moveElementInJson(jsonMovingElement, event.shape.type, {x: event.dx, y: -1 * event.dy});
+    jsonMovingElement[form]._w = event.shape.width;
+    jsonMovingElement[form]._h = event.shape.height;
+    jsonMovingElement.posattr._x = event.shape.x + jsonMovingElement[form]._w / 2;
+    jsonMovingElement.posattr._y = -1 * event.shape.y - jsonMovingElement[form]._h / 2;
+
+    for(let labelType of this.labelsEntry[this.modelCase[event.shape.type]]) {
+      if(labelType !== 'edit') {
+        if (((event.context.direction === 'ne' || event.context.direction === 'nw') && labelType !== 'type' && labelType !== 'code' && labelType !== 'priority')
+          || ((event.context.direction === 'se' || event.context.direction === 'sw') && labelType !== 'initmark' && labelType !== 'time' && labelType !== 'cond')) {
+
+          jsonMovingElement[labelType].posattr._y = parseFloat(jsonMovingElement[labelType].posattr._y) + event.context.delta.y;
+        }
+        if (((event.context.direction === 'sw' || event.context.direction === 'nw') && labelType !== 'type' && labelType !== 'initmark' && labelType !== 'time' && labelType !== 'code')
+          || ((event.context.direction === 'se' || event.context.direction === 'ne') && labelType !== 'cond' && labelType !== 'priority')) {
+          jsonMovingElement[labelType].posattr._x = parseFloat(jsonMovingElement[labelType].posattr._x) + event.context.delta.x;
+        }
+      }
+    }
+
 
 
     this.eventService.send(Message.SHAPE_SELECT, {element: event.shape, pageJson: page});

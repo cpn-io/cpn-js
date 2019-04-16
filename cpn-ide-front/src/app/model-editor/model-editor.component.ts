@@ -473,7 +473,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
         if (label.text) this.canvas.addShape(label, element);
 
     }
-   // this.modelService.shapeResizeJsonSaver(event, this.pageId);
+    this.modelService.shapeResizeJsonSaver(event, this.pageId);
   }
 
 

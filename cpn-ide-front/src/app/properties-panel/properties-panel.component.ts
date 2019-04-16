@@ -60,11 +60,76 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
   }
 
+
+  getContentType(itemName) {
+    if(itemName === 'Stroke') return 'color'; else return 'text';
+  }
+
+  tableOnChange(){
+    const commonNodes = this.getTable('commonNodes').data;
+    const nodes = this.getTable('nodes').data;
+
+    const htmlElement: HTMLElement = <HTMLElement>event.target;
+    if (htmlElement && htmlElement.nodeName === 'TD' || htmlElement.nodeName === 'INPUT') {
+      if (htmlElement.offsetParent && (htmlElement.offsetParent['offsetParent'])) {
+        const htmlTableElement: HTMLTableElement = <HTMLTableElement>document.getElementById(htmlElement.offsetParent['offsetParent'].id);
+
+        if (htmlTableElement.id === 'commonNodes') {
+          this.updateProperties(commonNodes, htmlTableElement);
+        } else if (htmlTableElement.id === 'nodes') {
+          this.updateProperties(nodes, htmlTableElement);
+        } else {
+          // update labels
+          const t = this.getTable(htmlTableElement.id);
+          if (t) {
+            this.updateProperties(t.data, htmlTableElement);
+          }
+        }
+
+        // let tableDataSource;
+        // switch (htmlTableElement.id) {
+        //   case 'nodes':
+        //     tableDataSource = this.nodes;
+        //     break;
+        //   case 'typeTable':
+        //     tableDataSource = this.type;
+        //     break;
+        //   case 'initmarkTable':
+        //     tableDataSource = this.initmark;
+        //     break;
+        //   case 'condTable':
+        //     tableDataSource = this.cond;
+        //     break;
+        //   case 'codeTable':
+        //     tableDataSource = this.code;
+        //     break;
+        //   case 'timeTable':
+        //     tableDataSource = this.time;
+        //     break;
+        //   case 'priorityTable':
+        //     tableDataSource = this.priority;
+        //     break;
+        //   case 'annotTable':
+        //     tableDataSource = this.annot;
+        //     break;
+        //   case 'commonNodes':
+        //     tableDataSource = this.commonNodes;
+        //     break;
+        //   default:
+        //     return;
+        //
+        // }
+        // this.updateProperties(tableDataSource, htmlTableElement);
+      }
+    }
+  }
+
+
   /**
    * The listener waits for pressing the input button in the panel and determines which property in which table has been changed.
    * @param event - Keyboard event
    */
-  @HostListener('window:keydown', ['$event'])
+ /* @HostListener('window:keydown', ['$event'])
   keyEvent(event: KeyboardEvent) {
 
     if (event.keyCode === 13) {
@@ -74,9 +139,9 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
       const nodes = this.getTable('nodes').data;
 
       const htmlElement: HTMLElement = <HTMLElement>event.target;
-      if (htmlElement && htmlElement.nodeName === 'TD') {
-        if (htmlElement.offsetParent) {
-          const htmlTableElement: HTMLTableElement = <HTMLTableElement>document.getElementById(htmlElement.offsetParent.id);
+      if (htmlElement && htmlElement.nodeName === 'TD' || htmlElement.nodeName === 'INPUT') {
+        if (htmlElement.offsetParent && (htmlElement.offsetParent['offsetParent'])) {
+          const htmlTableElement: HTMLTableElement = <HTMLTableElement>document.getElementById(htmlElement.offsetParent['offsetParent'].id);
 
           if (htmlTableElement.id === 'commonNodes') {
             this.updateProperties(commonNodes, htmlTableElement);
@@ -127,7 +192,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
         }
       }
     }
-  }
+  }*/
 
   getTable(id) {
     console.log(this.constructor.name, 'getLabelTable(), id = ', id);
@@ -172,7 +237,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     const rows = htmlTableElement.rows.length;
 
     for (let i = 0; i < rows; i += 1) {
-      const input = htmlTableElement.rows[i].cells[1].textContent;
+      const input = htmlTableElement.rows[i].cells[1].children[0].value;
       tableDataSource[i].value = input;
 
       console.log(this.constructor.name, 'ENTER on property field' + tableDataSource[i]);

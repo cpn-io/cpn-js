@@ -19,7 +19,7 @@
       <table [id]="table.id" class="table table-bordered table-hover table-small">
         <tr *ngFor="let item of table.data" [ngStyle]="item.hide && {display: 'none'}">
           <td width="50%" class="valueName">{{ item.name }}</td>
-          <td width="50%" contenteditable='true'>{{ item.value }}</td>
+          <td width="50%" ><input class="inputfield" [type]="getContentType(item.name)" [value]="item.value"></td>
         </tr>
       </table>
 
@@ -39,7 +39,7 @@
       <table [id]="table.id" [hidden]="!table.visible" class="table table-bordered table-hover table-small">
         <tr *ngFor="let item of table.data" [ngStyle]="item.hide && {display: 'none'}">
           <td width="50%" class="valueName">{{ item.name }}</td>
-          <td width="50%" contenteditable='true'>{{ item.value }}</td>
+          <td  width="50%"><input  id="fname" class="inputfield" [type]="getContentType(item.name)" [value]="item.value" (change)="tableOnChange()"></td>
         </tr>
       </table>
 

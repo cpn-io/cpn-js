@@ -1,3 +1,14 @@
+Build 1.1.1.1.20190416
+
+- Labels by creating through tab become immediately editable
+- In properties panel added palet for color properries
+- Now there is no need to press Enter to accept changes in the panel.
+- Delete time from version
+- Panel for creating elements is now opened by right mouse button
+- added change the position of labels after resize element
+
+
+
 Build 1.1.2019041217 
 
 - Added ability to make multi-line tags  RQ-001.md, RQ-002.md

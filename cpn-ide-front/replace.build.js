@@ -2,7 +2,7 @@ const replace = require('replace-in-file');
 const dateFormat = require('dateformat');
 
 const now = new Date();
-const buildVersion = '1.1.' + dateFormat(now, "yyyymmddHH");
+const buildVersion = '1.1.' + dateFormat(now, "yyyymmdd");
 
 const options = {
   files: 'src/environments/environment.prod.ts',

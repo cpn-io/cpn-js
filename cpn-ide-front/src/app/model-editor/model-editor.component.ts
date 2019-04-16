@@ -120,6 +120,11 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
       this.fireAllEvents(event);
     });
 
+    eventBus.on('resize.end', (event) => {
+
+      //console.log('click on, event = ', event);
+      this.shapeResizesonSaver(event);
+    });
 
     eventBus.on('shape.move.end', (event) => {
       console.log('shape.move.end event fired');
@@ -437,6 +442,40 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
   shapeMoveJsonSaver(event) {
     this.modelService.shapeMoveJsonSaver(event, this.pageId);
   }
+
+
+  /**
+   *saving to model coordinates after resize
+   * @param event
+   */
+  shapeResizesonSaver(event) {
+    let element = event.shape;
+    for( let label of element.labels) {
+    /*  let newX = label.x + event.dx;
+      let newY = label.y + event.dy;
+      let elementBoards = {
+        minx: event.context.newBounds.x - event.context.newBounds.width / 2,
+        maxx: event.context.newBounds.x + event.context.newBounds.width / 2,
+        miny: event.context.newBounds.y - event.context.newBounds.height / 2,
+        maxy: event.context.newBounds.y + event.context.newBounds.height / 2,
+      }*/
+      if (((event.context.direction === 'ne' || event.context.direction === 'nw')  &&  label.labelType !== 'type' && label.labelType !== 'code' && label.labelType !== 'priority')
+        || ((event.context.direction === 'se' || event.context.direction === 'sw')  &&  label.labelType !== 'initmark' &&  label.labelType !== 'time' &&  label.labelType !== 'cond')) {
+        label.y = label.y + event.dy;
+      }
+
+      if (((event.context.direction === 'sw' || event.context.direction === 'nw')  &&  label.labelType !== 'type' &&  label.labelType !== 'initmark' &&  label.labelType !== 'time' &&  label.labelType !== 'code')
+        ||((event.context.direction === 'se' || event.context.direction === 'ne')  && label.labelType !== 'cond' &&  label.labelType !== 'priority') ) {
+        label.x = label.x + event.dx;
+      }
+
+        this.canvas.removeShape(label);
+        if (label.text) this.canvas.addShape(label, element);
+
+    }
+   // this.modelService.shapeResizeJsonSaver(event, this.pageId);
+  }
+
 
   /**
    * saving the created arrow in the model json
@@ -1399,7 +1438,12 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
     if(!this.projectService.currentPageId || this.projectService.currentPageId !== this.pageId) this.projectService.currentPageId =  this.pageId;
     if(this.projectService.getCurrentElement()) {
       for (let i = 0; i < this.projectService.getCurrentElement().labels.length; i++) {
-        if (Object.values(this.projectService.appSettings).includes(this.projectService.getCurrentElement().labels[i].text)) this.projectService.getCurrentElement().labels.splice(i, 1);
+          let elemLabel = this.projectService.getCurrentElement().labels[i];
+          if (Object.values(this.projectService.appSettings).includes(elemLabel.text)) {
+
+            this.canvas.removeShape(elemLabel);
+            //modelElement.labels.splice(i, 1);
+          }
       }
       this.modelService.clearDefaultLabelValues(this.pageId);
     }

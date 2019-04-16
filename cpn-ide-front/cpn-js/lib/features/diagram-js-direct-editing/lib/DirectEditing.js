@@ -164,6 +164,7 @@ DirectEditing.prototype.activate = function(element) {
       context.options
     );
 
+
     this._active = {
       element: element,
       context: context,
@@ -172,6 +173,14 @@ DirectEditing.prototype.activate = function(element) {
 
     if (context.options && context.options.resizable ) {
       this.resizable = true;
+    }
+
+    let editBox = document.getElementById("editLabelId");
+    if(editBox) {
+      setTimeout(() => { // this will make the execution after the above boolean has changed
+          editBox.focus();
+      }, 100);
+
     }
 
     this._fire('activate');

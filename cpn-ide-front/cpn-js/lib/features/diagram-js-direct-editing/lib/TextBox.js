@@ -50,7 +50,7 @@ export default function TextBox(options) {
 
   this.parent = domify(
     '<div class="djs-direct-editing-parent">' +
-      '<div class="djs-direct-editing-content" contenteditable="true"></div>' +
+      '<div id="editLabelId" class="djs-direct-editing-content" contenteditable="true"></div>' +
     '</div>'
   );
 

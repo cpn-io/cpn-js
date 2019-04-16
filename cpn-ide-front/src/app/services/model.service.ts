@@ -229,7 +229,15 @@ export class ModelService {
 
 
   /*for refact*/
+  shapeResizeJsonSaver(event, pageId) {
+    this.saveBackup(this.projectData, pageId)
+    let page = this.getPageById(pageId);
+    let jsonMovingElement = this.getJsonElemetOnPage(pageId, event.shape.type === 'label' ? event.shape : event.shape.id, event.shape.type);
+    this.moveElementInJson(jsonMovingElement, event.shape.type, {x: event.dx, y: -1 * event.dy});
 
+
+    this.eventService.send(Message.SHAPE_SELECT, {element: event.shape, pageJson: page});
+  }
 
   shapeMoveJsonSaver(event, pageId){
     this.saveBackup(this.projectData, pageId)
@@ -683,7 +691,6 @@ export class ModelService {
           }
         }
       } else {
-
           for(let labelType of this.labelsEntry[entry]) {
             if(page[entry][labelType] && page[entry][labelType].text && page[entry][labelType].text.__text && Object.values(this.projectService.appSettings).includes(page[entry][labelType].text.__text))
               page[entry][labelType].text.__text = null;

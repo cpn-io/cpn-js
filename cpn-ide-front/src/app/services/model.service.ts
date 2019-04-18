@@ -22,7 +22,7 @@ export class ModelService {
   subPages;
   pageId;
   countNewItems = 0;
-  labelsEntry = {trans: ['time', 'code', 'priority', 'edit', 'cond'], place: ['initmark', 'edit', 'type'], arc:  ['annot'], label: ['edit']}
+  labelsEntry = {trans: ['time', 'code', 'priority', 'edit', 'cond'], place: ['initmark', 'edit', 'type'], arc:  ['annot'], label: ['edit']};
   paramsTypes = ['ml', 'color', 'var', 'globref'];
 
   constructor(private eventService: EventService, private http: HttpClient, private projectService: ProjectService) {
@@ -71,28 +71,28 @@ export class ModelService {
   saveBackup(model, pageId) {
     this.pageId = pageId;
     this.redoBackupModel = [];
-    console.log('Save data....')
-    let modelCopy = JSON.parse(JSON.stringify(model));//Object.assign({}, model);
-    this.backupModel.push({project: modelCopy, page: pageId});//unshift({project: modelCopy, page: pageId});
+    console.log('Save data....');
+    const modelCopy = JSON.parse(JSON.stringify(model)); // Object.assign({}, model);
+    this.backupModel.push({project: modelCopy, page: pageId}); // unshift({project: modelCopy, page: pageId});
   }
 
   cancelModelChanges(command) {
     let stackPop;
     let stackPush;
-    if(command === 'redo') {
+    if (command === 'redo') {
       stackPop = 'redoBackupModel';
       stackPush = 'backupModel';
     } else {
       stackPop = 'backupModel';
       stackPush = 'redoBackupModel';
     }
-    let modelState = this[stackPop].pop()
-    this[stackPush].push({project: JSON.parse(JSON.stringify(this.projectData)), page: this.pageId})
+    const modelState = this[stackPop].pop();
+    this[stackPush].push({project: JSON.parse(JSON.stringify(this.projectData)), page: this.pageId});
     this.projectData =  modelState.project;
-    let sending = { project: {data: this.projectData, name: this.modelName}}
+    const sending = { project: {data: this.projectData, name: this.modelName}};
     this.markOpenedModel();
     this.eventService.send(Message.PROJECT_LOAD,   sending);
-    if(modelState.page)  this.eventService.send(Message.PAGE_OPEN,   {pageObject: this.getPageById(modelState.page), subPages: this.subPages});
+    if (modelState.page) {  this.eventService.send(Message.PAGE_OPEN,   {pageObject: this.getPageById(modelState.page), subPages: this.subPages}); }
   }
 
 
@@ -118,12 +118,12 @@ export class ModelService {
   }*/
 
 
-  getJsonElemetOnPage(pageId, element, type){
+  getJsonElemetOnPage(pageId, element, type) {
     try {
-      let page = this.getPageById(pageId);
+      const page = this.getPageById(pageId);
       let entry;
-      if(type ==='label') {
-        if (element.labelTarget && element.labelTarget.parent){
+      if (type === 'label') {
+        if (element.labelTarget && element.labelTarget.parent) {
           entry  = this.modelCase[element.labelTarget.type];
           return page[entry].length ? page[entry].find(elem => elem._id === element.labelTarget.id)[element.labelType] : page[entry][element.labelType];
         } else {
@@ -133,7 +133,7 @@ export class ModelService {
         entry  = this.modelCase[type];
         return page[entry].length ? page[entry].find(elem => elem._id === element) : page[entry];
       }
-    } catch(e) {
+    } catch (e) {
       return undefined;
     }
   }
@@ -159,25 +159,25 @@ export class ModelService {
   }
 
 
-  ////ChangeModelActions
+  //// ChangeModelActions
 
 
 
-  deleteElementFromPageJson(pageId, id, type){
-    this.saveBackup(this.projectData, pageId)
-    let jsonPageObject = this.getPageById(pageId);
-    if (!jsonPageObject[this.modelCase[type]].length || jsonPageObject[this.modelCase[type]].length === 1) jsonPageObject[this.modelCase[type]] = [];
-    else
+  deleteElementFromPageJson(pageId, id, type) {
+    this.saveBackup(this.projectData, pageId);
+    const jsonPageObject = this.getPageById(pageId);
+    if (!jsonPageObject[this.modelCase[type]].length || jsonPageObject[this.modelCase[type]].length === 1) { jsonPageObject[this.modelCase[type]] = []; } else {
       jsonPageObject[this.modelCase[type]] = jsonPageObject[this.modelCase[type]].filter(elem => elem._id !== id);
+    }
   }
 
   deleteLabelJsonByCPNElem(CPNElem, index, typeElem, pageId) {
-    this.saveBackup(this.projectData, pageId)
-    let jsonPageObject = this.getPageById(pageId);
+    this.saveBackup(this.projectData, pageId);
+    const jsonPageObject = this.getPageById(pageId);
     try {
-      if( jsonPageObject[typeElem] instanceof Array)
+      if ( jsonPageObject[typeElem] instanceof Array) {
         jsonPageObject[typeElem].find( elem => elem._id === CPNElem.id)[CPNElem.labels[index].labelType].text.__text = undefined;
-      else jsonPageObject[typeElem][CPNElem.labels[index].labelType].text.__text = undefined;
+      } else { jsonPageObject[typeElem][CPNElem.labels[index].labelType].text.__text = undefined; }
     } catch (err) {
       console.log('!!!!!!!!!' + err + '!!!!!!!!!!');
     }
@@ -185,13 +185,13 @@ export class ModelService {
 
 
   addElementJsonOnPage(element, pageId, type) {
-    this.saveBackup(this.projectData, pageId)
-    let jsonPageObject = this.getPageById(pageId);
-    if( jsonPageObject[this.modelCase[type]] instanceof Array) {
+    this.saveBackup(this.projectData, pageId);
+    const jsonPageObject = this.getPageById(pageId);
+    if ( jsonPageObject[this.modelCase[type]] instanceof Array) {
       jsonPageObject[this.modelCase[type]].push(element);
     } else {
-      if(jsonPageObject[this.modelCase[type]]) {
-        let curentElem =  jsonPageObject[this.modelCase[type]];
+      if (jsonPageObject[this.modelCase[type]]) {
+        const curentElem =  jsonPageObject[this.modelCase[type]];
         jsonPageObject[this.modelCase[type]] = [curentElem, element];
       } else {
         jsonPageObject[this.modelCase[type]] =  [element];
@@ -199,9 +199,9 @@ export class ModelService {
     }
   }
 
-  //send changes
+  // send changes
 
-  changeSubPageTransitionName(subpage){
+  changeSubPageTransitionName(subpage) {
     this.eventService.send(Message.CHANGE_NAME_PAGE,  {id: subpage.subpageid, name: subpage.name, changedElement : 'tran'});
   }
 
@@ -212,53 +212,53 @@ export class ModelService {
         node: action === 'rename' ? node : undefined,
         action: action,
         element: 'tab',
-        target: blockId,//this.getCurrentBlock(node).id,
+        target: blockId, // this.getCurrentBlock(node).id,
         id: id,
-        state: state //this.treeComponent.treeModel.getState()
+        state: state // this.treeComponent.treeModel.getState()
       });
     } else if (elementType === 'ml') {
       this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
         node: action === 'rename' ? node : undefined,
         action: action,
         element: elementType,
-        target: blockId,//this.getCurrentBlock(node).id,
+        target: blockId, // this.getCurrentBlock(node).id,
         id: id,
-        state: state//this.treeComponent.treeModel.getState()
+        state: state// this.treeComponent.treeModel.getState()
       });
     } else if (elementType === 'color') {
       this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
         node: action === 'rename' ? node : undefined,
         action: action,
         element: elementType,
-        target: blockId,//this.getCurrentBlock(node).id,
+        target: blockId, // this.getCurrentBlock(node).id,
         id: id,
-        state: state//this.treeComponent.treeModel.getState()
+        state: state// this.treeComponent.treeModel.getState()
       });
     } else if (elementType === 'var') {
       this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
         node: action === 'rename' ? node : undefined,
         action: action,
         element: elementType,
-        target: blockId,//this.getCurrentBlock(node).id,
+        target: blockId, // this.getCurrentBlock(node).id,
         id: id,
-        state: state //this.treeComponent.treeModel.getState()
+        state: state // this.treeComponent.treeModel.getState()
       });
     } else if (elementType === 'globref') {
       this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
         node: action === 'rename' ? node : undefined,
         action: action,
         element: elementType,
-        target: blockId, //this.getCurrentBlock(node).id,
+        target: blockId, // this.getCurrentBlock(node).id,
         id: id,
-        state: state //this.treeComponent.treeModel.getState()
+        state: state // this.treeComponent.treeModel.getState()
       });
     } else if (this.paramsTypes.includes(id)) {
       this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
         node: action === 'rename' ? node : undefined,
         action: action,
-        target: blockId,//this.getCurrentBlock(node).id,
+        target: blockId, // this.getCurrentBlock(node).id,
         id: id,
-        state: state//this.treeComponent.treeModel.getState()
+        state: state// this.treeComponent.treeModel.getState()
       });
     }
   }
@@ -266,17 +266,17 @@ export class ModelService {
 
   /*for refact*/
   shapeResizeJsonSaver(event, pageId) {
-    this.saveBackup(this.projectData, pageId)
-    let page = this.getPageById(pageId);
-    let form = event.shape.type === 'cpn:Place' ? 'ellipse' : 'box';
-    let jsonMovingElement = this.getJsonElemetOnPage(pageId, event.shape.type === 'label' ? event.shape : event.shape.id, event.shape.type);
+    this.saveBackup(this.projectData, pageId);
+    const page = this.getPageById(pageId);
+    const form = event.shape.type === 'cpn:Place' ? 'ellipse' : 'box';
+    const jsonMovingElement = this.getJsonElemetOnPage(pageId, event.shape.type === 'label' ? event.shape : event.shape.id, event.shape.type);
     jsonMovingElement[form]._w = event.shape.width;
     jsonMovingElement[form]._h = event.shape.height;
     jsonMovingElement.posattr._x = event.shape.x + jsonMovingElement[form]._w / 2;
     jsonMovingElement.posattr._y = -1 * event.shape.y - jsonMovingElement[form]._h / 2;
 
-    for(let labelType of this.labelsEntry[this.modelCase[event.shape.type]]) {
-      if(labelType !== 'edit') {
+    for (const labelType of this.labelsEntry[this.modelCase[event.shape.type]]) {
+      if (labelType !== 'edit') {
         if (((event.context.direction === 'ne' || event.context.direction === 'nw') && labelType !== 'type' && labelType !== 'code' && labelType !== 'priority')
           || ((event.context.direction === 'se' || event.context.direction === 'sw') && labelType !== 'initmark' && labelType !== 'time' && labelType !== 'cond')) {
 
@@ -294,20 +294,21 @@ export class ModelService {
     this.eventService.send(Message.SHAPE_SELECT, {element: event.shape, pageJson: page});
   }
 
-  shapeMoveJsonSaver(event, pageId, arcShapes){
-    this.saveBackup(this.projectData, pageId)
-    let page = this.getPageById(pageId);
-    let jsonMovingElement = this.getJsonElemetOnPage(pageId, event.shape.type === 'label'? event.shape : event.shape.id, event.shape.type);
+  shapeMoveJsonSaver(event, pageId, arcShapes) {
+    this.saveBackup(this.projectData, pageId);
+    const page = this.getPageById(pageId);
+    const jsonMovingElement = this.getJsonElemetOnPage(pageId, event.shape.type === 'label' ? event.shape : event.shape.id, event.shape.type);
     this.moveElementInJson(jsonMovingElement, event.shape.type, {x: event.dx, y: -1 * event.dy}, event.shape);
-    if(event.shape.type !== 'bpmn:SequenceFlow') {
+    if (event.shape.type !== 'bpmn:SequenceFlow') {
       if (page.arc instanceof Array) {
-        for (let arc of page.arc) {
+        for (const arc of page.arc) {
           if (arc.placeend._idref === event.shape.id || arc.transend._idref === event.shape.id) {
-            let placeEnd = this.getJsonElemetOnPage(pageId, arc.placeend._idref, 'cpn:Place');
-            let transEnd = this.getJsonElemetOnPage(pageId, arc.transend._idref, 'cpn:Transition');
-            let modelElem = arcShapes.find(modelArc => modelArc.id === arc._id );
-            if(placeEnd && transEnd && modelElem)
-              this.moveElementInJson(arc, 'bpmn:SequenceFlow', {x: -1*(parseFloat(arc.annot.posattr._x) - (parseFloat(placeEnd.posattr._x) + parseFloat(transEnd.posattr._x))/2) + 6 , y: -1*(parseFloat(arc.annot.posattr._y) - (parseFloat(placeEnd.posattr._y) + parseFloat(transEnd.posattr._y))/2)}, modelElem);
+            const placeEnd = this.getJsonElemetOnPage(pageId, arc.placeend._idref, 'cpn:Place');
+            const transEnd = this.getJsonElemetOnPage(pageId, arc.transend._idref, 'cpn:Transition');
+            const modelElem = arcShapes.find(modelArc => modelArc.id === arc._id );
+            if (placeEnd && transEnd && modelElem) {
+              this.moveElementInJson(arc, 'bpmn:SequenceFlow', {x: -1 * (parseFloat(arc.annot.posattr._x) - (parseFloat(placeEnd.posattr._x) + parseFloat(transEnd.posattr._x)) / 2) + 6 , y: -1 * (parseFloat(arc.annot.posattr._y) - (parseFloat(placeEnd.posattr._y) + parseFloat(transEnd.posattr._y)) / 2)}, modelElem);
+            }
           }
         }
       }
@@ -387,18 +388,18 @@ export class ModelService {
 
   moveElementInJson(jsonElem, elemntType, delta, modelElem) {
 
-    for(let movingElement of this.labelsEntry[this.modelCase[elemntType]]) {
-      if(movingElement !== 'edit') {
+    for (const movingElement of this.labelsEntry[this.modelCase[elemntType]]) {
+      if (movingElement !== 'edit') {
         jsonElem[movingElement].posattr._x = parseFloat(jsonElem[movingElement].posattr._x) + delta.x;
         jsonElem[movingElement].posattr._y = parseFloat(jsonElem[movingElement].posattr._y) + delta.y;
       } else {
         jsonElem.posattr._x = parseFloat(jsonElem.posattr._x) + delta.x;
         jsonElem.posattr._y = parseFloat(jsonElem.posattr._y) + delta.y;
       }
-      if(elemntType === 'bpmn:SequenceFlow') {
+      if (elemntType === 'bpmn:SequenceFlow') {
         jsonElem.bendpoint = [];
-        let addToWay = jsonElem._orientation  === 'TtoP' ?  'push' : 'unshift'
-        for (let updWayPoint of modelElem.waypoints) {
+        const addToWay = jsonElem._orientation  === 'TtoP' ?  'push' : 'unshift';
+        for (const updWayPoint of modelElem.waypoints) {
           if (!updWayPoint.original) {
             jsonElem.bendpoint[addToWay]({
                 fillattr: {
@@ -430,17 +431,17 @@ export class ModelService {
 
 
   applyPageChanges(pageId, placeShapes, textRenderer, transShapes, arcShapes) {
-    this.saveBackup(this.projectData, pageId)
-    let page = this.getPageById(pageId);
-    //console.log('actual data -------' + JSON.stringify(page.place[0]));
+    this.saveBackup(this.projectData, pageId);
+    const page = this.getPageById(pageId);
+    // console.log('actual data -------' + JSON.stringify(page.place[0]));
     // console.log('moddifi data -------' + JSON.stringify(this.placeShapes[page.place[0]._id]));
 
     // console.log(JSON.stringify(this.transShapes));
     //  console.log( JSON.stringify(this.arcShapes));
-    var bounds;
+    let bounds;
     let updatedPlace;
     if (page.place && !(page.place.length === 0 && !page.place._id)) {
-      for (let place of page.place) {
+      for (const place of page.place) {
         updatedPlace = placeShapes[place._id];
         place.posattr._x = updatedPlace.x + place.ellipse._w / 2;
         place.posattr._y = -1 * updatedPlace.y - place.ellipse._h / 2;
@@ -450,7 +451,7 @@ export class ModelService {
         place.lineattr._thick = updatedPlace.strokeWidth;
         place.text = updatedPlace.name;
 
-        for (let label of placeShapes[place._id].labels) {
+        for (const label of placeShapes[place._id].labels) {
           if (label.labelNodeId === place.type._id) {
             bounds = {
               width: 200, // 90,
@@ -483,7 +484,7 @@ export class ModelService {
     if (page.trans && !(page.trans.length === 0 && !page.trans._id) ) {
       let updatedTran;
       if (page.trans.length) {
-        for (let tran of page.trans) {
+        for (const tran of page.trans) {
           updatedTran = transShapes[tran._id];
           tran.posattr._x = updatedTran.x + tran.box._w / 2;
           tran.posattr._y = -1 * updatedTran.y - tran.box._h / 2;
@@ -493,7 +494,7 @@ export class ModelService {
           tran.lineattr._thick = updatedTran.strokeWidth;
           tran.text = updatedTran.name;
 
-          for (let label of transShapes[tran._id].labels) {
+          for (const label of transShapes[tran._id].labels) {
             if (label.labelNodeId === tran.cond._id) {
               bounds = {
                 width: 200, // 90,
@@ -549,7 +550,7 @@ export class ModelService {
           }
         }
       } else {
-        let tran = page.trans;
+        const tran = page.trans;
         updatedTran = transShapes[tran._id];
         tran.posattr._x = updatedTran.x + tran.box._w / 2;
         tran.posattr._y = -1 * updatedTran.y - tran.box._h / 2;
@@ -559,7 +560,7 @@ export class ModelService {
         tran.lineattr._thick = updatedTran.strokeWidth;
         tran.text = updatedTran.name;
 
-        for (let label of transShapes[tran._id].labels) {
+        for (const label of transShapes[tran._id].labels) {
           if (label.labelNodeId === tran.cond._id) {
             bounds = {
               width: 200, // 90,
@@ -618,16 +619,16 @@ export class ModelService {
     }
     if (page.arc && !(page.arc.length === 0 && !page.arc._id) ) {
       let uodatedCon;
-      for (let arc of page.arc) {
-        for (let modelArc of arcShapes) {
+      for (const arc of page.arc) {
+        for (const modelArc of arcShapes) {
           if (modelArc.id === arc._id) {
             uodatedCon = modelArc;
           }
         }
         arc.bendpoint = [];
-        let addToWay = arc._orientation  === 'TtoP' ?  'push' : 'unshift'
-        for (let updWayPoint of uodatedCon.waypoints) {
-          if (!updWayPoint.original){
+        const addToWay = arc._orientation  === 'TtoP' ?  'push' : 'unshift';
+        for (const updWayPoint of uodatedCon.waypoints) {
+          if (!updWayPoint.original) {
             arc.bendpoint[addToWay](
               {
                 fillattr: {
@@ -678,7 +679,7 @@ export class ModelService {
         // }
         arc.lineattr._colour = uodatedCon.stroke;
         arc.lineattr._thick = uodatedCon.strokeWidth;
-        for (let label of uodatedCon.labels) {
+        for (const label of uodatedCon.labels) {
           if (label.labelNodeId === arc.annot._id) {
             bounds = {
               width: 200, // 90,
@@ -701,7 +702,7 @@ export class ModelService {
 
     this.eventService.send(Message.MODEL_UPDATE, {pageObject: page});
     // this.eventService.send(Message.MODEL_UPDATE, {pageObject:  page});
-    //EmitterService.getAppMessageEmitter().emit(
+    // EmitterService.getAppMessageEmitter().emit(
     //  {
     //    id: Constants.ACTION_MODEL_UPDATE,
     //    pageObject: page
@@ -713,12 +714,12 @@ export class ModelService {
 
 
   changeLabelText(label, text, pageId) {
-    this.saveBackup(this.projectData, pageId)
-    if (label && label.text) label.text.__text =  text;
+    this.saveBackup(this.projectData, pageId);
+    if (label && label.text) { label.text.__text =  text; }
   }
 
-  changePageName(pageId, name){
-    this.saveBackup(this.projectData, pageId)
+  changePageName(pageId, name) {
+    this.saveBackup(this.projectData, pageId);
     const changedPage = this.getPageById(pageId);
     if (changedPage) {
       changedPage.pageattr._name = name;
@@ -782,13 +783,13 @@ export class ModelService {
 
   createNewBlock(block, targetBlock) {
     this.saveBackup(this.projectData, undefined);
-    if(targetBlock) {
-      if(targetBlock.block && targetBlock.block instanceof Array) {
+    if (targetBlock) {
+      if (targetBlock.block && targetBlock.block instanceof Array) {
         targetBlock.block.push(block);
       } else {
-        if(targetBlock.block)
+        if (targetBlock.block) {
           targetBlock.block = [targetBlock.block];
-        else targetBlock.block = []
+        } else { targetBlock.block = []; }
         targetBlock.block.push(block);
       }
     } else {
@@ -797,20 +798,22 @@ export class ModelService {
   }
 
 
-  clearDefaultLabelValues(pageId){
-    let page = this.getPageById(pageId);
-    for(let entry of ['place', 'trans', 'arc']) {
-      if(page[entry] instanceof Array) {
-        for(let jsonElem of page[entry]) {
-          for(let labelType of this.labelsEntry[entry]) {
-            if(jsonElem[labelType] && jsonElem[labelType].text && jsonElem[labelType].text.__text && Object.values(this.projectService.appSettings).includes(jsonElem[labelType].text.__text))
+  clearDefaultLabelValues(pageId) {
+    const page = this.getPageById(pageId);
+    for (const entry of ['place', 'trans', 'arc']) {
+      if (page[entry] instanceof Array) {
+        for (const jsonElem of page[entry]) {
+          for (const labelType of this.labelsEntry[entry]) {
+            if (jsonElem[labelType] && jsonElem[labelType].text && jsonElem[labelType].text.__text && Object.values(this.projectService.appSettings).includes(jsonElem[labelType].text.__text)) {
               jsonElem[labelType].text.__text = null;
+            }
           }
         }
       } else {
-          for(let labelType of this.labelsEntry[entry]) {
-            if(page[entry][labelType] && page[entry][labelType].text && page[entry][labelType].text.__text && Object.values(this.projectService.appSettings).includes(page[entry][labelType].text.__text))
+          for (const labelType of this.labelsEntry[entry]) {
+            if (page[entry][labelType] && page[entry][labelType].text && page[entry][labelType].text.__text && Object.values(this.projectService.appSettings).includes(page[entry][labelType].text.__text)) {
               page[entry][labelType].text.__text = null;
+            }
           }
         }
       }
@@ -818,7 +821,7 @@ export class ModelService {
 
   deleteBlock(id) {
     this.saveBackup(this.projectData, undefined);
-    let cpnet = this.getcpnet();
+    const cpnet = this.getcpnet();
     cpnet.globbox.block = cpnet.globbox.block.filter(e => e.id !== id);
   }
 
@@ -834,7 +837,7 @@ export class ModelService {
     if (!block[elementGroup]) {
       newNode = this.newElemetn(elementGroup);
       block[elementGroup] = [newNode];
-      //////create new elemenetType whith
+      ////// create new elemenetType whith
     } else {
       newNode = this.newElemetn(elementGroup);
       block[elementGroup].push(newNode);
@@ -859,7 +862,7 @@ export class ModelService {
         };
         break;
       case 'globref':
-        return {id: this.projectService.getAppSettings()[elementType] + (++this.countNewItems), ml: this.projectService.getAppSettings()[elementType], _id: 'ID' + new Date().getTime()}
+        return {id: this.projectService.getAppSettings()[elementType] + (++this.countNewItems), ml: this.projectService.getAppSettings()[elementType], _id: 'ID' + new Date().getTime()};
         break;
       default:
 
@@ -876,7 +879,7 @@ export class ModelService {
    */
   parseVariableLayout(layout, elem, blockType) {
     this.saveBackup(this.projectData, undefined);
-    switch(blockType) {
+    switch (blockType) {
       case 'var':
         let splitLayoutArray;
         elem.layout = blockType + ' ' + layout;
@@ -892,31 +895,31 @@ export class ModelService {
         elem.layout = layout;
         elem.__text =  layout;
         break;
-      case 'color':   //*****отрефакторить*****
+      case 'color':   // *****отрефакторить*****
         elem.layout = blockType + ' ' + layout;
         layout = layout.replace('colset', '');
         splitLayoutArray =  layout.split('=');
         splitLayoutArray[1] = splitLayoutArray[1].split(' ').filter(e => e.trim() !== '' );
-        let testElem = splitLayoutArray[1][0].replace(/\s+/g, '')
-        for(let key of Object.keys(elem)) {
-          if(key !== '_id' && key !== 'layout') delete elem[key];
+        let testElem = splitLayoutArray[1][0].replace(/\s+/g, '');
+        for (const key of Object.keys(elem)) {
+          if (key !== '_id' && key !== 'layout') { delete elem[key]; }
         }
-        if(splitLayoutArray[1][splitLayoutArray[1].length - 1].replace(';', '') === 'timed') {
+        if (splitLayoutArray[1][splitLayoutArray[1].length - 1].replace(';', '') === 'timed') {
           elem.timed = '';
           splitLayoutArray[1].length =  splitLayoutArray[1].length - 1;
         }
         if (testElem === 'product') {
-          let productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*')
+          const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
           elem.id = splitLayoutArray[0].replace(/\s+/g, '');
           elem.product = { id: productList};
         }  else if (testElem === 'list') {
-          let productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*')
+          const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
           elem.id = splitLayoutArray[0].replace(/\s+/g, '');
           elem.list = { id: productList};
         } else {
           testElem = testElem.replace(/\s+/g, '').replace(';', '');
           splitLayoutArray[0] = splitLayoutArray[0].replace(/\s+/g, '').replace(';', '');
-          if(testElem.toLowerCase() === splitLayoutArray[0].toLowerCase()) {
+          if (testElem.toLowerCase() === splitLayoutArray[0].toLowerCase()) {
             elem.id = splitLayoutArray[0];
             elem[testElem.toLowerCase()] = '';
           } else {
@@ -935,7 +938,7 @@ export class ModelService {
 
     }
 
-    //return result;
+    // return result;
   }
 
 

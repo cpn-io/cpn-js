@@ -29,6 +29,7 @@ export class ModelService {
     console.log('ModelService instance CREATED!');
 
     this.eventService.on(Message.PROJECT_FILE_OPEN, (data) => {
+      this.markNewModel();
       this.loadProjectData(data.project);
       this.modelCase['cpn:Place'] = 'place';
       this.modelCase['cpn:Transition'] = 'trans';
@@ -42,14 +43,6 @@ export class ModelService {
 
     this.eventService.on(Message.PROJECT_LOAD, (data) => {
       this.loadProjectData(data.project);
-      this.modelCase['cpn:Place'] = 'place';
-      this.modelCase['cpn:Transition'] = 'trans';
-      this.modelCase['bpmn:SequenceFlow'] = 'arc';
-      this.modelCase['bpmn:Process'] = 'trans';
-      this.modelCase['place'] = 'place';
-      this.modelCase['trans'] = 'trans';
-      this.modelCase['arc'] = 'arc';
-      this.modelCase['label'] = 'label';
     });
 
     this.eventService.on(Message.PAGE_OPEN, (data) => {
@@ -58,15 +51,15 @@ export class ModelService {
 
   }
 
-  closeModel() {
+  markNewModel() {
     this.isLoaded  = false;
   }
 
-  openModel() {
+  markOpenedModel() {
     this.isLoaded = true;
   }
 
-  isLooadModel(){
+  isLooadModel() {
     return this.isLoaded;
   }
 
@@ -97,6 +90,7 @@ export class ModelService {
     this[stackPush].push({project: JSON.parse(JSON.stringify(this.projectData)), page: this.pageId})
     this.projectData =  modelState.project;
     let sending = { project: {data: this.projectData, name: this.modelName}}
+    this.markOpenedModel();
     this.eventService.send(Message.PROJECT_LOAD,   sending);
     if(modelState.page)  this.eventService.send(Message.PAGE_OPEN,   {pageObject: this.getPageById(modelState.page), subPages: this.subPages});
   }

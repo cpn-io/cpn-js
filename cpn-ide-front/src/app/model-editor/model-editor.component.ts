@@ -1955,8 +1955,8 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
     var orientation = arc._orientation;
     var source = placeShape;
     var target = transShape;
-    var reverse = false;
-    if (orientation && orientation === 'TtoP' && !this.modelService.isLooadModel()) {
+    var reverse =   this.modelService.isLooadModel() ? true : false;
+    if (orientation && orientation === 'TtoP') {
       source = transShape;
       target = placeShape;
       reverse = true;

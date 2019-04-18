@@ -5,6 +5,7 @@ import {Message} from '../common/message';
 import {EventService} from '../services/event.service';
 import {ProjectService} from '../services/project.service';
 import {ModelService} from '../services/model.service';
+
 @Component({
   selector: 'app-properties-panel',
   templateUrl: './properties-panel.component.html',
@@ -49,7 +50,14 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     time: 'Time',
     priority: 'Priority',
     annot: 'Annot'
-  }
+  };
+
+  commonNodesOrder = {
+    // type: 3,
+    Name: -1,
+    // initmark: 2,
+    // Stroke: -1
+  };
 
   constructor(private eventService: EventService, private projectService: ProjectService, private modelService: ModelService) {
   }
@@ -75,14 +83,18 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
 
   getContentType(itemName) {
-    if(itemName === 'Stroke') return 'color'; else return 'text';
+    if (itemName === 'Stroke') {
+      return 'color';
+    } else {
+      return 'text';
+    }
   }
 
-  getFieldName(name){
+  getFieldName(name) {
     return this.tableMapNames[name] || name;
   }
 
-  tableOnChange(){
+  tableOnChange() {
     const commonNodes = this.getTable('commonNodes').data;
     const nodes = this.getTable('nodes').data;
 
@@ -146,70 +158,71 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
    * The listener waits for pressing the input button in the panel and determines which property in which table has been changed.
    * @param event - Keyboard event
    */
- /* @HostListener('window:keydown', ['$event'])
-  keyEvent(event: KeyboardEvent) {
 
-    if (event.keyCode === 13) {
-      console.log(this.constructor.name, 'keyEvent(), event.keyCode === 13');
+  /* @HostListener('window:keydown', ['$event'])
+   keyEvent(event: KeyboardEvent) {
 
-      const commonNodes = this.getTable('commonNodes').data;
-      const nodes = this.getTable('nodes').data;
+     if (event.keyCode === 13) {
+       console.log(this.constructor.name, 'keyEvent(), event.keyCode === 13');
 
-      const htmlElement: HTMLElement = <HTMLElement>event.target;
-      if (htmlElement && htmlElement.nodeName === 'TD' || htmlElement.nodeName === 'INPUT') {
-        if (htmlElement.offsetParent && (htmlElement.offsetParent['offsetParent'])) {
-          const htmlTableElement: HTMLTableElement = <HTMLTableElement>document.getElementById(htmlElement.offsetParent['offsetParent'].id);
+       const commonNodes = this.getTable('commonNodes').data;
+       const nodes = this.getTable('nodes').data;
 
-          if (htmlTableElement.id === 'commonNodes') {
-            this.updateProperties(commonNodes, htmlTableElement);
-          } else if (htmlTableElement.id === 'nodes') {
-            this.updateProperties(nodes, htmlTableElement);
-          } else {
-            // update labels
-            const t = this.getTable(htmlTableElement.id);
-            if (t) {
-              this.updateProperties(t.data, htmlTableElement);
-            }
-          }
+       const htmlElement: HTMLElement = <HTMLElement>event.target;
+       if (htmlElement && htmlElement.nodeName === 'TD' || htmlElement.nodeName === 'INPUT') {
+         if (htmlElement.offsetParent && (htmlElement.offsetParent['offsetParent'])) {
+           const htmlTableElement: HTMLTableElement = <HTMLTableElement>document.getElementById(htmlElement.offsetParent['offsetParent'].id);
 
-          // let tableDataSource;
-          // switch (htmlTableElement.id) {
-          //   case 'nodes':
-          //     tableDataSource = this.nodes;
-          //     break;
-          //   case 'typeTable':
-          //     tableDataSource = this.type;
-          //     break;
-          //   case 'initmarkTable':
-          //     tableDataSource = this.initmark;
-          //     break;
-          //   case 'condTable':
-          //     tableDataSource = this.cond;
-          //     break;
-          //   case 'codeTable':
-          //     tableDataSource = this.code;
-          //     break;
-          //   case 'timeTable':
-          //     tableDataSource = this.time;
-          //     break;
-          //   case 'priorityTable':
-          //     tableDataSource = this.priority;
-          //     break;
-          //   case 'annotTable':
-          //     tableDataSource = this.annot;
-          //     break;
-          //   case 'commonNodes':
-          //     tableDataSource = this.commonNodes;
-          //     break;
-          //   default:
-          //     return;
-          //
-          // }
-          // this.updateProperties(tableDataSource, htmlTableElement);
-        }
-      }
-    }
-  }*/
+           if (htmlTableElement.id === 'commonNodes') {
+             this.updateProperties(commonNodes, htmlTableElement);
+           } else if (htmlTableElement.id === 'nodes') {
+             this.updateProperties(nodes, htmlTableElement);
+           } else {
+             // update labels
+             const t = this.getTable(htmlTableElement.id);
+             if (t) {
+               this.updateProperties(t.data, htmlTableElement);
+             }
+           }
+
+           // let tableDataSource;
+           // switch (htmlTableElement.id) {
+           //   case 'nodes':
+           //     tableDataSource = this.nodes;
+           //     break;
+           //   case 'typeTable':
+           //     tableDataSource = this.type;
+           //     break;
+           //   case 'initmarkTable':
+           //     tableDataSource = this.initmark;
+           //     break;
+           //   case 'condTable':
+           //     tableDataSource = this.cond;
+           //     break;
+           //   case 'codeTable':
+           //     tableDataSource = this.code;
+           //     break;
+           //   case 'timeTable':
+           //     tableDataSource = this.time;
+           //     break;
+           //   case 'priorityTable':
+           //     tableDataSource = this.priority;
+           //     break;
+           //   case 'annotTable':
+           //     tableDataSource = this.annot;
+           //     break;
+           //   case 'commonNodes':
+           //     tableDataSource = this.commonNodes;
+           //     break;
+           //   default:
+           //     return;
+           //
+           // }
+           // this.updateProperties(tableDataSource, htmlTableElement);
+         }
+       }
+     }
+   }*/
 
   getTable(id) {
     console.log(this.constructor.name, 'getLabelTable(), id = ', id);
@@ -424,8 +437,9 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
       t.data = [];
       // t.visible = false;
       // t.visible = this.selectedElement === t.id;
-      if (this.selectedElement === t.id)
+      if (this.selectedElement === t.id) {
         t.visible = true;
+      }
     }
   }
 
@@ -458,7 +472,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
       console.log(this.constructor.name, 'Message.SHAPE_SELECT, data = ', data);
 
       if (data.pageJson) {
-        //this.pageInModel = data.pageJson;
+        // this.pageInModel = data.pageJson;
         console.log(this.constructor.name, 'Message.SHAPE_SELECT, data.pageJson = ', data.pageJson);
       }
 
@@ -581,7 +595,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     //     :
     //     this.currentProjectModel.data.workspaceElements.cpnet.page;
     // }
-    let pageInModel =  this.modelService.getPageById(this.pageId);
+    const pageInModel = this.modelService.getPageById(this.pageId);
 
     // let pageInModel =  this.pageInModel;
     // let pageInModel = this.currentProjectModel.data.workspaceElements.cpnet.page.length ?
@@ -680,6 +694,14 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
       this.setEmptyLabels('annot', labelInModel.annot);
     }
+
+    const commonNodesOrder = this.commonNodesOrder;
+    commonNodes.sort(function (a, b) {
+      const keyA: any = commonNodesOrder[a.name] ? commonNodesOrder[a.name] : 0;
+      const keyB: any = commonNodesOrder[b.name] ? commonNodesOrder[b.name] : 0;
+      return keyA - keyB;
+    });
+    console.log(this.constructor.name, 'showShapeAttrs(), commonNodes = ', commonNodes);
 
     console.log(this.constructor.name, 'showShapeAttrs(), this.tables = ', this.tables);
   }

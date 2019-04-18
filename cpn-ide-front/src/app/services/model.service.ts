@@ -13,17 +13,33 @@ import {ProjectService} from '../services/project.service';
 @Injectable()
 export class ModelService {
 
+  private isLoaded = false;
   public modelName = '';
   public projectData = undefined;
   private backupModel = [];
+  private redoBackupModel;
   private modelCase = [];
   subPages;
+  pageId;
   countNewItems = 0;
   labelsEntry = {trans: ['time', 'code', 'priority', 'edit', 'cond'], place: ['initmark', 'edit', 'type'], arc:  ['annot'], label: ['edit']}
   paramsTypes = ['ml', 'color', 'var', 'globref'];
 
   constructor(private eventService: EventService, private http: HttpClient, private projectService: ProjectService) {
     console.log('ModelService instance CREATED!');
+
+    this.eventService.on(Message.PROJECT_FILE_OPEN, (data) => {
+      this.loadProjectData(data.project);
+      this.modelCase['cpn:Place'] = 'place';
+      this.modelCase['cpn:Transition'] = 'trans';
+      this.modelCase['bpmn:SequenceFlow'] = 'arc';
+      this.modelCase['bpmn:Process'] = 'trans';
+      this.modelCase['place'] = 'place';
+      this.modelCase['trans'] = 'trans';
+      this.modelCase['arc'] = 'arc';
+      this.modelCase['label'] = 'label';
+    });
+
     this.eventService.on(Message.PROJECT_LOAD, (data) => {
       this.loadProjectData(data.project);
       this.modelCase['cpn:Place'] = 'place';
@@ -42,24 +58,50 @@ export class ModelService {
 
   }
 
+  closeModel() {
+    this.isLoaded  = false;
+  }
+
+  openModel() {
+    this.isLoaded = true;
+  }
+
+  isLooadModel(){
+    return this.isLoaded;
+  }
+
   loadProjectData(project: any) {
     this.projectData = project.data;
     this.modelName = project.name;
   }
 
   saveBackup(model, pageId) {
+    this.pageId = pageId;
+    this.redoBackupModel = [];
     console.log('Save data....')
     let modelCopy = JSON.parse(JSON.stringify(model));//Object.assign({}, model);
     this.backupModel.push({project: modelCopy, page: pageId});//unshift({project: modelCopy, page: pageId});
   }
 
-  cancelModelChanges() {
-    let modelState = this.backupModel.pop()
+  cancelModelChanges(command) {
+    let stackPop;
+    let stackPush;
+    if(command === 'redo') {
+      stackPop = 'redoBackupModel';
+      stackPush = 'backupModel';
+    } else {
+      stackPop = 'backupModel';
+      stackPush = 'redoBackupModel';
+    }
+    let modelState = this[stackPop].pop()
+    this[stackPush].push({project: JSON.parse(JSON.stringify(this.projectData)), page: this.pageId})
     this.projectData =  modelState.project;
     let sending = { project: {data: this.projectData, name: this.modelName}}
     this.eventService.send(Message.PROJECT_LOAD,   sending);
     if(modelState.page)  this.eventService.send(Message.PAGE_OPEN,   {pageObject: this.getPageById(modelState.page), subPages: this.subPages});
   }
+
+
 
   getModelCase(labelType) {
     return this.modelCase[labelType];
@@ -258,19 +300,20 @@ export class ModelService {
     this.eventService.send(Message.SHAPE_SELECT, {element: event.shape, pageJson: page});
   }
 
-  shapeMoveJsonSaver(event, pageId){
+  shapeMoveJsonSaver(event, pageId, arcShapes){
     this.saveBackup(this.projectData, pageId)
     let page = this.getPageById(pageId);
     let jsonMovingElement = this.getJsonElemetOnPage(pageId, event.shape.type === 'label'? event.shape : event.shape.id, event.shape.type);
-    this.moveElementInJson(jsonMovingElement, event.shape.type, {x: event.dx, y: -1 * event.dy});
+    this.moveElementInJson(jsonMovingElement, event.shape.type, {x: event.dx, y: -1 * event.dy}, event.shape);
     if(event.shape.type !== 'bpmn:SequenceFlow') {
       if (page.arc instanceof Array) {
         for (let arc of page.arc) {
           if (arc.placeend._idref === event.shape.id || arc.transend._idref === event.shape.id) {
             let placeEnd = this.getJsonElemetOnPage(pageId, arc.placeend._idref, 'cpn:Place');
             let transEnd = this.getJsonElemetOnPage(pageId, arc.transend._idref, 'cpn:Transition');
-            if(placeEnd && transEnd)
-              this.moveElementInJson(arc, 'bpmn:SequenceFlow', {x: -1*(parseFloat(arc.annot.posattr._x) - (parseFloat(placeEnd.posattr._x) + parseFloat(transEnd.posattr._x))/2) + 6 , y: -1*(parseFloat(arc.annot.posattr._y) - (parseFloat(placeEnd.posattr._y) + parseFloat(transEnd.posattr._y))/2)});
+            let modelElem = arcShapes.find(modelArc => modelArc.id === arc._id );
+            if(placeEnd && transEnd && modelElem)
+              this.moveElementInJson(arc, 'bpmn:SequenceFlow', {x: -1*(parseFloat(arc.annot.posattr._x) - (parseFloat(placeEnd.posattr._x) + parseFloat(transEnd.posattr._x))/2) + 6 , y: -1*(parseFloat(arc.annot.posattr._y) - (parseFloat(placeEnd.posattr._y) + parseFloat(transEnd.posattr._y))/2)}, modelElem);
           }
         }
       }
@@ -348,7 +391,7 @@ export class ModelService {
   }
 
 
-  moveElementInJson(jsonElem, elemntType, delta) {
+  moveElementInJson(jsonElem, elemntType, delta, modelElem) {
 
     for(let movingElement of this.labelsEntry[this.modelCase[elemntType]]) {
       if(movingElement !== 'edit') {
@@ -358,8 +401,37 @@ export class ModelService {
         jsonElem.posattr._x = parseFloat(jsonElem.posattr._x) + delta.x;
         jsonElem.posattr._y = parseFloat(jsonElem.posattr._y) + delta.y;
       }
+      if(elemntType === 'bpmn:SequenceFlow') {
+        jsonElem.bendpoint = [];
+        let addToWay = jsonElem._orientation  === 'TtoP' ?  'push' : 'unshift'
+        for (let updWayPoint of modelElem.waypoints) {
+          if (!updWayPoint.original) {
+            jsonElem.bendpoint[addToWay]({
+                fillattr: {
+                  _colour: 'White',
+                  _pattern: 'Solid',
+                  _filled: 'false'
+                },
+                lineattr: {
+                  _colour: 'Black',
+                  _thick: '0',
+                  _type: 'Solid'
+                },
+                posattr: {
+                  _x: updWayPoint.x,
+                  _y: -1 * updWayPoint.y
+                },
+                textattr: {
+                  _colour: 'Black',
+                  _bold: 'false'
+                },
+                _id: 'ID' + new Date().getTime(),
+                _serial: '1'
+            });
+          }
+        }
+      }
     }
-
   }
 
 
@@ -558,26 +630,58 @@ export class ModelService {
             uodatedCon = modelArc;
           }
         }
-        if (arc.bendpoint) {
-          if (arc.bendpoint.length) {
-            for (let point of arc.bendpoint) {
-              for (let updWayPoint of uodatedCon.waypoints) {
-                if (point._id === updWayPoint.id) {
-                  point.posattr._x = updWayPoint.x;
-                  point.posattr._y = -1 * updWayPoint.y;
-                }
+        arc.bendpoint = [];
+        let addToWay = arc._orientation  === 'TtoP' ?  'push' : 'unshift'
+        for (let updWayPoint of uodatedCon.waypoints) {
+          if (!updWayPoint.original){
+            arc.bendpoint[addToWay](
+              {
+                fillattr: {
+                  _colour: 'White',
+                  _pattern: 'Solid',
+                  _filled: 'false'
+                },
+                lineattr: {
+                  _colour: 'Black',
+                  _thick: '0',
+                  _type: 'Solid'
+                },
+                posattr: {
+                  _x: updWayPoint.x,
+                  _y: -1 * updWayPoint.y
+                },
+                textattr: {
+                  _colour: 'Black',
+                  _bold: 'false'
+                },
+                _id: 'ID' + new Date().getTime(),
+                _serial: '1'
               }
-            }
-          } else {
-            for (let updWayPoint of uodatedCon.waypoints) {
-              if (arc.bendpoint._id === updWayPoint.id) {
-                arc.bendpoint.posattr._x = updWayPoint.x;
-                arc.bendpoint.posattr._y = -1 * updWayPoint.y;
-              }
-            }
+            );
           }
-
         }
+
+
+
+        // if (arc.bendpoint) {
+        //   if (arc.bendpoint.length) {
+        //     for (let point of arc.bendpoint) {
+        //       for (let updWayPoint of uodatedCon.waypoints) {
+        //         if (point._id === updWayPoint.id) {
+        //           point.posattr._x = updWayPoint.x;
+        //           point.posattr._y = -1 * updWayPoint.y;
+        //         }
+        //       }
+        //     }
+        //   } else {
+        //     for (let updWayPoint of uodatedCon.waypoints) {
+        //       if (arc.bendpoint._id === updWayPoint.id) {
+        //         arc.bendpoint.posattr._x = updWayPoint.x;
+        //         arc.bendpoint.posattr._y = -1 * updWayPoint.y;
+        //       }
+        //     }
+        //   }
+        // }
         arc.lineattr._colour = uodatedCon.stroke;
         arc.lineattr._thick = uodatedCon.strokeWidth;
         for (let label of uodatedCon.labels) {

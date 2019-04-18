@@ -38,6 +38,19 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
   private tables = [];
 
+  tableMapNames = {
+    Name: 'Name',
+    type: 'Colorset',
+    initmark: 'Initial marking',
+    Stroke: 'Stroke',
+    strokeWidth: 'Stroke width',
+    cond: 'Guard',
+    code: 'Action',
+    time: 'Time',
+    priority: 'Priority',
+    annot: 'Annot'
+  }
+
   constructor(private eventService: EventService, private projectService: ProjectService, private modelService: ModelService) {
   }
 
@@ -63,6 +76,10 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
   getContentType(itemName) {
     if(itemName === 'Stroke') return 'color'; else return 'text';
+  }
+
+  getFieldName(name){
+    return this.tableMapNames[name] || name;
   }
 
   tableOnChange(){
@@ -416,6 +433,11 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
    * Subscriber is awaiting data from other components
    */
   subscribeToProject() {
+    this.eventService.on(Message.PROJECT_FILE_OPEN, (data) => {
+      this.clearData();
+      this.currentProjectModel = data.project;
+    });
+
     this.eventService.on(Message.PROJECT_LOAD, (data) => {
       this.clearData();
       this.currentProjectModel = data.project;

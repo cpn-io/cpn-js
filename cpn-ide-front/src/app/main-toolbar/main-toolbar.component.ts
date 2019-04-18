@@ -25,9 +25,12 @@ export class MainToolbarComponent implements OnInit {
 
 
   undoChanges() {
-    this.modelService.cancelModelChanges();
+    this.modelService.cancelModelChanges('undo');
   }
 
+  redoChanges(){
+    this.modelService.cancelModelChanges('redo');
+  }
   openProject() {
     // EmitterService.getAppMessageEmitter().emit(
     //   {

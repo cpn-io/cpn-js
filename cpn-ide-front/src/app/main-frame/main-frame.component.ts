@@ -50,6 +50,10 @@ export class MainFrameComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // Subscribe on project load event
+    this.eventService.on(Message.PROJECT_FILE_OPEN, (data) => {
+      this.loadProjectData(data);
+    });
+    // Subscribe on project load event
     this.eventService.on(Message.PROJECT_LOAD, (data) => {
       this.loadProjectData(data);
     });

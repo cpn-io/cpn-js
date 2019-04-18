@@ -103,6 +103,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     this.appSettings =  this.projectService.getAppSettings();
     this.appSettingsKeys = Object.keys(this.appSettings);
     // Subscribe on project load event
+    this.eventService.on(Message.PROJECT_FILE_OPEN, (data) => {
+      this.loadProjectData(data.project);
+    });
     this.eventService.on(Message.PROJECT_LOAD, (data) => {
       this.loadProjectData(data.project);
     });

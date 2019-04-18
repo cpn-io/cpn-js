@@ -30,6 +30,11 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       this.loadProjectData(data.project);
       this.currentPojectModel = data.project;
     });
+    this.eventService.on(Message.PROJECT_FILE_OPEN, (data) => {
+      // console.log('ProjectParametersComponent.ngOnInit(), Message.PROJECT_LOAD, data -> ', data);
+      this.loadProjectData(data.project);
+      this.currentPojectModel = data.project;
+    });
 
     this.eventService.on(Message.OPEN_DECLARATION_BLOCK, (data) => {
       let tab = this.tabsComponent.tabs.find( e => e.id === data.id);

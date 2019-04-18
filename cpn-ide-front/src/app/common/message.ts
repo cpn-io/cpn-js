@@ -1,4 +1,5 @@
 export class Message {
+  public static PROJECT_FILE_OPEN = 'project.file.open'
   public static PROJECT_LOAD = 'project.load';
   public static PAGE_OPEN = 'page.open';
 

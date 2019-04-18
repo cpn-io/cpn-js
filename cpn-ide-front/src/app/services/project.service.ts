@@ -87,7 +87,7 @@ export class ProjectService {
 
     this.projectData = { project: {data: json, name: filename}}
 
-    this.eventService.send(Message.PROJECT_LOAD, this.projectData);
+    this.eventService.send(Message.PROJECT_FILE_OPEN, this.projectData);
   }
 
   loadTestProject() {
@@ -148,8 +148,8 @@ export class ProjectService {
     this.appSettings['block'] = 'newblock';
     this.appSettings['type'] = 'UNIT';
     this.appSettings['initmark']  = 'empty';
-    this.appSettings['code'] = '[]';
-    this.appSettings['cond'] = 'empty';
+    this.appSettings['code'] = 'empty';
+    this.appSettings['cond'] = '[]';
     this.appSettings['time'] = '@++0.0';
     this.appSettings['priority'] = 'P_NORMAL';
     this.appSettings['annot'] = 'annot';

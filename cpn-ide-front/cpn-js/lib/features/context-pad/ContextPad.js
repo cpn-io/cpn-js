@@ -85,6 +85,14 @@ ContextPad.prototype._init = function() {
     }*/
   });
 
+  eventBus.on('selection.changed', function(e) {//selection.changed
+    if(self.isOpen(e.element)) {
+      self.close();
+    }
+
+  });
+
+
   eventBus.on('elements.delete', function(event) {
     var elements = event.elements;
 

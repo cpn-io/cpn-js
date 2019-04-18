@@ -31,6 +31,11 @@ export class ProjectConsoleComponent implements OnInit, OnDestroy {
   }
 
   subscribeToAppMessage() {
+    this.eventService.on(Message.PROJECT_FILE_OPEN, (data) => {
+      this.loadProjectData(data.project);
+      this.logHtml = [];
+    });
+
     // Subscribe on project load event
     this.eventService.on(Message.PROJECT_LOAD, (data) => {
       this.loadProjectData(data.project);

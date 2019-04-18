@@ -440,7 +440,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
    * @param event
    */
   shapeMoveJsonSaver(event) {
-    this.modelService.shapeMoveJsonSaver(event, this.pageId);
+    this.modelService.shapeMoveJsonSaver(event, this.pageId, this.arcShapes);
   }
 
 
@@ -830,7 +830,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
     // businessObject: {
     //   text: obj.text,
     // }
-    element.name = newTranc.text;
+    element.name = newTranc.text; //!newTranc.text || newTranc.text.trim() === '' ? String.fromCharCode(566) : newTranc.text;
     element.stroke = newTranc.lineattr._colour
     element.strokeWidth = newTranc.lineattr._thick
     element.hierar = element.hierar ? element.hierar : 'tran'
@@ -1956,7 +1956,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
     var source = placeShape;
     var target = transShape;
     var reverse = false;
-    if (orientation && orientation == 'TtoP') {
+    if (orientation && orientation === 'TtoP') {
       source = transShape;
       target = placeShape;
       reverse = true;
@@ -1971,7 +1971,6 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
 
     if (arc.bendpoint) {
       if (arc.bendpoint.posattr) {
-        // @ts-ignore
         waypoints.push({
           // x: 1 * arc.bendpoint.posattr["@attributes"].x,
           // y: -1 * arc.bendpoint.posattr["@attributes"].y

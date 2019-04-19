@@ -47,6 +47,7 @@ export class ModelService {
 
     this.eventService.on(Message.PAGE_OPEN, (data) => {
       this.subPages =  data.subPages;
+      this.pageId = data.pageObject._id;
     });
 
   }
@@ -69,11 +70,10 @@ export class ModelService {
   }
 
   saveBackup(model, pageId) {
-    this.pageId = pageId;
     this.redoBackupModel = [];
     console.log('Save data....')
     let modelCopy = JSON.parse(JSON.stringify(model));//Object.assign({}, model);
-    this.backupModel.push({project: modelCopy, page: pageId});//unshift({project: modelCopy, page: pageId});
+    this.backupModel.push({project: modelCopy, page: pageId ? pageId : this.pageId});//unshift({project: modelCopy, page: pageId});
   }
 
   cancelModelChanges(command) {
@@ -397,7 +397,7 @@ export class ModelService {
       }
       if(elemntType === 'bpmn:SequenceFlow') {
         jsonElem.bendpoint = [];
-        let addToWay = jsonElem._orientation  === 'TtoP' ?  'push' : 'unshift'
+        let addToWay = 'push'; //jsonElem._orientation  === 'TtoP' ?  'push' : 'unshift'
         for (let updWayPoint of modelElem.waypoints) {
           if (!updWayPoint.original) {
             jsonElem.bendpoint[addToWay]({
@@ -625,7 +625,7 @@ export class ModelService {
           }
         }
         arc.bendpoint = [];
-        let addToWay = arc._orientation  === 'TtoP' ?  'push' : 'unshift'
+        let addToWay = 'push'; //arc._orientation  === 'TtoP' ?  'push' : 'unshift'
         for (let updWayPoint of uodatedCon.waypoints) {
           if (!updWayPoint.original){
             arc.bendpoint[addToWay](
@@ -809,7 +809,7 @@ export class ModelService {
         }
       } else {
           for(let labelType of this.labelsEntry[entry]) {
-            if(page[entry][labelType] && page[entry][labelType].text && page[entry][labelType].text.__text && Object.values(this.projectService.appSettings).includes(page[entry][labelType].text.__text))
+            if(page[entry] && page[entry][labelType] && page[entry][labelType].text && page[entry][labelType].text.__text && Object.values(this.projectService.appSettings).includes(page[entry][labelType].text.__text))
               page[entry][labelType].text.__text = null;
           }
         }

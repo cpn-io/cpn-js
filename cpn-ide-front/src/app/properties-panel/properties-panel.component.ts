@@ -52,11 +52,43 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     annot: 'Annot'
   };
 
+
+
+  /*
+  // Fucia
+  // Maroon  #800000ff
+  // Yellow  #ffff00ff
+  //  White  #ffffffff
+  // Red #ff0000ff
+  Silver #c0c0c0ff
+  Teal #008080ff
+  Navy #000080ff
+  Aqua #00ffffff
+  Black #000000ff
+  Olive #808000ff
+  Lime #00ff00ff
+  Gray #808080ff
+  Purple #800080ff
+  Green #008000ff
+  Blue #0000ffff
+  // */
+
+
   commonNodesOrder = {
-    // type: 3,
-    Name: -1,
-    // initmark: 2,
-    // Stroke: -1
+    place : {
+      Name: 1,
+      type: 2,
+      initmark: 3,
+      Stroke: 4
+    },
+    trans: {
+      Name: 1,
+      cond: 2,
+      time: 3,
+      priority: 4,
+      code: 5,
+      Stroke: 6
+    }
   };
 
   constructor(private eventService: EventService, private projectService: ProjectService, private modelService: ModelService) {
@@ -79,6 +111,13 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+  }
+
+  getFieldValue(id, name, value){
+    let retrunValue = value;
+    console.log('id name value: ' + id + ' ' + name + ' ' + value);
+    if(value === '  ')   retrunValue =  this.projectService.getAppSettings()[id];
+    return retrunValue;
   }
 
 
@@ -268,7 +307,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
     for (let i = 0; i < rows; i += 1) {
       const input = htmlTableElement.rows[i].cells[1].children[0].value;
-      tableDataSource[i].value = input;
+      tableDataSource[i].value = Object.values(this.projectService.getAppSettings()).includes(input) ? ' ' : input;
 
       console.log(this.constructor.name, 'ENTER on property field' + tableDataSource[i]);
     }
@@ -696,9 +735,10 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     }
 
     const commonNodesOrder = this.commonNodesOrder;
+    let typeElem = this.isTrans ? 'trans' : 'place'
     commonNodes.sort(function (a, b) {
-      const keyA: any = commonNodesOrder[a.name] ? commonNodesOrder[a.name] : 0;
-      const keyB: any = commonNodesOrder[b.name] ? commonNodesOrder[b.name] : 0;
+      const keyA: any = commonNodesOrder[typeElem][a.name] ? commonNodesOrder[typeElem][a.name] : 0;
+      const keyB: any = commonNodesOrder[typeElem][b.name] ? commonNodesOrder[typeElem][b.name] : 0;
       return keyA - keyB;
     });
     console.log(this.constructor.name, 'showShapeAttrs(), commonNodes = ', commonNodes);
@@ -733,6 +773,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
       t.data.push({name: 'Y', value: -1 * content.posattr._y - Math.round(bounds.height) / 2});
       t.data.push({name: 'Width', value: 0});
       t.data.push({name: 'Height', value: 0});
+      //t.data.push({name: 'Text', value: '  '});
       t.data.push({name: 'Text', value: '  '});
       t.data.push({name: 'Stroke', value: 'Black'});
     }

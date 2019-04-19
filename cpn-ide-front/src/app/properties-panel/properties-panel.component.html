@@ -19,7 +19,26 @@
       <table [id]="table.id" class="table table-bordered table-hover table-small">
         <tr *ngFor="let item of table.data" [ngStyle]="item.hide && {display: 'none'}">
           <td width="50%" class="valueName">{{ getFieldName(item.name) }}</td>
-          <td width="50%" ><input class="inputfield" [type]="getContentType(item.name)" [value]="item.value" (change)="tableOnChange()"></td>
+          <td width="50%" ><input  *ngIf="item.name !== 'Stroke'; else elseBlock" class="inputfield" [type]="getContentType(item.name)" [value]="getFieldValue(table.id, item.name, item.value)" (change)="tableOnChange()"></td>
+          <ng-template #elseBlock> <input type="color"  list="color" (change)="tableOnChange()" />
+            <datalist id="colorCommon">
+              <option>#800000ff</option>
+              <option>#ffff00ff</option>
+              <option>#ffffffff</option>
+              <option>#ff0000ff</option>
+              <option>#c0c0c0ff</option>
+              <option>#008080ff</option>
+              <option>#000080ff</option>
+              <option>#00ffffff</option>
+              <option>#000000ff</option>
+              <option>#808000ff</option>
+              <option>#00ff00ff</option>
+              <option>#808080ff</option>
+              <option>#800080ff</option>
+              <option>#008000ff</option>
+              <option>#0000ffff</option>
+            </datalist>
+          </ng-template>
         </tr>
       </table>
 
@@ -39,7 +58,27 @@
       <table [id]="table.id" [hidden]="!table.visible" class="table table-bordered table-hover table-small">
         <tr *ngFor="let item of table.data" [ngStyle]="item.hide && {display: 'none'}">
           <td width="50%" class="valueName">{{ getFieldName(item.name)}}</td>
-          <td  width="50%"><input  id="fname" class="inputfield" [type]="getContentType(item.name)" [value]="item.value" (change)="tableOnChange()"></td>
+          <td  width="50%"><input  *ngIf="item.name !== 'Stroke'; else elseBlock" id="fname" class="inputfield" [type]="getContentType(item.name)" [value]="getFieldValue(table.id, item.name, item.value)" (change)="tableOnChange()">
+            <ng-template #elseBlock> <input type="color"  list="color" (change)="tableOnChange()" />
+            <datalist id="color">
+              <option>#800000ff</option>
+              <option>#ffff00ff</option>
+              <option>#ffffffff</option>
+              <option>#ff0000ff</option>
+              <option>#c0c0c0ff</option>
+              <option>#008080ff</option>
+              <option>#000080ff</option>
+              <option>#00ffffff</option>
+              <option>#000000ff</option>
+              <option>#808000ff</option>
+              <option>#00ff00ff</option>
+              <option>#808080ff</option>
+              <option>#800080ff</option>
+              <option>#008000ff</option>
+              <option>#0000ffff</option>
+            </datalist>
+            </ng-template>
+          </td>
         </tr>
       </table>
 

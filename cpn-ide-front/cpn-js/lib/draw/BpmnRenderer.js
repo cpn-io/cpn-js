@@ -53,6 +53,12 @@ import {
 
 import Ids from 'ids';
 
+import {
+  drawPlace,
+  drawTransition
+} from './CpnRenderUtil';
+
+
 var RENDERER_IDS = new Ids();
 
 var TASK_BORDER_RADIUS = 10;
@@ -299,31 +305,6 @@ export default function BpmnRenderer(
 
     return circle;
   }
-
-
-  function drawPlace(parentGfx, element) {
-    const cx = Math.round(element.width / 2);
-    const cy = Math.round(element.height / 2);
-
-    var shape = svgCreate('ellipse');
-    svgAttr(shape, {
-      cx: cx,
-      cy: cy,
-      rx: cx,
-      ry: cy
-    });
-    svgAttr(shape, {
-      fill: element.cpnElement.fillattr._colour,
-      stroke: element.cpnElement.lineattr._colour,
-      strokeWidth: element.cpnElement.lineattr._thick
-    });
-
-    svgAppend(parentGfx, shape);
-
-    return shape;
-  }
-
-
 
   function drawEllipse(parentGfx, width, height, offset, attrs) {
 
@@ -805,7 +786,7 @@ export default function BpmnRenderer(
       //   shape = drawEllipse(parentGfx, element.width, element.height, 0.0, attrs);
       // }
 
-      shape = drawPlace(parentGfx, element);
+      shape = drawPlace(parentGfx, element, textRenderer);
       // shape = drawEllipse(parentGfx, element.width, element.height, 0.0, attrs);
 
       renderEmbeddedLabel(parentGfx, element, 'center-middle');
@@ -823,11 +804,13 @@ export default function BpmnRenderer(
       var shape;
 
       // if (element.hierar === 'subPage') {
-      if (element.cpnElement.subst) {
-        shape = drawRectSubp(parentGfx, element.width, element.height, 0, 0.0, attrs);
-      } else {
-        shape = drawRect(parentGfx, element.width, element.height, 0, 0.0, attrs);
-      }
+      // if (element.cpnElement.subst) {
+      //   shape = drawRectSubp(parentGfx, element.width, element.height, 0, 0.0, attrs);
+      // } else {
+      //   shape = drawRect(parentGfx, element.width, element.height, 0, 0.0, attrs);
+      // }
+
+      shape = drawTransition(parentGfx, element);
 
       renderEmbeddedLabel(parentGfx, element, 'center-middle');
       attachTaskMarkers(parentGfx, element);

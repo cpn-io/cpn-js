@@ -113,10 +113,10 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
   }
 
-  getFieldValue(id, name, value){
+  getFieldValue(id, name, value) {
     let retrunValue = value;
     // console.log('id name value: ' + id + ' ' + name + ' ' + value);
-    if(value === '  ')   retrunValue =  this.projectService.getAppSettings()[id];
+    if (value === '  ') {   retrunValue =  this.projectService.getAppSettings()[id]; }
     return retrunValue;
   }
 
@@ -386,11 +386,13 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     this.shapeObject.height = parseInt(nodes[6].value, 10);
     this.shapeObject.stroke = nodes[7].value;
 
-    this.shapeObject.cpnElement.lineattr._colour = this.shapeObject.stroke;
-
     this.shapeObject.strokeWidth = parseInt(nodes[8].value, 10);
     this.shapeObject.businessObject.name = this.shapeObject.name;
     let labelElem;
+
+    this.shapeObject.cpnElement.lineattr._colour = this.shapeObject.stroke;
+    this.shapeObject.cpnElement.lineattr._thick = this.shapeObject.strokeWidth;
+
     for (const label of this.shapeObject.labels) {
 
       // labelElem = this.getLabelProperties(label);
@@ -738,7 +740,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     }
 
     const commonNodesOrder = this.commonNodesOrder;
-    let typeElem = this.isTrans ? 'trans' : 'place'
+    const typeElem = this.isTrans ? 'trans' : 'place';
     commonNodes.sort(function (a, b) {
       const keyA: any = commonNodesOrder[typeElem][a.name] ? commonNodesOrder[typeElem][a.name] : 0;
       const keyB: any = commonNodesOrder[typeElem][b.name] ? commonNodesOrder[typeElem][b.name] : 0;
@@ -776,7 +778,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
       t.data.push({name: 'Y', value: -1 * content.posattr._y - Math.round(bounds.height) / 2});
       t.data.push({name: 'Width', value: 0});
       t.data.push({name: 'Height', value: 0});
-      //t.data.push({name: 'Text', value: '  '});
+      // t.data.push({name: 'Text', value: '  '});
       t.data.push({name: 'Text', value: '  '});
       t.data.push({name: 'Stroke', value: 'Black'});
     }

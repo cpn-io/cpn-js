@@ -1,0 +1,11 @@
+% This file is used by to initialise
+% the packets on Send
+
+1`(1,"Modellin")++      % first packet
+1`(2,"g and An")++      % second packet
+1`(3,"alysis b")++      % third packet
+1`(4,"y Means ")++      % fourth packet
+1`(5,"of Colou")++      % fifth packet
+1`(6,"red Petr")++      % sixth packet
+1`(7,"i Nets##")++      % seventh packet
+1`(8,"########")       % eighth packet

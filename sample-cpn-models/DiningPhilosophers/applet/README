@@ -1,0 +1,41 @@
+Communication between CPN Tools simulator and applet
+====================================================
+
+The Java files in this directory can be compiled with J2SE 1.4.2 which
+can be downloaded from:
+http://java.sun.com/j2se/index.jsp
+
+The applet in this directory and CPN Tools must be running on the same
+computer in order for the communication to work.
+
+There are two sample nets that can be used with the applet. In the
+DiningPhilosophers_COMM.cpn net, code segments are used to establish
+communication between CPN Tools and the applet. In the
+DiningPhilosophers_COMM_Mon.cpn net, user-defined monitors are used to
+establish communication between CPN Tools and the applet.
+
+To run the applet with DiningPhilosophers_COMM.cpn
+1) Start CPN Tools
+2) Load the sample net DiningPhilosophers_COMM.cpn
+3) Apply the Rewind tool to the net to return to the initial marking 
+4) Load the applet on the computer where CPN Tools is running, e.g. by
+   double-clicking on the applet.html file
+5) Apply the Single Step simulation tool to the Waiting transition
+6) Enter 9000 as the Port Number in the GUI for the applet
+7) Press the Start button in the applet
+8) Run a simulation of the CP-net and observe how the GUI for the
+   applet reflects the marking of the CP-net.
+
+
+To run the applet with DiningPhilosophers_COMM_Mon.cpn
+1) Start CPN Tools
+2) Load the sample net DiningPhilosophers_COMM_Mon.cpn
+3) Apply the Rewind tool to the net to return to the initial marking 
+4) Load the applet on the computer where CPN Tools is running, e.g. by
+   double-clicking on the applet.html file
+5) Apply the Play tool to the System page (the simulation feedback
+   will not be updated until a connection has been made to the applet
+   -- see steps 6 and 7)
+6) Enter 9000 as the Port Number in the GUI for the applet
+7) Press the Start button in the applet
+8) Observe how the GUI for the applet reflects the marking of the CP-net.

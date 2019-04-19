@@ -817,7 +817,7 @@ export class ModelService {
           }
         }
       }
-  }
+
 
   deleteBlock(id) {
     this.saveBackup(this.projectData, undefined);

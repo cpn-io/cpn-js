@@ -1,3 +1,22 @@
+Build 1.1.20190419  
+
+- fix default values for labels [issues 14](https://github.com/cpn-io/cpn-js/issues/14)
+- fix problem with arcs after undo changes [issue 13](https://github.com/cpn-io/cpn-js/issues/13)
+- add redo changes
+- fix wrong names of transition and place labels and their order in the Properties panel [issue 15](https://github.com/cpn-io/cpn-js/issues/15)
+- adding default values for labels in property panel [RQ-010](https://github.com/cpn-io/cpn-js/blob/master/development/requirements/RQ-010.md), [RQ-010](https://github.com/cpn-io/cpn-js/blob/master/development/requirements/RQ-009.md)
+- Field stroke changed to  cpn's colors list
+
+
+
+
+
+
+
+
+
+
+
 Build 1.1.20190416
 
 - Labels by creating through tab become immediately editable 

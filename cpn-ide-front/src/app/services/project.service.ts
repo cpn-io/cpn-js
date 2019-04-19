@@ -80,6 +80,8 @@ export class ProjectService {
       return;
     }
 
+    localStorage.setItem('projectJson', JSON.stringify(json));
+
     // EmitterService.getAppMessageEmitter().emit({
     //   id: Constants.ACTION_PROJECT_LOAD_DATA,
     //   project: {data: json, name: filename}

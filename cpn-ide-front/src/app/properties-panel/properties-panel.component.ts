@@ -115,7 +115,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
   getFieldValue(id, name, value){
     let retrunValue = value;
-   // console.log('id name value: ' + id + ' ' + name + ' ' + value);
+    // console.log('id name value: ' + id + ' ' + name + ' ' + value);
     if(value === '  ')   retrunValue =  this.projectService.getAppSettings()[id];
     return retrunValue;
   }
@@ -385,6 +385,9 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     this.shapeObject.width = parseInt(nodes[5].value, 10);
     this.shapeObject.height = parseInt(nodes[6].value, 10);
     this.shapeObject.stroke = nodes[7].value;
+
+    this.shapeObject.cpnElement.lineattr._colour = this.shapeObject.stroke;
+
     this.shapeObject.strokeWidth = parseInt(nodes[8].value, 10);
     this.shapeObject.businessObject.name = this.shapeObject.name;
     let labelElem;

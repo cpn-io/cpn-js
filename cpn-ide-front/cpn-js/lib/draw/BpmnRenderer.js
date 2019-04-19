@@ -13,7 +13,7 @@ import {
   isEventSubProcess
 } from '../util/DiUtil';
 
-import {is} from '../util/ModelUtil';
+import { is } from '../util/ModelUtil';
 
 import {
   createLine
@@ -86,7 +86,7 @@ export default function BpmnRenderer(
       strokeDasharray: 'none'
     }, options.attrs);
 
-    var ref = options.ref || {x: 0, y: 0};
+    var ref = options.ref || { x: 0, y: 0 };
 
     var scale = options.scale || 1;
 
@@ -140,11 +140,11 @@ export default function BpmnRenderer(
 
     if (type === 'sequenceflow-end') {
       var sequenceflowEnd = svgCreate('path');
-      svgAttr(sequenceflowEnd, {d: 'M 1 5 L 11 10 L 1 15 Z'});
+      svgAttr(sequenceflowEnd, { d: 'M 1 5 L 11 10 L 1 15 Z' });
 
       addMarker(id, {
         element: sequenceflowEnd,
-        ref: {x: 11, y: 10},
+        ref: { x: 11, y: 10 },
         scale: 0.5,
         attrs: {
           fill: stroke,
@@ -155,7 +155,7 @@ export default function BpmnRenderer(
 
     if (type === 'messageflow-start') {
       var messageflowStart = svgCreate('circle');
-      svgAttr(messageflowStart, {cx: 6, cy: 6, r: 3.5});
+      svgAttr(messageflowStart, { cx: 6, cy: 6, r: 3.5 });
 
       addMarker(id, {
         element: messageflowStart,
@@ -163,13 +163,13 @@ export default function BpmnRenderer(
           fill: fill,
           stroke: stroke
         },
-        ref: {x: 6, y: 6}
+        ref: { x: 6, y: 6 }
       });
     }
 
     if (type === 'messageflow-end') {
       var messageflowEnd = svgCreate('path');
-      svgAttr(messageflowEnd, {d: 'm 1 5 l 0 -3 l 7 3 l -7 3 z'});
+      svgAttr(messageflowEnd, { d: 'm 1 5 l 0 -3 l 7 3 l -7 3 z' });
 
       addMarker(id, {
         element: messageflowEnd,
@@ -178,13 +178,13 @@ export default function BpmnRenderer(
           stroke: stroke,
           strokeLinecap: 'butt'
         },
-        ref: {x: 8.5, y: 5}
+        ref: { x: 8.5, y: 5 }
       });
     }
 
     if (type === 'association-start') {
       var associationStart = svgCreate('path');
-      svgAttr(associationStart, {d: 'M 11 5 L 1 10 L 11 15'});
+      svgAttr(associationStart, { d: 'M 11 5 L 1 10 L 11 15' });
 
       addMarker(id, {
         element: associationStart,
@@ -193,14 +193,14 @@ export default function BpmnRenderer(
           stroke: stroke,
           strokeWidth: 1.5
         },
-        ref: {x: 1, y: 10},
+        ref: { x: 1, y: 10 },
         scale: 0.5
       });
     }
 
     if (type === 'association-end') {
       var associationEnd = svgCreate('path');
-      svgAttr(associationEnd, {d: 'M 1 5 L 11 10 L 1 15'});
+      svgAttr(associationEnd, { d: 'M 1 5 L 11 10 L 1 15' });
 
       addMarker(id, {
         element: associationEnd,
@@ -209,14 +209,14 @@ export default function BpmnRenderer(
           stroke: stroke,
           strokeWidth: 1.5
         },
-        ref: {x: 12, y: 10},
+        ref: { x: 12, y: 10 },
         scale: 0.5
       });
     }
 
     if (type === 'conditional-flow-marker') {
       var conditionalflowMarker = svgCreate('path');
-      svgAttr(conditionalflowMarker, {d: 'M 0 10 L 8 6 L 16 10 L 8 14 Z'});
+      svgAttr(conditionalflowMarker, { d: 'M 0 10 L 8 6 L 16 10 L 8 14 Z' });
 
       addMarker(id, {
         element: conditionalflowMarker,
@@ -224,21 +224,21 @@ export default function BpmnRenderer(
           fill: fill,
           stroke: stroke
         },
-        ref: {x: -1, y: 10},
+        ref: { x: -1, y: 10 },
         scale: 0.5
       });
     }
 
     if (type === 'conditional-default-flow-marker') {
       var conditionaldefaultflowMarker = svgCreate('path');
-      svgAttr(conditionaldefaultflowMarker, {d: 'M 6 4 L 10 16'});
+      svgAttr(conditionaldefaultflowMarker, { d: 'M 6 4 L 10 16' });
 
       addMarker(id, {
         element: conditionaldefaultflowMarker,
         attrs: {
           stroke: stroke
         },
-        ref: {x: 0, y: 10},
+        ref: { x: 0, y: 10 },
         scale: 0.5
       });
     }
@@ -300,6 +300,31 @@ export default function BpmnRenderer(
     return circle;
   }
 
+
+  function drawPlace(parentGfx, element) {
+    const cx = Math.round(element.width / 2);
+    const cy = Math.round(element.height / 2);
+
+    var shape = svgCreate('ellipse');
+    svgAttr(shape, {
+      cx: cx,
+      cy: cy,
+      rx: cx,
+      ry: cy
+    });
+    svgAttr(shape, {
+      fill: element.cpnElement.fillattr._colour,
+      stroke: element.cpnElement.lineattr._colour,
+      strokeWidth: element.cpnElement.lineattr._thick
+    });
+
+    svgAppend(parentGfx, shape);
+
+    return shape;
+  }
+
+
+
   function drawEllipse(parentGfx, width, height, offset, attrs) {
 
     if (isObject(offset)) {
@@ -352,6 +377,73 @@ export default function BpmnRenderer(
 
     return shape;
   }
+
+  function drawEllipseSubp(parentGfx, width, height, offset, attrs) {
+
+    if (isObject(offset)) {
+      attrs = offset;
+      offset = 0;
+    }
+
+    offset = offset || 0;
+
+    attrs = computeStyle(attrs, {
+      stroke: 'black',
+      strokeWidth: 2,
+      fill: 'white'
+    });
+
+    if (attrs.fill === 'none') {
+      delete attrs.fillOpacity;
+    }
+
+    var cx = width / 2,
+      cy = height / 2;
+
+    if (attrs.iserror) {
+      var shape2 = svgCreate('ellipse');
+      svgAttr(shape2, {
+        cx: cx,
+        cy: cy,
+        rx: Math.round((width) / 2 - offset),
+        ry: Math.round((height) / 2 - offset)
+      });
+      var attrs2 = {
+        stroke: '#ff9999',
+        strokeWidth: 8
+      };
+
+      svgAttr(shape2, attrs2);
+      svgAppend(parentGfx, shape2);
+    }
+
+    var shape = svgCreate('ellipse');
+    svgAttr(shape, {
+      cx: cx,
+      cy: cy,
+      rx: Math.round((width) / 2 - offset),
+      ry: Math.round((height) / 2 - offset)
+    });
+    svgAttr(shape, attrs);
+
+    var dd = attrs.strokeWidth + 2;
+
+    var shape2 = svgCreate('ellipse');
+    svgAttr(shape2, {
+      cx: cx,
+      cy: cy,
+      rx: Math.round((width - dd * 2) / 2 - offset),
+      ry: Math.round((height - dd * 2) / 2 - offset)
+    });
+    svgAttr(shape2, attrs);
+
+    svgAppend(parentGfx, shape2);
+
+    svgAppend(parentGfx, shape);
+
+    return shape;
+  }
+
 
   /**
    * Draw rectangle for subpage Transition
@@ -410,12 +502,14 @@ export default function BpmnRenderer(
     });
     svgAttr(rect, attrs);
 
+    var dd = attrs.strokeWidth + 2;
+
     var rect2 = svgCreate('rect');
     svgAttr(rect2, {
-      x: offset + 5, // width/18,
-      y: offset + 5, // height/18,
-      width: width - offset * 2 - 10, // width/9,
-      height: height - offset * 2 - 10, // height/9,
+      x: offset + dd,
+      y: offset + dd,
+      width: width - offset * 2 - dd * 2,
+      height: height - offset * 2 - dd * 2,
       rx: r,
       ry: r
     });
@@ -485,7 +579,7 @@ export default function BpmnRenderer(
     var x_2 = width / 2;
     var y_2 = height / 2;
 
-    var points = [{x: x_2, y: 0}, {x: width, y: y_2}, {x: x_2, y: height}, {x: 0, y: y_2}];
+    var points = [{ x: x_2, y: 0 }, { x: width, y: y_2 }, { x: x_2, y: height }, { x: 0, y: y_2 }];
 
     var pointsString = points.map(function (point) {
       return point.x + ',' + point.y;
@@ -515,7 +609,7 @@ export default function BpmnRenderer(
       fill: 'none'
     });
 
-    if(attrs.iserror){
+    if (attrs.iserror) {
       attrs.strokeWidth = 6;
     }
     var line = createLine(waypoints, attrs);
@@ -533,7 +627,7 @@ export default function BpmnRenderer(
     });
 
     var path = svgCreate('path');
-    svgAttr(path, {d: d});
+    svgAttr(path, { d: d });
     svgAttr(path, attrs);
 
     svgAppend(parentGfx, path);
@@ -542,7 +636,7 @@ export default function BpmnRenderer(
   }
 
   function drawMarker(type, parentGfx, path, attrs) {
-    return drawPath(parentGfx, path, assign({'data-marker': type}, attrs));
+    return drawPath(parentGfx, path, assign({ 'data-marker': type }, attrs));
   }
 
   function as(type) {
@@ -577,12 +671,12 @@ export default function BpmnRenderer(
     }
 
     if (isTypedEvent(event, 'bpmn:CancelEventDefinition') &&
-      isTypedEvent(event, 'bpmn:TerminateEventDefinition', {parallelMultiple: false})) {
+      isTypedEvent(event, 'bpmn:TerminateEventDefinition', { parallelMultiple: false })) {
       return renderer('bpmn:MultipleEventDefinition')(parentGfx, element, isThrowing);
     }
 
     if (isTypedEvent(event, 'bpmn:CancelEventDefinition') &&
-      isTypedEvent(event, 'bpmn:TerminateEventDefinition', {parallelMultiple: true})) {
+      isTypedEvent(event, 'bpmn:TerminateEventDefinition', { parallelMultiple: true })) {
       return renderer('bpmn:ParallelMultipleEventDefinition')(parentGfx, element, isThrowing);
     }
 
@@ -702,7 +796,17 @@ export default function BpmnRenderer(
         iserror: element.iserror
       };
 
-      var shape = drawEllipse(parentGfx, element.width, element.height, 0.0, attrs);
+      var shape;
+
+      // console.log('DRAW PLACE, element = ', element);
+      // if (element.cpnElement.port) {
+      //   shape = drawEllipseSubp(parentGfx, element.width, element.height, 0.0, attrs);
+      // } else {
+      //   shape = drawEllipse(parentGfx, element.width, element.height, 0.0, attrs);
+      // }
+
+      shape = drawPlace(parentGfx, element);
+      // shape = drawEllipse(parentGfx, element.width, element.height, 0.0, attrs);
 
       renderEmbeddedLabel(parentGfx, element, 'center-middle');
       attachTaskMarkers(parentGfx, element);
@@ -717,7 +821,9 @@ export default function BpmnRenderer(
         iserror: element.iserror
       };
       var shape;
-      if (element.hierar === 'subPage') {
+
+      // if (element.hierar === 'subPage') {
+      if (element.cpnElement.subst) {
         shape = drawRectSubp(parentGfx, element.width, element.height, 0, 0.0, attrs);
       } else {
         shape = drawRect(parentGfx, element.width, element.height, 0, 0.0, attrs);
@@ -1222,7 +1328,7 @@ export default function BpmnRenderer(
       var pathData;
 
       if (semantic.instantiate) {
-        drawCircle(parentGfx, 28, 28, 20 * 0.22, {strokeWidth: 1});
+        drawCircle(parentGfx, 28, 28, 20 * 0.22, { strokeWidth: 1 });
 
         pathData = pathMap.getScaledPath('TASK_TYPE_INSTANTIATING_SEND', {
           abspos: {
@@ -1363,11 +1469,11 @@ export default function BpmnRenderer(
 
       if (expandedPool) {
         drawLine(parentGfx, [
-          {x: 30, y: 0},
-          {x: 30, y: element.height}
+          { x: 30, y: 0 },
+          { x: 30, y: element.height }
         ], {
-          stroke: getStrokeColor(element, defaultStrokeColor)
-        });
+            stroke: getStrokeColor(element, defaultStrokeColor)
+          });
         var text = getSemantic(element).name;
         renderLaneLabel(parentGfx, text, element);
       } else {
@@ -1582,10 +1688,10 @@ export default function BpmnRenderer(
         stroke: getStrokeColor(element, defaultStrokeColor),
         strokeWidth: getStrokeWidth(element, defaultStrokeWidth)
       };
-      if(element.iserror) {
+      if (element.iserror) {
         var attrsError = {
           strokeLinejoin: 'round',
-         // markerEnd: marker('sequenceflow-end', fill, 1),
+          // markerEnd: marker('sequenceflow-end', fill, 1),
           stroke: 'red',
           strokeWidth: 3
         };
@@ -1703,7 +1809,7 @@ export default function BpmnRenderer(
           }
         });
 
-        var messageAttrs = {strokeWidth: 1};
+        var messageAttrs = { strokeWidth: 1 };
 
         if (di.messageVisibleKind === 'initiating') {
           messageAttrs.fill = 'white';
@@ -1753,7 +1859,7 @@ export default function BpmnRenderer(
       var elementObject = renderer('bpmn:DataObject')(parentGfx, element);
 
       /* input arrow path */
-      drawPath(parentGfx, arrowPathData, {strokeWidth: 1});
+      drawPath(parentGfx, arrowPathData, { strokeWidth: 1 });
 
       return elementObject;
     },

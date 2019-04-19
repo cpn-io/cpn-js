@@ -30,6 +30,9 @@ export default function LabelEditingProvider(
 
   // listen to dblclick on non-root elements
   eventBus.on('element.dblclick', function (event) {
+    if(event.element.type === 'bpmn:SequenceFlow' && event.element.labels[0]) {
+      event.element = event.element.labels[0];
+    }
     activateDirectEdit(event.element, true);
   });
 
@@ -135,6 +138,7 @@ LabelEditingProvider.prototype.activate = function (element) {
   if(element.type === 'cpn:Transition') {
     text = element.name;
   }
+
 
   if (text === undefined) {
     return;

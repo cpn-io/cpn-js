@@ -265,7 +265,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
 
     if (cpnet) {
       if (cpnet.globbox) {
-        if (cpnet.globbox.block) {
+        if (cpnet.globbox) {
          /* let defaultBlock;
           //if (cpnet.globbox.block.color || cpnet.globbox.block.var || cpnet.globbox.block.ml || cpnet.globbox.block.globref) {
           defaultBlock = {
@@ -287,7 +287,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
             };
             params[paramElem] = paramBlock;
           }
-          this.searchBlocks(cpnet.globbox.block, params);
+          this.searchBlocks(cpnet.globbox, params);
           this.declarations.push(params['color']);
           this.declarations.push(params['var']);
           this.declarations.push(params['globref']);
@@ -346,28 +346,28 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       if(block.block) this.searchBlocks(block.block, params);
       //  console.log(this.dataSets);
     }
-    if(currentBlock.id) {
-      let rootBlock = {
-        id: currentBlock.id
-      }
-      if (currentBlock.color) {
-        rootBlock['color'] = currentBlock.color;
-        params['color'].block.push({id: currentBlock.id, rows: currentBlock.color, visible: true });
-      }
-      if (currentBlock.var) {
-        rootBlock['var'] = currentBlock.var;
-        params['var'].block.push({id: currentBlock.id, rows: currentBlock.var, visible: true });
-      }
-      if (currentBlock.globref) {
-        rootBlock['globref'] = currentBlock.globref;
-        params['globref'].block.push({id: currentBlock.id, rows: currentBlock.globref, visible: true });
-      }
-      if (currentBlock.ml) {
-        rootBlock['ml'] = currentBlock.ml;
-        params['ml'].block.push({id: currentBlock.id, rows: currentBlock.ml, visible: true });
-      }
-      this.declarations.push(rootBlock);
+    let rootBlock =  {
+      id: currentBlock.id ? currentBlock.id : 'globbox'
     }
+
+    if (currentBlock.color) {
+      rootBlock['color'] = currentBlock.color;
+      params['color'].block.push({id: currentBlock.id, rows: currentBlock.color, visible: true });
+    }
+    if (currentBlock.var) {
+      rootBlock['var'] = currentBlock.var;
+      params['var'].block.push({id: currentBlock.id, rows: currentBlock.var, visible: true });
+    }
+    if (currentBlock.globref) {
+      rootBlock['globref'] = currentBlock.globref;
+      params['globref'].block.push({id: currentBlock.id, rows: currentBlock.globref, visible: true });
+    }
+    if (currentBlock.ml) {
+      rootBlock['ml'] = currentBlock.ml;
+      params['ml'].block.push({id: currentBlock.id, rows: currentBlock.ml, visible: true });
+    }
+    if(currentBlock.block && rootBlock.id === 'globbox') this.searchBlocks(currentBlock.block, params);
+    this.declarations.push(rootBlock);
   }
 
 

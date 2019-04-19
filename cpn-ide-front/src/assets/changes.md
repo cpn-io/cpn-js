@@ -8,15 +8,6 @@ Build 1.1.20190419
 - Field stroke changed to  cpn's colors list
 
 
-
-
-
-
-
-
-
-
-
 Build 1.1.20190416
 
 - Labels by creating through tab become immediately editable 

@@ -643,8 +643,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   buildGlobboxTree(block, projectNode) {
     let paramNode;
     paramNode = {
-      id: block.id,
-      name: block.id,
+      id: block.id ? block.id : 'globbox',
+      name: block.id ? block.id : 'globbox',
       children: []
     };
 
@@ -864,7 +864,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     if (cpnet) {
       if (cpnet.globbox) {
-        if (cpnet.globbox.block) {
+        if (cpnet.globbox) {
           const DeclarationsNode = {
             id: 'Declarations',
             name: 'Declarations',
@@ -873,12 +873,14 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           projectNode.children.push(DeclarationsNode);
           // GlobBox
           // --------------------------------------
-          for (const block of cpnet.globbox.block) {
+         /* for (const block of cpnet.globbox.block) {
             this.buildGlobboxTree(block, DeclarationsNode);
           }
           if (cpnet.globbox.block.id) {
             this.buildGlobboxTree(cpnet.globbox.block, DeclarationsNode);
-          }
+          }*/
+          this.buildGlobboxTree(cpnet.globbox, DeclarationsNode);
+
           // this.buildGlobboxTree(cpnet.globbox, DeclarationsNode);
           // this.buildGlobboxTree(cpnet.globbox.block, projectNode);
           // Pages

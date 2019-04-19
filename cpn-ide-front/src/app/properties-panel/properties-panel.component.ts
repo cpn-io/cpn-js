@@ -115,7 +115,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
   getFieldValue(id, name, value){
     let retrunValue = value;
-    console.log('id name value: ' + id + ' ' + name + ' ' + value);
+   // console.log('id name value: ' + id + ' ' + name + ' ' + value);
     if(value === '  ')   retrunValue =  this.projectService.getAppSettings()[id];
     return retrunValue;
   }

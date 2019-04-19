@@ -182,9 +182,18 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
       // this.createPlaceInModel(event.shape);
       // this.createTransitionInModel(event.shape);
       console.log('created arcs');
+
       // if (!this.jsonPageObject.arc.find( element => { return element._id === event.context.connection.id} )){
       if (!this.modelService.getJsonElemetOnPage(this.pageId, event.context.connection.id, 'bpmn:SequenceFlow')) {
         this.createArcsInModel(event.context);
+
+        // const arc = this.modelService.getJsonElemetOnPage(this.pageId, event.context.connection.id, 'bpmn:SequenceFlow');
+        // const pos = {x: event.context.connection.x, y: event.context.connection.y};
+        // const attrs = {stroke: 'Black', labelType: 'annot'};
+        // const textLabel = 'dsdsdddffffffffff';
+        // const  label = this.createLabel(event.context.connection, textLabel, pos, attrs, arc.annot._id);
+        // label.hidden = false;
+        // this.canvas.addShape(label, event.context.connection);
       }
 
     });

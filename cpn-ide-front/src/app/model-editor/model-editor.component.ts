@@ -1,16 +1,16 @@
-import {Component, ElementRef, HostListener, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 
-import {assign} from 'min-dash';
+import { assign } from 'min-dash';
 // import Diagram from 'bpmn-js/lib/Modeler';
 import Diagram from 'cpn-js/lib/Modeler';
 
-import {EmitterService} from '../services/emitter.service';
-import {HttpClient} from '@angular/common/http';
-import {Message} from '../common/message';
-import {EventService} from '../services/event.service';
-import {element} from 'protractor';
-import {ProjectService} from '../services/project.service';
-import {ModelService} from '../services/model.service';
+import { EmitterService } from '../services/emitter.service';
+import { HttpClient } from '@angular/common/http';
+import { Message } from '../common/message';
+import { EventService } from '../services/event.service';
+import { element } from 'protractor';
+import { ProjectService } from '../services/project.service';
+import { ModelService } from '../services/model.service';
 
 @Component({
   selector: 'app-model-editor',
@@ -20,10 +20,10 @@ import {ModelService} from '../services/model.service';
 export class ModelEditorComponent implements OnInit, OnDestroy {
 
   constructor(private eventService: EventService,
-              private emitterService: EmitterService,
-              private http: HttpClient,
-              private projectService: ProjectService,
-              private modelService: ModelService) {
+    private emitterService: EmitterService,
+    private http: HttpClient,
+    private projectService: ProjectService,
+    private modelService: ModelService) {
   }
 
   @ViewChild('container') containerElementRef: ElementRef;
@@ -48,9 +48,9 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
   transCount = 0;
   tabStack = {
     element: undefined, current: undefined, stack: {
-      trans: {cond: 'time', time: 'code', code: 'priority', priority: 'edit', edit: 'cond'},
-      place: {type: 'initmark', initmark: 'edit', edit: 'type'},
-      arc: {annot: 'edit', edit: 'annot'}
+      trans: { cond: 'time', time: 'code', code: 'priority', priority: 'edit', edit: 'cond' },
+      place: { type: 'initmark', initmark: 'edit', edit: 'type' },
+      arc: { annot: 'edit', edit: 'annot' }
     }
   };
 
@@ -252,7 +252,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
 
       let shape = this.elementFactory.createShape(attrs);
       shape = this.canvas.addShape(shape, this.canvas.getRootElement());
-      this.subpages.push({subpageid: data.id, tranid: shape.id, name: data.name});
+      this.subpages.push({ subpageid: data.id, tranid: shape.id, name: data.name });
       this.transShapes[attrs.id] = shape;
       this.createTransitionInModel(shape);
 
@@ -692,6 +692,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
     element.name = newPlace.text;
     element.stroke = newPlace.lineattr._colour;
     element.strokeWidth = newPlace.lineattr._thick;
+    element.cpnElement = newPlace;
     //  this.placeShapes[attrs.id] = shape;
     this.placeShapes[element.id] = element;
     this.modelService.addElementJsonOnPage(newPlace, this.pageId, 'cpn:Place');
@@ -863,10 +864,10 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
       if (subpage) {
         newTranc['subst'] = {
           subpageinfo: {
-            fillattr: {_colour: 'White', _pattern: 'Solid', _filled: 'false'},
-            lineattr: {_colour: 'Black', _thick: '0', _type: 'Solid'},
-            posattr: {_x: newTranc.posattr._x, _y: newTranc.posattr._y},
-            textattr: {_colour: 'Black', _bold: 'false'},
+            fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
+            lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
+            posattr: { _x: newTranc.posattr._x, _y: newTranc.posattr._y },
+            textattr: { _colour: 'Black', _bold: 'false' },
             _id: newTranc._id + 'e',
             _name: 'Supplier'
           },                  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -875,6 +876,8 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
         };
       }
     }
+
+    element.cpnElement = newTranc;
     this.transShapes[element.id] = element;
     this.modelService.addElementJsonOnPage(newTranc, this.pageId, 'cpn:Transition');
     /*if (this.jsonPageObject.trans.length || this.jsonPageObject.trans.length === 0  ) {
@@ -961,15 +964,15 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
       // pos = {x: 1.0 * label[2].value, y: -1.0 * label[3].value};
       // attrs = {stroke: label[7].value, labelType: label[3].value};
       // textLabel = label[6].value;
-      pos = {x: label[2].value, y: label[3].value};
-      attrs = {stroke: label[7].value, labelType: label[1].value};
+      pos = { x: label[2].value, y: label[3].value };
+      attrs = { stroke: label[7].value, labelType: label[1].value };
       textLabel = label[6].value;
       newLabel = this.createLabel(elementForUpdate, textLabel, pos, attrs, label[0].value);
       newLabel.hidden = false;
       this.canvas.addShape(newLabel, elementForUpdate);
     }
     this.modelUpdate();
-    this.eventService.send(Message.SHAPE_SELECT, {element: elementForUpdate});
+    this.eventService.send(Message.SHAPE_SELECT, { element: elementForUpdate });
 
   }
 
@@ -1444,14 +1447,14 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
 
       if (labelType !== 'arc' && this.tabStack.current === 'edit') {
         this.tabStack.current = this.tabStack.current ? labelStack[this.tabStack.current] : labelStack[Object.keys(labelStack)[Object.keys(labelStack).length - 1]];
-        this.diagram.get('eventBus').fire('element.dblclick', {element: this.tabStack.element});
+        this.diagram.get('eventBus').fire('element.dblclick', { element: this.tabStack.element });
       } else {
         const elemtnForEdit = this.tabStack.current ? this.tabStack.current : labelStack[Object.keys(labelStack)[Object.keys(labelStack).length - 1]];
         this.tabStack.current = labelStack[elemtnForEdit];
         if (labelType !== 'arc') {
-          this.addLabelEvent(event, this.tabStack.element, {type: elemtnForEdit});
+          this.addLabelEvent(event, this.tabStack.element, { type: elemtnForEdit });
         }
-        this.diagram.get('eventBus').fire('element.tab', {element: this.tabStack.element.labels.find(elem => elem.labelType === elemtnForEdit)});
+        this.diagram.get('eventBus').fire('element.tab', { element: this.tabStack.element.labels.find(elem => elem.labelType === elemtnForEdit) });
       }
 
 
@@ -1490,7 +1493,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
       //     element: event.element
       //   });
 
-      this.eventService.send(Message.SHAPE_SELECT, {element: event.element});
+      this.eventService.send(Message.SHAPE_SELECT, { element: event.element });
       // this.curentElement = event.element;
       // this.tabStack.element = event.element;
     }
@@ -1529,7 +1532,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
     this.canvas.addShape(t1, root);
 
     this.labelEditingProvider.update(t1, '222222222222');
-    assign(t1.label, {stroke: 'green'});
+    assign(t1.label, { stroke: 'green' });
     // console.log('labelEditingProvider.update(t1) !!!, t1.label = ', t1.label);
 
     const p2 = this.elementFactory.createShape({
@@ -1548,9 +1551,9 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
     let attrs: any = {
       type: 'bpmn:SequenceFlow',
       waypoints: [
-        {x: 150, y: 110},
-        {x: 200, y: 200},
-        {x: 450, y: 105}
+        { x: 150, y: 110 },
+        { x: 200, y: 200 },
+        { x: 450, y: 105 }
       ],
       stroke: 'red',
       strokeWidth: 1,
@@ -1560,9 +1563,9 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
       type: 'bpmn:SequenceFlow',
       // id: "connection1",
       waypoints: [
-        {x: 750, y: 110},
+        { x: 750, y: 110 },
         // { x: 200, y: 200 },
-        {x: 450, y: 105}
+        { x: 450, y: 105 }
       ],
       stroke: 'red',
       strokeWidth: 1,
@@ -1656,13 +1659,18 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
       if (pageObject.place) {
         for (const place of pageObject.place) {
           const attrs = this.getPlaceShapeAttrs(place);
+
           this.updateModelBounds(modelBounds, attrs);
+
           let shape = this.elementFactory.createShape(attrs);
+          shape.cpnElement = place;
+
           shape = this.canvas.addShape(shape, root);
           this.placeShapes[attrs.id] = shape;
 
           this.addShapeLabel(shape, place.type, 'type');
           this.addShapeLabel(shape, place.initmark, 'initmark');
+
         }
       }
 
@@ -1703,16 +1711,16 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
               // var y = -1.0 * labelNode.posattr["@attributes"].y;
               const x = 1.0 * aux.posattr._x;
               const y = -1.0 * aux.posattr._y;
-              pos = {x: x, y: y};
+              pos = { x: x, y: y };
             }
 
-            let attrs = {stroke: 'black', labelType: aux};
+            let attrs = { stroke: 'black', labelType: aux };
             if (aux.textattr) {
               let stroke = aux.stroke || 'black';
               // var stroke = labelNode.textattr["@attributes"].color || 'black';
               stroke = this.correctColor[stroke] || stroke;
 
-              attrs = {stroke: stroke, labelType: aux};
+              attrs = { stroke: stroke, labelType: aux };
             }
             const textLabel = typeof aux.text === 'string' ? aux.text : aux.text.__text;
             const label = this.createLabel(this.canvas.getRootElement(), textLabel, pos, attrs, aux._id);
@@ -1749,7 +1757,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
       // viewbox = this.canvas.viewbox();
       // console.log('viewbox = ', viewbox);
 
-      this.canvas.zoom(0.7, {x: vb.width / 2, y: vb.height / 2});
+      this.canvas.zoom(0.7, { x: vb.width / 2, y: vb.height / 2 });
     }
   }
 
@@ -1758,6 +1766,9 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
       const attrs = this.getTransShapeAttrs(trans);
       this.updateModelBounds(modelBounds, attrs);
       let shape = this.elementFactory.createShape(attrs);
+
+      shape.cpnElement = trans;
+
       shape = this.canvas.addShape(shape, root);
       this.transShapes[attrs.id] = shape;
 
@@ -1785,16 +1796,16 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
         // var y = -1.0 * labelNode.posattr["@attributes"].y;
         const x = 1.0 * labelNode.posattr._x;
         const y = -1.0 * labelNode.posattr._y;
-        pos = {x: x, y: y};
+        pos = { x: x, y: y };
       }
 
-      let attrs = {stroke: 'black', labelType: labelType};
+      let attrs = { stroke: 'black', labelType: labelType };
       if (labelNode.textattr) {
         let stroke = shape.stroke || 'black';
         // var stroke = labelNode.textattr["@attributes"].color || 'black';
         stroke = this.correctColor[stroke] || stroke;
 
-        attrs = {stroke: stroke, labelType: labelType};
+        attrs = { stroke: stroke, labelType: labelType };
       }
       const textLabel = typeof labelNode.text === 'string' ? labelNode.text : labelNode.text.__text;
       const label = this.createLabel(shape, textLabel, pos, attrs, labelNode._id);
@@ -1834,7 +1845,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
     // console.log('createLabel(), element, semantic ', element, semantic);
 
     if (!pos) {
-      pos = {x: Math.round(bounds.x), y: Math.round(bounds.y)};
+      pos = { x: Math.round(bounds.x), y: Math.round(bounds.y) };
     }
 
     // bounds = getExternalLabelBounds(semantic, element);
@@ -2082,7 +2093,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
         strokeWidth: strokeWidth,
       };
 
-      return {source: source, target: target, attrs: attrs};
+      return { source: source, target: target, attrs: attrs };
     }
 
     return undefined;

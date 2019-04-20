@@ -1,9 +1,9 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import * as X2JS from './../../x2js/xml2json.js';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {EventService} from './event.service';
-import {Message} from '../common/message';
-import {ProjectService} from '../services/project.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { EventService } from './event.service';
+import { Message } from '../common/message';
+import { ProjectService } from '../services/project.service';
 /**
  * Common service for getting access to project data from all application
  */
@@ -22,7 +22,7 @@ export class ModelService {
   subPages;
   pageId;
   countNewItems = 0;
-  labelsEntry = {trans: ['time', 'code', 'priority', 'edit', 'cond'], place: ['initmark', 'edit', 'type'], arc:  ['annot'], label: ['edit']};
+  labelsEntry = { trans: ['time', 'code', 'priority', 'edit', 'cond'], place: ['initmark', 'edit', 'type'], arc: ['annot'], label: ['edit'] };
   paramsTypes = ['ml', 'color', 'var', 'globref'];
 
   constructor(private eventService: EventService, private http: HttpClient, private projectService: ProjectService) {
@@ -33,7 +33,7 @@ export class ModelService {
       this.loadProjectData(data.project);
       this.modelCase['cpn:Place'] = 'place';
       this.modelCase['cpn:Transition'] = 'trans';
-      this.modelCase['bpmn:SequenceFlow'] = 'arc';
+      this.modelCase['cpn:Connection'] = 'arc';
       this.modelCase['bpmn:Process'] = 'trans';
       this.modelCase['place'] = 'place';
       this.modelCase['trans'] = 'trans';
@@ -46,14 +46,14 @@ export class ModelService {
     });
 
     this.eventService.on(Message.PAGE_OPEN, (data) => {
-      this.subPages =  data.subPages;
+      this.subPages = data.subPages;
       this.pageId = data.pageObject._id;
     });
 
   }
 
   markNewModel() {
-    this.isLoaded  = false;
+    this.isLoaded = false;
   }
 
   markOpenedModel() {
@@ -73,7 +73,7 @@ export class ModelService {
     this.redoBackupModel = [];
     console.log('Save data....');
     const modelCopy = JSON.parse(JSON.stringify(model)); // Object.assign({}, model);
-    this.backupModel.push({project: modelCopy, page: pageId ? pageId : this.pageId}); // unshift({project: modelCopy, page: pageId});
+    this.backupModel.push({ project: modelCopy, page: pageId ? pageId : this.pageId }); // unshift({project: modelCopy, page: pageId});
   }
 
   cancelModelChanges(command) {
@@ -87,12 +87,12 @@ export class ModelService {
       stackPush = 'redoBackupModel';
     }
     const modelState = this[stackPop].pop();
-    this[stackPush].push({project: JSON.parse(JSON.stringify(this.projectData)), page: this.pageId});
-    this.projectData =  modelState.project;
-    const sending = { project: {data: this.projectData, name: this.modelName}};
+    this[stackPush].push({ project: JSON.parse(JSON.stringify(this.projectData)), page: this.pageId });
+    this.projectData = modelState.project;
+    const sending = { project: { data: this.projectData, name: this.modelName } };
     this.markOpenedModel();
-    this.eventService.send(Message.PROJECT_LOAD,   sending);
-    if (modelState.page) {  this.eventService.send(Message.PAGE_OPEN,   {pageObject: this.getPageById(modelState.page), subPages: this.subPages}); }
+    this.eventService.send(Message.PROJECT_LOAD, sending);
+    if (modelState.page) { this.eventService.send(Message.PAGE_OPEN, { pageObject: this.getPageById(modelState.page), subPages: this.subPages }); }
   }
 
 
@@ -106,31 +106,31 @@ export class ModelService {
   }
 
   public getPageById(id): any {
-    return this.projectData.workspaceElements.cpnet.page.length ? this.projectData.workspaceElements.cpnet.page.find(page => page._id === id) : this.projectData.workspaceElements.cpnet.page ;
+    return this.projectData.workspaceElements.cpnet.page.length ? this.projectData.workspaceElements.cpnet.page.find(page => page._id === id) : this.projectData.workspaceElements.cpnet.page;
   }
 
- /* getJsonElemetOnPage(pageId, id, type){
-    try {
-      return this.getPageById(pageId)[this.modelCase[type]].length ? this.getPageById(pageId)[this.modelCase[type]].find(elem => elem._id === id) : this.getPageById(pageId)[this.modelCase[type]];
-    } catch(e) {
-      return undefined;
-    }
-  }*/
+  /* getJsonElementOnPage(pageId, id, type){
+     try {
+       return this.getPageById(pageId)[this.modelCase[type]].length ? this.getPageById(pageId)[this.modelCase[type]].find(elem => elem._id === id) : this.getPageById(pageId)[this.modelCase[type]];
+     } catch(e) {
+       return undefined;
+     }
+   }*/
 
 
-  getJsonElemetOnPage(pageId, element, type) {
+  getJsonElementOnPage(pageId, element, type) {
     try {
       const page = this.getPageById(pageId);
       let entry;
       if (type === 'label') {
         if (element.labelTarget && element.labelTarget.parent) {
-          entry  = this.modelCase[element.labelTarget.type];
+          entry = this.modelCase[element.labelTarget.type];
           return page[entry].length ? page[entry].find(elem => elem._id === element.labelTarget.id)[element.labelType] : page[entry][element.labelType];
         } else {
           return page['Aux'].length ? page['Aux'].find(elem => elem._id === element.labelNodeId) : page['Aux'];
         }
       } else {
-        entry  = this.modelCase[type];
+        entry = this.modelCase[type];
         return page[entry].length ? page[entry].find(elem => elem._id === element) : page[entry];
       }
     } catch (e) {
@@ -175,8 +175,8 @@ export class ModelService {
     this.saveBackup(this.projectData, pageId);
     const jsonPageObject = this.getPageById(pageId);
     try {
-      if ( jsonPageObject[typeElem] instanceof Array) {
-        jsonPageObject[typeElem].find( elem => elem._id === CPNElem.id)[CPNElem.labels[index].labelType].text.__text = undefined;
+      if (jsonPageObject[typeElem] instanceof Array) {
+        jsonPageObject[typeElem].find(elem => elem._id === CPNElem.id)[CPNElem.labels[index].labelType].text.__text = undefined;
       } else { jsonPageObject[typeElem][CPNElem.labels[index].labelType].text.__text = undefined; }
     } catch (err) {
       console.log('!!!!!!!!!' + err + '!!!!!!!!!!');
@@ -187,14 +187,14 @@ export class ModelService {
   addElementJsonOnPage(element, pageId, type) {
     this.saveBackup(this.projectData, pageId);
     const jsonPageObject = this.getPageById(pageId);
-    if ( jsonPageObject[this.modelCase[type]] instanceof Array) {
+    if (jsonPageObject[this.modelCase[type]] instanceof Array) {
       jsonPageObject[this.modelCase[type]].push(element);
     } else {
       if (jsonPageObject[this.modelCase[type]]) {
-        const curentElem =  jsonPageObject[this.modelCase[type]];
+        const curentElem = jsonPageObject[this.modelCase[type]];
         jsonPageObject[this.modelCase[type]] = [curentElem, element];
       } else {
-        jsonPageObject[this.modelCase[type]] =  [element];
+        jsonPageObject[this.modelCase[type]] = [element];
       }
     }
   }
@@ -202,7 +202,7 @@ export class ModelService {
   // send changes
 
   changeSubPageTransitionName(subpage) {
-    this.eventService.send(Message.CHANGE_NAME_PAGE,  {id: subpage.subpageid, name: subpage.name, changedElement : 'tran'});
+    this.eventService.send(Message.CHANGE_NAME_PAGE, { id: subpage.subpageid, name: subpage.name, changedElement: 'tran' });
   }
 
 
@@ -269,7 +269,7 @@ export class ModelService {
     this.saveBackup(this.projectData, pageId);
     const page = this.getPageById(pageId);
     const form = event.shape.type === 'cpn:Place' ? 'ellipse' : 'box';
-    const jsonMovingElement = this.getJsonElemetOnPage(pageId, event.shape.type === 'label' ? event.shape : event.shape.id, event.shape.type);
+    const jsonMovingElement = this.getJsonElementOnPage(pageId, event.shape.type === 'label' ? event.shape : event.shape.id, event.shape.type);
     jsonMovingElement[form]._w = event.shape.width;
     jsonMovingElement[form]._h = event.shape.height;
     jsonMovingElement.posattr._x = event.shape.x + jsonMovingElement[form]._w / 2;
@@ -291,98 +291,98 @@ export class ModelService {
 
 
 
-    this.eventService.send(Message.SHAPE_SELECT, {element: event.shape, pageJson: page});
+    this.eventService.send(Message.SHAPE_SELECT, { element: event.shape, pageJson: page });
   }
 
   shapeMoveJsonSaver(event, pageId, arcShapes) {
     this.saveBackup(this.projectData, pageId);
     const page = this.getPageById(pageId);
-    const jsonMovingElement = this.getJsonElemetOnPage(pageId, event.shape.type === 'label' ? event.shape : event.shape.id, event.shape.type);
-    this.moveElementInJson(jsonMovingElement, event.shape.type, {x: event.dx, y: -1 * event.dy}, event.shape);
-    if (event.shape.type !== 'bpmn:SequenceFlow') {
+    const jsonMovingElement = this.getJsonElementOnPage(pageId, event.shape.type === 'label' ? event.shape : event.shape.id, event.shape.type);
+    this.moveElementInJson(jsonMovingElement, event.shape.type, { x: event.dx, y: -1 * event.dy }, event.shape);
+    if (event.shape.type !== 'cpn:Connection') {
       if (page.arc instanceof Array) {
         for (const arc of page.arc) {
           if (arc.placeend._idref === event.shape.id || arc.transend._idref === event.shape.id) {
-            const placeEnd = this.getJsonElemetOnPage(pageId, arc.placeend._idref, 'cpn:Place');
-            const transEnd = this.getJsonElemetOnPage(pageId, arc.transend._idref, 'cpn:Transition');
-            const modelElem = arcShapes.find(modelArc => modelArc.id === arc._id );
+            const placeEnd = this.getJsonElementOnPage(pageId, arc.placeend._idref, 'cpn:Place');
+            const transEnd = this.getJsonElementOnPage(pageId, arc.transend._idref, 'cpn:Transition');
+            const modelElem = arcShapes.find(modelArc => modelArc.id === arc._id);
             if (placeEnd && transEnd && modelElem) {
-              this.moveElementInJson(arc, 'bpmn:SequenceFlow', {x: -1 * (parseFloat(arc.annot.posattr._x) - (parseFloat(placeEnd.posattr._x) + parseFloat(transEnd.posattr._x)) / 2) + 6 , y: -1 * (parseFloat(arc.annot.posattr._y) - (parseFloat(placeEnd.posattr._y) + parseFloat(transEnd.posattr._y)) / 2)}, modelElem);
+              this.moveElementInJson(arc, 'cpn:Connection', { x: -1 * (parseFloat(arc.annot.posattr._x) - (parseFloat(placeEnd.posattr._x) + parseFloat(transEnd.posattr._x)) / 2) + 6, y: -1 * (parseFloat(arc.annot.posattr._y) - (parseFloat(placeEnd.posattr._y) + parseFloat(transEnd.posattr._y)) / 2) }, modelElem);
             }
           }
         }
       }
     }
 
-    this.eventService.send(Message.SHAPE_SELECT, {element: event.shape, pageJson: page });
-   /* switch(event.shape.type){
-      case 'cpn:Place':
-        if(page.place.length) {
-          page.place.forEach(movingXmlElement => {
-            if (movingXmlElement._id === event.shape.id) {
-              movingXmlElement.posattr._x = parseFloat(movingXmlElement.posattr._x) + (event.dx);
-              movingXmlElement.posattr._y = parseFloat(movingXmlElement.posattr._y) + (-1 * event.dy);
-              movingXmlElement.type.posattr._x = parseFloat(movingXmlElement.type.posattr._x) + (event.dx);
-              movingXmlElement.type.posattr._y = parseFloat(movingXmlElement.type.posattr._y) + (-1 * event.dy);
-              movingXmlElement.initmark.posattr._x = parseFloat(movingXmlElement.initmark.posattr._x) + (event.dx);
-              movingXmlElement.initmark.posattr._y = parseFloat(movingXmlElement.initmark.posattr._y) + (-1 * event.dy);
-            }
-          })
-        } else {
-          page.place.posattr._x = parseFloat(page.place.posattr._x) + (event.dx);
-          page.place.posattr._y = parseFloat(page.place.posattr._y) + (-1 * event.dy);
-          page.place.type.posattr._x = parseFloat(page.place.type.posattr._x) + (event.dx);
-          page.place.type.posattr._y = parseFloat(page.place.type.posattr._y) + (-1 * event.dy);
-          page.place.initmark.posattr._x = parseFloat(page.place.initmark.posattr._x) + (event.dx);
-          page.place.initmark.posattr._y = parseFloat(page.place.initmark.posattr._y) + (-1 * event.dy);
-        }
-        break;
-      case 'cpn:Transition':
-        if(page.trans.length)
-          page.trans.forEach(movingXmlElement => {
-            if (movingXmlElement._id === event.shape.id) {
-              movingXmlElement.posattr._x = parseFloat(movingXmlElement.posattr._x) + (event.dx );
-              movingXmlElement.posattr._y = parseFloat(movingXmlElement.posattr._y) + (-1 * event.dy);
-              movingXmlElement.cond.posattr._x = parseFloat(movingXmlElement.cond.posattr._x) + (event.dx );
-              movingXmlElement.cond.posattr._y = parseFloat(movingXmlElement.cond.posattr._y) + (-1 * event.dy);
-              movingXmlElement.priority.posattr._x = parseFloat(movingXmlElement.priority.posattr._x) + (event.dx );
-              movingXmlElement.priority.posattr._y = parseFloat(movingXmlElement.priority.posattr._y) + (-1 * event.dy );
-              movingXmlElement.time.posattr._x = parseFloat(movingXmlElement.time.posattr._x) + (event.dx );
-              movingXmlElement.time.posattr._y = parseFloat(movingXmlElement.time.posattr._y) + (-1 * event.dy );
-              movingXmlElement.code.posattr._x = parseFloat(movingXmlElement.code.posattr._x) + (event.dx );
-              movingXmlElement.code.posattr._y = parseFloat(movingXmlElement.code.posattr._y) + (-1 * event.dy );
-            }
-          }); else {
-          page.trans.posattr._x = parseFloat(page.trans.posattr._x) + (event.dx );
-          page.trans.posattr._y = parseFloat(page.trans.posattr._y) + (-1 * event.dy);
-          page.trans.cond.posattr._x = parseFloat(page.trans.cond.posattr._x) + (event.dx );
-          page.trans.cond.posattr._y = parseFloat(page.trans.cond.posattr._y) + (-1 * event.dy);
-          page.trans.priority.posattr._x = parseFloat(page.trans.priority.posattr._x) + (event.dx );
-          page.trans.priority.posattr._y = parseFloat(page.trans.priority.posattr._y) + (-1 * event.dy );
-          page.trans.time.posattr._x = parseFloat(page.trans.time.posattr._x) + (event.dx );
-          page.trans.time.posattr._y = parseFloat(page.trans.time.posattr._y) + (-1 * event.dy );
-          page.trans.code.posattr._x = parseFloat(page.trans.code.posattr._x) + (event.dx );
-          page.trans.code.posattr._y = parseFloat(page.trans.code.posattr._y) + (-1 * event.dy );
-        }
-        break;
-      case 'bpmn:SequenceFlow':
-        if(page.arc.length)
-          page.arc.forEach(movingXmlElement => {
-            if (movingXmlElement._id === event.shape.id) {
-              movingXmlElement.annot.posattr._x = parseFloat(movingXmlElement.annot.posattr._x) + (event.dx );
-              movingXmlElement.annot.posattr._y = parseFloat(movingXmlElement.annot.posattr._y) + (-1 * event.dy);
-            }
-          }); else {
-          page.arc.annot.posattr._x = parseFloat(page.arc.annot.posattr._x) + (event.dx );
-          page.arc.annot.posattr._y = parseFloat(page.arc.annot.posattr._y) + (-1 * event.dy);
-        }
-        break;
-      default:
-    }
-    // this.applyPageChanges();
-    // let element = event.shape;
-    this.eventService.send(Message.SHAPE_SELECT, {element: event.shape, pageJson: page });
-    */
+    this.eventService.send(Message.SHAPE_SELECT, { element: event.shape, pageJson: page });
+    /* switch(event.shape.type){
+       case 'cpn:Place':
+         if(page.place.length) {
+           page.place.forEach(movingXmlElement => {
+             if (movingXmlElement._id === event.shape.id) {
+               movingXmlElement.posattr._x = parseFloat(movingXmlElement.posattr._x) + (event.dx);
+               movingXmlElement.posattr._y = parseFloat(movingXmlElement.posattr._y) + (-1 * event.dy);
+               movingXmlElement.type.posattr._x = parseFloat(movingXmlElement.type.posattr._x) + (event.dx);
+               movingXmlElement.type.posattr._y = parseFloat(movingXmlElement.type.posattr._y) + (-1 * event.dy);
+               movingXmlElement.initmark.posattr._x = parseFloat(movingXmlElement.initmark.posattr._x) + (event.dx);
+               movingXmlElement.initmark.posattr._y = parseFloat(movingXmlElement.initmark.posattr._y) + (-1 * event.dy);
+             }
+           })
+         } else {
+           page.place.posattr._x = parseFloat(page.place.posattr._x) + (event.dx);
+           page.place.posattr._y = parseFloat(page.place.posattr._y) + (-1 * event.dy);
+           page.place.type.posattr._x = parseFloat(page.place.type.posattr._x) + (event.dx);
+           page.place.type.posattr._y = parseFloat(page.place.type.posattr._y) + (-1 * event.dy);
+           page.place.initmark.posattr._x = parseFloat(page.place.initmark.posattr._x) + (event.dx);
+           page.place.initmark.posattr._y = parseFloat(page.place.initmark.posattr._y) + (-1 * event.dy);
+         }
+         break;
+       case 'cpn:Transition':
+         if(page.trans.length)
+           page.trans.forEach(movingXmlElement => {
+             if (movingXmlElement._id === event.shape.id) {
+               movingXmlElement.posattr._x = parseFloat(movingXmlElement.posattr._x) + (event.dx );
+               movingXmlElement.posattr._y = parseFloat(movingXmlElement.posattr._y) + (-1 * event.dy);
+               movingXmlElement.cond.posattr._x = parseFloat(movingXmlElement.cond.posattr._x) + (event.dx );
+               movingXmlElement.cond.posattr._y = parseFloat(movingXmlElement.cond.posattr._y) + (-1 * event.dy);
+               movingXmlElement.priority.posattr._x = parseFloat(movingXmlElement.priority.posattr._x) + (event.dx );
+               movingXmlElement.priority.posattr._y = parseFloat(movingXmlElement.priority.posattr._y) + (-1 * event.dy );
+               movingXmlElement.time.posattr._x = parseFloat(movingXmlElement.time.posattr._x) + (event.dx );
+               movingXmlElement.time.posattr._y = parseFloat(movingXmlElement.time.posattr._y) + (-1 * event.dy );
+               movingXmlElement.code.posattr._x = parseFloat(movingXmlElement.code.posattr._x) + (event.dx );
+               movingXmlElement.code.posattr._y = parseFloat(movingXmlElement.code.posattr._y) + (-1 * event.dy );
+             }
+           }); else {
+           page.trans.posattr._x = parseFloat(page.trans.posattr._x) + (event.dx );
+           page.trans.posattr._y = parseFloat(page.trans.posattr._y) + (-1 * event.dy);
+           page.trans.cond.posattr._x = parseFloat(page.trans.cond.posattr._x) + (event.dx );
+           page.trans.cond.posattr._y = parseFloat(page.trans.cond.posattr._y) + (-1 * event.dy);
+           page.trans.priority.posattr._x = parseFloat(page.trans.priority.posattr._x) + (event.dx );
+           page.trans.priority.posattr._y = parseFloat(page.trans.priority.posattr._y) + (-1 * event.dy );
+           page.trans.time.posattr._x = parseFloat(page.trans.time.posattr._x) + (event.dx );
+           page.trans.time.posattr._y = parseFloat(page.trans.time.posattr._y) + (-1 * event.dy );
+           page.trans.code.posattr._x = parseFloat(page.trans.code.posattr._x) + (event.dx );
+           page.trans.code.posattr._y = parseFloat(page.trans.code.posattr._y) + (-1 * event.dy );
+         }
+         break;
+       case 'cpn:Connection':
+         if(page.arc.length)
+           page.arc.forEach(movingXmlElement => {
+             if (movingXmlElement._id === event.shape.id) {
+               movingXmlElement.annot.posattr._x = parseFloat(movingXmlElement.annot.posattr._x) + (event.dx );
+               movingXmlElement.annot.posattr._y = parseFloat(movingXmlElement.annot.posattr._y) + (-1 * event.dy);
+             }
+           }); else {
+           page.arc.annot.posattr._x = parseFloat(page.arc.annot.posattr._x) + (event.dx );
+           page.arc.annot.posattr._y = parseFloat(page.arc.annot.posattr._y) + (-1 * event.dy);
+         }
+         break;
+       default:
+     }
+     // this.applyPageChanges();
+     // let element = event.shape;
+     this.eventService.send(Message.SHAPE_SELECT, {element: event.shape, pageJson: page });
+     */
   }
 
 
@@ -396,32 +396,32 @@ export class ModelService {
         jsonElem.posattr._x = parseFloat(jsonElem.posattr._x) + delta.x;
         jsonElem.posattr._y = parseFloat(jsonElem.posattr._y) + delta.y;
       }
-      if (elemntType === 'bpmn:SequenceFlow') {
+      if (elemntType === 'cpn:Connection') {
         jsonElem.bendpoint = [];
         const addToWay = 'push'; // jsonElem._orientation  === 'TtoP' ?  'push' : 'unshift'
         for (const updWayPoint of modelElem.waypoints) {
           if (!updWayPoint.original) {
             jsonElem.bendpoint[addToWay]({
-                fillattr: {
-                  _colour: 'White',
-                  _pattern: 'Solid',
-                  _filled: 'false'
-                },
-                lineattr: {
-                  _colour: 'Black',
-                  _thick: '0',
-                  _type: 'Solid'
-                },
-                posattr: {
-                  _x: updWayPoint.x,
-                  _y: -1 * updWayPoint.y
-                },
-                textattr: {
-                  _colour: 'Black',
-                  _bold: 'false'
-                },
-                _id: 'ID' + new Date().getTime(),
-                _serial: '1'
+              fillattr: {
+                _colour: 'White',
+                _pattern: 'Solid',
+                _filled: 'false'
+              },
+              lineattr: {
+                _colour: 'Black',
+                _thick: '0',
+                _type: 'Solid'
+              },
+              posattr: {
+                _x: updWayPoint.x,
+                _y: -1 * updWayPoint.y
+              },
+              textattr: {
+                _colour: 'Black',
+                _bold: 'false'
+              },
+              _id: 'ID' + new Date().getTime(),
+              _serial: '1'
             });
           }
         }
@@ -481,7 +481,7 @@ export class ModelService {
         }
       }
     }
-    if (page.trans && !(page.trans.length === 0 && !page.trans._id) ) {
+    if (page.trans && !(page.trans.length === 0 && !page.trans._id)) {
       let updatedTran;
       if (page.trans.length) {
         for (const tran of page.trans) {
@@ -617,7 +617,7 @@ export class ModelService {
 
       }
     }
-    if (page.arc && !(page.arc.length === 0 && !page.arc._id) ) {
+    if (page.arc && !(page.arc.length === 0 && !page.arc._id)) {
       let uodatedCon;
       for (const arc of page.arc) {
         for (const modelArc of arcShapes) {
@@ -700,7 +700,7 @@ export class ModelService {
       }
     }
 
-    this.eventService.send(Message.MODEL_UPDATE, {pageObject: page});
+    this.eventService.send(Message.MODEL_UPDATE, { pageObject: page });
     // this.eventService.send(Message.MODEL_UPDATE, {pageObject:  page});
     // EmitterService.getAppMessageEmitter().emit(
     //  {
@@ -715,7 +715,7 @@ export class ModelService {
 
   changeLabelText(label, text, pageId) {
     this.saveBackup(this.projectData, pageId);
-    if (label && label.text) { label.text.__text =  text; }
+    if (label && label.text) { label.text.__text = text; }
   }
 
   changePageName(pageId, name) {
@@ -728,7 +728,7 @@ export class ModelService {
 
   createNewPage(page) {
     this.saveBackup(this.projectData, page._id);
-    if ( this.projectData.workspaceElements.cpnet.length) {
+    if (this.projectData.workspaceElements.cpnet.length) {
       this.projectData.workspaceElements.cpnet.page.push(page);
     } else {
       this.projectData.workspaceElements.cpnet.page = [this.projectData.workspaceElements.cpnet.page];
@@ -760,7 +760,7 @@ export class ModelService {
           //   project: {data: project, name: this.modelName}
           // });
 
-          this.eventService.send(Message.XML_UPDATE, {project: {data: project, name: this.modelName}});
+          this.eventService.send(Message.XML_UPDATE, { project: { data: project, name: this.modelName } });
         }
       }
     } else {
@@ -773,7 +773,7 @@ export class ModelService {
         //   project: {data: project, name: this.modelName}
         // });
 
-        this.eventService.send(Message.XML_UPDATE, {project: {data: project, name: this.modelName}});
+        this.eventService.send(Message.XML_UPDATE, { project: { data: project, name: this.modelName } });
       }
     }
     //  console.log('Get data fromPAge ----' + JSON.stringify(updatedData.pageObject));
@@ -810,14 +810,14 @@ export class ModelService {
           }
         }
       } else {
-          for (const labelType of this.labelsEntry[entry]) {
-            if (page[entry] && page[entry][labelType] && page[entry][labelType].text && page[entry][labelType].text.__text && Object.values(this.projectService.appSettings).includes(page[entry][labelType].text.__text)) {
-              page[entry][labelType].text.__text = null;
-            }
-            }
+        for (const labelType of this.labelsEntry[entry]) {
+          if (page[entry] && page[entry][labelType] && page[entry][labelType].text && page[entry][labelType].text.__text && Object.values(this.projectService.appSettings).includes(page[entry][labelType].text.__text)) {
+            page[entry][labelType].text.__text = null;
           }
         }
       }
+    }
+  }
 
 
   deleteBlock(id) {
@@ -850,10 +850,10 @@ export class ModelService {
     this.saveBackup(this.projectData, undefined);
     switch (elementType) {
       case 'var':
-        return {id: this.projectService.getAppSettings()[elementType] + (++this.countNewItems), type: {id: this.projectService.getAppSettings()[elementType]}, _id: 'ID' + new Date().getTime()};
+        return { id: this.projectService.getAppSettings()[elementType] + (++this.countNewItems), type: { id: this.projectService.getAppSettings()[elementType] }, _id: 'ID' + new Date().getTime() };
         break;
       case 'color':
-        return {id: this.projectService.getAppSettings()[elementType] + (++this.countNewItems), timed: '', name: this.projectService.getAppSettings()[elementType], _id: 'ID' + new Date().getTime()};
+        return { id: this.projectService.getAppSettings()[elementType] + (++this.countNewItems), timed: '', name: this.projectService.getAppSettings()[elementType], _id: 'ID' + new Date().getTime() };
         break;
       case 'ml':
         return {
@@ -863,7 +863,7 @@ export class ModelService {
         };
         break;
       case 'globref':
-        return {id: this.projectService.getAppSettings()[elementType] + (++this.countNewItems), ml: this.projectService.getAppSettings()[elementType], _id: 'ID' + new Date().getTime()};
+        return { id: this.projectService.getAppSettings()[elementType] + (++this.countNewItems), ml: this.projectService.getAppSettings()[elementType], _id: 'ID' + new Date().getTime() };
         break;
       default:
 
@@ -885,8 +885,8 @@ export class ModelService {
         let splitLayoutArray;
         elem.layout = blockType + ' ' + layout;
         layout = layout.replace('var', '');
-        splitLayoutArray =  layout.trim().split(':');
-        for (let i = 0; i < splitLayoutArray.length; i++ ) {
+        splitLayoutArray = layout.trim().split(':');
+        for (let i = 0; i < splitLayoutArray.length; i++) {
           splitLayoutArray[i] = splitLayoutArray[i].replace(/\s+/g, '').split(',');
         }
         elem.id = splitLayoutArray[0];
@@ -894,29 +894,29 @@ export class ModelService {
         break;
       case 'ml':
         elem.layout = layout;
-        elem.__text =  layout;
+        elem.__text = layout;
         break;
       case 'color':   // *****отрефакторить*****
         elem.layout = blockType + ' ' + layout;
         layout = layout.replace('colset', '');
-        splitLayoutArray =  layout.split('=');
-        splitLayoutArray[1] = splitLayoutArray[1].split(' ').filter(e => e.trim() !== '' );
+        splitLayoutArray = layout.split('=');
+        splitLayoutArray[1] = splitLayoutArray[1].split(' ').filter(e => e.trim() !== '');
         let testElem = splitLayoutArray[1][0].replace(/\s+/g, '');
         for (const key of Object.keys(elem)) {
           if (key !== '_id' && key !== 'layout') { delete elem[key]; }
         }
         if (splitLayoutArray[1][splitLayoutArray[1].length - 1].replace(';', '') === 'timed') {
           elem.timed = '';
-          splitLayoutArray[1].length =  splitLayoutArray[1].length - 1;
+          splitLayoutArray[1].length = splitLayoutArray[1].length - 1;
         }
         if (testElem === 'product') {
           const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
           elem.id = splitLayoutArray[0].replace(/\s+/g, '');
-          elem.product = { id: productList};
-        }  else if (testElem === 'list') {
+          elem.product = { id: productList };
+        } else if (testElem === 'list') {
           const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
           elem.id = splitLayoutArray[0].replace(/\s+/g, '');
-          elem.list = { id: productList};
+          elem.list = { id: productList };
         } else {
           testElem = testElem.replace(/\s+/g, '').replace(';', '');
           splitLayoutArray[0] = splitLayoutArray[0].replace(/\s+/g, '').replace(';', '');
@@ -925,15 +925,15 @@ export class ModelService {
             elem[testElem.toLowerCase()] = '';
           } else {
             elem.id = splitLayoutArray[0];
-            elem.alias = { id: testElem};
+            elem.alias = { id: testElem };
           }
         }
         break;
       case 'globref':
-        splitLayoutArray =  layout.split(' ').filter(e => e.trim() !== '' && e.trim() !== '=' );
+        splitLayoutArray = layout.split(' ').filter(e => e.trim() !== '' && e.trim() !== '=');
         elem.id = splitLayoutArray[1].replace(/\s+/g, '').replace(';', '');
         elem.ml = splitLayoutArray[2].replace(/\s+/g, '').replace(';', '');
-        elem.layout =  blockType + ' ' + layout;
+        elem.layout = blockType + ' ' + layout;
         break;
       default:
 

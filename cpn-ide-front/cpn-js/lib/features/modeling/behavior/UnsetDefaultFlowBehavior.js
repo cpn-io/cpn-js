@@ -49,6 +49,9 @@ function isDefaultFlow(connection, source) {
   if (!is(connection, 'bpmn:SequenceFlow')) {
     return false;
   }
+  if (!is(connection, 'cpn:Connection')) {
+    return false;
+  }
 
   var sourceBo = getBusinessObject(source),
       sequenceFlow = getBusinessObject(connection);

@@ -74,7 +74,7 @@ BpmnLayouter.prototype.layoutConnection = function(connection, hints) {
   // (2) incoming / outgoing of Gateway -> v:h (outgoing), h:v (incoming)
   // (3) loops from / to the same element
   //
-  if (is(connection, 'bpmn:SequenceFlow') ||
+  if (is(connection, 'cpn:Connection') ||
       isCompensationAssociation(connection)) {
 
     if (source === target) {
@@ -110,8 +110,9 @@ BpmnLayouter.prototype.layoutConnection = function(connection, hints) {
         preferredLayouts: [ 'h:h' ]
       };
     }
-
   }
+
+
 
   if (manhattanOptions) {
 

@@ -39,17 +39,25 @@ export default function ReplaceConnectionBehavior(eventBus, modeling, bpmnRules)
      * This holds true for SequenceFlow <> MessageFlow.
      */
 
-    if (is(connection, 'bpmn:SequenceFlow')) {
+    if (is(connection, 'cpn:Connection')) {
       if (!is(source, 'cpn:BaseElement') && !is(target, 'cpn:BaseElement')) {
         if (!bpmnRules.canConnectSequenceFlow(source, target)) {
           remove = true;
         }
-
-        if (bpmnRules.canConnectMessageFlow(source, target)) {
-          replacementType = 'bpmn:MessageFlow';
-        }
       }
     }
+
+    // if (is(connection, 'bpmn:SequenceFlow')) {
+    //   if (!is(source, 'cpn:BaseElement') && !is(target, 'cpn:BaseElement')) {
+    //     if (!bpmnRules.canConnectSequenceFlow(source, target)) {
+    //       remove = true;
+    //     }
+
+    //     if (bpmnRules.canConnectMessageFlow(source, target)) {
+    //       replacementType = 'bpmn:MessageFlow';
+    //     }
+    //   }
+    // }
 
     // transform message flows into sequence flows, if possible
 

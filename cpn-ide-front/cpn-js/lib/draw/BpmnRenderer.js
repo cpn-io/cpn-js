@@ -55,7 +55,8 @@ import Ids from 'ids';
 
 import {
   drawPlace,
-  drawTransition
+  drawTransition,
+  drawArc
 } from './CpnRenderUtil';
 
 
@@ -770,53 +771,23 @@ export default function BpmnRenderer(
   var handlers = this.handlers = {
     // CPN
     'cpn:Place': function (parentGfx, element) {
-      var attrs = {
-        fill: getFillColor(element, defaultFillColor),
-        stroke: getStrokeColor(element, defaultStrokeColor),
-        strokeWidth: getStrokeWidth(element, defaultStrokeWidth),
-        iserror: element.iserror
-      };
-
-      var shape;
-
-      // console.log('DRAW PLACE, element = ', element);
-      // if (element.cpnElement.port) {
-      //   shape = drawEllipseSubp(parentGfx, element.width, element.height, 0.0, attrs);
-      // } else {
-      //   shape = drawEllipse(parentGfx, element.width, element.height, 0.0, attrs);
-      // }
-
-      shape = drawPlace(parentGfx, element, textRenderer);
-      // shape = drawEllipse(parentGfx, element.width, element.height, 0.0, attrs);
-
+      var shape = drawPlace(parentGfx, textRenderer, element);
       renderEmbeddedLabel(parentGfx, element, 'center-middle');
       attachTaskMarkers(parentGfx, element);
-
       return shape;
     },
     'cpn:Transition': function (parentGfx, element) {
-      var attrs = {
-        fill: getFillColor(element, defaultFillColor),
-        stroke: getStrokeColor(element, defaultStrokeColor),
-        strokeWidth: getStrokeWidth(element, defaultStrokeWidth),
-        iserror: element.iserror
-      };
-      var shape;
-
-      // if (element.hierar === 'subPage') {
-      // if (element.cpnElement.subst) {
-      //   shape = drawRectSubp(parentGfx, element.width, element.height, 0, 0.0, attrs);
-      // } else {
-      //   shape = drawRect(parentGfx, element.width, element.height, 0, 0.0, attrs);
-      // }
-
-      shape = drawTransition(parentGfx, element);
-
+      var shape = drawTransition(parentGfx, textRenderer, element);
       renderEmbeddedLabel(parentGfx, element, 'center-middle');
       attachTaskMarkers(parentGfx, element);
-
       return shape;
     },
+    'cpn:Connection': function (parentGfx, element) {
+      var pathData = createPathFromConnection(element);
+      var path = drawArc(parentGfx, element, pathData);
+      return path;
+    },
+
     // -------------------------------------------------
 
     'bpmn:Event': function (parentGfx, element, attrs) {
@@ -1659,6 +1630,7 @@ export default function BpmnRenderer(
 
       return drawDiamond(parentGfx, element.width, element.height, attrs);
     },
+
     'bpmn:SequenceFlow': function (parentGfx, element) {
       var pathData = createPathFromConnection(element);
 
@@ -1671,21 +1643,21 @@ export default function BpmnRenderer(
         stroke: getStrokeColor(element, defaultStrokeColor),
         strokeWidth: getStrokeWidth(element, defaultStrokeWidth)
       };
+
       if (element.iserror) {
         var attrsError = {
           strokeLinejoin: 'round',
           // markerEnd: marker('sequenceflow-end', fill, 1),
           stroke: 'red',
-          strokeWidth: 3
+          strokeWidth: 7
         };
         var path = drawPath(parentGfx, pathData, attrsError);
       }
       var path = drawPath(parentGfx, pathData, attrs);
 
+
       var sequenceFlow = getSemantic(element);
-
       var source;
-
       if (element.source) {
         source = element.source.businessObject;
 
@@ -1704,18 +1676,6 @@ export default function BpmnRenderer(
           });
         }
       }
-
-      // CPN -----------
-      // console.log('BpmnRenderer(), bpmn:SequenceFlow, element -> ', element);
-      // console.log('BpmnRenderer(), bpmn:SequenceFlow, element.label -> ', element.label);
-      // console.log('BpmnRenderer(), bpmn:SequenceFlow, element.labels -> ', element.labels);
-      // if (element.labels) {
-      //   element.labels.forEach((label) => {
-      //     console.log('BpmnRenderer(), bpmn:SequenceFlow, render label -> ', label);
-      //     renderExternalLabel(parentGfx, label);
-      //   });
-      // }
-      // -----------------------------
 
       return path;
     },

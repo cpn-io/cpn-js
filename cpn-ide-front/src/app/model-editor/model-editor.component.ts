@@ -160,6 +160,12 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
     });
 
 
+
+    // listen to dblclick on non-root elements
+    eventBus.on('element.dblclick',  (event) => {
+     this.connectionDblClick(event);
+    });
+
     eventBus.on('modelEditor.deleteElement', (event, element, connection) => {
       console.log(element);
       console.log(connection);
@@ -196,7 +202,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
       // if (!this.jsonPageObject.arc.find( element => { return element._id === event.context.connection.id} )){
       if (!this.modelService.getJsonElementOnPage(this.pageId, event.context.connection.id, 'cpn:Connection')) {
         this.createArcsInModel(event.context);
-
+        //this.addLabelEvent(event, event.context.connection, { type: 'annot' });
         // const arc = this.modelService.getJsonElemetOnPage(this.pageId, event.context.connection.id, 'bpmn:SequenceFlow');
         // const pos = {x: event.context.connection.x, y: event.context.connection.y};
         // const attrs = {stroke: 'Black', labelType: 'annot'};
@@ -465,6 +471,14 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
   }
 
 
+  connectionDblClick(event) {
+    if (event.element.type === 'cpn:Connection' && !event.element.labels[0]) {
+      this.addLabelEvent(event, event.element, {type: 'annot'});
+      this.diagram.get('eventBus').fire('element.dblclick', {element: event.element});
+    }
+  }
+
+
   modelUpdate() {
     const page = this.applyPageChanges();
 
@@ -609,8 +623,8 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
         },
         text: {
           _tool: 'CPN Tools',
-          _version: '4.0.1',
-          __text: 'annot'
+          _version: '4.0.1'
+          //__text: 'annot'
         },
         _id: element.connection.id + 'a'
       },
@@ -621,8 +635,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
 
     element.connection.stroke = newArc.lineattr._colour;
     element.connection.strokeWidth = newArc.lineattr._thick;
-    element.cpnElement = newArc;
-
+    element.connection.cpnElement = newArc;
     this.arcShapes.push(element.connection);
     //  this.labelEditingProvider.update(element.connection, '');
     ///  this.addShapeLabel(element.connection, newArc.annot, 'annot');

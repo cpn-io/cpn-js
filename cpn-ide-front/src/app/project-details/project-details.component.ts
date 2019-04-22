@@ -249,8 +249,11 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     if(elemType) {
       this.selectedElemement = {id: item._id, tabid: tabid, type: elemType};
     } else {
-      let blockId = tabid.split('-')[2];
+      let splitTabId = tabid.split('-');
+      let blockId = splitTabId[2];
+      let typeElem = splitTabId[1];
       this.selectedBlock = blockId === this.selectedBlock ? undefined : blockId;
+      this.selectedElemement = {id: item._id, tabid: blockId, type: typeElem};
     }
   }
 

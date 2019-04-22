@@ -767,13 +767,14 @@ function canResize(shape, newBounds) {
   if(shape.type === 'label') {
     return false
   }
+  if (is(shape, 'cpn:Connection')) {
+    return false;
+  }
   // CPN
   if (is(shape, 'cpn:BaseElement')) {
     return true;
   }
-  // if (is(shape, 'bpmn:SequenceFlow')) {
-  //   return true;
-  // }
+
   // ------------------------------------------------------------------
 
   if (is(shape, 'bpmn:SubProcess')) {

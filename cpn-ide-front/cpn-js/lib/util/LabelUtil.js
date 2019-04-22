@@ -25,7 +25,8 @@ export function isLabelExternal(semantic) {
          is(semantic, 'bpmn:DataStoreReference') ||
          is(semantic, 'bpmn:DataObjectReference') ||
          is(semantic, 'bpmn:SequenceFlow') ||
-         is(semantic, 'bpmn:MessageFlow')
+         is(semantic, 'bpmn:MessageFlow') ||
+         is(semantic, 'cpn:Connection')
         //  ||
         //  is(semantic, 'cpn:Place') ||
         //  is(semantic, 'cpn:Transition')

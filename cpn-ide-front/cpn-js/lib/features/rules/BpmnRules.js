@@ -404,7 +404,8 @@ function canConnect(source, target, connection) {
     (is(source, 'cpn:Place') && is(target, 'cpn:Transition')) ||
     (is(target, 'cpn:Place') && is(source, 'cpn:Transition'))
   ) {
-    return { type: 'bpmn:SequenceFlow' };
+    return { type: 'cpn:Connection' };
+    // return { type: 'bpmn:SequenceFlow' };
   }
   // -----------------------------------------------------------
 

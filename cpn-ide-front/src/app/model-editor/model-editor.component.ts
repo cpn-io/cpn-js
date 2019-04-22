@@ -109,8 +109,9 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
       this.fireAllEvents(event);
     });
     eventBus.on('autoPlace', (event) => {
-      // console.log('click on, event = ', event);
-      this.fireAllEvents(event);
+      console.log('MODEL EDITOR EVENT, event = ', event);
+      this.createShape(event);
+      // this.fireAllEvents(event);
     });
     eventBus.on('element.mousedown', (event) => {
       // console.log('click on, event = ', event);
@@ -129,23 +130,32 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
     eventBus.on('resize.end', (event) => {
 
       // console.log('click on, event = ', event);
-      this.shapeResizesonSaver(event);
+      this.shapeResizeJsonSaver(event);
     });
 
     eventBus.on('shape.move.end', (event) => {
       console.log('shape.move.end event fired');
       this.shapeMoveJsonSaver(event);
     });
+
+    eventBus.on('create.start', (event) => {
+      console.log('create.start');
+
+      this.createShape(event);
+    });
+
     eventBus.on(['create.end', 'autoPlace'], (event, context) => {
-      if (event.type === 'autoPlace') {
-        event.shape.x = event.source.x + 1.8 * event.source.width;
-        event.shape.y = event.source.y;
-      }
-      if (event.shape.type === 'cpn:Transition') {
-        this.createTransitionInModel(event.shape);
-      } else {
-        this.createPlaceInModel(event.shape);
-      }
+      console.log('create.end');
+
+      // if (event.type === 'autoPlace') {
+      //   event.shape.x = event.source.x + 1.8 * event.source.width;
+      //   event.shape.y = event.source.y;
+      // }
+      // if (event.shape.type === 'cpn:Transition') {
+      //   this.createTransitionInModel(event.shape);
+      // } else {
+      //   this.createPlaceInModel(event.shape);
+      // }
 
     });
 
@@ -163,7 +173,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
           // if (!this.jsonPageObject.trans.length || this.jsonPageObject.trans.length === 1) this.jsonPageObject.trans = []; else this.jsonPageObject.trans = this.jsonPageObject.trans.filter(elem => elem._id !== element.id);
           delete this.transShapes[element.id];
           break;
-        case 'bpmn:SequenceFlow':
+        case 'cpn:Connection':
           this.modelService.deleteElementFromPageJson(this.pageId, element.id, element.type);
           // if (!this.jsonPageObject.arc.length || this.jsonPageObject.arc.length === 1) this.jsonPageObject.arc = []; else this.jsonPageObject.arc = this.jsonPageObject.arc.filter(elem => elem._id !== element.id);
           this.arcShapes = this.arcShapes.filter(arc => arc.id !== element.id);
@@ -172,7 +182,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
 
       }
       connection.forEach(conid => {
-        this.modelService.deleteElementFromPageJson(this.pageId, conid, 'bpmn:SequenceFlow');
+        this.modelService.deleteElementFromPageJson(this.pageId, conid, 'cpn:Connection');
         // if (!this.jsonPageObject.arc.length || this.jsonPageObject.arc.length === 1) this.jsonPageObject.arc = []; else this.jsonPageObject.arc = this.jsonPageObject.arc.filter(elem => elem._id !== conid);
         this.arcShapes = this.arcShapes.filter(arc => arc.id !== conid);
       });
@@ -184,7 +194,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
       console.log('created arcs');
 
       // if (!this.jsonPageObject.arc.find( element => { return element._id === event.context.connection.id} )){
-      if (!this.modelService.getJsonElemetOnPage(this.pageId, event.context.connection.id, 'bpmn:SequenceFlow')) {
+      if (!this.modelService.getJsonElementOnPage(this.pageId, event.context.connection.id, 'cpn:Connection')) {
         this.createArcsInModel(event.context);
 
         // const arc = this.modelService.getJsonElemetOnPage(this.pageId, event.context.connection.id, 'bpmn:SequenceFlow');
@@ -313,6 +323,18 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
     this.labelEditingProvider = this.diagram.get('labelEditingProvider');
     this.textRenderer = this.diagram.get('textRenderer');
 
+  }
+
+  createShape(event) {
+    if (event.type === 'autoPlace') {
+      event.shape.x = event.source.x + 1.8 * event.source.width;
+      event.shape.y = event.source.y;
+    }
+    if (event.shape.type === 'cpn:Transition') {
+      this.createTransitionInModel(event.shape);
+    } else {
+      this.createPlaceInModel(event.shape);
+    }
   }
 
   subscripeToAppMessage() {
@@ -479,8 +501,28 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
    *saving to model coordinates after resize
    * @param event
    */
-  shapeResizesonSaver(event) {
+  shapeResizeJsonSaver(event) {
+    console.log(this.constructor.name, 'shapeResizesonSaver(), event = ', event);
+
     const element = event.shape;
+
+    // const context = event.context;
+    // const cpnElement = element.cpnElement;
+
+    // if (cpnElement) {
+    //   cpnElement.posattr._x = context.newBounds.x;
+    //   cpnElement.posattr._y = context.newBounds.y;
+
+    //   if (cpnElement.ellipse) {
+    //     cpnElement.ellipse._w = context.newBounds.width;
+    //     cpnElement.ellipse._h = context.newBounds.height;
+    //   }
+    //   if (cpnElement.box) {
+    //     cpnElement.box._w = context.newBounds.width;
+    //     cpnElement.box._h = context.newBounds.height;
+    //   }
+    // }
+
     for (const label of element.labels) {
       /*  let newX = label.x + event.dx;
         let newY = label.y + event.dy;
@@ -516,6 +558,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
    */
   createArcsInModel(element) {
     console.log('Created element ARC ' + element);
+
     const newArc = {
       posattr: {
         _x: 0.000000,
@@ -578,10 +621,12 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
 
     element.connection.stroke = newArc.lineattr._colour;
     element.connection.strokeWidth = newArc.lineattr._thick;
+    element.cpnElement = newArc;
+
     this.arcShapes.push(element.connection);
     //  this.labelEditingProvider.update(element.connection, '');
     ///  this.addShapeLabel(element.connection, newArc.annot, 'annot');
-    this.modelService.addElementJsonOnPage(newArc, this.pageId, 'bpmn:SequenceFlow');
+    this.modelService.addElementJsonOnPage(newArc, this.pageId, 'cpn:Connection');
     // this.jsonPageObject.arc.push(newArc);
     // this.modelUpdate();
 
@@ -956,7 +1001,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
           this.deleteLabel(elementForUpdate, i, 'trans');
         }
       }
-    } else if ('bpmn:SequenceFlow') {
+    } else if ('cpn:Connection') {
       elementForUpdate = this.arcShapes.find(element => element.id === data.element.id);
       for (const lab of elementForUpdate.labels) {
         const labelbounds = {
@@ -1251,7 +1296,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
       entry = page.trans;
     } else if (element.type === 'cpn:Place') {
       entry = page.place;
-    } else if (element.type === 'bpmn:SequenceFlow') {
+    } else if (element.type === 'cpn:Connection') {
       entry = page.arc;
     }
 
@@ -1388,7 +1433,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
         }
       }
 
-    } else if (element.type === 'bpmn:SequenceFlow') {
+    } else if (element.type === 'cpn:Connection') {
       if (context.type === 'annot') {
         let page = this.jsonPageObject;
         if (page.arc.length) {
@@ -1437,7 +1482,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
       // } else if(this.curentElement.type === 'cpn:Place') {
       //   labelType =  'place';
       //
-      // } else if(this.curentElement.type === 'bpmn:SequenceFlow') {
+      // } else if(this.curentElement.type === 'cpn:Connection') {
       //   labelType =  'arc';
       //
       // }
@@ -1445,7 +1490,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
 
 
       labelStack = this.tabStack.stack[labelType];
-      jsonElement = this.modelService.getJsonElemetOnPage(this.pageId, this.tabStack.element.id, this.tabStack.element.type); // this.jsonPageObject[labelType].length ? this.jsonPageObject[labelType].find(elem => { return this.curentElement.id === elem._id }) : this.jsonPageObject[labelType];
+      jsonElement = this.modelService.getJsonElementOnPage(this.pageId, this.tabStack.element.id, this.tabStack.element.type); // this.jsonPageObject[labelType].length ? this.jsonPageObject[labelType].find(elem => { return this.curentElement.id === elem._id }) : this.jsonPageObject[labelType];
       const lastAddedElement = this.tabStack.element.labels.find(element => Object.values(this.projectService.getAppSettings()).includes(element.text));
       if (lastAddedElement) {
         this.canvas._removeElement(lastAddedElement, 'label');
@@ -1558,7 +1603,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
     this.canvas.addShape(p2, root);
 
     let attrs: any = {
-      type: 'bpmn:SequenceFlow',
+      type: 'cpn:Connection',
       waypoints: [
         { x: 150, y: 110 },
         { x: 200, y: 200 },
@@ -1569,7 +1614,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
     };
 
     attrs = {
-      type: 'bpmn:SequenceFlow',
+      type: 'cpn:Connection',
       // id: "connection1",
       waypoints: [
         { x: 750, y: 110 },
@@ -1700,6 +1745,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
           const data = this.getConnectionAttrs(arc, pageObject);
           if (data) {
             const conn = this.modeling.connect(data.source, data.target, data.attrs, null);
+
             this.arcShapes.push(conn);
             if (arc.annot.text && arc.annot.text.length > 0) {
               const label = ' '; // arc.annot.text;
@@ -1992,8 +2038,6 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
   }
 
   getConnectionAttrs(arc, pageObject) {
-
-
     // let placeShape = this.placeShapes[arc.placeend["@attributes"].idref];
     // let transShape = this.transShapes[arc.transend["@attributes"].idref];
 
@@ -2094,12 +2138,13 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
 
     if (source && target) {
       const attrs = {
-        type: 'bpmn:SequenceFlow',
+        type: 'cpn:Connection',
         // id: arc["@attributes"].id,
         id: arc._id,
         waypoints: waypoints,
         stroke: stroke,
         strokeWidth: strokeWidth,
+        cpnElement: arc
       };
 
       return { source: source, target: target, attrs: attrs };

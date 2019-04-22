@@ -167,6 +167,8 @@ ContextPadProvider.prototype.getContextPadEntries = function (element) {
    */
   function appendAction(type, className, title, options, eventBus) {
 
+    console.log('appendAction(), type = ', type);
+
     if (typeof title !== 'string') {
       options = title;
       title = translate('Append {type}', { type: type.replace(/^bpmn:/, '') });

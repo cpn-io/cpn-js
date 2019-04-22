@@ -27,6 +27,10 @@ export default function TextRenderer(config) {
     style: defaultStyle
   });
 
+  this.getTextUtil = function() {
+    return textUtil;
+  }
+
   /**
    * Get the new bounds of an externally rendered,
    * layouted label.

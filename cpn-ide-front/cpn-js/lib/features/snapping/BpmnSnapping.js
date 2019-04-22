@@ -175,7 +175,8 @@ export default function BpmnSnapping(eventBus, canvas, bpmnRules, elementRegistr
         connection.type === 'bpmn:Association' ||
         connection.type === 'bpmn:DataOutputAssociation' ||
         connection.type === 'bpmn:DataInputAssociation' ||
-        connection.type === 'bpmn:SequenceFlow'
+        connection.type === 'bpmn:SequenceFlow' ||
+        connection.type === 'cpn:Connection'
       )
     ) {
       // snap source

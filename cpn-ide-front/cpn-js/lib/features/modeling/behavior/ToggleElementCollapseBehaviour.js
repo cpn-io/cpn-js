@@ -25,7 +25,7 @@ export default function ToggleElementCollapseBehaviour(
   function hideEmptyLables(children) {
     if (children.length) {
       children.forEach(function(child) {
-        if (child.type === 'label' && !child.businessObject.name) {
+        if (child.type === 'cpn:Label' && !child.businessObject.name) {
           child.hidden = true;
         }
       });

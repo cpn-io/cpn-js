@@ -656,66 +656,69 @@ function canAttach(elements, target, source, position) {
  */
 function canReplace(elements, target, position) {
 
-  if (!target) {
-    return false;
-  }
+  // if (!target) {
+  //   return false;
+  // }
 
-  var canExecute = {
-    replacements: []
-  };
+  // var canExecute = {
+  //   replacements: []
+  // };
 
-  forEach(elements, function (element) {
+  // forEach(elements, function (element) {
 
-    if (!isEventSubProcess(target)) {
+  //   if (!isEventSubProcess(target)) {
 
-      if (is(element, 'bpmn:StartEvent') &&
-        element.type !== 'label' &&
-        canDrop(element, target)) {
+  //     if (is(element, 'bpmn:StartEvent') &&
+  //       element.type !== 'cpn:Label' &&
+  //       canDrop(element, target)) {
 
-        // replace a non-interrupting start event by a blank interrupting start event
-        // when the target is not an event sub process
-        if (!isInterrupting(element)) {
-          canExecute.replacements.push({
-            oldElementId: element.id,
-            newElementType: 'bpmn:StartEvent'
-          });
-        }
+  //       // replace a non-interrupting start event by a blank interrupting start event
+  //       // when the target is not an event sub process
+  //       if (!isInterrupting(element)) {
+  //         canExecute.replacements.push({
+  //           oldElementId: element.id,
+  //           newElementType: 'bpmn:StartEvent'
+  //         });
+  //       }
 
-        // replace an error/escalation/compansate start event by a blank interrupting start event
-        // when the target is not an event sub process
-        if (hasErrorEventDefinition(element) ||
-          hasEscalationEventDefinition(element) ||
-          hasCompensateEventDefinition(element)) {
-          canExecute.replacements.push({
-            oldElementId: element.id,
-            newElementType: 'bpmn:StartEvent'
-          });
-        }
-      }
-    }
+  //       // replace an error/escalation/compansate start event by a blank interrupting start event
+  //       // when the target is not an event sub process
+  //       if (hasErrorEventDefinition(element) ||
+  //         hasEscalationEventDefinition(element) ||
+  //         hasCompensateEventDefinition(element)) {
+  //         canExecute.replacements.push({
+  //           oldElementId: element.id,
+  //           newElementType: 'bpmn:StartEvent'
+  //         });
+  //       }
+  //     }
+  //   }
 
-    if (!is(target, 'bpmn:Transaction')) {
-      if (hasEventDefinition(element, 'bpmn:CancelEventDefinition') &&
-        element.type !== 'label') {
+  //   if (!is(target, 'bpmn:Transaction')) {
+  //     if (hasEventDefinition(element, 'bpmn:CancelEventDefinition') &&
+  //       element.type !== 'label'
+  //       ) {
 
-        if (is(element, 'bpmn:EndEvent') && canDrop(element, target)) {
-          canExecute.replacements.push({
-            oldElementId: element.id,
-            newElementType: 'bpmn:EndEvent'
-          });
-        }
+  //       if (is(element, 'bpmn:EndEvent') && canDrop(element, target)) {
+  //         canExecute.replacements.push({
+  //           oldElementId: element.id,
+  //           newElementType: 'bpmn:EndEvent'
+  //         });
+  //       }
 
-        if (is(element, 'bpmn:BoundaryEvent') && canAttach(element, target, null, position)) {
-          canExecute.replacements.push({
-            oldElementId: element.id,
-            newElementType: 'bpmn:BoundaryEvent'
-          });
-        }
-      }
-    }
-  });
+  //       if (is(element, 'bpmn:BoundaryEvent') && canAttach(element, target, null, position)) {
+  //         canExecute.replacements.push({
+  //           oldElementId: element.id,
+  //           newElementType: 'bpmn:BoundaryEvent'
+  //         });
+  //       }
+  //     }
+  //   }
+  // });
 
-  return canExecute.replacements.length ? canExecute : false;
+  // return canExecute.replacements.length ? canExecute : false;
+
+  return false;
 }
 
 function canMove(elements, target) {
@@ -764,7 +767,7 @@ function canCreate(shape, target, source, position) {
 }
 
 function canResize(shape, newBounds) {
-  if(shape.type === 'label') {
+  if(shape.type === 'cpn:Label') {
     return false
   }
   if (is(shape, 'cpn:Connection')) {

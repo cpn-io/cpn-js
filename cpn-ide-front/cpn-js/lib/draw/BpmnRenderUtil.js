@@ -18,7 +18,7 @@ import {
 export function isTypedEvent(event, eventDefinitionType, filter) {
 
   function matches(definition, filter) {
-    return every(filter, function(val, key) {
+    return every(filter, function (val, key) {
 
       // we want a == conversion here, to be able to catch
       // undefined == false and friends
@@ -27,7 +27,7 @@ export function isTypedEvent(event, eventDefinitionType, filter) {
     });
   }
 
-  return some(event.eventDefinitions, function(definition) {
+  return some(event.eventDefinitions, function (definition) {
     return definition.$type === eventDefinitionType && matches(event, filter);
   });
 }
@@ -54,14 +54,29 @@ export function getSemantic(element) {
 // color access //////////////////////
 
 export function getFillColor(element, defaultColor) {
+  // cpn
+  if (element.cpnElement && element.cpnElement.fillattr) {
+    return element.cpnElement.fillattr._colour;
+  }
+
   return element.fill || getDi(element).get('bioc:fill') || defaultColor || 'white';
 }
 
 export function getStrokeColor(element, defaultColor) {
+  // cpn
+  if (element.cpnElement && element.cpnElement.lineattr) {
+    return element.cpnElement.lineattr._colour;
+  }
+
   return element.stroke || getDi(element).get('bioc:stroke') || defaultColor || 'black';
 }
 
 export function getStrokeWidth(element, defaultStrokeWidth) {
+  // cpn
+  if (element.cpnElement && element.cpnElement.lineattr) {
+    return element.cpnElement.lineattr._thick;
+  }
+
   return element.strokeWidth || getDi(element).get('bioc:strokeWidth') || defaultStrokeWidth || 1;
 }
 
@@ -71,8 +86,8 @@ export function getStrokeWidth(element, defaultStrokeWidth) {
 export function getCirclePath(shape) {
 
   var cx = shape.x + shape.width / 2,
-      cy = shape.y + shape.height / 2,
-      radius = shape.width / 2;
+    cy = shape.y + shape.height / 2,
+    radius = shape.width / 2;
 
   var circlePath = [
     ['M', cx, cy],
@@ -88,9 +103,9 @@ export function getCirclePath(shape) {
 export function getRoundRectPath(shape, borderRadius) {
 
   var x = shape.x,
-      y = shape.y,
-      width = shape.width,
-      height = shape.height;
+    y = shape.y,
+    width = shape.width,
+    height = shape.height;
 
   var roundRectPath = [
     ['M', x + borderRadius, y],
@@ -111,11 +126,11 @@ export function getRoundRectPath(shape, borderRadius) {
 export function getDiamondPath(shape) {
 
   var width = shape.width,
-      height = shape.height,
-      x = shape.x,
-      y = shape.y,
-      halfWidth = width / 2,
-      halfHeight = height / 2;
+    height = shape.height,
+    x = shape.x,
+    y = shape.y,
+    halfWidth = width / 2,
+    halfHeight = height / 2;
 
   var diamondPath = [
     ['M', x + halfWidth, y],
@@ -130,9 +145,9 @@ export function getDiamondPath(shape) {
 
 export function getRectPath(shape) {
   var x = shape.x,
-      y = shape.y,
-      width = shape.width,
-      height = shape.height;
+    y = shape.y,
+    width = shape.width,
+    height = shape.height;
 
   var rectPath = [
     ['M', x, y],

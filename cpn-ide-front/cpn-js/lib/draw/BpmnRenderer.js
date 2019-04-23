@@ -53,13 +53,6 @@ import {
 
 import Ids from 'ids';
 
-import {
-  drawPlace,
-  drawTransition,
-  drawArc
-} from './CpnRenderUtil';
-
-
 var RENDERER_IDS = new Ids();
 
 var TASK_BORDER_RADIUS = 10;
@@ -68,6 +61,8 @@ var INNER_OUTER_DIST = 3;
 var DEFAULT_FILL_OPACITY = .95,
   HIGH_FILL_OPACITY = .35;
 
+var ERROR_STROKE_COLOR = '#ffcccccc';
+var ERROR_STROKE_THICK = 8;
 
 export default function BpmnRenderer(
   config, eventBus, styles, pathMap,
@@ -741,6 +736,75 @@ export default function BpmnRenderer(
     });
   }
 
+  function renderCpnLabel(parentGfx, element) {
+    var semantic = getSemantic(element);
+    var box = {
+      width: 200, // 90,
+      height: 30,
+      x: element.width / 2 + element.x,
+      y: element.height / 2 + element.y
+    };
+
+    // return renderLabel(parentGfx, element.text || semantic.name, {
+    //   box: box,
+    //   fitBox: true,
+    //   style: assign(
+    //     {},
+    //     textRenderer.getExternalStyle(),
+    //     {
+    //       fill: getStrokeColor(element, defaultStrokeColor)
+    //     }
+    //   )
+    // });
+
+
+    // // Draw rect
+    // var rect = svgCreate('rect');
+    // svgAttr(rect, {
+    //   x: 0,
+    //   y: 0,
+    //   width: box.width,
+    //   height: box.height
+    // });
+    // svgAttr(rect, {
+    //   fill: 'white',
+    //   stroke: 'black',
+    //   strokeWidth: 1
+    // });
+    // svgAppend(parentGfx, rect);
+
+
+    var options = {
+      box: box,
+      fitBox: true,
+      style: assign(
+        {},
+        textRenderer.getExternalStyle(),
+        {
+          fill: getStrokeColor(element, defaultStrokeColor)
+        }
+      )
+    };
+
+    options = assign({
+      size: {
+        width: box.width,
+        height: box.height
+      }
+    }, options);
+
+    var text = textRenderer.createText(element.text || '', options);
+
+    svgClasses(text).add('djs-label');
+    svgAppend(parentGfx, text);
+
+
+
+    return text;
+
+  }
+
+
   function renderLaneLabel(parentGfx, text, element) {
     var textBox = renderLabel(parentGfx, text, {
       box: {
@@ -768,6 +832,273 @@ export default function BpmnRenderer(
     return pathData;
   }
 
+
+  /**
+   * Draw CPN place element
+   *
+   * @param {*} parentGfx - parent svg graphics element
+   * @param {*} element - place element
+   */
+  function drawPlace(parentGfx, textRenderer, element) {
+
+    const cpnElement = element.cpnElement;
+
+    var box = {
+      // x: parseFloat(cpnElement.posattr._x),
+      // y: parseFloat(cpnElement.posattr._y * -1),
+      // w: parseFloat(cpnElement.ellipse._w),
+      // h: parseFloat(cpnElement.ellipse._h)
+      x: parseFloat(element.x),
+      y: parseFloat(element.y),
+      w: parseFloat(element.width),
+      h: parseFloat(element.height)
+    };
+
+    const cx = parseFloat(box.w / 2);
+    const cy = parseFloat(box.h / 2);
+
+    // Draw error state
+    var isError = element.iserror;
+    isError = true;
+
+    if (isError) {
+      var ellipse = svgCreate('ellipse');
+      svgAttr(ellipse, {
+        cx: cx,
+        cy: cy,
+        rx: cx + ERROR_STROKE_THICK / 2,
+        ry: cy + ERROR_STROKE_THICK / 2
+      });
+      svgAttr(ellipse, {
+        stroke: ERROR_STROKE_COLOR,
+        strokeWidth: ERROR_STROKE_THICK
+      });
+      svgAppend(parentGfx, ellipse);
+    }
+
+    // Draw element
+    var ellipse = svgCreate('ellipse');
+    svgAttr(ellipse, {
+      cx: cx,
+      cy: cy,
+      rx: cx,
+      ry: cy
+    });
+    svgAttr(ellipse, {
+      fill: cpnElement.fillattr._colour,
+      stroke: cpnElement.lineattr._colour,
+      strokeWidth: cpnElement.lineattr._thick
+    });
+    svgAppend(parentGfx, ellipse);
+
+
+    // if Place is IN or OUT entry
+    var isPort = element.cpnElement.port;
+    isPort = true;
+    if (isPort) {
+      drawBottomTextLabel(parentGfx, textRenderer, 'Out', box);
+    }
+
+    return ellipse;
+  }
+
+
+
+  /**
+   * Draw CPN transition element
+   *
+   * @param {*} parentGfx - parent svg graphics element
+   * @param {*} element - transition element
+   */
+  function drawTransition(parentGfx, textRenderer, element) {
+    // console.log('drawTransition(), element = ', element);
+
+    const cpnElement = element.cpnElement;
+
+    var box = {
+      // x: parseFloat(cpnElement.posattr._x),
+      // y: parseFloat(cpnElement.posattr._y * -1),
+      // w: parseFloat(cpnElement.box._w),
+      // h: parseFloat(cpnElement.box._h)
+      x: parseFloat(element.x),
+      y: parseFloat(element.y),
+      w: parseFloat(element.width),
+      h: parseFloat(element.height)
+    };
+
+    // Draw error state
+    var isError = element.iserror;
+    isError = true;
+
+    if (isError) {
+      var rect = svgCreate('rect');
+      svgAttr(rect, {
+        x: -(ERROR_STROKE_THICK / 4),
+        y: -(ERROR_STROKE_THICK / 4),
+        width: box.w + ERROR_STROKE_THICK / 2,
+        height: box.h + ERROR_STROKE_THICK / 2
+      });
+      svgAttr(rect, {
+        stroke: ERROR_STROKE_COLOR,
+        strokeWidth: ERROR_STROKE_THICK
+      });
+      svgAppend(parentGfx, rect);
+    }
+
+    // Draw element
+    var rect = svgCreate('rect');
+    svgAttr(rect, {
+      x: 0,
+      y: 0,
+      width: box.w,
+      height: box.h
+    });
+    svgAttr(rect, {
+      fill: cpnElement.fillattr._colour,
+      stroke: cpnElement.lineattr._colour,
+      strokeWidth: cpnElement.lineattr._thick
+    });
+    svgAppend(parentGfx, rect);
+
+    // if Place is IN or OUT entry
+    var isPort = element.cpnElement.subst;
+    isPort = true;
+    if (isPort) {
+      drawBottomTextLabel(parentGfx, textRenderer, 'Port', box);
+      // drawBottomTextLink(parentGfx, textRenderer, 'Port', box);
+    }
+
+    return rect;
+  }
+
+
+
+  function drawArc(parentGfx, element, d) {
+    console.log('drawArc(), element = ', element);
+
+    const cpnElement = element.cpnElement;
+
+    var endMrker = drawEndMarker(parentGfx);
+
+    var path = svgCreate('path');
+    svgAttr(path, {
+      d: d,
+      'marker-start': 'url(#startMarker)',
+      'marker-end': 'url(#endMarker)'
+    });
+    svgAttr(path, {
+      stroke: cpnElement.lineattr._colour,
+      strokeWidth: cpnElement.lineattr._thick
+    });
+    svgAppend(parentGfx, path);
+
+    // drawMarker(parentGfx, element);
+
+    return path;
+  }
+
+  function drawEndMarker(parentGfx) {
+    var marker = svgCreate('marker');
+    svgAttr(marker, {
+      id: 'endMarker',
+      orient: 'auto',
+      refX: 15,
+      refY: 7,
+      markerWidth: 20,
+      markerHeight: 15,
+    });
+    // marker path
+    var path = svgCreate('path');
+    svgAttr(path, {
+      d: 'M0,0 L2,7 L0,15 L15,7 Z',
+      fill: 'black'
+    });
+    svgAppend(marker, path);
+    // -----------------------------
+    svgAppend(parentGfx, marker);
+
+    return marker;
+  }
+
+
+  /**
+   * Draw borttom text label
+   *
+   * @param {*} parentGfx - parent svg graphics element
+   * @param {*} s - text
+   * @param {*} parentRect - parent element rectangle
+   */
+  function drawBottomTextLabel(parentGfx, textRenderer, s, parentRect) {
+    const textDim = textRenderer.getTextUtil().getDimensions(s, {});
+    textDim.width += 5;
+    textDim.height += 1;
+
+    var rect = svgCreate('rect');
+    svgAttr(rect, {
+      x: parentRect.w / 2 - textDim.width / 2,
+      y: parentRect.h - textDim.height / 2,
+      width: textDim.width,
+      height: textDim.height
+    });
+    svgAttr(rect, {
+      fill: '#ffc',
+      stroke: '#000',
+      strokeWidth: 1
+    });
+    svgAppend(parentGfx, rect);
+
+    var text = svgCreate('text');
+    svgAttr(text, {
+      x: parentRect.w / 2 - textDim.width / 2 + 2.5,
+      y: parentRect.h + 4
+    });
+    text.textContent = s;
+    svgAppend(parentGfx, text);
+  }
+
+
+  /**
+   * Trying to draw hyperlink label
+   */
+  function drawBottomTextLink(parentGfx, textRenderer, s, parentRect) {
+    const textDim = textRenderer.getTextUtil().getDimensions(s, {});
+    textDim.width += 5;
+    textDim.height += 1;
+
+    var a = svgCreate('a');
+    svgAttr(a, {
+      // 'xlink:href': "http://www.opera.com/",
+      'href': "http://www.opera.com/",
+      target: "_blank"
+    });
+
+    var rect = svgCreate('rect');
+    svgAttr(rect, {
+      x: parentRect.w / 2 - textDim.width / 2,
+      y: parentRect.h - textDim.height / 2,
+      width: textDim.width,
+      height: textDim.height
+    });
+    svgAttr(rect, {
+      fill: '#ffc',
+      stroke: '#000',
+      strokeWidth: 1
+    });
+    svgAppend(a, rect);
+
+    var text = svgCreate('text');
+    svgAttr(text, {
+      x: parentRect.w / 2 - textDim.width / 2 + 2.5,
+      y: parentRect.h + 4
+    });
+    text.textContent = s;
+    svgAppend(a, text);
+
+    svgAppend(parentGfx, a);
+  }
+
+
+
   var handlers = this.handlers = {
     // CPN
     'cpn:Place': function (parentGfx, element) {
@@ -776,15 +1107,65 @@ export default function BpmnRenderer(
       attachTaskMarkers(parentGfx, element);
       return shape;
     },
+
     'cpn:Transition': function (parentGfx, element) {
       var shape = drawTransition(parentGfx, textRenderer, element);
       renderEmbeddedLabel(parentGfx, element, 'center-middle');
       attachTaskMarkers(parentGfx, element);
       return shape;
     },
+
     'cpn:Connection': function (parentGfx, element) {
+      // var pathData = createPathFromConnection(element);
+      // var path = drawArc(parentGfx, element, pathData);
+      // return path;
+
+
       var pathData = createPathFromConnection(element);
-      var path = drawArc(parentGfx, element, pathData);
+
+      var fill = getFillColor(element, defaultFillColor),
+        stroke = getStrokeColor(element, defaultStrokeColor);
+
+      var attrs = {
+        strokeLinejoin: 'round',
+        markerEnd: marker('sequenceflow-end', fill, stroke),
+        stroke: getStrokeColor(element, defaultStrokeColor),
+        strokeWidth: getStrokeWidth(element, defaultStrokeWidth)
+      };
+
+      if (element.iserror) {
+        var attrsError = {
+          strokeLinejoin: 'round',
+          // markerEnd: marker('sequenceflow-end', fill, 1),
+          stroke: 'red',
+          strokeWidth: 7
+        };
+        var path = drawPath(parentGfx, pathData, attrsError);
+      }
+      var path = drawPath(parentGfx, pathData, attrs);
+
+
+      var sequenceFlow = getSemantic(element);
+      var source;
+      if (element.source) {
+        source = element.source.businessObject;
+
+        // conditional flow marker
+        if (sequenceFlow.conditionExpression && source.$instanceOf('bpmn:Activity')) {
+          svgAttr(path, {
+            markerStart: marker('conditional-flow-marker', fill, stroke)
+          });
+        }
+
+        // default marker
+        if (source.default && (source.$instanceOf('bpmn:Gateway') || source.$instanceOf('bpmn:Activity')) &&
+          source.default === sequenceFlow) {
+          svgAttr(path, {
+            markerStart: marker('conditional-default-flow-marker', fill, stroke)
+          });
+        }
+      }
+
       return path;
     },
 
@@ -1902,9 +2283,17 @@ export default function BpmnRenderer(
 
       return group;
     },
-    'label': function (parentGfx, element) {
-      return renderExternalLabel(parentGfx, element);
+
+    // 'label': function (parentGfx, element) {
+    //   console.log('render label, element = ', element);
+    //   return renderExternalLabel(parentGfx, element);
+    // },
+
+    'cpn:Label': function (parentGfx, element) {
+      console.log('render cpn:Label, element = ', element);
+      return renderCpnLabel(parentGfx, element);
     },
+
     'bpmn:TextAnnotation': function (parentGfx, element) {
       var style = {
         'fill': 'none',

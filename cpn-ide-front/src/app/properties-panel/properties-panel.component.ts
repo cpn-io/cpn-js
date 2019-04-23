@@ -520,7 +520,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
         console.log(this.constructor.name, 'Message.SHAPE_SELECT, data.pageJson = ', data.pageJson);
       }
 
-      const selectedElement = data.element.type === 'label' ? data.element.labelType : '';
+      const selectedElement = data.element.type === 'cpn:Label' ? data.element.labelType : '';
 
       if (selectedElement !== '' && selectedElement !== this.selectedElement) {
         this.selectedElement = selectedElement;
@@ -529,7 +529,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
           t.visible = this.selectedElement === t.id;
         }
       }
-      this.showShapeAttrs(data.element.type === 'label' ? data.element.parent : data.element);
+      this.showShapeAttrs(data.element.type === 'cpn:Label' ? data.element.parent : data.element);
     });
   }
 
@@ -648,16 +648,16 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     // }) : this.currentProjectModel.data.workspaceElements.cpnet.page;
 
     //  this.pageInModel = pageInModel;
-    nodes.push({name: 'Id', value: type === 'label' ? shapeObject.labelNodeId : shapeObject.id, hide: true});
-    nodes.push(type === 'label' ? {name: 'Text', value: shapeObject.text} : {name: 'Name', value: shapeObject.name});
-    nodes.push({name: 'Type', value: type === 'label' ? shapeObject.labelType : type, hide: true});
+    nodes.push({name: 'Id', value: type === 'cpn:Label' ? shapeObject.labelNodeId : shapeObject.id, hide: true});
+    nodes.push(type === 'cpn:Label' ? {name: 'Text', value: shapeObject.text} : {name: 'Name', value: shapeObject.name});
+    nodes.push({name: 'Type', value: type === 'cpn:Label' ? shapeObject.labelType : type, hide: true});
     nodes.push({name: 'X', value: shapeObject.x});
     nodes.push({name: 'Y', value: shapeObject.y});
     nodes.push({name: 'Width', value: shapeObject.width});
     nodes.push({name: 'Height', value: shapeObject.height});
     nodes.push({name: 'Stroke', value: shapeObject.stroke});
     nodes.push({name: 'strokeWidth', value: shapeObject.strokeWidth});
-    commonNodes.push(type === 'label' ? {name: 'Text', value: shapeObject.text} : {name: 'Name', value: shapeObject.name});
+    commonNodes.push(type === 'cpn:Label' ? {name: 'Text', value: shapeObject.text} : {name: 'Name', value: shapeObject.name});
     let labelElem;
 
     // labels

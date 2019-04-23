@@ -56,7 +56,7 @@ export default function DataStoreBehavior(
         shape = context.shape;
 
     if (is(shape, 'bpmn:DataStoreReference') &&
-        shape.type !== 'label') {
+        shape.type !== 'cpn:Label') {
 
       if (!context.hints) {
         context.hints = {};
@@ -98,7 +98,7 @@ export default function DataStoreBehavior(
 
 
     if (is(shape, 'bpmn:DataStoreReference') &&
-        shape.type !== 'label' &&
+        shape.type !== 'cpn:Label' &&
         is(parent, 'bpmn:Collaboration')) {
 
       updateDataStoreParent(shape);
@@ -120,7 +120,7 @@ export default function DataStoreBehavior(
     }
 
     if (is(shape, 'bpmn:DataStoreReference') &&
-        shape.type !== 'label' &&
+        shape.type !== 'cpn:Label' &&
         is(parent, 'bpmn:Collaboration')) {
 
       var participant = is(oldParent, 'bpmn:Participant') ?

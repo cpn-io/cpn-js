@@ -46,8 +46,12 @@ ElementFactory.prototype.create = function(elementType, attrs) {
 
   // console.log('ElementFactory.prototype.create()', elementType, attrs);
 
-  if (elementType === 'label') {
-    return this.baseCreate(elementType, assign({ type: 'label' }, DEFAULT_LABEL_SIZE, attrs));
+  // if (elementType === 'label') {
+  //   return this.baseCreate(elementType, assign({ type: 'label' }, DEFAULT_LABEL_SIZE, attrs));
+  // }
+
+  if (elementType === 'cpn:Label') {
+    return this.baseCreate(elementType, assign({ type: 'cpn:Label' }, DEFAULT_LABEL_SIZE, attrs));
   }
 
   return this.createBpmnElement(elementType, attrs);
@@ -138,7 +142,7 @@ ElementFactory.prototype.createBpmnElement = function(elementType, attrs) {
     businessObject.name = attrs.name;
   // ---------------------------------------------------------
 
-  var e = this.baseCreate(elementType, attrs); 
+  var e = this.baseCreate(elementType, attrs);
 
   // console.log('ElementFactory.prototype.createBpmnElement', e);
 

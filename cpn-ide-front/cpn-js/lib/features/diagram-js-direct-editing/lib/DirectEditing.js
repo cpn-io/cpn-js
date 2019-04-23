@@ -24,7 +24,7 @@ export default function DirectEditing(eventBus, canvas) {
   });
 }
 
-DirectEditing.$inject = [ 'eventBus', 'canvas' ];
+DirectEditing.$inject = ['eventBus', 'canvas'];
 
 
 /**
@@ -36,7 +36,7 @@ DirectEditing.$inject = [ 'eventBus', 'canvas' ];
  *                          Additionally the provider must expose a #update(element, value) method
  *                          to receive direct editing updates.
  */
-DirectEditing.prototype.registerProvider = function(provider) {
+DirectEditing.prototype.registerProvider = function (provider) {
   this._providers.push(provider);
 };
 
@@ -46,7 +46,7 @@ DirectEditing.prototype.registerProvider = function(provider) {
  *
  * @return {Boolean}
  */
-DirectEditing.prototype.isActive = function() {
+DirectEditing.prototype.isActive = function () {
   return !!this._active;
 };
 
@@ -54,7 +54,7 @@ DirectEditing.prototype.isActive = function() {
 /**
  * Cancel direct editing, if it is currently active
  */
-DirectEditing.prototype.cancel = function() {
+DirectEditing.prototype.cancel = function () {
   if (!this._active) {
     return;
   }
@@ -64,11 +64,11 @@ DirectEditing.prototype.cancel = function() {
 };
 
 
-DirectEditing.prototype._fire = function(event, context) {
+DirectEditing.prototype._fire = function (event, context) {
   this._eventBus.fire('directEditing.' + event, context || { active: this._active });
 };
 
-DirectEditing.prototype.close = function() {
+DirectEditing.prototype.close = function () {
   this._textbox.destroy();
 
   this._fire('deactivate');
@@ -79,7 +79,7 @@ DirectEditing.prototype.close = function() {
 };
 
 
-DirectEditing.prototype.complete = function() {
+DirectEditing.prototype.complete = function () {
 
   var active = this._active;
 
@@ -106,12 +106,12 @@ DirectEditing.prototype.complete = function() {
 };
 
 
-DirectEditing.prototype.getValue = function() {
+DirectEditing.prototype.getValue = function () {
   return this._textbox.getValue();
 };
 
 
-DirectEditing.prototype._handleKey = function(e) {
+DirectEditing.prototype._handleKey = function (e) {
 
   // stop bubble
   e.stopPropagation();
@@ -132,7 +132,9 @@ DirectEditing.prototype._handleKey = function(e) {
 };
 
 
-DirectEditing.prototype._handleResize = function(event) {
+DirectEditing.prototype._handleResize = function (event) {
+  // console.log('_handleResize(), event = ', event);
+
   this._fire('resize', event);
 };
 
@@ -143,7 +145,7 @@ DirectEditing.prototype._handleResize = function(event) {
  * @param {Object} ElementDescriptor the descriptor for a shape or connection
  * @return {Boolean} true if the activation was possible
  */
-DirectEditing.prototype.activate = function(element) {
+DirectEditing.prototype.activate = function (element) {
   if (this.isActive()) {
     this.cancel();
   }
@@ -151,7 +153,7 @@ DirectEditing.prototype.activate = function(element) {
   // the direct editing context
   var context;
 
-  var provider = find(this._providers, function(p) {
+  var provider = find(this._providers, function (p) {
     return (context = p.activate(element)) ? p : null;
   });
 
@@ -171,16 +173,57 @@ DirectEditing.prototype.activate = function(element) {
       provider: provider
     };
 
-    if (context.options && context.options.resizable ) {
+    if (context.options && context.options.resizable) {
       this.resizable = true;
     }
 
     let editBox = document.getElementById("editLabelId");
-    if(editBox) {
-      setTimeout(() => { // this will make the execution after the above boolean has changed
-          editBox.focus();
-      }, 100);
 
+    // console.log('DirectEditing.prototype.activate(), editBox = ', editBox);
+
+    let _this = this;
+
+    if (editBox) {
+      // select all text after focus
+      // editBox.onfocus = function () {
+      window.setTimeout(function () {
+        var sel, range;
+
+        // console.log('DirectEditing.prototype.activate(), window.getSelection = ', window.getSelection);
+        // console.log('DirectEditing.prototype.activate(), document.createRange = ', document.createRange);
+        // console.log('DirectEditing.prototype.activate(), document.body.createTextRange = ', document.body.createTextRange);
+
+        if (window.getSelection && document.createRange) {
+          range = document.createRange();
+          range.selectNodeContents(editBox);
+          sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+        } else if (document.body.createTextRange) {
+          range = document.body.createTextRange();
+          range.moveToElementText(editBox);
+          range.select();
+        }
+      }, 10);
+      // };
+
+      // set focus to element
+      setTimeout(() => { // this will make the execution after the above boolean has changed
+        editBox.focus();
+      }, 10);
+
+
+      // set TAB key event handler
+      editBox.onkeydown = function (e) {
+        console.log('DirectEditing.prototype.activate(), editBox.onkeydown, e = ', e);
+
+        if (e.key === "Tab") {
+          e.stopImmediatePropagation();
+          e.stopPropagation();
+
+          _this._eventBus.fire('element.edit.tab', { event: e, element: element });
+        }
+      };
     }
 
     this._fire('activate');

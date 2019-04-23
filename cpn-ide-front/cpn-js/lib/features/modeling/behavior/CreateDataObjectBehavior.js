@@ -17,7 +17,7 @@ export default function CreateDataObjectBehavior(eventBus, bpmnFactory, moddle) 
     var context = event.context,
         shape = context.shape;
 
-    if (is(shape, 'bpmn:DataObjectReference') && shape.type !== 'label') {
+    if (is(shape, 'bpmn:DataObjectReference') && shape.type !== 'cpn:Label') {
 
       // create a DataObject every time a DataObjectReference is created
       var dataObject = bpmnFactory.create('bpmn:DataObject');

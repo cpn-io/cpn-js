@@ -28,9 +28,14 @@ export default function LabelEditingProvider(
 
   directEditing.registerProvider(this);
 
+  // listen to edit event
+  eventBus.on('element.edit', function (event) {
+    activateDirectEdit(event.element, true);
+  });
+
   // listen to dblclick on non-root elements
   eventBus.on('element.dblclick', function (event) {
-    if(event.element.type === 'cpn:Connection' && event.element.labels[0]) {
+    if (event.element.type === 'cpn:Connection' && event.element.labels[0]) {
       event.element = event.element.labels[0];
     }
     activateDirectEdit(event.element, true);
@@ -103,7 +108,7 @@ export default function LabelEditingProvider(
 
   function activateDirectEdit(element, force) {
     if (force ||
-      isAny(element, ['bpmn:Task', 'bpmn:TextAnnotation', 'cpn:Place', 'cpn:Transition']) ||
+      isAny(element, ['bpmn:Task', 'bpmn:TextAnnotation', 'cpn:Place', 'cpn:Transition', 'cpn:Label']) ||
       isCollapsedSubProcess(element)) {
 
       directEditing.activate(element);
@@ -133,9 +138,11 @@ LabelEditingProvider.$inject = [
  */
 LabelEditingProvider.prototype.activate = function (element) {
 
+  console.log('LabelEditingProvider.activate(), element = ', element);
+
   // text
   var text = getLabel(element);
-  if(element.type === 'cpn:Transition') {
+  if (element.type === 'cpn:Transition') {
     text = element.name;
   }
   // if(element.type === 'cpn:Connection') {
@@ -160,12 +167,10 @@ LabelEditingProvider.prototype.activate = function (element) {
   // tasks
   if (
     isAny(element, [
-      'bpmn:Task',
-      'bpmn:Participant',
-      'bpmn:Lane',
-      'bpmn:CallActivity',
       'cpn:Place',
-      'cpn:Transition'
+      'cpn:Transition',
+      'cpn:Connection',
+      'cpn:Label',
     ]) ||
     isCollapsedSubProcess(element)
   ) {
@@ -208,8 +213,8 @@ LabelEditingProvider.prototype.activate = function (element) {
 LabelEditingProvider.prototype.getEditingBBox = function (element) {
   var canvas = this._canvas;
 
- // var target = element.label || element;
-  var target =  element;
+  // var target = element.label || element;
+  var target = element;
   var bbox = canvas.getAbsoluteBBox(target);
 
   var mid = {
@@ -392,18 +397,17 @@ LabelEditingProvider.prototype.update = function (
     };
   }
 
-  if(element.type === 'cpn:Place'){
+  if (element.type === 'cpn:Place') {
     element.name = newLabel;
   }
-  if(element.type === 'cpn:Transition'){
+  if (element.type === 'cpn:Transition') {
     element.name = newLabel;
   }
 
   // if (isEmptyText(newLabel)) {
   //   newLabel = null;
   // }
-  if((element.type === 'label') && typeof newLabel === 'string' )
-  {
+  if ((element.type === 'cpn:Label') && typeof newLabel === 'string') {
     element.text = newLabel;
   };
   this._modeling.updateLabel(element, newLabel, newBounds);

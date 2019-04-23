@@ -22,7 +22,12 @@ export class ModelService {
   subPages;
   pageId;
   countNewItems = 0;
-  labelsEntry = { trans: ['time', 'code', 'priority', 'edit', 'cond'], place: ['initmark', 'edit', 'type'], arc: ['annot'], label: ['edit'] };
+  labelsEntry = {
+    trans: ['time', 'code', 'priority', 'edit', 'cond'],
+    place: ['initmark', 'edit', 'type'],
+    arc: ['annot'],
+    label: ['edit']
+  };
   paramsTypes = ['ml', 'color', 'var', 'globref'];
 
   constructor(private eventService: EventService, private http: HttpClient, private projectService: ProjectService) {
@@ -34,6 +39,7 @@ export class ModelService {
       this.modelCase['cpn:Place'] = 'place';
       this.modelCase['cpn:Transition'] = 'trans';
       this.modelCase['cpn:Connection'] = 'arc';
+      this.modelCase['cpn:Label'] = 'label';
       this.modelCase['bpmn:Process'] = 'trans';
       this.modelCase['place'] = 'place';
       this.modelCase['trans'] = 'trans';
@@ -122,7 +128,7 @@ export class ModelService {
     try {
       const page = this.getPageById(pageId);
       let entry;
-      if (type === 'label') {
+      if (type === 'cpn:Label') {
         if (element.labelTarget && element.labelTarget.parent) {
           entry = this.modelCase[element.labelTarget.type];
           return page[entry].length ? page[entry].find(elem => elem._id === element.labelTarget.id)[element.labelType] : page[entry][element.labelType];
@@ -269,7 +275,7 @@ export class ModelService {
     this.saveBackup(this.projectData, pageId);
     const page = this.getPageById(pageId);
     const form = event.shape.type === 'cpn:Place' ? 'ellipse' : 'box';
-    const jsonMovingElement = this.getJsonElementOnPage(pageId, event.shape.type === 'label' ? event.shape : event.shape.id, event.shape.type);
+    const jsonMovingElement = this.getJsonElementOnPage(pageId, event.shape.type === 'cpn:Label' ? event.shape : event.shape.id, event.shape.type);
     jsonMovingElement[form]._w = event.shape.width;
     jsonMovingElement[form]._h = event.shape.height;
     jsonMovingElement.posattr._x = event.shape.x + jsonMovingElement[form]._w / 2;
@@ -297,7 +303,7 @@ export class ModelService {
   shapeMoveJsonSaver(event, pageId, arcShapes) {
     this.saveBackup(this.projectData, pageId);
     const page = this.getPageById(pageId);
-    const jsonMovingElement = this.getJsonElementOnPage(pageId, event.shape.type === 'label' ? event.shape : event.shape.id, event.shape.type);
+    const jsonMovingElement = this.getJsonElementOnPage(pageId, event.shape.type === 'cpn:Label' ? event.shape : event.shape.id, event.shape.type);
     this.moveElementInJson(jsonMovingElement, event.shape.type, { x: event.dx, y: -1 * event.dy }, event.shape);
     if (event.shape.type !== 'cpn:Connection') {
       if (page.arc instanceof Array) {
@@ -387,6 +393,11 @@ export class ModelService {
 
 
   moveElementInJson(jsonElem, elemntType, delta, modelElem) {
+
+    console.log('moveElementInJson(), jsonElem = ', jsonElem);
+    console.log('moveElementInJson(), elemntType = ', elemntType);
+    console.log('moveElementInJson(), delta = ', delta);
+    console.log('moveElementInJson(), modelElem = ', modelElem);
 
     for (const movingElement of this.labelsEntry[this.modelCase[elemntType]]) {
       if (movingElement !== 'edit') {

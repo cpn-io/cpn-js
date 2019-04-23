@@ -27,8 +27,7 @@ export function getLabel(element) {
   // CPN
   // -------------------------------------
   if (
-    (is(semantic, 'cpn:Place') ||
-      is(semantic, 'bpmn:Transition') || element.type === 'label')
+    (is(semantic, 'cpn:Place') || is(semantic, 'cpn:Transition') || element.type === 'cpn:Label')
     &&
     element.text
   ) {
@@ -46,7 +45,7 @@ export function setLabel(element, text, isExternal) {
   var semantic = element.businessObject,
     attr = getLabelAttr(semantic);
 
-  if (element.type !== 'label' && attr) {
+  if (element.type !== 'cpn:Label' && attr) {
     semantic[attr] = text;
   }
 

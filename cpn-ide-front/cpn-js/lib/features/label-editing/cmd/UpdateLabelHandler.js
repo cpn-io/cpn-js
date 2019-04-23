@@ -38,7 +38,7 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
 
     // external label if present
    // var label = element.label || element;
-    var label = element.type === 'label' ? element.label || element : element;
+    var label = element.type === 'cpn:Label' ? element.label || element : element;
 
     var labelTarget = element.labelTarget || element;
 
@@ -50,7 +50,7 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
   function setNameText(element, text) {
 
     // external label if present
-    var label = elemnt.type === 'label' ? element.label : element;
+    var label = elemnt.type === 'cpn:Label' ? element.label : element;
 
     var labelTarget = element.labelTarget || element;
 

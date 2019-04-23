@@ -100,13 +100,36 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
      })*/
 
     const eventBus = this.diagram.get('eventBus');
-    eventBus.on('element.click', (event) => {
+
+    // eventBus.on('element.click', (event) => {
+    //   console.log('click on, event = ', event);
+    //   this.fireSelectionEvent(event);
+    // });
+
+    // eventBus.on('mousedown', (event) => {
+    //   console.log('click on, event = ', event);
+    //   this.fireSelectionEvent(event);
+    // });
+
+    eventBus.on('element.mouseup', (event) => {
       // console.log('click on, event = ', event);
-      this.fireSelectionEvent(event);
+      this.diagram.get('eventBus').fire('element.edit', { element: event.element });
     });
+
+    eventBus.on('element.edit.tab', (event) => {
+      console.log('element.edit.tab, event = ', event);
+      this.gotoNextLabelEditing(event.element);
+    });
+
+    // eventBus.on('element.tab', (event) => {
+    //   console.log('element.tab, event = ', event);
+    //   // this.gotoNextLabelEditing(event.element);
+    // });
+
     eventBus.on('drag.init', (event) => {
-      // console.log('click on, event = ', event);
-      this.fireAllEvents(event);
+      console.log('click on, event = ', event);
+      // this.fireAllEvents(event);
+      this.fireSelectionEvent(event);
     });
     eventBus.on('autoPlace', (event) => {
       console.log('MODEL EDITOR EVENT, event = ', event);
@@ -162,8 +185,8 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
 
 
     // listen to dblclick on non-root elements
-    eventBus.on('element.dblclick',  (event) => {
-     this.connectionDblClick(event);
+    eventBus.on('element.dblclick', (event) => {
+      // this.connectionDblClick(event);
     });
 
     eventBus.on('modelEditor.deleteElement', (event, element, connection) => {
@@ -473,8 +496,8 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
 
   connectionDblClick(event) {
     if (event.element.type === 'cpn:Connection' && !event.element.labels[0]) {
-      this.addLabelEvent(event, event.element, {type: 'annot'});
-      this.diagram.get('eventBus').fire('element.dblclick', {element: event.element});
+      this.addLabelEvent(event, event.element, { type: 'annot' });
+      this.diagram.get('eventBus').fire('element.dblclick', { element: event.element });
     }
   }
 
@@ -1475,56 +1498,96 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
    * create label by preesing f2 key
    * @param event
    */
-  @HostListener('window:keydown', ['$event'])
-  f2KeyDownHandler(event) {// keyEvent(event: KeyboardEvent) {
+  // @HostListener('window:keydown', ['$event'])
+  // f2KeyDownHandler(event) {// keyEvent(event: KeyboardEvent) {
 
-    if (event.keyCode === 9 && this.projectService.currentPageId === this.pageId) {
-      event.stopImmediatePropagation();
-      // event.stopPropagation();
-      // event.preventDefault();
-      let jsonElement;
-      let labelStack;
-      let labelType;
-      if (!this.tabStack.element || this.projectService.getCurrentElement().id !== this.tabStack.element.id) {
-        this.tabStack.element = this.projectService.getCurrentElement();
-        this.tabStack.current = undefined;
+  //   if (event.keyCode === 9 && this.projectService.currentPageId === this.pageId) {
+  //     event.stopImmediatePropagation();
+  //     // event.stopPropagation();
+  //     // event.preventDefault();
+
+  //     let jsonElement;
+  //     let labelStack;
+  //     let labelType;
+  //     if (!this.tabStack.element || this.projectService.getCurrentElement().id !== this.tabStack.element.id) {
+  //       this.tabStack.element = this.projectService.getCurrentElement();
+  //       this.tabStack.current = undefined;
+  //     }
+  //     // if(this.curentElement.type === 'cpn:Transition') {
+  //     //   labelType =  'trans';
+  //     //
+  //     // } else if(this.curentElement.type === 'cpn:Place') {
+  //     //   labelType =  'place';
+  //     //
+  //     // } else if(this.curentElement.type === 'cpn:Connection') {
+  //     //   labelType =  'arc';
+  //     //
+  //     // }
+  //     labelType = this.modelService.getModelCase(this.tabStack.element.type);
+
+
+  //     labelStack = this.tabStack.stack[labelType];
+  //     jsonElement = this.modelService.getJsonElementOnPage(this.pageId, this.tabStack.element.id, this.tabStack.element.type); // this.jsonPageObject[labelType].length ? this.jsonPageObject[labelType].find(elem => { return this.curentElement.id === elem._id }) : this.jsonPageObject[labelType];
+  //     const lastAddedElement = this.tabStack.element.labels.find(element => Object.values(this.projectService.getAppSettings()).includes(element.text));
+  //     if (lastAddedElement) {
+  //       this.canvas._removeElement(lastAddedElement, 'cpn:Label');
+  //       this.modelService.changeLabelText(jsonElement[Object.keys(labelStack).find(key => labelStack[key] === this.tabStack.current)], null, this.pageId);
+  //       this.tabStack.element.labels.splice(this.tabStack.element.labels.indexOf(lastAddedElement), 1);
+
+  //     }
+
+  //     if (labelType !== 'arc' && this.tabStack.current === 'edit') {
+  //       this.tabStack.current = this.tabStack.current ? labelStack[this.tabStack.current] : labelStack[Object.keys(labelStack)[Object.keys(labelStack).length - 1]];
+
+  //       this.diagram.get('eventBus').fire('element.dblclick', { element: this.tabStack.element });
+  //     } else {
+  //       const elemtnForEdit = this.tabStack.current ? this.tabStack.current : labelStack[Object.keys(labelStack)[Object.keys(labelStack).length - 1]];
+  //       this.tabStack.current = labelStack[elemtnForEdit];
+  //       if (labelType !== 'arc') {
+  //         this.addLabelEvent(event, this.tabStack.element, { type: elemtnForEdit });
+  //       }
+  //       this.diagram.get('eventBus').fire('element.tab', { element: this.tabStack.element.labels.find(elem => elem.labelType === elemtnForEdit) });
+  //     }
+
+
+  //   }
+  // }
+
+  gotoNextLabelEditing(element) {
+    console.log('gotoNextLabelEditing(), element = ', element);
+
+    let jsonElement;
+    let labelStack;
+    let labelType;
+
+    if (!this.tabStack.element || this.projectService.getCurrentElement().id !== this.tabStack.element.id) {
+      this.tabStack.element = this.projectService.getCurrentElement();
+      this.tabStack.current = undefined;
+    }
+
+    labelType = this.modelService.getModelCase(this.tabStack.element.type);
+
+    labelStack = this.tabStack.stack[labelType];
+    jsonElement = this.modelService.getJsonElementOnPage(this.pageId, this.tabStack.element.id, this.tabStack.element.type); // this.jsonPageObject[labelType].length ? this.jsonPageObject[labelType].find(elem => { return this.curentElement.id === elem._id }) : this.jsonPageObject[labelType];
+    const lastAddedElement = this.tabStack.element.labels.find(element => Object.values(this.projectService.getAppSettings()).includes(element.text));
+    if (lastAddedElement) {
+      this.canvas._removeElement(lastAddedElement, 'cpn:Label');
+      this.modelService.changeLabelText(jsonElement[Object.keys(labelStack).find(key => labelStack[key] === this.tabStack.current)], null, this.pageId);
+      this.tabStack.element.labels.splice(this.tabStack.element.labels.indexOf(lastAddedElement), 1);
+
+    }
+
+    if (labelType !== 'arc' && this.tabStack.current === 'edit') {
+      this.tabStack.current = this.tabStack.current ? labelStack[this.tabStack.current] : labelStack[Object.keys(labelStack)[Object.keys(labelStack).length - 1]];
+
+      this.diagram.get('eventBus').fire('element.dblclick', { element: this.tabStack.element });
+    } else {
+      const elemtnForEdit = this.tabStack.current ? this.tabStack.current : labelStack[Object.keys(labelStack)[Object.keys(labelStack).length - 1]];
+      this.tabStack.current = labelStack[elemtnForEdit];
+      if (labelType !== 'arc') {
+        this.addLabelEvent(event, this.tabStack.element, { type: elemtnForEdit });
       }
-      // if(this.curentElement.type === 'cpn:Transition') {
-      //   labelType =  'trans';
-      //
-      // } else if(this.curentElement.type === 'cpn:Place') {
-      //   labelType =  'place';
-      //
-      // } else if(this.curentElement.type === 'cpn:Connection') {
-      //   labelType =  'arc';
-      //
-      // }
-      labelType = this.modelService.getModelCase(this.tabStack.element.type);
-
-
-      labelStack = this.tabStack.stack[labelType];
-      jsonElement = this.modelService.getJsonElementOnPage(this.pageId, this.tabStack.element.id, this.tabStack.element.type); // this.jsonPageObject[labelType].length ? this.jsonPageObject[labelType].find(elem => { return this.curentElement.id === elem._id }) : this.jsonPageObject[labelType];
-      const lastAddedElement = this.tabStack.element.labels.find(element => Object.values(this.projectService.getAppSettings()).includes(element.text));
-      if (lastAddedElement) {
-        this.canvas._removeElement(lastAddedElement, 'label');
-        this.modelService.changeLabelText(jsonElement[Object.keys(labelStack).find(key => labelStack[key] === this.tabStack.current)], null, this.pageId);
-        this.tabStack.element.labels.splice(this.tabStack.element.labels.indexOf(lastAddedElement), 1);
-
-      }
-
-      if (labelType !== 'arc' && this.tabStack.current === 'edit') {
-        this.tabStack.current = this.tabStack.current ? labelStack[this.tabStack.current] : labelStack[Object.keys(labelStack)[Object.keys(labelStack).length - 1]];
-        this.diagram.get('eventBus').fire('element.dblclick', { element: this.tabStack.element });
-      } else {
-        const elemtnForEdit = this.tabStack.current ? this.tabStack.current : labelStack[Object.keys(labelStack)[Object.keys(labelStack).length - 1]];
-        this.tabStack.current = labelStack[elemtnForEdit];
-        if (labelType !== 'arc') {
-          this.addLabelEvent(event, this.tabStack.element, { type: elemtnForEdit });
-        }
-        this.diagram.get('eventBus').fire('element.tab', { element: this.tabStack.element.labels.find(elem => elem.labelType === elemtnForEdit) });
-      }
-
-
+      this.diagram.get('eventBus').fire('element.tab', { element: this.tabStack.element.labels.find(elem => elem.labelType === elemtnForEdit) });
     }
   }
 
@@ -1547,22 +1610,23 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
       }
       this.modelService.clearDefaultLabelValues(this.pageId);
     }
-    this.projectService.setCurrentElement(event.element);
 
+    var element = event.element || event.shape || event.connection;
+    this.projectService.setCurrentElement(element);
 
-    // this.curentElement = event.element;
+    // this.curentElement = element;
     //  console.log('fireSelectionEvent(), event = ', event);
-    if (event.element) {
+    if (element) {
 
       // EmitterService.getAppMessageEmitter().emit(
       //   {
       //     id: Constants.ACTION_SHAPE_SELECT,
-      //     element: event.element
+      //     element: element
       //   });
 
-      this.eventService.send(Message.SHAPE_SELECT, { element: event.element });
-      // this.curentElement = event.element;
-      // this.tabStack.element = event.element;
+      this.eventService.send(Message.SHAPE_SELECT, { element: element });
+      // this.curentElement = element;
+      // this.tabStack.element = element;
     }
   }
 
@@ -1936,7 +2000,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
       id: semantic.id + '_label_' + this.makeid(6),
       labelNodeId: labelNodeId,
       labelTarget: element,
-      type: 'label',
+      type: 'cpn:Label',
       hidden: element.hidden || !semantic.name,
       text: text,
       x: pos.x - Math.round(bounds.width) / 2,

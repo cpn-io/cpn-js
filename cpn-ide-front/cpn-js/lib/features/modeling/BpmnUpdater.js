@@ -144,7 +144,7 @@ export default function BpmnUpdater(
   this.executed(['shape.move', 'shape.create', 'shape.resize'], ifBpmn(function (event) {
 
     // exclude labels because they're handled separately during shape.changed
-    if (event.context.shape.type === 'label') {
+    if (event.context.shape.type === 'cpn:Label') {
       return;
     }
 
@@ -154,7 +154,7 @@ export default function BpmnUpdater(
   this.reverted(['shape.move', 'shape.create', 'shape.resize'], ifBpmn(function (event) {
 
     // exclude labels because they're handled separately during shape.changed
-    if (event.context.shape.type === 'label') {
+    if (event.context.shape.type === 'cpn:Label') {
       return;
     }
 
@@ -164,7 +164,7 @@ export default function BpmnUpdater(
   // Handle labels separately. This is necessary, because the label bounds have to be updated
   // every time its shape changes, not only on move, create and resize.
   eventBus.on('shape.changed', function (event) {
-    if (event.element.type === 'label') {
+    if (event.element.type === 'cpn:Label') {
       updateBounds({ context: { shape: event.element } });
     }
   });

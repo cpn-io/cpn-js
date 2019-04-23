@@ -108,7 +108,7 @@ ContextPadProvider.prototype.getContextPadEntries = function (element) {
 
   var actions = {};
 
-  if (element.type === 'label') {
+  if (element.type === 'cpn:Label') {
     return actions;
   }
 
@@ -183,7 +183,7 @@ ContextPadProvider.prototype.getContextPadEntries = function (element) {
 
     var append = autoPlace ? function (event, element) {
 
-      if (type.split('.')[0] === 'label') {
+      if (type.split('.')[0] === 'cpn:Label') {
        // var shape = elementFactory.createShape(assign({type: type}, options));
         fireCreatelabelEvent(event, element, {type: type.split('.')[1]});
         contextPad.close();

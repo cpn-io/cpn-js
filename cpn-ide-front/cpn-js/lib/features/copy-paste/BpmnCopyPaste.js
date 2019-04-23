@@ -50,7 +50,7 @@ export default function BpmnCopyPaste(
 
     descriptor.colors = colors;
 
-    if (element.type === 'label') {
+    if (element.type === 'cpn:Label') {
       return descriptor;
     }
 
@@ -87,7 +87,7 @@ export default function BpmnCopyPaste(
 
     descriptor.businessObject = helper.clone(oldBusinessObject, newBusinessObject, properties);
 
-    if (descriptor.type === 'label') {
+    if (descriptor.type === 'cpn:Label') {
       return;
     }
 

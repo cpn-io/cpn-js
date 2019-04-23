@@ -839,7 +839,12 @@ export class ModelService {
 
   deleteElementInBlock(blcok, elementType, id) {
     this.saveBackup(this.projectData, undefined);
-    blcok[elementType] = blcok[elementType].filter(elem => elem._id !== id);
+    //blcok[elementType] = blcok[elementType].filter(elem => elem._id !== id);
+    for( var i = 0; i < blcok[elementType].length; i++) {
+      if ( blcok[elementType][i]._id === id) {
+        blcok[elementType].splice(i, 1);
+      }
+    }
   }
 
 
@@ -849,7 +854,7 @@ export class ModelService {
     if (!block[elementGroup]) {
       newNode = this.newElemetn(elementGroup);
       block[elementGroup] = [newNode];
-      ////// create new elemenetType whith
+      ////// create new elemenetType with
     } else {
       newNode = this.newElemetn(elementGroup);
       block[elementGroup].push(newNode);

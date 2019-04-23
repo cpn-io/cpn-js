@@ -17,6 +17,7 @@ import {ModelService} from '../services/model.service';
  */
 export class ProjectExplorerComponent implements OnInit, OnDestroy {
   @Input() message = 'Not set';
+  idNodeCounter = 0;
   private eventHub: any;
   newPageCount = 0;
   stateTree;
@@ -76,8 +77,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   //
   options = {
     allowDrag: true,
-    allowDrop: true,
-
+    allowDrop: (element, { parent, index }) => {
+      return parent.data.name === 'Pages';
+      },
     actionMapping: {
       mouse: {
         contextMenu: (model: any, node: any, event: any) => {
@@ -116,7 +118,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
 
     this.eventService.on(Message.UPDATE_TREE, (data) => {
-      const newNodeId = data.newNodeId;
+      const newNodeId = data.newNodeId;//? data.newNodeId  : data.comonBlock.id;
       if (data.state) {
         this.stateTree = data.state;
         // this.treeComponent.treeModel.setState(data.state);
@@ -139,7 +141,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           }
 
           this.treeComponent.treeModel.setFocusedNode(nodeForEdit);
-          this.onEditNode(nodeForEdit);
+          if(data.after !== 'delete' && data.after !== 'edit')this.onEditNode(nodeForEdit);
         }
       }, 100);
 
@@ -212,7 +214,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           if (node.data.type === 'page') {
             return 'page';
           } else {
-            return node.id;
+            return node.data.name;
           }
 
       }
@@ -285,7 +287,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       }
     } else {
       if (!addingElement) {
-        addingElement = node.data.id;
+        addingElement = node.data.name;
       }
       //this.sendChangingElementToDeclarationPanel(node, addingElement, 'add', undefined);
       this.modelService.sendChangingElementToDeclarationPanel(node, addingElement, 'add', undefined, this.getCurrentBlock(node).id, this.treeComponent.treeModel.getState());
@@ -363,8 +365,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   getCurrentBlock(currentNode): any {
-    while (currentNode.parent && currentNode.parent.data && currentNode.parent.data.id !== 'Declarations') {
-      if (!this.modelService.paramsTypes.includes(currentNode.id) && !this.modelService.paramsTypes.includes(currentNode.parent.id)) {
+    while (currentNode.parent && currentNode.parent.data && currentNode.parent.data.name !== 'Declarations') {
+      if (!this.modelService.paramsTypes.includes(currentNode.data.name) && !this.modelService.paramsTypes.includes(currentNode.parent.data.name)) {
         break;
       }
       currentNode = currentNode.parent;
@@ -413,7 +415,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           this.editableNode = null;
         } else {
           //this.sendChangingElementToDeclarationPanel(this.editableNode, this.editableNode.parent.data.id, 'rename', this.editableNode.data.id);
-          this.modelService.sendChangingElementToDeclarationPanel(this.editableNode, this.editableNode.parent.data.id, 'rename', this.editableNode.data.id,  this.getCurrentBlock(this.editableNode).id, this.treeComponent.treeModel.getState());
+          this.modelService.sendChangingElementToDeclarationPanel(this.editableNode, this.editableNode.parent.data.name, 'rename', this.editableNode.data.id,  this.getCurrentBlock(this.editableNode).id, this.treeComponent.treeModel.getState());
         }
         //   this.eventService.send(Message.XML_UPDATE, {project: {data: this.currentProjectModel, name: this.modelName}});
       } else if (htmlElement && htmlElement.nodeName === 'TD') {
@@ -490,7 +492,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       this.focusedNode(parentNod);
       // deletingElem = !this.paramsTypes.includes(node.parent.id) ? node.data.id : node.parent.id;
       //this.sendChangingElementToDeclarationPanel(node, node.parent.id, 'delete', node.data.id);
-      this.modelService.sendChangingElementToDeclarationPanel(node, node.parent.id, 'delete', node.data.id,  this.getCurrentBlock(node).id, this.treeComponent.treeModel.getState());
+      this.modelService.sendChangingElementToDeclarationPanel(node, node.parent.name, 'delete', node.data.id,  this.getCurrentBlock(node).id, this.treeComponent.treeModel.getState());
     }
 
   }
@@ -651,7 +653,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     projectNode.children.push(paramNode);
     if (block.ml) {
       const mlNode = {
-        id: 'ml',
+        id: 'ml' + this.idNodeCounter++,
         name: 'ml',
         children: []
       };
@@ -676,7 +678,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
     if (block.var) {
       const varNode = {
-        id: 'var',
+        id: 'var' + this.idNodeCounter++,
         name: 'var',
         children: []
       };
@@ -716,7 +718,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
     if (block.globref) {
       const globrefNode = {
-        id: 'globref',
+        id: 'globref' + this.idNodeCounter++,
         name: 'globref',
         children: []
       };
@@ -739,7 +741,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
     if (block.color) {
       const colorNode = {
-        id: 'color',
+        id: 'color' + this.idNodeCounter++,
         name: 'color',
         children: []
       };
@@ -1143,21 +1145,21 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   canCreate(node): boolean {
     return node && ((node.id === 'Pages' || node.data.type === 'page' || node.id === 'Declarations')
-      || (!this.modelService.paramsTypes.includes(node.parent.data.id) && (this.modelService.paramsTypes.includes(node.id))));
+      || (!this.modelService.paramsTypes.includes(node.parent.data.name) && (this.modelService.paramsTypes.includes(node.data.name))));
   }
 
   canEdit(node): boolean {
-    return node && !this.reservedWords.includes(node.data.id) && !this.modelService.paramsTypes.includes(node.data.id);
+    return node && !this.reservedWords.includes(node.data.name) && !this.modelService.paramsTypes.includes(node.data.name);
   }
 
   canDelete(node): boolean {
-    return node && !this.reservedWords.includes(node.data.id) && !this.modelService.paramsTypes.includes(node.data.id);
+    return node && !this.reservedWords.includes(node.data.name) && !this.modelService.paramsTypes.includes(node.data.name);
   }
 
   canCreateDeclaration(node): boolean {
     return (this.isDeclarationBlock(node)
-      && !this.modelService.paramsTypes.includes(node.data.id)
-      && !this.modelService.paramsTypes.includes(node.parent.data.id));
+      && !this.modelService.paramsTypes.includes(node.data.name)
+      && !this.modelService.paramsTypes.includes(node.parent.data.name));
   }
 
   autoWidth(event) {

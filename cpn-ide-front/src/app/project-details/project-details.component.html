@@ -93,7 +93,7 @@
                 </div>
 
                 <!--div *ngIf="paramsTypes.includes(tab.id) && tab.id ==='color'  && showTable !== 'Color'" -->
-                <div *ngIf="paramsTypes.includes(tab.id)  && showTable.toLowerCase() !== tab.id" div>
+                <div *ngIf="paramsTypes.includes(tab.id)  && showTable.toLowerCase() !== tab.id">
                   <div *ngFor="let block of tab['block']">
 
                     <div (click)="hideColapseTable('declarationPanel-'+ tab.id +'-' + block.id + '-commonTable', block)"

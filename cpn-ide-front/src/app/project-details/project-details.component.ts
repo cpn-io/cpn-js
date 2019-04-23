@@ -74,7 +74,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       break;
       case 'rename':
           this.changeinExplorerName(data);
-          this.eventService.send(Message.UPDATE_TREE, {project: this.currentPojectModel, state: data.state});
+          this.eventService.send(Message.UPDATE_TREE, {project: this.currentPojectModel, state: data.state, newNodeId: data.node.id, comonBlock: data.target, after: 'edit'});
           break;
       case 'delete':
         if(data.element === 'tab') {
@@ -228,9 +228,11 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       afterDelDec = this.declarations.find(e => e.id === this.selectedElemement.tabid);
       //afterDelDec[this.selectedElemement.type] = afterDelDec[this.selectedElemement.type].filter(elem => elem._id !== this.selectedElemement.id);
       this.modelService.deleteElementInBlock(afterDelDec, this.selectedElemement.type, this.selectedElemement.id);
+      let elemFromEntry  = afterDelDec[this.selectedElemement.type][0] || afterDelDec;
       this.selectedElemement = undefined;
+      this.eventService.send(Message.UPDATE_TREE, {project: this.currentPojectModel, state: state,  comonBlock: elemFromEntry, after: 'delete' });
     }
-    this.eventService.send(Message.UPDATE_TREE, {project: this.currentPojectModel, state: state});
+
   }
 
   deleteTab(tabsComp, state) {

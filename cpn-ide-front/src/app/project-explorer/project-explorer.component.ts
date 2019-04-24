@@ -3,7 +3,7 @@ import {Component, HostListener, Input, OnDestroy, OnInit, ViewChild} from '@ang
 import {EventService} from '../services/event.service';
 import {Message} from '../common/message';
 import {ProjectService} from '../services/project.service';
-import {TreeComponent} from 'angular-tree-component';
+import {TreeComponent, TREE_ACTIONS} from 'angular-tree-component';
 import {ModelService} from '../services/model.service';
 // import {TreeComponent} from 'angular-tree-component';
 
@@ -90,16 +90,24 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       mouse: {
         contextMenu: (model: any, node: any, event: any) => {
           this.onTreeNodeContextMenu(event, node);
+        },
+        drop: (tree, node, $event, {from, to}) => {
+          console.log('drag', from, to);
+          console.log('onMoveNode', node.name, 'to', to.parent.name, 'at index', to.index);
+          let parentJson = from.parent.data.object;//(this.treeComponent.treeModel.getNodeById(node.id)).parent.data.object;
+          this.modelService.moveNonModelJsonElement(from.data.object, parentJson, to.parent.data.object, to.index, this.paramsTypes.includes(from.parent.data.name) ? undefined : from.data.name);
+          TREE_ACTIONS.MOVE_NODE( tree, node, $event, { from, to } );
         }
       }
     }
   };
 
-  onMoveNode(event) {
+  /*onMoveNode(event) {
     console.log('onMoveNode', event.node.name, 'to', event.to.parent.name, 'at index', event.to.index);
-    this.modelService.moveNonModelJsonElement(event.node.object, event.node.parent.data.object, event.to.parent.data.object,  event.to.index);
+    let parentJson = (this.treeComponent.treeModel.getNodeById(event.node.id));//.parent.data.object;
+    this.modelService.moveNonModelJsonElement(event.node.object, parentJson, event.to.parent.object, event.to.index);
 
-  }
+  }*/
 
   /**
    * Constructor

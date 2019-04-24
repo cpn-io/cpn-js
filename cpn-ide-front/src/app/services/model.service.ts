@@ -440,8 +440,67 @@ export class ModelService {
     }
   }
 
-moveNonModelJsonElement(element, parent, target, index) {
+moveNonModelJsonElement(element, parent, target, index, type) {
+
+    const addelemToEntry = (entry) => {
+      if(target[entry]) {
+        if (target[entry] instanceof Array) {
+          target[entry].splice(index, 0, element);
+        } else {
+          target[entry] = [target[entry]];
+          target[entry].splice(index, 0, element);
+        }
+      } else if (element instanceof Array) target[type] = element; else target[type] = [element];
+    }
+
+    if(!type) {
+      addelemToEntry(type);
+      if(parent instanceof Array) {
+        for(let i = 0; i < parent.length; i++) {
+          if(parent[i]._id === element._id) parent.splice(i, 1);
+        }
+      } else {
+        parent = [];
+      }
+    } else if(this.paramsTypes.includes(type)) {
+      addelemToEntry(type);
+      delete parent[type];
+    } else {
+      addelemToEntry('block');
+      if(parent.block instanceof Array) {
+        for(let i = 0; i < parent.block.length; i++) {
+          if(parent.block[i]._id === element._id) parent.block.splice(i, 1);
+        }
+      } else {
+        parent.block = [];
+      }
+    }
+/*    const deleteElemFromEntryById = this.paramsTypes.includes(type) ? ( entry, type) => {
+      delete entry[type];
+      } :  (id, entry) => {
+      if(entry instanceof Array) {
+        for(let i = 0; i < entry.length; i++) {
+          if(entry[i]._id === element._id) entry.splice(i, 1);
+        }
+      } else {
+        entry = [];
+      }
+    };
+    const addElementToEntry = (addingElem, entry , indexPlace) => {
+      if(entry instanceof Array) {
+        entry.splice(indexPlace, 0, addingElem);
+      } else {
+        if(entry) {
+          entry = [entry];
+          entry.splice(indexPlace, 0, addingElem);
+        } else {
+          entry = [addingElem];
+        }
+      }
+    }
     console.log('moveNonModelJsonElement - element: ', element, ', parent: ', parent, ', taregt: ', target, ', index: ', index);
+    addElementToEntry(element, target, index);
+    deleteElemFromEntryById(element._id, parent);*/
 }
 
 

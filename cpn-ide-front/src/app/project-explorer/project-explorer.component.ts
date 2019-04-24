@@ -30,7 +30,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   // topics = ['project', 'Declarations', 'Monitors', 'Options', 'Default', 'Pages', 'Standard priorities', 'Standard declarations'];
 
-  reservedWords = ['project', 'Declarations', 'Monitors', 'Options', 'Default', 'Pages'];
+  reservedWords = ['project', 'Declarations', 'Monitors', 'Options', 'Default', 'Pages', 'globbox'];
   paramsTypes = ['ml', 'color', 'var', 'globref'];
   appSettingsKeys;
   appSettings;
@@ -78,7 +78,13 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   options = {
     allowDrag: true,
     allowDrop: (element, { parent, index }) => {
-      return parent.data.name === 'Pages';
+     let elemHeaderCatalog  = this.getHeaderCatalog(element);
+     let parentHeaderCatalog =  this.getHeaderCatalog(parent);
+     //console.log( 'elemHeaderCatalog: ' + elemHeaderCatalog.id + '  parentHeaderCatalog: ' + parentHeaderCatalog.id + ' parent: ' + element.parent.id);
+     if(this.paramsTypes.includes(element.parent.data.name)) {
+       if(element.parent.data.name !== parent.data.name)  return false;
+     }
+      return  elemHeaderCatalog && parentHeaderCatalog ? elemHeaderCatalog.data.name === parentHeaderCatalog.data.name && (this.paramsTypes.includes(element.parent.data.name) || (!this.paramsTypes.includes(parent.data.name) &&  !this.paramsTypes.includes(parent.parent.data.name))) : false;
       },
     actionMapping: {
       mouse: {
@@ -89,6 +95,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
   };
 
+  onMoveNode(event) {
+    console.log('onMoveNode', event.node.name, 'to', event.to.parent.name, 'at index', event.to.index);
+    this.modelService.moveNonModelJsonElement(event.node.object, event.node.parent.data.object, event.to.parent.data.object,  event.to.index);
+
+  }
 
   /**
    * Constructor
@@ -219,6 +230,16 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
       }
     }
+  }
+
+  getHeaderCatalog(node) {
+    if(node) {
+      while (node.parent && !this.reservedWords.includes(node.id)) {
+        node = node.parent;
+      }
+    }
+    return node;
+
   }
 
   /**
@@ -398,13 +419,13 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    */
   @HostListener('document:keydown', ['$event'])
   keyEvent(event: KeyboardEvent) {
-    console.log('Key event TAB EVEnt' + event);
+    console.log('project-explorer Keyboard event ',  event);
     //  this.diagram.get('eventBus').fire('element.hover', this.curentElement );
     if (event.keyCode === 13) {
       const htmlElement: HTMLInputElement = <HTMLInputElement>event.target;
       if (htmlElement && htmlElement.name === 'textinpfield') {
         this.editableNode.data.name = htmlElement.value;
-        if (this.editableNode.data.object) {
+        if (this.editableNode.data.object && this.editableNode.data.object.type === 'page') {
           this.editableNode.data.object.pageattr._name = this.editableNode.data.name;
           this.eventService.send(Message.CHANGE_NAME_PAGE, {
             id: this.editableNode.id,
@@ -647,6 +668,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     paramNode = {
       id: block.id ? block.id : 'globbox',
       name: block.id ? block.id : 'globbox',
+      object: block,
       children: []
     };
 
@@ -655,6 +677,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       const mlNode = {
         id: 'ml' + this.idNodeCounter++,
         name: 'ml',
+        object: block.ml,
         children: []
       };
       paramNode.children.push(mlNode);
@@ -665,14 +688,16 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           mlNode.children.push({
             id: ml._id,
             // id: globref['@attributes'].id,
-            name: ml
+            name: ml,
+            object: ml
           });
         }
       } else {
         mlNode.children.push({
           id: block.ml._id,
           // id: globref['@attributes'].id,
-          name: block.ml
+          name: block.ml,
+          object: block.ml
         });
       }
     }
@@ -680,6 +705,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       const varNode = {
         id: 'var' + this.idNodeCounter++,
         name: 'var',
+        object: block.var,
         children: []
       };
       paramNode.children.push(varNode);
@@ -689,6 +715,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
             // id: v['@attributes'].id,
             id: v._id,
             name: v.id,
+            object: v
           };
           if (v.layout) {
             // node.name += ' : ' + v.layout;
@@ -703,6 +730,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           // id: v['@attributes'].id,
           id: block.var._id,
           name: block.var.id,
+          object: block.var
         };
 
         if (block.var.layout) {
@@ -720,6 +748,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       const globrefNode = {
         id: 'globref' + this.idNodeCounter++,
         name: 'globref',
+        object: block.var,
         children: []
       };
       paramNode.children.push(globrefNode);
@@ -729,6 +758,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
             // id: globref['@attributes'].id,
             id: globref._id,
             name: globref.layout ? globref.layout.replace('globref ', '') : globref.id + ' = ' + globref.ml + ';',
+            object: globref
           });
         }
       } else {
@@ -736,6 +766,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           // id: globref['@attributes'].id,
           id: block.globref._id,
           name: block.globref.layout ? block.globref.layout.replace('globref ', '') : block.globref.id + ' = ' + block.globref.ml + ';',
+          object: block.globref
         });
       }
     }
@@ -743,6 +774,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       const colorNode = {
         id: 'color' + this.idNodeCounter++,
         name: 'color',
+        object: block.color,
         children: []
       };
       paramNode.children.push(colorNode);
@@ -752,6 +784,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
             // id: color['@attributes'].id,
             id: color._id,
             name: color.id,
+            object: color
           };
           if (color.layout) {
             node.name = color.layout.replace('colset ', '').replace('color ', '');
@@ -783,6 +816,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           // id: color['@attributes'].id,
           id: block.color._id,
           name: block.color.id,
+          object: block.color,
         };
         if (block.color.layout) {
           node.name = block.color.layout.replace('colset ', '').replace('color ', '');

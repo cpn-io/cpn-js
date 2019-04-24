@@ -440,6 +440,11 @@ export class ModelService {
     }
   }
 
+moveNonModelJsonElement(element, parent, target, index) {
+    console.log('moveNonModelJsonElement - element: ', element, ', parent: ', parent, ', taregt: ', target, ', index: ', index);
+}
+
+
 
   applyPageChanges(pageId, placeShapes, textRenderer, transShapes, arcShapes) {
     this.saveBackup(this.projectData, pageId);
@@ -755,6 +760,7 @@ export class ModelService {
       this.projectData.workspaceElements.cpnet.page = [];
     }
   }
+
 
 
 

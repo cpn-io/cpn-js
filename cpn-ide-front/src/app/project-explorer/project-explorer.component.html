@@ -81,7 +81,7 @@
       <div class="scroll-y">
         <div class="pane" style="padding:10px">
 
-          <tree-root #tree [nodes]="nodes" [options]="options" (activate)="activateNode($event)">
+          <tree-root #tree [nodes]="nodes" [options]="options" (activate)="activateNode($event)"  (moveNode)="onMoveNode($event)">
             <ng-template #treeNodeTemplate let-node let-index="index">
 
               <div [ngClass]="node.data.classes" class="node">

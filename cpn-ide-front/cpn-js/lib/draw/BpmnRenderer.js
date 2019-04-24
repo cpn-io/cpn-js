@@ -737,42 +737,12 @@ export default function BpmnRenderer(
   }
 
   function renderCpnLabel(parentGfx, element) {
-    var semantic = getSemantic(element);
     var box = {
       width: 200, // 90,
       height: 30,
       x: element.width / 2 + element.x,
       y: element.height / 2 + element.y
     };
-
-    // return renderLabel(parentGfx, element.text || semantic.name, {
-    //   box: box,
-    //   fitBox: true,
-    //   style: assign(
-    //     {},
-    //     textRenderer.getExternalStyle(),
-    //     {
-    //       fill: getStrokeColor(element, defaultStrokeColor)
-    //     }
-    //   )
-    // });
-
-
-    // // Draw rect
-    // var rect = svgCreate('rect');
-    // svgAttr(rect, {
-    //   x: 0,
-    //   y: 0,
-    //   width: box.width,
-    //   height: box.height
-    // });
-    // svgAttr(rect, {
-    //   fill: 'white',
-    //   stroke: 'black',
-    //   strokeWidth: 1
-    // });
-    // svgAppend(parentGfx, rect);
-
 
     var options = {
       box: box,

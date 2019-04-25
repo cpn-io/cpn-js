@@ -1,0 +1,25 @@
+<div class="nav-link mb-0" (click)="open(fileNameModal)" >
+  <i class="far fa-save"></i>
+  <span>Save project</span>
+</div>
+
+<ng-template #fileNameModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">File name to save</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class='form-group'>
+      <label for='fileName'>File name: <b>{{fileName}}</b></label>
+      <input type="text" class="form-control" [(ngModel)]="fileNameInput" autofocus id="fileName">
+    </div>
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-success" (click)="modal.close()"
+            [disabled]="fileName.length < 1">Save</button>
+  </div>
+</ng-template>

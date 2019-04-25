@@ -36,6 +36,7 @@ import {ProjectService} from './services/project.service';
 import {ModelService} from './services/model.service';
 import {EventService} from './services/event.service';
 import {ReplaceSpacesPipe} from './pipes/replace-spaces.pipe';
+import { SaveprojectButtonComponent } from './actions/saveproject-button/saveproject-button.component';
 
 // -----------------------------------------------------------------------------
 
@@ -59,6 +60,7 @@ import {ReplaceSpacesPipe} from './pipes/replace-spaces.pipe';
     ProjectDetailsComponent,
     PropertiesPanelComponent,
     MlEditorComponent,
+    SaveprojectButtonComponent,
   ],
   imports: [
     BrowserModule,

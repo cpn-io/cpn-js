@@ -137,7 +137,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.appSettings =  this.projectService.getAppSettings();
+    this.appSettings = this.projectService.getAppSettings();
     this.appSettingsKeys = Object.keys(this.appSettings);
     // Subscribe on project load event
     this.eventService.on(Message.PROJECT_FILE_OPEN, (data) => {
@@ -168,7 +168,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
         if (newNodeId) {
           const nodeForEdit = this.treeComponent.treeModel.getNodeById(newNodeId);
-          if (!data.comonBlock) this.eventService.send(Message.OPEN_DECLARATION_BLOCK, {id: this.getCurrentBlock(nodeForEdit).id});
+          if (!data.comonBlock) {
+            this.eventService.send(Message.OPEN_DECLARATION_BLOCK, {id: this.getCurrentBlock(nodeForEdit).id});
+          }
           let expnNode = nodeForEdit;
           while (expnNode.id !== 'project') {
             expnNode.expand();
@@ -176,7 +178,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           }
 
           this.treeComponent.treeModel.setFocusedNode(nodeForEdit);
-          if(data.after !== 'delete' && data.after !== 'edit')this.onEditNode(nodeForEdit);
+          if (data.after !== 'delete' && data.after !== 'edit') {
+            this.onEditNode(nodeForEdit);
+          }
         }
       }, 100);
 
@@ -204,8 +208,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     // console.log('ProjectExplorerComponent.ngOnInit()');
     // this.updateTree();
   }
-
-
 
   ngOnDestroy() {
     // console.log("ProjectExplorerComponent.OnDestroy()");
@@ -328,7 +330,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         this.eventService.send(Message.SUBPAGE_CREATE, {
           name: pageNode.name,
           id: pageNode.id,
-          parentid:  node.data.id,
           event: event,
           state: this.treeComponent.treeModel.getState()
         });
@@ -563,17 +564,13 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * @param id
    */
   deleteNode(node, id) {
-    try {
-      for (const nd of node.children) {
-        if (nd.id === id) {
-          node.children = node.children.filter(x => x !== nd)
-        }
-        if (nd && nd.children && nd.children instanceof Array && nd.children.length > 0) {
-          this.deleteNode(nd, id);
-        }
+    for (const nd of node.children) {
+      if (nd.id === id) {
+        node.children = node.children.filter(x => x !== nd);
       }
-    } catch (e) {
-      return;
+      if (nd.children && nd.children.length > 0) {
+        this.deleteNode(nd, id);
+      }
     }
   }
 

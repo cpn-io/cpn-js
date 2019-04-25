@@ -5,6 +5,7 @@ import {Message} from '../common/message';
 import {ProjectService} from '../services/project.service';
 import {TreeComponent, TREE_ACTIONS} from 'angular-tree-component';
 import {ModelService} from '../services/model.service';
+
 // import {TreeComponent} from 'angular-tree-component';
 
 @Component({
@@ -77,15 +78,17 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   //
   options = {
     allowDrag: true,
-    allowDrop: (element, { parent, index }) => {
-     let elemHeaderCatalog  = this.getHeaderCatalog(element);
-     let parentHeaderCatalog =  this.getHeaderCatalog(parent);
-     //console.log( 'elemHeaderCatalog: ' + elemHeaderCatalog.id + '  parentHeaderCatalog: ' + parentHeaderCatalog.id + ' parent: ' + element.parent.id);
-     if(this.paramsTypes.includes(element.parent.data.name)) {
-       if(element.parent.data.name !== parent.data.name)  return false;
-     }
-      return  elemHeaderCatalog && parentHeaderCatalog ? elemHeaderCatalog.data.name === parentHeaderCatalog.data.name && (this.paramsTypes.includes(element.parent.data.name) || (!this.paramsTypes.includes(parent.data.name) &&  !this.paramsTypes.includes(parent.parent.data.name))) : false;
-      },
+    allowDrop: (element, {parent, index}) => {
+      let elemHeaderCatalog = this.getHeaderCatalog(element);
+      let parentHeaderCatalog = this.getHeaderCatalog(parent);
+      //console.log( 'elemHeaderCatalog: ' + elemHeaderCatalog.id + '  parentHeaderCatalog: ' + parentHeaderCatalog.id + ' parent: ' + element.parent.id);
+      if (this.paramsTypes.includes(element.parent.data.name)) {
+        if (element.parent.data.name !== parent.data.name) {
+          return false;
+        }
+      }
+      return elemHeaderCatalog && parentHeaderCatalog ? elemHeaderCatalog.data.name === parentHeaderCatalog.data.name && (this.paramsTypes.includes(element.parent.data.name) || (!this.paramsTypes.includes(parent.data.name) && !this.paramsTypes.includes(parent.parent.data.name))) : false;
+    },
     actionMapping: {
       mouse: {
         contextMenu: (model: any, node: any, event: any) => {
@@ -96,7 +99,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           console.log('onMoveNode', node.name, 'to', to.parent.name, 'at index', to.index);
           let parentJson = from.parent.data.object;//(this.treeComponent.treeModel.getNodeById(node.id)).parent.data.object;
           this.modelService.moveNonModelJsonElement(from.data.object, parentJson, to.parent.data.object, to.index, this.paramsTypes.includes(from.parent.data.name) ? undefined : from.data.name);
-          TREE_ACTIONS.MOVE_NODE( tree, node, $event, { from, to } );
+          TREE_ACTIONS.MOVE_NODE(tree, node, $event, {from, to});
         }
       }
     }
@@ -121,7 +124,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.appSettings =  this.projectService.getAppSettings();
+    this.appSettings = this.projectService.getAppSettings();
     this.appSettingsKeys = Object.keys(this.appSettings);
     // Subscribe on project load event
     this.eventService.on(Message.PROJECT_FILE_OPEN, (data) => {
@@ -152,7 +155,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
         if (newNodeId) {
           const nodeForEdit = this.treeComponent.treeModel.getNodeById(newNodeId);
-          if (!data.comonBlock) this.eventService.send(Message.OPEN_DECLARATION_BLOCK, {id: this.getCurrentBlock(nodeForEdit).id});
+          if (!data.comonBlock) {
+            this.eventService.send(Message.OPEN_DECLARATION_BLOCK, {id: this.getCurrentBlock(nodeForEdit).id});
+          }
           let expnNode = nodeForEdit;
           while (expnNode.id !== 'project') {
             expnNode.expand();
@@ -160,7 +165,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           }
 
           this.treeComponent.treeModel.setFocusedNode(nodeForEdit);
-          if(data.after !== 'delete' && data.after !== 'edit')this.onEditNode(nodeForEdit);
+          if (data.after !== 'delete' && data.after !== 'edit') {
+            this.onEditNode(nodeForEdit);
+          }
         }
       }, 100);
 
@@ -241,7 +248,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   getHeaderCatalog(node) {
-    if(node) {
+    if (node) {
       while (node.parent && !this.reservedWords.includes(node.id)) {
         node = node.parent;
       }
@@ -427,7 +434,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    */
   @HostListener('document:keydown', ['$event'])
   keyEvent(event: KeyboardEvent) {
-    console.log('project-explorer Keyboard event ',  event);
+    console.log('project-explorer Keyboard event ', event);
     //  this.diagram.get('eventBus').fire('element.hover', this.curentElement );
     if (event.keyCode === 13) {
       const htmlElement: HTMLInputElement = <HTMLInputElement>event.target;
@@ -444,7 +451,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           this.editableNode = null;
         } else {
           //this.sendChangingElementToDeclarationPanel(this.editableNode, this.editableNode.parent.data.id, 'rename', this.editableNode.data.id);
-          this.modelService.sendChangingElementToDeclarationPanel(this.editableNode, this.editableNode.parent.data.name, 'rename', this.editableNode.data.id,  this.getCurrentBlock(this.editableNode).id, this.treeComponent.treeModel.getState());
+          this.modelService.sendChangingElementToDeclarationPanel(this.editableNode, this.editableNode.parent.data.name, 'rename', this.editableNode.data.id, this.getCurrentBlock(this.editableNode).id, this.treeComponent.treeModel.getState());
         }
         //   this.eventService.send(Message.XML_UPDATE, {project: {data: this.currentProjectModel, name: this.modelName}});
       } else if (htmlElement && htmlElement.nodeName === 'TD') {
@@ -464,7 +471,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
           this.showTable = 'application-settings-table';
           setTimeout(() => {
-            this.showTable = 'not'
+            this.showTable = 'not';
           }, 0);
 
         }
@@ -487,11 +494,12 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       setTimeout(() => { // this will make the execution after the above boolean has changed
         const inputElem = document.getElementById('textinpfield');
 
-       console.log(this.constructor.name, 'editNodeText(), inputElem = ', inputElem);
+        console.log(this.constructor.name, 'editNodeText(), inputElem = ', inputElem);
         console.log(this.constructor.name, 'editNodeText(), nodeElem = ', node);
 
-        if (inputElem)
+        if (inputElem) {
           inputElem.focus();
+        }
       }, 100);
     }
   }
@@ -521,18 +529,18 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       this.focusedNode(parentNod);
       // deletingElem = !this.paramsTypes.includes(node.parent.id) ? node.data.id : node.parent.id;
       //this.sendChangingElementToDeclarationPanel(node, node.parent.id, 'delete', node.data.id);
-      this.modelService.sendChangingElementToDeclarationPanel(node, node.parent.name, 'delete', node.data.id,  this.getCurrentBlock(node).id, this.treeComponent.treeModel.getState());
+      this.modelService.sendChangingElementToDeclarationPanel(node, node.parent.name, 'delete', node.data.id, this.getCurrentBlock(node).id, this.treeComponent.treeModel.getState());
     }
 
   }
 
 
-  focusedNode(node){
-    if(node) {
+  focusedNode(node) {
+    if (node) {
       const newfocusedBlock = this.getCurrentBlock(node);
       this.eventService.send(Message.OPEN_DECLARATION_BLOCK, {id: newfocusedBlock.id});
       this.treeComponent.treeModel.setFocusedNode(newfocusedBlock);
-      this.treeComponent.treeModel.setActiveNode(newfocusedBlock, true, false)
+      this.treeComponent.treeModel.setActiveNode(newfocusedBlock, true, false);
       this.treeComponent.treeModel.setSelectedNode(newfocusedBlock, true);
     }
   }
@@ -576,35 +584,35 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   updateModel(updatedData) {
     this.modelService.updateModel(updatedData);
-   /* const project = this.currentProjectModel;
-    if (project.workspaceElements.cpnet.page.length) {
-      for (let page of project.workspaceElements.cpnet.page) {
-        if (page.pageattr._name === updatedData.pageObject.pageattr._name) {
-          page = updatedData.pageObject;
+    /* const project = this.currentProjectModel;
+     if (project.workspaceElements.cpnet.page.length) {
+       for (let page of project.workspaceElements.cpnet.page) {
+         if (page.pageattr._name === updatedData.pageObject.pageattr._name) {
+           page = updatedData.pageObject;
 
-          // EmitterService.getAppMessageEmitter().emit({
-          //   id: Constants.ACTION_XML_UPDATE, // id: Constants.ACTION_PROJECT_LOAD_DATA,
-          //   project: {data: project, name: this.modelName}
-          // });
+           // EmitterService.getAppMessageEmitter().emit({
+           //   id: Constants.ACTION_XML_UPDATE, // id: Constants.ACTION_PROJECT_LOAD_DATA,
+           //   project: {data: project, name: this.modelName}
+           // });
 
-          this.eventService.send(Message.XML_UPDATE, {project: {data: project, name: this.modelName}});
-        }
-      }
-    } else {
-      let page = project.workspaceElements.cpnet.page;
-      if (page.pageattr._name === updatedData.pageObject.pageattr._name) {
-        page = updatedData.pageObject;
+           this.eventService.send(Message.XML_UPDATE, {project: {data: project, name: this.modelName}});
+         }
+       }
+     } else {
+       let page = project.workspaceElements.cpnet.page;
+       if (page.pageattr._name === updatedData.pageObject.pageattr._name) {
+         page = updatedData.pageObject;
 
-        // EmitterService.getAppMessageEmitter().emit({
-        //   id: Constants.ACTION_XML_UPDATE, // id: Constants.ACTION_PROJECT_LOAD_DATA,
-        //   project: {data: project, name: this.modelName}
-        // });
+         // EmitterService.getAppMessageEmitter().emit({
+         //   id: Constants.ACTION_XML_UPDATE, // id: Constants.ACTION_PROJECT_LOAD_DATA,
+         //   project: {data: project, name: this.modelName}
+         // });
 
-        this.eventService.send(Message.XML_UPDATE, {project: {data: project, name: this.modelName}});
-      }
-    }
-    //  console.log('Get data fromPAge ----' + JSON.stringify(updatedData.pageObject));
-    // console.log('actual data -------' + JSON.stringify(proj.workspaceElements.cpnet.page));*/
+         this.eventService.send(Message.XML_UPDATE, {project: {data: project, name: this.modelName}});
+       }
+     }
+     //  console.log('Get data fromPAge ----' + JSON.stringify(updatedData.pageObject));
+     // console.log('actual data -------' + JSON.stringify(proj.workspaceElements.cpnet.page));*/
   }
 
   // loadTree() {
@@ -917,12 +925,12 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           projectNode.children.push(DeclarationsNode);
           // GlobBox
           // --------------------------------------
-         /* for (const block of cpnet.globbox.block) {
-            this.buildGlobboxTree(block, DeclarationsNode);
-          }
-          if (cpnet.globbox.block.id) {
-            this.buildGlobboxTree(cpnet.globbox.block, DeclarationsNode);
-          }*/
+          /* for (const block of cpnet.globbox.block) {
+             this.buildGlobboxTree(block, DeclarationsNode);
+           }
+           if (cpnet.globbox.block.id) {
+             this.buildGlobboxTree(cpnet.globbox.block, DeclarationsNode);
+           }*/
           this.buildGlobboxTree(cpnet.globbox, DeclarationsNode);
 
           // this.buildGlobboxTree(cpnet.globbox, DeclarationsNode);
@@ -1120,9 +1128,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   activateNode(event) {
     this.selectedNode = event.node;
 
-   // if (event.node !== this.editableNode) {
-  //    this.editableNode = null;
-  //  }
+    // if (event.node !== this.editableNode) {
+    //    this.editableNode = null;
+    //  }
     // console.log(event);
     // console.log(event.node);
 
@@ -1208,8 +1216,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     console.log(this.constructor.name, 'autoWidth(), event.srcElement = ', event.srcElement);
 
     let w = ((event.srcElement.value.length + 1) * 7);
-    if (w < 30)
+    if (w < 30) {
       w = 30;
+    }
 
     event.srcElement.style.width = w + 'px';
   }

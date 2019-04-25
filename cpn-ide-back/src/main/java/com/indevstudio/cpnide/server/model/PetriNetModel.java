@@ -9,8 +9,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class PetriNetModel {
     private ConcurrentHashMap<String, PetriNet> usersNets = new ConcurrentHashMap<>();
-    private   HighLevelSimulator s ;
-    public PetriNetModel(){
+    private HighLevelSimulator s;
+
+    public PetriNetModel() {
         try {
             s = HighLevelSimulator.getHighLevelSimulator();
         } catch (Exception e) {
@@ -22,12 +23,12 @@ public class PetriNetModel {
         return usersNets.get(userSessionId);
     }
 
-    public void setPetriNet(String userSessionId,PetriNet petriNet) {
+    public void setPetriNet(String userSessionId, PetriNet petriNet) {
         usersNets.put(userSessionId, petriNet);
     }
 
-    public HighLevelSimulator getHighLevelSimulator(){
-        return  this.s;
+    public HighLevelSimulator getHighLevelSimulator() {
+        return this.s;
     }
 
 }

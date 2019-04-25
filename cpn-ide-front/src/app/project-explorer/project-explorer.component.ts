@@ -95,8 +95,24 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           console.log('drag', from, to);
           console.log('onMoveNode', node.name, 'to', to.parent.name, 'at index', to.index);
           let parentJson = from.parent.data.object;//(this.treeComponent.treeModel.getNodeById(node.id)).parent.data.object;
-          this.modelService.moveNonModelJsonElement(from.data.object, parentJson, to.parent.data.object, to.index, this.paramsTypes.includes(from.parent.data.name) ? undefined : from.data.name);
-          TREE_ACTIONS.MOVE_NODE( tree, node, $event, { from, to } );
+          let type = node.data.type === 'page' ? 'page' : this.paramsTypes.includes(from.parent.data.name) ? undefined : from.data.name
+          this.modelService.moveNonModelJsonElement(from.data.object, parentJson, to.parent.data.object, to.index, type);
+          if(to.parent.data.object[type]) {
+            to.parent = tree.getNodeById((to.parent.children.find(e => e.data.name === type)).id);
+            node = node.children.find(chld => chld.data.name === from.data.name );
+            let onDeleteNodeId = from.id;
+            let fromChildren = from.children;
+            for(from of fromChildren) {
+                if (from)  tree.moveNode(tree.getNodeById(from.id), to); else break;//tree.moveNode(from, to);//TREE_ACTIONS.MOVE_NODE(tree, node, $event, {from, to}); else break;
+            }
+            let deleteNode = tree.getNodeById(onDeleteNodeId);
+            this.deleteNode(this.nodes[0], onDeleteNodeId);
+            this.updateTree();
+            this.treeComponent.treeModel.setState(tree.getState());
+
+          } else {
+            TREE_ACTIONS.MOVE_NODE(tree, node, $event, {from, to});
+          }
         }
       }
     }
@@ -188,6 +204,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     // console.log('ProjectExplorerComponent.ngOnInit()');
     // this.updateTree();
   }
+
+
 
   ngOnDestroy() {
     // console.log("ProjectExplorerComponent.OnDestroy()");
@@ -310,6 +328,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         this.eventService.send(Message.SUBPAGE_CREATE, {
           name: pageNode.name,
           id: pageNode.id,
+          parentid:  node.data.id,
           event: event,
           state: this.treeComponent.treeModel.getState()
         });
@@ -544,13 +563,17 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * @param id
    */
   deleteNode(node, id) {
-    for (const nd of node.children) {
-      if (nd.id === id) {
-        node.children = node.children.filter(x => x !== nd);
+    try {
+      for (const nd of node.children) {
+        if (nd.id === id) {
+          node.children = node.children.filter(x => x !== nd)
+        }
+        if (nd && nd.children && nd.children instanceof Array && nd.children.length > 0) {
+          this.deleteNode(nd, id);
+        }
       }
-      if (nd.children && nd.children.length > 0) {
-        this.deleteNode(nd, id);
-      }
+    } catch (e) {
+      return;
     }
   }
 

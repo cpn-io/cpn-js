@@ -257,6 +257,64 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
       this.addLabelEvent(event, element, context);
     });
 
+    this.eventService.on(Message.SUBPAGE_CREATE, (data) => {
+      let attrs;
+      let shape;
+      if(data.parentid === this.pageId) {
+        if (data.object) {
+          attrs = this.getTransShapeAttrs(data.object);
+          shape = this.elementFactory.createShape(attrs);
+          shape.cpnElement = data.object;
+          shape = this.canvas.addShape(shape, this.canvas.getRootElement());
+          this.subpages.push({subpageid: data.id, tranid: shape.id, name: data.name});
+          this.transShapes[attrs.id] = shape;
+        } else {
+          /***create trasition***/
+          const bounds = this.canvas.viewbox();
+          attrs = {
+            type: 'cpn:Transition',
+            // id: obj["@attributes"].id,
+            id: 'ID' + new Date().getTime(),
+            x: bounds.x + bounds.width / 2,
+            y: bounds.y + bounds.height / 2,
+            width: 100,
+            height: 80,
+            name: data.name,
+            stroke: 'Black',
+            strokeWidth: 1,
+            hierar: 'subPage'
+            // businessObject: {
+            //   text: obj.text,
+            // }
+          };
+
+          shape = this.elementFactory.createShape(attrs);
+          shape = this.canvas.addShape(shape, this.canvas.getRootElement());
+          this.subpages.push({subpageid: data.id, tranid: shape.id, name: data.name});
+          this.transShapes[attrs.id] = shape;
+          this.createTransitionInModel(shape);
+        }
+      }
+
+
+      /* var shape = this.elementFactory.createShape(assign({ type: 'cpn:Transition' }, undefined));
+
+       this.subpages.push({subpageid: data.id,   tranid: shape.id, name: data.name});
+       shape.hierar = 'subPage'
+       this.dragging.init(event, 'create', {
+         cursor: 'grabbing',
+         autoActivate: true,
+         data: {
+           shape: shape,
+           context: {
+             shape: shape,
+             source: undefined
+           }
+         }
+       });*/
+    });
+
+
 
     this.eventService.on(Message.CHANGE_NAME_PAGE, (data) => {
       if (data.changedElement === 'page' && data.parentPage === this.modelService.getPageById(this.pageId).pageattr._name) {
@@ -277,49 +335,6 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.eventService.on(Message.SUBPAGE_CREATE, (data) => {
-      /***create trasition***/
-      const bounds = this.canvas.viewbox();
-      const attrs = {
-        type: 'cpn:Transition',
-        // id: obj["@attributes"].id,
-        id: 'ID' + new Date().getTime(),
-        x: bounds.x + bounds.width / 2,
-        y: bounds.y + bounds.height / 2,
-        width: 100,
-        height: 80,
-        name: data.name,
-        stroke: 'Black',
-        strokeWidth: 1,
-        hierar: 'subPage'
-        // businessObject: {
-        //   text: obj.text,
-        // }
-      };
-
-      let shape = this.elementFactory.createShape(attrs);
-      shape = this.canvas.addShape(shape, this.canvas.getRootElement());
-      this.subpages.push({subpageid: data.id, tranid: shape.id, name: data.name});
-      this.transShapes[attrs.id] = shape;
-      this.createTransitionInModel(shape);
-
-
-      /* var shape = this.elementFactory.createShape(assign({ type: 'cpn:Transition' }, undefined));
-
-       this.subpages.push({subpageid: data.id,   tranid: shape.id, name: data.name});
-       shape.hierar = 'subPage'
-       this.dragging.init(event, 'create', {
-         cursor: 'grabbing',
-         autoActivate: true,
-         data: {
-           shape: shape,
-           context: {
-             shape: shape,
-             source: undefined
-           }
-         }
-       });*/
-    });
 
 
     this.eventService.on(Message.DELETE_PAGE, (data) => {  /// {id: node.id, parent: node.parent.data.name}
@@ -960,7 +975,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
             _id: newTranc._id + 'e',
             _name: 'Supplier'
           },                  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-          _portsock: '',     /// <<--------------------------------------------------------------------TO DO FILL THIS FIELD ARCS ID---------------------------------------------------------------------
+          _portsock: '',     /// <<--------------------------------------------------------------------TO DO FILL THIS FIELD PORT ID---------------------------------------------------------------------
           _subpage: subpage.subpageid ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         };
       }

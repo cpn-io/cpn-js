@@ -1,0 +1,974 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for lib/features/bendpoints/Bendpoints.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../../index.html">all files</a> / <a href="index.html">lib/features/bendpoints/</a> Bendpoints.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">94.02% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>110/117</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">75.56% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>34/45</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">92% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>23/25</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">94.02% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>110/117</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">147×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">202×</span>
+<span class="cline-any cline-yes">202×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">202×</span>
+<span class="cline-any cline-yes">49×</span>
+<span class="cline-any cline-yes">49×</span>
+<span class="cline-any cline-yes">49×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">49×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">49×</span>
+<span class="cline-any cline-yes">49×</span>
+<span class="cline-any cline-yes">49×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">202×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">86×</span>
+<span class="cline-any cline-yes">332×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">332×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">332×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">86×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">86×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">86×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">246×</span>
+<span class="cline-any cline-yes">246×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">246×</span>
+<span class="cline-any cline-yes">218×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">37×</span>
+<span class="cline-any cline-yes">236×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">37×</span>
+<span class="cline-any cline-yes">146×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">110×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">110×</span>
+<span class="cline-any cline-yes">49×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">49×</span>
+<span class="cline-any cline-yes">49×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">110×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">37×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">37×</span>
+<span class="cline-any cline-yes">37×</span>
+<span class="cline-any cline-yes">37×</span>
+<span class="cline-any cline-yes">37×</span>
+<span class="cline-any cline-yes">37×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-yes">37×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">253×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">253×</span>
+<span class="cline-any cline-yes">152×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">101×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">101×</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">51×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { forEach } from 'min-dash';
+&nbsp;
+import {
+  event as domEvent,
+  query as domQuery,
+  queryAll as domQueryAll
+} from 'min-dom';
+&nbsp;
+import {
+  BENDPOINT_CLS,
+  SEGMENT_DRAGGER_CLS,
+  addBendpoint,
+  addSegmentDragger,
+  toCanvasCoordinates
+} from './BendpointUtil';
+&nbsp;
+import cssEscape from 'css.escape';
+&nbsp;
+import {
+  pointsAligned,
+  getMidPoint
+} from '../../util/Geometry';
+&nbsp;
+import {
+  getApproxIntersection
+} from '../../util/LineIntersection';
+&nbsp;
+import {
+  append as svgAppend,
+  attr as svgAttr,
+  classes as svgClasses,
+  create as svgCreate,
+  remove as svgRemove
+} from 'tiny-svg';
+&nbsp;
+import { translate } from '../../util/SvgTransformUtil';
+&nbsp;
+&nbsp;
+/**
+ * A service that adds editable bendpoints to connections.
+ */
+export default function Bendpoints(
+    eventBus, canvas, interactionEvents,
+    bendpointMove, connectionSegmentMove) {
+&nbsp;
+  function getConnectionIntersection(waypoints, event) {
+    var localPosition = toCanvasCoordinates(canvas, event),
+        intersection = getApproxIntersection(waypoints, localPosition);
+&nbsp;
+    return intersection;
+  }
+&nbsp;
+  function isIntersectionMiddle(intersection, waypoints, treshold) {
+    var idx = intersection.index,
+        p = intersection.point,
+        p0, p1, mid, aligned, xDelta, yDelta;
+&nbsp;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (idx &lt;= 0 || intersection.bendpoint) {
+<span class="cstat-no" title="statement not covered" >      return false;</span>
+    }
+&nbsp;
+    p0 = waypoints[idx - 1];
+    p1 = waypoints[idx];
+    mid = getMidPoint(p0, p1),
+    aligned = pointsAligned(p0, p1);
+    xDelta = Math.abs(p.x - mid.x);
+    yDelta = Math.abs(p.y - mid.y);
+&nbsp;
+    return aligned &amp;&amp; xDelta &lt;= treshold &amp;&amp; yDelta &lt;= treshold;
+  }
+&nbsp;
+  function activateBendpointMove(event, connection) {
+    var waypoints = connection.waypoints,
+        intersection = getConnectionIntersection(waypoints, event);
+&nbsp;
+    if (!intersection) {
+      return;
+    }
+&nbsp;
+    if (isIntersectionMiddle(intersection, waypoints, 10)) {
+      connectionSegmentMove.start(event, connection, intersection.index);
+    } else {
+      bendpointMove.start(event, connection, intersection.index, !intersection.bendpoint);
+    }
+&nbsp;
+    // we've handled the event
+    return true;
+  }
+&nbsp;
+  function bindInteractionEvents(node, eventName, element) {
+&nbsp;
+    domEvent.bind(node, eventName, function(event) {
+      interactionEvents.triggerMouseEvent(eventName, event, element);
+      event.stopPropagation();
+    });
+  }
+&nbsp;
+  function getBendpointsContainer(element, create) {
+&nbsp;
+    var layer = canvas.getLayer('overlays'),
+        gfx = domQuery('.djs-bendpoints[data-element-id="' + cssEscape(element.id) + '"]', layer);
+&nbsp;
+    if (!gfx &amp;&amp; create) {
+      gfx = svgCreate('g');
+      svgAttr(gfx, { 'data-element-id': element.id });
+      svgClasses(gfx).add('djs-bendpoints');
+&nbsp;
+      svgAppend(layer, gfx);
+&nbsp;
+      bindInteractionEvents(gfx, 'mousedown', element);
+      bindInteractionEvents(gfx, 'click', element);
+      bindInteractionEvents(gfx, 'dblclick', element);
+    }
+&nbsp;
+    return gfx;
+  }
+&nbsp;
+  function createBendpoints(gfx, connection) {
+    connection.waypoints.forEach(function(p, idx) {
+      var bendpoint = addBendpoint(gfx);
+&nbsp;
+      svgAppend(gfx, bendpoint);
+&nbsp;
+      translate(bendpoint, p.x, p.y);
+    });
+&nbsp;
+    // add floating bendpoint
+    addBendpoint(gfx, 'floating');
+  }
+&nbsp;
+  function createSegmentDraggers(gfx, connection) {
+&nbsp;
+    var waypoints = connection.waypoints;
+&nbsp;
+    var segmentStart,
+        segmentEnd;
+&nbsp;
+    for (var i = 1; i &lt; waypoints.length; i++) {
+&nbsp;
+      segmentStart = waypoints[i - 1];
+      segmentEnd = waypoints[i];
+&nbsp;
+      if (pointsAligned(segmentStart, segmentEnd)) {
+        addSegmentDragger(gfx, segmentStart, segmentEnd);
+      }
+    }
+  }
+&nbsp;
+  function clearBendpoints(gfx) {
+    forEach(domQueryAll('.' + BENDPOINT_CLS, gfx), function(node) {
+      svgRemove(node);
+    });
+  }
+&nbsp;
+  function clearSegmentDraggers(gfx) {
+    forEach(domQueryAll('.' + SEGMENT_DRAGGER_CLS, gfx), function(node) {
+      svgRemove(node);
+    });
+  }
+&nbsp;
+  function addHandles(connection) {
+&nbsp;
+    var gfx = getBendpointsContainer(connection);
+&nbsp;
+    if (!gfx) {
+      gfx = getBendpointsContainer(connection, true);
+&nbsp;
+      createBendpoints(gfx, connection);
+      createSegmentDraggers(gfx, connection);
+    }
+&nbsp;
+    return gfx;
+  }
+&nbsp;
+  function updateHandles(connection) {
+&nbsp;
+    var gfx = getBendpointsContainer(connection);
+&nbsp;
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (gfx) {
+      clearSegmentDraggers(gfx);
+      clearBendpoints(gfx);
+      createSegmentDraggers(gfx, connection);
+      createBendpoints(gfx, connection);
+    }
+  }
+&nbsp;
+  eventBus.on('connection.changed', function(event) {
+    updateHandles(event.element);
+  });
+&nbsp;
+  eventBus.on('connection.remove', function(event) <span class="fstat-no" title="function not covered" >{</span>
+    var gfx = <span class="cstat-no" title="statement not covered" >getBendpointsContainer(event.element);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (gfx) {</span>
+<span class="cstat-no" title="statement not covered" >      svgRemove(gfx);</span>
+    }
+  });
+&nbsp;
+  eventBus.on('element.marker.update', function(event) {
+&nbsp;
+    var element = event.element,
+        bendpointsGfx;
+&nbsp;
+    if (!element.waypoints) {
+      return;
+    }
+&nbsp;
+    bendpointsGfx = addHandles(element);
+&nbsp;
+    if (event.add) {
+      svgClasses(bendpointsGfx).add(event.marker);
+    } else {
+      svgClasses(bendpointsGfx).remove(event.marker);
+    }
+  });
+&nbsp;
+  eventBus.on('element.mousemove', function(event) {
+&nbsp;
+    var element = event.element,
+        waypoints = element.waypoints,
+        bendpointsGfx,
+        floating,
+        intersection;
+&nbsp;
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (waypoints) {
+      bendpointsGfx = getBendpointsContainer(element, true);
+      floating = domQuery('.floating', bendpointsGfx);
+&nbsp;
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (!floating) {
+<span class="cstat-no" title="statement not covered" >        return;</span>
+      }
+&nbsp;
+      intersection = getConnectionIntersection(waypoints, event.originalEvent);
+&nbsp;
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (intersection) {
+        translate(floating, intersection.point.x, intersection.point.y);
+      }
+    }
+  });
+&nbsp;
+  eventBus.on('element.mousedown', function(event) {
+&nbsp;
+    var originalEvent = event.originalEvent,
+        element = event.element,
+        waypoints = element.waypoints;
+&nbsp;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!waypoints) {
+<span class="cstat-no" title="statement not covered" >      return;</span>
+    }
+&nbsp;
+    return activateBendpointMove(originalEvent, element, waypoints);
+  });
+&nbsp;
+  eventBus.on('selection.changed', function(event) {
+    var newSelection = event.newSelection,
+        primary = newSelection[0];
+&nbsp;
+    if (primary &amp;&amp; primary.waypoints) {
+      addHandles(primary);
+    }
+  });
+&nbsp;
+  eventBus.on('element.hover', function(event) {
+    var element = event.element;
+&nbsp;
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (element.waypoints) {
+      addHandles(element);
+      interactionEvents.registerEvent(event.gfx, 'mousemove', 'element.mousemove');
+    }
+  });
+&nbsp;
+  eventBus.on('element.out', function(event) <span class="fstat-no" title="function not covered" >{</span>
+<span class="cstat-no" title="statement not covered" >    interactionEvents.unregisterEvent(event.gfx, 'mousemove', 'element.mousemove');</span>
+  });
+&nbsp;
+  // update bendpoint container data attribute on element ID change
+  eventBus.on('element.updateId', function(context) {
+    var element = context.element,
+        newId = context.newId;
+&nbsp;
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (element.waypoints) {
+      var bendpointContainer = getBendpointsContainer(element);
+&nbsp;
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (bendpointContainer) {
+        svgAttr(bendpointContainer, { 'data-element-id': newId });
+      }
+    }
+  });
+&nbsp;
+  // API
+&nbsp;
+  this.addHandles = addHandles;
+  this.updateHandles = updateHandles;
+  this.getBendpointsContainer = getBendpointsContainer;
+}
+&nbsp;
+Bendpoints.$inject = [
+  'eventBus',
+  'canvas',
+  'interactionEvents',
+  'bendpointMove',
+  'connectionSegmentMove'
+];
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Oct 24 2018 10:37:43 GMT+0200 (Central European Summer Time)
+</div>
+</div>
+<script src="../../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../../sorter.js"></script>
+</body>
+</html>

@@ -1,0 +1,1094 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for lib/features/touch/TouchInteractionEvents.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../../index.html">all files</a> / <a href="index.html">lib/features/touch/</a> TouchInteractionEvents.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">27.54% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>38/138</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">16.67% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>5/30</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">17.65% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>6/34</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">27.74% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>38/137</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {
+  forEach
+} from 'min-dash';
+&nbsp;
+import {
+  event as domEvent,
+  closest as domClosest
+} from 'min-dom';
+&nbsp;
+import Hammer from 'hammerjs';
+&nbsp;
+import {
+  toPoint
+} from '../../util/Event';
+&nbsp;
+var MIN_ZOOM = 0.2,
+    MAX_ZOOM = 4;
+&nbsp;
+var mouseEvents = [
+  'mousedown',
+  'mouseup',
+  'mouseover',
+  'mouseout',
+  'click',
+  'dblclick'
+];
+&nbsp;
+function log() <span class="fstat-no" title="function not covered" >{</span>
+  // console.log.apply(console, arguments);
+}
+&nbsp;
+function get(service, injector) {
+  return injector.get(service, false);
+}
+&nbsp;
+function stopEvent(event) <span class="fstat-no" title="function not covered" >{</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  event.preventDefault();</span>
+<span class="cstat-no" title="statement not covered" >  event.stopPropagation();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  if (typeof event.stopImmediatePropagation === 'function') {</span>
+<span class="cstat-no" title="statement not covered" >    event.stopImmediatePropagation();</span>
+  }
+}
+&nbsp;
+&nbsp;
+function createTouchRecognizer(node) {
+&nbsp;
+  function stopMouse(event) <span class="fstat-no" title="function not covered" >{</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    forEach(mouseEvents, function(e) <span class="fstat-no" title="function not covered" >{</span></span>
+<span class="cstat-no" title="statement not covered" >      domEvent.bind(node, e, stopEvent, true);</span>
+    });
+  }
+&nbsp;
+  function allowMouse(event) <span class="fstat-no" title="function not covered" >{</span>
+<span class="cstat-no" title="statement not covered" >    setTimeout(function() <span class="fstat-no" title="function not covered" >{</span></span>
+<span class="cstat-no" title="statement not covered" >      forEach(mouseEvents, function(e) <span class="fstat-no" title="function not covered" >{</span></span>
+<span class="cstat-no" title="statement not covered" >        domEvent.unbind(node, e, stopEvent, true);</span>
+      });
+    }, 500);
+  }
+&nbsp;
+  domEvent.bind(node, 'touchstart', stopMouse, true);
+  domEvent.bind(node, 'touchend', allowMouse, true);
+  domEvent.bind(node, 'touchcancel', allowMouse, true);
+&nbsp;
+  // A touch event recognizer that handles
+  // touch events only (we know, we can already handle
+  // mouse events out of the box)
+&nbsp;
+  var recognizer = new Hammer.Manager(node, {
+    inputClass: Hammer.TouchInput,
+    recognizers: []
+  });
+&nbsp;
+&nbsp;
+  var tap = new Hammer.Tap();
+  var pan = new Hammer.Pan({ threshold: 10 });
+  var press = new Hammer.Press();
+  var pinch = new Hammer.Pinch();
+&nbsp;
+  var doubleTap = new Hammer.Tap({ event: 'doubletap', taps: 2 });
+&nbsp;
+  pinch.requireFailure(pan);
+  pinch.requireFailure(press);
+&nbsp;
+  recognizer.add([ pan, press, pinch, doubleTap, tap ]);
+&nbsp;
+  recognizer.reset = function(force) <span class="fstat-no" title="function not covered" >{</span>
+    var recognizers = <span class="cstat-no" title="statement not covered" >this.recognizers,</span>
+        session = <span class="cstat-no" title="statement not covered" >this.session;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (session.stopped) {</span>
+<span class="cstat-no" title="statement not covered" >      return;</span>
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    log('recognizer', 'stop');</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    recognizer.stop(force);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    setTimeout(function() <span class="fstat-no" title="function not covered" >{</span></span>
+      var i, r;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      log('recognizer', 'reset');</span>
+<span class="cstat-no" title="statement not covered" >      for (i = 0; (r = recognizers[i]); i++) {</span>
+<span class="cstat-no" title="statement not covered" >        r.reset();</span>
+<span class="cstat-no" title="statement not covered" >        r.state = 8; </span>// FAILED STATE
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      session.curRecognizer = null;</span>
+    }, 0);
+  };
+&nbsp;
+  recognizer.on('hammer.input', function(event) <span class="fstat-no" title="function not covered" >{</span>
+<span class="cstat-no" title="statement not covered" >    if (event.srcEvent.defaultPrevented) {</span>
+<span class="cstat-no" title="statement not covered" >      recognizer.reset(true);</span>
+    }
+  });
+&nbsp;
+  return recognizer;
+}
+&nbsp;
+/**
+ * A plugin that provides touch events for elements.
+ *
+ * @param {EventBus} eventBus
+ * @param {InteractionEvents} interactionEvents
+ */
+export default function TouchInteractionEvents(
+    injector, canvas, eventBus,
+    elementRegistry, interactionEvents) {
+&nbsp;
+  // optional integrations
+  var dragging = get('dragging', injector),
+      move = get('move', injector),
+      contextPad = get('contextPad', injector),
+      palette = get('palette', injector);
+&nbsp;
+  // the touch recognizer
+  var recognizer;
+&nbsp;
+  function handler(type) {
+&nbsp;
+    return function(event) <span class="fstat-no" title="function not covered" >{</span>
+<span class="cstat-no" title="statement not covered" >      log('element', type, event);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      interactionEvents.fire(type, event);</span>
+    };
+  }
+&nbsp;
+  function getGfx(target) <span class="fstat-no" title="function not covered" >{</span>
+    var node = <span class="cstat-no" title="statement not covered" >domClosest(target, 'svg, .djs-element', true);</span>
+<span class="cstat-no" title="statement not covered" >    return node;</span>
+  }
+&nbsp;
+  function initEvents(svg) {
+&nbsp;
+    // touch recognizer
+    recognizer = createTouchRecognizer(svg);
+&nbsp;
+    recognizer.on('doubletap', handler('element.dblclick'));
+&nbsp;
+    recognizer.on('tap', handler('element.click'));
+&nbsp;
+    function startGrabCanvas(event) <span class="fstat-no" title="function not covered" >{</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      log('canvas', 'grab start');</span>
+&nbsp;
+      var lx = <span class="cstat-no" title="statement not covered" >0,</span> ly = <span class="cstat-no" title="statement not covered" >0;</span>
+&nbsp;
+      function update(e) <span class="fstat-no" title="function not covered" >{</span>
+&nbsp;
+        var dx = <span class="cstat-no" title="statement not covered" >e.deltaX - lx,</span>
+            dy = <span class="cstat-no" title="statement not covered" >e.deltaY - ly;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        canvas.scroll({ dx: dx, dy: dy });</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        lx = e.deltaX;</span>
+<span class="cstat-no" title="statement not covered" >        ly = e.deltaY;</span>
+      }
+&nbsp;
+      function end(e) <span class="fstat-no" title="function not covered" >{</span>
+<span class="cstat-no" title="statement not covered" >        recognizer.off('panmove', update);</span>
+<span class="cstat-no" title="statement not covered" >        recognizer.off('panend', end);</span>
+<span class="cstat-no" title="statement not covered" >        recognizer.off('pancancel', end);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        log('canvas', 'grab end');</span>
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      recognizer.on('panmove', update);</span>
+<span class="cstat-no" title="statement not covered" >      recognizer.on('panend', end);</span>
+<span class="cstat-no" title="statement not covered" >      recognizer.on('pancancel', end);</span>
+    }
+&nbsp;
+    function startGrab(event) <span class="fstat-no" title="function not covered" >{</span>
+&nbsp;
+      var gfx = <span class="cstat-no" title="statement not covered" >getGfx(event.target),</span>
+          element = <span class="cstat-no" title="statement not covered" >gfx &amp;&amp; elementRegistry.get(gfx);</span>
+&nbsp;
+      // recognizer
+<span class="cstat-no" title="statement not covered" >      if (move &amp;&amp; canvas.getRootElement() !== element) {</span>
+<span class="cstat-no" title="statement not covered" >        log('element', 'move start', element, event, true);</span>
+<span class="cstat-no" title="statement not covered" >        return move.start(event, element, true);</span>
+      } else {
+<span class="cstat-no" title="statement not covered" >        startGrabCanvas(event);</span>
+      }
+    }
+&nbsp;
+    function startZoom(e) <span class="fstat-no" title="function not covered" >{</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      log('canvas', 'zoom start');</span>
+&nbsp;
+      var zoom = <span class="cstat-no" title="statement not covered" >canvas.zoom(),</span>
+          mid = <span class="cstat-no" title="statement not covered" >e.center;</span>
+&nbsp;
+      function update(e) <span class="fstat-no" title="function not covered" >{</span>
+&nbsp;
+        var ratio = <span class="cstat-no" title="statement not covered" >1 - (1 - e.scale) / 1.50,</span>
+            newZoom = <span class="cstat-no" title="statement not covered" >Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, ratio * zoom));</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        canvas.zoom(newZoom, mid);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        stopEvent(e);</span>
+      }
+&nbsp;
+      function end(e) <span class="fstat-no" title="function not covered" >{</span>
+<span class="cstat-no" title="statement not covered" >        recognizer.off('pinchmove', update);</span>
+<span class="cstat-no" title="statement not covered" >        recognizer.off('pinchend', end);</span>
+<span class="cstat-no" title="statement not covered" >        recognizer.off('pinchcancel', end);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        recognizer.reset(true);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        log('canvas', 'zoom end');</span>
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      recognizer.on('pinchmove', update);</span>
+<span class="cstat-no" title="statement not covered" >      recognizer.on('pinchend', end);</span>
+<span class="cstat-no" title="statement not covered" >      recognizer.on('pinchcancel', end);</span>
+    }
+&nbsp;
+    recognizer.on('panstart', startGrab);
+    recognizer.on('press', startGrab);
+&nbsp;
+    recognizer.on('pinchstart', startZoom);
+  }
+&nbsp;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (dragging) {
+&nbsp;
+    // simulate hover during dragging
+<span class="cstat-no" title="statement not covered" >    eventBus.on('drag.move', function(event) <span class="fstat-no" title="function not covered" >{</span></span>
+&nbsp;
+      var originalEvent = <span class="cstat-no" title="statement not covered" >event.originalEvent;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      if (!originalEvent || originalEvent instanceof MouseEvent) {</span>
+<span class="cstat-no" title="statement not covered" >        return;</span>
+      }
+&nbsp;
+      var position = <span class="cstat-no" title="statement not covered" >toPoint(originalEvent);</span>
+&nbsp;
+      // this gets really expensive ...
+      var node = <span class="cstat-no" title="statement not covered" >document.elementFromPoint(position.x, position.y),</span>
+          gfx = <span class="cstat-no" title="statement not covered" >getGfx(node),</span>
+          element = <span class="cstat-no" title="statement not covered" >gfx &amp;&amp; elementRegistry.get(gfx);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      if (element !== event.hover) {</span>
+<span class="cstat-no" title="statement not covered" >        if (event.hover) {</span>
+<span class="cstat-no" title="statement not covered" >          dragging.out(event);</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (element) {</span>
+<span class="cstat-no" title="statement not covered" >          dragging.hover({ element: element, gfx: gfx });</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >          event.hover = element;</span>
+<span class="cstat-no" title="statement not covered" >          event.hoverGfx = gfx;</span>
+        }
+      }
+    });
+  }
+&nbsp;
+  if (contextPad) {
+&nbsp;
+    eventBus.on('contextPad.create', function(event) <span class="fstat-no" title="function not covered" >{</span>
+      var node = <span class="cstat-no" title="statement not covered" >event.pad.html;</span>
+&nbsp;
+      // touch recognizer
+      var padRecognizer = <span class="cstat-no" title="statement not covered" >createTouchRecognizer(node);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      padRecognizer.on('panstart', function(event) <span class="fstat-no" title="function not covered" >{</span></span>
+<span class="cstat-no" title="statement not covered" >        log('context-pad', 'panstart', event);</span>
+<span class="cstat-no" title="statement not covered" >        contextPad.trigger('dragstart', event, true);</span>
+      });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      padRecognizer.on('press', function(event) <span class="fstat-no" title="function not covered" >{</span></span>
+<span class="cstat-no" title="statement not covered" >        log('context-pad', 'press', event);</span>
+<span class="cstat-no" title="statement not covered" >        contextPad.trigger('dragstart', event, true);</span>
+      });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      padRecognizer.on('tap', function(event) <span class="fstat-no" title="function not covered" >{</span></span>
+<span class="cstat-no" title="statement not covered" >        log('context-pad', 'tap', event);</span>
+<span class="cstat-no" title="statement not covered" >        contextPad.trigger('click', event);</span>
+      });
+    });
+  }
+&nbsp;
+  if (palette) {
+    eventBus.on('palette.create', function(event) <span class="fstat-no" title="function not covered" >{</span>
+      var node = <span class="cstat-no" title="statement not covered" >event.container;</span>
+&nbsp;
+      // touch recognizer
+      var padRecognizer = <span class="cstat-no" title="statement not covered" >createTouchRecognizer(node);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      padRecognizer.on('panstart', function(event) <span class="fstat-no" title="function not covered" >{</span></span>
+<span class="cstat-no" title="statement not covered" >        log('palette', 'panstart', event);</span>
+<span class="cstat-no" title="statement not covered" >        palette.trigger('dragstart', event, true);</span>
+      });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      padRecognizer.on('press', function(event) <span class="fstat-no" title="function not covered" >{</span></span>
+<span class="cstat-no" title="statement not covered" >        log('palette', 'press', event);</span>
+<span class="cstat-no" title="statement not covered" >        palette.trigger('dragstart', event, true);</span>
+      });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      padRecognizer.on('tap', function(event) <span class="fstat-no" title="function not covered" >{</span></span>
+<span class="cstat-no" title="statement not covered" >        log('palette', 'tap', event);</span>
+<span class="cstat-no" title="statement not covered" >        palette.trigger('click', event);</span>
+      });
+    });
+  }
+&nbsp;
+  eventBus.on('canvas.init', function(event) {
+    initEvents(event.svg);
+  });
+}
+&nbsp;
+&nbsp;
+TouchInteractionEvents.$inject = [
+  'injector',
+  'canvas',
+  'eventBus',
+  'elementRegistry',
+  'interactionEvents',
+  'touchFix'
+];
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Oct 24 2018 10:37:43 GMT+0200 (Central European Summer Time)
+</div>
+</div>
+<script src="../../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../../sorter.js"></script>
+</body>
+</html>

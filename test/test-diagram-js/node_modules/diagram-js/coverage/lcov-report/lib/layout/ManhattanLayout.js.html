@@ -1,0 +1,2192 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for lib/layout/ManhattanLayout.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">all files</a> / <a href="index.html">lib/layout/</a> ManhattanLayout.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">94.8% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>164/173</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">88.59% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>132/149</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>27/27</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">94.8% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>164/173</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362
+363
+364
+365
+366
+367
+368
+369
+370
+371
+372
+373
+374
+375
+376
+377
+378
+379
+380
+381
+382
+383
+384
+385
+386
+387
+388
+389
+390
+391
+392
+393
+394
+395
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405
+406
+407
+408
+409
+410
+411
+412
+413
+414
+415
+416
+417
+418
+419
+420
+421
+422
+423
+424
+425
+426
+427
+428
+429
+430
+431
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448
+449
+450
+451
+452
+453
+454
+455
+456
+457
+458
+459
+460
+461
+462
+463
+464
+465
+466
+467
+468
+469
+470
+471
+472
+473
+474
+475
+476
+477
+478
+479
+480
+481
+482
+483
+484
+485
+486
+487
+488
+489
+490
+491
+492
+493
+494
+495
+496
+497
+498
+499
+500
+501
+502
+503
+504
+505
+506
+507
+508
+509
+510
+511
+512
+513
+514
+515
+516
+517
+518
+519
+520
+521
+522
+523
+524
+525
+526
+527
+528
+529
+530
+531
+532
+533
+534
+535
+536
+537
+538
+539
+540
+541
+542
+543
+544
+545
+546
+547
+548
+549
+550
+551
+552
+553
+554
+555
+556
+557
+558
+559
+560
+561
+562
+563
+564
+565
+566
+567
+568
+569
+570
+571
+572
+573
+574
+575
+576
+577
+578
+579
+580
+581
+582
+583
+584
+585
+586
+587
+588
+589
+590
+591
+592
+593
+594
+595
+596
+597
+598
+599
+600
+601
+602
+603
+604
+605
+606
+607
+608
+609
+610
+611
+612
+613
+614
+615
+616
+617
+618
+619
+620
+621
+622
+623
+624
+625
+626
+627
+628
+629
+630
+631
+632
+633
+634
+635
+636
+637
+638
+639
+640
+641
+642
+643
+644
+645
+646
+647
+648
+649
+650
+651
+652
+653
+654
+655
+656
+657
+658
+659
+660
+661
+662
+663
+664
+665
+666
+667
+668
+669
+670
+671
+672
+673
+674
+675
+676
+677
+678
+679
+680
+681
+682
+683
+684
+685
+686
+687
+688
+689
+690
+691
+692
+693
+694
+695
+696
+697
+698
+699
+700
+701
+702
+703
+704
+705
+706
+707
+708
+709
+710</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">17×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">44×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">44×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">44×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">44×</span>
+<span class="cline-any cline-yes">44×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">44×</span>
+<span class="cline-any cline-yes">44×</span>
+<span class="cline-any cline-yes">44×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">44×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">44×</span>
+<span class="cline-any cline-yes">27×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">27×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">17×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">17×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">17×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">17×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">44×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">44×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">91×</span>
+<span class="cline-any cline-yes">91×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">91×</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">76×</span>
+<span class="cline-any cline-yes">17×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">59×</span>
+<span class="cline-any cline-yes">38×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">21×</span>
+<span class="cline-any cline-yes">21×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">114×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">114×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">113×</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">91×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">48×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">47×</span>
+<span class="cline-any cline-yes">47×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">47×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">43×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">43×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">21×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">20×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">114×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">135×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">44×</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">44×</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">44×</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">26×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">19×</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">47×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">288×</span>
+<span class="cline-any cline-yes">288×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">288×</span>
+<span class="cline-any cline-yes">180×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">288×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {
+  isArray,
+  find,
+  without,
+  assign
+} from 'min-dash';
+&nbsp;
+import {
+  getOrientation,
+  getMid
+} from './LayoutUtil';
+&nbsp;
+import {
+  pointInRect,
+  pointDistance,
+  pointsAligned,
+  pointsOnLine
+} from '../util/Geometry';
+&nbsp;
+var MIN_SEGMENT_LENGTH = 20,
+    POINT_ORIENTATION_PADDING = 5;
+&nbsp;
+var round = Math.round;
+&nbsp;
+var INTERSECTION_THRESHOLD = 20,
+    ORIENTATION_THRESHOLD = {
+      'h:h': 20,
+      'v:v': 20,
+      'h:v': -10,
+      'v:h': -10
+    };
+&nbsp;
+function needsTurn(orientation, startDirection) {
+  return !{
+    t: /top/,
+    r: /right/,
+    b: /bottom/,
+    l: /left/,
+    h: /./,
+    v: /./
+  }[startDirection].test(orientation);
+}
+&nbsp;
+function canLayoutStraight(direction, targetOrientation) {
+  return {
+    t: /top/,
+    r: /right/,
+    b: /bottom/,
+    l: /left/,
+    h: /left|right/,
+    v: /top|bottom/
+  }[direction].test(targetOrientation);
+}
+&nbsp;
+function getSegmentBendpoints(a, b, directions) {
+  var orientation = getOrientation(b, a, POINT_ORIENTATION_PADDING);
+&nbsp;
+  var startDirection = directions.split(':')[0];
+&nbsp;
+  var xmid = round((b.x - a.x) / 2 + a.x),
+      ymid = round((b.y - a.y) / 2 + a.y);
+&nbsp;
+  var segmentEnd, segmentDirections;
+&nbsp;
+  var layoutStraight = canLayoutStraight(startDirection, orientation),
+      layoutHorizontal = /h|r|l/.test(startDirection),
+      layoutTurn = false;
+&nbsp;
+  var turnNextDirections = false;
+&nbsp;
+  if (layoutStraight) {
+    segmentEnd = layoutHorizontal ? { x: xmid, y: a.y } : { x: a.x, y: ymid };
+&nbsp;
+    segmentDirections = layoutHorizontal ? 'h:h' : 'v:v';
+  } else {
+    layoutTurn = needsTurn(orientation, startDirection);
+&nbsp;
+    segmentDirections = layoutHorizontal ? 'h:v' : 'v:h';
+&nbsp;
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (layoutTurn) {
+&nbsp;
+      if (layoutHorizontal) {
+        turnNextDirections = ymid === a.y;
+&nbsp;
+        segmentEnd = {
+          x: a.x + MIN_SEGMENT_LENGTH * (/l/.test(startDirection) ? -1 : 1),
+          y: turnNextDirections ? <span class="branch-0 cbranch-no" title="branch not covered" >ymid + MIN_SEGMENT_LENGTH </span>: ymid
+        };
+      } else {
+        turnNextDirections = xmid === a.x;
+&nbsp;
+        segmentEnd = {
+          x: turnNextDirections ? <span class="branch-0 cbranch-no" title="branch not covered" >xmid + MIN_SEGMENT_LENGTH </span>: xmid,
+          y: a.y + MIN_SEGMENT_LENGTH * (/t/.test(startDirection) ? -1 : 1)
+        };
+      }
+&nbsp;
+    } else {
+<span class="cstat-no" title="statement not covered" >      segmentEnd = {</span>
+        x: xmid,
+        y: ymid
+      };
+    }
+  }
+&nbsp;
+  return {
+    waypoints: getBendpoints(a, segmentEnd, segmentDirections).concat(segmentEnd),
+    directions:  segmentDirections,
+    turnNextDirections: turnNextDirections
+  };
+}
+&nbsp;
+function getStartSegment(a, b, directions) {
+  return getSegmentBendpoints(a, b, directions);
+}
+&nbsp;
+function getEndSegment(a, b, directions) {
+  var invertedSegment = getSegmentBendpoints(b, a, invertDirections(directions));
+&nbsp;
+  return {
+    waypoints: invertedSegment.waypoints.slice().reverse(),
+    directions: invertDirections(invertedSegment.directions),
+    turnNextDirections: invertedSegment.turnNextDirections
+  };
+}
+&nbsp;
+function getMidSegment(startSegment, endSegment) {
+&nbsp;
+  var startDirection = startSegment.directions.split(':')[1],
+      endDirection = endSegment.directions.split(':')[0];
+&nbsp;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (startSegment.turnNextDirections) {
+<span class="cstat-no" title="statement not covered" >    startDirection = startDirection == 'h' ? 'v' : 'h';</span>
+  }
+&nbsp;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (endSegment.turnNextDirections) {
+<span class="cstat-no" title="statement not covered" >    endDirection = endDirection == 'h' ? 'v' : 'h';</span>
+  }
+&nbsp;
+  var directions = startDirection + ':' + endDirection;
+&nbsp;
+  var bendpoints = getBendpoints(
+    startSegment.waypoints[startSegment.waypoints.length - 1],
+    endSegment.waypoints[0],
+    directions
+  );
+&nbsp;
+  return {
+    waypoints: bendpoints,
+    directions: directions
+  };
+}
+&nbsp;
+function invertDirections(directions) {
+  return directions.split(':').reverse().join(':');
+}
+&nbsp;
+/**
+ * Handle simple layouts with maximum two bendpoints.
+ */
+function getSimpleBendpoints(a, b, directions) {
+&nbsp;
+  var xmid = round((b.x - a.x) / 2 + a.x),
+      ymid = round((b.y - a.y) / 2 + a.y);
+&nbsp;
+  // one point, right or left from a
+  if (directions === 'h:v') {
+    return [ { x: b.x, y: a.y } ];
+  }
+&nbsp;
+  // one point, above or below a
+  if (directions === 'v:h') {
+    return [ { x: a.x, y: b.y } ];
+  }
+&nbsp;
+  // vertical segment between a and b
+  if (directions === 'h:h') {
+    return [
+      { x: xmid, y: a.y },
+      { x: xmid, y: b.y }
+    ];
+  }
+&nbsp;
+  // horizontal segment between a and b
+  <span class="missing-if-branch" title="else path not taken" >E</span>if (directions === 'v:v') {
+    return [
+      { x: a.x, y: ymid },
+      { x: b.x, y: ymid }
+    ];
+  }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  throw new Error('invalid directions: can only handle varians of [hv]:[hv]');</span>
+}
+&nbsp;
+&nbsp;
+/**
+ * Returns the mid points for a manhattan connection between two points.
+ *
+ * @example h:h (horizontal:horizontal)
+ *
+ * [a]----[x]
+ *         |
+ *        [x]----[b]
+ *
+ * @example h:v (horizontal:vertical)
+ *
+ * [a]----[x]
+ *         |
+ *        [b]
+ *
+ * @example h:r (horizontal:right)
+ *
+ * [a]----[x]
+ *         |
+ *    [b]-[x]
+ *
+ * @param  {Point} a
+ * @param  {Point} b
+ * @param  {String} directions
+ *
+ * @return {Array&lt;Point&gt;}
+ */
+function getBendpoints(a, b, directions) {
+  directions = directions || 'h:h';
+&nbsp;
+  if (!isValidDirections(directions)) {
+    throw new Error(
+      'unknown directions: &lt;' + directions + '&gt;: ' +
+      'must be specified as &lt;start&gt;:&lt;end&gt; ' +
+      'with start/end in { h,v,t,r,b,l }'
+    );
+  }
+&nbsp;
+  // compute explicit directions, involving trbl dockings
+  // using a three segmented layouting algorithm
+  if (isExplicitDirections(directions)) {
+    var startSegment = getStartSegment(a, b, directions),
+        endSegment = getEndSegment(a, b, directions),
+        midSegment = getMidSegment(startSegment, endSegment);
+&nbsp;
+    return [].concat(
+      startSegment.waypoints,
+      midSegment.waypoints,
+      endSegment.waypoints
+    );
+  }
+&nbsp;
+  // handle simple [hv]:[hv] cases that can be easily computed
+  return getSimpleBendpoints(a, b, directions);
+}
+&nbsp;
+/**
+ * Create a connection between the two points according
+ * to the manhattan layout (only horizontal and vertical) edges.
+ *
+ * @param {Point} a
+ * @param {Point} b
+ *
+ * @param {String} [directions='h:h'] specifies manhattan directions for each point as {adirection}:{bdirection}.
+                   A directionfor a point is either `h` (horizontal) or `v` (vertical)
+ *
+ * @return {Array&lt;Point&gt;}
+ */
+export function connectPoints(a, b, directions) {
+&nbsp;
+  var points = getBendpoints(a, b, directions);
+&nbsp;
+  points.unshift(a);
+  points.push(b);
+&nbsp;
+  return withoutRedundantPoints(points);
+}
+&nbsp;
+&nbsp;
+/**
+ * Connect two rectangles using a manhattan layouted connection.
+ *
+ * @param {Bounds} source source rectangle
+ * @param {Bounds} target target rectangle
+ * @param {Point} [start] source docking
+ * @param {Point} [end] target docking
+ *
+ * @param {Object} [hints]
+ * @param {String} [hints.preserveDocking=source] preserve docking on selected side
+ * @param {Array&lt;String&gt;} [hints.preferredLayouts]
+ * @param {Point|Boolean} [hints.connectionStart] whether the start changed
+ * @param {Point|Boolean} [hints.connectionEnd] whether the end changed
+ *
+ * @return {Array&lt;Point&gt;} connection points
+ */
+export function connectRectangles(source, target, start, end, hints) {
+&nbsp;
+  var preferredLayouts = hints &amp;&amp; hints.preferredLayouts || [];
+&nbsp;
+  var preferredLayout = without(preferredLayouts, 'straight')[0] || 'h:h';
+&nbsp;
+  var threshold = ORIENTATION_THRESHOLD[preferredLayout] || 0;
+&nbsp;
+  var orientation = getOrientation(source, target, threshold);
+&nbsp;
+  var directions = getDirections(orientation, preferredLayout);
+&nbsp;
+  start = start || getMid(source);
+  end = end || getMid(target);
+&nbsp;
+  var directionSplit = directions.split(':');
+&nbsp;
+  // compute actual docking points for start / end
+  // this ensures we properly layout only parts of the
+  // connection that lies in between the two rectangles
+  var startDocking = getDockingPoint(start, source, directionSplit[0], invertOrientation(orientation)),
+      endDocking = getDockingPoint(end, target, directionSplit[1], orientation);
+&nbsp;
+  return connectPoints(startDocking, endDocking, directions);
+}
+&nbsp;
+&nbsp;
+/**
+ * Repair the connection between two rectangles, of which one has been updated.
+ *
+ * @param {Bounds} source
+ * @param {Bounds} target
+ * @param {Point} [start]
+ * @param {Point} [end]
+ * @param {Array&lt;Point&gt;} waypoints
+ * @param {Object} [hints]
+ * @param {Array&lt;String&gt;} [hints.preferredLayouts] list of preferred layouts
+ * @param {Boolean} [hints.connectionStart]
+ * @param {Boolean} [hints.connectionEnd]
+ *
+ * @return {Array&lt;Point&gt;} repaired waypoints
+ */
+export function repairConnection(source, target, start, end, waypoints, hints) {
+&nbsp;
+  <span class="missing-if-branch" title="else path not taken" >E</span>if (isArray(start)) {
+    waypoints = start;
+    hints = end;
+&nbsp;
+    start = getMid(source);
+    end = getMid(target);
+  }
+&nbsp;
+  hints = assign({ preferredLayouts: [] }, hints);
+  waypoints = waypoints || <span class="branch-1 cbranch-no" title="branch not covered" >[];</span>
+&nbsp;
+  var preferredLayouts = hints.preferredLayouts,
+      preferStraight = preferredLayouts.indexOf('straight') !== -1,
+      repairedWaypoints;
+&nbsp;
+  // just layout non-existing or simple connections
+  // attempt to render straight lines, if required
+&nbsp;
+  if (preferStraight) {
+    // attempt to layout a straight line
+    repairedWaypoints = layoutStraight(source, target, start, end, hints);
+  }
+&nbsp;
+  if (!repairedWaypoints) {
+    // check if we layout from start or end
+    if (hints.connectionEnd) {
+      repairedWaypoints = _repairConnectionSide(target, source, end, waypoints.slice().reverse());
+      repairedWaypoints = repairedWaypoints &amp;&amp; repairedWaypoints.reverse();
+    } else
+    if (hints.connectionStart) {
+      repairedWaypoints = _repairConnectionSide(source, target, start, waypoints);
+    } else
+    // or whether nothing seems to have changed
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (waypoints &amp;&amp; waypoints.length) {
+<span class="cstat-no" title="statement not covered" >      repairedWaypoints = waypoints;</span>
+    }
+  }
+&nbsp;
+  // simply reconnect if nothing else worked
+  if (!repairedWaypoints) {
+    repairedWaypoints = connectRectangles(source, target, start, end, hints);
+  }
+&nbsp;
+  return repairedWaypoints;
+}
+&nbsp;
+&nbsp;
+function inRange(a, start, end) {
+  return a &gt;= start &amp;&amp; a &lt;= end;
+}
+&nbsp;
+function isInRange(axis, a, b) {
+  var size = {
+    x: 'width',
+    y: 'height'
+  };
+&nbsp;
+  return inRange(a[axis], b[axis], b[axis] + b[size[axis]]);
+}
+&nbsp;
+/**
+ * Layout a straight connection
+ *
+ * @param {Bounds} source
+ * @param {Bounds} target
+ * @param {Point} start
+ * @param {Point} end
+ * @param {Object} [hints]
+ *
+ * @return {Array&lt;Point&gt;} waypoints if straight layout worked
+ */
+export function layoutStraight(source, target, start, end, hints) {
+  var axis = {},
+      primaryAxis,
+      orientation;
+&nbsp;
+  orientation = getOrientation(source, target);
+&nbsp;
+  // only layout a straight connection if shapes are
+  // horizontally or vertically aligned
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!/^(top|bottom|left|right)$/.test(orientation)) {
+<span class="cstat-no" title="statement not covered" >    return null;</span>
+  }
+&nbsp;
+  if (/top|bottom/.test(orientation)) {
+    primaryAxis = 'x';
+  }
+&nbsp;
+  if (/left|right/.test(orientation)) {
+    primaryAxis = 'y';
+  }
+&nbsp;
+  if (hints.preserveDocking === 'target') {
+&nbsp;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!isInRange(primaryAxis, end, source)) {
+<span class="cstat-no" title="statement not covered" >      return null;</span>
+    }
+&nbsp;
+    axis[primaryAxis] = end[primaryAxis];
+&nbsp;
+    return [
+      {
+        x: axis.x !== undefined ? axis.x : start.x,
+        y: axis.y !== undefined ? axis.y : start.y,
+        original: {
+          x: axis.x !== undefined ? axis.x : start.x,
+          y: axis.y !== undefined ? axis.y : start.y
+        }
+      },
+      {
+        x: end.x,
+        y: end.y
+      }
+    ];
+&nbsp;
+  } else {
+&nbsp;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!isInRange(primaryAxis, start, target)) {
+<span class="cstat-no" title="statement not covered" >      return null;</span>
+    }
+&nbsp;
+    axis[primaryAxis] = start[primaryAxis];
+&nbsp;
+    return [
+      {
+        x: start.x,
+        y: start.y
+      },
+      {
+        x: axis.x !== undefined ? axis.x : end.x,
+        y: axis.y !== undefined ? axis.y : end.y,
+        original: {
+          x: axis.x !== undefined ? axis.x : end.x,
+          y: axis.y !== undefined ? axis.y : end.y
+        }
+      }
+    ];
+  }
+&nbsp;
+}
+&nbsp;
+&nbsp;
+/**
+ * Repair a connection from one side that moved.
+ *
+ * @param {Bounds} moved
+ * @param {Bounds} other
+ * @param {Point} newDocking
+ * @param {Array&lt;Point&gt;} points originalPoints from moved to other
+ *
+ * @return {Array&lt;Point&gt;} the repaired points between the two rectangles
+ */
+export function _repairConnectionSide(moved, other, newDocking, points) {
+&nbsp;
+  function needsRelayout(moved, other, points) {
+&nbsp;
+    if (points.length &lt; 3) {
+      return true;
+    }
+&nbsp;
+    if (points.length &gt; 4) {
+      return false;
+    }
+&nbsp;
+    // relayout if two points overlap
+    // this is most likely due to
+    return !!find(points, function(p, idx) {
+      var q = points[idx - 1];
+&nbsp;
+      return q &amp;&amp; pointDistance(p, q) &lt; 3;
+    });
+  }
+&nbsp;
+  function repairBendpoint(candidate, oldPeer, newPeer) {
+&nbsp;
+    var alignment = pointsAligned(oldPeer, candidate);
+&nbsp;
+    switch (alignment) {
+    case 'v':
+      // repair vertical alignment
+      return { x: candidate.x, y: newPeer.y };
+    case 'h':
+      // repair horizontal alignment
+      return { x: newPeer.x, y: candidate.y };
+    }
+&nbsp;
+    return { x: candidate.x, y: candidate. y };
+  }
+&nbsp;
+  function removeOverlapping(points, a, b) {
+    var i;
+&nbsp;
+    for (i = points.length - 2; i !== 0; i--) {
+&nbsp;
+      // intersects (?) break, remove all bendpoints up to this one and relayout
+      if (pointInRect(points[i], a, INTERSECTION_THRESHOLD) ||
+          pointInRect(points[i], b, INTERSECTION_THRESHOLD)) {
+&nbsp;
+        // return sliced old connection
+        return points.slice(i);
+      }
+    }
+&nbsp;
+    return points;
+  }
+&nbsp;
+&nbsp;
+  // (0) only repair what has layoutable bendpoints
+&nbsp;
+  // (1) if only one bendpoint and on shape moved onto other shapes axis
+  //     (horizontally / vertically), relayout
+&nbsp;
+  if (needsRelayout(moved, other, points)) {
+    return null;
+  }
+&nbsp;
+  var oldDocking = points[0],
+      newPoints = points.slice(),
+      slicedPoints;
+&nbsp;
+  // (2) repair only last line segment and only if it was layouted before
+&nbsp;
+  newPoints[0] = newDocking;
+  newPoints[1] = repairBendpoint(newPoints[1], oldDocking, newDocking);
+&nbsp;
+&nbsp;
+  // (3) if shape intersects with any bendpoint after repair,
+  //     remove all segments up to this bendpoint and repair from there
+&nbsp;
+  slicedPoints = removeOverlapping(newPoints, moved, other);
+&nbsp;
+  if (slicedPoints !== newPoints) {
+    return _repairConnectionSide(moved, other, newDocking, slicedPoints);
+  }
+&nbsp;
+  return newPoints;
+}
+&nbsp;
+&nbsp;
+/**
+ * Returns the manhattan directions connecting two rectangles
+ * with the given orientation.
+ *
+ * Will always return the default layout, if it is specific
+ * regarding sides already (trbl).
+ *
+ * @example
+ *
+ * getDirections('top'); // -&gt; 'v:v'
+ * getDirections('intersect'); // -&gt; 't:t'
+ *
+ * getDirections('top-right', 'v:h'); // -&gt; 'v:h'
+ * getDirections('top-right', 'h:h'); // -&gt; 'h:h'
+ *
+ *
+ * @param {String} orientation
+ * @param {String} defaultLayout
+ *
+ * @return {String}
+ */
+function getDirections(orientation, defaultLayout) {
+&nbsp;
+  // don't override specific trbl directions
+  if (isExplicitDirections(defaultLayout)) {
+    return defaultLayout;
+  }
+&nbsp;
+  switch (orientation) {
+  case 'intersect':
+    return 't:t';
+&nbsp;
+  case 'top':
+  case 'bottom':
+    return 'v:v';
+&nbsp;
+  case 'left':
+  case 'right':
+    return 'h:h';
+&nbsp;
+  // 'top-left'
+  // 'top-right'
+  // 'bottom-left'
+  // 'bottom-right'
+  default:
+    return defaultLayout;
+  }
+}
+&nbsp;
+function isValidDirections(directions) {
+  return directions &amp;&amp; /^h|v|t|r|b|l:h|v|t|r|b|l$/.test(directions);
+}
+&nbsp;
+function isExplicitDirections(directions) {
+  return directions &amp;&amp; /t|r|b|l/.test(directions);
+}
+&nbsp;
+function invertOrientation(orientation) {
+  return {
+    'top': 'bottom',
+    'bottom': 'top',
+    'left': 'right',
+    'right': 'left',
+    'top-left': 'bottom-right',
+    'bottom-right': 'top-left',
+    'top-right': 'bottom-left',
+    'bottom-left': 'top-right',
+  }[orientation];
+}
+&nbsp;
+function getDockingPoint(point, rectangle, dockingDirection, targetOrientation) {
+&nbsp;
+  // ensure we end up with a specific docking direction
+  // based on the targetOrientation, if &lt;h|v&gt; is being passed
+&nbsp;
+  if (dockingDirection === 'h') {
+    dockingDirection = /left/.test(targetOrientation) ? 'l' : 'r';
+  }
+&nbsp;
+  if (dockingDirection === 'v') {
+    dockingDirection = /top/.test(targetOrientation) ? 't' : 'b';
+  }
+&nbsp;
+  if (dockingDirection === 't') {
+    return { original: point, x: point.x, y: rectangle.y };
+  }
+&nbsp;
+  if (dockingDirection === 'r') {
+    return { original: point, x: rectangle.x + rectangle.width, y: point.y };
+  }
+&nbsp;
+  if (dockingDirection === 'b') {
+    return { original: point, x: point.x, y: rectangle.y + rectangle.height };
+  }
+&nbsp;
+  <span class="missing-if-branch" title="else path not taken" >E</span>if (dockingDirection === 'l') {
+    return { original: point, x: rectangle.x, y: point.y };
+  }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  throw new Error('unexpected dockingDirection: &lt;' + dockingDirection + '&gt;');</span>
+}
+&nbsp;
+&nbsp;
+/**
+ * Return list of waypoints with redundant ones filtered out.
+ *
+ * @example
+ *
+ * Original points:
+ *
+ *   [x] ----- [x] ------ [x]
+ *                         |
+ *                        [x] ----- [x] - [x]
+ *
+ * Filtered:
+ *
+ *   [x] ---------------- [x]
+ *                         |
+ *                        [x] ----------- [x]
+ *
+ * @param  {Array&lt;Point&gt;} waypoints
+ *
+ * @return {Array&lt;Point&gt;}
+ */
+export function withoutRedundantPoints(waypoints) {
+  return waypoints.reduce(function(points, p, idx) {
+&nbsp;
+    var previous = points[points.length - 1],
+        next = waypoints[idx + 1];
+&nbsp;
+    if (!pointsOnLine(previous, next, p, 0)) {
+      points.push(p);
+    }
+&nbsp;
+    return points;
+  }, []);
+}</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Oct 24 2018 10:37:43 GMT+0200 (Central European Summer Time)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

@@ -5,6 +5,7 @@ import {Message} from '../common/message';
 import {EventService} from '../services/event.service';
 import {ProjectService} from '../services/project.service';
 import {ModelService} from '../services/model.service';
+import {element} from 'protractor';
 
 @Component({
   selector: 'app-properties-panel',
@@ -30,7 +31,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   private isPlace = false;
   private isTrans = false;
   private isArc = false;
-
+  cpnElement;
   private currentProjectModel: any;
   private pageInModel;
   private shapeObject;
@@ -39,18 +40,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
   private tables = [];
 
-  tableMapNames = {
-    Name: 'Name',
-    type: 'Colorset',
-    initmark: 'Initial marking',
-    Stroke: 'Stroke',
-    strokeWidth: 'Stroke width',
-    cond: 'Guard',
-    code: 'Action',
-    time: 'Time',
-    priority: 'Priority',
-    annot: 'Annot'
-  };
+  private tableMapNames;
 
 
 
@@ -95,6 +85,29 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.tableMapNames = {
+      Name: 'Name',
+      type: 'Colorset',
+      initmark: 'Initial marking',
+      Stroke: 'Stroke',
+      strokeWidth: 'Stroke width',
+      cond: 'Guard',
+      code: 'Action',
+      time: 'Time',
+      priority: 'Priority',
+      annot: 'Annot',
+      invert: {}
+
+    };
+    this.tableMapNames['invert']['Colorset'] = 'type';
+    this.tableMapNames['invert']['Initial marking'] = 'initmark';
+    this.tableMapNames['invert']['troke width'] = 'strokeWidth';
+    this.tableMapNames['invert']['Guard'] = 'cond';
+    this.tableMapNames['invert']['Action'] = 'code';
+    this.tableMapNames['invert']['Time'] = 'time';
+    this.tableMapNames['invert']['Priority'] = 'priority';
+    this.tableMapNames['invert']['Annot'] = 'annot';
+
     this.tables = [
       {id: 'commonNodes', name: '', data: [], visible: false},
       {id: 'nodes', name: '', data: [], visible: false},
@@ -141,8 +154,15 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     if (htmlElement && htmlElement.nodeName === 'TD' || htmlElement.nodeName === 'INPUT') {
       if (htmlElement.offsetParent && (htmlElement.offsetParent['offsetParent'])) {
         const htmlTableElement: HTMLTableElement = <HTMLTableElement>document.getElementById(htmlElement.offsetParent['offsetParent'].id);
+        if(htmlElement.nodeName === 'INPUT') {
+          let updatedfield = htmlElement.parentNode.parentNode.childNodes[0].textContent;
+          updatedfield = this.tableMapNames['invert'][updatedfield] ?  this.tableMapNames['invert'][updatedfield] : updatedfield;
+          const newValue = htmlElement['value'];
+          let table = this.getTable(htmlElement.offsetParent['offsetParent'].id);
+          this.setDescendantProp(this.cpnElement, this.setValueForTableByIdandReturnPath(newValue, table, updatedfield).replace('cpnElement.', ''), newValue );
 
-        if (htmlTableElement.id === 'commonNodes') {
+        }
+       /* if (htmlTableElement.id === 'commonNodes') {
           this.updateProperties(commonNodes, htmlTableElement);
         } else if (htmlTableElement.id === 'nodes') {
           this.updateProperties(nodes, htmlTableElement);
@@ -152,7 +172,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
           if (t) {
             this.updateProperties(t.data, htmlTableElement);
           }
-        }
+        }*/
 
         // let tableDataSource;
         // switch (htmlTableElement.id) {
@@ -191,6 +211,23 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
       }
     }
   }
+
+   setDescendantProp(obj, desc, value) {
+    if(desc) {
+      let arr = desc.split('.');
+      while (arr.length > 1) {
+        obj = obj[arr.shift()];
+      }
+       obj[arr[0]] = value;
+    }
+  }
+
+  setValueForTableByIdandReturnPath(value, table, name): string{
+    for(let i = 0; i < table.data.length; i++){
+      if(table.data[i].name === name) {table.data[i].value =  value; return table.data[i].path; }
+    }
+  }
+
 
 
   /**
@@ -529,7 +566,8 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
           t.visible = this.selectedElement === t.id;
         }
       }
-      this.showShapeAttrs(data.element.type === 'cpn:Label' ? data.element.parent : data.element);
+      this.cpnElement = data.cpnElement;
+      this.showShapeAttrs(data.element.type === 'cpn:Label' ? data.element.parent : data.element, data.cpnElement, data.type);
     });
   }
 
@@ -603,13 +641,13 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
    * function that fills the data setd for fields in the properties panel
    * @param shapeObject - model shape object
    */
-  showShapeAttrs(shapeObject) {
-    console.log(this.constructor.name, 'showShapeAttrs(), shapeObject = ', shapeObject);
+  showShapeAttrs(shapeObject, cpnElement, elementType) {
+    console.log(this.constructor.name, 'showShapeAttrs(), shapeObject = ', shapeObject, cpnElement);
 
     this.clearData();
 
     this.shapeObject = shapeObject;
-    let type = shapeObject.type.replace(/^bpmn:/, '');
+    let type = elementType;///shapeObject.type.replace(/^bpmn:/, '');
     type = type.replace(/^cpn:/, '');
 
     // this.title = type;
@@ -648,7 +686,24 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     // }) : this.currentProjectModel.data.workspaceElements.cpnet.page;
 
     //  this.pageInModel = pageInModel;
-    nodes.push({name: 'Id', value: type === 'cpn:Label' ? shapeObject.labelNodeId : shapeObject.id, hide: true});
+    let  elementShape = undefined;
+    if(elementType !== 'cpn:Connection') {
+      elementShape = elementType === 'cpn:Transition' ? 'box' : 'ellipse';
+    }
+    nodes.push({name: 'Id', value: cpnElement._id, hide: true, path:  'cpnElement._id' });
+    nodes.push({name: 'Name', value: cpnElement.text, path:  'cpnElement.text' });
+    nodes.push({name: 'Type', value: elementType, hide: true});
+    nodes.push({name: 'X', value: cpnElement.posattr._x, path:  'cpnElement.posattr._x' });
+    nodes.push({name: 'Y', value: cpnElement.posattr._y, path:  'cpnElement.posattr._y' });
+    nodes.push({name: 'Width', value: elementShape  ? cpnElement[elementShape]._w :  ' - ', path:  elementShape ? 'cpnElement' + elementShape + '._w' : undefined });
+    nodes.push({name: 'Height', value: elementShape ?  cpnElement[elementShape]._h : ' - ' , path:  elementShape ? 'cpnElement' + elementShape + '._h' : undefined });
+    nodes.push({name: 'Stroke', value: cpnElement.lineattr._colour, path:  'cpnElement.lineattr._colour' });
+    nodes.push({name: 'strokeWidth', value: cpnElement.lineattr._thick, path:  'cpnElement.lineattr._thick' });
+    nodes.push({name: 'BackGround', value: cpnElement.fillattr._colour, path:  'cpnElement.fillattr._colour' });
+    commonNodes.push( {name: 'Name', value: cpnElement.text, path: 'cpnElement.text'} );
+
+
+    /*nodes.push({name: 'Id', value: type === 'cpn:Label' ? shapeObject.labelNodeId : shapeObject.id, hide: true});
     nodes.push(type === 'cpn:Label' ? {name: 'Text', value: shapeObject.text} : {name: 'Name', value: shapeObject.name});
     nodes.push({name: 'Type', value: type === 'cpn:Label' ? shapeObject.labelType : type, hide: true});
     nodes.push({name: 'X', value: shapeObject.x});
@@ -657,7 +712,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     nodes.push({name: 'Height', value: shapeObject.height});
     nodes.push({name: 'Stroke', value: shapeObject.stroke});
     nodes.push({name: 'strokeWidth', value: shapeObject.strokeWidth});
-    commonNodes.push(type === 'cpn:Label' ? {name: 'Text', value: shapeObject.text} : {name: 'Name', value: shapeObject.name});
+    commonNodes.push(type === 'cpn:Label' ? {name: 'Text', value: shapeObject.text} : {name: 'Name', value: shapeObject.name});*/
     let labelElem;
 
     // labels
@@ -668,8 +723,27 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     // this.code = [];
     // this.priority = [];
     // this.annot = [];
+    for (const label of this.modelService.getLabelEntry()[this.modelService.getModelCase(elementType)]) {
+      // labelElem = this.getLabelProperties(label);
 
-    for (const label of shapeObject.labels) {
+      const t = this.getTable(label);
+      if (t) {
+        labelElem = t.data;
+        labelElem.push({name: 'Id', value: cpnElement[label]._id, hide: true, path:  'cpnElement.' + label + '._id'});
+        labelElem.push({name: 'Type', value: type, hide: true});
+        labelElem.push({name: 'X', value: cpnElement[label].posattr._x,  path:  'cpnElement.' + label + '.posattr._x'});
+        labelElem.push({name: 'Y', value: cpnElement[label].posattr._y,  path:  'cpnElement.' + label + '.posattr._y'});
+        //labelElem.push({name: 'Width', value: label.width});
+        //labelElem.push({name: 'Height', value: label.height});
+        labelElem.push({name: 'Text', value: cpnElement[label].text.__text ? cpnElement[label].text.__text : this.projectService.appSettings[label], path:  'cpnElement.' + label + '.text.__text'});
+        labelElem.push({name: 'Stroke', value: cpnElement[label].lineattr._colour, path:  'cpnElement.' + label + '.lineattr._colou'});
+        labelElem.push({name: 'strokeWidth', value: cpnElement[label].lineattr._thick,  path:  'cpnElement.' + label + '.lineattr._thick'});
+        labelElem.push({name: 'BackGround', value: cpnElement[label].fillattr._colour,  path:  'cpnElement.' + label + '.fillattr._colour'});
+        commonNodes.push({name: label, value: cpnElement[label].text.__text ? cpnElement[label].text.__text : this.projectService.appSettings[label],  path:  'cpnElement.' + label + '.text.__text'});
+      }
+    }
+    commonNodes.push({name: 'Stroke', value: cpnElement.lineattr._colour, path: 'cpnElement.lineattr._colour' });
+    /*for (const label of shapeObject.labels) {
       // labelElem = this.getLabelProperties(label);
 
       const t = this.getTable(label.labelType);
@@ -748,7 +822,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     });
     console.log(this.constructor.name, 'showShapeAttrs(), commonNodes = ', commonNodes);
 
-    console.log(this.constructor.name, 'showShapeAttrs(), this.tables = ', this.tables);
+    console.log(this.constructor.name, 'showShapeAttrs(), this.tables = ', this.tables);*/
   }
 
   /**

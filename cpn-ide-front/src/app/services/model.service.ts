@@ -102,6 +102,9 @@ export class ModelService {
   }
 
 
+  getLabelEntry(){
+    return this.labelsEntry;
+  }
 
   getModelCase(labelType) {
     return this.modelCase[labelType];

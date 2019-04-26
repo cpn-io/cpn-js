@@ -1670,7 +1670,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
       //     element: element
       //   });
 
-      this.eventService.send(Message.SHAPE_SELECT, {element: element});
+      this.eventService.send(Message.SHAPE_SELECT, {element: element, cpnElement: element.cpnElement, type: element.type});
       // this.curentElement = element;
       // this.tabStack.element = element;
     }

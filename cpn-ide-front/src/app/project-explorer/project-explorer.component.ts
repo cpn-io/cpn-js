@@ -95,9 +95,10 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           console.log('drag', from, to);
           console.log('onMoveNode', node.name, 'to', to.parent.name, 'at index', to.index);
           let parentJson = from.parent.data.object;//(this.treeComponent.treeModel.getNodeById(node.id)).parent.data.object;
-          let type = node.data.type === 'page' ? 'page' : this.paramsTypes.includes(from.parent.data.name) ? undefined : from.data.name
+          let type = node.data.type === 'page' ? 'page' : this.paramsTypes.includes(from.parent.data.name) ? undefined : from.data.name;
+          const isEntryExist: boolean = to.parent.data.object[type];
           this.modelService.moveNonModelJsonElement(from.data.object, parentJson, to.parent.data.object, to.index, type);
-          if(to.parent.data.object[type]) {
+          if(isEntryExist) {
             to.parent = tree.getNodeById((to.parent.children.find(e => e.data.name === type)).id);
             node = node.children.find(chld => chld.data.name === from.data.name );
             let onDeleteNodeId = from.id;

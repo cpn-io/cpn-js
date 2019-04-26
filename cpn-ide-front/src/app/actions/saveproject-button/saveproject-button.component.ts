@@ -11,7 +11,9 @@ import * as X2JS from '../../../x2js/xml2json';
 })
 export class SaveprojectButtonComponent implements OnInit {
 
-  fileNameInput = 'myPetriNet';
+  fileNameModel = 'myPetriNet';
+
+  xmlPrefix = '<?xml version="1.0" encoding="iso-8859-1"?>\n<!DOCTYPE workspaceElements PUBLIC "-//CPN//DTD CPNXML 1.0//EN" "http://cpntools.org/DTD/6/cpn.dtd">';
 
   constructor(private modal: NgbModal,
               private modelService: ModelService) {
@@ -24,7 +26,8 @@ export class SaveprojectButtonComponent implements OnInit {
     this.modal.open(modalName, {ariaLabelledBy: 'modal-basic-title', centered: true}).result.then((result) => {
 
       const x2js = new X2JS();
-      const xml = (x2js.json2xml_str(JSON.parse(JSON.stringify(this.modelService.getProjectData())))); /// netJson
+      let xml = (x2js.json2xml_str(JSON.parse(JSON.stringify(this.modelService.getProjectData())))); /// netJson
+      xml = `${this.xmlPrefix}\n${xml}`;
 
       let bytes = []; // chars
 
@@ -39,7 +42,7 @@ export class SaveprojectButtonComponent implements OnInit {
   }
 
   private get fileName() {
-    return `${this.fileNameInput}.cpn`;
+    return `${this.fileNameModel}.cpn`;
   }
 
   private saveAsText(charArray: any, fileName: string) {

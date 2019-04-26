@@ -1,0 +1,743 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for lib/core/GraphicsFactory.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">all files</a> / <a href="index.html">lib/core/</a> GraphicsFactory.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">98.72% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>77/78</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">95% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>19/20</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>16/16</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">98.72% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>77/78</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">982×</span>
+<span class="cline-any cline-yes">982×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3339×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3339×</span>
+<span class="cline-any cline-yes">2174×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1165×</span>
+<span class="cline-any cline-yes">1165×</span>
+<span class="cline-any cline-yes">347×</span>
+<span class="cline-any cline-yes">347×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">347×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3339×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">3706×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3706×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3706×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">2673×</span>
+<span class="cline-any cline-yes">2673×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2673×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2668×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2673×</span>
+<span class="cline-any cline-yes">2673×</span>
+<span class="cline-any cline-yes">2673×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2673×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2673×</span>
+<span class="cline-any cline-yes">2673×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2673×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2673×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">2673×</span>
+<span class="cline-any cline-yes">2673×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">637×</span>
+<span class="cline-any cline-yes">637×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">637×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1112×</span>
+<span class="cline-any cline-yes">949×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1112×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">637×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">674×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">674×</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">666×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">666×</span>
+<span class="cline-any cline-yes">1840×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1840×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">2952×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2952×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">93×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">93×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">770×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">770×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">94×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">94×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3707×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3706×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3706×</span>
+<span class="cline-any cline-yes">2936×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2936×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">770×</span>
+<span class="cline-any cline-yes">770×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3706×</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3692×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">178×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">178×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1845×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {
+  forEach,
+  reduce
+} from 'min-dash';
+&nbsp;
+import {
+  getChildren,
+  getVisual
+} from '../util/GraphicsUtil';
+&nbsp;
+import { translate } from '../util/SvgTransformUtil';
+&nbsp;
+import { clear as domClear } from 'min-dom';
+&nbsp;
+import {
+  append as svgAppend,
+  attr as svgAttr,
+  classes as svgClasses,
+  create as svgCreate,
+  remove as svgRemove
+} from 'tiny-svg';
+&nbsp;
+&nbsp;
+/**
+ * A factory that creates graphical elements
+ *
+ * @param {EventBus} eventBus
+ * @param {ElementRegistry} elementRegistry
+ */
+export default function GraphicsFactory(eventBus, elementRegistry) {
+  this._eventBus = eventBus;
+  this._elementRegistry = elementRegistry;
+}
+&nbsp;
+GraphicsFactory.$inject = [ 'eventBus' , 'elementRegistry' ];
+&nbsp;
+&nbsp;
+GraphicsFactory.prototype._getChildren = function(element) {
+&nbsp;
+  var gfx = this._elementRegistry.getGraphics(element);
+&nbsp;
+  var childrenGfx;
+&nbsp;
+  // root element
+  if (!element.parent) {
+    childrenGfx = gfx;
+  } else {
+    childrenGfx = getChildren(gfx);
+    if (!childrenGfx) {
+      childrenGfx = svgCreate('g');
+      svgClasses(childrenGfx).add('djs-children');
+&nbsp;
+      svgAppend(gfx.parentNode, childrenGfx);
+    }
+  }
+&nbsp;
+  return childrenGfx;
+};
+&nbsp;
+/**
+ * Clears the graphical representation of the element and returns the
+ * cleared visual (the &lt;g class="djs-visual" /&gt; element).
+ */
+GraphicsFactory.prototype._clear = function(gfx) {
+  var visual = getVisual(gfx);
+&nbsp;
+  domClear(visual);
+&nbsp;
+  return visual;
+};
+&nbsp;
+/**
+ * Creates a gfx container for shapes and connections
+ *
+ * The layout is as follows:
+ *
+ * &lt;g class="djs-group"&gt;
+ *
+ *   &lt;!-- the gfx --&gt;
+ *   &lt;g class="djs-element djs-(shape|connection)"&gt;
+ *     &lt;g class="djs-visual"&gt;
+ *       &lt;!-- the renderer draws in here --&gt;
+ *     &lt;/g&gt;
+ *
+ *     &lt;!-- extensions (overlays, click box, ...) goes here
+ *   &lt;/g&gt;
+ *
+ *   &lt;!-- the gfx child nodes --&gt;
+ *   &lt;g class="djs-children"&gt;&lt;/g&gt;
+ * &lt;/g&gt;
+ *
+ * @param {Object} parent
+ * @param {String} type the type of the element, i.e. shape | connection
+ * @param {Number} [parentIndex] position to create container in parent
+ */
+GraphicsFactory.prototype._createContainer = function(type, childrenGfx, parentIndex) {
+  var outerGfx = svgCreate('g');
+  svgClasses(outerGfx).add('djs-group');
+&nbsp;
+  // insert node at position
+  if (typeof parentIndex !== 'undefined') {
+    prependTo(outerGfx, childrenGfx, childrenGfx.childNodes[parentIndex]);
+  } else {
+    svgAppend(childrenGfx, outerGfx);
+  }
+&nbsp;
+  var gfx = svgCreate('g');
+  svgClasses(gfx).add('djs-element');
+  svgClasses(gfx).add('djs-' + type);
+&nbsp;
+  svgAppend(outerGfx, gfx);
+&nbsp;
+  // create visual
+  var visual = svgCreate('g');
+  svgClasses(visual).add('djs-visual');
+&nbsp;
+  svgAppend(gfx, visual);
+&nbsp;
+  return gfx;
+};
+&nbsp;
+GraphicsFactory.prototype.create = function(type, element, parentIndex) {
+  var childrenGfx = this._getChildren(element.parent);
+  return this._createContainer(type, childrenGfx, parentIndex);
+};
+&nbsp;
+GraphicsFactory.prototype.updateContainments = function(elements) {
+&nbsp;
+  var self = this,
+      elementRegistry = this._elementRegistry,
+      parents;
+&nbsp;
+  parents = reduce(elements, function(map, e) {
+&nbsp;
+    if (e.parent) {
+      map[e.parent.id] = e.parent;
+    }
+&nbsp;
+    return map;
+  }, {});
+&nbsp;
+  // update all parents of changed and reorganized their children
+  // in the correct order (as indicated in our model)
+  forEach(parents, function(parent) {
+&nbsp;
+    var children = parent.children;
+&nbsp;
+    if (!children) {
+      return;
+    }
+&nbsp;
+    var childGfx = self._getChildren(parent);
+&nbsp;
+    forEach(children.slice().reverse(), function(c) {
+      var gfx = elementRegistry.getGraphics(c);
+&nbsp;
+      prependTo(gfx.parentNode, childGfx);
+    });
+  });
+};
+&nbsp;
+GraphicsFactory.prototype.drawShape = function(visual, element) {
+  var eventBus = this._eventBus;
+&nbsp;
+  return eventBus.fire('render.shape', { gfx: visual, element: element });
+};
+&nbsp;
+GraphicsFactory.prototype.getShapePath = function(element) {
+  var eventBus = this._eventBus;
+&nbsp;
+  return eventBus.fire('render.getShapePath', element);
+};
+&nbsp;
+GraphicsFactory.prototype.drawConnection = function(visual, element) {
+  var eventBus = this._eventBus;
+&nbsp;
+  return eventBus.fire('render.connection', { gfx: visual, element: element });
+};
+&nbsp;
+GraphicsFactory.prototype.getConnectionPath = function(waypoints) {
+  var eventBus = this._eventBus;
+&nbsp;
+  return eventBus.fire('render.getConnectionPath', waypoints);
+};
+&nbsp;
+GraphicsFactory.prototype.update = function(type, element, gfx) {
+  // Do not update root element
+  if (!element.parent) {
+    return;
+  }
+&nbsp;
+  var visual = this._clear(gfx);
+&nbsp;
+  // redraw
+  if (type === 'shape') {
+    this.drawShape(visual, element);
+&nbsp;
+    // update positioning
+    translate(gfx, element.x, element.y);
+  } else
+  <span class="missing-if-branch" title="else path not taken" >E</span>if (type === 'connection') {
+    this.drawConnection(visual, element);
+  } else {
+<span class="cstat-no" title="statement not covered" >    throw new Error('unknown type: ' + type);</span>
+  }
+&nbsp;
+  if (element.hidden) {
+    svgAttr(gfx, 'display', 'none');
+  } else {
+    svgAttr(gfx, 'display', 'block');
+  }
+};
+&nbsp;
+GraphicsFactory.prototype.remove = function(element) {
+  var gfx = this._elementRegistry.getGraphics(element);
+&nbsp;
+  // remove
+  svgRemove(gfx.parentNode);
+};
+&nbsp;
+&nbsp;
+// helpers //////////////////////
+&nbsp;
+function prependTo(newNode, parentNode, siblingNode) {
+  parentNode.insertBefore(newNode, siblingNode || parentNode.firstChild);
+}
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Oct 24 2018 10:37:43 GMT+0200 (Central European Summer Time)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for lib/features/selection/Selection.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../../index.html">all files</a> / <a href="index.html">lib/features/selection/</a> Selection.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">96.88% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>31/32</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">90% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>9/10</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>8/8</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">96.88% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>31/32</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">668×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">668×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">668×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">668×</span>
+<span class="cline-any cline-yes">170×</span>
+<span class="cline-any cline-yes">170×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">668×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">174×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">174×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">174×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">523×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">53×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">524×</span>
+<span class="cline-any cline-yes">524×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">524×</span>
+<span class="cline-any cline-yes">323×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">524×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">521×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">524×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {
+  isArray,
+  forEach
+} from 'min-dash';
+&nbsp;
+&nbsp;
+/**
+ * A service that offers the current selection in a diagram.
+ * Offers the api to control the selection, too.
+ *
+ * @class
+ *
+ * @param {EventBus} eventBus the event bus
+ */
+export default function Selection(eventBus) {
+&nbsp;
+  this._eventBus = eventBus;
+&nbsp;
+  this._selectedElements = [];
+&nbsp;
+  var self = this;
+&nbsp;
+  eventBus.on([ 'shape.remove', 'connection.remove' ], function(e) {
+    var element = e.element;
+    self.deselect(element);
+  });
+&nbsp;
+  eventBus.on([ 'diagram.clear' ], function(e) {
+    self.select(null);
+  });
+}
+&nbsp;
+Selection.$inject = [ 'eventBus' ];
+&nbsp;
+&nbsp;
+Selection.prototype.deselect = function(element) {
+  var selectedElements = this._selectedElements;
+&nbsp;
+  var idx = selectedElements.indexOf(element);
+&nbsp;
+  if (idx !== -1) {
+    var oldSelection = selectedElements.slice();
+&nbsp;
+    selectedElements.splice(idx, 1);
+&nbsp;
+    this._eventBus.fire('selection.changed', { oldSelection: oldSelection, newSelection: selectedElements });
+  }
+};
+&nbsp;
+&nbsp;
+Selection.prototype.get = function() {
+  return this._selectedElements;
+};
+&nbsp;
+Selection.prototype.isSelected = function(element) {
+  return this._selectedElements.indexOf(element) !== -1;
+};
+&nbsp;
+&nbsp;
+/**
+ * This method selects one or more elements on the diagram.
+ *
+ * By passing an additional add parameter you can decide whether or not the element(s)
+ * should be added to the already existing selection or not.
+ *
+ * @method Selection#select
+ *
+ * @param  {Object|Object[]} elements element or array of elements to be selected
+ * @param  {boolean} [add] whether the element(s) should be appended to the current selection, defaults to false
+ */
+Selection.prototype.select = function(elements, add) {
+  var selectedElements = this._selectedElements,
+      oldSelection = selectedElements.slice();
+&nbsp;
+  if (!isArray(elements)) {
+    elements = elements ? [ elements ] : [];
+  }
+&nbsp;
+  // selection may be cleared by passing an empty array or null
+  // to the method
+  if (add) {
+    forEach(elements, function(element) {
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (selectedElements.indexOf(element) !== -1) {
+        // already selected
+<span class="cstat-no" title="statement not covered" >        return;</span>
+      } else {
+        selectedElements.push(element);
+      }
+    });
+  } else {
+    this._selectedElements = selectedElements = elements.slice();
+  }
+&nbsp;
+  this._eventBus.fire('selection.changed', { oldSelection: oldSelection, newSelection: selectedElements });
+};
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Oct 24 2018 10:37:43 GMT+0200 (Central European Summer Time)
+</div>
+</div>
+<script src="../../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../../sorter.js"></script>
+</body>
+</html>

@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for lib/navigation/movecanvas/MoveCanvas.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../../index.html">all files</a> / <a href="index.html">lib/navigation/movecanvas/</a> MoveCanvas.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">10% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>3/30</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/16</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">16.67% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>1/6</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">10% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>3/30</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {
+  set as cursorSet,
+  unset as cursorUnset
+} from '../../util/Cursor';
+&nbsp;
+import {
+  install as installClickTrap
+} from '../../util/ClickTrap';
+&nbsp;
+import {
+  delta as deltaPos
+} from '../../util/PositionUtil';
+&nbsp;
+import {
+  event as domEvent,
+  closest as domClosest
+} from 'min-dom';
+&nbsp;
+import {
+  toPoint
+} from '../../util/Event';
+&nbsp;
+&nbsp;
+function length(point) <span class="fstat-no" title="function not covered" >{</span>
+<span class="cstat-no" title="statement not covered" >  return Math.sqrt(Math.pow(point.x, 2) + Math.pow(point.y, 2));</span>
+}
+&nbsp;
+var THRESHOLD = 15;
+&nbsp;
+&nbsp;
+export default function MoveCanvas(eventBus, canvas) {
+&nbsp;
+  var context;
+&nbsp;
+  function handleMove(event) <span class="fstat-no" title="function not covered" >{</span>
+&nbsp;
+    var start = <span class="cstat-no" title="statement not covered" >context.start,</span>
+        position = <span class="cstat-no" title="statement not covered" >toPoint(event),</span>
+        delta = <span class="cstat-no" title="statement not covered" >deltaPos(position, start);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (!context.dragging &amp;&amp; length(delta) &gt; THRESHOLD) {</span>
+<span class="cstat-no" title="statement not covered" >      context.dragging = true;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      installClickTrap(eventBus);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      cursorSet('grab');</span>
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (context.dragging) {</span>
+&nbsp;
+      var lastPosition = <span class="cstat-no" title="statement not covered" >context.last || context.start;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      delta = deltaPos(position, lastPosition);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      canvas.scroll({</span>
+        dx: delta.x,
+        dy: delta.y
+      });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      context.last = position;</span>
+    }
+&nbsp;
+    // prevent select
+<span class="cstat-no" title="statement not covered" >    event.preventDefault();</span>
+  }
+&nbsp;
+&nbsp;
+  function handleEnd(event) <span class="fstat-no" title="function not covered" >{</span>
+<span class="cstat-no" title="statement not covered" >    domEvent.unbind(document, 'mousemove', handleMove);</span>
+<span class="cstat-no" title="statement not covered" >    domEvent.unbind(document, 'mouseup', handleEnd);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    context = null;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    cursorUnset();</span>
+  }
+&nbsp;
+  function handleStart(event) <span class="fstat-no" title="function not covered" >{</span>
+    // event is already handled by '.djs-draggable'
+<span class="cstat-no" title="statement not covered" >    if (domClosest(event.target, '.djs-draggable')) {</span>
+<span class="cstat-no" title="statement not covered" >      return;</span>
+    }
+&nbsp;
+&nbsp;
+    // reject non-left left mouse button or modifier key
+<span class="cstat-no" title="statement not covered" >    if (event.button || event.ctrlKey || event.shiftKey || event.altKey) {</span>
+<span class="cstat-no" title="statement not covered" >      return;</span>
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    context = {</span>
+      start: toPoint(event)
+    };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    domEvent.bind(document, 'mousemove', handleMove);</span>
+<span class="cstat-no" title="statement not covered" >    domEvent.bind(document, 'mouseup', handleEnd);</span>
+&nbsp;
+    // we've handled the event
+<span class="cstat-no" title="statement not covered" >    return true;</span>
+  }
+&nbsp;
+  // listen for move on element mouse down;
+  // allow others to hook into the event before us though
+  // (dragging / element moving will do this)
+  eventBus.on('element.mousedown', 500, function(e) <span class="fstat-no" title="function not covered" >{</span>
+<span class="cstat-no" title="statement not covered" >    return handleStart(e.originalEvent);</span>
+  });
+&nbsp;
+}
+&nbsp;
+&nbsp;
+MoveCanvas.$inject = [ 'eventBus', 'canvas' ];
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Oct 24 2018 10:37:43 GMT+0200 (Central European Summer Time)
+</div>
+</div>
+<script src="../../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../../sorter.js"></script>
+</body>
+</html>

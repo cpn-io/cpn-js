@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for lib/features/modeling/cmd/MoveShapeHandler.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../../prettify.css" />
+    <link rel="stylesheet" href="../../../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../../../index.html">all files</a> / <a href="index.html">lib/features/modeling/cmd/</a> MoveShapeHandler.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">97.56% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>40/41</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">75% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>6/8</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">87.5% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>7/8</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">97.56% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>40/41</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">611×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">611×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">323×</span>
+<span class="cline-any cline-yes">323×</span>
+<span class="cline-any cline-yes">323×</span>
+<span class="cline-any cline-yes">323×</span>
+<span class="cline-any cline-yes">323×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">323×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">323×</span>
+<span class="cline-any cline-yes">323×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">323×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">323×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">323×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">304×</span>
+<span class="cline-any cline-yes">304×</span>
+<span class="cline-any cline-yes">304×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">304×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">304×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">43×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">43×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">304×</span>
+<span class="cline-any cline-yes">43×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">47×</span>
+<span class="cline-any cline-yes">47×</span>
+<span class="cline-any cline-yes">47×</span>
+<span class="cline-any cline-yes">47×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">47×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">47×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">47×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">43×</span>
+<span class="cline-any cline-yes">43×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">43×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {
+  assign,
+  forEach,
+  pick
+} from 'min-dash';
+&nbsp;
+import MoveHelper from './helper/MoveHelper';
+&nbsp;
+import {
+  add as collectionAdd,
+  remove as collectionRemove
+} from '../../../util/Collections';
+&nbsp;
+import {
+  getMovedSourceAnchor,
+  getMovedTargetAnchor
+} from './helper/AnchorsHelper';
+&nbsp;
+&nbsp;
+/**
+ * A handler that implements reversible moving of shapes.
+ */
+export default function MoveShapeHandler(modeling) {
+  this._modeling = modeling;
+&nbsp;
+  this._helper = new MoveHelper(modeling);
+}
+&nbsp;
+MoveShapeHandler.$inject = [ 'modeling' ];
+&nbsp;
+&nbsp;
+MoveShapeHandler.prototype.execute = function(context) {
+&nbsp;
+  var shape = context.shape,
+      delta = context.delta,
+      newParent = context.newParent || shape.parent,
+      newParentIndex = context.newParentIndex,
+      oldParent = shape.parent;
+&nbsp;
+  context.oldBounds = pick(shape, [ 'x', 'y', 'width', 'height']);
+&nbsp;
+  // save old parent in context
+  context.oldParent = oldParent;
+  context.oldParentIndex = collectionRemove(oldParent.children, shape);
+&nbsp;
+  // add to new parent at position
+  collectionAdd(newParent.children, shape, newParentIndex);
+&nbsp;
+  // update shape parent + position
+  assign(shape, {
+    parent: newParent,
+    x: shape.x + delta.x,
+    y: shape.y + delta.y
+  });
+&nbsp;
+  return shape;
+};
+&nbsp;
+MoveShapeHandler.prototype.postExecute = function(context) {
+&nbsp;
+  var shape = context.shape,
+      delta = context.delta,
+      hints = context.hints;
+&nbsp;
+  var modeling = this._modeling;
+&nbsp;
+  if (hints.layout !== false) {
+&nbsp;
+    forEach(shape.incoming, function(c) {
+      modeling.layoutConnection(c, {
+        connectionEnd: getMovedTargetAnchor(c, shape, delta)
+      });
+    });
+&nbsp;
+    forEach(shape.outgoing, function(c) {
+      modeling.layoutConnection(c, {
+        connectionStart: getMovedSourceAnchor(c, shape, delta)
+      });
+    });
+  }
+&nbsp;
+  if (hints.recurse !== false) {
+    this.moveChildren(context);
+  }
+};
+&nbsp;
+MoveShapeHandler.prototype.revert = function(context) {
+&nbsp;
+  var shape = context.shape,
+      oldParent = context.oldParent,
+      oldParentIndex = context.oldParentIndex,
+      delta = context.delta;
+&nbsp;
+  // restore previous location in old parent
+  collectionAdd(oldParent.children, shape, oldParentIndex);
+&nbsp;
+  // revert to old position and parent
+  assign(shape, {
+    parent: oldParent,
+    x: shape.x - delta.x,
+    y: shape.y - delta.y
+  });
+&nbsp;
+  return shape;
+};
+&nbsp;
+MoveShapeHandler.prototype.moveChildren = function(context) {
+&nbsp;
+  var delta = context.delta,
+      shape = context.shape;
+&nbsp;
+  this._helper.moveRecursive(shape.children, delta, null);
+};
+&nbsp;
+MoveShapeHandler.prototype.getNewParent = function(context) <span class="fstat-no" title="function not covered" >{</span>
+<span class="cstat-no" title="statement not covered" >  return context.newParent || context.shape.parent;</span>
+};
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Oct 24 2018 10:37:43 GMT+0200 (Central European Summer Time)
+</div>
+</div>
+<script src="../../../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../../../sorter.js"></script>
+</body>
+</html>

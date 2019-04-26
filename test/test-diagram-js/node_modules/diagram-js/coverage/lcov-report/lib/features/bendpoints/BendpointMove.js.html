@@ -1,0 +1,908 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for lib/features/bendpoints/BendpointMove.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../../index.html">all files</a> / <a href="index.html">lib/features/bendpoints/</a> BendpointMove.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">92.59% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>100/108</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">80.43% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>37/46</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>11/11</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">92.59% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>100/108</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">21×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">17×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">17×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">17×</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {
+  pointDistance,
+  pointsOnLine
+} from '../../util/Geometry';
+&nbsp;
+import {
+  addBendpoint
+} from './BendpointUtil';
+&nbsp;
+var MARKER_OK = 'connect-ok',
+    MARKER_NOT_OK = 'connect-not-ok',
+    MARKER_CONNECT_HOVER = 'connect-hover',
+    MARKER_CONNECT_UPDATING = 'djs-updating';
+&nbsp;
+var COMMAND_BENDPOINT_UPDATE = 'connection.updateWaypoints',
+    COMMAND_RECONNECT_START = 'connection.reconnectStart',
+    COMMAND_RECONNECT_END = 'connection.reconnectEnd';
+&nbsp;
+var round = Math.round;
+&nbsp;
+import {
+  classes as svgClasses,
+  remove as svgRemove
+} from 'tiny-svg';
+&nbsp;
+import { translate } from '../../util/SvgTransformUtil';
+&nbsp;
+&nbsp;
+/**
+ * A component that implements moving of bendpoints
+ */
+export default function BendpointMove(
+    injector, eventBus, canvas,
+    dragging, graphicsFactory, rules,
+    modeling) {
+&nbsp;
+&nbsp;
+  // optional connection docking integration
+  var connectionDocking = injector.get('connectionDocking', false);
+&nbsp;
+&nbsp;
+  // API
+&nbsp;
+  this.start = function(event, connection, bendpointIndex, insert) {
+&nbsp;
+    var type,
+        context,
+        waypoints = connection.waypoints,
+        gfx = canvas.getGraphics(connection);
+&nbsp;
+    if (!insert &amp;&amp; bendpointIndex === 0) {
+      type = COMMAND_RECONNECT_START;
+    } else
+    if (!insert &amp;&amp; bendpointIndex === waypoints.length - 1) {
+      type = COMMAND_RECONNECT_END;
+    } else {
+      type = COMMAND_BENDPOINT_UPDATE;
+    }
+&nbsp;
+    context = {
+      connection: connection,
+      bendpointIndex: bendpointIndex,
+      insert: insert,
+      type: type
+    };
+&nbsp;
+    dragging.init(event, 'bendpoint.move', {
+      data: {
+        connection: connection,
+        connectionGfx: gfx,
+        context: context
+      }
+    });
+  };
+&nbsp;
+&nbsp;
+  // DRAGGING IMPLEMENTATION
+&nbsp;
+&nbsp;
+  function redrawConnection(data) {
+    graphicsFactory.update('connection', data.connection, data.connectionGfx);
+  }
+&nbsp;
+  function filterRedundantWaypoints(waypoints) {
+&nbsp;
+    // alter copy of waypoints, not original
+    waypoints = waypoints.slice();
+&nbsp;
+    var idx = 0,
+        point,
+        previousPoint,
+        nextPoint;
+&nbsp;
+    while (waypoints[idx]) {
+      point = waypoints[idx];
+      previousPoint = waypoints[idx - 1];
+      nextPoint = waypoints[idx + 1];
+&nbsp;
+      if (pointDistance(point, nextPoint) === 0 ||
+          pointsOnLine(previousPoint, nextPoint, point)) {
+&nbsp;
+        // remove point, if overlapping with {nextPoint}
+        // or on line with {previousPoint} -&gt; {point} -&gt; {nextPoint}
+        waypoints.splice(idx, 1);
+      } else {
+        idx++;
+      }
+    }
+&nbsp;
+    return waypoints;
+  }
+&nbsp;
+  eventBus.on('bendpoint.move.start', function(e) {
+&nbsp;
+    var context = e.context,
+        connection = context.connection,
+        originalWaypoints = connection.waypoints,
+        waypoints = originalWaypoints.slice(),
+        insert = context.insert,
+        idx = context.bendpointIndex;
+&nbsp;
+    context.originalWaypoints = originalWaypoints;
+&nbsp;
+    if (insert) {
+      // insert placeholder for bendpoint to-be-added
+      waypoints.splice(idx, 0, null);
+    }
+&nbsp;
+    connection.waypoints = waypoints;
+&nbsp;
+    // add dragger gfx
+    context.draggerGfx = addBendpoint(canvas.getLayer('overlays'));
+    svgClasses(context.draggerGfx).add('djs-dragging');
+&nbsp;
+    canvas.addMarker(connection, MARKER_CONNECT_UPDATING);
+  });
+&nbsp;
+  eventBus.on('bendpoint.move.hover', function(e) {
+    var context = e.context;
+&nbsp;
+    context.hover = e.hover;
+&nbsp;
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (e.hover) {
+      canvas.addMarker(e.hover, MARKER_CONNECT_HOVER);
+&nbsp;
+      // asks whether reconnect / bendpoint move / bendpoint add
+      // is allowed at the given position
+      var allowed = context.allowed = rules.allowed(context.type, context);
+&nbsp;
+      if (allowed) {
+        canvas.removeMarker(context.hover, MARKER_NOT_OK);
+        canvas.addMarker(context.hover, MARKER_OK);
+&nbsp;
+        context.target = context.hover;
+      } else if (allowed === false) {
+        canvas.removeMarker(context.hover, MARKER_OK);
+        canvas.addMarker(context.hover, MARKER_NOT_OK);
+&nbsp;
+        context.target = null;
+      }
+    }
+  });
+&nbsp;
+  eventBus.on([
+    'bendpoint.move.out',
+    'bendpoint.move.cleanup'
+  ], function(e) {
+&nbsp;
+    // remove connect marker
+    // if it was added
+    var hover = e.context.hover;
+&nbsp;
+    if (hover) {
+      canvas.removeMarker(hover, MARKER_CONNECT_HOVER);
+      canvas.removeMarker(hover, e.context.target ? MARKER_OK : MARKER_NOT_OK);
+    }
+  });
+&nbsp;
+  eventBus.on('bendpoint.move.move', function(e) {
+&nbsp;
+    var context = e.context,
+        moveType = context.type,
+        connection = e.connection,
+        source, target;
+&nbsp;
+    connection.waypoints[context.bendpointIndex] = { x: e.x, y: e.y };
+&nbsp;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (connectionDocking) {
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      if (context.hover) {</span>
+<span class="cstat-no" title="statement not covered" >        if (moveType === COMMAND_RECONNECT_START) {</span>
+<span class="cstat-no" title="statement not covered" >          source = context.hover;</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (moveType === COMMAND_RECONNECT_END) {</span>
+<span class="cstat-no" title="statement not covered" >          target = context.hover;</span>
+        }
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      connection.waypoints = connectionDocking.getCroppedWaypoints(connection, source, target);</span>
+    }
+&nbsp;
+    // add dragger gfx
+    translate(context.draggerGfx, e.x, e.y);
+&nbsp;
+    redrawConnection(e);
+  });
+&nbsp;
+  eventBus.on([
+    'bendpoint.move.end',
+    'bendpoint.move.cancel'
+  ], function(e) {
+&nbsp;
+    var context = e.context,
+        hover = context.hover,
+        connection = context.connection;
+&nbsp;
+    // remove dragger gfx
+    svgRemove(context.draggerGfx);
+    context.newWaypoints = connection.waypoints.slice();
+    connection.waypoints = context.originalWaypoints;
+    canvas.removeMarker(connection, MARKER_CONNECT_UPDATING);
+&nbsp;
+    if (hover) {
+      canvas.removeMarker(hover, MARKER_OK);
+      canvas.removeMarker(hover, MARKER_NOT_OK);
+    }
+  });
+&nbsp;
+  eventBus.on('bendpoint.move.end', function(e) {
+&nbsp;
+    var context = e.context,
+        waypoints = context.newWaypoints,
+        bendpointIndex = context.bendpointIndex,
+        bendpoint = waypoints[bendpointIndex],
+        allowed = context.allowed,
+        hints;
+&nbsp;
+    // ensure we have actual pixel values bendpoint
+    // coordinates (important when zoom level was &gt; 1 during move)
+    bendpoint.x = round(bendpoint.x);
+    bendpoint.y = round(bendpoint.y);
+&nbsp;
+    if (allowed &amp;&amp; context.type === COMMAND_RECONNECT_START) {
+      modeling.reconnectStart(context.connection, context.target, bendpoint);
+    } else
+    if (allowed &amp;&amp; context.type === COMMAND_RECONNECT_END) {
+      modeling.reconnectEnd(context.connection, context.target, bendpoint);
+    } else
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (allowed !== false &amp;&amp; context.type === COMMAND_BENDPOINT_UPDATE) {
+&nbsp;
+      // pass hints on the actual moved bendpoint
+      // this is useful for connection and label layouting
+      hints = {
+        bendpointMove: {
+          insert: e.context.insert,
+          bendpointIndex: bendpointIndex
+        }
+      };
+&nbsp;
+      modeling.updateWaypoints(context.connection, filterRedundantWaypoints(waypoints), hints);
+    } else {
+<span class="cstat-no" title="statement not covered" >      redrawConnection(e);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      return false;</span>
+    }
+  });
+&nbsp;
+  eventBus.on('bendpoint.move.cancel', function(e) {
+    redrawConnection(e);
+  });
+}
+&nbsp;
+BendpointMove.$inject = [
+  'injector',
+  'eventBus',
+  'canvas',
+  'dragging',
+  'graphicsFactory',
+  'rules',
+  'modeling'
+];</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Oct 24 2018 10:37:43 GMT+0200 (Central European Summer Time)
+</div>
+</div>
+<script src="../../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../../sorter.js"></script>
+</body>
+</html>

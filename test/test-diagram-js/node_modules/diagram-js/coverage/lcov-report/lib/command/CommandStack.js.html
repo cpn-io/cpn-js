@@ -1,0 +1,1577 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for lib/command/CommandStack.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">all files</a> / <a href="index.html">lib/command/</a> CommandStack.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">97.53% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>158/162</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">94.03% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>63/67</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>27/27</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">97.53% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>158/162</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362
+363
+364
+365
+366
+367
+368
+369
+370
+371
+372
+373
+374
+375
+376
+377
+378
+379
+380
+381
+382
+383
+384
+385
+386
+387
+388
+389
+390
+391
+392
+393
+394
+395
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405
+406
+407
+408
+409
+410
+411
+412
+413
+414
+415
+416
+417
+418
+419
+420
+421
+422
+423
+424
+425
+426
+427
+428
+429
+430
+431
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448
+449
+450
+451
+452
+453
+454
+455
+456
+457
+458
+459
+460
+461
+462
+463
+464
+465
+466
+467
+468
+469
+470
+471
+472
+473
+474
+475
+476
+477
+478
+479
+480
+481
+482
+483
+484
+485
+486
+487
+488
+489
+490
+491
+492
+493
+494
+495
+496
+497
+498
+499
+500
+501
+502
+503
+504
+505</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">668×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">668×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">668×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">668×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">668×</span>
+<span class="cline-any cline-yes">668×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">668×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">668×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">669×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1333×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1332×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1332×</span>
+<span class="cline-any cline-yes">1330×</span>
+<span class="cline-any cline-yes">1326×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">433×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">433×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">433×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">433×</span>
+<span class="cline-any cline-yes">123×</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">115×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">425×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">669×</span>
+<span class="cline-any cline-yes">669×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">669×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">99×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">99×</span>
+<span class="cline-any cline-yes">96×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">96×</span>
+<span class="cline-any cline-yes">237×</span>
+<span class="cline-any cline-yes">237×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">237×</span>
+<span class="cline-any cline-yes">96×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">141×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">96×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">35×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35×</span>
+<span class="cline-any cline-yes">30×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">30×</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">87×</span>
+<span class="cline-any cline-yes">30×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">57×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">30×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">13571×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13564×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13564×</span>
+<span class="cline-any cline-yes">13564×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">124×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">338×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">237×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">237×</span>
+<span class="cline-any cline-yes">237×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">237×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">237×</span>
+<span class="cline-any cline-yes">237×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">237×</span>
+<span class="cline-any cline-yes">209×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">237×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">237×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">9744×</span>
+<span class="cline-any cline-yes">698×</span>
+<span class="cline-any cline-yes">698×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9744×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9744×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9744×</span>
+<span class="cline-any cline-yes">18480×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18480×</span>
+<span class="cline-any cline-yes">310×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9744×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">576×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1653×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1653×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1653×</span>
+<span class="cline-any cline-yes">1653×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1653×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1417×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1417×</span>
+<span class="cline-any cline-yes">1417×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1417×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1417×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1416×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1416×</span>
+<span class="cline-any cline-yes">1329×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1329×</span>
+<span class="cline-any cline-yes">376×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1329×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1416×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1416×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1416×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1188×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1413×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1413×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1413×</span>
+<span class="cline-any cline-yes">1326×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1326×</span>
+<span class="cline-any cline-yes">664×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1326×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1413×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2874×</span>
+<span class="cline-any cline-yes">2874×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2874×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2874×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2872×</span>
+<span class="cline-any cline-yes">1330×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2872×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">2865×</span>
+<span class="cline-any cline-yes">2865×</span>
+<span class="cline-any cline-yes">2865×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2865×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2865×</span>
+<span class="cline-any cline-yes">698×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">698×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">698×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1394×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1394×</span>
+<span class="cline-any cline-yes">173×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1221×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1221×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1413×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1413×</span>
+<span class="cline-any cline-yes">1326×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">237×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">2089×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">13571×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13571×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13571×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {
+  uniqueBy,
+  isArray
+} from 'min-dash';
+&nbsp;
+&nbsp;
+/**
+ * A service that offers un- and redoable execution of commands.
+ *
+ * The command stack is responsible for executing modeling actions
+ * in a un- and redoable manner. To do this it delegates the actual
+ * command execution to {@link CommandHandler}s.
+ *
+ * Command handlers provide {@link CommandHandler#execute(ctx)} and
+ * {@link CommandHandler#revert(ctx)} methods to un- and redo a command
+ * identified by a command context.
+ *
+ *
+ * ## Life-Cycle events
+ *
+ * In the process the command stack fires a number of life-cycle events
+ * that other components to participate in the command execution.
+ *
+ *    * preExecute
+ *    * preExecuted
+ *    * execute
+ *    * executed
+ *    * postExecute
+ *    * postExecuted
+ *    * revert
+ *    * reverted
+ *
+ * A special event is used for validating, whether a command can be
+ * performed prior to its execution.
+ *
+ *    * canExecute
+ *
+ * Each of the events is fired as `commandStack.{eventName}` and
+ * `commandStack.{commandName}.{eventName}`, respectively. This gives
+ * components fine grained control on where to hook into.
+ *
+ * The event object fired transports `command`, the name of the
+ * command and `context`, the command context.
+ *
+ *
+ * ## Creating Command Handlers
+ *
+ * Command handlers should provide the {@link CommandHandler#execute(ctx)}
+ * and {@link CommandHandler#revert(ctx)} methods to implement
+ * redoing and undoing of a command.
+ *
+ * A command handler _must_ ensure undo is performed properly in order
+ * not to break the undo chain. It must also return the shapes that
+ * got changed during the `execute` and `revert` operations.
+ *
+ * Command handlers may execute other modeling operations (and thus
+ * commands) in their `preExecute` and `postExecute` phases. The command
+ * stack will properly group all commands together into a logical unit
+ * that may be re- and undone atomically.
+ *
+ * Command handlers must not execute other commands from within their
+ * core implementation (`execute`, `revert`).
+ *
+ *
+ * ## Change Tracking
+ *
+ * During the execution of the CommandStack it will keep track of all
+ * elements that have been touched during the command's execution.
+ *
+ * At the end of the CommandStack execution it will notify interested
+ * components via an 'elements.changed' event with all the dirty
+ * elements.
+ *
+ * The event can be picked up by components that are interested in the fact
+ * that elements have been changed. One use case for this is updating
+ * their graphical representation after moving / resizing or deletion.
+ *
+ * @see CommandHandler
+ *
+ * @param {EventBus} eventBus
+ * @param {Injector} injector
+ */
+export default function CommandStack(eventBus, injector) {
+&nbsp;
+  /**
+   * A map of all registered command handlers.
+   *
+   * @type {Object}
+   */
+  this._handlerMap = {};
+&nbsp;
+  /**
+   * A stack containing all re/undoable actions on the diagram
+   *
+   * @type {Array&lt;Object&gt;}
+   */
+  this._stack = [];
+&nbsp;
+  /**
+   * The current index on the stack
+   *
+   * @type {Number}
+   */
+  this._stackIdx = -1;
+&nbsp;
+  /**
+   * Current active commandStack execution
+   *
+   * @type {Object}
+   */
+  this._currentExecution = {
+    actions: [],
+    dirty: []
+  };
+&nbsp;
+&nbsp;
+  this._injector = injector;
+  this._eventBus = eventBus;
+&nbsp;
+  this._uid = 1;
+&nbsp;
+  eventBus.on([
+    'diagram.destroy',
+    'diagram.clear'
+  ], function() {
+    this.clear(false);
+  }, this);
+}
+&nbsp;
+CommandStack.$inject = [ 'eventBus', 'injector' ];
+&nbsp;
+&nbsp;
+/**
+ * Execute a command
+ *
+ * @param {String} command the command to execute
+ * @param {Object} context the environment to execute the command in
+ */
+CommandStack.prototype.execute = function(command, context) {
+  if (!command) {
+    throw new Error('command required');
+  }
+&nbsp;
+  var action = { command: command, context: context };
+&nbsp;
+  this._pushAction(action);
+  this._internalExecute(action);
+  this._popAction(action);
+};
+&nbsp;
+&nbsp;
+/**
+ * Ask whether a given command can be executed.
+ *
+ * Implementors may hook into the mechanism on two ways:
+ *
+ *   * in event listeners:
+ *
+ *     Users may prevent the execution via an event listener.
+ *     It must prevent the default action for `commandStack.(&lt;command&gt;.)canExecute` events.
+ *
+ *   * in command handlers:
+ *
+ *     If the method {@link CommandHandler#canExecute} is implemented in a handler
+ *     it will be called to figure out whether the execution is allowed.
+ *
+ * @param  {String} command the command to execute
+ * @param  {Object} context the environment to execute the command in
+ *
+ * @return {Boolean} true if the command can be executed
+ */
+CommandStack.prototype.canExecute = function(command, context) {
+&nbsp;
+  var action = { command: command, context: context };
+&nbsp;
+  var handler = this._getHandler(command);
+&nbsp;
+  var result = this._fire(command, 'canExecute', action);
+&nbsp;
+  // handler#canExecute will only be called if no listener
+  // decided on a result already
+  if (result === undefined) {
+    if (!handler) {
+      return false;
+    }
+&nbsp;
+    if (handler.canExecute) {
+      result = handler.canExecute(context);
+    }
+  }
+&nbsp;
+  return result;
+};
+&nbsp;
+&nbsp;
+/**
+ * Clear the command stack, erasing all undo / redo history
+ */
+CommandStack.prototype.clear = function(emit) {
+  this._stack.length = 0;
+  this._stackIdx = -1;
+&nbsp;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (emit !== false) {
+<span class="cstat-no" title="statement not covered" >    this._fire('changed');</span>
+  }
+};
+&nbsp;
+&nbsp;
+/**
+ * Undo last command(s)
+ */
+CommandStack.prototype.undo = function() {
+  var action = this._getUndoAction(),
+      next;
+&nbsp;
+  if (action) {
+    this._pushAction(action);
+&nbsp;
+    while (action) {
+      this._internalUndo(action);
+      next = this._getUndoAction();
+&nbsp;
+      if (!next || next.id !== action.id) {
+        break;
+      }
+&nbsp;
+      action = next;
+    }
+&nbsp;
+    this._popAction();
+  }
+};
+&nbsp;
+&nbsp;
+/**
+ * Redo last command(s)
+ */
+CommandStack.prototype.redo = function() {
+  var action = this._getRedoAction(),
+      next;
+&nbsp;
+  if (action) {
+    this._pushAction(action);
+&nbsp;
+    while (action) {
+      this._internalExecute(action, true);
+      next = this._getRedoAction();
+&nbsp;
+      if (!next || next.id !== action.id) {
+        break;
+      }
+&nbsp;
+      action = next;
+    }
+&nbsp;
+    this._popAction();
+  }
+};
+&nbsp;
+&nbsp;
+/**
+ * Register a handler instance with the command stack
+ *
+ * @param {String} command
+ * @param {CommandHandler} handler
+ */
+CommandStack.prototype.register = function(command, handler) {
+  this._setHandler(command, handler);
+};
+&nbsp;
+&nbsp;
+/**
+ * Register a handler type with the command stack
+ * by instantiating it and injecting its dependencies.
+ *
+ * @param {String} command
+ * @param {Function} a constructor for a {@link CommandHandler}
+ */
+CommandStack.prototype.registerHandler = function(command, handlerCls) {
+&nbsp;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!command || !handlerCls) {
+<span class="cstat-no" title="statement not covered" >    throw new Error('command and handlerCls must be defined');</span>
+  }
+&nbsp;
+  var handler = this._injector.instantiate(handlerCls);
+  this.register(command, handler);
+};
+&nbsp;
+CommandStack.prototype.canUndo = function() {
+  return !!this._getUndoAction();
+};
+&nbsp;
+CommandStack.prototype.canRedo = function() {
+  return !!this._getRedoAction();
+};
+&nbsp;
+// stack access  //////////////////////
+&nbsp;
+CommandStack.prototype._getRedoAction = function() {
+  return this._stack[this._stackIdx + 1];
+};
+&nbsp;
+&nbsp;
+CommandStack.prototype._getUndoAction = function() {
+  return this._stack[this._stackIdx];
+};
+&nbsp;
+&nbsp;
+// internal functionality //////////////////////
+&nbsp;
+CommandStack.prototype._internalUndo = function(action) {
+  var self = this;
+&nbsp;
+  var command = action.command,
+      context = action.context;
+&nbsp;
+  var handler = this._getHandler(command);
+&nbsp;
+  // guard against illegal nested command stack invocations
+  this._atomicDo(function() {
+    self._fire(command, 'revert', action);
+&nbsp;
+    if (handler.revert) {
+      self._markDirty(handler.revert(context));
+    }
+&nbsp;
+    self._revertedAction(action);
+&nbsp;
+    self._fire(command, 'reverted', action);
+  });
+};
+&nbsp;
+&nbsp;
+CommandStack.prototype._fire = function(command, qualifier, event) {
+  if (arguments.length &lt; 3) {
+    event = qualifier;
+    qualifier = null;
+  }
+&nbsp;
+  var names = qualifier ? [ command + '.' + qualifier, qualifier ] : [ command ],
+      i, name, result;
+&nbsp;
+  event = this._eventBus.createEvent(event);
+&nbsp;
+  for (i = 0; (name = names[i]); i++) {
+    result = this._eventBus.fire('commandStack.' + name, event);
+&nbsp;
+    if (event.cancelBubble) {
+      break;
+    }
+  }
+&nbsp;
+  return result;
+};
+&nbsp;
+CommandStack.prototype._createId = function() {
+  return this._uid++;
+};
+&nbsp;
+CommandStack.prototype._atomicDo = function(fn) {
+&nbsp;
+  var execution = this._currentExecution;
+&nbsp;
+  execution.atomic = true;
+&nbsp;
+  try {
+    fn();
+  } finally {
+    execution.atomic = false;
+  }
+};
+&nbsp;
+CommandStack.prototype._internalExecute = function(action, redo) {
+  var self = this;
+&nbsp;
+  var command = action.command,
+      context = action.context;
+&nbsp;
+  var handler = this._getHandler(command);
+&nbsp;
+  if (!handler) {
+    throw new Error('no command handler registered for &lt;' + command + '&gt;');
+  }
+&nbsp;
+  this._pushAction(action);
+&nbsp;
+  if (!redo) {
+    this._fire(command, 'preExecute', action);
+&nbsp;
+    if (handler.preExecute) {
+      handler.preExecute(context);
+    }
+&nbsp;
+    this._fire(command, 'preExecuted', action);
+  }
+&nbsp;
+  // guard against illegal nested command stack invocations
+  this._atomicDo(function() {
+&nbsp;
+    self._fire(command, 'execute', action);
+&nbsp;
+    if (handler.execute) {
+      // actual execute + mark return results as dirty
+      self._markDirty(handler.execute(context));
+    }
+&nbsp;
+    // log to stack
+    self._executedAction(action, redo);
+&nbsp;
+    self._fire(command, 'executed', action);
+  });
+&nbsp;
+  if (!redo) {
+    this._fire(command, 'postExecute', action);
+&nbsp;
+    if (handler.postExecute) {
+      handler.postExecute(context);
+    }
+&nbsp;
+    this._fire(command, 'postExecuted', action);
+  }
+&nbsp;
+  this._popAction(action);
+};
+&nbsp;
+&nbsp;
+CommandStack.prototype._pushAction = function(action) {
+&nbsp;
+  var execution = this._currentExecution,
+      actions = execution.actions;
+&nbsp;
+  var baseAction = actions[0];
+&nbsp;
+  if (execution.atomic) {
+    throw new Error('illegal invocation in &lt;execute&gt; or &lt;revert&gt; phase (action: ' + action.command + ')');
+  }
+&nbsp;
+  if (!action.id) {
+    action.id = (baseAction &amp;&amp; baseAction.id) || this._createId();
+  }
+&nbsp;
+  actions.push(action);
+};
+&nbsp;
+&nbsp;
+CommandStack.prototype._popAction = function() {
+  var execution = this._currentExecution,
+      actions = execution.actions,
+      dirty = execution.dirty;
+&nbsp;
+  actions.pop();
+&nbsp;
+  if (!actions.length) {
+    this._eventBus.fire('elements.changed', { elements: uniqueBy('id', dirty) });
+&nbsp;
+    dirty.length = 0;
+&nbsp;
+    this._fire('changed');
+  }
+};
+&nbsp;
+&nbsp;
+CommandStack.prototype._markDirty = function(elements) {
+  var execution = this._currentExecution;
+&nbsp;
+  if (!elements) {
+    return;
+  }
+&nbsp;
+  elements = isArray(elements) ? elements : [ elements ];
+&nbsp;
+  execution.dirty = execution.dirty.concat(elements);
+};
+&nbsp;
+&nbsp;
+CommandStack.prototype._executedAction = function(action, redo) {
+  var stackIdx = ++this._stackIdx;
+&nbsp;
+  if (!redo) {
+    this._stack.splice(stackIdx, this._stack.length, action);
+  }
+};
+&nbsp;
+&nbsp;
+CommandStack.prototype._revertedAction = function(action) {
+  this._stackIdx--;
+};
+&nbsp;
+&nbsp;
+CommandStack.prototype._getHandler = function(command) {
+  return this._handlerMap[command];
+};
+&nbsp;
+CommandStack.prototype._setHandler = function(command, handler) {
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!command || !handler) {
+<span class="cstat-no" title="statement not covered" >    throw new Error('command and handler required');</span>
+  }
+&nbsp;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (this._handlerMap[command]) {
+<span class="cstat-no" title="statement not covered" >    throw new Error('overriding handler for command &lt;' + command + '&gt;');</span>
+  }
+&nbsp;
+  this._handlerMap[command] = handler;
+};
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Oct 24 2018 10:37:43 GMT+0200 (Central European Summer Time)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

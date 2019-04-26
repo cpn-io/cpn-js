@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for lib/features/auto-scroll/AutoScroll.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../../index.html">all files</a> / <a href="index.html">lib/features/auto-scroll/</a> AutoScroll.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">97.73% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>43/44</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">94.44% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>17/18</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">88.89% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>8/9</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">97.73% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>43/44</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-yes">52×</span>
+<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">52×</span>
+<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">36×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">25×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { assign } from 'min-dash';
+&nbsp;
+import {
+  toPoint
+} from '../../util/Event';
+&nbsp;
+&nbsp;
+/**
+ * Initiates canvas scrolling if current cursor point is close to a border.
+ * Cancelled when current point moves back inside the scrolling borders
+ * or cancelled manually.
+ *
+ * Default options :
+ *   scrollThresholdIn: [ 20, 20, 20, 20 ],
+ *   scrollThresholdOut: [ 0, 0, 0, 0 ],
+ *   scrollRepeatTimeout: 15,
+ *   scrollStep: 10
+ *
+ * Threshold order:
+ *   [ left, top, right, bottom ]
+ */
+export default function AutoScroll(config, eventBus, canvas, mouseTracking) {
+&nbsp;
+  this._canvas = canvas;
+  this._mouseTracking = mouseTracking;
+&nbsp;
+  this._opts = assign({
+    scrollThresholdIn: [ 20, 20, 20, 20 ],
+    scrollThresholdOut: [ 0, 0, 0, 0 ],
+    scrollRepeatTimeout: 15,
+    scrollStep: 10
+  }, config);
+&nbsp;
+  var self = this;
+&nbsp;
+  eventBus.on('drag.move', function(e) {
+    var point = self._toBorderPoint(e);
+&nbsp;
+    self.startScroll(point);
+  });
+&nbsp;
+  eventBus.on([ 'drag.cleanup' ], function() {
+    self.stopScroll();
+  });
+}
+&nbsp;
+AutoScroll.$inject = [
+  'config.autoScroll',
+  'eventBus',
+  'canvas',
+  'mouseTracking'
+];
+&nbsp;
+&nbsp;
+/**
+ * Starts scrolling loop.
+ * Point is given in global scale in canvas container box plane.
+ *
+ * @param  {Object} point { x: X, y: Y }
+ */
+AutoScroll.prototype.startScroll = function(point) {
+&nbsp;
+  var canvas = this._canvas;
+  var opts = this._opts;
+  var self = this;
+&nbsp;
+  var clientRect = canvas.getContainer().getBoundingClientRect();
+&nbsp;
+  var diff = [
+    point.x,
+    point.y,
+    clientRect.width - point.x,
+    clientRect.height - point.y
+  ];
+&nbsp;
+  this.stopScroll();
+&nbsp;
+  var dx = 0,
+      dy = 0;
+&nbsp;
+  for (var i = 0; i &lt; 4; i++) {
+    if (between(diff[i], opts.scrollThresholdOut[i], opts.scrollThresholdIn[i])) {
+      if (i === 0) {
+        dx = opts.scrollStep;
+      } else if (i == 1) {
+        dy = opts.scrollStep;
+      } else if (i == 2) {
+        dx = -opts.scrollStep;
+      } else <span class="missing-if-branch" title="else path not taken" >E</span>if (i == 3) {
+        dy = -opts.scrollStep;
+      }
+    }
+  }
+&nbsp;
+  if (dx !== 0 || dy !== 0) {
+    canvas.scroll({ dx: dx, dy: dy });
+&nbsp;
+    this._scrolling = setTimeout(function() <span class="fstat-no" title="function not covered" >{</span>
+<span class="cstat-no" title="statement not covered" >      self.startScroll(point);</span>
+    }, opts.scrollRepeatTimeout);
+  }
+};
+&nbsp;
+function between(val, start, end) {
+  if (start &lt; val &amp;&amp; val &lt; end) {
+    return true;
+  }
+&nbsp;
+  return false;
+}
+&nbsp;
+&nbsp;
+/**
+ * Stops scrolling loop.
+ */
+AutoScroll.prototype.stopScroll = function() {
+  clearTimeout(this._scrolling);
+};
+&nbsp;
+&nbsp;
+/**
+ * Overrides defaults options.
+ *
+ * @param  {Object} options
+ */
+AutoScroll.prototype.setOptions = function(options) {
+  this._opts = assign({}, this._opts, options);
+};
+&nbsp;
+&nbsp;
+/**
+ * Converts event to a point in canvas container plane in global scale.
+ *
+ * @param  {Event} event
+ * @return {Point}
+ */
+AutoScroll.prototype._toBorderPoint = function(event) {
+  var clientRect = this._canvas._container.getBoundingClientRect();
+&nbsp;
+  var globalPosition = toPoint(event.originalEvent);
+&nbsp;
+  return {
+    x: globalPosition.x - clientRect.left,
+    y: globalPosition.y - clientRect.top
+  };
+};</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Oct 24 2018 10:37:43 GMT+0200 (Central European Summer Time)
+</div>
+</div>
+<script src="../../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../../sorter.js"></script>
+</body>
+</html>

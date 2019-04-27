@@ -42,7 +42,6 @@ export class CpnEditorComponent implements OnInit {
     defaultRenderer.SHAPE_STYLE = styles.style({fill: 'white', stroke: '#000', strokeWidth: 2});
 
     this.createTestDiagram1();
-    // this.createTestDiagram2();
 
     this.updateConnections();
     // this.subscribeEvents();
@@ -67,7 +66,9 @@ export class CpnEditorComponent implements OnInit {
       x: 150,
       y: 100,
       width: 100,
-      height: 80
+      height: 80,
+      type: 'cpn:Place',
+      name: 'P1'
     });
 
     canvas.addShape(shape1, root);
@@ -76,7 +77,9 @@ export class CpnEditorComponent implements OnInit {
       x: 290,
       y: 220,
       width: 100,
-      height: 80
+      height: 80,
+      type: 'cpn:Transition',
+      name: 'T1'
     });
 
     canvas.addShape(shape2, root);
@@ -98,7 +101,9 @@ export class CpnEditorComponent implements OnInit {
       x: 450,
       y: 80,
       width: 100,
-      height: 80
+      height: 80,
+      type: 'cpn:Place',
+      name: 'P2'
     });
 
     canvas.addShape(shape3, root);
@@ -112,63 +117,6 @@ export class CpnEditorComponent implements OnInit {
   getShapeCenter(shape) {
     return {x: shape.x + shape.width / 2, y: shape.y + shape.height / 2};
   }
-
-
-  createTestDiagram2() {
-    console.log('createTestDiagram2()');
-
-    const diagram = this.diagram;
-    const canvas = diagram.get('canvas');
-    const elementFactory = diagram.get('elementFactory');
-
-    let rootShape, parentShape, childShape, childShape2, label, connection;
-
-    rootShape = elementFactory.createRoot({
-      id: 'root'
-    });
-
-    canvas.setRootElement(rootShape);
-
-    parentShape = elementFactory.createShape({
-      id: 'parent',
-      x: 100, y: 100, width: 300, height: 300
-    });
-
-    canvas.addShape(parentShape, rootShape);
-
-    childShape = elementFactory.createShape({
-      id: 'child',
-      x: 110, y: 110, width: 100, height: 100
-    });
-
-    canvas.addShape(childShape, parentShape);
-
-    childShape2 = elementFactory.createShape({
-      id: 'child2',
-      x: 200, y: 110, width: 100, height: 100
-    });
-
-    canvas.addShape(childShape2, parentShape);
-
-    label = elementFactory.createLabel({
-      id: 'label1',
-      x: 250, y: 110, width: 40, height: 40,
-      hidden: true
-    });
-
-    canvas.addShape(label, parentShape);
-
-    connection = elementFactory.createConnection({
-      id: 'connection',
-      waypoints: [{x: 150, y: 150}, {x: 150, y: 200}, {x: 350, y: 150}],
-      source: childShape,
-      target: childShape2
-    });
-
-    canvas.addConnection(connection, parentShape);
-
-  }
-
 
   subscribeEvents() {
     const eventBus = this.diagram.get('eventBus');

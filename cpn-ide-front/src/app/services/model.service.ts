@@ -1065,6 +1065,17 @@ moveNonModelJsonElement(element, parent, target, index, type) {
   }
 
 
+  setDescendantProp(obj, desc, value) {
+    if(desc) {
+      let arr = desc.split('.');
+      while (arr.length > 1) {
+        obj = obj[arr.shift()];
+      }
+      obj[arr[0]] = value;
+    }
+  }
+
+
 
 
 }

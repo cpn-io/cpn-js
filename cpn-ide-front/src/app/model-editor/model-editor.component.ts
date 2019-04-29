@@ -129,6 +129,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
     eventBus.on('drag.init', (event) => {
       console.log('click on, event = ', event);
       // this.fireAllEvents(event);
+      //let gfx = this.canvas._elementRegistry.getGraphics(event.shape);
       this.fireSelectionEvent(event);
     });
     eventBus.on('autoPlace', (event) => {
@@ -426,7 +427,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
         }*/
         let element;
         let entry;
-        if(data.type === 'cpn:Place'){
+        if(data.type === 'cpn:Place') {
           entry = this.placeShapes;
           element = entry[data.elementid];
         } else if(data.type === 'cpn:Transition') {
@@ -443,8 +444,8 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
         let shape = this.elementFactory.createShape(attrs);
         shape.cpnElement = element.cpnElement;
         shape = this.canvas.addShape(shape, this.canvas.getRootElement());
-        this.addShapeLabel(shape, element.cpnElement.type, 'type');
-        this.addShapeLabel(shape, element.cpnElement.initmark, 'initmark');
+        for(let label of this.modelService.getLabelEntry()[this.modelService.getModelCase(data.type)])
+          this.addShapeLabel(shape, element.cpnElement[label], label);
         if (entry instanceof Array) entry.push(shape); else entry[attrs.id] = shape;
 
        // this.addShapeLabel(shape, place.type, 'type');

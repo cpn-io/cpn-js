@@ -63,84 +63,90 @@ ElementFactory.prototype.createBpmnElement = function(elementType, attrs) {
 
   attrs = attrs || {};
 
-  var businessObject = attrs.businessObject;
-
-  if (!businessObject) {
-    if (!attrs.type) {
-      throw new Error(translate('no shape type specified'));
-    }
-
-    businessObject = this._bpmnFactory.create(attrs.type);
-  }
-
-  if (!businessObject.di) {
-    if (elementType === 'root') {
-      businessObject.di = this._bpmnFactory.createDiPlane(businessObject, [], {
-        id: businessObject.id + '_di'
-      });
-    } else
-    if (elementType === 'connection') {
-      businessObject.di = this._bpmnFactory.createDiEdge(businessObject, [], {
-        id: businessObject.id + '_di'
-      });
-    } else {
-      businessObject.di = this._bpmnFactory.createDiShape(businessObject, {}, {
-        id: businessObject.id + '_di'
-      });
-    }
-  }
-
-  if (attrs.colors) {
-    assign(businessObject.di, attrs.colors);
-
-    delete attrs.colors;
-  }
-
-  applyAttributes(businessObject, attrs, [
-    'processRef',
-    'isInterrupting',
-    'associationDirection',
-    'isForCompensation'
-  ]);
-
-  if (attrs.isExpanded) {
-    applyAttribute(businessObject.di, attrs, 'isExpanded');
-  }
-
-  if (is(businessObject, 'bpmn:ExclusiveGateway')) {
-    businessObject.di.isMarkerVisible = true;
-  }
-
-  var eventDefinitions,
-      newEventDefinition;
-
-  if (attrs.eventDefinitionType) {
-    eventDefinitions = businessObject.get('eventDefinitions') || [];
-    newEventDefinition = this._moddle.create(attrs.eventDefinitionType);
-
-    if (attrs.eventDefinitionType === 'bpmn:ConditionalEventDefinition') {
-      newEventDefinition.condition = this._moddle.create('bpmn:FormalExpression');
-    }
-
-    eventDefinitions.push(newEventDefinition);
-
-    newEventDefinition.$parent = businessObject;
-    businessObject.eventDefinitions = eventDefinitions;
-
-    delete attrs.eventDefinitionType;
-  }
-
-  size = this._getDefaultSize(businessObject);
-
-  attrs = assign({
-    businessObject: businessObject,
-    id: businessObject.id
-  }, size, attrs);
-
   // CPN
-  if (attrs.name)
-    businessObject.name = attrs.name;
-  // ---------------------------------------------------------
+  var businessObject = attrs.cpnElement;
+
+  // var businessObject = attrs.businessObject;
+  //
+  // if (!businessObject) {
+  //   if (!attrs.type) {
+  //     throw new Error(translate('no shape type specified'));
+  //   }
+  //
+  //   businessObject = this._bpmnFactory.create(attrs.type);
+  // }
+  //
+  // if (!businessObject.di) {
+  //   if (elementType === 'root') {
+  //     businessObject.di = this._bpmnFactory.createDiPlane(businessObject, [], {
+  //       id: businessObject.id + '_di'
+  //     });
+  //   } else
+  //   if (elementType === 'connection') {
+  //     businessObject.di = this._bpmnFactory.createDiEdge(businessObject, [], {
+  //       id: businessObject.id + '_di'
+  //     });
+  //   } else {
+  //     businessObject.di = this._bpmnFactory.createDiShape(businessObject, {}, {
+  //       id: businessObject.id + '_di'
+  //     });
+  //   }
+  // }
+  //
+  // if (attrs.colors) {
+  //   assign(businessObject.di, attrs.colors);
+  //
+  //   delete attrs.colors;
+  // }
+  //
+  // applyAttributes(businessObject, attrs, [
+  //   'processRef',
+  //   'isInterrupting',
+  //   'associationDirection',
+  //   'isForCompensation'
+  // ]);
+  //
+  // if (attrs.isExpanded) {
+  //   applyAttribute(businessObject.di, attrs, 'isExpanded');
+  // }
+  //
+  // if (is(businessObject, 'bpmn:ExclusiveGateway')) {
+  //   businessObject.di.isMarkerVisible = true;
+  // }
+  //
+  // var eventDefinitions,
+  //     newEventDefinition;
+  //
+  // if (attrs.eventDefinitionType) {
+  //   eventDefinitions = businessObject.get('eventDefinitions') || [];
+  //   newEventDefinition = this._moddle.create(attrs.eventDefinitionType);
+  //
+  //   if (attrs.eventDefinitionType === 'bpmn:ConditionalEventDefinition') {
+  //     newEventDefinition.condition = this._moddle.create('bpmn:FormalExpression');
+  //   }
+  //
+  //   eventDefinitions.push(newEventDefinition);
+  //
+  //   newEventDefinition.$parent = businessObject;
+  //   businessObject.eventDefinitions = eventDefinitions;
+  //
+  //   delete attrs.eventDefinitionType;
+  // }
+  //
+  // size = this._getDefaultSize(businessObject);
+  //
+
+  if (businessObject) {
+    attrs = assign({
+      businessObject: businessObject,
+      id: businessObject._id
+    }, size, attrs);
+  }
+  //
+  // // CPN
+  // if (attrs.name)
+  //   businessObject.name = attrs.name;
+  // // ---------------------------------------------------------
 
   var e = this.baseCreate(elementType, attrs);
 

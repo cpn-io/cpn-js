@@ -20,7 +20,7 @@ import {
   isExpanded
 } from '../../util/DiUtil';
 
-import { is } from '../../util/ModelUtil';
+import { is, isCpn } from '../../util/ModelUtil';
 
 
 export default function BpmnLayouter() {}
@@ -74,7 +74,7 @@ BpmnLayouter.prototype.layoutConnection = function(connection, hints) {
   // (2) incoming / outgoing of Gateway -> v:h (outgoing), h:v (incoming)
   // (3) loops from / to the same element
   //
-  if (is(connection, 'cpn:Connection') ||
+  if (isCpn(connection) ||
       isCompensationAssociation(connection)) {
 
     if (source === target) {

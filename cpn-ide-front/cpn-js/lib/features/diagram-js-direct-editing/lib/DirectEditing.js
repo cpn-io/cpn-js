@@ -146,6 +146,8 @@ DirectEditing.prototype._handleResize = function (event) {
  * @return {Boolean} true if the activation was possible
  */
 DirectEditing.prototype.activate = function (element) {
+  console.log('DirectEditing.prototype.activate, element = ', element);
+
   if (this.isActive()) {
     this.cancel();
   }
@@ -156,6 +158,8 @@ DirectEditing.prototype.activate = function (element) {
   var provider = find(this._providers, function (p) {
     return (context = p.activate(element)) ? p : null;
   });
+
+  console.log('DirectEditing.prototype.activate, context = ', context);
 
   // check if activation took place
   if (context) {
@@ -206,6 +210,10 @@ DirectEditing.prototype.activate = function (element) {
         }
       }, 10);
       // };
+
+      editBox.onfocusout = function () {
+        _this._eventBus.fire('element.edit.end', { element: element });
+      };
 
       // set focus to element
       setTimeout(() => { // this will make the execution after the above boolean has changed

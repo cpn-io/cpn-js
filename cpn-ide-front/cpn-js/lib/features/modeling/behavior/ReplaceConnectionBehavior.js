@@ -8,7 +8,7 @@ import inherits from 'inherits';
 
 import CommandInterceptor from 'diagram-js/lib/command/CommandInterceptor';
 
-import { is } from '../../../util/ModelUtil';
+import { is, isCpn } from '../../../util/ModelUtil';
 
 
 export default function ReplaceConnectionBehavior(eventBus, modeling, bpmnRules) {
@@ -39,8 +39,9 @@ export default function ReplaceConnectionBehavior(eventBus, modeling, bpmnRules)
      * This holds true for SequenceFlow <> MessageFlow.
      */
 
-    if (is(connection, 'cpn:Connection')) {
-      if (!is(source, 'cpn:BaseElement') && !is(target, 'cpn:BaseElement')) {
+    // CPN
+    if (isCpn(connection)) {
+      if (!isCpn(source) && !isCpn(target)) {
         if (!bpmnRules.canConnectSequenceFlow(source, target)) {
           remove = true;
         }
@@ -61,19 +62,19 @@ export default function ReplaceConnectionBehavior(eventBus, modeling, bpmnRules)
 
     // transform message flows into sequence flows, if possible
 
-    if (is(connection, 'bpmn:MessageFlow')) {
-      if (!bpmnRules.canConnectMessageFlow(source, target)) {
-        remove = true;
-      }
-
-      if (bpmnRules.canConnectSequenceFlow(source, target)) {
-        replacementType = 'bpmn:SequenceFlow';
-      }
-    }
-
-    if (is(connection, 'bpmn:Association') && !bpmnRules.canConnectAssociation(source, target)) {
-      remove = true;
-    }
+    // if (is(connection, 'bpmn:MessageFlow')) {
+    //   if (!bpmnRules.canConnectMessageFlow(source, target)) {
+    //     remove = true;
+    //   }
+    //
+    //   if (bpmnRules.canConnectSequenceFlow(source, target)) {
+    //     replacementType = 'bpmn:SequenceFlow';
+    //   }
+    // }
+    //
+    // if (is(connection, 'bpmn:Association') && !bpmnRules.canConnectAssociation(source, target)) {
+    //   remove = true;
+    // }
 
 
     // remove invalid connection,

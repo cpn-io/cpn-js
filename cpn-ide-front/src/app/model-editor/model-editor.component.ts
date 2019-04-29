@@ -2,7 +2,7 @@ import {Component, ElementRef, HostListener, Input, OnDestroy, OnInit, ViewChild
 
 import {assign} from 'min-dash';
 // import Diagram from 'bpmn-js/lib/Modeler';
-import Diagram from 'cpn-js/lib/Modeler';
+import Diagram from '../../../cpn-js/lib/Modeler';
 
 import {EmitterService} from '../services/emitter.service';
 import {HttpClient} from '@angular/common/http';
@@ -182,6 +182,15 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
 
     });
 
+    eventBus.on('element.edit.end', (event) => {
+      console.log('element.edit.end, event = ', event);
+      // if (event.element && event.element.cpnElement)
+      //   event.element.cpnElement.name = event.element.name;
+      // this.diagram.get('eventBus').fire('drag.init', {element: event.element});
+      if (event.element) {
+        this.eventService.send(Message.SHAPE_SELECT, {element: event.element});
+      }
+    });
 
     // listen to dblclick on non-root elements
     eventBus.on('element.dblclick', (event) => {
@@ -585,32 +594,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
 
     const element = event.shape;
 
-    // const context = event.context;
-    // const cpnElement = element.cpnElement;
-
-    // if (cpnElement) {
-    //   cpnElement.posattr._x = context.newBounds.x;
-    //   cpnElement.posattr._y = context.newBounds.y;
-
-    //   if (cpnElement.ellipse) {
-    //     cpnElement.ellipse._w = context.newBounds.width;
-    //     cpnElement.ellipse._h = context.newBounds.height;
-    //   }
-    //   if (cpnElement.box) {
-    //     cpnElement.box._w = context.newBounds.width;
-    //     cpnElement.box._h = context.newBounds.height;
-    //   }
-    // }
-
     for (const label of element.labels) {
-      /*  let newX = label.x + event.dx;
-        let newY = label.y + event.dy;
-        let elementBoards = {
-          minx: event.context.newBounds.x - event.context.newBounds.width / 2,
-          maxx: event.context.newBounds.x + event.context.newBounds.width / 2,
-          miny: event.context.newBounds.y - event.context.newBounds.height / 2,
-          maxy: event.context.newBounds.y + event.context.newBounds.height / 2,
-        }*/
       if (((event.context.direction === 'ne' || event.context.direction === 'nw') && label.labelType !== 'type' && label.labelType !== 'code' && label.labelType !== 'priority')
         || ((event.context.direction === 'se' || event.context.direction === 'sw') && label.labelType !== 'initmark' && label.labelType !== 'time' && label.labelType !== 'cond')) {
         label.y = label.y + event.dy;
@@ -700,7 +684,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
 
     element.connection.stroke = newArc.lineattr._colour;
     element.connection.strokeWidth = newArc.lineattr._thick;
-    element.connection.cpnElement = newArc;
+    // element.connection.cpnElement = newArc;
     this.arcShapes.push(element.connection);
     //  this.labelEditingProvider.update(element.connection, '');
     ///  this.addShapeLabel(element.connection, newArc.annot, 'annot');
@@ -824,7 +808,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
     element.name = newPlace.text;
     element.stroke = newPlace.lineattr._colour;
     element.strokeWidth = newPlace.lineattr._thick;
-    element.cpnElement = newPlace;
+    // element.cpnElement = newPlace;
     //  this.placeShapes[attrs.id] = shape;
     this.placeShapes[element.id] = element;
     this.modelService.addElementJsonOnPage(newPlace, this.pageId, 'cpn:Place');
@@ -1685,7 +1669,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
       this.modelService.clearDefaultLabelValues(this.pageId);
     }
 
-    let element = event.element || event.shape || event.connection;
+    const element = event.element || event.shape || event.connection;
     this.projectService.setCurrentElement(element);
 
     // this.curentElement = element;
@@ -1706,78 +1690,6 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
 
   fireAllEvents(event) {
     console.log('fireDEACTIVATE(), event = ', event === null ? 'NULL' : event);
-  }
-
-  loadTestModel() {
-    const root = this.canvas.getRootElement();
-
-    const p1 = this.elementFactory.createShape({
-      type: 'cpn:Place',
-      name: 'Place 1',
-      x: 100,
-      y: 100,
-      width: 100,
-      height: 70,
-      fill: '#fee',
-      stroke: '#c33',
-      strokeWidth: 3,
-    });
-    this.canvas.addShape(p1, root);
-
-    const t1 = this.elementFactory.createShape({
-      type: 'cpn:Transition',
-      name: 'Transition 1',
-      x: 400,
-      y: 100,
-      width: 100,
-      height: 70,
-      stroke: 'green',
-    });
-
-    this.canvas.addShape(t1, root);
-
-    this.labelEditingProvider.update(t1, '222222222222');
-    assign(t1.label, {stroke: 'green'});
-    // console.log('labelEditingProvider.update(t1) !!!, t1.label = ', t1.label);
-
-    const p2 = this.elementFactory.createShape({
-      type: 'cpn:Place',
-      name: 'Place 2',
-      x: 700,
-      y: 100,
-      width: 100,
-      height: 70,
-      fill: '#fee',
-      stroke: '#c33',
-      strokeWidth: 3,
-    });
-    this.canvas.addShape(p2, root);
-
-    let attrs: any = {
-      type: 'cpn:Connection',
-      waypoints: [
-        {x: 150, y: 110},
-        {x: 200, y: 200},
-        {x: 450, y: 105}
-      ],
-      stroke: 'red',
-      strokeWidth: 1,
-    };
-
-    attrs = {
-      type: 'cpn:Connection',
-      // id: "connection1",
-      waypoints: [
-        {x: 750, y: 110},
-        // { x: 200, y: 200 },
-        {x: 450, y: 105}
-      ],
-      stroke: 'red',
-      strokeWidth: 1,
-    };
-
-    const c1 = this.modeling.connect(p2, t1, attrs, null);
-    this.labelEditingProvider.update(c1, 'cccccccccccccc');
   }
 
   lassoTool() {
@@ -1834,6 +1746,23 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
     }
   }
 
+  getPlaceEditorElement(obj) {
+    return {
+      type: 'cpn:Place',
+      name: obj.text,
+      x: parseFloat(obj.posattr._x),
+      y: parseFloat(obj.posattr._y) * -1,
+      width: parseFloat(obj.ellipse._w),
+      height: parseFloat(obj.ellipse._h),
+      cpnElement: obj
+    };
+  }
+
+  /**
+   * Load cpn model to diagram editor
+   *
+   * @param pageObject
+   */
   loadPageDiagram(pageObject) {
     // console.log('ModelEditorComponent. load()');
     // console.log(pageObject);
@@ -1863,79 +1792,78 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
       // Places
       if (pageObject.place) {
         for (const place of pageObject.place) {
-          const attrs = this.getPlaceShapeAttrs(place);
+          // const attrs = this.getPlaceShapeAttrs(place);
+          // this.updateModelBounds(modelBounds, attrs);
+          // let shape = this.elementFactory.createShape(attrs);
+          // shape = this.canvas.addShape(shape, root);
+          // this.placeShapes[attrs.id] = shape;
+          // this.addShapeLabel(shape, place.type, 'type');
+          // this.addShapeLabel(shape, place.initmark, 'initmark');
+          // this.addShapePortLabel(shape);
 
-          this.updateModelBounds(modelBounds, attrs);
-
-          let shape = this.elementFactory.createShape(attrs);
-          shape.cpnElement = place;
-
-          shape = this.canvas.addShape(shape, root);
-          this.placeShapes[attrs.id] = shape;
-
-          this.addShapeLabel(shape, place.type, 'type');
-          this.addShapeLabel(shape, place.initmark, 'initmark');
-
+          const element = this.getPlaceEditorElement(place);
+          const shape = this.elementFactory.createShape(element);
+          this.canvas.addShape(shape, root);
         }
       }
 
-      // Transitions
-      if (pageObject.trans) {
-        if (pageObject.trans.length) {
-          for (const trans of pageObject.trans) {
-            this.setModelTransitions(trans, modelBounds, root);
-          }
-        } else {
-          this.setModelTransitions(pageObject.trans, modelBounds, root);
-        }
-      }
-
-      // Arcs
-      if (pageObject.arc) {
-        for (const arc of pageObject.arc) {
-          const data = this.getConnectionAttrs(arc, pageObject);
-          if (data) {
-            const conn = this.modeling.connect(data.source, data.target, data.attrs, null);
-
-            this.arcShapes.push(conn);
-            if (arc.annot.text && arc.annot.text.length > 0) {
-              const label = ' '; // arc.annot.text;
-              this.labelEditingProvider.update(conn, label);
-            }
-            this.addShapeLabel(conn, arc.annot, 'annot');
-          }
-        }
-      }
-
-      // Aux
-      if (pageObject.Aux) {
-        if (pageObject.Aux instanceof Array) {
-          for (const aux of pageObject.Aux) {
-            let pos;
-            if (aux.posattr) {
-              // var x = 1.0 * labelNode.posattr["@attributes"].x;
-              // var y = -1.0 * labelNode.posattr["@attributes"].y;
-              const x = 1.0 * aux.posattr._x;
-              const y = -1.0 * aux.posattr._y;
-              pos = {x: x, y: y};
-            }
-
-            let attrs = {stroke: 'black', labelType: aux};
-            if (aux.textattr) {
-              let stroke = aux.stroke || 'black';
-              // var stroke = labelNode.textattr["@attributes"].color || 'black';
-              stroke = this.correctColor[stroke] || stroke;
-
-              attrs = {stroke: stroke, labelType: aux};
-            }
-            const textLabel = typeof aux.text === 'string' ? aux.text : aux.text.__text;
-            const label = this.createLabel(this.canvas.getRootElement(), textLabel, pos, attrs, aux._id);
-            label.hidden = false;
-            this.canvas.addShape(label, this.canvas.getRootElement());
-          }
-
-        }
-      }
+      // // Transitions
+      // if (pageObject.trans) {
+      //   if (pageObject.trans.length) {
+      //     for (const trans of pageObject.trans) {
+      //       this.setModelTransitions(trans, modelBounds, root);
+      //     }
+      //   } else {
+      //     this.setModelTransitions(pageObject.trans, modelBounds, root);
+      //   }
+      // }
+      //
+      // // Arcs
+      // if (pageObject.arc) {
+      //   for (const arc of pageObject.arc) {
+      //     const data = this.getConnectionAttrs(arc, pageObject);
+      //     if (data) {
+      //       const conn = this.modeling.connect(data.source, data.target, data.attrs, null);
+      //
+      //       this.arcShapes.push(conn);
+      //       if (arc.annot.text && arc.annot.text.length > 0) {
+      //         const label = ' '; // arc.annot.text;
+      //         this.labelEditingProvider.update(conn, label);
+      //       }
+      //       this.addShapeLabel(conn, arc.annot, 'annot');
+      //     }
+      //   }
+      // }
+      //
+      // // Aux
+      // if (pageObject.Aux) {
+      //   if (pageObject.Aux instanceof Array) {
+      //     for (const aux of pageObject.Aux) {
+      //       let pos;
+      //       if (aux.posattr) {
+      //         // var x = 1.0 * labelNode.posattr["@attributes"].x;
+      //         // var y = -1.0 * labelNode.posattr["@attributes"].y;
+      //         const x = 1.0 * aux.posattr._x;
+      //         const y = -1.0 * aux.posattr._y;
+      //         pos = {x: x, y: y};
+      //       }
+      //
+      //       let attrs = {stroke: 'black', labelType: aux};
+      //       if (aux.textattr) {
+      //         let stroke = aux.stroke || 'black';
+      //         // var stroke = labelNode.textattr["@attributes"].color || 'black';
+      //         stroke = this.correctColor[stroke] || stroke;
+      //
+      //         attrs = {stroke: stroke, labelType: aux};
+      //       }
+      //       const textLabel = typeof aux.text === 'string' ? aux.text : aux.text.__text;
+      //       const label = this.createLabel(this.canvas.getRootElement(), textLabel, pos, attrs, aux._id);
+      //       label.hidden = false;
+      //       this.canvas.addShape(label, this.canvas.getRootElement());
+      //     }
+      //
+      //   }
+      // }
 
 
       console.log('modelBounds = ', modelBounds);
@@ -1990,36 +1918,49 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
       if (trans.priority) {
         this.addShapeLabel(shape, trans.priority, 'priority');
       }
+
+      this.addShapePortLabel(shape);
     }
   }
 
   addShapeLabel(shape, labelNode, labelType) {
     // if (labelNode && labelNode.text && typeof labelNode.text === 'string' ? true : labelNode.text.__text) {
 
-      let pos;
-      if (labelNode.posattr) {
-        // var x = 1.0 * labelNode.posattr["@attributes"].x;
-        // var y = -1.0 * labelNode.posattr["@attributes"].y;
-        const x = 1.0 * labelNode.posattr._x;
-        const y = -1.0 * labelNode.posattr._y;
-        pos = {x: x, y: y};
-      }
+    let pos;
+    if (labelNode.posattr) {
+      // var x = 1.0 * labelNode.posattr["@attributes"].x;
+      // var y = -1.0 * labelNode.posattr["@attributes"].y;
+      const x = 1.0 * labelNode.posattr._x;
+      const y = -1.0 * labelNode.posattr._y;
+      pos = {x: x, y: y};
+    }
 
-      let attrs = {stroke: 'black', labelType: labelType};
-      if (labelNode.textattr) {
-        let stroke = shape.stroke || 'black';
-        // var stroke = labelNode.textattr["@attributes"].color || 'black';
-        stroke = this.correctColor[stroke] || stroke;
+    let attrs = {stroke: 'black', labelType: labelType};
+    if (labelNode.textattr) {
+      let stroke = shape.stroke || 'black';
+      // var stroke = labelNode.textattr["@attributes"].color || 'black';
+      stroke = this.correctColor[stroke] || stroke;
 
-        attrs = {stroke: stroke, labelType: labelType};
-      }
-      const textLabel = typeof labelNode.text === 'string' ? labelNode.text : labelNode.text.__text;
-      const label = this.createLabel(shape, textLabel, pos, attrs, labelNode._id);
-      label.hidden = false;
-      return this.canvas.addShape(label, shape);
+      attrs = {stroke: stroke, labelType: labelType};
+    }
+    const textLabel = typeof labelNode.text === 'string' ? labelNode.text : labelNode.text.__text;
+    const label = this.createLabel(shape, textLabel, pos, attrs, labelNode._id);
+    label.hidden = false;
+    return this.canvas.addShape(label, shape);
 
     // }
     // return undefined;
+  }
+
+  addShapePortLabel(shape) {
+    const pos = {x: shape.x + shape.width / 2, y: shape.y + shape.height};
+
+    const attrs = {stroke: 'black', labelType: 'port'};
+    const textLabel = 'PORT';
+    const labelId = '_port_label_' + this.makeid(6);
+    const label = this.createLabel(shape, textLabel, pos, attrs, labelId);
+    label.hidden = false;
+    return this.canvas.addShape(label, shape);
   }
 
   // Вычислим координаты всей модели по кадому элементу
@@ -2063,6 +2004,61 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
       y: pos.y
     };
 
+    text = labelText; // || semantic.name;
+
+    if (!text) {
+      text = '';
+    }
+
+    if (text) {
+      // get corrected bounds from actual layouted text
+      bounds = this.textRenderer.getExternalLabelBounds(bounds, text);
+    }
+
+
+    label = this.elementFactory.createLabel(this.elementData(semantic, {
+      id: '_label_' + this.makeid(6),
+      labelNodeId: labelNodeId,
+      labelTarget: element,
+      type: 'cpn:Label',
+      hidden: element.hidden,
+      text: text,
+      x: pos.x - Math.round(bounds.width) / 2,
+      y: pos.y - Math.round(bounds.height) / 2,
+      width: Math.round(bounds.width),
+      height: Math.round(bounds.height),
+      stroke: attrs.stroke,
+      labelType: attrs.labelType
+    }));
+
+    // this.labelEditingProvider.update(element, label);
+    // this.labelEditingProvider.update(element, text);
+
+    return label;
+  }
+
+  // add label
+  createPortLabel(element, labelText, pos, attrs, labelNodeId) {
+    let bounds,
+      text,
+      label,
+      semantic;
+
+    semantic = element.businessObject;
+    // console.log('createLabel(), element, semantic ', element, semantic);
+
+    if (!pos) {
+      pos = {x: Math.round(bounds.x), y: Math.round(bounds.y)};
+    }
+
+    // bounds = getExternalLabelBounds(semantic, element);
+    bounds = {
+      width: 200, // 90,
+      height: 30,
+      x: pos.x,
+      y: pos.y
+    };
+
     text = labelText || semantic.name;
 
     if (text) {
@@ -2072,7 +2068,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
 
 
     label = this.elementFactory.createLabel(this.elementData(semantic, {
-      id: semantic.id + '_label_' + this.makeid(6),
+      id: '_label_' + this.makeid(6),
       labelNodeId: labelNodeId,
       labelTarget: element,
       type: 'cpn:Label',
@@ -2092,11 +2088,12 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
     return label;
   }
 
+
   elementData(semantic, attrs) {
     return assign({
-      id: semantic.id,
-      type: semantic.$type,
-      businessObject: semantic
+      // id: semantic.id,
+      // type: semantic.$type,
+      // businessObject: semantic
     }, attrs);
   }
 
@@ -2113,10 +2110,6 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
 
   getPlaceShapeAttrs(obj) {
     let
-      // x = 1 * obj.posattr["@attributes"].x,
-      // y = -1 * obj.posattr["@attributes"].y,
-      // w = 1 * obj.ellipse["@attributes"].w,
-      // h = 1 * obj.ellipse["@attributes"].h;
       x = 1 * obj.posattr._x,
       y = -1 * obj.posattr._y,
       w = 1 * obj.ellipse._w,
@@ -2144,6 +2137,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
       name: obj.text,
       stroke: stroke,
       strokeWidth: strokeWidth,
+      cpnElement: obj
 
       // businessObject: {
       //   text: obj.text,
@@ -2182,7 +2176,8 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
       name: obj.text,
       stroke: stroke,
       strokeWidth: strokeWidth,
-      hierar: this.subpages.find(e => e.subpageid === obj._id || e.tranid === obj._id) ? 'subPage' : 'tran'
+      hierar: this.subpages.find(e => e.subpageid === obj._id || e.tranid === obj._id) ? 'subPage' : 'tran',
+      cpnElement: obj
       // businessObject: {
       //   text: obj.text,
       // }

@@ -7,7 +7,8 @@ import {
 
 import {
   getBusinessObject,
-  is
+  is,
+  isCpn
 } from '../../util/ModelUtil';
 
 import {
@@ -18,9 +19,8 @@ var MARKER_HIDDEN = 'djs-element-hidden',
   MARKER_LABEL_HIDDEN = 'djs-label-hidden';
 
 
-export default function LabelEditingPreview(
-  eventBus, canvas, elementRegistry,
-  pathMap) {
+export default function LabelEditingPreview(eventBus, canvas, elementRegistry,
+                                            pathMap) {
 
   var self = this;
 
@@ -31,52 +31,62 @@ export default function LabelEditingPreview(
   eventBus.on('directEditing.activate', function (context) {
     var activeProvider = context.active;
 
-    element = activeProvider.element.label || activeProvider.element;
+    // element = activeProvider.element.label || activeProvider.element;
+    element = activeProvider.element;
+
+    console.log('LabelEditingPreview, directEditing.activate, element = ', element);
 
     // text annotation
-    if (is(element, 'bpmn:TextAnnotation')) {
-      absoluteElementBBox = canvas.getAbsoluteBBox(element);
+    // if (is(element, 'bpmn:TextAnnotation')) {
+    //   absoluteElementBBox = canvas.getAbsoluteBBox(element);
+    //
+    //   gfx = svgCreate('g');
+    //
+    //   var textPathData = pathMap.getScaledPath('TEXT_ANNOTATION', {
+    //     xScaleFactor: 1,
+    //     yScaleFactor: 1,
+    //     containerWidth: element.width,
+    //     containerHeight: element.height,
+    //     position: {
+    //       mx: 0.0,
+    //       my: 0.0
+    //     }
+    //   });
+    //
+    //   var path = self.path = svgCreate('path');
+    //
+    //   svgAttr(path, {
+    //     d: textPathData,
+    //     strokeWidth: 2,
+    //     stroke: getStrokeColor(element)
+    //   });
+    //
+    //   svgAppend(gfx, path);
+    //
+    //   svgAppend(defaultLayer, gfx);
+    //
+    //   translate(gfx, element.x, element.y);
+    // }
 
-      gfx = svgCreate('g');
+    console.log('LabelEditingPreview, directEditing.activate, isCpn(element) = ', isCpn(element));
 
-      var textPathData = pathMap.getScaledPath('TEXT_ANNOTATION', {
-        xScaleFactor: 1,
-        yScaleFactor: 1,
-        containerWidth: element.width,
-        containerHeight: element.height,
-        position: {
-          mx: 0.0,
-          my: 0.0
-        }
-      });
-
-      var path = self.path = svgCreate('path');
-
-      svgAttr(path, {
-        d: textPathData,
-        strokeWidth: 2,
-        stroke: getStrokeColor(element)
-      });
-
-      svgAppend(gfx, path);
-
-      svgAppend(defaultLayer, gfx);
-
-      translate(gfx, element.x, element.y);
-    }
-
-    if (is(element, 'bpmn:TextAnnotation') ||
-      element.labelTarget) {
-      canvas.addMarker(element, MARKER_HIDDEN);
-    } else if (is(element, 'bpmn:Task') ||
-      is(element, 'bpmn:CallActivity') ||
-      is(element, 'bpmn:SubProcess') ||
-      is(element, 'bpmn:Participant') ||
-      is(element, 'cpn:Place') ||
-      is(element, 'cpn:Transition')
-    ) {
+    if (isCpn(element)) {
       canvas.addMarker(element, MARKER_LABEL_HIDDEN);
     }
+
+    // if (element.labelTarget) {
+    //   canvas.addMarker(element, MARKER_HIDDEN);
+    // }
+
+    // if (is(element, 'bpmn:TextAnnotation') ||
+    //   element.labelTarget) {
+    //   canvas.addMarker(element, MARKER_HIDDEN);
+    // }
+    // if (is(element, 'cpn:Place') ||
+    //   is(element, 'cpn:Transition')
+    // ) {
+    //   canvas.addMarker(element, MARKER_LABEL_HIDDEN);
+    // }
   });
 
   eventBus.on('directEditing.resize', function (context) {

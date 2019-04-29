@@ -6,7 +6,7 @@ import {
   getLabel
 } from './LabelUtil';
 
-import { is } from '../../util/ModelUtil';
+import { is, isCpn } from '../../util/ModelUtil';
 import { isAny } from '../modeling/util/ModelingUtil';
 import { isExpanded } from '../../util/DiUtil';
 
@@ -107,10 +107,10 @@ export default function LabelEditingProvider(
 
 
   function activateDirectEdit(element, force) {
-    if (force ||
-      isAny(element, ['bpmn:Task', 'bpmn:TextAnnotation', 'cpn:Place', 'cpn:Transition', 'cpn:Label']) ||
-      isCollapsedSubProcess(element)) {
+    console.log('activateDirectEdit(), element = ', element);
+    console.log('activateDirectEdit(), isCpn(element) = ', isCpn(element));
 
+    if (force || isCpn(element)) {
       directEditing.activate(element);
     }
   }
@@ -142,13 +142,6 @@ LabelEditingProvider.prototype.activate = function (element) {
 
   // text
   var text = getLabel(element);
-  if (element.type === 'cpn:Transition') {
-    text = element.name;
-  }
-  // if(element.type === 'cpn:Connection') {
-  //   element = element.labels[0];
-  // }
-
   if (text === undefined) {
     return;
   }
@@ -164,35 +157,36 @@ LabelEditingProvider.prototype.activate = function (element) {
 
   var options = {};
 
-  // tasks
-  if (
-    isAny(element, [
-      'cpn:Place',
-      'cpn:Transition',
-      'cpn:Connection',
-      'cpn:Label',
-    ]) ||
-    isCollapsedSubProcess(element)
-  ) {
-    assign(options, {
-      centerVertically: true
-    });
-  }
+  // // tasks
+  // if (
+  //   isAny(element, [
+  //     'cpn:Place',
+  //     'cpn:Transition',
+  //     'cpn:Connection',
+  //     'cpn:Label',
+  //   ]) ||
+  //   isCollapsedSubProcess(element)
+  // ) {
+  //   assign(options, {
+  //     centerVertically: true
+  //   });
+  // }
 
   // external labels
-  if (isLabelExternal(element)) {
+  // if (isLabelExternal(element)) {
     assign(options, {
-      autoResize: true
+      autoResize: false,
+      centerVertically: true
     });
-  }
+  // }
 
   // text annotations
-  if (is(element, 'bpmn:TextAnnotation')) {
-    assign(options, {
-      resizable: true,
-      autoResize: true
-    });
-  }
+  // if (is(element, 'bpmn:TextAnnotation')) {
+  //   assign(options, {
+  //     resizable: true,
+  //     autoResize: true
+  //   });
+  // }
 
   assign(context, {
     options: options
@@ -265,9 +259,14 @@ LabelEditingProvider.prototype.getEditingBBox = function (element) {
 
   // internal labels for tasks and collapsed call activities,
   // sub processes and participants
-  if (isAny(element, ['bpmn:Task', 'bpmn:CallActivity', 'cpn:Place', 'cpn:Transition']) ||
-    isCollapsedPool(element) ||
-    isCollapsedSubProcess(element)) {
+  // if (isAny(element, ['bpmn:Task', 'bpmn:CallActivity', 'cpn:Place', 'cpn:Transition']) ||
+  //   isCollapsedPool(element) ||
+  //   isCollapsedSubProcess(element))
+    if (isAny(element, ['cpn:Place', 'cpn:Transition']) ||
+      isCollapsedPool(element) ||
+      isCollapsedSubProcess(element))
+
+    {
 
     assign(bounds, {
       width: bbox.width,

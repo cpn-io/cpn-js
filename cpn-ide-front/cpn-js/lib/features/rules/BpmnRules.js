@@ -453,102 +453,106 @@ function canConnect(source, target, connection) {
  * @return {Boolean}
  */
 function canDrop(element, target, position) {
-  // CPN
-  if (is(element, 'cpn:BaseElement')) {
-    return true;
-  }
-  // ------------------------------------------------------------------
-
-  // can move labels everywhere
-  if (isLabel(element)) {
-    return true;
-  }
-
-  // disallow to create elements on collapsed pools
-  if (is(target, 'bpmn:Participant') && !isExpanded(target)) {
-    return false;
-  }
-
-  // allow to create new participants on
-  // on existing collaboration and process diagrams
-  if (is(element, 'bpmn:Participant')) {
-    return is(target, 'bpmn:Process') || is(target, 'bpmn:Collaboration');
-  }
-
-  // allow creating lanes on participants and other lanes only
-  if (is(element, 'bpmn:Lane')) {
-    return is(target, 'bpmn:Participant') || is(target, 'bpmn:Lane');
-  }
-
-  if (is(element, 'bpmn:BoundaryEvent')) {
-    return false;
-  }
-
-  // drop flow elements onto flow element containers
-  // and participants
-  if (is(element, 'bpmn:FlowElement') && !is(element, 'bpmn:DataStoreReference')) {
-    if (is(target, 'bpmn:FlowElementsContainer')) {
-      return isExpanded(target);
-    }
-
-    return isAny(target, ['bpmn:Participant', 'bpmn:Lane']);
-  }
-
-  // account for the fact that data associations are always
-  // rendered and moved to top (Process or Collaboration level)
+  // // CPN
+  // if (is(element, 'cpn:BaseElement')) {
+  //   return true;
+  // }
+  // // ------------------------------------------------------------------
   //
-  // artifacts may be placed wherever, too
-  if (isAny(element, ['bpmn:Artifact', 'bpmn:DataAssociation', 'bpmn:DataStoreReference'])) {
-    return isAny(target, [
-      'bpmn:Collaboration',
-      'bpmn:Lane',
-      'bpmn:Participant',
-      'bpmn:Process',
-      'bpmn:SubProcess']);
-  }
+  // // can move labels everywhere
+  // if (isLabel(element)) {
+  //   return true;
+  // }
+  //
+  // // disallow to create elements on collapsed pools
+  // if (is(target, 'bpmn:Participant') && !isExpanded(target)) {
+  //   return false;
+  // }
+  //
+  // // allow to create new participants on
+  // // on existing collaboration and process diagrams
+  // if (is(element, 'bpmn:Participant')) {
+  //   return is(target, 'bpmn:Process') || is(target, 'bpmn:Collaboration');
+  // }
+  //
+  // // allow creating lanes on participants and other lanes only
+  // if (is(element, 'bpmn:Lane')) {
+  //   return is(target, 'bpmn:Participant') || is(target, 'bpmn:Lane');
+  // }
+  //
+  // if (is(element, 'bpmn:BoundaryEvent')) {
+  //   return false;
+  // }
+  //
+  // // drop flow elements onto flow element containers
+  // // and participants
+  // if (is(element, 'bpmn:FlowElement') && !is(element, 'bpmn:DataStoreReference')) {
+  //   if (is(target, 'bpmn:FlowElementsContainer')) {
+  //     return isExpanded(target);
+  //   }
+  //
+  //   return isAny(target, ['bpmn:Participant', 'bpmn:Lane']);
+  // }
+  //
+  // // account for the fact that data associations are always
+  // // rendered and moved to top (Process or Collaboration level)
+  // //
+  // // artifacts may be placed wherever, too
+  // if (isAny(element, ['bpmn:Artifact', 'bpmn:DataAssociation', 'bpmn:DataStoreReference'])) {
+  //   return isAny(target, [
+  //     'bpmn:Collaboration',
+  //     'bpmn:Lane',
+  //     'bpmn:Participant',
+  //     'bpmn:Process',
+  //     'bpmn:SubProcess']);
+  // }
+  //
+  // if (is(element, 'bpmn:MessageFlow')) {
+  //   return is(target, 'bpmn:Collaboration')
+  //     || element.source.parent == target
+  //     || element.target.parent == target;
+  // }
+  //
+  // return false;
 
-  if (is(element, 'bpmn:MessageFlow')) {
-    return is(target, 'bpmn:Collaboration')
-      || element.source.parent == target
-      || element.target.parent == target;
-  }
-
-  return false;
+  return true;
 }
 
 function canPaste(tree, target) {
-  var topLevel = tree[0],
-    participants;
+  // var topLevel = tree[0],
+  //   participants;
+  //
+  // if (is(target, 'bpmn:Collaboration')) {
+  //   return every(topLevel, function (e) {
+  //     return e.type === 'bpmn:Participant';
+  //   });
+  // }
+  //
+  // if (is(target, 'bpmn:Process')) {
+  //   participants = some(topLevel, function (e) {
+  //     return e.type === 'bpmn:Participant';
+  //   });
+  //
+  //   return !(participants && target.children.length > 0);
+  // }
+  //
+  // // disallow to create elements on collapsed pools
+  // if (is(target, 'bpmn:Participant') && !isExpanded(target)) {
+  //   return false;
+  // }
+  //
+  // if (is(target, 'bpmn:FlowElementsContainer')) {
+  //   return isExpanded(target);
+  // }
+  //
+  // return isAny(target, [
+  //   'bpmn:Collaboration',
+  //   'bpmn:Lane',
+  //   'bpmn:Participant',
+  //   'bpmn:Process',
+  //   'bpmn:SubProcess']);
 
-  if (is(target, 'bpmn:Collaboration')) {
-    return every(topLevel, function (e) {
-      return e.type === 'bpmn:Participant';
-    });
-  }
-
-  if (is(target, 'bpmn:Process')) {
-    participants = some(topLevel, function (e) {
-      return e.type === 'bpmn:Participant';
-    });
-
-    return !(participants && target.children.length > 0);
-  }
-
-  // disallow to create elements on collapsed pools
-  if (is(target, 'bpmn:Participant') && !isExpanded(target)) {
-    return false;
-  }
-
-  if (is(target, 'bpmn:FlowElementsContainer')) {
-    return isExpanded(target);
-  }
-
-  return isAny(target, [
-    'bpmn:Collaboration',
-    'bpmn:Lane',
-    'bpmn:Participant',
-    'bpmn:Process',
-    'bpmn:SubProcess']);
+  return true;
 }
 
 function isBoundaryEvent(element) {
@@ -723,84 +727,89 @@ function canReplace(elements, target, position) {
 
 function canMove(elements, target) {
 
-  // do not move selection containing boundary events
-  if (some(elements, isBoundaryEvent)) {
-    return false;
-  }
+  // // do not move selection containing boundary events
+  // if (some(elements, isBoundaryEvent)) {
+  //   return false;
+  // }
+  //
+  // // do not move selection containing lanes
+  // if (some(elements, isLane)) {
+  //   return false;
+  // }
+  //
+  // // allow default move check to start move operation
+  // if (!target) {
+  //   return true;
+  // }
+  //
+  // return elements.every(function (element) {
+  //   return canDrop(element, target);
+  // });
 
-  // do not move selection containing lanes
-  if (some(elements, isLane)) {
-    return false;
-  }
-
-  // allow default move check to start move operation
-  if (!target) {
-    return true;
-  }
-
-  return elements.every(function (element) {
-    return canDrop(element, target);
-  });
+  return true;
 }
 
 function canCreate(shape, target, source, position) {
 
-  if (!target) {
-    return false;
-  }
-
-  if (isLabel(target)) {
-    return null;
-  }
-
-  if (isSame(source, target)) {
-    return false;
-  }
-
-  // ensure we do not drop the element
-  // into source
-  if (source && isParent(source, target)) {
-    return false;
-  }
+  // if (!target) {
+  //   return false;
+  // }
+  //
+  // if (isLabel(target)) {
+  //   return null;
+  // }
+  //
+  // if (isSame(source, target)) {
+  //   return false;
+  // }
+  //
+  // // ensure we do not drop the element
+  // // into source
+  // if (source && isParent(source, target)) {
+  //   return false;
+  // }
 
   return canDrop(shape, target, position) || canInsert(shape, target, position);
 }
 
 function canResize(shape, newBounds) {
-  if(shape.type === 'cpn:Label') {
-    return false
-  }
   if (is(shape, 'cpn:Connection')) {
     return false;
   }
-  // CPN
-  if (is(shape, 'cpn:BaseElement')) {
-    return true;
-  }
 
-  // ------------------------------------------------------------------
+  return true;
 
-  if (is(shape, 'bpmn:SubProcess')) {
-    return (
-      isExpanded(shape) && (
-        !newBounds || (newBounds.width >= 100 && newBounds.height >= 80)
-      )
-    );
-  }
-
-  if (is(shape, 'bpmn:Lane')) {
-    return !newBounds || (newBounds.width >= 130 && newBounds.height >= 60);
-  }
-
-  if (is(shape, 'bpmn:Participant')) {
-    return !newBounds || (newBounds.width >= 250 && newBounds.height >= 50);
-  }
-
-  if (isTextAnnotation(shape)) {
-    return true;
-  }
-
-  return false;
+  // // CPN
+  // if(shape.type === 'cpn:Label') {
+  //   return false
+  // }
+  // if (is(shape, 'cpn:BaseElement')) {
+  //   return true;
+  // }
+  //
+  // // ------------------------------------------------------------------
+  //
+  // if (is(shape, 'bpmn:SubProcess')) {
+  //   return (
+  //     isExpanded(shape) && (
+  //       !newBounds || (newBounds.width >= 100 && newBounds.height >= 80)
+  //     )
+  //   );
+  // }
+  //
+  // if (is(shape, 'bpmn:Lane')) {
+  //   return !newBounds || (newBounds.width >= 130 && newBounds.height >= 60);
+  // }
+  //
+  // if (is(shape, 'bpmn:Participant')) {
+  //   return !newBounds || (newBounds.width >= 250 && newBounds.height >= 50);
+  // }
+  //
+  // if (isTextAnnotation(shape)) {
+  //   return true;
+  // }
+  //
+  // return false;
 }
 
 /**
@@ -909,13 +918,13 @@ function contains(collection, element) {
 }
 
 function canCopy(collection, element) {
-  if (is(element, 'bpmn:Lane') && !contains(collection, element.parent)) {
-    return false;
-  }
-
-  if (is(element, 'bpmn:BoundaryEvent') && !contains(collection, element.host)) {
-    return false;
-  }
+  // if (is(element, 'bpmn:Lane') && !contains(collection, element.parent)) {
+  //   return false;
+  // }
+  //
+  // if (is(element, 'bpmn:BoundaryEvent') && !contains(collection, element.host)) {
+  //   return false;
+  // }
 
   return true;
 }

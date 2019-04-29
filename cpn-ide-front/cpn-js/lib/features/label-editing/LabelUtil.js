@@ -21,23 +21,24 @@ function getLabelAttr(semantic) {
 
 export function getLabel(element) {
 
-  var semantic = element.businessObject,
-  attr = getLabelAttr(semantic);
-
-  // CPN
-  // -------------------------------------
-  if (
-    (is(semantic, 'cpn:Place') || is(semantic, 'cpn:Transition') || element.type === 'cpn:Label')
-    &&
-    element.text
-  ) {
-    return element.text
-  }
-  // -------------------------------------
-
-  if (attr) {
-    return semantic[attr] || '';
-  }
+  return element.name || element.text;
+  // var semantic = element.businessObject,
+  // attr = getLabelAttr(semantic);
+  //
+  // // CPN
+  // // -------------------------------------
+  // if (
+  //   (is(semantic, 'cpn:Place') || is(semantic, 'cpn:Transition') || element.type === 'cpn:Label')
+  //   &&
+  //   element.text
+  // ) {
+  //   return element.text
+  // }
+  // // -------------------------------------
+  //
+  // if (attr) {
+  //   return semantic[attr] || '';
+  // }
 }
 
 

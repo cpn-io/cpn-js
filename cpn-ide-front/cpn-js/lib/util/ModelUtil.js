@@ -7,11 +7,16 @@
  * @return {Boolean}
  */
 export function is(element, type) {
-  var bo = getBusinessObject(element);
+  // var bo = element; // getBusinessObject(element);
+  //
+  // return bo && (typeof bo.$instanceOf === 'function') && bo.$instanceOf(type);
 
-  return bo && (typeof bo.$instanceOf === 'function') && bo.$instanceOf(type);
+  return element && element.type && element.type === type;
 }
 
+export function isCpn(element) {
+  return element && element.type && /^cpn/.test(element.type);
+}
 
 /**
  * Return the business object for a given element.

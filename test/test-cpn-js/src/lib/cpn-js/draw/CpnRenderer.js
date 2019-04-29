@@ -11,7 +11,10 @@ import {
   createLine
 } from 'diagram-js/lib/util/RenderUtil';
 
-import {is} from '../util/ModelUtil';
+import {
+  is,
+  isCpn
+} from '../util/ModelUtil';
 
 import {
   query as domQuery
@@ -43,7 +46,7 @@ import {
 
 var RENDERER_IDS = new Ids();
 
-var ERROR_STROKE_COLOR = '#ffcccccc';
+var ERROR_STROKE_COLOR = '#ffccccdd';
 var ERROR_STROKE_THICK = 8;
 
 export default function CpnRenderer(
@@ -307,24 +310,42 @@ export default function CpnRenderer(
   }
 
   function renderLabel(parentGfx, label, options) {
-    options = assign({
-      size: {
-        width: 100
-      }
-    }, options);
 
     var text = textRenderer.createText(label || '', options);
     svgClasses(text).add('djs-label');
     svgAppend(parentGfx, text);
+
+    // var rect = svgCreate('rect');
+    // svgAttr(rect, {
+    //   x: 0,
+    //   y: 0,
+    //   width: options.box.width,
+    //   height: options.box.height,
+    //   fill: 'transparent',
+    //   strokeWidth: 1,
+    //   strokeColor: 'black'
+    // });
+    // svgAppend(parentGfx, rect);
+
     return text;
   }
 
-  function renderEmbeddedLabel(parentGfx, element, align) {
-    var semantic = element;
-
-    return renderLabel(parentGfx, semantic.name, {
+  function renderEmbeddedLabel(parentGfx, element) {
+    const attrs = {
       box: element,
-      align: align,
+      align: 'center-middle',
+      padding: 5,
+      style: {
+        fill: getStrokeColor(element)
+      }
+    };
+    return renderLabel(parentGfx, element.name, attrs);
+  }
+
+  function renderExternalLabel(parentGfx, element) {
+    return renderLabel(parentGfx, element.text, {
+      box: element,
+      align: 'center-middle',
       padding: 5,
       style: {
         fill: getStrokeColor(element)
@@ -332,64 +353,42 @@ export default function CpnRenderer(
     });
   }
 
-  function renderExternalLabel(parentGfx, element) {
-    var semantic = element;
-    var box = {
-      width: 200, // 90,
-      height: 30,
-      x: element.width / 2 + element.x,
-      y: element.height / 2 + element.y
-    };
-
-    return renderLabel(parentGfx, element.text || semantic.name, {
-      box: box,
-      fitBox: true,
-      style: assign(
-        {},
-        textRenderer.getExternalStyle(),
-        {
-          fill: getStrokeColor(element)
-        }
-      )
-    });
-  }
-
-  function renderCpnLabel(parentGfx, element) {
-    var box = {
-      width: 200, // 90,
-      height: 30,
-      x: element.width / 2 + element.x,
-      y: element.height / 2 + element.y
-    };
-
-    var options = {
-      box: box,
-      fitBox: true,
-      style: assign(
-        {},
-        textRenderer.getExternalStyle(),
-        {
-          fill: getStrokeColor(element)
-        }
-      )
-    };
-
-    options = assign({
-      size: {
-        width: box.width,
-        height: box.height
-      }
-    }, options);
-
-    var text = textRenderer.createText(element.text || '', options);
-
-    svgClasses(text).add('djs-label');
-    svgAppend(parentGfx, text);
-
-
-    return text;
-
-  }
+  // function renderCpnLabel(parentGfx, element) {
+  //   var box = {
+  //     x: element.x,
+  //     y: element.y,
+  //     width: element.width,
+  //     height: element.height
+  //   };
+  //
+  //   var options = {
+  //     box: box,
+  //     fitBox: true,
+  //     align: 'center-middle',
+  //     style: assign(
+  //       {},
+  //       textRenderer.getExternalStyle(),
+  //       {
+  //         fill: getStrokeColor(element)
+  //       }
+  //     )
+  //   };
+  //
+  //   options = assign({
+  //     size: {
+  //       width: box.width,
+  //       height: box.height
+  //     }
+  //   }, options);
+  //
+  //   var text = textRenderer.createText(element.text || '', options);
+  //
+  //   svgClasses(text).add('djs-label');
+  //   svgAppend(parentGfx, text);
+  //
+  //   return text;
+  //
+  // }
 
   function createPathFromConnection(connection) {
     var waypoints = connection.waypoints;
@@ -421,6 +420,8 @@ export default function CpnRenderer(
     const cx = parseFloat(box.w / 2);
     const cy = parseFloat(box.h / 2);
 
+    const strokeWidth = getStrokeWidth(element);
+
     // Draw error state
     var isError = element.iserror;
     isError = true;
@@ -430,8 +431,8 @@ export default function CpnRenderer(
       svgAttr(ellipse, {
         cx: cx,
         cy: cy,
-        rx: cx + ERROR_STROKE_THICK / 2,
-        ry: cy + ERROR_STROKE_THICK / 2
+        rx: cx + ERROR_STROKE_THICK / 2 + strokeWidth / 2,
+        ry: cy + ERROR_STROKE_THICK / 2 + strokeWidth / 2
       });
       svgAttr(ellipse, {
         fill: 'transparent',
@@ -457,14 +458,14 @@ export default function CpnRenderer(
     svgAppend(parentGfx, ellipse);
 
 
-    // if Place is IN or OUT entry
-    if (element.cpnElement) {
-      var isPort = element.cpnElement.port;
-      isPort = true;
-      if (isPort) {
-        drawBottomTextLabel(parentGfx, textRenderer, 'Out', box);
-      }
-    }
+    // // if Place is IN or OUT entry
+    // if (element.cpnElement) {
+    //   var isPort = element.cpnElement.port;
+    //   isPort = true;
+    //   if (isPort) {
+    //     drawBottomTextLabel(parentGfx, textRenderer, 'Out', box);
+    //   }
+    // }
 
     return ellipse;
   }
@@ -492,6 +493,8 @@ export default function CpnRenderer(
       h: parseFloat(element.height)
     };
 
+    const strokeWidth = getStrokeWidth(element);
+
     // Draw error state
     var isError = element.iserror;
     isError = true;
@@ -499,10 +502,10 @@ export default function CpnRenderer(
     if (isError) {
       var rect = svgCreate('rect');
       svgAttr(rect, {
-        x: -(ERROR_STROKE_THICK / 4),
-        y: -(ERROR_STROKE_THICK / 4),
-        width: box.w + ERROR_STROKE_THICK / 2,
-        height: box.h + ERROR_STROKE_THICK / 2
+        x: -(ERROR_STROKE_THICK + strokeWidth) / 2,
+        y: -(ERROR_STROKE_THICK + strokeWidth) / 2,
+        width: box.w + (ERROR_STROKE_THICK + strokeWidth),
+        height: box.h + (ERROR_STROKE_THICK + strokeWidth)
       });
       svgAttr(rect, {
         fill: 'transparent',
@@ -527,15 +530,15 @@ export default function CpnRenderer(
     });
     svgAppend(parentGfx, rect);
 
-    // if Place is IN or OUT entry
-    if (element.cpnElement) {
-      var isPort = element.cpnElement.subst;
-      isPort = true;
-      if (isPort) {
-        drawBottomTextLabel(parentGfx, textRenderer, 'Port', box);
-        // drawBottomTextLink(parentGfx, textRenderer, 'Port', box);
-      }
-    }
+    // // if Place is IN or OUT entry
+    // if (element.cpnElement) {
+    //   var isPort = element.cpnElement.subst;
+    //   isPort = true;
+    //   if (isPort) {
+    //     drawBottomTextLabel(parentGfx, textRenderer, 'Port', box);
+    //     // drawBottomTextLink(parentGfx, textRenderer, 'Port', box);
+    //   }
+    // }
 
     return rect;
   }
@@ -670,14 +673,14 @@ export default function CpnRenderer(
     // CPN
     'cpn:Place': function (parentGfx, element) {
       var shape = drawPlace(parentGfx, textRenderer, element);
-      renderEmbeddedLabel(parentGfx, element, 'center-middle');
+      renderEmbeddedLabel(parentGfx, element);
       attachTaskMarkers(parentGfx, element);
       return shape;
     },
 
     'cpn:Transition': function (parentGfx, element) {
       var shape = drawTransition(parentGfx, textRenderer, element);
-      renderEmbeddedLabel(parentGfx, element, 'center-middle');
+      renderEmbeddedLabel(parentGfx, element);
       attachTaskMarkers(parentGfx, element);
       return shape;
     },
@@ -717,7 +720,8 @@ export default function CpnRenderer(
 
     'cpn:Label': function (parentGfx, element) {
       console.log('render cpn:Label, element = ', element);
-      return renderCpnLabel(parentGfx, element);
+      return renderExternalLabel(parentGfx, element);
+
     },
 
     'cpn:TextAnnotation': function (parentGfx, element) {
@@ -849,7 +853,7 @@ CpnRenderer.$inject = [
 
 
 CpnRenderer.prototype.canRender = function (element) {
-  return is(element, 'cpn:Place') || is(element, 'cpn:Transition') || is(element, 'cpn:Label') || is(element, 'cpn:Connection');
+  return isCpn(element);
   // return
   //   is(element, 'cpn:Place') ||
   //   is(element, 'cpn:Transition') ||

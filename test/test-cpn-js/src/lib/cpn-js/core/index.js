@@ -13,12 +13,14 @@ import ConnectModule from 'diagram-js/lib/features/connect';
 import SnappingModule from 'diagram-js/lib/features/snapping';
 import BendpointsModule from 'diagram-js/lib/features/bendpoints';
 import ResizeModule from 'diagram-js/lib/features/resize';
+import AttachSupportModule from 'diagram-js/lib/features/attach-support';
 
 import CroppingConnectionDocking from 'diagram-js/lib/layout/CroppingConnectionDocking';
 
 import CpnContextPadProvider from '../features/context-pad/CpnContextPadProvider';
 import CpnPaletteProvider from '../features/palette/CpnPaletteProvider';
 import CpnRulesModule from '../features/rules';
+import CpnAutoResizeModule from '../features/auto-resize';
 
 import CpnSnappingModule from '../features/snapping';
 import CpnModelingModule from '../features/modeling';
@@ -33,7 +35,7 @@ export default {
     SelectionModule,
     ZoomScrollModule,
     MoveCanvasModule,
-    ModelingModule,
+    // // ModelingModule,
     MoveModule,
     OutlineModule,
     LassoToolModule,
@@ -41,9 +43,10 @@ export default {
     CreateModule,
     ContextPadModule,
     ConnectModule,
-    SnappingModule,
+    // SnappingModule,
     BendpointsModule,
-    ResizeModule,
+    // ResizeModule,
+    AttachSupportModule,
 
     CroppingConnectionDocking,
 
@@ -51,6 +54,7 @@ export default {
     CpnModelingModule,
     CpnSnappingModule,
     CpnRulesModule,
+    CpnAutoResizeModule,
 
     // Custom
     DrawModule,

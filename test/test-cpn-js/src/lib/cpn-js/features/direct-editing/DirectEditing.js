@@ -157,6 +157,10 @@ DirectEditing.prototype.activate = function (element) {
     return (context = p.activate(element)) ? p : null;
   });
 
+  // console.log('DirectEditing.prototype.activate, element = ', element);
+  // console.log('DirectEditing.prototype.activate, context = ', context);
+
+
   // check if activation took place
   if (context) {
     this.$textbox = this._textbox.create(

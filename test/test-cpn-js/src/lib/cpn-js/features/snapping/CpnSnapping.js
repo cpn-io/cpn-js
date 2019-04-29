@@ -24,8 +24,7 @@ import {
 
 
 import {
-  getBoundaryAttachment,
-  getParticipantSizeConstraints
+  getBoundaryAttachment
 } from './CpnSnappingUtil';
 
 var round = Math.round;
@@ -46,10 +45,6 @@ export default function CpnSnapping(eventBus, canvas, cpnRules, elementRegistry)
   // instantiate super
   Snapping.call(this, eventBus, canvas);
 
-
-  /**
-   * Drop participant on process <> process elements snapping
-   */
   eventBus.on('create.start', function (event) {
 
     var context = event.context,
@@ -58,14 +53,8 @@ export default function CpnSnapping(eventBus, canvas, cpnRules, elementRegistry)
   });
 
   eventBus.on(['create.move', 'create.end'], HIGH_PRIORITY, function (event) {
-
     var context = event.context,
-      shape = context.shape,
-      participantSnapBox = context.participantSnapBox;
-
-    if (!isSnapped(event) && participantSnapBox) {
-      snapParticipant(participantSnapBox, shape, event);
-    }
+      shape = context.shape;
   });
 
   eventBus.on('shape.move.start', function (event) {
@@ -105,22 +94,22 @@ export default function CpnSnapping(eventBus, canvas, cpnRules, elementRegistry)
     }
   });
 
-  /**
-   * Adjust parent for flowElements to the target participant
-   * when droping onto lanes.
-   */
-  eventBus.on([
-    'shape.move.hover',
-    'shape.move.move',
-    'shape.move.end',
-    'create.hover',
-    'create.move',
-    'create.end'
-  ], HIGH_PRIORITY, function (event) {
-    var context = event.context,
-      shape = context.shape,
-      hover = event.hover;
-  });
+  // /**
+  //  * Adjust parent for flowElements to the target participant
+  //  * when droping onto lanes.
+  //  */
+  // eventBus.on([
+  //   'shape.move.hover',
+  //   'shape.move.move',
+  //   'shape.move.end',
+  //   'create.hover',
+  //   'create.move',
+  //   'create.end'
+  // ], HIGH_PRIORITY, function (event) {
+  //   var context = event.context,
+  //     shape = context.shape,
+  //     hover = event.hover;
+  // });
 
   /**
    * Snap sequence flows.
@@ -287,63 +276,6 @@ CpnSnapping.prototype.addTargetSnaps = function (snapPoints, shape, target) {
     snapPoints.add(c.id + '-docking', docking.original || docking);
   });
 };
-
-
-// participant snapping //////////////////////
-
-function initParticipantSnapping(context, shape, elements) {
-
-  if (!elements.length) {
-    return;
-  }
-
-  var snapBox = getBoundingBox(elements.filter(function (e) {
-    return !e.labelTarget && !e.waypoints;
-  }));
-
-  snapBox.x -= 50;
-  snapBox.y -= 20;
-  snapBox.width += 70;
-  snapBox.height += 40;
-
-  // adjust shape height to include bounding box
-  shape.width = Math.max(shape.width, snapBox.width);
-  shape.height = Math.max(shape.height, snapBox.height);
-
-  context.participantSnapBox = snapBox;
-}
-
-function snapParticipant(snapBox, shape, event, offset) {
-  offset = offset || 0;
-
-  var shapeHalfWidth = shape.width / 2 - offset,
-    shapeHalfHeight = shape.height / 2;
-
-  var currentTopLeft = {
-    x: event.x - shapeHalfWidth - offset,
-    y: event.y - shapeHalfHeight
-  };
-
-  var currentBottomRight = {
-    x: event.x + shapeHalfWidth + offset,
-    y: event.y + shapeHalfHeight
-  };
-
-  var snapTopLeft = snapBox,
-    snapBottomRight = bottomRight(snapBox);
-
-  if (currentTopLeft.x >= snapTopLeft.x) {
-    setSnapped(event, 'x', snapTopLeft.x + offset + shapeHalfWidth);
-  } else if (currentBottomRight.x <= snapBottomRight.x) {
-    setSnapped(event, 'x', snapBottomRight.x - offset - shapeHalfWidth);
-  }
-
-  if (currentTopLeft.y >= snapTopLeft.y) {
-    setSnapped(event, 'y', snapTopLeft.y + shapeHalfHeight);
-  } else if (currentBottomRight.y <= snapBottomRight.y) {
-    setSnapped(event, 'y', snapBottomRight.y - shapeHalfHeight);
-  }
-}
 
 
 // boundary event snapping //////////////////////

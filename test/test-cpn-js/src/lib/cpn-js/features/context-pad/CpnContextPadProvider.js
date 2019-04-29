@@ -1,3 +1,5 @@
+import {is} from '../../util/ModelUtil';
+
 /**
  * A example context pad provider.
  */
@@ -15,43 +17,53 @@ CpnContextPadProvider.$inject = [
 ];
 
 
-CpnContextPadProvider.prototype.getContextPadEntries = function(element) {
+CpnContextPadProvider.prototype.getContextPadEntries = function (element) {
   var connect = this._connect,
-      modeling = this._modeling;
+    modeling = this._modeling;
 
   function removeElement() {
-    modeling.removeElements([ element ]);
+    modeling.removeElements([element]);
   }
 
   function startConnect(event, element, autoActivate) {
     connect.start(event, element, autoActivate);
   }
 
-  // console.log('getContextPadEntries(), element = ', element);
-  // console.log('getContextPadEntries(), typeof(element) = ', element.constructor.name === 'Connection');
 
-  // no context pad for Connection
-  if (element.constructor.name === 'Connection')
-    return null;
+  if (is(element, 'cpn:Connection'))
+    return {
+      'delete': {
+        group: 'edit',
+        className: 'context-pad-icon-remove',
+        title: 'Remove',
+        action: {
+          click: removeElement,
+          dragstart: removeElement
+        }
+      }
+    };
 
-  return {
-    'delete': {
-      group: 'edit',
-      className: 'context-pad-icon-remove',
-      title: 'Remove',
-      action: {
-        click: removeElement,
-        dragstart: removeElement
+  if (is(element, 'cpn:Place') || is(element, 'cpn:Transition'))
+    return {
+      'delete': {
+        group: 'edit',
+        className: 'context-pad-icon-remove',
+        title: 'Remove',
+        action: {
+          click: removeElement,
+          dragstart: removeElement
+        }
+      },
+      'connect': {
+        group: 'edit',
+        className: 'context-pad-icon-connect',
+        title: 'Connect',
+        action: {
+          click: startConnect,
+          dragstart: startConnect
+        }
       }
-    },
-    'connect': {
-      group: 'edit',
-      className: 'context-pad-icon-connect',
-      title: 'Connect',
-      action: {
-        click: startConnect,
-        dragstart: startConnect
-      }
-    }
-  };
+    };
+
+  return null;
 };

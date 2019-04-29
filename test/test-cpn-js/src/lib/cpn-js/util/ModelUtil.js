@@ -12,6 +12,10 @@ export function is(element, type) {
   return element.type && element.type === type;
 }
 
+export function isCpn(element) {
+  return element && element.type && /^cpn/.test(element.type);
+}
+
 export function isAny(element, types) {
   return some(types, function(t) {
     return is(element, t);

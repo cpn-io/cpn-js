@@ -24,3 +24,8 @@ label.node {
   position: fixed !important;
 }
 
+label.node-underline {
+  text-decoration: solid #007bff underline;
+  //border-bottom: solid #007bff 2px;
+}
+

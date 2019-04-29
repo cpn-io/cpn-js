@@ -50,6 +50,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   nodes = [];
 
+  // Множество идентификаторов узлов, которые должны быть подсвечены снизу в даный момент
+  underlineNodeSet = new Set();
+
   // nodes = [
   //   {
   //     id: 1,
@@ -412,6 +415,26 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     this.eventService.send(Message.OPEN_DECLARATION_BLOCK, {id: currentNode.id});
 
     event.preventDefault();
+  }
+
+  /**
+   * Подсвечивание снизу надписи в узле дерева
+   * @param {boolean} underline - флаг добавить/убрать подсвечивание
+   * @param {string} nodeId - ид ноды. Не обязательный параметр. Если не указан, флаг underline распространяется на все ноды
+   * @example this.underlineNode(false) - убрать подсвечивание у всех нод
+   * @example this.underlineNode(true, 'NODEID') - подсветить ноду с указанным ид
+   */
+  underlineNodeLabel(underline: boolean, nodeId?: string) {
+    if (underline) {
+      if (arguments.length > 1)
+        this.underlineNodeSet.add(nodeId);
+    }
+    else  {
+      if (arguments.length > 1)
+        this.underlineNodeSet.delete(nodeId);
+      else
+        this.underlineNodeSet = new Set();
+    }
   }
 
   getCurrentBlock(currentNode): any {
@@ -1139,7 +1162,13 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   activateNode(event) {
+
+
     this.selectedNode = event.node;
+
+    // проверка работы функции подчеркивания ноды
+    // this.underlineNodeLabel(false);
+    // this.underlineNodeLabel(true, this.selectedNode.id);
 
    // if (event.node !== this.editableNode) {
   //    this.editableNode = null;

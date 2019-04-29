@@ -21,8 +21,11 @@ import CpnPaletteProvider from '../features/palette/CpnPaletteProvider';
 import CpnRulesModule from '../features/rules';
 
 import CpnSnappingModule from '../features/snapping';
-
 import CpnModelingModule from '../features/modeling';
+
+import DirectEditingModule from '../features/direct-editing';
+import LabelEditingModule from '../features/label-editing';
+import DrawModule from '../draw';
 
 export default {
   __depends__: [
@@ -47,7 +50,12 @@ export default {
     // Cpn
     CpnModelingModule,
     CpnSnappingModule,
-    CpnRulesModule
+    CpnRulesModule,
+
+    // Custom
+    DrawModule,
+    DirectEditingModule,
+    LabelEditingModule,
   ],
   __init__: [
     'contextPadProvider',

@@ -86,7 +86,7 @@
 
               <div [ngClass]="node.data.classes" class="node">
 
-                <label *ngIf="editableNode !== node"
+                <label *ngIf="editableNode !== node" [ngClass]="{'node-underline': underlineNodeSet.has(node.id)}"
                        (click)="openNode($event, node)"
                        (dblclick)="onEditNode(node)"
                        class="node">

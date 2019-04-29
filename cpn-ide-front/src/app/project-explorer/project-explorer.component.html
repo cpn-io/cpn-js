@@ -3,145 +3,154 @@
 <!--<div style="width: 100%; height:100%; margin-top:-42px; border: 0px solid blue">-->
 <!--<div style="padding-top:42px; height:100%;; border:0px solid red">-->
 <tabs #tabsComponent class="cpn-tabs">
-  <tab [id]="'Explorer panel'"  [tabTitle]="'Explorer panel'">
-  <nav class="navbar navbar-sm navbar-expand shadow-sm">
+  <tab [id]="'Explorer panel'" [tabTitle]="'Explorer panel'">
+    <nav class="navbar navbar-sm navbar-expand shadow-sm">
 
-    <ul class="navbar-nav mr-auto">
+      <ul class="navbar-nav mr-auto">
 
-      <div *ngIf="canCreateDeclaration(selectedNode)">
-        <li class="dropdown nav-item">
-          <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle nav-link" data-toggle="dropdown"
-             href="#" id="navbarDropdown">
-            <i class="fas fa-plus"></i>
-            <span>New</span>
+        <div *ngIf="canCreateDeclaration(selectedNode)">
+          <li class="dropdown nav-item">
+            <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle nav-link" data-toggle="dropdown"
+               href="#" id="navbarDropdown">
+              <i class="fas fa-plus"></i>
+              <span>New</span>
+            </a>
+            <div aria-labelledby="navbarDropdown" class="dropdown-menu shadow">
+              <a (click)="onAddNode(selectedNode, 'color')" class="dropdown-item" href="#">New Color</a>
+              <a (click)="onAddNode(selectedNode, 'var')" class="dropdown-item" href="#">New Var</a>
+              <a (click)="onAddNode(selectedNode, 'ml')" class="dropdown-item" href="#">New ML</a>
+              <a (click)="onAddNode(selectedNode, 'globref')" class="dropdown-item" href="#">New GlobRef</a>
+              <a (click)="onAddNode(selectedNode, 'block')" class="dropdown-item" href="#">New Block</a>
+            </div>
+          </li>
+        </div>
+
+        <li class="nav-item"><a (click)="onAddNode(selectedNode)" *ngIf="canCreate(selectedNode)" class="nav-link"
+                                href="#">
+          <i class="fas fa-plus"></i>New {{getStringValueForAddingCp(selectedNode)}}</a></li>
+
+        <div *ngIf="canCreate(selectedNode) || canCreateDeclaration(selectedNode)" class="divider"></div>
+
+        <li class="nav-item"><a (click)="onEditNode(selectedNode)" *ngIf="canEdit(selectedNode)" class="nav-link"
+                                href="#">
+          <i class="fas fa-pen"></i>Edit</a></li>
+        <li class="nav-item"><a (click)="onDeleteNode(selectedNode)" *ngIf="canDelete(selectedNode)" class="nav-link"
+                                href="#">
+          <i class="fas fa-minus"></i>Delete</a></li>
+        <!--
+        <div class="nav-item">
+          <li class="nav-item dropdown">
+            <a (click)="onAddNode(selectedNode)" *ngIf="canCreate(selectedNode)" class="dropdown-item" href="#">
+              <i class="fas fa-plus"></i>New {{getStringValueForAddingCp(selectedNode)}}</a>
+            <a (click)="onEditNode(selectedNode)" *ngIf="canEdit(selectedNode)" class="dropdown-item" href="#">
+              <i class="fas fa-pen"></i>Edit</a>
+            <a (click)="onDeleteNode(selectedNode)" *ngIf="canDelete(selectedNode)" class="dropdown-item" href="#">
+              <i class="fas fa-minus"></i>Delete</a>
+
+            <div *ngIf="canCreateDeclaration(selectedNode)">
+              <div class="dropdown-divider" href="#"></div>
+
+              <a (click)="onAddNode(selectedNode, 'color')" class="dropdown-item" href="#">New Color</a>
+              <a (click)="onAddNode(selectedNode, 'var')" class="dropdown-item" href="#">New Var</a>
+              <a (click)="onAddNode(selectedNode, 'ml')" class="dropdown-item" href="#">New ML</a>
+              <a (click)="onAddNode(selectedNode, 'globref')" class="dropdown-item" href="#">New GlobRef</a>
+              <a (click)="onAddNode(selectedNode, 'block')" class="dropdown-item" href="#">New Block</a>
+            </div>
+          </li>
+        </div>
+        -->
+
+        <!--<div class="divider"></div>-->
+
+      </ul>
+
+      <ul class="navbar-nav ml-auto">
+        <li>
+          <input (input)="changeFilter($event.target.value)" [value]="filterText" placeholder="Filter" type="text"/>
+        </li>
+
+        <li class="nav-item">
+          <a (click)="changeFilter('')" class="nav-link btn-close" href="#">
+            <i class="fas fa-times"></i>
           </a>
-          <div aria-labelledby="navbarDropdown" class="dropdown-menu shadow">
-            <a (click)="onAddNode(selectedNode, 'color')" class="dropdown-item" href="#">New Color</a>
-            <a (click)="onAddNode(selectedNode, 'var')" class="dropdown-item" href="#">New Var</a>
-            <a (click)="onAddNode(selectedNode, 'ml')" class="dropdown-item" href="#">New ML</a>
-            <a (click)="onAddNode(selectedNode, 'globref')" class="dropdown-item" href="#">New GlobRef</a>
-            <a (click)="onAddNode(selectedNode, 'block')" class="dropdown-item" href="#">New Block</a>
-          </div>
         </li>
-      </div>
+      </ul>
 
-      <li class="nav-item"><a (click)="onAddNode(selectedNode)" *ngIf="canCreate(selectedNode)" class="nav-link" href="#">
-        <i class="fas fa-plus"></i>New {{getStringValueForAddingCp(selectedNode)}}</a></li>
+    </nav>
 
-      <div *ngIf="canCreate(selectedNode) || canCreateDeclaration(selectedNode)" class="divider"></div>
+    <div class="workspace-container">
+      <div class="inner">
+        <div class="scroll-y">
+          <div class="pane" style="padding:10px">
 
-      <li class="nav-item"><a (click)="onEditNode(selectedNode)" *ngIf="canEdit(selectedNode)" class="nav-link" href="#">
-        <i class="fas fa-pen"></i>Edit</a></li>
-      <li class="nav-item"><a (click)="onDeleteNode(selectedNode)" *ngIf="canDelete(selectedNode)" class="nav-link"
-                              href="#">
-        <i class="fas fa-minus"></i>Delete</a></li>
-      <!--
-      <div class="nav-item">
-        <li class="nav-item dropdown">
-          <a (click)="onAddNode(selectedNode)" *ngIf="canCreate(selectedNode)" class="dropdown-item" href="#">
-            <i class="fas fa-plus"></i>New {{getStringValueForAddingCp(selectedNode)}}</a>
-          <a (click)="onEditNode(selectedNode)" *ngIf="canEdit(selectedNode)" class="dropdown-item" href="#">
-            <i class="fas fa-pen"></i>Edit</a>
-          <a (click)="onDeleteNode(selectedNode)" *ngIf="canDelete(selectedNode)" class="dropdown-item" href="#">
-            <i class="fas fa-minus"></i>Delete</a>
+            <tree-root #tree [nodes]="nodes" [options]="options" (activate)="activateNode($event)">
+              <ng-template #treeNodeTemplate let-node let-index="index">
 
-          <div *ngIf="canCreateDeclaration(selectedNode)">
-            <div class="dropdown-divider" href="#"></div>
+                <div [ngClass]="node.data.classes" class="node">
 
-            <a (click)="onAddNode(selectedNode, 'color')" class="dropdown-item" href="#">New Color</a>
-            <a (click)="onAddNode(selectedNode, 'var')" class="dropdown-item" href="#">New Var</a>
-            <a (click)="onAddNode(selectedNode, 'ml')" class="dropdown-item" href="#">New ML</a>
-            <a (click)="onAddNode(selectedNode, 'globref')" class="dropdown-item" href="#">New GlobRef</a>
-            <a (click)="onAddNode(selectedNode, 'block')" class="dropdown-item" href="#">New Block</a>
-          </div>
-        </li>
-      </div>
-      -->
+                  <label *ngIf="editableNode !== node" [ngClass]="{'node-underline': underlineNodeSet.has(node.id)}"
+                         (click)="openNode($event, node)"
+                         (dblclick)="onEditNode(node)"
+                         class="node">
+                    <span *ngIf="needToCollapse(node); else notCollapsible">
+                      <span *ngIf="collapsedLabel[node.id] === true || collapsedLabel[node.id] === undefined">
+                        {{getShortLabel(node.data.name.toString())}} <span class="btn-more" (click)="collapseExpandClick(node.id)" >...</span></span>
+                      <span *ngIf="collapsedLabel[node.id] === false">
+                        {{node.data.name}}  <span class="btn-more" (click)="collapseExpandClick(node.id)" ><</span></span>
+                    </span>
+                    <ng-template #notCollapsible>{{node.data.name}}</ng-template>
+                  </label>
 
-      <!--<div class="divider"></div>-->
+                  <input (currentTabChange)="inputNewNameEvent(node, value)"
+                         (focus)="autoWidth($event)" (focusout)="closeNodeEditor($event)"
+                         (keydown)="autoWidth($event)" *ngIf="editableNode === node"
+                         [defaultValue]="node.data.name"
+                         autofocus
+                         id="textinpfield"
+                         name="textinpfield"
+                         type="text">
 
-    </ul>
+                  <!--<input type="text" [defaultValue]="node.data.name"-->
+                  <!--id="textinpfield" name="textinpfield"-->
+                  <!--autofocus-->
+                  <!--onkeydown="this.style.width = ((this.value.length + 1) * 8) + 'px';"-->
+                  <!--(currentTabChange)="inputNewNameEvent(node, value)">-->
 
-    <ul class="navbar-nav ml-auto">
-      <li>
-        <input (input)="changeFilter($event.target.value)" [value]="filterText" placeholder="Filter" type="text"/>
-      </li>
+                  <div *ngIf="canCreate(node) || canEdit(node) || canDelete(node) || canCreateDeclaration(node)"
+                       class="dropdown-menu dropdown-menu-fixed shadow"
+                       id="context-menu-{{node.id  | replaceSpaces}}">
 
-      <li class="nav-item">
-        <a (click)="changeFilter('')" class="nav-link btn-close" href="#">
-          <i class="fas fa-times"></i>
-        </a>
-      </li>
-    </ul>
+                    <a (click)="onAddNode(node)" *ngIf="canCreate(node)" class="dropdown-item" href="#">
+                      <i class="fas fa-plus"></i>New {{getStringValueForAddingCp(node)}}</a>
+                    <a (click)="onEditNode(node)" *ngIf="canEdit(node)" class="dropdown-item" href="#">
+                      <i class="fas fa-pen"></i>Edit</a>
+                    <a (click)="onDeleteNode(node)" *ngIf="canDelete(node)" class="dropdown-item" href="#">
+                      <i class="fas fa-minus"></i>Delete</a>
 
-  </nav>
+                    <div *ngIf="canCreateDeclaration(node)">
+                      <div class="dropdown-divider" href="#"></div>
 
-  <div class="workspace-container">
-    <div class="inner">
-      <div class="scroll-y">
-        <div class="pane" style="padding:10px">
-
-          <tree-root #tree [nodes]="nodes" [options]="options" (activate)="activateNode($event)">
-            <ng-template #treeNodeTemplate let-node let-index="index">
-
-              <div [ngClass]="node.data.classes" class="node">
-
-                <label *ngIf="editableNode !== node" [ngClass]="{'node-underline': underlineNodeSet.has(node.id)}"
-                       (click)="openNode($event, node)"
-                       (dblclick)="onEditNode(node)"
-                       class="node">
-                  {{node.data.name}}
-                </label>
-
-                <input (currentTabChange)="inputNewNameEvent(node, value)"
-                       (focus)="autoWidth($event)" (focusout)="closeNodeEditor($event)"
-                       (keydown)="autoWidth($event)" *ngIf="editableNode === node"
-                       [defaultValue]="node.data.name"
-                       autofocus
-                       id="textinpfield"
-                       name="textinpfield"
-                       type="text">
-
-                <!--<input type="text" [defaultValue]="node.data.name"-->
-                <!--id="textinpfield" name="textinpfield"-->
-                <!--autofocus-->
-                <!--onkeydown="this.style.width = ((this.value.length + 1) * 8) + 'px';"-->
-                <!--(currentTabChange)="inputNewNameEvent(node, value)">-->
-
-                <div *ngIf="canCreate(node) || canEdit(node) || canDelete(node) || canCreateDeclaration(node)"
-                     class="dropdown-menu dropdown-menu-fixed shadow"
-                     id="context-menu-{{node.id  | replaceSpaces}}">
-
-                  <a (click)="onAddNode(node)" *ngIf="canCreate(node)" class="dropdown-item" href="#">
-                    <i class="fas fa-plus"></i>New {{getStringValueForAddingCp(node)}}</a>
-                  <a (click)="onEditNode(node)" *ngIf="canEdit(node)" class="dropdown-item" href="#">
-                    <i class="fas fa-pen"></i>Edit</a>
-                  <a (click)="onDeleteNode(node)" *ngIf="canDelete(node)" class="dropdown-item" href="#">
-                    <i class="fas fa-minus"></i>Delete</a>
-
-                  <div *ngIf="canCreateDeclaration(node)">
-                    <div class="dropdown-divider" href="#"></div>
-
-                    <a (click)="onAddNode(node, 'color')" class="dropdown-item" href="#">New Color</a>
-                    <a (click)="onAddNode(node, 'var')" class="dropdown-item" href="#">New Var</a>
-                    <a (click)="onAddNode(node, 'ml')" class="dropdown-item" href="#">New ML</a>
-                    <a (click)="onAddNode(node, 'globref')" class="dropdown-item" href="#">New GlobRef</a>
-                    <a (click)="onAddNode(node, 'block')" class="dropdown-item" href="#">New Block</a>
+                      <a (click)="onAddNode(node, 'color')" class="dropdown-item" href="#">New Color</a>
+                      <a (click)="onAddNode(node, 'var')" class="dropdown-item" href="#">New Var</a>
+                      <a (click)="onAddNode(node, 'ml')" class="dropdown-item" href="#">New ML</a>
+                      <a (click)="onAddNode(node, 'globref')" class="dropdown-item" href="#">New GlobRef</a>
+                      <a (click)="onAddNode(node, 'block')" class="dropdown-item" href="#">New Block</a>
+                    </div>
                   </div>
+
                 </div>
 
-              </div>
+              </ng-template>
+            </tree-root>
 
-            </ng-template>
-          </tree-root>
-
+          </div>
         </div>
       </div>
     </div>
-  </div>
   </tab>
-  <tab [id]="'Application settings'"  [tabTitle]="'Application settings'">
-    <table [id]="'application-settings-table'" class="table table-bordered table-hover table-small" *ngIf="showTable !== 'application-settings-table'">
+  <tab [id]="'Application settings'" [tabTitle]="'Application settings'">
+    <table [id]="'application-settings-table'" class="table table-bordered table-hover table-small"
+           *ngIf="showTable !== 'application-settings-table'">
       <tr *ngFor="let item of appSettingsKeys">
         <td width="50%" class="valueName">{{ item}}</td>
         <td width="50%" contenteditable='true'>{{ appSettings[item] }}</td>

@@ -5,6 +5,7 @@ import {Message} from '../common/message';
 import {ProjectService} from '../services/project.service';
 import {TreeComponent, TREE_ACTIONS} from 'angular-tree-component';
 import {ModelService} from '../services/model.service';
+
 // import {TreeComponent} from 'angular-tree-component';
 
 @Component({
@@ -53,6 +54,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   // Множество идентификаторов узлов, которые должны быть подсвечены снизу в даный момент
   underlineNodeSet = new Set();
 
+  // Состояние укороченных названий узлов
+  collapsedLabel = [];
+
   // nodes = [
   //   {
   //     id: 1,
@@ -80,15 +84,17 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   //
   options = {
     allowDrag: true,
-    allowDrop: (element, { parent, index }) => {
-     let elemHeaderCatalog  = this.getHeaderCatalog(element);
-     let parentHeaderCatalog =  this.getHeaderCatalog(parent);
-     //console.log( 'elemHeaderCatalog: ' + elemHeaderCatalog.id + '  parentHeaderCatalog: ' + parentHeaderCatalog.id + ' parent: ' + element.parent.id);
-     if(this.paramsTypes.includes(element.parent.data.name)) {
-       if(element.parent.data.name !== parent.data.name)  return false;
-     }
-      return  elemHeaderCatalog && parentHeaderCatalog ? elemHeaderCatalog.data.name === parentHeaderCatalog.data.name && (this.paramsTypes.includes(element.parent.data.name) || (!this.paramsTypes.includes(parent.data.name) &&  !this.paramsTypes.includes(parent.parent.data.name))) : false;
-      },
+    allowDrop: (element, {parent, index}) => {
+      let elemHeaderCatalog = this.getHeaderCatalog(element);
+      let parentHeaderCatalog = this.getHeaderCatalog(parent);
+      //console.log( 'elemHeaderCatalog: ' + elemHeaderCatalog.id + '  parentHeaderCatalog: ' + parentHeaderCatalog.id + ' parent: ' + element.parent.id);
+      if (this.paramsTypes.includes(element.parent.data.name)) {
+        if (element.parent.data.name !== parent.data.name) {
+          return false;
+        }
+      }
+      return elemHeaderCatalog && parentHeaderCatalog ? elemHeaderCatalog.data.name === parentHeaderCatalog.data.name && (this.paramsTypes.includes(element.parent.data.name) || (!this.paramsTypes.includes(parent.data.name) && !this.paramsTypes.includes(parent.parent.data.name))) : false;
+    },
     actionMapping: {
       mouse: {
         contextMenu: (model: any, node: any, event: any) => {
@@ -101,13 +107,17 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           let type = node.data.type === 'page' ? 'page' : this.paramsTypes.includes(from.parent.data.name) ? undefined : from.data.name;
           const isEntryExist: boolean = to.parent.data.object[type];
           this.modelService.moveNonModelJsonElement(from.data.object, parentJson, to.parent.data.object, to.index, type);
-          if(isEntryExist) {
+          if (isEntryExist) {
             to.parent = tree.getNodeById((to.parent.children.find(e => e.data.name === type)).id);
-            node = node.children.find(chld => chld.data.name === from.data.name );
+            node = node.children.find(chld => chld.data.name === from.data.name);
             let onDeleteNodeId = from.id;
             let fromChildren = from.children;
-            for(from of fromChildren) {
-                if (from)  tree.moveNode(tree.getNodeById(from.id), to); else break;//tree.moveNode(from, to);//TREE_ACTIONS.MOVE_NODE(tree, node, $event, {from, to}); else break;
+            for (from of fromChildren) {
+              if (from) {
+                tree.moveNode(tree.getNodeById(from.id), to);
+              } else {
+                break;
+              }//tree.moveNode(from, to);//TREE_ACTIONS.MOVE_NODE(tree, node, $event, {from, to}); else break;
             }
             let deleteNode = tree.getNodeById(onDeleteNodeId);
             this.deleteNode(this.nodes[0], onDeleteNodeId);
@@ -157,7 +167,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
 
     this.eventService.on(Message.UPDATE_TREE, (data) => {
-      const newNodeId = data.newNodeId;//? data.newNodeId  : data.comonBlock.id;
+      const newNodeId = data.newNodeId; // ? data.newNodeId  : data.comonBlock.id;
       if (data.state) {
         this.stateTree = data.state;
         // this.treeComponent.treeModel.setState(data.state);
@@ -265,7 +275,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   getHeaderCatalog(node) {
-    if(node) {
+    if (node) {
       while (node.parent && !this.reservedWords.includes(node.id)) {
         node = node.parent;
       }
@@ -426,15 +436,51 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    */
   underlineNodeLabel(underline: boolean, nodeId?: string) {
     if (underline) {
-      if (arguments.length > 1)
+      if (arguments.length > 1) {
         this.underlineNodeSet.add(nodeId);
-    }
-    else  {
-      if (arguments.length > 1)
+      }
+    } else {
+      if (arguments.length > 1) {
         this.underlineNodeSet.delete(nodeId);
-      else
+      } else {
         this.underlineNodeSet = new Set();
+      }
     }
+  }
+
+  // Функция вычисляет, будет ли схлопываться/разворачиваться содержимое метки узла.
+  // Если узел - объект, который описывает функцию или исключение,
+  // значит, он содержит много букв, и  мы можем сделать его collapsible.
+  needToCollapse(node: any): boolean {
+    let result = false;
+    if (typeof node.data.name === 'object') {
+      result = (node.data.name.toString().match('[a-zA-Z0-9\\s]*(fun\\s){1}') !== null);
+    }
+    return result;
+  }
+
+  // Разворот/схлоп содержимого метки ноды
+  collapseExpandClick(nodeId: string) {
+    if (this.collapsedLabel[nodeId] === undefined) {
+      this.collapsedLabel[nodeId] = false;
+    } else {
+      this.collapsedLabel[nodeId] = !this.collapsedLabel[nodeId];
+    }
+  }
+
+  /**
+   * Распарсить метку, чотбы выцепить отттуда и вернуть название функции или исключения
+   * @param {string} data - полный текст метки в узле
+    */
+  getShortLabel(data: string): string {
+    let result = data;
+    try {
+      const array = data.match('^[a-zA-Z0-9\\s]*(fun\\s){1}[a-zA-Z0-9]+');
+      result = array[0];
+    } catch (e) {
+      console.error(`getShortLabel() - input string not valid. Expected 'fun' or 'exception.`);
+    }
+    return result;
   }
 
   getCurrentBlock(currentNode): any {
@@ -471,7 +517,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    */
   @HostListener('document:keydown', ['$event'])
   keyEvent(event: KeyboardEvent) {
-    console.log('project-explorer Keyboard event ',  event);
+    console.log('project-explorer Keyboard event ', event);
     //  this.diagram.get('eventBus').fire('element.hover', this.curentElement );
     if (event.keyCode === 13) {
       const htmlElement: HTMLInputElement = <HTMLInputElement>event.target;
@@ -487,8 +533,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           });
           this.editableNode = null;
         } else {
-          //this.sendChangingElementToDeclarationPanel(this.editableNode, this.editableNode.parent.data.id, 'rename', this.editableNode.data.id);
-          this.modelService.sendChangingElementToDeclarationPanel(this.editableNode, this.editableNode.parent.data.name, 'rename', this.editableNode.data.id,  this.getCurrentBlock(this.editableNode).id, this.treeComponent.treeModel.getState());
+          // this.sendChangingElementToDeclarationPanel(this.editableNode, this.editableNode.parent.data.id, 'rename', this.editableNode.data.id);
+          this.modelService.sendChangingElementToDeclarationPanel(this.editableNode, this.editableNode.parent.data.name, 'rename', this.editableNode.data.id, this.getCurrentBlock(this.editableNode).id, this.treeComponent.treeModel.getState());
         }
         //   this.eventService.send(Message.XML_UPDATE, {project: {data: this.currentProjectModel, name: this.modelName}});
       } else if (htmlElement && htmlElement.nodeName === 'TD') {
@@ -508,7 +554,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
           this.showTable = 'application-settings-table';
           setTimeout(() => {
-            this.showTable = 'not'
+            this.showTable = 'not';
           }, 0);
 
         }
@@ -531,11 +577,12 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       setTimeout(() => { // this will make the execution after the above boolean has changed
         const inputElem = document.getElementById('textinpfield');
 
-       console.log(this.constructor.name, 'editNodeText(), inputElem = ', inputElem);
+        console.log(this.constructor.name, 'editNodeText(), inputElem = ', inputElem);
         console.log(this.constructor.name, 'editNodeText(), nodeElem = ', node);
 
-        if (inputElem)
+        if (inputElem) {
           inputElem.focus();
+        }
       }, 100);
     }
   }
@@ -565,18 +612,18 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       this.focusedNode(parentNod);
       // deletingElem = !this.paramsTypes.includes(node.parent.id) ? node.data.id : node.parent.id;
       //this.sendChangingElementToDeclarationPanel(node, node.parent.id, 'delete', node.data.id);
-      this.modelService.sendChangingElementToDeclarationPanel(node, node.parent.name, 'delete', node.data.id,  this.getCurrentBlock(node).id, this.treeComponent.treeModel.getState());
+      this.modelService.sendChangingElementToDeclarationPanel(node, node.parent.name, 'delete', node.data.id, this.getCurrentBlock(node).id, this.treeComponent.treeModel.getState());
     }
 
   }
 
 
-  focusedNode(node){
-    if(node) {
+  focusedNode(node) {
+    if (node) {
       const newfocusedBlock = this.getCurrentBlock(node);
       this.eventService.send(Message.OPEN_DECLARATION_BLOCK, {id: newfocusedBlock.id});
       this.treeComponent.treeModel.setFocusedNode(newfocusedBlock);
-      this.treeComponent.treeModel.setActiveNode(newfocusedBlock, true, false)
+      this.treeComponent.treeModel.setActiveNode(newfocusedBlock, true, false);
       this.treeComponent.treeModel.setSelectedNode(newfocusedBlock, true);
     }
   }
@@ -620,35 +667,35 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   updateModel(updatedData) {
     this.modelService.updateModel(updatedData);
-   /* const project = this.currentProjectModel;
-    if (project.workspaceElements.cpnet.page.length) {
-      for (let page of project.workspaceElements.cpnet.page) {
-        if (page.pageattr._name === updatedData.pageObject.pageattr._name) {
-          page = updatedData.pageObject;
+    /* const project = this.currentProjectModel;
+     if (project.workspaceElements.cpnet.page.length) {
+       for (let page of project.workspaceElements.cpnet.page) {
+         if (page.pageattr._name === updatedData.pageObject.pageattr._name) {
+           page = updatedData.pageObject;
 
-          // EmitterService.getAppMessageEmitter().emit({
-          //   id: Constants.ACTION_XML_UPDATE, // id: Constants.ACTION_PROJECT_LOAD_DATA,
-          //   project: {data: project, name: this.modelName}
-          // });
+           // EmitterService.getAppMessageEmitter().emit({
+           //   id: Constants.ACTION_XML_UPDATE, // id: Constants.ACTION_PROJECT_LOAD_DATA,
+           //   project: {data: project, name: this.modelName}
+           // });
 
-          this.eventService.send(Message.XML_UPDATE, {project: {data: project, name: this.modelName}});
-        }
-      }
-    } else {
-      let page = project.workspaceElements.cpnet.page;
-      if (page.pageattr._name === updatedData.pageObject.pageattr._name) {
-        page = updatedData.pageObject;
+           this.eventService.send(Message.XML_UPDATE, {project: {data: project, name: this.modelName}});
+         }
+       }
+     } else {
+       let page = project.workspaceElements.cpnet.page;
+       if (page.pageattr._name === updatedData.pageObject.pageattr._name) {
+         page = updatedData.pageObject;
 
-        // EmitterService.getAppMessageEmitter().emit({
-        //   id: Constants.ACTION_XML_UPDATE, // id: Constants.ACTION_PROJECT_LOAD_DATA,
-        //   project: {data: project, name: this.modelName}
-        // });
+         // EmitterService.getAppMessageEmitter().emit({
+         //   id: Constants.ACTION_XML_UPDATE, // id: Constants.ACTION_PROJECT_LOAD_DATA,
+         //   project: {data: project, name: this.modelName}
+         // });
 
-        this.eventService.send(Message.XML_UPDATE, {project: {data: project, name: this.modelName}});
-      }
-    }
-    //  console.log('Get data fromPAge ----' + JSON.stringify(updatedData.pageObject));
-    // console.log('actual data -------' + JSON.stringify(proj.workspaceElements.cpnet.page));*/
+         this.eventService.send(Message.XML_UPDATE, {project: {data: project, name: this.modelName}});
+       }
+     }
+     //  console.log('Get data fromPAge ----' + JSON.stringify(updatedData.pageObject));
+     // console.log('actual data -------' + JSON.stringify(proj.workspaceElements.cpnet.page));*/
   }
 
   // loadTree() {
@@ -961,12 +1008,12 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           projectNode.children.push(DeclarationsNode);
           // GlobBox
           // --------------------------------------
-         /* for (const block of cpnet.globbox.block) {
-            this.buildGlobboxTree(block, DeclarationsNode);
-          }
-          if (cpnet.globbox.block.id) {
-            this.buildGlobboxTree(cpnet.globbox.block, DeclarationsNode);
-          }*/
+          /* for (const block of cpnet.globbox.block) {
+             this.buildGlobboxTree(block, DeclarationsNode);
+           }
+           if (cpnet.globbox.block.id) {
+             this.buildGlobboxTree(cpnet.globbox.block, DeclarationsNode);
+           }*/
           this.buildGlobboxTree(cpnet.globbox, DeclarationsNode);
 
           // this.buildGlobboxTree(cpnet.globbox, DeclarationsNode);
@@ -1162,17 +1209,15 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   activateNode(event) {
-
-
     this.selectedNode = event.node;
 
     // проверка работы функции подчеркивания ноды
     // this.underlineNodeLabel(false);
     // this.underlineNodeLabel(true, this.selectedNode.id);
 
-   // if (event.node !== this.editableNode) {
-  //    this.editableNode = null;
-  //  }
+    // if (event.node !== this.editableNode) {
+    //    this.editableNode = null;
+    //  }
     // console.log(event);
     // console.log(event.node);
 
@@ -1258,8 +1303,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     console.log(this.constructor.name, 'autoWidth(), event.srcElement = ', event.srcElement);
 
     let w = ((event.srcElement.value.length + 1) * 7);
-    if (w < 30)
+    if (w < 30) {
       w = 30;
+    }
 
     event.srcElement.style.width = w + 'px';
   }

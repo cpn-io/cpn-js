@@ -28,26 +28,21 @@ export class SaveprojectButtonComponent implements OnInit {
       const x2js = new X2JS();
       let xml = (x2js.json2xml_str(JSON.parse(JSON.stringify(this.modelService.getProjectData())))); /// netJson
       xml = `${this.xmlPrefix}\n${xml}`;
+      this.saveAsText(xml, this.fileName);
 
-      let bytes = []; // chars
-
-      for (let i = 0; i < xml.length; ++i) {
-        const char = xml.charAt(i);
-        bytes = bytes.concat(char);
-      }
-
-      this.saveAsText(bytes, this.fileName);
     }, (reason) => {
     });
   }
 
+  /**
+   * Полное имя файла с расширением
+   */
   private get fileName() {
     return `${this.fileNameModel}.cpn`;
   }
 
-  private saveAsText(charArray: any, fileName: string) {
-
-    const blob = new Blob(charArray, {type: 'text/plain;charset=utf-8'});
+  private saveAsText(charArray: string, fileName: string) {
+    const blob = new Blob([charArray], {type: 'text/plain;charset=utf-8'});
     FileSaver.saveAs(blob, fileName);
   }
 

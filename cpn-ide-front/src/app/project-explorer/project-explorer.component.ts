@@ -423,6 +423,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     const currentNode = this.getCurrentBlock(node);
     console.log(currentNode);
     this.eventService.send(Message.OPEN_DECLARATION_BLOCK, {id: currentNode.id});
+    this.sendMlToMlEditor(node.data.name);
 
     event.preventDefault();
   }
@@ -453,8 +454,13 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   // значит, он содержит много букв, и  мы можем сделать его collapsible.
   needToCollapse(node: any): boolean {
     let result = false;
-    if (typeof node.data.name === 'object') {
-      result = (node.data.name.toString().match('[a-zA-Z0-9\\s]*(fun\\s){1}') !== null);
+
+    // if (typeof node.data.name === 'object') {
+    //   result = (node.data.name.toString().match('[a-zA-Z0-9\\s]*(fun\\s){1}') !== null);
+    // }
+    try {
+      result = (node.data.name.toString().length > 50);
+    } catch (e) {
     }
     return result;
   }
@@ -471,16 +477,22 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   /**
    * Распарсить метку, чотбы выцепить отттуда и вернуть название функции или исключения
    * @param {string} data - полный текст метки в узле
-    */
+   */
   getShortLabel(data: string): string {
     let result = data;
     try {
-      const array = data.match('^[a-zA-Z0-9\\s]*(fun\\s){1}[a-zA-Z0-9]+');
+      const array = data.match('^[a-zA-Z0-9_\\s]*([fun|val]\\s){1}[a-zA-Z0-9_]+');
       result = array[0];
     } catch (e) {
-      console.error(`getShortLabel() - input string not valid. Expected 'fun' or 'exception.`);
+      try {
+        result = data.match('^[a-zA-Z0-9_\\s]+[=|:]{1}')[0];
+      } catch (e1) {}
     }
     return result;
+  }
+
+  sendMlToMlEditor(value: any) {
+    this.eventService.send(Message.SML_TO_EDITOR, {fn: {data: value}});
   }
 
   getCurrentBlock(currentNode): any {
@@ -611,7 +623,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       parentNod = node.parent;
       this.focusedNode(parentNod);
       // deletingElem = !this.paramsTypes.includes(node.parent.id) ? node.data.id : node.parent.id;
-      //this.sendChangingElementToDeclarationPanel(node, node.parent.id, 'delete', node.data.id);
+      // this.sendChangingElementToDeclarationPanel(node, node.parent.id, 'delete', node.data.id);
       this.modelService.sendChangingElementToDeclarationPanel(node, node.parent.name, 'delete', node.data.id, this.getCurrentBlock(node).id, this.treeComponent.treeModel.getState());
     }
 
@@ -957,6 +969,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   loadProjectData(project: any) {
     this.filterText = '';
 
+    this.collapsedLabel = [];
     const projectData = project.data;
     const projectName = project.name;
     this.currentProjectModel = project.data;

@@ -88,17 +88,19 @@
 
                 <div [ngClass]="node.data.classes" class="node">
 
+                  <!-- Большие тексты в узлах дерева сделаны разворачивающимися-->
                   <label *ngIf="editableNode !== node" [ngClass]="{'node-underline': underlineNodeSet.has(node.id)}"
                          (click)="openNode($event, node)"
                          (dblclick)="onEditNode(node)"
                          class="node">
                     <span *ngIf="needToCollapse(node); else notCollapsible">
                       <span *ngIf="collapsedLabel[node.id] === true || collapsedLabel[node.id] === undefined">
-                        {{getShortLabel(node.data.name.toString())}} <span class="btn-more" (click)="collapseExpandClick(node.id)" >...</span></span>
+                        {{getShortLabel(node.data.name.toString())}} <span class="btn-more" (click)="collapseExpandClick(node.id)" > >> </span></span>
                       <span *ngIf="collapsedLabel[node.id] === false">
-                        {{node.data.name}}  <span class="btn-more" (click)="collapseExpandClick(node.id)" ><</span></span>
+                        {{node.data.name}}  <span class="btn-more" (click)="collapseExpandClick(node.id)" > << </span></span>
                     </span>
                     <ng-template #notCollapsible>{{node.data.name}}</ng-template>
+                    <!--{{node.data.name}}-->
                   </label>
 
                   <input (currentTabChange)="inputNewNameEvent(node, value)"

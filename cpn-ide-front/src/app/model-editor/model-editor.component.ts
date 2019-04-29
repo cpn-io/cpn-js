@@ -411,10 +411,38 @@ export class ModelEditorComponent implements OnInit, OnDestroy {
           testElem = data.labels.find(lab => elem.id === lab[0].value);
           if (testElem)  break;
         }*/
-        const testElem = data.element.labels.find(elem => data.labels.find(lab => elem.labelNodeId === lab[0].value));
-        if (!testElem) {
+      /*  const testElem = data.element.labels.find(elem => data.labels.find(lab => elem.labelNodeId === lab[0].value));
+      /  if (!testElem) {
           this.applyPropertyUpdateChanges(data);
+        }*/
+        let element;
+        let entry;
+        if(data.type === 'cpn:Place'){
+          entry = this.placeShapes;
+          element = entry[data.elementid];
+        } else if(data.type === 'cpn:Transition') {
+          entry = this.transShapes;
+          element = entry[data.elementid];
+        } else if(data.type === 'cpn:Connection') {
+          entry = this.arcShapes;
+          element = entry.find(elem => elem.id === data.elementid);
         }
+       // this.diagram.get('eventBus').fire('elements.changed', { elements: [element] });
+
+        this.canvas.removeShape(element);
+        const attrs = this.getPlaceShapeAttrs(element.cpnElement);
+        let shape = this.elementFactory.createShape(attrs);
+        shape.cpnElement = element.cpnElement;
+        shape = this.canvas.addShape(shape, this.canvas.getRootElement());
+        this.addShapeLabel(shape, element.cpnElement.type, 'type');
+        this.addShapeLabel(shape, element.cpnElement.initmark, 'initmark');
+        if (entry instanceof Array) entry.push(shape); else entry[attrs.id] = shape;
+
+       // this.addShapeLabel(shape, place.type, 'type');
+       // this.addShapeLabel(shape, place.initmark, 'initmark');
+
+
+        this.eventService.send(Message.SHAPE_SELECT, {element: element, cpnElement: element.cpnElement, type: element.type});
       }
     });
 

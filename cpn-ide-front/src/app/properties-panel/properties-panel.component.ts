@@ -31,7 +31,8 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   private isPlace = false;
   private isTrans = false;
   private isArc = false;
-  cpnElement;
+  private cpnElement;
+  private elementType;
   private currentProjectModel: any;
   private pageInModel;
   private shapeObject;
@@ -159,8 +160,15 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
           updatedfield = this.tableMapNames['invert'][updatedfield] ?  this.tableMapNames['invert'][updatedfield] : updatedfield;
           const newValue = htmlElement['value'];
           let table = this.getTable(htmlElement.offsetParent['offsetParent'].id);
-          this.setDescendantProp(this.cpnElement, this.setValueForTableByIdandReturnPath(newValue, table, updatedfield).replace('cpnElement.', ''), newValue );
-
+          this.modelService.setDescendantProp(this.cpnElement, this.setValueForTableByIdandReturnPath(newValue, table, updatedfield).replace('cpnElement.', ''), newValue );
+          const emiterData = {
+            id: Constants.ACTION_PROPERTY_UPDATE,
+            labels: [],
+            elementid: this.cpnElement._id,
+            type: this.elementType,
+            pagename: this.modelService.getPageById(this.pageId).pageattr._name
+          };
+          this.eventService.send(Message.PROPERTY_UPDATE, emiterData);
         }
        /* if (htmlTableElement.id === 'commonNodes') {
           this.updateProperties(commonNodes, htmlTableElement);
@@ -212,15 +220,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     }
   }
 
-   setDescendantProp(obj, desc, value) {
-    if(desc) {
-      let arr = desc.split('.');
-      while (arr.length > 1) {
-        obj = obj[arr.shift()];
-      }
-       obj[arr[0]] = value;
-    }
-  }
+
 
   setValueForTableByIdandReturnPath(value, table, name): string{
     for(let i = 0; i < table.data.length; i++){
@@ -643,7 +643,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
    */
   showShapeAttrs(shapeObject, cpnElement, elementType) {
     console.log(this.constructor.name, 'showShapeAttrs(), shapeObject = ', shapeObject, cpnElement);
-
+    this.elementType = elementType;
     this.clearData();
 
     this.shapeObject = shapeObject;

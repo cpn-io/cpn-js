@@ -31,8 +31,9 @@ export default function LabelEditingProvider(
     activateDirectEdit(event.element, true);
   });
 
-  // listen to dblclick on non-root elements
-  eventBus.on('element.dblclick', function (event) {
+  // listen to direct editing event
+  // eventBus.on('element.dblclick', function (event) {
+  eventBus.on('element.click', function (event) {
     if (event.element.type === 'cpn:Connection' && event.element.labels[0]) {
       event.element = event.element.labels[0];
     }

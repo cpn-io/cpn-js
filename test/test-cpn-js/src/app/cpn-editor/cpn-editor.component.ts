@@ -2,7 +2,7 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 
 import Diagram from 'diagram-js';
 
-import CpnDiagramModule from '../cpn-js/core';
+import CpnDiagramModule from '../../lib/cpn-js/core';
 
 
 @Component({
@@ -70,8 +70,22 @@ export class CpnEditorComponent implements OnInit {
       type: 'cpn:Place',
       name: 'P1'
     });
-
     canvas.addShape(shape1, root);
+
+    // create P1 labels
+    const label1 = elementFactory.createLabel({
+      labelTarget: shape1,
+      type: 'cpn:Label',
+      name: 'initmark',
+      text: 'initmark',
+      x: shape1.x + shape1.width,
+      y: shape1.y + shape1.height,
+      width: 100,
+      height: 20,
+    });
+    canvas.addShape(label1, shape1);
+
+
 
     const shape2 = elementFactory.createShape({
       x: 290,
@@ -91,7 +105,8 @@ export class CpnEditorComponent implements OnInit {
         this.getShapeCenter(shape2)
       ],
       source: shape1,
-      target: shape2
+      target: shape2,
+      type: 'cpn:Connection',
     });
 
     canvas.addConnection(connection1, root);

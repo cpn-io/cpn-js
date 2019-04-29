@@ -11,7 +11,7 @@ import {
   createLine
 } from 'diagram-js/lib/util/RenderUtil';
 
-import { is } from '../util/ModelUtil';
+import {is} from '../util/ModelUtil';
 
 import {
   query as domQuery
@@ -33,14 +33,7 @@ import {
 import Ids from 'ids';
 
 import {
-  isTypedEvent,
-  isThrowEvent,
-  isCollection,
-  getDi,
-  getSemantic,
-  getCirclePath,
-  getRoundRectPath,
-  getDiamondPath,
+  getEllipsePath,
   getRectPath,
   getFillColor,
   getStrokeColor,
@@ -48,15 +41,7 @@ import {
 } from './CpnRenderUtil';
 
 
-
-
 var RENDERER_IDS = new Ids();
-
-var TASK_BORDER_RADIUS = 10;
-var INNER_OUTER_DIST = 3;
-
-var DEFAULT_FILL_OPACITY = .95,
-  HIGH_FILL_OPACITY = .35;
 
 var ERROR_STROKE_COLOR = '#ffcccccc';
 var ERROR_STROKE_THICK = 8;
@@ -66,10 +51,6 @@ export default function CpnRenderer(
   canvas, textRenderer, priority) {
 
   BaseRenderer.call(this, eventBus, priority);
-
-  var defaultFillColor = config && config.defaultFillColor,
-    defaultStrokeColor = config && config.defaultStrokeColor,
-    defaultStrokeWidth = 1;
 
   var rendererId = RENDERER_IDS.next();
 
@@ -85,7 +66,7 @@ export default function CpnRenderer(
       strokeDasharray: 'none'
     }, options.attrs);
 
-    var ref = options.ref || { x: 0, y: 0 };
+    var ref = options.ref || {x: 0, y: 0};
 
     var scale = options.scale || 1;
 
@@ -139,11 +120,11 @@ export default function CpnRenderer(
 
     if (type === 'sequenceflow-end') {
       var sequenceflowEnd = svgCreate('path');
-      svgAttr(sequenceflowEnd, { d: 'M 1 5 L 11 10 L 1 15 Z' });
+      svgAttr(sequenceflowEnd, {d: 'M 1 5 L 11 10 L 1 15 Z'});
 
       addMarker(id, {
         element: sequenceflowEnd,
-        ref: { x: 11, y: 10 },
+        ref: {x: 11, y: 10},
         scale: 0.5,
         attrs: {
           fill: stroke,
@@ -154,7 +135,7 @@ export default function CpnRenderer(
 
     if (type === 'messageflow-start') {
       var messageflowStart = svgCreate('circle');
-      svgAttr(messageflowStart, { cx: 6, cy: 6, r: 3.5 });
+      svgAttr(messageflowStart, {cx: 6, cy: 6, r: 3.5});
 
       addMarker(id, {
         element: messageflowStart,
@@ -162,13 +143,13 @@ export default function CpnRenderer(
           fill: fill,
           stroke: stroke
         },
-        ref: { x: 6, y: 6 }
+        ref: {x: 6, y: 6}
       });
     }
 
     if (type === 'messageflow-end') {
       var messageflowEnd = svgCreate('path');
-      svgAttr(messageflowEnd, { d: 'm 1 5 l 0 -3 l 7 3 l -7 3 z' });
+      svgAttr(messageflowEnd, {d: 'm 1 5 l 0 -3 l 7 3 l -7 3 z'});
 
       addMarker(id, {
         element: messageflowEnd,
@@ -177,13 +158,13 @@ export default function CpnRenderer(
           stroke: stroke,
           strokeLinecap: 'butt'
         },
-        ref: { x: 8.5, y: 5 }
+        ref: {x: 8.5, y: 5}
       });
     }
 
     if (type === 'association-start') {
       var associationStart = svgCreate('path');
-      svgAttr(associationStart, { d: 'M 11 5 L 1 10 L 11 15' });
+      svgAttr(associationStart, {d: 'M 11 5 L 1 10 L 11 15'});
 
       addMarker(id, {
         element: associationStart,
@@ -192,14 +173,14 @@ export default function CpnRenderer(
           stroke: stroke,
           strokeWidth: 1.5
         },
-        ref: { x: 1, y: 10 },
+        ref: {x: 1, y: 10},
         scale: 0.5
       });
     }
 
     if (type === 'association-end') {
       var associationEnd = svgCreate('path');
-      svgAttr(associationEnd, { d: 'M 1 5 L 11 10 L 1 15' });
+      svgAttr(associationEnd, {d: 'M 1 5 L 11 10 L 1 15'});
 
       addMarker(id, {
         element: associationEnd,
@@ -208,14 +189,14 @@ export default function CpnRenderer(
           stroke: stroke,
           strokeWidth: 1.5
         },
-        ref: { x: 12, y: 10 },
+        ref: {x: 12, y: 10},
         scale: 0.5
       });
     }
 
     if (type === 'conditional-flow-marker') {
       var conditionalflowMarker = svgCreate('path');
-      svgAttr(conditionalflowMarker, { d: 'M 0 10 L 8 6 L 16 10 L 8 14 Z' });
+      svgAttr(conditionalflowMarker, {d: 'M 0 10 L 8 6 L 16 10 L 8 14 Z'});
 
       addMarker(id, {
         element: conditionalflowMarker,
@@ -223,277 +204,24 @@ export default function CpnRenderer(
           fill: fill,
           stroke: stroke
         },
-        ref: { x: -1, y: 10 },
+        ref: {x: -1, y: 10},
         scale: 0.5
       });
     }
 
     if (type === 'conditional-default-flow-marker') {
       var conditionaldefaultflowMarker = svgCreate('path');
-      svgAttr(conditionaldefaultflowMarker, { d: 'M 6 4 L 10 16' });
+      svgAttr(conditionaldefaultflowMarker, {d: 'M 6 4 L 10 16'});
 
       addMarker(id, {
         element: conditionaldefaultflowMarker,
         attrs: {
           stroke: stroke
         },
-        ref: { x: 0, y: 10 },
+        ref: {x: 0, y: 10},
         scale: 0.5
       });
     }
-  }
-
-  function drawCircle(parentGfx, width, height, offset, attrs) {
-
-    if (isObject(offset)) {
-      attrs = offset;
-      offset = 0;
-    }
-
-    offset = offset || 0;
-
-    attrs = computeStyle(attrs, {
-      stroke: 'black',
-      strokeWidth: 2,
-      fill: 'white'
-    });
-
-    if (attrs.fill === 'none') {
-      delete attrs.fillOpacity;
-    }
-
-    var cx = width / 2,
-      cy = height / 2;
-
-
-    if (attrs.iserror) {
-      var circle2 = svgCreate('circle');
-      svgAttr(circle2, {
-        cx: cx + 5,
-        cy: cy + 5,
-        r: Math.round((width + height) / 4 - offset + 10)
-      });
-      let attrs2 = {
-        stroke: 'red',
-        strokeWidth: 2,
-        fill: 'white'
-      };
-      svgAttr(circle2, attrs2);
-
-      svgAppend(parentGfx, circle2);
-
-    }
-
-
-    var circle = svgCreate('circle');
-    svgAttr(circle, {
-      cx: cx,
-      cy: cy,
-      r: Math.round((width + height) / 4 - offset)
-    });
-    svgAttr(circle, attrs);
-
-    svgAppend(parentGfx, circle);
-
-
-    return circle;
-  }
-
-  function drawEllipse(parentGfx, width, height, offset, attrs) {
-
-    if (isObject(offset)) {
-      attrs = offset;
-      offset = 0;
-    }
-
-    offset = offset || 0;
-
-    attrs = computeStyle(attrs, {
-      stroke: 'black',
-      strokeWidth: 2,
-      fill: 'white'
-    });
-
-    if (attrs.fill === 'none') {
-      delete attrs.fillOpacity;
-    }
-
-    var cx = width / 2,
-      cy = height / 2;
-
-    if (attrs.iserror) {
-      var shape2 = svgCreate('ellipse');
-      svgAttr(shape2, {
-        cx: cx,
-        cy: cy,
-        rx: Math.round((width) / 2 - offset),
-        ry: Math.round((height) / 2 - offset)
-      });
-      var attrs2 = {
-        stroke: '#ff9999',
-        strokeWidth: 8
-      };
-
-      svgAttr(shape2, attrs2);
-      svgAppend(parentGfx, shape2);
-    }
-
-    var shape = svgCreate('ellipse');
-    svgAttr(shape, {
-      cx: cx,
-      cy: cy,
-      rx: Math.round((width) / 2 - offset),
-      ry: Math.round((height) / 2 - offset)
-    });
-    svgAttr(shape, attrs);
-
-    svgAppend(parentGfx, shape);
-
-    return shape;
-  }
-
-  function drawEllipseSubp(parentGfx, width, height, offset, attrs) {
-
-    if (isObject(offset)) {
-      attrs = offset;
-      offset = 0;
-    }
-
-    offset = offset || 0;
-
-    attrs = computeStyle(attrs, {
-      stroke: 'black',
-      strokeWidth: 2,
-      fill: 'white'
-    });
-
-    if (attrs.fill === 'none') {
-      delete attrs.fillOpacity;
-    }
-
-    var cx = width / 2,
-      cy = height / 2;
-
-    if (attrs.iserror) {
-      var shape2 = svgCreate('ellipse');
-      svgAttr(shape2, {
-        cx: cx,
-        cy: cy,
-        rx: Math.round((width) / 2 - offset),
-        ry: Math.round((height) / 2 - offset)
-      });
-      var attrs2 = {
-        stroke: '#ff9999',
-        strokeWidth: 8
-      };
-
-      svgAttr(shape2, attrs2);
-      svgAppend(parentGfx, shape2);
-    }
-
-    var shape = svgCreate('ellipse');
-    svgAttr(shape, {
-      cx: cx,
-      cy: cy,
-      rx: Math.round((width) / 2 - offset),
-      ry: Math.round((height) / 2 - offset)
-    });
-    svgAttr(shape, attrs);
-
-    var dd = attrs.strokeWidth + 2;
-
-    var shape2 = svgCreate('ellipse');
-    svgAttr(shape2, {
-      cx: cx,
-      cy: cy,
-      rx: Math.round((width - dd * 2) / 2 - offset),
-      ry: Math.round((height - dd * 2) / 2 - offset)
-    });
-    svgAttr(shape2, attrs);
-
-    svgAppend(parentGfx, shape2);
-
-    svgAppend(parentGfx, shape);
-
-    return shape;
-  }
-
-
-  /**
-   * Draw rectangle for subpage Transition
-   *
-   * @param parentGfx
-   * @param width
-   * @param height
-   * @param r
-   * @param offset
-   * @param attrs
-   */
-  function drawRectSubp(parentGfx, width, height, r, offset, attrs) {
-
-    if (isObject(offset)) {
-      attrs = offset;
-      offset = 0;
-    }
-
-    offset = offset || 0;
-
-    attrs = computeStyle(attrs, {
-      stroke: 'black',
-      strokeWidth: 7,
-      fill: 'red'
-    });
-
-
-    if (attrs.iserror) {
-      var rect2 = svgCreate('rect');
-      svgAttr(rect2, {
-        x: offset,
-        y: offset,
-        width: width - offset * 2,
-        height: height - offset * 2,
-        rx: r,
-        ry: r
-      });
-      var attrs2 = {
-        stroke: '#ff9999',
-        strokeWidth: 8
-      };
-      svgAttr(rect2, attrs2);
-
-      svgAppend(parentGfx, rect2);
-
-    }
-
-    var rect = svgCreate('rect');
-    svgAttr(rect, {
-      x: offset,
-      y: offset,
-      width: width - offset * 2,
-      height: height - offset * 2,
-      rx: r,
-      ry: r
-    });
-    svgAttr(rect, attrs);
-
-    var dd = attrs.strokeWidth + 2;
-
-    var rect2 = svgCreate('rect');
-    svgAttr(rect2, {
-      x: offset + dd,
-      y: offset + dd,
-      width: width - offset * 2 - dd * 2,
-      height: height - offset * 2 - dd * 2,
-      rx: r,
-      ry: r
-    });
-    svgAttr(rect2, attrs);
-
-    svgAppend(parentGfx, rect);
-
-    svgAppend(parentGfx, rect2);
-
-    return rect;
   }
 
   function drawRect(parentGfx, width, height, r, offset, attrs) {
@@ -548,51 +276,6 @@ export default function CpnRenderer(
     return rect;
   }
 
-  function drawDiamond(parentGfx, width, height, attrs) {
-
-    var x_2 = width / 2;
-    var y_2 = height / 2;
-
-    var points = [{ x: x_2, y: 0 }, { x: width, y: y_2 }, { x: x_2, y: height }, { x: 0, y: y_2 }];
-
-    var pointsString = points.map(function (point) {
-      return point.x + ',' + point.y;
-    }).join(' ');
-
-    attrs = computeStyle(attrs, {
-      stroke: 'black',
-      strokeWidth: 2,
-      fill: 'white'
-    });
-
-    var polygon = svgCreate('polygon');
-    svgAttr(polygon, {
-      points: pointsString
-    });
-    svgAttr(polygon, attrs);
-
-    svgAppend(parentGfx, polygon);
-
-    return polygon;
-  }
-
-  function drawLine(parentGfx, waypoints, attrs) {
-    attrs = computeStyle(attrs, ['no-fill'], {
-      stroke: 'black',
-      strokeWidth: 2,
-      fill: 'none'
-    });
-
-    if (attrs.iserror) {
-      attrs.strokeWidth = 6;
-    }
-    var line = createLine(waypoints, attrs);
-
-    svgAppend(parentGfx, line);
-
-    return line;
-  }
-
   function drawPath(parentGfx, d, attrs) {
 
     attrs = computeStyle(attrs, ['no-fill'], {
@@ -601,7 +284,7 @@ export default function CpnRenderer(
     });
 
     var path = svgCreate('path');
-    svgAttr(path, { d: d });
+    svgAttr(path, {d: d});
     svgAttr(path, attrs);
 
     svgAppend(parentGfx, path);
@@ -610,7 +293,7 @@ export default function CpnRenderer(
   }
 
   function drawMarker(type, parentGfx, path, attrs) {
-    return drawPath(parentGfx, path, assign({ 'data-marker': type }, attrs));
+    return drawPath(parentGfx, path, assign({'data-marker': type}, attrs));
   }
 
   function as(type) {
@@ -624,7 +307,6 @@ export default function CpnRenderer(
   }
 
   function renderLabel(parentGfx, label, options) {
-
     options = assign({
       size: {
         width: 100
@@ -632,11 +314,8 @@ export default function CpnRenderer(
     }, options);
 
     var text = textRenderer.createText(label || '', options);
-
     svgClasses(text).add('djs-label');
-
     svgAppend(parentGfx, text);
-
     return text;
   }
 
@@ -648,7 +327,7 @@ export default function CpnRenderer(
       align: align,
       padding: 5,
       style: {
-        fill: getStroke(element)
+        fill: getStrokeColor(element)
       }
     });
   }
@@ -669,7 +348,7 @@ export default function CpnRenderer(
         {},
         textRenderer.getExternalStyle(),
         {
-          fill: getStroke(element)
+          fill: getStrokeColor(element)
         }
       )
     });
@@ -690,7 +369,7 @@ export default function CpnRenderer(
         {},
         textRenderer.getExternalStyle(),
         {
-          fill: getStroke(element)
+          fill: getStrokeColor(element)
         }
       )
     };
@@ -708,7 +387,6 @@ export default function CpnRenderer(
     svgAppend(parentGfx, text);
 
 
-
     return text;
 
   }
@@ -721,24 +399,6 @@ export default function CpnRenderer(
       pathData += 'L' + waypoints[i].x + ',' + waypoints[i].y + ' ';
     }
     return pathData;
-  }
-
-  function getFill(element) {
-    if (element.cpnElement && cpnElement.fillattr)
-      return cpnElement.fillattr._colour || 'white';
-    return element.fill || 'white';
-  }
-
-  function getStroke(element) {
-    if (element.cpnElement && cpnElement.lineattr)
-      return cpnElement.lineattr._colour || 'black';
-    return element.stroke || 'black';
-  }
-
-  function getStrokeWidth(element) {
-    if (element.cpnElement && cpnElement.lineattr)
-      return cpnElement.lineattr._thick || 2;
-    return element.strokeWidth || 2;
   }
 
   /**
@@ -774,6 +434,7 @@ export default function CpnRenderer(
         ry: cy + ERROR_STROKE_THICK / 2
       });
       svgAttr(ellipse, {
+        fill: 'transparent',
         stroke: ERROR_STROKE_COLOR,
         strokeWidth: ERROR_STROKE_THICK
       });
@@ -789,8 +450,8 @@ export default function CpnRenderer(
       ry: cy
     });
     svgAttr(ellipse, {
-      fill: getFill(element),
-      stroke: getStroke(element),
+      fill: getFillColor(element),
+      stroke: getStrokeColor(element),
       strokeWidth: getStrokeWidth(element),
     });
     svgAppend(parentGfx, ellipse);
@@ -807,7 +468,6 @@ export default function CpnRenderer(
 
     return ellipse;
   }
-
 
 
   /**
@@ -845,6 +505,7 @@ export default function CpnRenderer(
         height: box.h + ERROR_STROKE_THICK / 2
       });
       svgAttr(rect, {
+        fill: 'transparent',
         stroke: ERROR_STROKE_COLOR,
         strokeWidth: ERROR_STROKE_THICK
       });
@@ -860,8 +521,8 @@ export default function CpnRenderer(
       height: box.h
     });
     svgAttr(rect, {
-      fill: getFill(element),
-      stroke: getStroke(element),
+      fill: getFillColor(element),
+      stroke: getStrokeColor(element),
       strokeWidth: getStrokeWidth(element),
     });
     svgAppend(parentGfx, rect);
@@ -880,7 +541,6 @@ export default function CpnRenderer(
   }
 
 
-
   function drawArc(parentGfx, element, d) {
     console.log('drawArc(), element = ', element);
 
@@ -895,7 +555,7 @@ export default function CpnRenderer(
       'marker-end': 'url(#endMarker)'
     });
     svgAttr(path, {
-      stroke: getStroke(element),
+      stroke: getStrokeColor(element),
       strokeWidth: getStrokeWidth(element),
     });
     svgAppend(parentGfx, path);
@@ -1006,7 +666,6 @@ export default function CpnRenderer(
   }
 
 
-
   var handlers = this.handlers = {
     // CPN
     'cpn:Place': function (parentGfx, element) {
@@ -1031,12 +690,12 @@ export default function CpnRenderer(
 
       var pathData = createPathFromConnection(element);
 
-      var fill = getFill(element), stroke = getStroke(element);
+      var fill = getFillColor(element), stroke = getStrokeColor(element);
 
       var attrs = {
         strokeLinejoin: 'round',
         markerEnd: marker('sequenceflow-end', fill, stroke),
-        stroke: getStroke(element),
+        stroke: getStrokeColor(element),
         strokeWidth: getStrokeWidth(element)
       };
 
@@ -1081,7 +740,7 @@ export default function CpnRenderer(
       });
 
       drawPath(parentGfx, textPathData, {
-        stroke: getStroke(element)
+        stroke: getStrokeColor(element)
       });
 
       var text = element.text || '';
@@ -1090,7 +749,7 @@ export default function CpnRenderer(
         align: 'left-top',
         padding: 5,
         style: {
-          fill: getStroke(element)
+          fill: getStrokeColor(element)
         }
       });
 
@@ -1190,8 +849,13 @@ CpnRenderer.$inject = [
 
 
 CpnRenderer.prototype.canRender = function (element) {
-  return is(element, 'cpn:Place');
-  // return true;
+  return is(element, 'cpn:Place') || is(element, 'cpn:Transition') || is(element, 'cpn:Label') || is(element, 'cpn:Connection');
+  // return
+  //   is(element, 'cpn:Place') ||
+  //   is(element, 'cpn:Transition') ||
+  //   is(element, 'cpn:Connection') ||
+  //   is(element, 'cpn:Label');
+  return true;
 };
 
 CpnRenderer.prototype.drawShape = function (parentGfx, element) {
@@ -1204,11 +868,16 @@ CpnRenderer.prototype.drawShape = function (parentGfx, element) {
 CpnRenderer.prototype.drawConnection = function (parentGfx, element) {
   var type = element.type;
   var h = this.handlers[type];
-  console.log('CONNECTION DRAAAAAAAW!!!!')
+  console.log('CONNECTION DRAAAAAAAW!!!!');
   /* jshint -W040 */
   return h(parentGfx, element);
 };
 
 CpnRenderer.prototype.getShapePath = function (element) {
+  console.log('CpnRenderer.prototype.getShapePath(), element = ', element);
+
+  if (is(element, 'cpn:Place'))
+    return getEllipsePath(element);
+
   return getRectPath(element);
 };

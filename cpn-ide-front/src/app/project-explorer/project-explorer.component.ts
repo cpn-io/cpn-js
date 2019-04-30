@@ -450,14 +450,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   // Функция вычисляет, будет ли схлопываться/разворачиваться содержимое метки узла.
-  // Если узел - объект, который описывает функцию или исключение,
-  // значит, он содержит много букв, и  мы можем сделать его collapsible.
   needToCollapse(node: any): boolean {
     let result = false;
-
-    // if (typeof node.data.name === 'object') {
-    //   result = (node.data.name.toString().match('[a-zA-Z0-9\\s]*(fun\\s){1}') !== null);
-    // }
     try {
       result = (node.data.name.toString().length > 50);
     } catch (e) {
@@ -475,18 +469,22 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Распарсить метку, чотбы выцепить отттуда и вернуть название функции или исключения
+   * Распарсить метку, чотбы выцепить отттуда и вернуть название функции или исключения или название переменной
    * @param {string} data - полный текст метки в узле
    */
   getShortLabel(data: string): string {
-    let result = data;
+    let result;
     try {
       const array = data.match('^[a-zA-Z0-9_\\s]*([fun|val]\\s){1}[a-zA-Z0-9_]+');
       result = array[0];
     } catch (e) {
       try {
-        result = data.match('^[a-zA-Z0-9_\\s]+[=|:]{1}')[0];
-      } catch (e1) {}
+        const array = data.match('^[a-zA-Z0-9_\\s]+[=|:]{1}');
+        result = array[0];
+      } catch (e1) {
+        console.warn(`Cannot get short label automatically. Long string = ${data}.`);
+        result = data.substring(0, 10);
+      }
     }
     return result;
   }

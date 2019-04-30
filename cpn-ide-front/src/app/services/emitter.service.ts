@@ -60,6 +60,17 @@ export class EmitterService {
     // return this.http.post('api/cpn/verifi', [{'xml': JSON.stringify(netJson)}]);
   }
 
+  getMarking(elemType: String, id: String) {
+    console.log('getMarking for place ' + id);
+    return this.http.post('api/cpn/marking', [{ 'id': id, 'sessionId': 'testid'}]);
+  }
+
+  makeStep(elemType: String, id: String) {
+    console.log('getMarking for place ' + id);
+    return this.http.post('api/cpn/step', [{ 'id': id, 'sessionId': 'testid'}]);
+  }
+
+
   getXMlDescription(netJson: any): any {
     let cpnet;
 

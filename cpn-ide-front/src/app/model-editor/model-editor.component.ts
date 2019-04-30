@@ -9,6 +9,7 @@ import {HttpClient} from '@angular/common/http';
 import {Message} from '../common/message';
 import {EventService} from '../services/event.service';
 import {element} from 'protractor';
+import {ModelService} from '../services/model.service';
 
 @Component({
   selector: 'app-model-editor',
@@ -19,7 +20,8 @@ export class ModelEditorComponent implements OnInit {
 
   constructor(private eventService: EventService,
               private emitterService: EmitterService,
-              private http: HttpClient) {
+              private http: HttpClient,
+              private modelService: ModelService) {
   }
 
   @ViewChild('container') containerElementRef: ElementRef;
@@ -40,6 +42,7 @@ export class ModelEditorComponent implements OnInit {
   transShapes = [];
   arcShapes = [];
   curentElement;
+  pageId;
   transCount = 0;
 
   correctColor = {
@@ -174,23 +177,43 @@ export class ModelEditorComponent implements OnInit {
     });
 
     this.eventService.on(Message.SUBPAGE_CREATE, (data) => {
-      /***create trasition***/
+      let attrs;
+      let shape;
+      if(data.parentid === this.pageId) {
+        if (data.object) {
+          attrs = this.getTransShapeAttrs(data.object);
+          shape = this.elementFactory.createShape(attrs);
+          shape.cpnElement = data.object;
+          shape = this.canvas.addShape(shape, this.canvas.getRootElement());
+          this.subpages.push({subpageid: data.id, tranid: shape.id, name: data.name});
+          this.transShapes[attrs.id] = shape;
+        } else {
+          /***create trasition***/
+          const bounds = this.canvas.viewbox();
+          attrs = {
+            type: 'cpn:Transition',
+            // id: obj["@attributes"].id,
+            id: 'ID' + new Date().getTime(),
+            x: bounds.x + bounds.width / 2,
+            y: bounds.y + bounds.height / 2,
+            width: 100,
+            height: 80,
+            name: data.name,
+            stroke: 'Black',
+            strokeWidth: 1,
+            hierar: 'subPage'
+            // businessObject: {
+            //   text: obj.text,
+            // }
+          };
 
-      const shape = this.elementFactory.createShape(assign({ type: 'cpn:Transition' }, undefined));
-
-      this.subpages.push({subpageid: data.id,   tranid: shape.id, name: data.name});
-      shape.hierar = 'subPage';
-      this.dragging.init(event, 'create', {
-        cursor: 'grabbing',
-        autoActivate: true,
-        data: {
-          shape: shape,
-          context: {
-            shape: shape,
-            source: undefined
-          }
+          shape = this.elementFactory.createShape(attrs);
+          shape = this.canvas.addShape(shape, this.canvas.getRootElement());
+          this.subpages.push({subpageid: data.id, tranid: shape.id, name: data.name});
+          this.transShapes[attrs.id] = shape;
+          this.createTransitionInModel(shape);
         }
-      });
+      }
     });
 
 
@@ -246,19 +269,50 @@ export class ModelEditorComponent implements OnInit {
 
     // Subscribe on property update event
     this.eventService.on(Message.PROPERTY_UPDATE, (data) => {
-      if (data.pagename === this.jsonPageObject.pageattr._name) {
-      // let testElem;
-      /*for (let elem of data.element.labels) {
-        testElem = data.labels.find(lab => elem.id === lab[0].value);
-        if (testElem)  break;
-      }*/
+      if (data.pagename === this.modelService.getPageById(this.pageId).pageattr._name) {
+        // let testElem;
+        /*for (let elem of data.element.labels) {
+          testElem = data.labels.find(lab => elem.id === lab[0].value);
+          if (testElem)  break;
+        }*/
+        /*  const testElem = data.element.labels.find(elem => data.labels.find(lab => elem.labelNodeId === lab[0].value));
+        /  if (!testElem) {
+            this.applyPropertyUpdateChanges(data);
+          }*/
+        let element;
+        let entry;
+        let attrs;
+        if(data.type === 'cpn:Place') {
+          entry = this.placeShapes;
+          element = entry[data.elementid];
+          attrs = this.getPlaceShapeAttrs(element.cpnElement);
+        } else if(data.type === 'cpn:Transition') {
+          entry = this.transShapes;
+          element = entry[data.elementid];
+          attrs = this.getTransShapeAttrs(element.cpnElement);
+        } else if(data.type === 'cpn:Connection') {
+          entry = this.arcShapes;
+          element = entry.find(elem => elem.id === data.elementid);
+          attrs = this.getConnectionAttrs(element.cpnElement, this.modelService.getPageById(this.pageId));
+        }
+        // this.diagram.get('eventBus').fire('elements.changed', { elements: [element] });
 
-        console.log(this.constructor.name, 'on(Message.PROPERTY_UPDATE), data = ', data);
+        this.canvas.removeShape(element);
+        let shape;
+        if(data.type !== 'cpn:Connection') {
+          shape = this.elementFactory.createShape(attrs);
+          shape.cpnElement = element.cpnElement;
+          shape = this.canvas.addShape(shape, this.canvas.getRootElement());
+        } else {
+           shape = this.modeling.connect(attrs.source, attrs.target, attrs.attrs, null);
+        }
+        for(let label of this.modelService.getLabelEntry()[this.modelService.getModelCase(data.type)])
+          this.addShapeLabel(shape, element.cpnElement[label], label);
+        if (entry instanceof Array) entry.push(shape); else entry[attrs.id] = shape;
 
-        const testElem = data.element.labels.find(elem => data.element.labels.find(lab => elem.labelNodeId === lab[0].value));
-      if (!testElem) {
-        this.applyPropertyUpdateChanges(data);
-      }
+        // this.addShapeLabel(shape, place.type, 'type');
+        // this.addShapeLabel(shape, place.initmark, 'initmark');
+        this.eventService.send(Message.SHAPE_SELECT, {element: element, cpnElement: element.cpnElement, type: element.type});
       }
     });
 
@@ -1610,6 +1664,7 @@ export class ModelEditorComponent implements OnInit {
   load(pageObject, subPages) {
     this.subpages = subPages;
     this.jsonPageObject = pageObject;
+    this.pageId = pageObject._id;
     const that = this;
     if (pageObject) {
       this.diagram.createDiagram(function () {
@@ -1730,7 +1785,7 @@ export class ModelEditorComponent implements OnInit {
   }
 
   addShapeLabel(shape, labelNode, labelType) {
-    if (labelNode && labelNode.text && typeof labelNode.text === 'string' ? true : labelNode.text.__text) {
+    if (labelNode){//&& labelNode.text && typeof labelNode.text === 'string' ? true : labelNode.text.__text) {
 
       let pos;
       if (labelNode.posattr) {

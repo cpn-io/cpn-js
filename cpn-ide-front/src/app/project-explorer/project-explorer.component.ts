@@ -215,6 +215,12 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       }
     });
 
+    // подписка на событие - выбрали фигуру на канве
+    this.eventService.on(Message.SHAPE_SELECT, (data) => {
+      console.log(this.constructor.name, ' ----- An element selected, data = ', data);
+      this.underlineRelations(data.element);
+    });
+
     // this.subscribeToProject();
 
     // this.loadTree();
@@ -226,6 +232,42 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     // console.log("ProjectExplorerComponent.OnDestroy()");
     // this.subscription.unsubscribe();
+  }
+
+  /**
+   * подчеркнуть все, что связано с данным элементом
+    */
+  underlineRelations(element: any) {
+    this.doUnderlineNodeLabel(false);
+
+    if (element.type === 'cpn:Place') {
+      this.underlineRelationsRecursively(this.nodes[0], element.cpnElement.type.text.toString());
+
+    } else if (element.type === 'cpn:Transition') {
+
+    }
+   }
+
+  /**
+   * рекурсивный пеербор узлов
+   * @param parentNode родительский узел
+   * @param id идентификатор родительского узла
+   */
+  underlineRelationsRecursively(parentNode: any, id: string): boolean {
+    if (parentNode.children !== undefined) {
+      for (const node of parentNode.children) {
+          if (this.underlineRelationsRecursively(node, id)) {
+            this.doUnderlineNodeLabel(true, node.id);
+            return true;
+        }
+      }
+    } else {
+      if (parentNode.object.id === id) {
+        this.doUnderlineNodeLabel(true, parentNode.id);
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -435,7 +477,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * @example this.underlineNode(false) - убрать подсвечивание у всех нод
    * @example this.underlineNode(true, 'NODEID') - подсветить ноду с указанным ид
    */
-  underlineNodeLabel(underline: boolean, nodeId?: string) {
+  doUnderlineNodeLabel(underline: boolean, nodeId?: string) {
     if (underline) {
       if (arguments.length > 1) {
         this.underlineNodeSet.add(nodeId);
@@ -483,7 +525,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         result = array[0];
       } catch (e1) {
         console.warn(`Cannot get short label automatically. Long string = ${data}.`);
-        result = data.substring(0, 10);
+        result = data.substring(0, 20);
       }
     }
     return result;
@@ -967,6 +1009,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   loadProjectData(project: any) {
     this.filterText = '';
 
+    this.doUnderlineNodeLabel(false);
     this.collapsedLabel = [];
     const projectData = project.data;
     const projectName = project.name;
@@ -1222,15 +1265,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   activateNode(event) {
     this.selectedNode = event.node;
 
-    // проверка работы функции подчеркивания ноды
-    // this.underlineNodeLabel(false);
-    // this.underlineNodeLabel(true, this.selectedNode.id);
-
     // if (event.node !== this.editableNode) {
     //    this.editableNode = null;
     //  }
     // console.log(event);
-    // console.log(event.node);
+    console.log(event.node);
 
     if (event && event.node && event.node.data && event.node.data.type === 'page') {
       const pageObject = event.node.data.object;

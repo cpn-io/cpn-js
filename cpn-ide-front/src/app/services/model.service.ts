@@ -1,9 +1,10 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import * as X2JS from './../../x2js/xml2json.js';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { EventService } from './event.service';
-import { Message } from '../common/message';
-import { ProjectService } from '../services/project.service';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {EventService} from './event.service';
+import {Message} from '../common/message';
+import {ProjectService} from '../services/project.service';
+
 /**
  * Common service for getting access to project data from all application
  */
@@ -79,7 +80,7 @@ export class ModelService {
     this.redoBackupModel = [];
     console.log('Save data....');
     const modelCopy = JSON.parse(JSON.stringify(model)); // Object.assign({}, model);
-    this.backupModel.push({ project: modelCopy, page: pageId ? pageId : this.pageId }); // unshift({project: modelCopy, page: pageId});
+    this.backupModel.push({project: modelCopy, page: pageId ? pageId : this.pageId}); // unshift({project: modelCopy, page: pageId});
   }
 
   cancelModelChanges(command) {
@@ -93,16 +94,18 @@ export class ModelService {
       stackPush = 'redoBackupModel';
     }
     const modelState = this[stackPop].pop();
-    this[stackPush].push({ project: JSON.parse(JSON.stringify(this.projectData)), page: this.pageId });
+    this[stackPush].push({project: JSON.parse(JSON.stringify(this.projectData)), page: this.pageId});
     this.projectData = modelState.project;
-    const sending = { project: { data: this.projectData, name: this.modelName } };
+    const sending = {project: {data: this.projectData, name: this.modelName}};
     this.markOpenedModel();
     this.eventService.send(Message.PROJECT_LOAD, sending);
-    if (modelState.page) { this.eventService.send(Message.PAGE_OPEN, { pageObject: this.getPageById(modelState.page), subPages: this.subPages }); }
+    if (modelState.page) {
+      this.eventService.send(Message.PAGE_OPEN, {pageObject: this.getPageById(modelState.page), subPages: this.subPages});
+    }
   }
 
 
-  getLabelEntry(){
+  getLabelEntry() {
     return this.labelsEntry;
   }
 
@@ -171,11 +174,12 @@ export class ModelService {
   //// ChangeModelActions
 
 
-
   deleteElementFromPageJson(pageId, id, type) {
     this.saveBackup(this.projectData, pageId);
     const jsonPageObject = this.getPageById(pageId);
-    if (!jsonPageObject[this.modelCase[type]].length || jsonPageObject[this.modelCase[type]].length === 1) { jsonPageObject[this.modelCase[type]] = []; } else {
+    if (!jsonPageObject[this.modelCase[type]].length || jsonPageObject[this.modelCase[type]].length === 1) {
+      jsonPageObject[this.modelCase[type]] = [];
+    } else {
       jsonPageObject[this.modelCase[type]] = jsonPageObject[this.modelCase[type]].filter(elem => elem._id !== id);
     }
   }
@@ -186,9 +190,11 @@ export class ModelService {
     try {
       if (jsonPageObject[typeElem] instanceof Array) {
         jsonPageObject[typeElem].find(elem => elem._id === CPNElem.id)[CPNElem.labels[index].labelType].text.__text = undefined;
-      } else { jsonPageObject[typeElem][CPNElem.labels[index].labelType].text.__text = undefined; }
+      } else {
+        jsonPageObject[typeElem][CPNElem.labels[index].labelType].text.__text = undefined;
+      }
     } catch (err) {
-      console.log('!!!!!!!!!' + err + '!!!!!!!!!!');
+      console.error(`deleteLabelJsonByCPNElem() - an exeption occured: ${err}`);
     }
   }
 
@@ -211,7 +217,7 @@ export class ModelService {
   // send changes
 
   changeSubPageTransitionName(subpage) {
-    this.eventService.send(Message.CHANGE_NAME_PAGE, { id: subpage.subpageid, name: subpage.name, changedElement: 'tran' });
+    this.eventService.send(Message.CHANGE_NAME_PAGE, {id: subpage.subpageid, name: subpage.name, changedElement: 'tran'});
   }
 
 
@@ -299,15 +305,14 @@ export class ModelService {
     }
 
 
-
-    this.eventService.send(Message.SHAPE_SELECT, { element: event.shape, pageJson: page });
+    this.eventService.send(Message.SHAPE_SELECT, {element: event.shape, pageJson: page});
   }
 
   shapeMoveJsonSaver(event, pageId, arcShapes) {
     this.saveBackup(this.projectData, pageId);
     const page = this.getPageById(pageId);
     const jsonMovingElement = this.getJsonElementOnPage(pageId, event.shape.type === 'cpn:Label' ? event.shape : event.shape.id, event.shape.type);
-    this.moveElementInJson(jsonMovingElement, event.shape.type, { x: event.dx, y: -1 * event.dy }, event.shape);
+    this.moveElementInJson(jsonMovingElement, event.shape.type, {x: event.dx, y: -1 * event.dy}, event.shape);
     if (event.shape.type !== 'cpn:Connection') {
       if (page.arc instanceof Array) {
         for (const arc of page.arc) {
@@ -316,14 +321,17 @@ export class ModelService {
             const transEnd = this.getJsonElementOnPage(pageId, arc.transend._idref, 'cpn:Transition');
             const modelElem = arcShapes.find(modelArc => modelArc.id === arc._id);
             if (placeEnd && transEnd && modelElem) {
-              this.moveElementInJson(arc, 'cpn:Connection', { x: -1 * (parseFloat(arc.annot.posattr._x) - (parseFloat(placeEnd.posattr._x) + parseFloat(transEnd.posattr._x)) / 2) + 6, y: -1 * (parseFloat(arc.annot.posattr._y) - (parseFloat(placeEnd.posattr._y) + parseFloat(transEnd.posattr._y)) / 2) }, modelElem);
+              this.moveElementInJson(arc, 'cpn:Connection', {
+                x: -1 * (parseFloat(arc.annot.posattr._x) - (parseFloat(placeEnd.posattr._x) + parseFloat(transEnd.posattr._x)) / 2) + 6,
+                y: -1 * (parseFloat(arc.annot.posattr._y) - (parseFloat(placeEnd.posattr._y) + parseFloat(transEnd.posattr._y)) / 2)
+              }, modelElem);
             }
           }
         }
       }
     }
 
-    this.eventService.send(Message.SHAPE_SELECT, { element: event.shape, pageJson: page });
+    this.eventService.send(Message.SHAPE_SELECT, {element: event.shape, pageJson: page});
     /* switch(event.shape.type){
        case 'cpn:Place':
          if(page.place.length) {
@@ -443,59 +451,71 @@ export class ModelService {
     }
   }
 
-moveNonModelJsonElement(element, parent, target, index, type) {
+  moveNonModelJsonElement(element, parent, target, index, type) {
 
     const addelemToEntry = (entry) => {
-      if(target[entry]) {
+      if (target[entry]) {
         if (!(target[entry] instanceof Array)) {
           target[entry] = [target[entry]];
         }
-        if(element instanceof Array) {
-          for(let el of element) {
+        if (element instanceof Array) {
+          for (let el of element) {
             target[entry].splice(++index, 0, el);
           }
-        } else target[entry].splice(index, 0, element);
-      } else if (element instanceof Array) target[type] = element; else target[type] = [element];
-    }
-    if(type === 'page') {
-      let subPageTrans;
-      if(parent.trans instanceof Array) {
-        for(let i = 0; i < parent.trans.length; i++) {
-           if(parent.trans[i].subst && parent.trans[i].subst._subpage === element._id) {
-             subPageTrans =  Object.assign({}, parent.trans[i]);
-             delete parent.trans[i]['subst']
-             if(target.trans) {
-               if(target.trans instanceof Array) {
-                 subPageTrans._id = 'ID' + new Date().getTime();
-                 target.trans.push(subPageTrans);
-               } else {
-                 target.trans = [subPageTrans, target.trans];
-               }
-             } else target.trans =  [subPageTrans];
-             this.eventService.send(Message.SUBPAGE_CREATE, {
-               name: element.pageattr._name,
-               id: subPageTrans.subst._subpage,
-               parentid: target._id,
-               event: event,
-               state: undefined, //this.treeComponent.treeModel.getState(),
-               object: subPageTrans
-             });
-             break;
-           }
-         }
+        } else {
+          target[entry].splice(index, 0, element);
+        }
+      } else if (element instanceof Array) {
+        target[type] = element;
+      } else {
+        target[type] = [element];
       }
-    } else if(!type) {
-      if(target) {
+    };
+    if (type === 'page') {
+      let subPageTrans;
+      if (parent.trans instanceof Array) {
+        for (let i = 0; i < parent.trans.length; i++) {
+          if (parent.trans[i].subst && parent.trans[i].subst._subpage === element._id) {
+            subPageTrans = Object.assign({}, parent.trans[i]);
+            delete parent.trans[i]['subst'];
+            if (target.trans) {
+              if (target.trans instanceof Array) {
+                subPageTrans._id = 'ID' + new Date().getTime();
+                target.trans.push(subPageTrans);
+              } else {
+                target.trans = [subPageTrans, target.trans];
+              }
+            } else {
+              target.trans = [subPageTrans];
+            }
+            this.eventService.send(Message.SUBPAGE_CREATE, {
+              name: element.pageattr._name,
+              id: subPageTrans.subst._subpage,
+              parentid: target._id,
+              event: event,
+              state: undefined, //this.treeComponent.treeModel.getState(),
+              object: subPageTrans
+            });
+            break;
+          }
+        }
+      }
+    } else if (!type) {
+      if (target) {
         if (target instanceof Array) {
           target.splice(index, 0, element);
         } else {
           target = [target];
           target.splice(index, 0, element);
         }
-      } else if (element instanceof Array) target = element; else target = [element];
-      if(parent instanceof Array) {
-        for(let i = 0; i < parent.length; i++) {
-          if(parent[i]._id === element._id) {
+      } else if (element instanceof Array) {
+        target = element;
+      } else {
+        target = [element];
+      }
+      if (parent instanceof Array) {
+        for (let i = 0; i < parent.length; i++) {
+          if (parent[i]._id === element._id) {
             parent.splice(i, 1);
             break;
           }
@@ -503,47 +523,48 @@ moveNonModelJsonElement(element, parent, target, index, type) {
       } else {
         parent = [];
       }
-    } else if(this.paramsTypes.includes(type)) {
+    } else if (this.paramsTypes.includes(type)) {
       addelemToEntry(type);
       delete parent[type];
     } else {
       addelemToEntry('block');
-      if(parent.block instanceof Array) {
-        for(let i = 0; i < parent.block.length; i++) {
-          if(parent.block[i]._id === element._id) parent.block.splice(i, 1);
+      if (parent.block instanceof Array) {
+        for (let i = 0; i < parent.block.length; i++) {
+          if (parent.block[i]._id === element._id) {
+            parent.block.splice(i, 1);
+          }
         }
       } else {
         parent.block = [];
       }
     }
-/*    const deleteElemFromEntryById = this.paramsTypes.includes(type) ? ( entry, type) => {
-      delete entry[type];
-      } :  (id, entry) => {
-      if(entry instanceof Array) {
-        for(let i = 0; i < entry.length; i++) {
-          if(entry[i]._id === element._id) entry.splice(i, 1);
+    /*    const deleteElemFromEntryById = this.paramsTypes.includes(type) ? ( entry, type) => {
+          delete entry[type];
+          } :  (id, entry) => {
+          if(entry instanceof Array) {
+            for(let i = 0; i < entry.length; i++) {
+              if(entry[i]._id === element._id) entry.splice(i, 1);
+            }
+          } else {
+            entry = [];
+          }
+        };
+        const addElementToEntry = (addingElem, entry , indexPlace) => {
+          if(entry instanceof Array) {
+            entry.splice(indexPlace, 0, addingElem);
+          } else {
+            if(entry) {
+              entry = [entry];
+              entry.splice(indexPlace, 0, addingElem);
+            } else {
+              entry = [addingElem];
+            }
+          }
         }
-      } else {
-        entry = [];
-      }
-    };
-    const addElementToEntry = (addingElem, entry , indexPlace) => {
-      if(entry instanceof Array) {
-        entry.splice(indexPlace, 0, addingElem);
-      } else {
-        if(entry) {
-          entry = [entry];
-          entry.splice(indexPlace, 0, addingElem);
-        } else {
-          entry = [addingElem];
-        }
-      }
-    }
-    console.log('moveNonModelJsonElement - element: ', element, ', parent: ', parent, ', taregt: ', target, ', index: ', index);
-    addElementToEntry(element, target, index);
-    deleteElemFromEntryById(element._id, parent);*/
-}
-
+        console.log('moveNonModelJsonElement - element: ', element, ', parent: ', parent, ', taregt: ', target, ', index: ', index);
+        addElementToEntry(element, target, index);
+        deleteElemFromEntryById(element._id, parent);*/
+  }
 
 
   applyPageChanges(pageId, placeShapes, textRenderer, transShapes, arcShapes) {
@@ -773,7 +794,6 @@ moveNonModelJsonElement(element, parent, target, index, type) {
         }
 
 
-
         // if (arc.bendpoint) {
         //   if (arc.bendpoint.length) {
         //     for (let point of arc.bendpoint) {
@@ -816,7 +836,7 @@ moveNonModelJsonElement(element, parent, target, index, type) {
       }
     }
 
-    this.eventService.send(Message.MODEL_UPDATE, { pageObject: page });
+    this.eventService.send(Message.MODEL_UPDATE, {pageObject: page});
     // this.eventService.send(Message.MODEL_UPDATE, {pageObject:  page});
     // EmitterService.getAppMessageEmitter().emit(
     //  {
@@ -827,11 +847,11 @@ moveNonModelJsonElement(element, parent, target, index, type) {
   }
 
 
-
-
   changeLabelText(label, text, pageId) {
     this.saveBackup(this.projectData, pageId);
-    if (label && label.text) { label.text.__text = text; }
+    if (label && label.text) {
+      label.text.__text = text;
+    }
   }
 
   changePageName(pageId, name) {
@@ -862,8 +882,6 @@ moveNonModelJsonElement(element, parent, target, index, type) {
   }
 
 
-
-
   updateModel(updatedData) {
     this.saveBackup(this.projectData, undefined);
     const project = this.projectData;
@@ -877,7 +895,7 @@ moveNonModelJsonElement(element, parent, target, index, type) {
           //   project: {data: project, name: this.modelName}
           // });
 
-          this.eventService.send(Message.XML_UPDATE, { project: { data: project, name: this.modelName } });
+          this.eventService.send(Message.XML_UPDATE, {project: {data: project, name: this.modelName}});
         }
       }
     } else {
@@ -890,7 +908,7 @@ moveNonModelJsonElement(element, parent, target, index, type) {
         //   project: {data: project, name: this.modelName}
         // });
 
-        this.eventService.send(Message.XML_UPDATE, { project: { data: project, name: this.modelName } });
+        this.eventService.send(Message.XML_UPDATE, {project: {data: project, name: this.modelName}});
       }
     }
     //  console.log('Get data fromPAge ----' + JSON.stringify(updatedData.pageObject));
@@ -906,7 +924,9 @@ moveNonModelJsonElement(element, parent, target, index, type) {
       } else {
         if (targetBlock.block) {
           targetBlock.block = [targetBlock.block];
-        } else { targetBlock.block = []; }
+        } else {
+          targetBlock.block = [];
+        }
         targetBlock.block.push(block);
       }
     } else {
@@ -946,8 +966,8 @@ moveNonModelJsonElement(element, parent, target, index, type) {
   deleteElementInBlock(blcok, elementType, id) {
     this.saveBackup(this.projectData, undefined);
     //blcok[elementType] = blcok[elementType].filter(elem => elem._id !== id);
-    for( var i = 0; i < blcok[elementType].length; i++) {
-      if ( blcok[elementType][i]._id === id) {
+    for (var i = 0; i < blcok[elementType].length; i++) {
+      if (blcok[elementType][i]._id === id) {
         blcok[elementType].splice(i, 1);
       }
     }
@@ -972,10 +992,19 @@ moveNonModelJsonElement(element, parent, target, index, type) {
     this.saveBackup(this.projectData, undefined);
     switch (elementType) {
       case 'var':
-        return { id: this.projectService.getAppSettings()[elementType] + (++this.countNewItems), type: { id: this.projectService.getAppSettings()[elementType] }, _id: 'ID' + new Date().getTime() };
+        return {
+          id: this.projectService.getAppSettings()[elementType] + (++this.countNewItems),
+          type: {id: this.projectService.getAppSettings()[elementType]},
+          _id: 'ID' + new Date().getTime()
+        };
         break;
       case 'color':
-        return { id: this.projectService.getAppSettings()[elementType] + (++this.countNewItems), timed: '', name: this.projectService.getAppSettings()[elementType], _id: 'ID' + new Date().getTime() };
+        return {
+          id: this.projectService.getAppSettings()[elementType] + (++this.countNewItems),
+          timed: '',
+          name: this.projectService.getAppSettings()[elementType],
+          _id: 'ID' + new Date().getTime()
+        };
         break;
       case 'ml':
         return {
@@ -985,13 +1014,16 @@ moveNonModelJsonElement(element, parent, target, index, type) {
         };
         break;
       case 'globref':
-        return { id: this.projectService.getAppSettings()[elementType] + (++this.countNewItems), ml: this.projectService.getAppSettings()[elementType], _id: 'ID' + new Date().getTime() };
+        return {
+          id: this.projectService.getAppSettings()[elementType] + (++this.countNewItems),
+          ml: this.projectService.getAppSettings()[elementType],
+          _id: 'ID' + new Date().getTime()
+        };
         break;
       default:
 
     }
   }
-
 
 
   /**
@@ -1025,7 +1057,9 @@ moveNonModelJsonElement(element, parent, target, index, type) {
         splitLayoutArray[1] = splitLayoutArray[1].split(' ').filter(e => e.trim() !== '');
         let testElem = splitLayoutArray[1][0].replace(/\s+/g, '');
         for (const key of Object.keys(elem)) {
-          if (key !== '_id' && key !== 'layout') { delete elem[key]; }
+          if (key !== '_id' && key !== 'layout') {
+            delete elem[key];
+          }
         }
         if (splitLayoutArray[1][splitLayoutArray[1].length - 1].replace(';', '') === 'timed') {
           elem.timed = '';
@@ -1034,11 +1068,11 @@ moveNonModelJsonElement(element, parent, target, index, type) {
         if (testElem === 'product') {
           const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
           elem.id = splitLayoutArray[0].replace(/\s+/g, '');
-          elem.product = { id: productList };
+          elem.product = {id: productList};
         } else if (testElem === 'list') {
           const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
           elem.id = splitLayoutArray[0].replace(/\s+/g, '');
-          elem.list = { id: productList };
+          elem.list = {id: productList};
         } else {
           testElem = testElem.replace(/\s+/g, '').replace(';', '');
           splitLayoutArray[0] = splitLayoutArray[0].replace(/\s+/g, '').replace(';', '');
@@ -1047,7 +1081,7 @@ moveNonModelJsonElement(element, parent, target, index, type) {
             elem[testElem.toLowerCase()] = '';
           } else {
             elem.id = splitLayoutArray[0];
-            elem.alias = { id: testElem };
+            elem.alias = {id: testElem};
           }
         }
         break;
@@ -1066,7 +1100,7 @@ moveNonModelJsonElement(element, parent, target, index, type) {
 
 
   setDescendantProp(obj, desc, value) {
-    if(desc) {
+    if (desc) {
       let arr = desc.split('.');
       while (arr.length > 1) {
         obj = obj[arr.shift()];
@@ -1075,7 +1109,20 @@ moveNonModelJsonElement(element, parent, target, index, type) {
     }
   }
 
+  getRelations(id: string, elem: string): Array<string> {
+    let result = [];
+    switch (elem) {
+      case 'Place': {
+        this.getProjectData()
+        break;
+      }
+      case 'Transition': {
+        break;
+      }
+    }
+    return result;
 
+  }
 
 
 }

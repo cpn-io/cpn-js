@@ -5,7 +5,7 @@
   "main": "electron-main.js",
   "scripts": {
     "ng": "ng",
-    "start": "node ./version.build.js && ng serve --proxy-config proxy.conf.json --host 0.0.0.0",
+    "start": "node ./version.build.js && ng serve --proxy-config proxy.conf.json",
     "updateBuild": "node ./replace.build.js",
     "build": "node ./version.build.js && ng build",
     "test": "ng test",

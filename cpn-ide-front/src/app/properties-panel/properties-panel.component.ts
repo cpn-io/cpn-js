@@ -566,8 +566,10 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
           t.visible = this.selectedElement === t.id;
         }
       }
-      this.cpnElement = data.cpnElement;
-      this.showShapeAttrs(data.element.type === 'cpn:Label' ? data.element.parent : data.element, data.cpnElement, data.type);
+
+      const element = data.element.type === 'cpn:Label' ? data.element.parent : data.element;
+      this.cpnElement = element.cpnElement;
+      this.showShapeAttrs(element, element.cpnElement, element.type);
     });
   }
 
@@ -642,7 +644,11 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
    * @param shapeObject - model shape object
    */
   showShapeAttrs(shapeObject, cpnElement, elementType) {
-    console.log(this.constructor.name, 'showShapeAttrs(), shapeObject = ', shapeObject, cpnElement);
+    console.log(this.constructor.name, 'showShapeAttrs(), shapeObject = ', shapeObject, cpnElement, elementType);
+
+    if (!shapeObject || !cpnElement || !elementType)
+      return;
+
     this.elementType = elementType;
     this.clearData();
 

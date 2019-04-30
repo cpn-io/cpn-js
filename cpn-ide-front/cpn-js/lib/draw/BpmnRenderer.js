@@ -825,7 +825,7 @@ export default function BpmnRenderer(config, eventBus, styles, pathMap,
 
     // Draw error state
     var isError = element.iserror;
-    isError = true;
+    // isError = true;
 
     var thick = parseFloat(cpnElement.lineattr._thick);
 
@@ -896,7 +896,7 @@ export default function BpmnRenderer(config, eventBus, styles, pathMap,
 
     // Draw error state
     var isError = element.iserror;
-    isError = true;
+    // isError = true;
 
     var thick = parseFloat(cpnElement.lineattr._thick);
 

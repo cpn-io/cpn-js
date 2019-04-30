@@ -239,13 +239,44 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     */
   underlineRelations(element: any) {
     this.doUnderlineNodeLabel(false);
+    let elementId;
 
+    // подчеркиваем color
     if (element.type === 'cpn:Place') {
       this.underlineRelationsRecursively(this.nodes[0], element.cpnElement.type.text.toString());
-
+      elementId = element.cpnElement._id;
     } else if (element.type === 'cpn:Transition') {
-
+      elementId = element.cpnElement._id;
     }
+
+    // подчеркиваем var
+    if (element.type === 'cpn:Place' || element.type === 'cpn:Transition') {
+      if (this.modelService.getcpnet()) {
+        if (this.modelService.getcpnet().page instanceof Array) {
+          for (const page of this.modelService.getcpnet().page) {
+            this.processPage(page, elementId);
+          }
+        } else {
+          this.processPage(this.modelService.getcpnet().page, elementId);
+        }
+      }
+    }
+   }
+
+   processPage(page: any, elementId: string) {
+     if (page.arc instanceof Array) {
+       for (const arc of page.arc) {
+         this.processArc(arc, elementId);
+       }
+     } else {
+       this.processArc(page.arc, elementId);
+     }
+   }
+
+   processArc(arc: any, elementId: string) {
+     if ((arc.placeend && arc.placeend._idref === elementId) || (arc.transend && arc.transend._idref === elementId)) {
+       this.underlineRelationsRecursively(this.nodes[0], arc.annot.text.toString());
+     }
    }
 
   /**
@@ -254,7 +285,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * @param id идентификатор родительского узла
    */
   underlineRelationsRecursively(parentNode: any, id: string): boolean {
-    if (parentNode.children !== undefined) {
+    if (parentNode.children) {
       for (const node of parentNode.children) {
           if (this.underlineRelationsRecursively(node, id)) {
             this.doUnderlineNodeLabel(true, node.id);
@@ -269,6 +300,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
     return false;
   }
+
 
   /**
    * Subscribe to event emitter for receiveing project event

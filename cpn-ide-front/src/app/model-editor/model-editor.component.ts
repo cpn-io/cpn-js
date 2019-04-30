@@ -56,6 +56,18 @@ export class ModelEditorComponent implements OnInit {
     });
 
     const eventBus = this.diagram.get('eventBus');
+    eventBus.on('element.hover', (event) => {
+      if (event.element.type === 'cpn:Transition' ||
+        event.element.type === 'cpn:Place') {
+        this.eventService.send(Message.SHAPE_HOVER, {element: event.element});
+      }
+    });
+    eventBus.on('element.out', (event) => {
+      if (event.element.type === 'cpn:Transition' ||
+        event.element.type === 'cpn:Place') {
+        this.eventService.send(Message.SHAPE_OUT, {element: event.element});
+      }
+    });
     eventBus.on('element.click', (event) => {
       /*if(event.element.type === 'cpn:Place') {
         this.emitterService.getMarking(event.element.type, event.element.id).subscribe(
@@ -70,8 +82,6 @@ export class ModelEditorComponent implements OnInit {
             console.log('daTA ', datalog);
           })
       }*/
-
-
       // console.log('click on, event = ', event);
       this.fireSelectionEvent(event);
     });
@@ -114,7 +124,6 @@ export class ModelEditorComponent implements OnInit {
         }
 
     });
-
 
     eventBus.on('modelEditor.deleteElement', (event , element, connection) => {
       console.log(element);
@@ -2138,6 +2147,4 @@ export class ModelEditorComponent implements OnInit {
 
     return arc;
   }
-
-
 }

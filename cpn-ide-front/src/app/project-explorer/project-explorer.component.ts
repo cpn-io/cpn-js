@@ -165,7 +165,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       this.updateModel(data);
     });
 
-
     this.eventService.on(Message.UPDATE_TREE, (data) => {
       const newNodeId = data.newNodeId; // ? data.newNodeId  : data.comonBlock.id;
       if (data.state) {
@@ -200,7 +199,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     });
 
-
     this.eventService.on(Message.CHANGE_NAME_PAGE, (data) => {
       if (data.changedElement === 'tran') {
         const node = this.getObjects(this.nodes, 'id', data.id);
@@ -215,10 +213,14 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       }
     });
 
-    // подписка на событие - выбрали фигуру на канве
-    this.eventService.on(Message.SHAPE_SELECT, (data) => {
-      console.log(this.constructor.name, ' ----- An element selected, data = ', data);
+    // подписка на событие
+    this.eventService.on(Message.SHAPE_HOVER, (data) => {
+      console.log(' ----- An element hover, data = ' + data);
       this.underlineRelations(data.element);
+    });
+
+    this.eventService.on(Message.SHAPE_OUT, (data) => {
+      this.doUnderlineNodeLabel(false);
     });
 
     // this.subscribeToProject();
@@ -299,6 +301,27 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       }
     }
     return false;
+  }
+
+  /**
+   * Подсвечивание снизу надписи в узле дерева
+   * @param {boolean} underline - флаг добавить/убрать подсвечивание
+   * @param {string} nodeId - ид ноды. Не обязательный параметр. Если не указан, флаг underline распространяется на все ноды
+   * @example this.underlineNode(false) - убрать подсвечивание у всех нод
+   * @example this.underlineNode(true, 'NODEID') - подсветить ноду с указанным ид
+   */
+  doUnderlineNodeLabel(underline: boolean, nodeId?: string) {
+    if (underline) {
+      if (arguments.length > 1) {
+        this.underlineNodeSet.add(nodeId);
+      }
+    } else {
+      if (arguments.length > 1) {
+        this.underlineNodeSet.delete(nodeId);
+      } else {
+        this.underlineNodeSet = new Set();
+      }
+    }
   }
 
 
@@ -500,27 +523,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     this.sendMlToMlEditor(node.data.name);
 
     event.preventDefault();
-  }
-
-  /**
-   * Подсвечивание снизу надписи в узле дерева
-   * @param {boolean} underline - флаг добавить/убрать подсвечивание
-   * @param {string} nodeId - ид ноды. Не обязательный параметр. Если не указан, флаг underline распространяется на все ноды
-   * @example this.underlineNode(false) - убрать подсвечивание у всех нод
-   * @example this.underlineNode(true, 'NODEID') - подсветить ноду с указанным ид
-   */
-  doUnderlineNodeLabel(underline: boolean, nodeId?: string) {
-    if (underline) {
-      if (arguments.length > 1) {
-        this.underlineNodeSet.add(nodeId);
-      }
-    } else {
-      if (arguments.length > 1) {
-        this.underlineNodeSet.delete(nodeId);
-      } else {
-        this.underlineNodeSet = new Set();
-      }
-    }
   }
 
   // Функция вычисляет, будет ли схлопываться/разворачиваться содержимое метки узла.

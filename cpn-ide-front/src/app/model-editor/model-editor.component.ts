@@ -57,7 +57,7 @@ export class ModelEditorComponent implements OnInit {
 
     const eventBus = this.diagram.get('eventBus');
     eventBus.on('element.click', (event) => {
-      if(event.element.type === 'cpn:Place') {
+      /*if(event.element.type === 'cpn:Place') {
         this.emitterService.getMarking(event.element.type, event.element.id).subscribe(
           (data: any) => {
             let dlog = data;
@@ -69,7 +69,7 @@ export class ModelEditorComponent implements OnInit {
             let datalog = data;
             console.log('daTA ', datalog);
           })
-      }
+      }*/
 
 
       // console.log('click on, event = ', event);

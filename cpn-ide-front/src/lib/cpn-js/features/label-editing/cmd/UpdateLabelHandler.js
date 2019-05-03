@@ -88,6 +88,7 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
   }
 
   function execute(ctx) {
+    console.log('UpdateLabelHandler.execute(), ctx = ', ctx);
     ctx.oldLabel = getLabel(ctx.element);
     return setText(ctx.element, ctx.newLabel);
   }
@@ -97,6 +98,8 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
   }
 
   function postExecute(ctx) {
+    console.log('UpdateLabelHandler.postExecute(), ctx = ', ctx);
+
     var element = ctx.element,
         label = element.label || element,
         newLabel = ctx.newLabel,
@@ -113,7 +116,7 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
     }
 
     // ignore internal labels for elements except text annotations
-    if (!isLabelExternal(element) && !is(element, CPN_TEXT_ANNOTATION)) {
+    if (!isLabelExternal(element) && !is(element, CPN_TEXT_ANNOTATION) && !is(element, CPN_LABEL)) {
       return;
     }
 
@@ -134,6 +137,8 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
     // setting newBounds to false or _null_ will
     // disable the postExecute resize operation
     if (newBounds) {
+      console.log('UpdateLabelHandler.postExecute(), resizeShape, newBounds = ', newBounds);
+
       modeling.resizeShape(label, newBounds, NULL_DIMENSIONS);
     }
   }

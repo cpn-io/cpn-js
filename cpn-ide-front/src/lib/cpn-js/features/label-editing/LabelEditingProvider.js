@@ -6,7 +6,7 @@ import {
   getLabel
 } from './LabelEditingUtil';
 
-import {CPN_CONNECTION, CPN_TEXT_ANNOTATION, is, isCpn, isAny, CPN_LABEL} from '../../util/ModelUtil';
+import {CPN_CONNECTION, CPN_TEXT_ANNOTATION, CPN_LABEL, is, isCpn, isAny} from '../../util/ModelUtil';
 
 import {
   getExternalLabelMid,
@@ -158,9 +158,9 @@ LabelEditingProvider.prototype.activate = function (element) {
     assign(options, {
       centerVertically: false,
       centerHorizontally: false,
+      autoResize: true
     });
-  } else
-  if (isCpn(element)) {
+  } else if (isCpn(element)) {
     assign(options, {
       centerVertically: true,
       centerHorizontally: true,
@@ -249,9 +249,7 @@ LabelEditingProvider.prototype.getEditingBBox = function (element) {
 };
 
 
-LabelEditingProvider.prototype.update = function (
-  element, newLabel,
-  activeContextText, bounds) {
+LabelEditingProvider.prototype.update = function (element, newLabel, activeContextText, bounds) {
 
   console.log('LabelEditingProvider.prototype.update(), element = ', element);
   console.log('LabelEditingProvider.prototype.update(), newLabel = ', newLabel);
@@ -260,11 +258,27 @@ LabelEditingProvider.prototype.update = function (
   var newBounds,
     bbox;
 
-  element.name = newLabel;
-  element.text = newLabel;
-
+  element.name = element.text = newLabel;
   this._eventBus.fire('element.changed', {element: element});
+
+  if (is(element, CPN_LABEL)) {
+    // newBounds = {
+    //   x: element.x,
+    //   y: element.y,
+    //   width: 500,
+    //   height: 50
+    // };
+
+    newBounds = this._textRenderer.getExternalLabelBounds(element, newLabel);
+
+    this._modeling.updateLabel(element, newLabel, newBounds);
+    // this._modeling.resizeShape(element, newBounds, {width: 0, height: 0});
+  }
 };
+
+LabelEditingProvider.prototype.getTextBounds = function (element, newLabel) {
+  return this._textRenderer.getExternalLabelBounds(element, newLabel);
+}
 
 LabelEditingProvider.prototype.gotoNext = function (element) {
   console.log('LabelEditingProvider.prototype.gotoNext(), element = ', element);

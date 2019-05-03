@@ -4,6 +4,10 @@ import {
 } from 'min-dash';
 
 import TextBox from './TextBox';
+import {
+  CPN_LABEL,
+  is
+} from "../../util/ModelUtil";
 
 
 /**
@@ -158,9 +162,28 @@ DirectEditing.prototype._handleKey = function (e) {
 
 
 DirectEditing.prototype._handleResize = function (event) {
+  console.log('_handleResize(), event = ', event);
   // console.log('_handleResize(), event = ', event);
 
-  this._fire('resize', event);
+  // var bounds = textUtil.getDimensions(content.innerText, {
+  //   box: {
+  //     width: 2000, // 90,
+  //     height: 20,
+  //   }
+  // });
+
+  var provider = this._active.provider;
+  var element = this._active.element;
+
+  console.log('_handleResize(), element = ', element);
+
+  var newLabel = event.newLabel;
+  var newBounds = provider.getTextBounds(element, newLabel);
+  console.log('_handleResize(), newBounds = ', newBounds);
+
+  this._fire('resize', {newBounds: newBounds});
+
+  return newBounds;
 };
 
 
@@ -188,6 +211,10 @@ DirectEditing.prototype.activate = function (element) {
 
   // check if activation took place
   if (context) {
+    // if (is(element, CPN_LABEL)) {
+    //   context.bounds.width = 1000;
+    // }
+
     this.$textbox = this._textbox.create(
       context.bounds,
       context.style,
@@ -203,8 +230,7 @@ DirectEditing.prototype.activate = function (element) {
     };
 
     if (context.options && context.options.resizable) {
-      this.
-        = true;
+      this.resizable = true;
     }
 
     let editBox = document.getElementById("editLabelId");

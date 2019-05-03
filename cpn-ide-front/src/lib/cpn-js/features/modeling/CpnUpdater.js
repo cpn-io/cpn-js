@@ -55,8 +55,9 @@ export default function CpnUpdater(eventBus, connectionDocking, selection) {
     console.log('CpnUpdater(), element.hover, element = ', element);
 
     // eventBus.fire('element.click', { element: element });
-    if (isCpn(element))
+    if (isCpn(element) && !is(element, CPN_LABEL) && !is(element, CPN_CONNECTION)) {
       selection.select(element);
+    }
   });
 
   // eventBus.on('element.click', function(event) {

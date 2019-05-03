@@ -1,4 +1,4 @@
-import { assign } from 'min-dash';
+import {assign} from 'min-dash';
 
 import TextUtil from 'diagram-js/lib/util/Text';
 
@@ -19,15 +19,17 @@ export default function TextRenderer(config) {
 
   var fontSize = parseInt(defaultStyle.fontSize, 10) - 1;
 
-  var externalStyle = assign({}, defaultStyle, {
-    fontSize: fontSize
-  }, config && config.externalStyle || {});
+  var externalStyle = assign(
+    {},
+    defaultStyle,
+    // { fontSize: fontSize },
+    config && config.externalStyle || {});
 
   var textUtil = new TextUtil({
     style: defaultStyle
   });
 
-  this.getTextUtil = function() {
+  this.getTextUtil = function () {
     return textUtil;
   }
 
@@ -40,28 +42,28 @@ export default function TextRenderer(config) {
    *
    * @return {Bounds}
    */
-  this.getExternalLabelBounds = function(bounds, text) {
+  this.getExternalLabelBounds = function (bounds, text) {
 
     console.log('this.getExternalLabelBounds(), bounds, text, externalStyle = ', bounds, text, externalStyle);
 
     var layoutedDimensions = textUtil.getDimensions(text, {
       box: {
-        width: 200, // 90,
+        width: 2000, // 90,
         height: 20,
-        x: bounds.width / 2 + bounds.x,
-        y: bounds.height / 2 + bounds.y
-      },
-      style: externalStyle
-    });
-    console.log('this.getExternalLabelBounds(), layoutedDimensions = ', layoutedDimensions);
-    var d = textUtil.getDimensions(text, {
-      box: {
-        width: 100, // 90,
-        height: 20,
+        // x: bounds.width / 2 + bounds.x,
+        // y: bounds.height / 2 + bounds.y
       }
+      , style: externalStyle
     });
-    console.log('this.getExternalLabelBounds(), d = ', d);
-    layoutedDimensions = d;
+    // console.log('this.getExternalLabelBounds(), layoutedDimensions = ', layoutedDimensions);
+    // var d = textUtil.getDimensions(text, {
+    //   box: {
+    //     width: 2000, // 90,
+    //     height: 20,
+    //   }
+    // });
+    // console.log('this.getExternalLabelBounds(), d = ', d);
+    // layoutedDimensions = d;
 
     // resize label shape to fit label text
     // return {
@@ -87,7 +89,7 @@ export default function TextRenderer(config) {
    *
    * @return {Bounds}
    */
-  this.getTextAnnotationBounds = function(bounds, text) {
+  this.getTextAnnotationBounds = function (bounds, text) {
 
     var layoutedDimensions = textUtil.getDimensions(text, {
       box: bounds,
@@ -112,21 +114,21 @@ export default function TextRenderer(config) {
    *
    * @return {SVGElement} rendered text
    */
-  this.createText = function(text, options) {
+  this.createText = function (text, options) {
     return textUtil.createText(text, options || {});
   };
 
   /**
    * Get default text style.
    */
-  this.getDefaultStyle = function() {
+  this.getDefaultStyle = function () {
     return defaultStyle;
   };
 
   /**
    * Get the external text style.
    */
-  this.getExternalStyle = function() {
+  this.getExternalStyle = function () {
     return externalStyle;
   };
 

@@ -10,9 +10,10 @@ import {
   event as domEvent,
   remove as domRemove
 } from 'min-dom';
+import TextUtil from "diagram-js/lib/util/Text";
 
 var min = Math.min,
-    max = Math.max;
+  max = Math.max;
 
 function preventDefault(e) {
   e.preventDefault();
@@ -50,14 +51,16 @@ export default function TextBox(options) {
 
   this.parent = domify(
     '<div class="djs-direct-editing-parent">' +
-      '<div id="editLabelId" class="djs-direct-editing-content" contenteditable="true"></div>' +
+    '<div id="editLabelId" class="djs-direct-editing-content" contenteditable="true"></div>' +
     '</div>'
   );
 
   this.content = domQuery('[contenteditable]', this.parent);
 
-  this.keyHandler = options.keyHandler || function() {};
-  this.resizeHandler = options.resizeHandler || function() {};
+  this.keyHandler = options.keyHandler || function () {
+  };
+  this.resizeHandler = options.resizeHandler || function () {
+  };
 
   this.autoResize = bind(this.autoResize, this);
   this.handlePaste = bind(this.handlePaste, this);
@@ -81,12 +84,12 @@ export default function TextBox(options) {
  *
  * @return {DOMElement} The created content DOM element
  */
-TextBox.prototype.create = function(bounds, style, value, options) {
+TextBox.prototype.create = function (bounds, style, value, options) {
   var self = this;
 
   var parent = this.parent,
-      content = this.content,
-      container = this.container;
+    content = this.content,
+    container = this.container;
 
   options = this.options = options || {};
 
@@ -169,6 +172,8 @@ TextBox.prototype.create = function(bounds, style, value, options) {
   domEvent.bind(content, 'mousedown', stopPropagation);
   domEvent.bind(content, 'paste', self.handlePaste);
 
+  console.log('TextBox.prototype.create(), options = ', options);
+
   if (options.autoResize) {
     domEvent.bind(content, 'input', this.autoResize);
   }
@@ -188,11 +193,11 @@ TextBox.prototype.create = function(bounds, style, value, options) {
 /**
  * Intercept paste events to remove formatting from pasted text.
  */
-TextBox.prototype.handlePaste = function(e) {
+TextBox.prototype.handlePaste = function (e) {
   var self = this;
 
   var options = this.options,
-      style = this.style;
+    style = this.style;
 
   e.preventDefault();
 
@@ -215,16 +220,16 @@ TextBox.prototype.handlePaste = function(e) {
 
     // Internet Explorer
     var range = this.getSelection(),
-        startContainer = range.startContainer,
-        endContainer = range.endContainer,
-        startOffset = range.startOffset,
-        endOffset = range.endOffset,
-        commonAncestorContainer = range.commonAncestorContainer;
+      startContainer = range.startContainer,
+      endContainer = range.endContainer,
+      startOffset = range.startOffset,
+      endOffset = range.endOffset,
+      commonAncestorContainer = range.commonAncestorContainer;
 
     var childNodesArray = toArray(commonAncestorContainer.childNodes);
 
     var container,
-        offset;
+      offset;
 
     if (isTextNode(commonAncestorContainer)) {
       var containerTextContent = startContainer.textContent;
@@ -246,9 +251,9 @@ TextBox.prototype.handlePaste = function(e) {
       offset = textNode.textContent.length;
     } else {
       var startContainerChildIndex = childNodesArray.indexOf(startContainer),
-          endContainerChildIndex = childNodesArray.indexOf(endContainer);
+        endContainerChildIndex = childNodesArray.indexOf(endContainer);
 
-      childNodesArray.forEach(function(childNode, index) {
+      childNodesArray.forEach(function (childNode, index) {
 
         if (index === startContainerChildIndex) {
           childNode.textContent =
@@ -267,7 +272,7 @@ TextBox.prototype.handlePaste = function(e) {
     if (container && offset !== undefined) {
 
       // is necessary in Internet Explorer
-      setTimeout(function() {
+      setTimeout(function () {
         self.setSelection(container, offset);
       });
     }
@@ -285,41 +290,68 @@ TextBox.prototype.handlePaste = function(e) {
 /**
  * Automatically resize element vertically to fit its content.
  */
-TextBox.prototype.autoResize = function() {
+TextBox.prototype.autoResize = function () {
   var parent = this.parent,
-      content = this.content;
+    content = this.content;
 
   var fontSize = parseInt(this.style.fontSize) || 12;
 
-  if (content.scrollHeight > parent.offsetHeight ||
-      content.scrollHeight < parent.offsetHeight - fontSize) {
-    var bounds = parent.getBoundingClientRect();
+  console.log('TextBox.prototype.autoResize, parent = ', parent);
+  console.log('TextBox.prototype.autoResize, content = ', content);
 
-    var height = content.scrollHeight;
-    parent.style.height = height + 'px';
+  // if (content.scrollHeight > parent.offsetHeight ||
+  //     content.scrollHeight < parent.offsetHeight - fontSize) {
+  // parent.setAttribute('style', parent.style);
 
-    this.resizeHandler({
-      width: bounds.width,
-      height: bounds.height,
-      dx: 0,
-      dy: height - bounds.height
-    });
-  }
+  // var bounds = parent.getBoundingClientRect();
+
+  // var textUtil = new TextUtil();
+  // var bounds = textUtil.getDimensions(content.innerText, {
+  //   box: {
+  //     width: 2000, // 90,
+  //     height: 20,
+  //   }
+  // });
+
+  // var width = content.scrollWidth;
+  // var height = content.scrollHeight;
+  // var width = bounds.width;
+  // var height = bounds.height;
+  // parent.style.width = width + 'px';
+  // parent.style.height = height + 'px';
+
+  // bounds.width = 200;
+
+  // console.log('TextBox.prototype.autoResize, bounds = ', bounds);
+
+  // this.resizeHandler({
+  //   width: bounds.width,
+  //   height: bounds.height,
+  //   dx: 10,
+  //   dy: 10 // height - bounds.height
+  // });
+  // }
+
+  var newBounds = this.resizeHandler({
+    newLabel: content.innerText
+  });
+  parent.style.width = Math.ceil(newBounds.width) + 'px';
+  parent.style.height = Math.ceil(newBounds.height) + 'px';
 };
 
 /**
  * Make an element resizable by adding a resize handle.
  */
-TextBox.prototype.resizable = function() {
+TextBox.prototype.resizable = function () {
   var self = this;
 
   var parent = this.parent,
-      resizeHandle = this.resizeHandle;
+    resizeHandle = this.resizeHandle;
 
   var minWidth = parseInt(this.style.minWidth) || 0,
-      minHeight = parseInt(this.style.minHeight) || 0,
-      maxWidth = parseInt(this.style.maxWidth) || Infinity,
-      maxHeight = parseInt(this.style.maxHeight) || Infinity;
+    minHeight = parseInt(this.style.minHeight) || 0,
+    maxWidth = parseInt(this.style.maxWidth) || Infinity,
+    maxHeight = parseInt(this.style.maxHeight) || Infinity;
 
   if (!resizeHandle) {
     resizeHandle = this.resizeHandle = domify(
@@ -328,7 +360,7 @@ TextBox.prototype.resizable = function() {
 
     var startX, startY, startWidth, startHeight;
 
-    var onMouseDown = function(e) {
+    var onMouseDown = function (e) {
       preventDefault(e);
       stopPropagation(e);
 
@@ -344,7 +376,7 @@ TextBox.prototype.resizable = function() {
       domEvent.bind(document, 'mouseup', onMouseUp);
     };
 
-    var onMouseMove = function(e) {
+    var onMouseMove = function (e) {
       preventDefault(e);
       stopPropagation(e);
 
@@ -362,11 +394,11 @@ TextBox.prototype.resizable = function() {
       });
     };
 
-    var onMouseUp = function(e) {
+    var onMouseUp = function (e) {
       preventDefault(e);
       stopPropagation(e);
 
-      domEvent.unbind(document,'mousemove', onMouseMove, false);
+      domEvent.unbind(document, 'mousemove', onMouseMove, false);
       domEvent.unbind(document, 'mouseup', onMouseUp, false);
     };
 
@@ -394,10 +426,10 @@ TextBox.prototype.resizable = function() {
  * Clear content and style of the textbox, unbind listeners and
  * reset CSS style.
  */
-TextBox.prototype.destroy = function() {
+TextBox.prototype.destroy = function () {
   var parent = this.parent,
-      content = this.content,
-      resizeHandle = this.resizeHandle;
+    content = this.content,
+    resizeHandle = this.resizeHandle;
 
   // clear content
   content.innerText = '';
@@ -421,20 +453,20 @@ TextBox.prototype.destroy = function() {
 };
 
 
-TextBox.prototype.getValue = function() {
+TextBox.prototype.getValue = function () {
   return this.content.innerText;
 };
 
 
-TextBox.prototype.getSelection = function() {
+TextBox.prototype.getSelection = function () {
   var selection = window.getSelection(),
-      range = selection.getRangeAt(0);
+    range = selection.getRangeAt(0);
 
   return range;
 };
 
 
-TextBox.prototype.setSelection = function(container, offset) {
+TextBox.prototype.setSelection = function (container, offset) {
   var range = document.createRange();
 
   if (container === null) {

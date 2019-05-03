@@ -63,9 +63,28 @@ DirectEditing.prototype.cancel = function () {
   this.close();
 };
 
+/**
+ * End direct editing, and go to gotoNext element
+ */
+DirectEditing.prototype.gotoNext = function () {
+  if (!this._active) {
+    return;
+  }
+  var provider = this._active.provider;
+  var element = this._active.element;
+
+  // console.log('DirectEditing.prototype.gotoNext, element = ', element);
+  // this.cancel();
+  // this.close();
+
+  this.complete();
+
+  if (provider && element)
+    provider.gotoNext(element);
+};
 
 DirectEditing.prototype._fire = function (event, context) {
-  this._eventBus.fire('directEditing.' + event, context || { active: this._active });
+  this._eventBus.fire('directEditing.' + event, context || {active: this._active});
 };
 
 DirectEditing.prototype.close = function () {
@@ -124,11 +143,17 @@ DirectEditing.prototype._handleKey = function (e) {
     return this.cancel();
   }
 
-  // Enter
-  /*if (key === 13 && !e.shiftKey) {
+  // TAB
+  if (key === 9) {
     e.preventDefault();
-    return this.complete();
-  }*/
+    return this.gotoNext();
+  }
+
+  // Enter
+  // /*if (key === 13 && !e.shiftKey) {
+  //   e.preventDefault();
+  //   return this.complete();
+  // }*/
 };
 
 
@@ -218,16 +243,16 @@ DirectEditing.prototype.activate = function (element) {
 
 
       // set TAB key event handler
-      editBox.onkeydown = function (e) {
-        console.log('DirectEditing.prototype.activate(), editBox.onkeydown, e = ', e);
-
-        if (e.key === "Tab") {
-          e.stopImmediatePropagation();
-          e.stopPropagation();
-
-          _this._eventBus.fire('element.edit.tab', { event: e, element: element });
-        }
-      };
+      // editBox.onkeydown = function (e) {
+      //   console.log('DirectEditing.prototype.activate(), editBox.onkeydown, e = ', e);
+      //
+      //   if (e.key === "Tab") {
+      //     e.stopImmediatePropagation();
+      //     e.stopPropagation();
+      //
+      //     _this._eventBus.fire('element.edit.tab', { event: e, element: element });
+      //   }
+      // };
     }
 
     this._fire('activate');

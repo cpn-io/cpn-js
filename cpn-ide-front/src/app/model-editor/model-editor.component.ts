@@ -1,8 +1,8 @@
 import {Component, ElementRef, HostListener, Input, OnInit, ViewChild} from '@angular/core';
 
 import {assign} from 'min-dash';
-// import Diagram from 'bpmn-js/lib/Modeler';
-import Diagram from 'cpn-js/lib/Modeler';
+import Diagram from 'diagram-js';
+import CpnDiagramModule from '../../lib/cpn-js/core';
 
 import {EmitterService} from '../services/emitter.service';
 import {HttpClient} from '@angular/common/http';
@@ -51,23 +51,36 @@ export class ModelEditorComponent implements OnInit {
 
   ngOnInit() {
     this.subscripeToAppMessage();
+
+
+    // this.diagram = new Diagram({
+    //   container: this.containerElementRef.nativeElement
+    // });
+
     this.diagram = new Diagram({
-      container: this.containerElementRef.nativeElement
+      canvas: {
+        container: this.containerElementRef.nativeElement
+      },
+      modules: [
+        CpnDiagramModule,
+      ]
     });
 
     const eventBus = this.diagram.get('eventBus');
-    eventBus.on('element.hover', (event) => {
-      if (event.element.type === 'cpn:Transition' ||
-        event.element.type === 'cpn:Place') {
-        this.eventService.send(Message.SHAPE_HOVER, {element: event.element});
-      }
-    });
-    eventBus.on('element.out', (event) => {
-      if (event.element.type === 'cpn:Transition' ||
-        event.element.type === 'cpn:Place') {
-        this.eventService.send(Message.SHAPE_OUT, {element: event.element});
-      }
-    });
+
+    // eventBus.on('element.hover', (event) => {
+    //   if (event.element.type === 'cpn:Transition' ||
+    //     event.element.type === 'cpn:Place') {
+    //     this.eventService.send(Message.SHAPE_HOVER, {element: event.element});
+    //   }
+    // });
+    // eventBus.on('element.out', (event) => {
+    //   if (event.element.type === 'cpn:Transition' ||
+    //     event.element.type === 'cpn:Place') {
+    //     this.eventService.send(Message.SHAPE_OUT, {element: event.element});
+    //   }
+    // });
+
     eventBus.on('element.click', (event) => {
       /*if(event.element.type === 'cpn:Place') {
         this.emitterService.getMarking(event.element.type, event.element.id).subscribe(
@@ -188,7 +201,7 @@ export class ModelEditorComponent implements OnInit {
         const tran = this.transShapes[this.subpages.find(e => e.subpageid = data.id).tranid];
         if (tran) {
           tran.name = data.name;
-          tran.businessObject.name =  tran.name;
+          // tran.businessObject.name =  tran.name;
           this.canvas.removeShape(tran);
           this.canvas.addShape(tran, this.canvas.getRootElement());
           for (const lab of tran.labels) {
@@ -255,9 +268,9 @@ export class ModelEditorComponent implements OnInit {
     });
 
     const that = this;
-    this.diagram.createDiagram(function () {
-      // that.loadTestModel();
-    });
+    // this.diagram.createDiagram(function () {
+    //   // that.loadTestModel();
+    // });
 
     this.elementFactory = this.diagram.get('elementFactory');
     this.dragging = this.diagram.get('dragging');
@@ -1691,9 +1704,9 @@ export class ModelEditorComponent implements OnInit {
     this.pageId = pageObject._id;
     const that = this;
     if (pageObject) {
-      this.diagram.createDiagram(function () {
+      // this.diagram.createDiagram(function () {
         that.loadPageDiagram(pageObject);
-      });
+      // });
     } else { this.canvas._clear(); }
   }
 
@@ -1703,7 +1716,8 @@ export class ModelEditorComponent implements OnInit {
 
     // console.log('ModelEditorComponent. load(), pageObject = ' + JSON.stringify(pageObject));
 
-    // this.diagram.clear();
+    this.diagram.clear();
+    // this.canvas._clear();
 
     this.placeShapes = [];
     this.transShapes = [];
@@ -1862,8 +1876,8 @@ export class ModelEditorComponent implements OnInit {
       label,
       semantic;
 
-    semantic = element.businessObject;
-    // console.log('createLabel(), element, semantic ', element, semantic);
+    semantic = element.cpnElement; // element.businessObject;
+    console.log('createLabel(), element, semantic, labelText = ', element, semantic, labelText);
 
     if (!pos) {
       pos = {x: Math.round(bounds.x), y: Math.round(bounds.y)};
@@ -1883,6 +1897,7 @@ export class ModelEditorComponent implements OnInit {
       // get corrected bounds from actual layouted text
       bounds = this.textRenderer.getExternalLabelBounds(bounds, text);
     }
+    console.log('createLabel(), bounds = ', bounds);
 
 
     label = this.elementFactory.createLabel(this.elementData(semantic, {
@@ -1929,8 +1944,8 @@ export class ModelEditorComponent implements OnInit {
     let
       // x = 1 * obj.posattr["@attributes"].x,
       // y = -1 * obj.posattr["@attributes"].y,
-      // w = 1 * obj.ellipse["@attributes"].w,
-      // h = 1 * obj.ellipse["@attributes"].h;
+      // width = 1 * obj.ellipse["@attributes"].width,
+      // height = 1 * obj.ellipse["@attributes"].height;
       x = 1 * obj.posattr._x,
       y = -1 * obj.posattr._y,
       w = 1 * obj.ellipse._w,
@@ -1971,8 +1986,8 @@ export class ModelEditorComponent implements OnInit {
     let
       // x = 1 * obj.posattr["@attributes"].x,
       // y = -1 * obj.posattr["@attributes"].y,
-      // w = 1 * obj.box["@attributes"].w,
-      // h = 1 * obj.box["@attributes"].h;
+      // width = 1 * obj.box["@attributes"].width,
+      // height = 1 * obj.box["@attributes"].height;
       x = 1 * obj.posattr._x,
       y = -1 * obj.posattr._y,
       w = 1 * obj.box._w,

@@ -4,7 +4,7 @@ import CommandInterceptor from 'diagram-js/lib/command/CommandInterceptor';
 
 inherits(CpnUpdater, CommandInterceptor);
 
-import {is, isCpn} from '../../util/ModelUtil';
+import {CPN_CONNECTION, CPN_LABEL, CPN_PLACE, is, isCpn} from '../../util/ModelUtil';
 
 CpnUpdater.$inject = [
   'eventBus',
@@ -84,14 +84,14 @@ export default function CpnUpdater(eventBus, connectionDocking, selection) {
     console.log('CpnUpdater(), updateNewConnection(e), e = ', e);
     const context = e.context;
     const connection = context.connection;
-    connection.type = 'cpn:Connection';
+    connection.type = CPN_CONNECTION;
   }
 
   function updateNewShape(e) {
     console.log('CpnUpdater(), updateNewShape(e), e = ', e);
     const context = e.context;
     const shape = context.shape;
-    shape.type = 'cpn:Place';
+    shape.type = CPN_PLACE;
   }
 
   // update bounds
@@ -112,7 +112,7 @@ export default function CpnUpdater(eventBus, connectionDocking, selection) {
   function updateLabel(e) {
     // console.log('CpnUpdater(), updateLabel(), e = ', e);
     var shape = e.element;
-    if (is(shape, 'cpn:Label')) {
+    if (is(shape, CPN_LABEL)) {
       shape.parent = shape.labelTarget;
     }
   }

@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as FileSaver from 'file-saver';
 import {ModelService} from '../../services/model.service';
-import * as X2JS from '../../../x2js/xml2json';
+import * as X2JS from '../../../lib/x2js/xml2json';
 
 @Component({
   selector: 'app-saveproject-button',

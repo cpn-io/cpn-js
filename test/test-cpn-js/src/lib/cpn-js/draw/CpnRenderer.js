@@ -12,6 +12,11 @@ import {
 } from 'diagram-js/lib/util/RenderUtil';
 
 import {
+  CPN_PLACE,
+  CPN_TRANSITION,
+  CPN_LABEL,
+  CPN_CONNECTION,
+  CPN_TEXT_ANNOTATION,
   is,
   isCpn
 } from '../util/ModelUtil';
@@ -46,8 +51,8 @@ import {
 
 var RENDERER_IDS = new Ids();
 
-var ERROR_STROKE_COLOR = '#ffccccdd';
-var ERROR_STROKE_THICK = 8;
+var ERROR_STROKE_COLOR = '#ff999966';
+var ERROR_STROKE_THICK = 7;
 
 export default function CpnRenderer(
   config, eventBus, styles, pathMap,
@@ -574,14 +579,14 @@ export default function CpnRenderer(
       id: 'endMarker',
       orient: 'auto',
       refX: 15,
-      refY: 7,
-      markerWidth: 20,
-      markerHeight: 15,
+      refY: 5,
+      markerWidth: 15,
+      markerHeight: 10,
     });
     // marker path
     var path = svgCreate('path');
     svgAttr(path, {
-      d: 'M0,0 L2,7 L0,15 L15,7 Z',
+      d: 'M0,0 L2,5 L0,10 L15,5 Z',
       fill: 'black'
     });
     svgAppend(marker, path);
@@ -686,42 +691,39 @@ export default function CpnRenderer(
     },
 
     'cpn:Connection': function (parentGfx, element) {
-      // var pathData = createPathFromConnection(element);
-      // var path = drawArc(parentGfx, element, pathData);
-      // return path;
-
-
       var pathData = createPathFromConnection(element);
-
-      var fill = getFillColor(element), stroke = getStrokeColor(element);
-
-      var attrs = {
-        strokeLinejoin: 'round',
-        markerEnd: marker('sequenceflow-end', fill, stroke),
-        stroke: getStrokeColor(element),
-        strokeWidth: getStrokeWidth(element)
-      };
-
-      if (element.iserror) {
-        var attrsError = {
-          strokeLinejoin: 'round',
-          // markerEnd: marker('sequenceflow-end', fill, 1),
-          stroke: 'red',
-          strokeWidth: 7
-        };
-        var path = drawPath(parentGfx, pathData, attrsError);
-      }
-      var path = drawPath(parentGfx, pathData, attrs);
-
+      var path = drawArc(parentGfx, element, pathData);
       return path;
+
+      // var pathData = createPathFromConnection(element);
+      //
+      // var fill = getFillColor(element), stroke = getStrokeColor(element);
+      //
+      // var attrs = {
+      //   strokeLinejoin: 'round',
+      //   markerEnd: marker('sequenceflow-end', fill, stroke),
+      //   stroke: getStrokeColor(element),
+      //   strokeWidth: getStrokeWidth(element)
+      // };
+      //
+      // if (element.iserror) {
+      //   var attrsError = {
+      //     strokeLinejoin: 'round',
+      //     // markerEnd: marker('sequenceflow-end', fill, 1),
+      //     stroke: 'red',
+      //     strokeWidth: 7
+      //   };
+      //   var path = drawPath(parentGfx, pathData, attrsError);
+      // }
+      // var path = drawPath(parentGfx, pathData, attrs);
+      //
+      // return path;
     },
 
     // -------------------------------------------------
 
     'cpn:Label': function (parentGfx, element) {
-      console.log('render cpn:Label, element = ', element);
       return renderExternalLabel(parentGfx, element);
-
     },
 
     'cpn:TextAnnotation': function (parentGfx, element) {
@@ -854,11 +856,6 @@ CpnRenderer.$inject = [
 
 CpnRenderer.prototype.canRender = function (element) {
   return isCpn(element);
-  // return
-  //   is(element, 'cpn:Place') ||
-  //   is(element, 'cpn:Transition') ||
-  //   is(element, 'cpn:Connection') ||
-  //   is(element, 'cpn:Label');
   return true;
 };
 
@@ -872,7 +869,6 @@ CpnRenderer.prototype.drawShape = function (parentGfx, element) {
 CpnRenderer.prototype.drawConnection = function (parentGfx, element) {
   var type = element.type;
   var h = this.handlers[type];
-  console.log('CONNECTION DRAAAAAAAW!!!!');
   /* jshint -W040 */
   return h(parentGfx, element);
 };
@@ -880,7 +876,7 @@ CpnRenderer.prototype.drawConnection = function (parentGfx, element) {
 CpnRenderer.prototype.getShapePath = function (element) {
   console.log('CpnRenderer.prototype.getShapePath(), element = ', element);
 
-  if (is(element, 'cpn:Place'))
+  if (is(element, CPN_PLACE))
     return getEllipsePath(element);
 
   return getRectPath(element);

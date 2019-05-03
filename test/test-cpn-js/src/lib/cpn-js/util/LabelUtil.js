@@ -2,7 +2,7 @@ import {
   assign
 } from 'min-dash';
 
-import { is } from './ModelUtil';
+import {CPN_CONNECTION, is} from './ModelUtil';
 
 
 export var DEFAULT_LABEL_SIZE = {
@@ -17,7 +17,7 @@ export var FLOW_LABEL_INDENT = 15;
  * Returns true if the given semantic has an external label
  */
 export function isLabelExternal(element) {
-  return is(element, 'cpn:Connection');
+  return is(element, CPN_CONNECTION);
 }
 
 /**

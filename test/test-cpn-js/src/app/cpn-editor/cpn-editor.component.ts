@@ -57,9 +57,10 @@ export class CpnEditorComponent implements OnInit {
     const modeling = diagram.get('modeling');
 
 // add root
-    const root = elementFactory.createRoot();
+//     const root = elementFactory.createRoot();
+//     canvas.setRootElement(root);
 
-    canvas.setRootElement(root);
+    const root = canvas.getRootElement();
 
 // add shapes
     const shape1 = elementFactory.createShape({
@@ -73,18 +74,27 @@ export class CpnEditorComponent implements OnInit {
     canvas.addShape(shape1, root);
 
     // create P1 labels
-    const label1 = elementFactory.createLabel({
+    let label = elementFactory.createLabel({
       labelTarget: shape1,
       type: 'cpn:Label',
-      name: 'initmark',
       text: 'initmark',
       x: shape1.x + shape1.width,
       y: shape1.y + shape1.height,
       width: 100,
       height: 20,
     });
-    canvas.addShape(label1, shape1);
+    canvas.addShape(label, shape1);
 
+    label = elementFactory.createLabel({
+      labelTarget: shape1,
+      type: 'cpn:Label',
+      text: 'type',
+      x: shape1.x - 100,
+      y: shape1.y + shape1.height,
+      width: 100,
+      height: 20,
+    });
+    canvas.addShape(label, shape1);
 
 
     const shape2 = elementFactory.createShape({
@@ -108,8 +118,19 @@ export class CpnEditorComponent implements OnInit {
       target: shape2,
       type: 'cpn:Connection',
     });
-
     canvas.addConnection(connection1, root);
+
+    label = elementFactory.createLabel({
+      labelTarget: connection1,
+      type: 'cpn:Label',
+      text: 'desc',
+      x: connection1.waypoints[0].x + 20,
+      y: connection1.waypoints[0].y + 20,
+      width: 100,
+      height: 20,
+    });
+    canvas.addShape(label, connection1);
+
 
 
     const shape3 = elementFactory.createShape({

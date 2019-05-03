@@ -10,7 +10,7 @@ try {
 //  echo 'export class MyVersion {public static readonly number = '%SVN_REVISION%'}' > src\myVersion.ts
 
   // var file = new File("src/app/app.version.ts");
-  // file.open("w");
+  // file.open("width");
   // file.writeln("export class AppVersion {public static readonly buildVersion = '${buildVersion}'}");
   // file.close();
 

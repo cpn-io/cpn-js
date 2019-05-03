@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import * as X2JS from './../../x2js/xml2json.js';
+import * as X2JS from '../../lib/x2js/xml2json.js';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {EventService} from './event.service';
 import {Message} from '../common/message';

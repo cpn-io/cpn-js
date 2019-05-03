@@ -1,6 +1,7 @@
 import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {Constants} from '../common/constants';
-import TextRenderer from '../../../cpn-js/lib/draw/TextRenderer';
+import TextRenderer from '../../lib/cpn-js/draw/TextRenderer';
+
 import {Message} from '../common/message';
 import {EventService} from '../services/event.service';
 import {ProjectService} from '../services/project.service';

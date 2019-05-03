@@ -1,4 +1,13 @@
 <!--The content below is only a placeholder and can be replaced.-->
+<label for="image">
+  <div class="nav-link mb-0">
+    <input (change)="uploadFile($event)" id="image" name="image" style="display:none;" type="file"/>
+    <!--<img src="../../../assets/img/open.png">-->
+    <i class="far fa-folder-open"></i>
+    <span>Open project</span>
+  </div>
+</label>
+
 
 <app-cpn-editor></app-cpn-editor>
 

@@ -1,6 +1,6 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import * as X2JS from 'src/x2js/xml2json.js';
+import * as X2JS from 'src/lib/x2js/xml2json.js';
 
 
 @Injectable()

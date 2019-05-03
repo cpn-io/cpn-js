@@ -17,7 +17,7 @@ arrows:
 arrows-alt:
   name: expand-arrows-alt
 arrows-h:
-  name: arrows-alt-h
+  name: arrows-alt-height
 arrows-v:
   name: arrows-alt-v
 bar-chart:
@@ -224,7 +224,7 @@ sign-in:
 sign-out:
   name: sign-out-alt
 sliders:
-  name: sliders-h
+  name: sliders-height
 sort-alpha-asc:
   name: sort-alpha-down
 sort-alpha-desc:

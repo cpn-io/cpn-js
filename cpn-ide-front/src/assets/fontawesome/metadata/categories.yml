@@ -57,7 +57,7 @@ arrows:
     - arrow-right
     - arrow-up
     - arrows-alt
-    - arrows-alt-h
+    - arrows-alt-height
     - arrows-alt-v
     - caret-down
     - caret-left
@@ -712,7 +712,7 @@ gender:
     - mars
     - mars-double
     - mars-stroke
-    - mars-stroke-h
+    - mars-stroke-height
     - mars-stroke-v
     - mercury
     - neuter
@@ -761,7 +761,7 @@ health:
   icons:
     - accessible-icon
     - ambulance
-    - h-square
+    - height-square
     - heart
     - heartbeat
     - hospital
@@ -792,7 +792,7 @@ images:
     - image
     - images
     - portrait
-    - sliders-h
+    - sliders-height
     - tint
   label: Images
 interfaces:
@@ -834,7 +834,7 @@ interfaces:
     - dot-circle
     - download
     - edit
-    - ellipsis-h
+    - ellipsis-height
     - ellipsis-v
     - envelope
     - envelope-open
@@ -914,7 +914,7 @@ interfaces:
     - sign-out-alt
     - signal
     - sitemap
-    - sliders-h
+    - sliders-height
     - smile
     - sort
     - sort-alpha-down
@@ -1003,7 +1003,7 @@ maps:
     - glass-martini
     - globe
     - graduation-cap
-    - h-square
+    - height-square
     - heart
     - heartbeat
     - helicopter
@@ -1095,7 +1095,7 @@ marketing:
     - lightbulb
     - mail-bulk
     - poll
-    - poll-h
+    - poll-height
     - search-dollar
     - search-location
   label: Marketing

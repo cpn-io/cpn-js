@@ -6,7 +6,7 @@ import {
   getLabel
 } from './LabelEditingUtil';
 
-import {is, isAny} from '../../util/ModelUtil';
+import {CPN_CONNECTION, CPN_TEXT_ANNOTATION, is, isCpn, isAny} from '../../util/ModelUtil';
 
 import {
   getExternalLabelMid,
@@ -23,6 +23,8 @@ export default function LabelEditingProvider(
   this._canvas = canvas;
   this._modeling = modeling;
   this._textRenderer = textRenderer;
+  this._eventBus = eventBus;
+  this._directEditing = directEditing;
 
   directEditing.registerProvider(this);
 
@@ -34,8 +36,12 @@ export default function LabelEditingProvider(
   // listen to direct editing event
   // eventBus.on('element.dblclick', function (event) {
   eventBus.on('element.click', function (event) {
-    if (event.element.type === 'cpn:Connection' && event.element.labels[0]) {
-      event.element = event.element.labels[0];
+    if (event.element.type === CPN_CONNECTION) {
+      if (event.element.labels > 0) {
+        event.element = event.element.labels[0];
+      } else {
+        return;
+      }
     }
     activateDirectEdit(event.element, true);
   });
@@ -104,16 +110,11 @@ export default function LabelEditingProvider(
     activateDirectEdit(event.shape);
   });
 
-
   function activateDirectEdit(element, force) {
-    if (force ||
-      isAny(element, ['cpn:TextAnnotation', 'cpn:Place', 'cpn:Transition', 'cpn:Label']) ||
-      isCollapsedSubProcess(element)) {
-
+    if (force || isCpn(element)) {
       directEditing.activate(element);
     }
   }
-
 }
 
 LabelEditingProvider.$inject = [
@@ -139,13 +140,6 @@ LabelEditingProvider.prototype.activate = function (element) {
 
   // text
   var text = getLabel(element);
-  if (element.type === 'cpn:Transition') {
-    text = element.name;
-  }
-  // if(element.type === 'cpn:Connection') {
-  //   element = element.labels[0];
-  // }
-
   if (text === undefined) {
     return;
   }
@@ -156,20 +150,11 @@ LabelEditingProvider.prototype.activate = function (element) {
 
   // bounds
   var bounds = this.getEditingBBox(element);
-
   assign(context, bounds);
-
   var options = {};
 
   // tasks
-  if (
-    isAny(element, [
-      'cpn:Place',
-      'cpn:Transition',
-      'cpn:Connection',
-      'cpn:Label',
-    ])
-  ) {
+  if (isCpn(element)) {
     assign(options, {
       centerVertically: true,
       centerHorizontally: true,
@@ -184,7 +169,7 @@ LabelEditingProvider.prototype.activate = function (element) {
   }
 
   // text annotations
-  if (is(element, 'cpn:TextAnnotation')) {
+  if (is(element, CPN_TEXT_ANNOTATION)) {
     assign(options, {
       resizable: true,
       autoResize: true
@@ -240,104 +225,19 @@ LabelEditingProvider.prototype.getEditingBBox = function (element) {
     fontWeight: this._textRenderer.getDefaultStyle().fontWeight
   };
 
-  // internal labels for tasks and collapsed call activities,
-  // sub processes and participants
-  // if (isCpn(element)) {
+  assign(bounds, {
+    width: bbox.width,
+    height: bbox.height
+  });
 
-    assign(bounds, {
-      width: bbox.width,
-      height: bbox.height
-    });
-
-    assign(style, {
-      fontSize: defaultFontSize + 'px',
-      lineHeight: defaultLineHeight,
-      paddingTop: (7 * zoom) + 'px',
-      paddingBottom: (7 * zoom) + 'px',
-      paddingLeft: (5 * zoom) + 'px',
-      paddingRight: (5 * zoom) + 'px'
-    });
-  // }
-
-  // var width = 90 * zoom,
-  //   paddingTop = 7 * zoom,
-  //   paddingBottom = 4 * zoom;
-  //
-  // // external labels for events, data elements, gateways and connections
-  // if (target.labelTarget) {
-  //   assign(bounds, {
-  //     width: width,
-  //     height: bbox.height + paddingTop + paddingBottom,
-  //     x: mid.x - width / 2,
-  //     y: bbox.y - paddingTop
-  //   });
-  //
-  //   assign(style, {
-  //     fontSize: externalFontSize + 'px',
-  //     lineHeight: externalLineHeight,
-  //     paddingTop: paddingTop + 'px',
-  //     paddingBottom: paddingBottom + 'px'
-  //   });
-  // }
-  //
-  // // external label not yet created
-  // if (isLabelExternal(target)
-  //   && !hasExternalLabel(target)
-  //   && !isLabel(target)) {
-  //
-  //   var externalLabelMid = getExternalLabelMid(element);
-  //
-  //   var absoluteBBox = canvas.getAbsoluteBBox({
-  //     x: externalLabelMid.x,
-  //     y: externalLabelMid.y,
-  //     width: 0,
-  //     height: 0
-  //   });
-  //
-  //   var height = externalFontSize + paddingTop + paddingBottom;
-  //
-  //   assign(bounds, {
-  //     width: width,
-  //     height: height,
-  //     x: absoluteBBox.x - width / 2,
-  //     y: absoluteBBox.y - height / 2
-  //   });
-  //
-  //   assign(style, {
-  //     fontSize: externalFontSize + 'px',
-  //     lineHeight: externalLineHeight,
-  //     paddingTop: paddingTop + 'px',
-  //     paddingBottom: paddingBottom + 'px'
-  //   });
-  // }
-  //
-  // // text annotations
-  // if (is(element, 'cpn:TextAnnotation')) {
-  //   assign(bounds, {
-  //     width: bbox.width,
-  //     height: bbox.height,
-  //     minWidth: 30 * zoom,
-  //     minHeight: 10 * zoom
-  //   });
-  //
-  //   assign(style, {
-  //     textAlign: 'left',
-  //     paddingTop: (5 * zoom) + 'px',
-  //     paddingBottom: (7 * zoom) + 'px',
-  //     paddingLeft: (7 * zoom) + 'px',
-  //     paddingRight: (5 * zoom) + 'px',
-  //     fontSize: defaultFontSize + 'px',
-  //     lineHeight: defaultLineHeight
-  //   });
-  // }
-
-  // -----------------------------------------------
-  // bounds = {
-  //   x: element.x,
-  //   y: element.y,
-  //   width: element.width * zoom,
-  //   height: element.height * zoom,
-  // }
+  assign(style, {
+    fontSize: defaultFontSize + 'px',
+    lineHeight: defaultLineHeight,
+    paddingTop: (7 * zoom) + 'px',
+    paddingBottom: (7 * zoom) + 'px',
+    paddingLeft: (5 * zoom) + 'px',
+    paddingRight: (5 * zoom) + 'px'
+  });
 
   return {bounds: bounds, style: style};
 };
@@ -348,24 +248,54 @@ LabelEditingProvider.prototype.update = function (
   activeContextText, bounds) {
 
   console.log('LabelEditingProvider.prototype.update(), element = ', element);
+  console.log('LabelEditingProvider.prototype.update(), newLabel = ', newLabel);
+  console.log('LabelEditingProvider.prototype.update(), activeContextText = ', activeContextText);
 
   var newBounds,
     bbox;
 
-  if (is(element, 'cpn:TextAnnotation')) {
-    bbox = this._canvas.getAbsoluteBBox(element);
+  element.name = newLabel;
+  element.text = newLabel;
 
-    newBounds = {
-      x: element.x,
-      y: element.y,
-      width: element.width / bbox.width * bounds.width,
-      height: element.height / bbox.height * bounds.height
-    };
+  this._eventBus.fire('element.changed', {element: element});
+};
+
+LabelEditingProvider.prototype.gotoNext = function (element) {
+  console.log('LabelEditingProvider.prototype.gotoNext(), element = ', element);
+
+  if (!element) {
+    return;
   }
 
-  if (element.name) element.name = newLabel;
-  if (element.text) element.text = newLabel;
-};
+  let nextElement;
+
+  if (element.labels && element.labels.length > 0) {
+    // if element is shape
+    nextElement = element.labels[0];
+  } else {
+    // if element is label
+    if (element.labelTarget) {
+      const parentElement = element.labelTarget;
+      const labels = parentElement.labels;
+
+      let n = 0;
+      // find index of current label
+      for (n = 0; n < labels.length; n++) {
+        if (labels[n] === element) {
+          break;
+        }
+      }
+
+      if (n < labels.length - 1)
+        nextElement = labels[n + 1];
+      else
+        nextElement = parentElement;
+    }
+  }
+
+  if (nextElement)
+    this._directEditing.activate(nextElement);
+}
 
 // helpers //////////////////////
 

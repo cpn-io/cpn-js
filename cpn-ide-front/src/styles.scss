@@ -1,13 +1,5 @@
-/* You can add global styles to this file, and also import other style files */
-// @import './../node_modules/angular-tree-component/dist/angular-tree-component.css';
-// @import "./../node_modules/bootstrap/dist/css/bootstrap.css";
 @import './../node_modules/angular-tree-component/dist/angular-tree-component.css';
-//@import "./../node_modules/bootstrap/dist/css/bootstrap.css";
-// @import "./../node_modules/diagram-js/assets/diagram-js.css";
-@import "./../cpn-js/resources/bpmn-font/css/bpmn.css";
-@import "./../cpn-js/resources/bpmn-font/css/bpmn-codes.css";
-@import "./../cpn-js/resources/bpmn-font/css/bpmn-embedded.css";
-@import "./../cpn-js/resources/diagram-js.css";
+@import "./../node_modules/diagram-js/assets/diagram-js.css";
 
 html {
   background: rgb(248, 249, 250);

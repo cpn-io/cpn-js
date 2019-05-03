@@ -697,7 +697,7 @@ arrows-alt-h:
   label: Alternate Arrows Horizontal
   search:
     terms:
-      - arrows-h
+      - arrows-height
       - resize
   styles:
     - solid

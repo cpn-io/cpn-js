@@ -14,7 +14,7 @@ const TRANSLATE_COLOR = {
 };
 
 export function getText(element) {
-  return element.name || element.text || 'undefined';
+  return element.name || element.text || '';
 }
 
 export function getFillColor(element) {

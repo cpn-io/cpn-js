@@ -101,117 +101,118 @@ export class ModelEditorComponent implements OnInit {
       // console.log('click on, event = ', event);
       this.fireSelectionEvent(event);
     });
-    eventBus.on('drag.init', (event) => {
-      // console.log('click on, event = ', event);
-      this.fireAllEvents(event);
-    });
-    eventBus.on('autoPlace', (event) => {
-      // console.log('click on, event = ', event);
-      this.fireAllEvents(event);
-    });
-    eventBus.on('element.mousedown', (event) => {
-      // console.log('click on, event = ', event);
-      this.fireAllEvents(event);
-    });
-    eventBus.on('popupMenu.open', (event) => {
-      // console.log('click on, event = ', event);
-      this.fireAllEvents(event);
-    });
-    eventBus.on('canvas.viewbox.changing', (event) => {
 
-      // console.log('click on, event = ', event);
-      this.fireAllEvents(event);
-    });
+    // eventBus.on('drag.init', (event) => {
+    //   // console.log('click on, event = ', event);
+    //   this.fireAllEvents(event);
+    // });
+    // eventBus.on('autoPlace', (event) => {
+    //   // console.log('click on, event = ', event);
+    //   this.fireAllEvents(event);
+    // });
+    // eventBus.on('element.mousedown', (event) => {
+    //   // console.log('click on, event = ', event);
+    //   this.fireAllEvents(event);
+    // });
+    // eventBus.on('popupMenu.open', (event) => {
+    //   // console.log('click on, event = ', event);
+    //   this.fireAllEvents(event);
+    // });
+    // eventBus.on('canvas.viewbox.changing', (event) => {
 
-
-    eventBus.on('shape.move.end', (event) => {
-      console.log('shape.move.end event fired');
-      this.shapeMoveJsonSaver(event);
-    });
-    eventBus.on(['create.end', 'autoPlace'], (event, context) => {
-      if (event.type === 'autoPlace') {
-        event.shape.x = event.source.x + 1.8 * event.source.width;
-        event.shape.y = event.source.y;
-      }
-      if (event.shape.type === 'cpn:Transition') {
-        this.createTransitionInModel(event.shape);
-      } else {
-        this.createPlaceInModel(event.shape);
-      }
-
-    });
-
-    eventBus.on('modelEditor.deleteElement', (event, element, connection) => {
-      console.log(element);
-      console.log(connection);
-      switch (element.type) {
-        case 'cpn:Place':
-          if (!this.jsonPageObject.place.length || this.jsonPageObject.place.length === 1) {
-            this.jsonPageObject.place = [];
-          } else {
-            this.jsonPageObject.place = this.jsonPageObject.place.filter(elem => elem._id !== element.id);
-          }
-          delete this.placeShapes[element.id];
-          break;
-        case 'cpn:Transition':
-          if (!this.jsonPageObject.trans.length || this.jsonPageObject.trans.length === 1) {
-            this.jsonPageObject.trans = [];
-          } else {
-            this.jsonPageObject.trans = this.jsonPageObject.trans.filter(elem => elem._id !== element.id);
-          }
-          delete this.transShapes[element.id];
-          break;
-        case 'cpn:Connection':
-          if (!this.jsonPageObject.arc.length || this.jsonPageObject.arc.length === 1) {
-            this.jsonPageObject.arc = [];
-          } else {
-            this.jsonPageObject.arc = this.jsonPageObject.arc.filter(elem => elem._id !== element.id);
-          }
-          this.arcShapes = this.arcShapes.filter(arc => arc.id !== element.id);
-          break;
-        default:
-
-      }
-      connection.forEach(conid => {
-        if (!this.jsonPageObject.arc.length || this.jsonPageObject.arc.length === 1) {
-          this.jsonPageObject.arc = [];
-        } else {
-          this.jsonPageObject.arc = this.jsonPageObject.arc.filter(elem => elem._id !== conid);
-        }
-        this.arcShapes = this.arcShapes.filter(arc => arc.id !== conid);
-      });
-    });
-
-    eventBus.on('commandStack.connection.create.execute', (event) => {
-      // this.createPlaceInModel(event.shape);
-      // this.createTransitionInModel(event.shape);
-      console.log('created arcs');
-      if (!this.jsonPageObject.arc.find(element => element._id === event.context.connection.id)) {
-        this.createArcsInModel(event.context);
-      }
-
-    });
+    //   // console.log('click on, event = ', event);
+    //   this.fireAllEvents(event);
+    // });
 
 
-    eventBus.on('directEditing.cancel', (event) => {
-      if (event.active.element.type === 'cpn:Transition' && event.active.element.hierar === 'subPage') {
-        const subp = this.subpages.find(sp => sp.tranid === event.active.element.id);
-        if (subp && subp.name !== event.active.element.name) {
-          subp.name = event.active.element.name;
-          this.changeSubPageName(subp);
-        }
-      }
-      this.modelUpdate();
-    });
+    // eventBus.on('shape.move.end', (event) => {
+    //   console.log('shape.move.end event fired');
+    //   this.shapeMoveJsonSaver(event);
+    // });
+    // eventBus.on(['create.end', 'autoPlace'], (event, context) => {
+    //   if (event.type === 'autoPlace') {
+    //     event.shape.x = event.source.x + 1.8 * event.source.width;
+    //     event.shape.y = event.source.y;
+    //   }
+    //   if (event.shape.type === 'cpn:Transition') {
+    //     this.createTransitionInModel(event.shape);
+    //   } else {
+    //     this.createPlaceInModel(event.shape);
+    //   }
 
-    eventBus.on('directEditing.Enter', (event) => {
-      // console.log('click on, event = ', event);
-      console.log('ENTER!!!!!!!!');
-    });
-    eventBus.on('ContextPadProvider.createlabel', (event, element, context) => {
-      console.log('GET EVENT ADD LABEL = ', event);
-      this.addLabelEvent(event, element, context);
-    });
+    // });
+
+    // eventBus.on('modelEditor.deleteElement', (event, element, connection) => {
+    //   console.log(element);
+    //   console.log(connection);
+    //   switch (element.type) {
+    //     case 'cpn:Place':
+    //       if (!this.jsonPageObject.place.length || this.jsonPageObject.place.length === 1) {
+    //         this.jsonPageObject.place = [];
+    //       } else {
+    //         this.jsonPageObject.place = this.jsonPageObject.place.filter(elem => elem._id !== element.id);
+    //       }
+    //       delete this.placeShapes[element.id];
+    //       break;
+    //     case 'cpn:Transition':
+    //       if (!this.jsonPageObject.trans.length || this.jsonPageObject.trans.length === 1) {
+    //         this.jsonPageObject.trans = [];
+    //       } else {
+    //         this.jsonPageObject.trans = this.jsonPageObject.trans.filter(elem => elem._id !== element.id);
+    //       }
+    //       delete this.transShapes[element.id];
+    //       break;
+    //     case 'cpn:Connection':
+    //       if (!this.jsonPageObject.arc.length || this.jsonPageObject.arc.length === 1) {
+    //         this.jsonPageObject.arc = [];
+    //       } else {
+    //         this.jsonPageObject.arc = this.jsonPageObject.arc.filter(elem => elem._id !== element.id);
+    //       }
+    //       this.arcShapes = this.arcShapes.filter(arc => arc.id !== element.id);
+    //       break;
+    //     default:
+
+    //   }
+    //   connection.forEach(conid => {
+    //     if (!this.jsonPageObject.arc.length || this.jsonPageObject.arc.length === 1) {
+    //       this.jsonPageObject.arc = [];
+    //     } else {
+    //       this.jsonPageObject.arc = this.jsonPageObject.arc.filter(elem => elem._id !== conid);
+    //     }
+    //     this.arcShapes = this.arcShapes.filter(arc => arc.id !== conid);
+    //   });
+    // });
+
+    // eventBus.on('commandStack.connection.create.execute', (event) => {
+    //   // this.createPlaceInModel(event.shape);
+    //   // this.createTransitionInModel(event.shape);
+    //   console.log('created arcs');
+    //   if (!this.jsonPageObject.arc.find(element => element._id === event.context.connection.id)) {
+    //     this.createArcsInModel(event.context);
+    //   }
+
+    // });
+
+
+    // eventBus.on('directEditing.cancel', (event) => {
+    //   if (event.active.element.type === 'cpn:Transition' && event.active.element.hierar === 'subPage') {
+    //     const subp = this.subpages.find(sp => sp.tranid === event.active.element.id);
+    //     if (subp && subp.name !== event.active.element.name) {
+    //       subp.name = event.active.element.name;
+    //       this.changeSubPageName(subp);
+    //     }
+    //   }
+    //   this.modelUpdate();
+    // });
+
+    // eventBus.on('directEditing.Enter', (event) => {
+    //   // console.log('click on, event = ', event);
+    //   console.log('ENTER!!!!!!!!');
+    // });
+    // eventBus.on('ContextPadProvider.createlabel', (event, element, context) => {
+    //   console.log('GET EVENT ADD LABEL = ', event);
+    //   this.addLabelEvent(event, element, context);
+    // });
 
 
     this.eventService.on(Message.CHANGE_NAME_PAGE, (data) => {

@@ -95,9 +95,9 @@ CpnImporter.prototype.add = function (cpnElement, type) {
     element = this._elementFactory.createShape(attrs);
     this._canvas.addShape(element, root);
 
-    for (var key of ['type', 'initmark']) {
+    for (var key of ['type', 'initmark', 'port']) {
       if (cpnElement[key]) {
-        attrs = this.getLabelAttrs(element, cpnElement[key]);
+        attrs = this.getLabelAttrs(element, cpnElement[key], key);
         label = this._elementFactory.createLabel(attrs);
         this._canvas.addShape(label, element);
       }
@@ -112,7 +112,7 @@ CpnImporter.prototype.add = function (cpnElement, type) {
 
     for (var key of ['cond', 'time', 'code', 'priority']) {
       if (cpnElement[key]) {
-        attrs = this.getLabelAttrs(element, cpnElement[key]);
+        attrs = this.getLabelAttrs(element, cpnElement[key], key);
         label = this._elementFactory.createLabel(attrs);
         this._canvas.addShape(label, element);
       }
@@ -130,7 +130,15 @@ CpnImporter.prototype.add = function (cpnElement, type) {
     if (placeShape && transShape) {
       const data = this.getArcData(cpnElement, type, placeShape, transShape);
       if (data) {
-        const conn = this._modeling.connect(data.source, data.target, data.attrs, null);
+        element = this._modeling.connect(data.source, data.target, data.attrs, null);
+
+        // for (var key of ['annot']) {
+        //   if (cpnElement[key]) {
+        //     attrs = this.getLabelAttrs(element, cpnElement[key], key);
+        //     label = this._elementFactory.createLabel(attrs);
+        //     this._canvas.addShape(label, element);
+        //   }
+        // }
       }
     }
   }
@@ -266,12 +274,15 @@ CpnImporter.prototype.getPlaceAttrs = function (cpnPlaceElement, type) {
   return attrs;
 }
 
-CpnImporter.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement) {
+CpnImporter.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, labelType) {
   var x = Math.round(cpnLabelElement.posattr._x);
   var y = Math.round(cpnLabelElement.posattr._y) * -1;
 
-  var text = cpnLabelElement.text.__text || 'undefined';
+  var text = cpnLabelElement._type || cpnLabelElement.text.__text || '';
   console.log('CpnImporter.prototype.getLabelAttrs(), text = ', text);
+  if (text === 'I/O') {
+    text = 'In/Out';
+  }
 
   var bounds = { x: x, y: y, width: 200, height: 20 };
   bounds = this._textRenderer.getExternalLabelBounds(bounds, text);
@@ -283,6 +294,7 @@ CpnImporter.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement) {
     type: CPN_LABEL,
     id: cpnLabelElement._id,
     cpnElement: cpnLabelElement,
+    labelType: labelType,
     text: text,
     labelTarget: labelTarget,
     x: x,

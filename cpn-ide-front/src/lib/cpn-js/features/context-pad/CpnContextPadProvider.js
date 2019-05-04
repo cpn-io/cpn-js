@@ -30,40 +30,40 @@ CpnContextPadProvider.prototype.getContextPadEntries = function (element) {
   }
 
 
-  if (is(element, CPN_CONNECTION))
-    return {
-      'delete': {
-        group: 'edit',
-        className: 'context-pad-icon-remove',
-        title: 'Remove',
-        action: {
-          click: removeElement,
-          dragstart: removeElement
-        }
-      }
-    };
-
-  if (is(element, CPN_PLACE) || is(element, CPN_TRANSITION))
-    return {
-      'delete': {
-        group: 'edit',
-        className: 'context-pad-icon-remove',
-        title: 'Remove',
-        action: {
-          click: removeElement,
-          dragstart: removeElement
-        }
-      },
-      'connect': {
-        group: 'edit',
-        className: 'context-pad-icon-connect',
-        title: 'Connect',
-        action: {
-          click: startConnect,
-          dragstart: startConnect
-        }
-      }
-    };
+  // if (is(element, CPN_CONNECTION))
+  //   return {
+  //     'delete': {
+  //       group: 'edit',
+  //       className: 'context-pad-icon-remove',
+  //       title: 'Remove',
+  //       action: {
+  //         click: removeElement,
+  //         dragstart: removeElement
+  //       }
+  //     }
+  //   };
+  //
+  // if (is(element, CPN_PLACE) || is(element, CPN_TRANSITION))
+  //   return {
+  //     'delete': {
+  //       group: 'edit',
+  //       className: 'context-pad-icon-remove',
+  //       title: 'Remove',
+  //       action: {
+  //         click: removeElement,
+  //         dragstart: removeElement
+  //       }
+  //     },
+  //     'connect': {
+  //       group: 'edit',
+  //       className: 'context-pad-icon-connect',
+  //       title: 'Connect',
+  //       action: {
+  //         click: startConnect,
+  //         dragstart: startConnect
+  //       }
+  //     }
+  //   };
 
   return null;
 };

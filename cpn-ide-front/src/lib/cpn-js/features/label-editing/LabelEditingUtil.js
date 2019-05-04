@@ -1,5 +1,7 @@
+import { getText } from "../../draw/CpnRenderUtil";
+
 export function getLabel(element) {
-   return element.text || element.name || 'undefined';
+   return getText(element);
 }
 
 export function setLabel(element, text, isExternal) {
@@ -7,6 +9,5 @@ export function setLabel(element, text, isExternal) {
     element.text = text;
   if (element.name)
     element.name = text;
-
   return element;
 }

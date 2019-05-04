@@ -9,15 +9,23 @@ import {
 
 // color access //////////////////////
 
+const TRANSLATE_COLOR = {
+  'Fucia': '#f0f'
+};
+
+export function getText(element) {
+  return element.name || element.text || 'undefined';
+}
+
 export function getFillColor(element) {
   if (element.cpnElement && element.cpnElement.fillattr)
-    return element.cpnElement.fillattr._colour || 'white';
+    return TRANSLATE_COLOR[element.cpnElement.fillattr._colour] || element.cpnElement.fillattr._colour || 'white';
   return element.fill || 'white';
 }
 
 export function getStrokeColor(element) {
   if (element.cpnElement && element.cpnElement.lineattr)
-    return element.cpnElement.lineattr._colour || 'black';
+    return TRANSLATE_COLOR[element.cpnElement.lineattr._colour] || element.cpnElement.lineattr._colour || 'black';
   return element.stroke || 'black';
 }
 

@@ -13,10 +13,7 @@ import UpdateLabelHandler from '../label-editing/cmd/UpdateLabelHandler';
  * @param {CommandStack} commandStack
  * @param {CpnRules} cpnRules
  */
-export default function Modeling(
-    eventBus, elementFactory, commandStack,
-    cpnRules) {
-
+export default function Modeling(eventBus, elementFactory, commandStack, cpnRules) {
   console.log('Modeling()');
 
   BaseModeling.call(this, eventBus, elementFactory, commandStack);
@@ -58,19 +55,16 @@ Modeling.prototype.updateLabel = function(element, newLabel, newBounds, hints) {
 
 
 Modeling.prototype.connect = function(source, target, attrs, hints) {
-
   var cpnRules = this._cpnRules;
 
   if (!attrs) {
     attrs = cpnRules.canConnect(source, target);
   }
-
   if (!attrs) {
     return;
   }
 
   // console.log('Modeling.prototype.connect()', source, target, attrs, source.parent, hints);
-
   return this.createConnection(source, target, attrs, source.parent, hints);
 };
 
@@ -84,3 +78,19 @@ Modeling.prototype.setColor = function(elements, colors) {
     colors: colors
   });
 };
+
+// Modeling.prototype.getElementById = function(id) {
+//   console.log('Modeling.prototype.getElementById(), id = ', id);
+
+//   var result;
+//   for (const key of Object.keys(this._elementRegistry._elements)) {
+//     const element = this._elementRegistry._elements[key].element;
+
+//     if (element && element.id && element.id === id) {
+//       result = element;
+//     }
+//   }
+
+//   console.log('Modeling.prototype.getElementById(), result = ', result);
+//   return result;
+// };

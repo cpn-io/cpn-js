@@ -15,6 +15,7 @@ import {
   getBusinessObject,
   is
 } from '../../../util/ModelUtil';
+import { getText } from '../../../draw/CpnRenderUtil';
 
 var NULL_DIMENSIONS = {
   width: 0,
@@ -120,9 +121,7 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
       return;
     }
 
-    var bo = getBusinessObject(label);
-
-    var text = bo.name || bo.text;
+    var text = getText(label);
 
     // don't resize without text
     if (!text) {

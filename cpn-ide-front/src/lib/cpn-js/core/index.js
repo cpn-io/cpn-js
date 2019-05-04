@@ -23,6 +23,7 @@ import CpnResizeModule from '../features/resize';
 
 import CpnSnappingModule from '../features/snapping';
 import CpnModelingModule from '../features/modeling';
+import CpnImportModule from '../import';
 
 import DirectEditingModule from '../features/direct-editing';
 import LabelEditingModule from '../features/label-editing';
@@ -53,6 +54,7 @@ export default {
     CpnSnappingModule,
     CpnRulesModule,
     CpnResizeModule,
+    CpnImportModule,
 
     // Custom
     DrawModule,

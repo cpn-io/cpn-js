@@ -45,7 +45,7 @@ import {
   getRectPath,
   getFillColor,
   getStrokeColor,
-  getStrokeWidth, getBox
+  getStrokeWidth, getBox, getText
 } from './CpnRenderUtil';
 
 
@@ -344,11 +344,11 @@ export default function CpnRenderer(
         fill: getStrokeColor(element)
       }
     };
-    return renderLabel(parentGfx, element.name, attrs);
+    return renderLabel(parentGfx, getText(element), attrs);
   }
 
   function renderExternalLabel(parentGfx, element) {
-    return renderLabel(parentGfx, element.text, {
+    return renderLabel(parentGfx, getText(element), {
       box: element,
       align: 'left-top',
       // padding: 5,
@@ -421,7 +421,7 @@ export default function CpnRenderer(
 
     // Draw error state
     var isError = element.iserror;
-    isError = true;
+    // isError = true;
 
     if (isError) {
       var ellipse = svgCreate('ellipse');
@@ -472,7 +472,7 @@ export default function CpnRenderer(
 
     // Draw error state
     var isError = element.iserror;
-    isError = true;
+    // isError = true;
 
     if (isError) {
       var rect = svgCreate('rect');
@@ -656,32 +656,32 @@ export default function CpnRenderer(
 
     'cpn:Connection': function (parentGfx, element) {
       var pathData = createPathFromConnection(element);
-      var path = drawArc(parentGfx, element, pathData);
-      return path;
-
-      // var pathData = createPathFromConnection(element);
-      //
-      // var fill = getFillColor(element), stroke = getStrokeColor(element);
-      //
-      // var attrs = {
-      //   strokeLinejoin: 'round',
-      //   markerEnd: marker('sequenceflow-end', fill, stroke),
-      //   stroke: getStrokeColor(element),
-      //   strokeWidth: getStrokeWidth(element)
-      // };
-      //
-      // if (element.iserror) {
-      //   var attrsError = {
-      //     strokeLinejoin: 'round',
-      //     // markerEnd: marker('sequenceflow-end', fill, 1),
-      //     stroke: 'red',
-      //     strokeWidth: 7
-      //   };
-      //   var path = drawPath(parentGfx, pathData, attrsError);
-      // }
-      // var path = drawPath(parentGfx, pathData, attrs);
-      //
+      // var path = drawArc(parentGfx, element, pathData);
       // return path;
+
+      var pathData = createPathFromConnection(element);
+
+      var fill = getFillColor(element), stroke = getStrokeColor(element);
+
+      var attrs = {
+        strokeLinejoin: 'round',
+        markerEnd: marker('sequenceflow-end', fill, stroke),
+        stroke: getStrokeColor(element),
+        strokeWidth: getStrokeWidth(element)
+      };
+
+      if (element.iserror) {
+        var attrsError = {
+          strokeLinejoin: 'round',
+          // markerEnd: marker('sequenceflow-end', fill, 1),
+          stroke: 'red',
+          strokeWidth: 7
+        };
+        var path = drawPath(parentGfx, pathData, attrsError);
+      }
+      var path = drawPath(parentGfx, pathData, attrs);
+
+      return path;
     },
 
     // -------------------------------------------------

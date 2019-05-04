@@ -11,6 +11,9 @@ import {EventService} from '../services/event.service';
 import {element} from 'protractor';
 import {ModelService} from '../services/model.service';
 
+import {importCpnPage} from '../../lib/cpn-js/import/Importer';
+
+
 @Component({
   selector: 'app-model-editor',
   templateUrl: './model-editor.component.html',
@@ -128,46 +131,62 @@ export class ModelEditorComponent implements OnInit {
     eventBus.on(['create.end', 'autoPlace'], (event, context) => {
       if (event.type === 'autoPlace') {
         event.shape.x = event.source.x + 1.8 * event.source.width;
-        event.shape.y = event.source.y ;
+        event.shape.y = event.source.y;
       }
-        if (event.shape.type === 'cpn:Transition') {
-          this.createTransitionInModel(event.shape);
-        } else {
-          this.createPlaceInModel(event.shape);
-        }
+      if (event.shape.type === 'cpn:Transition') {
+        this.createTransitionInModel(event.shape);
+      } else {
+        this.createPlaceInModel(event.shape);
+      }
 
     });
 
-    eventBus.on('modelEditor.deleteElement', (event , element, connection) => {
+    eventBus.on('modelEditor.deleteElement', (event, element, connection) => {
       console.log(element);
       console.log(connection);
-        switch (element.type) {
-          case 'cpn:Place':
-            if (!this.jsonPageObject.place.length || this.jsonPageObject.place.length === 1) { this.jsonPageObject.place = []; } else { this.jsonPageObject.place = this.jsonPageObject.place.filter(elem => elem._id !== element.id); }
-            delete this.placeShapes[element.id];
-            break;
-          case 'cpn:Transition':
-            if (!this.jsonPageObject.trans.length || this.jsonPageObject.trans.length === 1) { this.jsonPageObject.trans = []; } else { this.jsonPageObject.trans = this.jsonPageObject.trans.filter(elem => elem._id !== element.id); }
-             delete this.transShapes[element.id];
-            break;
-          case 'cpn:Connection':
-            if (!this.jsonPageObject.arc.length || this.jsonPageObject.arc.length === 1) { this.jsonPageObject.arc = []; } else { this.jsonPageObject.arc = this.jsonPageObject.arc.filter(elem => elem._id !== element.id); }
-            this.arcShapes = this.arcShapes.filter(arc => arc.id !== element.id);
-            break;
-          default:
+      switch (element.type) {
+        case 'cpn:Place':
+          if (!this.jsonPageObject.place.length || this.jsonPageObject.place.length === 1) {
+            this.jsonPageObject.place = [];
+          } else {
+            this.jsonPageObject.place = this.jsonPageObject.place.filter(elem => elem._id !== element.id);
+          }
+          delete this.placeShapes[element.id];
+          break;
+        case 'cpn:Transition':
+          if (!this.jsonPageObject.trans.length || this.jsonPageObject.trans.length === 1) {
+            this.jsonPageObject.trans = [];
+          } else {
+            this.jsonPageObject.trans = this.jsonPageObject.trans.filter(elem => elem._id !== element.id);
+          }
+          delete this.transShapes[element.id];
+          break;
+        case 'cpn:Connection':
+          if (!this.jsonPageObject.arc.length || this.jsonPageObject.arc.length === 1) {
+            this.jsonPageObject.arc = [];
+          } else {
+            this.jsonPageObject.arc = this.jsonPageObject.arc.filter(elem => elem._id !== element.id);
+          }
+          this.arcShapes = this.arcShapes.filter(arc => arc.id !== element.id);
+          break;
+        default:
 
+      }
+      connection.forEach(conid => {
+        if (!this.jsonPageObject.arc.length || this.jsonPageObject.arc.length === 1) {
+          this.jsonPageObject.arc = [];
+        } else {
+          this.jsonPageObject.arc = this.jsonPageObject.arc.filter(elem => elem._id !== conid);
         }
-        connection.forEach(conid => {
-          if (!this.jsonPageObject.arc.length || this.jsonPageObject.arc.length === 1) { this.jsonPageObject.arc = []; } else { this.jsonPageObject.arc = this.jsonPageObject.arc.filter(elem => elem._id !== conid); }
-          this.arcShapes = this.arcShapes.filter(arc => arc.id !== conid);
-        });
+        this.arcShapes = this.arcShapes.filter(arc => arc.id !== conid);
+      });
     });
 
     eventBus.on('commandStack.connection.create.execute', (event) => {
       // this.createPlaceInModel(event.shape);
       // this.createTransitionInModel(event.shape);
       console.log('created arcs');
-      if (!this.jsonPageObject.arc.find( element => element._id === event.context.connection.id )) {
+      if (!this.jsonPageObject.arc.find(element => element._id === event.context.connection.id)) {
         this.createArcsInModel(event.context);
       }
 
@@ -195,7 +214,6 @@ export class ModelEditorComponent implements OnInit {
     });
 
 
-
     this.eventService.on(Message.CHANGE_NAME_PAGE, (data) => {
       if (data.changedElement === 'page' && data.parentPage === this.jsonPageObject.pageattr._name) {
         const tran = this.transShapes[this.subpages.find(e => e.subpageid = data.id).tranid];
@@ -206,7 +224,9 @@ export class ModelEditorComponent implements OnInit {
           this.canvas.addShape(tran, this.canvas.getRootElement());
           for (const lab of tran.labels) {
             this.canvas.removeShape(lab);
-            if (lab.text) {  this.canvas.addShape(lab, tran); }
+            if (lab.text) {
+              this.canvas.addShape(lab, tran);
+            }
           }
           this.applyPageChanges();
         }
@@ -216,7 +236,7 @@ export class ModelEditorComponent implements OnInit {
     this.eventService.on(Message.SUBPAGE_CREATE, (data) => {
       let attrs;
       let shape;
-      if(data.parentid === this.pageId) {
+      if (data.parentid === this.pageId) {
         if (data.object) {
           attrs = this.getTransShapeAttrs(data.object);
           shape = this.elementFactory.createShape(attrs);
@@ -256,13 +276,17 @@ export class ModelEditorComponent implements OnInit {
 
     this.eventService.on(Message.DELETE_PAGE, (data) => {  /// {id: node.id, parent: node.parent.data.name}
       if (data.parent === this.jsonPageObject.pageattr._name) {
-         const tran = this.transShapes[this.subpages.find(e => e.subpageid = data.id).tranid];
-         if (tran) {
-           if (!this.jsonPageObject.trans.length || this.jsonPageObject.trans.length === 1) { this.jsonPageObject.trans = []; } else { this.jsonPageObject.trans = this.jsonPageObject.trans.filter(elem => elem._id !== tran.id); }
-           delete this.transShapes[tran.id];
-           this.canvas.removeShape(tran);
-         }
-      } else if (this.jsonPageObject._id === data.id ) {
+        const tran = this.transShapes[this.subpages.find(e => e.subpageid = data.id).tranid];
+        if (tran) {
+          if (!this.jsonPageObject.trans.length || this.jsonPageObject.trans.length === 1) {
+            this.jsonPageObject.trans = [];
+          } else {
+            this.jsonPageObject.trans = this.jsonPageObject.trans.filter(elem => elem._id !== tran.id);
+          }
+          delete this.transShapes[tran.id];
+          this.canvas.removeShape(tran);
+        }
+      } else if (this.jsonPageObject._id === data.id) {
         this.canvas._clear();
       }
     });
@@ -319,15 +343,15 @@ export class ModelEditorComponent implements OnInit {
         let element;
         let entry;
         let attrs;
-        if(data.type === 'cpn:Place') {
+        if (data.type === 'cpn:Place') {
           entry = this.placeShapes;
           element = entry[data.elementid];
           attrs = this.getPlaceShapeAttrs(element.cpnElement);
-        } else if(data.type === 'cpn:Transition') {
+        } else if (data.type === 'cpn:Transition') {
           entry = this.transShapes;
           element = entry[data.elementid];
           attrs = this.getTransShapeAttrs(element.cpnElement);
-        } else if(data.type === 'cpn:Connection') {
+        } else if (data.type === 'cpn:Connection') {
           entry = this.arcShapes;
           element = entry.find(elem => elem.id === data.elementid);
           attrs = this.getConnectionAttrs(element.cpnElement, this.modelService.getPageById(this.pageId));
@@ -336,16 +360,21 @@ export class ModelEditorComponent implements OnInit {
 
         this.canvas.removeShape(element);
         let shape;
-        if(data.type !== 'cpn:Connection') {
+        if (data.type !== 'cpn:Connection') {
           shape = this.elementFactory.createShape(attrs);
           shape.cpnElement = element.cpnElement;
           shape = this.canvas.addShape(shape, this.canvas.getRootElement());
         } else {
-           shape = this.modeling.connect(attrs.source, attrs.target, attrs.attrs, null);
+          shape = this.modeling.connect(attrs.source, attrs.target, attrs.attrs, null);
         }
-        for(let label of this.modelService.getLabelEntry()[this.modelService.getModelCase(data.type)])
+        for (let label of this.modelService.getLabelEntry()[this.modelService.getModelCase(data.type)]) {
           this.addShapeLabel(shape, element.cpnElement[label], label);
-        if (entry instanceof Array) entry.push(shape); else entry[attrs.id] = shape;
+        }
+        if (entry instanceof Array) {
+          entry.push(shape);
+        } else {
+          entry[attrs.id] = shape;
+        }
 
         // this.addShapeLabel(shape, place.type, 'type');
         // this.addShapeLabel(shape, place.initmark, 'initmark');
@@ -359,7 +388,7 @@ export class ModelEditorComponent implements OnInit {
         const placeShapes = this.placeShapes;
         const transShapes = this.transShapes;
         const canvas = this.canvas;
-        Object.keys(placeShapes).forEach(function(key) {
+        Object.keys(placeShapes).forEach(function (key) {
           shape = placeShapes[key];
           if (shape.iserror) {
             shape.iserror = false;
@@ -367,11 +396,13 @@ export class ModelEditorComponent implements OnInit {
             canvas.addShape(shape, canvas.getRootElement());
             for (const lab of shape.labels) {
               canvas.removeShape(lab);
-              if (lab.text) {  canvas.addShape(lab, shape); }
+              if (lab.text) {
+                canvas.addShape(lab, shape);
+              }
             }
           }
         });
-        Object.keys(transShapes).forEach(function(key) {
+        Object.keys(transShapes).forEach(function (key) {
           shape = transShapes[key];
           if (shape.iserror) {
             shape.iserror = false;
@@ -379,7 +410,9 @@ export class ModelEditorComponent implements OnInit {
             canvas.addShape(shape, canvas.getRootElement());
             for (const lab of shape.labels) {
               canvas.removeShape(lab);
-              if (lab.text) {  canvas.addShape(lab, shape); }
+              if (lab.text) {
+                canvas.addShape(lab, shape);
+              }
             }
           }
 
@@ -390,7 +423,9 @@ export class ModelEditorComponent implements OnInit {
           this.canvas.addConnection(arc, this.canvas.getRootElement());
           for (const lab of arc.labels) {
             canvas.removeShape(lab);
-            if (lab.text) {  canvas.addShape(lab, arc); }
+            if (lab.text) {
+              canvas.addShape(lab, arc);
+            }
           }
         }
         for (const id of data.id) {
@@ -401,7 +436,9 @@ export class ModelEditorComponent implements OnInit {
             canvas.addShape(shape, canvas.getRootElement());
             for (const lab of shape.labels) {
               canvas.removeShape(lab);
-              if (lab.text) {  canvas.addShape(lab, shape); }
+              if (lab.text) {
+                canvas.addShape(lab, shape);
+              }
             }
           }
           shape = this.transShapes[(id.trim()).slice(0, -1)];
@@ -411,7 +448,9 @@ export class ModelEditorComponent implements OnInit {
             canvas.addShape(shape, canvas.getRootElement());
             for (const lab of shape.labels) {
               canvas.removeShape(lab);
-              if (lab.text) {  canvas.addShape(lab, shape); }
+              if (lab.text) {
+                canvas.addShape(lab, shape);
+              }
             }
 
           }
@@ -422,7 +461,9 @@ export class ModelEditorComponent implements OnInit {
             this.canvas.addConnection(shape, this.canvas.getRootElement());
             for (const lab of shape.labels) {
               canvas.removeShape(lab);
-              if (lab.text) {  canvas.addShape(lab, shape); }
+              if (lab.text) {
+                canvas.addShape(lab, shape);
+              }
             }
           }
         }
@@ -431,7 +472,7 @@ export class ModelEditorComponent implements OnInit {
   }
 
 
-   modelUpdate() {
+  modelUpdate() {
     const page = this.applyPageChanges();
 
     //  console.log('actual data -------' + JSON.stringify(page));
@@ -450,7 +491,7 @@ export class ModelEditorComponent implements OnInit {
   }
 
   changeSubPageName(subpage) {
-    this.eventService.send(Message.CHANGE_NAME_PAGE,  {id: subpage.subpageid, name: subpage.name, changedElement : 'tran'});
+    this.eventService.send(Message.CHANGE_NAME_PAGE, {id: subpage.subpageid, name: subpage.name, changedElement: 'tran'});
   }
 
   /**
@@ -488,45 +529,45 @@ export class ModelEditorComponent implements OnInit {
         if (page.trans.length) {
           page.trans.forEach(movingXmlElement => {
             if (movingXmlElement._id === event.shape.id) {
-              movingXmlElement.cond.posattr._x = parseFloat(movingXmlElement.cond.posattr._x) + (event.dx );
+              movingXmlElement.cond.posattr._x = parseFloat(movingXmlElement.cond.posattr._x) + (event.dx);
               movingXmlElement.cond.posattr._y = parseFloat(movingXmlElement.cond.posattr._y) + (-1 * event.dy);
-              movingXmlElement.priority.posattr._x = parseFloat(movingXmlElement.priority.posattr._x) + (event.dx );
-              movingXmlElement.priority.posattr._y = parseFloat(movingXmlElement.priority.posattr._y) + (-1 * event.dy );
-              movingXmlElement.time.posattr._x = parseFloat(movingXmlElement.time.posattr._x) + (event.dx );
-              movingXmlElement.time.posattr._y = parseFloat(movingXmlElement.time.posattr._y) + (-1 * event.dy );
-              movingXmlElement.code.posattr._x = parseFloat(movingXmlElement.code.posattr._x) + (event.dx );
-              movingXmlElement.code.posattr._y = parseFloat(movingXmlElement.code.posattr._y) + (-1 * event.dy );
+              movingXmlElement.priority.posattr._x = parseFloat(movingXmlElement.priority.posattr._x) + (event.dx);
+              movingXmlElement.priority.posattr._y = parseFloat(movingXmlElement.priority.posattr._y) + (-1 * event.dy);
+              movingXmlElement.time.posattr._x = parseFloat(movingXmlElement.time.posattr._x) + (event.dx);
+              movingXmlElement.time.posattr._y = parseFloat(movingXmlElement.time.posattr._y) + (-1 * event.dy);
+              movingXmlElement.code.posattr._x = parseFloat(movingXmlElement.code.posattr._x) + (event.dx);
+              movingXmlElement.code.posattr._y = parseFloat(movingXmlElement.code.posattr._y) + (-1 * event.dy);
             }
           });
         } else {
-              page.trans.cond.posattr._x = parseFloat(page.trans.cond.posattr._x) + (event.dx );
-              page.trans.cond.posattr._y = parseFloat(page.trans.cond.posattr._y) + (-1 * event.dy);
-              page.trans.priority.posattr._x = parseFloat(page.trans.priority.posattr._x) + (event.dx );
-              page.trans.priority.posattr._y = parseFloat(page.trans.priority.posattr._y) + (-1 * event.dy );
-              page.trans.time.posattr._x = parseFloat(page.trans.time.posattr._x) + (event.dx );
-              page.trans.time.posattr._y = parseFloat(page.trans.time.posattr._y) + (-1 * event.dy );
-              page.trans.code.posattr._x = parseFloat(page.trans.code.posattr._x) + (event.dx );
-              page.trans.code.posattr._y = parseFloat(page.trans.code.posattr._y) + (-1 * event.dy );
-          }
+          page.trans.cond.posattr._x = parseFloat(page.trans.cond.posattr._x) + (event.dx);
+          page.trans.cond.posattr._y = parseFloat(page.trans.cond.posattr._y) + (-1 * event.dy);
+          page.trans.priority.posattr._x = parseFloat(page.trans.priority.posattr._x) + (event.dx);
+          page.trans.priority.posattr._y = parseFloat(page.trans.priority.posattr._y) + (-1 * event.dy);
+          page.trans.time.posattr._x = parseFloat(page.trans.time.posattr._x) + (event.dx);
+          page.trans.time.posattr._y = parseFloat(page.trans.time.posattr._y) + (-1 * event.dy);
+          page.trans.code.posattr._x = parseFloat(page.trans.code.posattr._x) + (event.dx);
+          page.trans.code.posattr._y = parseFloat(page.trans.code.posattr._y) + (-1 * event.dy);
+        }
         break;
       case 'cpn:Connection':
         if (page.arc.length) {
           page.arc.forEach(movingXmlElement => {
             if (movingXmlElement._id === event.shape.id) {
-              movingXmlElement.annot.posattr._x = parseFloat(movingXmlElement.annot.posattr._x) + (event.dx );
+              movingXmlElement.annot.posattr._x = parseFloat(movingXmlElement.annot.posattr._x) + (event.dx);
               movingXmlElement.annot.posattr._y = parseFloat(movingXmlElement.annot.posattr._y) + (-1 * event.dy);
             }
           });
         } else {
-          page.arc.annot.posattr._x = parseFloat(page.arc.annot.posattr._x) + (event.dx );
+          page.arc.annot.posattr._x = parseFloat(page.arc.annot.posattr._x) + (event.dx);
           page.arc.annot.posattr._y = parseFloat(page.arc.annot.posattr._y) + (-1 * event.dy);
         }
         break;
       default:
     }
-   // this.applyPageChanges();
-   // let element = event.shape;
-    this.eventService.send(Message.SHAPE_SELECT, {element: event.shape, pageJson: this.jsonPageObject });
+    // this.applyPageChanges();
+    // let element = event.shape;
+    this.eventService.send(Message.SHAPE_SELECT, {element: event.shape, pageJson: this.jsonPageObject});
 
   }
 
@@ -563,14 +604,14 @@ export class ModelEditorComponent implements OnInit {
         _currentcyckle: 2
       },
       transend: {
-        _idref:  element.source.type === 'cpn:Place' ?  element.target.id : element.source.id
+        _idref: element.source.type === 'cpn:Place' ? element.target.id : element.source.id
       },
       placeend: {
-        _idref: element.source.type === 'cpn:Place' ?  element.source.id : element.target.id
+        _idref: element.source.type === 'cpn:Place' ? element.source.id : element.target.id
       },
       annot: {
         posattr: {
-          _x: (element.target.x + element.source.x) / 2 ,
+          _x: (element.target.x + element.source.x) / 2,
           _y: -1 * (element.target.y + element.source.y) / 2
         },
         fillattr: {
@@ -601,12 +642,11 @@ export class ModelEditorComponent implements OnInit {
 
     element.connection.stroke = newArc.lineattr._colour;
     element.connection.strokeWidth = newArc.lineattr._thick;
-     this.arcShapes.push(element.connection);
-  //  this.labelEditingProvider.update(element.connection, '');
-  ///  this.addShapeLabel(element.connection, newArc.annot, 'annot');
+    this.arcShapes.push(element.connection);
+    //  this.labelEditingProvider.update(element.connection, '');
+    ///  this.addShapeLabel(element.connection, newArc.annot, 'annot');
     this.jsonPageObject.arc.push(newArc);
     // this.modelUpdate();
-
 
 
   }
@@ -628,72 +668,72 @@ export class ModelEditorComponent implements OnInit {
     };
     bounds = this.textRenderer.getExternalLabelBounds(bounds, 'AVert');
     const newPlace = {
-          posattr: {
-            _x: element.x, // -294.000000
-            _y: element.y  // 156.000000
-          },
-          fillattr: {
-            _colour: 'White',
-            _pattern: '',
-            _filled: false
-          },
-          lineattr: {
-            _colour: 'Black',
-            _thick: 1,
-            _type: 'Solid'
-          },
-          textattr: {
-            _colour: 'Black',
-            _bold: false
-          },
-          text: '',
-          ellipse: {
-            _w: element.width,  // 74.000000,
-            _h: element.height  // 70.000000
-          },
-          token: {
-            _x: -80.000000,
-            _y: -49.000000
-          },
-          marking: {
-            snap: {
-              _snap_id: 9,
-              '_anchor.horizontal': 1,
-              '_anchor.vertical': 3
-      },
-        _x: -4.000000,
-        _y: -10.000000,
-        _hidden: false
-      },
-      type: {
-        posattr: {
-        _x: element.x + Math.round(bounds.width) / 2 + element.width , /// 55.500000,
-        _y: -1 * element.y - Math.round(bounds.height) / 2 - element.height// 102.000000
+      posattr: {
+        _x: element.x, // -294.000000
+        _y: element.y  // 156.000000
       },
       fillattr: {
         _colour: 'White',
-          _pattern: 'Solid',
-          _filled: false
+        _pattern: '',
+        _filled: false
       },
       lineattr: {
         _colour: 'Black',
-        _thick: 0,
+        _thick: 1,
         _type: 'Solid'
       },
       textattr: {
         _colour: 'Black',
         _bold: false
       },
-      text: {
-        _tool: 'CPN Tools',
-        _version: '4.0.1',
+      text: '',
+      ellipse: {
+        _w: element.width,  // 74.000000,
+        _h: element.height  // 70.000000
       },
-      _id: element.id + 't' // 'ID1412328455'
-    },
+      token: {
+        _x: -80.000000,
+        _y: -49.000000
+      },
+      marking: {
+        snap: {
+          _snap_id: 9,
+          '_anchor.horizontal': 1,
+          '_anchor.vertical': 3
+        },
+        _x: -4.000000,
+        _y: -10.000000,
+        _hidden: false
+      },
+      type: {
+        posattr: {
+          _x: element.x + Math.round(bounds.width) / 2 + element.width, /// 55.500000,
+          _y: -1 * element.y - Math.round(bounds.height) / 2 - element.height// 102.000000
+        },
+        fillattr: {
+          _colour: 'White',
+          _pattern: 'Solid',
+          _filled: false
+        },
+        lineattr: {
+          _colour: 'Black',
+          _thick: 0,
+          _type: 'Solid'
+        },
+        textattr: {
+          _colour: 'Black',
+          _bold: false
+        },
+        text: {
+          _tool: 'CPN Tools',
+          _version: '4.0.1',
+        },
+        _id: element.id + 't' // 'ID1412328455'
+      },
       initmark: {
         posattr: {
-          _x:  element.x + Math.round(bounds.width) / 2 + element.width ,
-          _y: -1 * element.y  - Math.round(bounds.height) / 2
+          _x: element.x + Math.round(bounds.width) / 2 + element.width,
+          _y: -1 * element.y - Math.round(bounds.height) / 2
         },
         fillattr: {
           _colour: 'White',
@@ -718,18 +758,16 @@ export class ModelEditorComponent implements OnInit {
       _id: element.id // 'ID1412328424'
     };
     // let attrs = this.getPlaceShapeAttrs(newPlace);
-  //  let shape = this.elementFactory.createShape(attrs);
-   // shape = this.canvas.addShape(shape, this.canvas.getRootElement());
+    //  let shape = this.elementFactory.createShape(attrs);
+    // shape = this.canvas.addShape(shape, this.canvas.getRootElement());
 
     element.name = newPlace.text;
     element.stroke = newPlace.lineattr._colour;
     element.strokeWidth = newPlace.lineattr._thick;
-  //  this.placeShapes[attrs.id] = shape;
+    //  this.placeShapes[attrs.id] = shape;
     this.placeShapes[element.id] = element;
     this.jsonPageObject.place.push(newPlace);
-   // this.modelUpdate();
-
-
+    // this.modelUpdate();
 
 
   }
@@ -757,129 +795,129 @@ export class ModelEditorComponent implements OnInit {
       },
       fillattr: {
         _colour: 'White',
-          _pattern: '',
+        _pattern: '',
         _filled: false
       },
       lineattr: {
         _colour: 'Black',
-          _thick: 1,
-          _type: 'solid'
+        _thick: 1,
+        _type: 'solid'
       },
       textattr: {
         _colour: 'Black',
-          _bold: false
+        _bold: false
       },
       text: '',
-        box: {
-      _w: element.width,
-      _h: element.height
-    },
+      box: {
+        _w: element.width,
+        _h: element.height
+      },
       binding: {
         _x: 7.200000,
         _y: -3.000000
       },
       cond: {
         posattr: {
-          _x: element.x + Math.round(bounds.width) / 2 -  element.width / 4,
-          _y: -1 * element.y  - Math.round(bounds.height) / 2  + element.height / 4
+          _x: element.x + Math.round(bounds.width) / 2 - element.width / 4,
+          _y: -1 * element.y - Math.round(bounds.height) / 2 + element.height / 4
         },
         fillattr: {
           _colour: 'White',
-            _pattern: 'Solid',
-            _filled: false
+          _pattern: 'Solid',
+          _filled: false
         },
         lineattr: {
           _colour: 'Black',
-            _thick: 0,
-            _type: 'Solid'
+          _thick: 0,
+          _type: 'Solid'
         },
         textattr: {
           _colour: 'Black',
-            _bold: false
+          _bold: false
         },
         text: {
           _tool: 'CPN Tools',
-            _version: '4.0.1'
+          _version: '4.0.1'
         },
         _id: element.id + 'co'
       },
       time: {
         posattr: {
-          _x: element.x + Math.round(bounds.width) / 2 + element.width , /// 55.500000,
+          _x: element.x + Math.round(bounds.width) / 2 + element.width, /// 55.500000,
           _y: -1 * element.y - Math.round(bounds.height) / 2 + element.height / 4 // 102.000000
         },
         fillattr: {
           _colour: 'White',
-            _pattern: 'Solid',
-            _filled: false
+          _pattern: 'Solid',
+          _filled: false
         },
         lineattr: {
           _colour: 'Black',
-            _thick: 0,
-            _type: 'Solid'
+          _thick: 0,
+          _type: 'Solid'
         },
         textattr: {
           _colour: 'Black',
-            _bold: false
+          _bold: false
         },
         text: {
           _tool: 'CPN Tools',
-            _version: '4.0.1'
+          _version: '4.0.1'
         },
         _id: element.id + 'tm'
       },
       code: {
         posattr: {
-          _x:  element.x + Math.round(bounds.width) / 2 + element.width ,
-          _y: -1 * element.y  - Math.round(bounds.height) / 2 - element.height
+          _x: element.x + Math.round(bounds.width) / 2 + element.width,
+          _y: -1 * element.y - Math.round(bounds.height) / 2 - element.height
         },
         fillattr: {
           _colour: 'White',
-            _pattern: 'Solid',
-            _filled: false
+          _pattern: 'Solid',
+          _filled: false
         },
         lineattr: {
           _colour: 'Black',
-            _thick: 0,
-            _type: 'Solid'
+          _thick: 0,
+          _type: 'Solid'
         },
         textattr: {
           _colour: 'Black',
-            _bold: false
+          _bold: false
         },
         text: {
           _tool: 'CPN Tools',
-            _version: '4.0.1'
+          _version: '4.0.1'
         },
         _id: element.id + 'cd'
       },
       priority: {
         posattr: {
-          _x:  element.x + Math.round(bounds.width) / 2 -  element.width / 4,
-          _y: -1 * element.y  - Math.round(bounds.height) / 2 - element.height
+          _x: element.x + Math.round(bounds.width) / 2 - element.width / 4,
+          _y: -1 * element.y - Math.round(bounds.height) / 2 - element.height
         },
         fillattr: {
           _colour: 'White',
-            _pattern: 'Solid',
-            _filled: false
+          _pattern: 'Solid',
+          _filled: false
         },
         lineattr: {
           _colour: 'Black',
-            _thick: 0,
-            _type: 'Solid'
+          _thick: 0,
+          _type: 'Solid'
         },
         textattr: {
           _colour: 'Black',
-            _bold: false
+          _bold: false
         },
         text: {
           _tool: 'CPN Tools',
-            _version: '4.0.1'
+          _version: '4.0.1'
         },
         _id: element.id + 'p'
       },
       _id: element.id,
-        _explicit: false
+      _explicit: false
     };
     // businessObject: {
     //   text: obj.text,
@@ -888,9 +926,11 @@ export class ModelEditorComponent implements OnInit {
     element.stroke = newTranc.lineattr._colour;
     element.strokeWidth = newTranc.lineattr._thick;
     element.hierar = element.hierar ? element.hierar : 'tran';
-    if (element.hierar ) {
+    if (element.hierar) {
       const subpage = this.subpages.find(e => e.tranid === newTranc._id);
-      if (!element.name) {  element.name = subpage && subpage.name ? subpage.name : ''; }
+      if (!element.name) {
+        element.name = subpage && subpage.name ? subpage.name : '';
+      }
       if (subpage) {
         newTranc['subst'] = {
           subpageinfo: {
@@ -907,7 +947,7 @@ export class ModelEditorComponent implements OnInit {
       }
     }
     this.transShapes[element.id] = element;
-    if (this.jsonPageObject.trans.length || this.jsonPageObject.trans.length === 0  ) {
+    if (this.jsonPageObject.trans.length || this.jsonPageObject.trans.length === 0) {
       this.jsonPageObject.trans.push(newTranc);
     } else {
       const curTran = this.jsonPageObject.trans;
@@ -940,10 +980,10 @@ export class ModelEditorComponent implements OnInit {
           this.canvas.addShape(lab, elementForUpdate);
         }
       }
-      for ( let i = 0; i < elementForUpdate.labels.length; i++) {
-        if ( elementForUpdate.labels[i].text.trim() === '') {
+      for (let i = 0; i < elementForUpdate.labels.length; i++) {
+        if (elementForUpdate.labels[i].text.trim() === '') {
           try {
-            this.jsonPageObject.place.find( elem => elem._id === elementForUpdate.id)[elementForUpdate.labels[i].labelType].text.__text = undefined;
+            this.jsonPageObject.place.find(elem => elem._id === elementForUpdate.id)[elementForUpdate.labels[i].labelType].text.__text = undefined;
           } catch (err) {
             console.log('!!!!!!!!!' + err + '!!!!!!!!!!');
           }
@@ -961,10 +1001,10 @@ export class ModelEditorComponent implements OnInit {
           this.canvas.addShape(lab, elementForUpdate);
         }
       }
-      for ( let i = 0; i < elementForUpdate.labels.length; i++) {
+      for (let i = 0; i < elementForUpdate.labels.length; i++) {
         if (elementForUpdate.labels[i].text.trim() === '') {
           try {
-            this.jsonPageObject.place.find( elem => elem._id === elementForUpdate.id)[elementForUpdate.labels[i].labelType].text.__text = undefined;
+            this.jsonPageObject.place.find(elem => elem._id === elementForUpdate.id)[elementForUpdate.labels[i].labelType].text.__text = undefined;
           } catch (err) {
             console.log('!!!!!!!!!' + err + '!!!!!!!!!!');
           }
@@ -973,15 +1013,15 @@ export class ModelEditorComponent implements OnInit {
       }
     } else if ('cpn:Connection') {
       elementForUpdate = this.arcShapes.find(element => element.id === data.element.id);
-     for (const lab of elementForUpdate.labels) {
+      for (const lab of elementForUpdate.labels) {
         const labelbounds = {
-         width: lab.width, // 90,
-         height: lab.height,
-         x: lab.x,
-         y: lab.y
-       };
-       this.labelEditingProvider.update(elementForUpdate, lab.text, '', labelbounds);
-     }
+          width: lab.width, // 90,
+          height: lab.height,
+          x: lab.x,
+          y: lab.y
+        };
+        this.labelEditingProvider.update(elementForUpdate, lab.text, '', labelbounds);
+      }
     }
 
     for (const label of data.labels) {
@@ -1009,7 +1049,7 @@ export class ModelEditorComponent implements OnInit {
   applyPageChanges() {
     const page = this.jsonPageObject;
     // console.log('actual data -------' + JSON.stringify(page.place[0]));
-   // console.log('moddifi data -------' + JSON.stringify(this.placeShapes[page.place[0]._id]));
+    // console.log('moddifi data -------' + JSON.stringify(this.placeShapes[page.place[0]._id]));
 
     // console.log(JSON.stringify(this.transShapes));
     //  console.log( JSON.stringify(this.arcShapes));
@@ -1056,7 +1096,7 @@ export class ModelEditorComponent implements OnInit {
         }
       }
     }
-    if (!(page.trans.length === 0 && !page.trans._id) ) {
+    if (!(page.trans.length === 0 && !page.trans._id)) {
       let updatedTran;
       if (page.trans.length) {
         for (const tran of page.trans) {
@@ -1192,7 +1232,7 @@ export class ModelEditorComponent implements OnInit {
 
       }
     }
-    if (!(page.arc.length === 0 && !page.arc._id) ) {
+    if (!(page.arc.length === 0 && !page.arc._id)) {
       let uodatedCon;
       for (const arc of page.arc) {
         for (const modelArc of this.arcShapes) {
@@ -1242,7 +1282,7 @@ export class ModelEditorComponent implements OnInit {
 
       }
     }
-   // this.eventService.send(Message.MODEL_UPDATE, {pageObject:  page});
+    // this.eventService.send(Message.MODEL_UPDATE, {pageObject:  page});
     // EmitterService.getAppMessageEmitter().emit(
     //  {
     //    id: Constants.ACTION_MODEL_UPDATE,
@@ -1427,25 +1467,27 @@ export class ModelEditorComponent implements OnInit {
 
             }
           }
-          if (!linkOfJsonElement) { linkOfJsonElement = page.trans; }
+          if (!linkOfJsonElement) {
+            linkOfJsonElement = page.trans;
+          }
           if (lastAddedElement.labelType === 'cond') {
-           if ( this.addLabelEvent(event, this.curentElement, {type: 'time'})) {
-             textOfPrevElement = linkOfJsonElement.cond.text;
-           } else {
-             if ( this.addLabelEvent(event, this.curentElement, {type: 'code'})) {
-               textOfPrevElement = linkOfJsonElement.cond.text;
-             } else {
-               this.addLabelEvent(event, this.curentElement, {type: 'priority'});
-               textOfPrevElement = linkOfJsonElement.cond.text;
-             }
-           }
+            if (this.addLabelEvent(event, this.curentElement, {type: 'time'})) {
+              textOfPrevElement = linkOfJsonElement.cond.text;
+            } else {
+              if (this.addLabelEvent(event, this.curentElement, {type: 'code'})) {
+                textOfPrevElement = linkOfJsonElement.cond.text;
+              } else {
+                this.addLabelEvent(event, this.curentElement, {type: 'priority'});
+                textOfPrevElement = linkOfJsonElement.cond.text;
+              }
+            }
           }
           if (lastAddedElement.labelType === 'time') {
-            if ( this.addLabelEvent(event, this.curentElement, {type: 'code'})) {
+            if (this.addLabelEvent(event, this.curentElement, {type: 'code'})) {
               textOfPrevElement = linkOfJsonElement.time.text;
             } else {
               if (this.curentElement.labels.length > 1) {
-                if ( this.addLabelEvent(event, this.curentElement, {type: 'priority'})) {
+                if (this.addLabelEvent(event, this.curentElement, {type: 'priority'})) {
                   textOfPrevElement = linkOfJsonElement.time.text;
                 } else {
                   this.addLabelEvent(event, this.curentElement, {type: 'cond'});
@@ -1455,11 +1497,11 @@ export class ModelEditorComponent implements OnInit {
             }
           }
           if (lastAddedElement.labelType === 'code') {
-            if (  this.addLabelEvent(event, this.curentElement, {type: 'priority'})) {
+            if (this.addLabelEvent(event, this.curentElement, {type: 'priority'})) {
               textOfPrevElement = linkOfJsonElement.code.text;
             } else {
               if (this.curentElement.labels.length > 1) {
-                if ( this.addLabelEvent(event, this.curentElement, {type: 'cond'})) {
+                if (this.addLabelEvent(event, this.curentElement, {type: 'cond'})) {
                   textOfPrevElement = linkOfJsonElement.code.text;
                 } else {
                   this.addLabelEvent(event, this.curentElement, {type: 'time'});
@@ -1469,11 +1511,11 @@ export class ModelEditorComponent implements OnInit {
             }
           }
           if (lastAddedElement.labelType === 'priority') {
-            if ( this.addLabelEvent(event, this.curentElement, {type: 'cond'})) {
+            if (this.addLabelEvent(event, this.curentElement, {type: 'cond'})) {
               textOfPrevElement = linkOfJsonElement.priority.text;
             } else {
               if (this.curentElement.labels.length > 1) {
-                if ( this.addLabelEvent(event, this.curentElement, {type: 'time'})) {
+                if (this.addLabelEvent(event, this.curentElement, {type: 'time'})) {
                   textOfPrevElement = linkOfJsonElement.priority.text;
                 } else {
                   this.addLabelEvent(event, this.curentElement, {type: 'code'});
@@ -1525,7 +1567,9 @@ export class ModelEditorComponent implements OnInit {
 
             }
           }
-          if (!linkOfJsonElement) { linkOfJsonElement = page.place; }
+          if (!linkOfJsonElement) {
+            linkOfJsonElement = page.place;
+          }
           if (lastAddedElement.labelType === 'initmark') {
             this.addLabelEvent(event, this.curentElement, {type: 'type'});
             textOfPrevElement = linkOfJsonElement.initmark.text;
@@ -1705,12 +1749,20 @@ export class ModelEditorComponent implements OnInit {
     const that = this;
     if (pageObject) {
       // this.diagram.createDiagram(function () {
-        that.loadPageDiagram(pageObject);
+      that.loadPageDiagram(pageObject);
       // });
-    } else { this.canvas._clear(); }
+    } else {
+      this.canvas._clear();
+    }
   }
 
   loadPageDiagram(pageObject) {
+    console.log('loadPageDiagram(), import, pageObject = ', pageObject);
+
+    importCpnPage(this.diagram, pageObject);
+  }
+
+  loadPageDiagram_BAK(pageObject) {
     // console.log('ModelEditorComponent. load()');
     // console.log(pageObject);
 
@@ -1781,49 +1833,38 @@ export class ModelEditorComponent implements OnInit {
       console.log('modelBounds = ', modelBounds);
 
       const viewbox = this.canvas.viewbox();
-      // console.log('viewbox = ', viewbox);
-      // viewbox.x = -100;
-      // viewbox.y = -20;
-      // viewbox.width = modelBounds.width + 300;
-      // viewbox.height = modelBounds.height + 200;
-      // this.canvas.viewbox(viewbox);
-      // this.canvas.scroll({ dx: -1.0 * modelBounds.x, dy: -1.0 * modelBounds.y });
-
-      // var vb = {
-      //   x: modelBounds.x,
-      //   y: modelBounds.y,
-      //   width: Math.max(modelBounds.width, viewbox.width),
-      //   height: Math.max(modelBounds.height, viewbox.height)
-      // };
       const vb = modelBounds;
       this.canvas.viewbox(vb);
-
-      // console.log('modelBounds = ', modelBounds);
-      // this.canvas.viewbox(modelBounds);
-      // viewbox = this.canvas.viewbox();
-      // console.log('viewbox = ', viewbox);
 
       this.canvas.zoom(0.7, {x: vb.width / 2, y: vb.height / 2});
     }
   }
 
   setModelTransitions(trans: any, modelBounds: any, root: any) {
-    if (trans.lenght > 0 || (trans._id ) ) {
+    if (trans.lenght > 0 || (trans._id)) {
       const attrs = this.getTransShapeAttrs(trans);
       this.updateModelBounds(modelBounds, attrs);
       let shape = this.elementFactory.createShape(attrs);
       shape = this.canvas.addShape(shape, root);
       this.transShapes[attrs.id] = shape;
 
-    if (trans.cond) {  this.addShapeLabel(shape, trans.cond, 'cond'); }
-    if (trans.time) {   this.addShapeLabel(shape, trans.time, 'time'); }
-    if (trans.code) {   this.addShapeLabel(shape, trans.code, 'code'); }
-    if (trans.priority) {  this.addShapeLabel(shape, trans.priority, 'priority'); }
+      if (trans.cond) {
+        this.addShapeLabel(shape, trans.cond, 'cond');
+      }
+      if (trans.time) {
+        this.addShapeLabel(shape, trans.time, 'time');
+      }
+      if (trans.code) {
+        this.addShapeLabel(shape, trans.code, 'code');
+      }
+      if (trans.priority) {
+        this.addShapeLabel(shape, trans.priority, 'priority');
+      }
     }
   }
 
   addShapeLabel(shape, labelNode, labelType) {
-    if (labelNode){//&& labelNode.text && typeof labelNode.text === 'string' ? true : labelNode.text.__text) {
+    if (labelNode) {//&& labelNode.text && typeof labelNode.text === 'string' ? true : labelNode.text.__text) {
 
       let pos;
       if (labelNode.posattr) {
@@ -2013,7 +2054,7 @@ export class ModelEditorComponent implements OnInit {
       name: obj.text,
       stroke: stroke,
       strokeWidth: strokeWidth,
-      hierar: this.subpages.find(e => e.subpageid === obj._id ||  e.tranid === obj._id) ? 'subPage' : 'tran',
+      hierar: this.subpages.find(e => e.subpageid === obj._id || e.tranid === obj._id) ? 'subPage' : 'tran',
       // businessObject: {
       //   text: obj.text,
       // }

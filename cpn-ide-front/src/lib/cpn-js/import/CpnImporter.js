@@ -95,9 +95,9 @@ CpnImporter.prototype.add = function (cpnElement, type) {
     element = this._elementFactory.createShape(attrs);
     this._canvas.addShape(element, root);
 
-    for (var l of [cpnElement.type, cpnElement.initmark]) {
-      if (l) {
-        attrs = this.getLabelAttrs(element, l);
+    for (var key of ['type', 'initmark']) {
+      if (cpnElement[key]) {
+        attrs = this.getLabelAttrs(element, cpnElement[key]);
         label = this._elementFactory.createLabel(attrs);
         this._canvas.addShape(label, element);
       }
@@ -110,9 +110,9 @@ CpnImporter.prototype.add = function (cpnElement, type) {
     element = this._elementFactory.createShape(attrs);
     this._canvas.addShape(element, root);
 
-    for (var l of [cpnElement.cond, cpnElement.time, cpnElement.code, cpnElement.priority]) {
-      if (l) {
-        attrs = this.getLabelAttrs(element, l);
+    for (var key of ['cond', 'time', 'code', 'priority']) {
+      if (cpnElement[key]) {
+        attrs = this.getLabelAttrs(element, cpnElement[key]);
         label = this._elementFactory.createLabel(attrs);
         this._canvas.addShape(label, element);
       }

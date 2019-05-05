@@ -53,7 +53,7 @@ import {
 var RENDERER_IDS = new Ids();
 
 var ERROR_STROKE_COLOR = '#ff999966';
-var ERROR_STROKE_THICK = 7;
+var ERROR_STROKE_THICK = 5;
 
 var PORT_FILL_COLOR = '#e0e0fd';
 var PORT_STROKE_COLOR = '#4c66cc';

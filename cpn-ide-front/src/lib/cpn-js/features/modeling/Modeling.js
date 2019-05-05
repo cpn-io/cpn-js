@@ -4,6 +4,9 @@ import BaseModeling from 'diagram-js/lib/features/modeling/Modeling';
 
 import UpdateLabelHandler from '../label-editing/cmd/UpdateLabelHandler';
 
+import {
+  isCpn,
+} from '../../util/ModelUtil';
 
 /**
  * CPN modeling features activator
@@ -13,12 +16,14 @@ import UpdateLabelHandler from '../label-editing/cmd/UpdateLabelHandler';
  * @param {CommandStack} commandStack
  * @param {CpnRules} cpnRules
  */
-export default function Modeling(eventBus, elementFactory, commandStack, cpnRules) {
+export default function Modeling(eventBus, elementFactory, elementRegistry, commandStack, cpnRules) {
   console.log('Modeling()');
 
   BaseModeling.call(this, eventBus, elementFactory, commandStack);
 
+  this._eventBus = eventBus;
   this._cpnRules = cpnRules;
+  this._elementRegistry = elementRegistry;
 
   this._defaultValues = [];
 }
@@ -28,6 +33,7 @@ inherits(Modeling, BaseModeling);
 Modeling.$inject = [
   'eventBus',
   'elementFactory',
+  'elementRegistry',
   'commandStack',
   'cpnRules'
 ];
@@ -53,6 +59,14 @@ Modeling.prototype.updateLabel = function(element, newLabel, newBounds, hints) {
     newBounds: newBounds,
     hints: hints || {}
   });
+};
+
+Modeling.prototype.updateElement = function(element) {
+  console.log('Modeling().updateElement(), element = ', element);
+
+  if (element) {
+    this._eventBus.fire('element.changed', { element: element });
+  }
 };
 
 
@@ -81,21 +95,51 @@ Modeling.prototype.setColor = function(elements, colors) {
   });
 };
 
-// Modeling.prototype.getElementById = function(id) {
-//   console.log('Modeling.prototype.getElementById(), id = ', id);
+Modeling.prototype.getElementById = function(id) {
+  return this._elementRegistry.get(id);
+};
 
-//   var result;
-//   for (const key of Object.keys(this._elementRegistry._elements)) {
-//     const element = this._elementRegistry._elements[key].element;
+Modeling.prototype.getElementByCpnElement = function(cpnElement) {
+  var result;
 
-//     if (element && element.id && element.id === id) {
-//       result = element;
-//     }
-//   }
+  for (const key of Object.keys(this._elementRegistry._elements)) {
+    const element = this._elementRegistry._elements[key].element;
 
-//   console.log('Modeling.prototype.getElementById(), result = ', result);
-//   return result;
-// };
+    if (element && element.cpnElement === cpnElement) {
+      result = element;
+      break;
+    }
+  }
+
+  return result;
+};
+
+Modeling.prototype.getElementByCpnElementId = function(cpnElementId) {
+  var result;
+
+  for (const key of Object.keys(this._elementRegistry._elements)) {
+    const element = this._elementRegistry._elements[key].element;
+
+    if (element && element.cpnElement && element.cpnElement._id === cpnElementId) {
+      result = element;
+      break;
+    }
+  }
+
+  return result;
+};
+
+Modeling.prototype.clearErrorMarking = function() {
+  for (const key of Object.keys(this._elementRegistry._elements)) {
+    const element = this._elementRegistry._elements[key].element;
+
+    if (isCpn(element)) {
+      element.iserror = false;
+      this.updateElement(element);
+    }
+  }
+};
+
 
 Modeling.prototype.setDefaultValue = function (key, value) {
   this._defaultValues[key] = value;

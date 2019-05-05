@@ -1,12 +1,12 @@
-import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
-import {Constants} from '../common/constants';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { Constants } from '../common/constants';
 import TextRenderer from '../../lib/cpn-js/draw/TextRenderer';
 
-import {Message} from '../common/message';
-import {EventService} from '../services/event.service';
-import {ProjectService} from '../services/project.service';
-import {ModelService} from '../services/model.service';
-import {element} from 'protractor';
+import { Message } from '../common/message';
+import { EventService } from '../services/event.service';
+import { ProjectService } from '../services/project.service';
+import { ModelService } from '../services/model.service';
+import { element } from 'protractor';
 
 @Component({
   selector: 'app-properties-panel',
@@ -67,7 +67,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
 
   commonNodesOrder = {
-    place : {
+    place: {
       Name: 1,
       type: 2,
       initmark: 3,
@@ -111,15 +111,15 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     this.tableMapNames['invert']['Annot'] = 'annot';
 
     this.tables = [
-      {id: 'commonNodes', name: '', data: [], visible: false},
-      {id: 'nodes', name: '', data: [], visible: false},
-      {id: 'type', name: 'Type', data: [], visible: false},
-      {id: 'initmark', name: 'Initmark', data: [], visible: false},
-      {id: 'cond', name: 'Condition', data: [], visible: false},
-      {id: 'code', name: 'Code', data: [], visible: false},
-      {id: 'time', name: 'Time', data: [], visible: false},
-      {id: 'priority', name: 'Priority', data: [], visible: false},
-      {id: 'annot', name: 'Annotation', data: [], visible: false},
+      { id: 'commonNodes', name: '', data: [], visible: false },
+      { id: 'nodes', name: '', data: [], visible: false },
+      { id: 'type', name: 'Type', data: [], visible: false },
+      { id: 'initmark', name: 'Initmark', data: [], visible: false },
+      { id: 'cond', name: 'Condition', data: [], visible: false },
+      { id: 'code', name: 'Code', data: [], visible: false },
+      { id: 'time', name: 'Time', data: [], visible: false },
+      { id: 'priority', name: 'Priority', data: [], visible: false },
+      { id: 'annot', name: 'Annotation', data: [], visible: false },
     ];
 
     this.subscribeToProject();
@@ -131,7 +131,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   getFieldValue(id, name, value) {
     let retrunValue = value;
     // console.log('id name value: ' + id + ' ' + name + ' ' + value);
-    if (value === '  ') {   retrunValue =  this.projectService.getAppSettings()[id]; }
+    if (value === '  ') { retrunValue = this.projectService.getAppSettings()[id]; }
     return retrunValue;
   }
 
@@ -156,32 +156,33 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     if (htmlElement && htmlElement.nodeName === 'TD' || htmlElement.nodeName === 'INPUT') {
       if (htmlElement.offsetParent && (htmlElement.offsetParent['offsetParent'])) {
         const htmlTableElement: HTMLTableElement = <HTMLTableElement>document.getElementById(htmlElement.offsetParent['offsetParent'].id);
-        if(htmlElement.nodeName === 'INPUT') {
+        if (htmlElement.nodeName === 'INPUT') {
           let updatedfield = htmlElement.parentNode.parentNode.childNodes[0].textContent;
-          updatedfield = this.tableMapNames['invert'][updatedfield] ?  this.tableMapNames['invert'][updatedfield] : updatedfield;
+          updatedfield = this.tableMapNames['invert'][updatedfield] ? this.tableMapNames['invert'][updatedfield] : updatedfield;
           const newValue = htmlElement['value'];
           let table = this.getTable(htmlElement.offsetParent['offsetParent'].id);
-          this.modelService.setDescendantProp(this.cpnElement, this.setValueForTableByIdandReturnPath(newValue, table, updatedfield).replace('cpnElement.', ''), newValue );
+          this.modelService.setDescendantProp(this.cpnElement, this.setValueForTableByIdandReturnPath(newValue, table, updatedfield).replace('cpnElement.', ''), newValue);
           const emiterData = {
             id: Constants.ACTION_PROPERTY_UPDATE,
             labels: [],
             elementid: this.cpnElement._id,
+            cpnElement: this.cpnElement,
             type: this.elementType,
             pagename: this.modelService.getPageById(this.pageId).pageattr._name
           };
           this.eventService.send(Message.PROPERTY_UPDATE, emiterData);
         }
-       /* if (htmlTableElement.id === 'commonNodes') {
-          this.updateProperties(commonNodes, htmlTableElement);
-        } else if (htmlTableElement.id === 'nodes') {
-          this.updateProperties(nodes, htmlTableElement);
-        } else {
-          // update labels
-          const t = this.getTable(htmlTableElement.id);
-          if (t) {
-            this.updateProperties(t.data, htmlTableElement);
-          }
-        }*/
+        /* if (htmlTableElement.id === 'commonNodes') {
+           this.updateProperties(commonNodes, htmlTableElement);
+         } else if (htmlTableElement.id === 'nodes') {
+           this.updateProperties(nodes, htmlTableElement);
+         } else {
+           // update labels
+           const t = this.getTable(htmlTableElement.id);
+           if (t) {
+             this.updateProperties(t.data, htmlTableElement);
+           }
+         }*/
 
         // let tableDataSource;
         // switch (htmlTableElement.id) {
@@ -223,9 +224,9 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
 
 
-  setValueForTableByIdandReturnPath(value, table, name): string{
-    for(let i = 0; i < table.data.length; i++){
-      if(table.data[i].name === name) {table.data[i].value =  value; return table.data[i].path; }
+  setValueForTableByIdandReturnPath(value, table, name): string {
+    for (let i = 0; i < table.data.length; i++) {
+      if (table.data[i].name === name) { table.data[i].value = value; return table.data[i].path; }
     }
   }
 
@@ -693,21 +694,21 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     // }) : this.currentProjectModel.data.workspaceElements.cpnet.page;
 
     //  this.pageInModel = pageInModel;
-    let  elementShape = undefined;
-    if(elementType !== 'cpn:Connection') {
+    let elementShape = undefined;
+    if (elementType !== 'cpn:Connection') {
       elementShape = elementType === 'cpn:Transition' ? 'box' : 'ellipse';
     }
-    nodes.push({name: 'Id', value: cpnElement._id, hide: true, path:  'cpnElement._id' });
-    nodes.push({name: 'Name', value: cpnElement.text, path:  'cpnElement.text' });
-    nodes.push({name: 'Type', value: elementType, hide: true});
-    nodes.push({name: 'X', value: cpnElement.posattr._x, path:  'cpnElement.posattr._x' });
-    nodes.push({name: 'Y', value: cpnElement.posattr._y, path:  'cpnElement.posattr._y' });
-    nodes.push({name: 'Width', value: elementShape  ? cpnElement[elementShape]._w :  ' - ', path:  elementShape ? 'cpnElement' + elementShape + '._w' : undefined });
-    nodes.push({name: 'Height', value: elementShape ?  cpnElement[elementShape]._h : ' - ' , path:  elementShape ? 'cpnElement' + elementShape + '._h' : undefined });
-    nodes.push({name: 'Stroke', value: cpnElement.lineattr._colour, path:  'cpnElement.lineattr._colour' });
-    nodes.push({name: 'strokeWidth', value: cpnElement.lineattr._thick, path:  'cpnElement.lineattr._thick' });
-    nodes.push({name: 'BackGround', value: cpnElement.fillattr._colour, path:  'cpnElement.fillattr._colour' });
-    commonNodes.push( {name: 'Name', value: cpnElement.text, path: 'cpnElement.text'} );
+    nodes.push({ name: 'Id', value: cpnElement._id, hide: true, path: 'cpnElement._id' });
+    nodes.push({ name: 'Name', value: cpnElement.text, path: 'cpnElement.text' });
+    nodes.push({ name: 'Type', value: elementType, hide: true });
+    nodes.push({ name: 'X', value: cpnElement.posattr._x, path: 'cpnElement.posattr._x' });
+    nodes.push({ name: 'Y', value: cpnElement.posattr._y, path: 'cpnElement.posattr._y' });
+    nodes.push({ name: 'Width', value: elementShape ? cpnElement[elementShape]._w : ' - ', path: elementShape ? 'cpnElement' + elementShape + '._w' : undefined });
+    nodes.push({ name: 'Height', value: elementShape ? cpnElement[elementShape]._h : ' - ', path: elementShape ? 'cpnElement' + elementShape + '._h' : undefined });
+    nodes.push({ name: 'Stroke', value: cpnElement.lineattr._colour, path: 'cpnElement.lineattr._colour' });
+    nodes.push({ name: 'strokeWidth', value: cpnElement.lineattr._thick, path: 'cpnElement.lineattr._thick' });
+    nodes.push({ name: 'BackGround', value: cpnElement.fillattr._colour, path: 'cpnElement.fillattr._colour' });
+    commonNodes.push({ name: 'Name', value: cpnElement.text, path: 'cpnElement.text' });
 
 
     /*nodes.push({name: 'Id', value: type === 'cpn:Label' ? shapeObject.labelNodeId : shapeObject.id, hide: true});
@@ -736,20 +737,20 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
       const t = this.getTable(label);
       if (t) {
         labelElem = t.data;
-        labelElem.push({name: 'Id', value: cpnElement[label]._id, hide: true, path:  'cpnElement.' + label + '._id'});
-        labelElem.push({name: 'Type', value: type, hide: true});
-        labelElem.push({name: 'X', value: cpnElement[label].posattr._x,  path:  'cpnElement.' + label + '.posattr._x'});
-        labelElem.push({name: 'Y', value: cpnElement[label].posattr._y,  path:  'cpnElement.' + label + '.posattr._y'});
+        labelElem.push({ name: 'Id', value: cpnElement[label]._id, hide: true, path: 'cpnElement.' + label + '._id' });
+        labelElem.push({ name: 'Type', value: type, hide: true });
+        labelElem.push({ name: 'X', value: cpnElement[label].posattr._x, path: 'cpnElement.' + label + '.posattr._x' });
+        labelElem.push({ name: 'Y', value: cpnElement[label].posattr._y, path: 'cpnElement.' + label + '.posattr._y' });
         //labelElem.push({name: 'Width', value: label.width});
         //labelElem.push({name: 'Height', value: label.height});
-        labelElem.push({name: 'Text', value: cpnElement[label].text.__text ? cpnElement[label].text.__text : this.projectService.appSettings[label], path:  'cpnElement.' + label + '.text.__text'});
-        labelElem.push({name: 'Stroke', value: cpnElement[label].lineattr._colour, path:  'cpnElement.' + label + '.lineattr._colou'});
-        labelElem.push({name: 'strokeWidth', value: cpnElement[label].lineattr._thick,  path:  'cpnElement.' + label + '.lineattr._thick'});
-        labelElem.push({name: 'BackGround', value: cpnElement[label].fillattr._colour,  path:  'cpnElement.' + label + '.fillattr._colour'});
-        commonNodes.push({name: label, value: cpnElement[label].text.__text ? cpnElement[label].text.__text : this.projectService.appSettings[label],  path:  'cpnElement.' + label + '.text.__text'});
+        labelElem.push({ name: 'Text', value: cpnElement[label].text.__text ? cpnElement[label].text.__text : this.projectService.appSettings[label], path: 'cpnElement.' + label + '.text.__text' });
+        labelElem.push({ name: 'Stroke', value: cpnElement[label].lineattr._colour, path: 'cpnElement.' + label + '.lineattr._colou' });
+        labelElem.push({ name: 'strokeWidth', value: cpnElement[label].lineattr._thick, path: 'cpnElement.' + label + '.lineattr._thick' });
+        labelElem.push({ name: 'BackGround', value: cpnElement[label].fillattr._colour, path: 'cpnElement.' + label + '.fillattr._colour' });
+        commonNodes.push({ name: label, value: cpnElement[label].text.__text ? cpnElement[label].text.__text : this.projectService.appSettings[label], path: 'cpnElement.' + label + '.text.__text' });
       }
     }
-    commonNodes.push({name: 'Stroke', value: cpnElement.lineattr._colour, path: 'cpnElement.lineattr._colour' });
+    commonNodes.push({ name: 'Stroke', value: cpnElement.lineattr._colour, path: 'cpnElement.lineattr._colour' });
     /*for (const label of shapeObject.labels) {
       // labelElem = this.getLabelProperties(label);
 
@@ -853,15 +854,15 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
       };
       const textRend = new TextRenderer();
       bounds = textRend.getExternalLabelBounds(bounds, '');
-      t.data.push({name: 'Id', value: content._id, hide: true});
-      t.data.push({name: 'Type', value: id, hide: true});
-      t.data.push({name: 'X', value: 1 * content.posattr._x + Math.round(bounds.width) / 2});
-      t.data.push({name: 'Y', value: -1 * content.posattr._y - Math.round(bounds.height) / 2});
-      t.data.push({name: 'Width', value: 0});
-      t.data.push({name: 'Height', value: 0});
+      t.data.push({ name: 'Id', value: content._id, hide: true });
+      t.data.push({ name: 'Type', value: id, hide: true });
+      t.data.push({ name: 'X', value: 1 * content.posattr._x + Math.round(bounds.width) / 2 });
+      t.data.push({ name: 'Y', value: -1 * content.posattr._y - Math.round(bounds.height) / 2 });
+      t.data.push({ name: 'Width', value: 0 });
+      t.data.push({ name: 'Height', value: 0 });
       // t.data.push({name: 'Text', value: '  '});
-      t.data.push({name: 'Text', value: '  '});
-      t.data.push({name: 'Stroke', value: 'Black'});
+      t.data.push({ name: 'Text', value: '  ' });
+      t.data.push({ name: 'Stroke', value: 'Black' });
     }
   }
 

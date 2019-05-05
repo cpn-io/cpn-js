@@ -22,6 +22,10 @@ export function isCpn(element) {
   return element && element.type && /^cpn/.test(element.type);
 }
 
+export function isCpnPortOrSubst(element) {
+  return element && element.labelType && (element.labelType === 'port' || element.labelType === 'subst');
+}
+
 export function isAny(element, types) {
   return some(types, function(t) {
     return is(element, t);

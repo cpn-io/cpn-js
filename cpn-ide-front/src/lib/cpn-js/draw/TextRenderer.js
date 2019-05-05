@@ -75,7 +75,7 @@ export default function TextRenderer(config) {
     return {
       x: Math.round(bounds.x),
       y: Math.round(bounds.y),
-      width: Math.ceil(layoutedDimensions.width + 0.5),
+      width: Math.ceil(layoutedDimensions.width + 1),
       height: Math.ceil(layoutedDimensions.height)
     };
 

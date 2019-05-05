@@ -4,11 +4,6 @@ import {
 } from 'min-dash';
 
 import TextBox from './TextBox';
-import {
-  CPN_LABEL,
-  is
-} from "../../util/ModelUtil";
-
 
 /**
  * A direct editing component that allows users
@@ -88,7 +83,7 @@ DirectEditing.prototype.gotoNext = function () {
 };
 
 DirectEditing.prototype._fire = function (event, context) {
-  this._eventBus.fire('directEditing.' + event, context || {active: this._active});
+  this._eventBus.fire('directEditing.' + event, context || { active: this._active });
 };
 
 DirectEditing.prototype.close = function () {
@@ -181,7 +176,7 @@ DirectEditing.prototype._handleResize = function (event) {
   var newBounds = provider.getTextBounds(element, newLabel);
   console.log('_handleResize(), newBounds = ', newBounds);
 
-  this._fire('resize', {newBounds: newBounds});
+  this._fire('resize', { newBounds: newBounds });
 
   return newBounds;
 };
@@ -241,32 +236,32 @@ DirectEditing.prototype.activate = function (element) {
 
     if (editBox) {
       // select all text after focus
-      // editBox.onfocus = function () {
-      window.setTimeout(function () {
-        var sel, range;
+      editBox.onfocus = function () {
+        window.setTimeout(function () {
+          var sel, range;
 
-        // console.log('DirectEditing.prototype.activate(), window.getSelection = ', window.getSelection);
-        // console.log('DirectEditing.prototype.activate(), document.createRange = ', document.createRange);
-        // console.log('DirectEditing.prototype.activate(), document.body.createTextRange = ', document.body.createTextRange);
+          // console.log('DirectEditing.prototype.activate(), window.getSelection = ', window.getSelection);
+          // console.log('DirectEditing.prototype.activate(), document.createRange = ', document.createRange);
+          // console.log('DirectEditing.prototype.activate(), document.body.createTextRange = ', document.body.createTextRange);
 
-        if (window.getSelection && document.createRange) {
-          range = document.createRange();
-          range.selectNodeContents(editBox);
-          sel = window.getSelection();
-          sel.removeAllRanges();
-          sel.addRange(range);
-        } else if (document.body.createTextRange) {
-          range = document.body.createTextRange();
-          range.moveToElementText(editBox);
-          range.select();
-        }
-      }, 10);
-      // };
+          if (window.getSelection && document.createRange) {
+            range = document.createRange();
+            range.selectNodeContents(editBox);
+            sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+          } else if (document.body.createTextRange) {
+            range = document.body.createTextRange();
+            range.moveToElementText(editBox);
+            range.select();
+          }
+        }, 100);
+      };
 
       // set focus to element
       setTimeout(() => { // this will make the execution after the above boolean has changed
         editBox.focus();
-      }, 10);
+      }, 100);
 
 
       // set TAB key event handler

@@ -9,6 +9,7 @@ import RulesModule from 'diagram-js/lib/features/rules';
 import Modeling from './Modeling';
 import CpnLayouter from './CpnLayouter';
 import CpnUpdater from './CpnUpdater';
+import AdaptiveLabelPositioningBehavior from './AdaptiveLabelPositioningBehavior';
 
 export default {
   __depends__: [
@@ -22,8 +23,10 @@ export default {
     'modeling',
     'layouter',
     'cpnUpdater',
+    'adaptiveLabelPositioningBehavior',
   ],
   modeling: [ 'type', Modeling ],
   layouter: [ 'type', CpnLayouter ],
-  cpnUpdater: [ 'type', CpnUpdater ]
+  cpnUpdater: [ 'type', CpnUpdater ],
+  adaptiveLabelPositioningBehavior: [ 'type', AdaptiveLabelPositioningBehavior ],
 };

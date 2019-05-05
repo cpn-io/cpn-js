@@ -7,13 +7,13 @@
  * @param  {Object} cpnPageElement
  * @param  {Function} done the callback, invoked with (err, [ warning ]) once the import is done
  */
-import { CPN_CONNECTION, CPN_PLACE, CPN_TEXT_ANNOTATION, CPN_TRANSITION } from "../util/ModelUtil";
+import { CPN_CONNECTION, CPN_PLACE, CPN_TEXT_ANNOTATION, CPN_TRANSITION, is } from "../util/ModelUtil";
 
 export function importCpnPage(diagram, cpnPageElement) {
 
   console.log('Importer.importCpnPage(), cpnPageElement = ', cpnPageElement);
 
-  var importer, eventBus, translate, canvas;
+  var importer, eventBus, translate, canvas, elementRegistry, layouter;
 
   var error, warnings = [];
 
@@ -22,6 +22,8 @@ export function importCpnPage(diagram, cpnPageElement) {
     eventBus = diagram.get('eventBus');
     translate = diagram.get('translate');
     canvas = diagram.get('canvas');
+    elementRegistry = diagram.get('elementRegistry');
+    layouter = diagram.get('layouter');
 
     eventBus.fire('import.render.start', { source: cpnPageElement });
 
@@ -58,23 +60,37 @@ export function importCpnPage(diagram, cpnPageElement) {
     if (!cpnPageElement.pageattr)
       throw new Error(translate('CPN page element is not a CPN page object (pageattr is undefined)'));
 
-    importContent(cpnPageElement.place, CPN_PLACE);
-    importContent(cpnPageElement.trans, CPN_TRANSITION);
-    importContent(cpnPageElement.arc, CPN_CONNECTION);
-    importContent(cpnPageElement.Aux, CPN_TEXT_ANNOTATION);
+    importContent(cpnPageElement, cpnPageElement.place, CPN_PLACE);
+    importContent(cpnPageElement, cpnPageElement.trans, CPN_TRANSITION);
+    importContent(cpnPageElement, cpnPageElement.arc, CPN_CONNECTION);
+    importContent(cpnPageElement, cpnPageElement.Aux, CPN_TEXT_ANNOTATION);
+
+    layoutConnections();
   }
 
-  function importContent(content, type) {
-    if (content && type) {
-      if (content.length && content.length > 0) {
-        for (const obj of content) {
-          importer.add(obj, type);
+  function importContent(page, element, type) {
+    if (element && type) {
+      if (element.length && element.length > 0) {
+        for (const obj of element) {
+          importer.add(page, obj, type);
         }
       } else {
-        importer.add(content, type);
+        importer.add(page, element, type);
       }
     }
   }
+
+  function layoutConnections() {
+    for (const key of Object.keys(elementRegistry._elements)) {
+      const element = elementRegistry._elements[key].element;
+
+      if (is(element, CPN_CONNECTION)) {
+        console.log('importCpnPage(), layoutConnections(), element = ', element);
+        layouter.cropConnection(element);
+      }
+    }
+  }
+
 
   /**
    * Calculate new diagram viewbox by loaded shapes
@@ -120,5 +136,5 @@ export function importCpnPage(diagram, cpnPageElement) {
     return vb;
   }
 
-
 }
+

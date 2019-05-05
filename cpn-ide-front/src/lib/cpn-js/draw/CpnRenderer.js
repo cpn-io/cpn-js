@@ -18,7 +18,8 @@ import {
   CPN_CONNECTION,
   CPN_TEXT_ANNOTATION,
   is,
-  isCpn
+  isCpn,
+  isCpnPortOrSubst
 } from '../util/ModelUtil';
 
 import {
@@ -53,6 +54,9 @@ var RENDERER_IDS = new Ids();
 
 var ERROR_STROKE_COLOR = '#ff999966';
 var ERROR_STROKE_THICK = 7;
+
+var PORT_FILL_COLOR = '#e0e0fd';
+var PORT_STROKE_COLOR = '#4c66cc';
 
 export default function CpnRenderer(
   config, eventBus, styles, pathMap,
@@ -314,24 +318,26 @@ export default function CpnRenderer(
     return handlers[type];
   }
 
-  function renderLabel(parentGfx, element, options) {
+  function renderLabel(parentGfx, element, attrs) {
 
-    if (element && element.labelType === 'port') {
+    if (isCpnPortOrSubst(element)) {
       var rect = svgCreate('rect');
       svgAttr(rect, {
-        x: -2,
+        x: -3,
         y: 0,
-        width: options.box.width + 3,
-        height: options.box.height - 1,
-        fill: '#ffffcc',
-        stroke: 'black',
+        width: attrs.box.width + 5,
+        height: attrs.box.height - 1,
+        fill: PORT_FILL_COLOR,
+        stroke: PORT_STROKE_COLOR,
         strokeWidth: 1,
       });
       // console.log('renderLabel(), rect = ', rect);
       svgAppend(parentGfx, rect);
+
+      attrs.style.fill = PORT_STROKE_COLOR;
     }
 
-    var text = textRenderer.createText(getText(element) || '', options);
+    var text = textRenderer.createText(getText(element) || '', attrs);
     svgClasses(text).add('djs-label');
     svgAppend(parentGfx, text);
 

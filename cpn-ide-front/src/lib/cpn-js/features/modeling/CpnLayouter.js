@@ -88,8 +88,9 @@ CpnLayouter.prototype.layoutConnection = function (connection, hints) {
     start = hints.connectionStart,
     end = hints.connectionEnd;
 
-  var manhattanOptions,
-    updatedWaypoints;
+  console.log('CpnLayouter.prototype.layoutConnection(), waypoints = ', waypoints);
+
+  var manhattanOptions, updatedWaypoints;
 
   if (!start) {
     start = getConnectionDocking(waypoints && waypoints[0], source);
@@ -112,17 +113,19 @@ CpnLayouter.prototype.layoutConnection = function (connection, hints) {
     };
   }
 
-  if (manhattanOptions) {
-    manhattanOptions = assign(manhattanOptions, hints);
-    updatedWaypoints =
-      withoutRedundantPoints(
-        repairConnection(
-          source, target,
-          start, end,
-          waypoints,
-          manhattanOptions
-        )
-      );
+  if (waypoints && waypoints.length > 2) {
+    if (manhattanOptions) {
+      manhattanOptions = assign(manhattanOptions, hints);
+      updatedWaypoints =
+        withoutRedundantPoints(
+          repairConnection(
+            source, target,
+            start, end,
+            waypoints,
+            manhattanOptions
+          )
+        );
+    }
   }
 
   this.cropConnection(connection);

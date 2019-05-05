@@ -6,7 +6,7 @@ import {
   getLabel
 } from './LabelEditingUtil';
 
-import {CPN_CONNECTION, CPN_TEXT_ANNOTATION, CPN_LABEL, is, isCpn, isAny} from '../../util/ModelUtil';
+import { CPN_CONNECTION, CPN_TEXT_ANNOTATION, CPN_LABEL, is, isCpn, isAny, CPN_PLACE, CPN_TRANSITION, isCpnPortOrSubst } from '../../util/ModelUtil';
 
 import {
   getExternalLabelMid,
@@ -135,13 +135,20 @@ LabelEditingProvider.$inject = [
  * @return {Object} an object with properties bounds (position and size), text and options
  */
 LabelEditingProvider.prototype.activate = function (element) {
-
   console.log('LabelEditingProvider.activate(), element = ', element);
+
+  // disable editing for port and subst labels
+  if (isCpnPortOrSubst(element))
+    return;
 
   // text
   var text = getLabel(element);
-  if (text === undefined) {
-    return;
+
+  // console.log('LabelEditingProvider.activate(), text = \'' + text + '\'');
+
+  if ((!text || text.trim() === '')) {
+    text = element.defaultValue || '';
+    // console.log('LabelEditingProvider.activate(), defualt text = ', text);
   }
 
   var context = {
@@ -213,7 +220,7 @@ LabelEditingProvider.prototype.getEditingBBox = function (element) {
   };
 
   // default position
-  var bounds = {x: bbox.x, y: bbox.y};
+  var bounds = { x: bbox.x, y: bbox.y };
 
   var zoom = canvas.zoom();
 
@@ -245,7 +252,7 @@ LabelEditingProvider.prototype.getEditingBBox = function (element) {
     // paddingRight: (5 * zoom) + 'px'
   });
 
-  return {bounds: bounds, style: style};
+  return { bounds: bounds, style: style };
 };
 
 
@@ -259,7 +266,7 @@ LabelEditingProvider.prototype.update = function (element, newLabel, activeConte
     bbox;
 
   element.name = element.text = newLabel;
-  this._eventBus.fire('element.changed', {element: element});
+  this._eventBus.fire('element.changed', { element: element });
 
   if (is(element, CPN_LABEL)) {
     // newBounds = {
@@ -277,7 +284,17 @@ LabelEditingProvider.prototype.update = function (element, newLabel, activeConte
 };
 
 LabelEditingProvider.prototype.getTextBounds = function (element, newLabel) {
-  return this._textRenderer.getExternalLabelBounds(element, newLabel);
+
+  var zoom = this._canvas.zoom();
+
+  var bounds = this._textRenderer.getExternalLabelBounds(element, newLabel);
+
+  return {
+    x: Math.ceil(bounds.x * zoom),
+    y: Math.ceil(bounds.y * zoom),
+    width: Math.ceil(bounds.width * zoom),
+    height: Math.ceil(bounds.height * zoom)
+  };
 }
 
 LabelEditingProvider.prototype.gotoNext = function (element) {
@@ -287,31 +304,39 @@ LabelEditingProvider.prototype.gotoNext = function (element) {
     return;
   }
 
+  let tabElementsList = [];
+  let shapeElement;
+  if (is(element, CPN_PLACE) || is(element, CPN_TRANSITION)) {
+    shapeElement = element;
+  } else if (is(element, CPN_LABEL)) {
+    shapeElement = element.labelTarget;
+  }
+
+  if (!shapeElement)
+    return;
+
+  tabElementsList.push(shapeElement);
+  for (var l of shapeElement.labels.filter(e => !isCpnPortOrSubst(e))) {
+    tabElementsList.push(l);
+  }
+
+  console.log('LabelEditingProvider.prototype.gotoNext(), tabElementsList = ', tabElementsList);
+
   let nextElement;
 
-  if (element.labels && element.labels.length > 0) {
-    // if element is shape
-    nextElement = element.labels[0];
-  } else {
-    // if element is label
-    if (element.labelTarget) {
-      const parentElement = element.labelTarget;
-      const labels = parentElement.labels;
-
-      let n = 0;
-      // find index of current label
-      for (n = 0; n < labels.length; n++) {
-        if (labels[n] === element) {
-          break;
-        }
+  // if element is label
+  if (tabElementsList && tabElementsList.length > 0) {
+    let n = 0;
+    // find index of current label
+    for (n = 0; n < tabElementsList.length; n++) {
+      if (tabElementsList[n] === element) {
+        break;
       }
-
-      if (n < labels.length - 1)
-        nextElement = labels[n + 1];
-      else
-        nextElement = parentElement;
     }
+    nextElement = n < tabElementsList.length - 1 ? tabElementsList[n + 1] : tabElementsList[0];
   }
+
+  console.log('LabelEditingProvider.prototype.gotoNext(), nextElement = ', nextElement);
 
   if (nextElement)
     this._directEditing.activate(nextElement);

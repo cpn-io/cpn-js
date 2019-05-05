@@ -19,7 +19,7 @@ export class ProjectService {
   constructor(private eventService: EventService, private http: HttpClient) {
     console.log('ProjectService instance CREATED!');
 
-    this.loadTestProject();
+    this.loadEmptyProject();
     this.setDefaultAppSettings();
   }
 
@@ -92,31 +92,6 @@ export class ProjectService {
     this.eventService.send(Message.PROJECT_FILE_OPEN, this.projectData);
   }
 
-  loadTestProject() {
-    const headers = new HttpHeaders()
-      .set('Access-Control-Allow-Origin', '*')
-      .set('Accept', 'application/xml');
-
-    // const modelFile = 'baseModel_ID1008016.cpn';
-   //  const modelFile = 'discretemodel_task1.cpn';
-    // const modelFile = 'erdp.cpn';
-    // const modelFile = 'hoponhopoff-color.cpn';
-    const modelFile = 'mynet.cpn';
-    // const modelFile = 'mscProtocol.cpn'
-
-    const url = './assets/cpn/' + modelFile;
-    this.http.get(url, {headers: headers, responseType: 'text'})
-      .subscribe(
-        (response: any) => {
-          // console.log('GET ' + url + ', response = ' + JSON.stringify(response));
-          this.loadProjectXml(modelFile, response);
-        },
-        (error) => {
-          console.error('GET ' + url + ', error = ' + JSON.stringify(error));
-        }
-      );
-  }
-
   loadEmptyProject() {
     const headers = new HttpHeaders()
       .set('Access-Control-Allow-Origin', '*')
@@ -126,8 +101,11 @@ export class ProjectService {
     //  const modelFile = 'discretemodel_task1.cpn';
     // const modelFile = 'erdp.cpn';
     // const modelFile = 'hoponhopoff-color.cpn';
-    const modelFile = 'emptynet.cpn';
     // const modelFile = 'mscProtocol.cpn'
+
+    // const modelFile = 'emptynet.cpn';
+    // const modelFile = 'test-1.cpn';
+    const modelFile = 'mynet.cpn';
 
     const url = './assets/cpn/' + modelFile;
     this.http.get(url, {headers: headers, responseType: 'text'})

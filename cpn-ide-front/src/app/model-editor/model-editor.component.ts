@@ -1,17 +1,17 @@
-import {Component, ElementRef, HostListener, Input, OnInit, ViewChild} from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
 
-import {assign} from 'min-dash';
+import { assign } from 'min-dash';
 import Diagram from 'diagram-js';
 import CpnDiagramModule from '../../lib/cpn-js/core';
 
-import {EmitterService} from '../services/emitter.service';
-import {HttpClient} from '@angular/common/http';
-import {Message} from '../common/message';
-import {EventService} from '../services/event.service';
-import {element} from 'protractor';
-import {ModelService} from '../services/model.service';
+import { EmitterService } from '../services/emitter.service';
+import { HttpClient } from '@angular/common/http';
+import { Message } from '../common/message';
+import { EventService } from '../services/event.service';
+import { element } from 'protractor';
+import { ModelService } from '../services/model.service';
 
-import {importCpnPage} from '../../lib/cpn-js/import/Importer';
+import { importCpnPage } from '../../lib/cpn-js/import/Importer';
 
 
 @Component({
@@ -22,9 +22,9 @@ import {importCpnPage} from '../../lib/cpn-js/import/Importer';
 export class ModelEditorComponent implements OnInit {
 
   constructor(private eventService: EventService,
-              private emitterService: EmitterService,
-              private http: HttpClient,
-              private modelService: ModelService) {
+    private emitterService: EmitterService,
+    private http: HttpClient,
+    private modelService: ModelService) {
   }
 
   @ViewChild('container') containerElementRef: ElementRef;
@@ -38,6 +38,7 @@ export class ModelEditorComponent implements OnInit {
   modeling;
   labelEditingProvider;
   textRenderer;
+
   jsonPageObject;
   // subscription: Subscription;
   subpages = [];
@@ -243,7 +244,7 @@ export class ModelEditorComponent implements OnInit {
           shape = this.elementFactory.createShape(attrs);
           shape.cpnElement = data.object;
           shape = this.canvas.addShape(shape, this.canvas.getRootElement());
-          this.subpages.push({subpageid: data.id, tranid: shape.id, name: data.name});
+          this.subpages.push({ subpageid: data.id, tranid: shape.id, name: data.name });
           this.transShapes[attrs.id] = shape;
         } else {
           /***create trasition***/
@@ -267,7 +268,7 @@ export class ModelEditorComponent implements OnInit {
 
           shape = this.elementFactory.createShape(attrs);
           shape = this.canvas.addShape(shape, this.canvas.getRootElement());
-          this.subpages.push({subpageid: data.id, tranid: shape.id, name: data.name});
+          this.subpages.push({ subpageid: data.id, tranid: shape.id, name: data.name });
           this.transShapes[attrs.id] = shape;
           this.createTransitionInModel(shape);
         }
@@ -304,6 +305,15 @@ export class ModelEditorComponent implements OnInit {
     this.labelEditingProvider = this.diagram.get('labelEditingProvider');
     this.textRenderer = this.diagram.get('textRenderer');
 
+    this.modeling.setDefaultValue('type', 'UINT');
+    this.modeling.setDefaultValue('initmark', 'INIT MARK');
+
+    this.modeling.setDefaultValue('cond', '[]');
+    this.modeling.setDefaultValue('time', '@+');
+    this.modeling.setDefaultValue('code', 'input();\noutput();\naction();\n');
+    this.modeling.setDefaultValue('priority', 'P_NORMAL');
+
+    this.modeling.setDefaultValue('annot', 'expr');
   }
 
   subscripeToAppMessage() {
@@ -379,7 +389,7 @@ export class ModelEditorComponent implements OnInit {
 
         // this.addShapeLabel(shape, place.type, 'type');
         // this.addShapeLabel(shape, place.initmark, 'initmark');
-        this.eventService.send(Message.SHAPE_SELECT, {element: element, cpnElement: element.cpnElement, type: element.type});
+        this.eventService.send(Message.SHAPE_SELECT, { element: element, cpnElement: element.cpnElement, type: element.type });
       }
     });
 
@@ -488,11 +498,11 @@ export class ModelEditorComponent implements OnInit {
     //   });
     // console.log('CANCEL!!!!!!!!');
 
-    this.eventService.send(Message.MODEL_UPDATE, {pageObject: page});
+    this.eventService.send(Message.MODEL_UPDATE, { pageObject: page });
   }
 
   changeSubPageName(subpage) {
-    this.eventService.send(Message.CHANGE_NAME_PAGE, {id: subpage.subpageid, name: subpage.name, changedElement: 'tran'});
+    this.eventService.send(Message.CHANGE_NAME_PAGE, { id: subpage.subpageid, name: subpage.name, changedElement: 'tran' });
   }
 
   /**
@@ -568,7 +578,7 @@ export class ModelEditorComponent implements OnInit {
     }
     // this.applyPageChanges();
     // let element = event.shape;
-    this.eventService.send(Message.SHAPE_SELECT, {element: event.shape, pageJson: this.jsonPageObject});
+    this.eventService.send(Message.SHAPE_SELECT, { element: event.shape, pageJson: this.jsonPageObject });
 
   }
 
@@ -935,10 +945,10 @@ export class ModelEditorComponent implements OnInit {
       if (subpage) {
         newTranc['subst'] = {
           subpageinfo: {
-            fillattr: {_colour: 'White', _pattern: 'Solid', _filled: 'false'},
-            lineattr: {_colour: 'Black', _thick: '0', _type: 'Solid'},
-            posattr: {_x: newTranc.posattr._x, _y: newTranc.posattr._y},
-            textattr: {_colour: 'Black', _bold: 'false'},
+            fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
+            lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
+            posattr: { _x: newTranc.posattr._x, _y: newTranc.posattr._y },
+            textattr: { _colour: 'Black', _bold: 'false' },
             _id: newTranc._id + 'e',
             _name: 'Supplier'
           },                  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1026,18 +1036,18 @@ export class ModelEditorComponent implements OnInit {
     }
 
     for (const label of data.labels) {
-      pos = {x: 1.0 * label[2].value, y: -1.0 * label[3].value};
-      attrs = {stroke: label[7].value, labelType: label[3].value};
+      pos = { x: 1.0 * label[2].value, y: -1.0 * label[3].value };
+      attrs = { stroke: label[7].value, labelType: label[3].value };
       textLabel = label[6].value;
-      pos = {x: label[2].value, y: label[3].value};
-      attrs = {stroke: label[7].value, labelType: label[1].value};
+      pos = { x: label[2].value, y: label[3].value };
+      attrs = { stroke: label[7].value, labelType: label[1].value };
       textLabel = label[6].value;
       newLabel = this.createLabel(elementForUpdate, textLabel, pos, attrs, label[0].value);
       newLabel.hidden = false;
       this.canvas.addShape(newLabel, elementForUpdate);
     }
     this.modelUpdate();
-    this.eventService.send(Message.SHAPE_SELECT, {element: elementForUpdate});
+    this.eventService.send(Message.SHAPE_SELECT, { element: elementForUpdate });
 
   }
 
@@ -1472,60 +1482,60 @@ export class ModelEditorComponent implements OnInit {
             linkOfJsonElement = page.trans;
           }
           if (lastAddedElement.labelType === 'cond') {
-            if (this.addLabelEvent(event, this.curentElement, {type: 'time'})) {
+            if (this.addLabelEvent(event, this.curentElement, { type: 'time' })) {
               textOfPrevElement = linkOfJsonElement.cond.text;
             } else {
-              if (this.addLabelEvent(event, this.curentElement, {type: 'code'})) {
+              if (this.addLabelEvent(event, this.curentElement, { type: 'code' })) {
                 textOfPrevElement = linkOfJsonElement.cond.text;
               } else {
-                this.addLabelEvent(event, this.curentElement, {type: 'priority'});
+                this.addLabelEvent(event, this.curentElement, { type: 'priority' });
                 textOfPrevElement = linkOfJsonElement.cond.text;
               }
             }
           }
           if (lastAddedElement.labelType === 'time') {
-            if (this.addLabelEvent(event, this.curentElement, {type: 'code'})) {
+            if (this.addLabelEvent(event, this.curentElement, { type: 'code' })) {
               textOfPrevElement = linkOfJsonElement.time.text;
             } else {
               if (this.curentElement.labels.length > 1) {
-                if (this.addLabelEvent(event, this.curentElement, {type: 'priority'})) {
+                if (this.addLabelEvent(event, this.curentElement, { type: 'priority' })) {
                   textOfPrevElement = linkOfJsonElement.time.text;
                 } else {
-                  this.addLabelEvent(event, this.curentElement, {type: 'cond'});
+                  this.addLabelEvent(event, this.curentElement, { type: 'cond' });
                   textOfPrevElement = linkOfJsonElement.time.text;
                 }
               }
             }
           }
           if (lastAddedElement.labelType === 'code') {
-            if (this.addLabelEvent(event, this.curentElement, {type: 'priority'})) {
+            if (this.addLabelEvent(event, this.curentElement, { type: 'priority' })) {
               textOfPrevElement = linkOfJsonElement.code.text;
             } else {
               if (this.curentElement.labels.length > 1) {
-                if (this.addLabelEvent(event, this.curentElement, {type: 'cond'})) {
+                if (this.addLabelEvent(event, this.curentElement, { type: 'cond' })) {
                   textOfPrevElement = linkOfJsonElement.code.text;
                 } else {
-                  this.addLabelEvent(event, this.curentElement, {type: 'time'});
+                  this.addLabelEvent(event, this.curentElement, { type: 'time' });
                   textOfPrevElement = linkOfJsonElement.code.text;
                 }
               }
             }
           }
           if (lastAddedElement.labelType === 'priority') {
-            if (this.addLabelEvent(event, this.curentElement, {type: 'cond'})) {
+            if (this.addLabelEvent(event, this.curentElement, { type: 'cond' })) {
               textOfPrevElement = linkOfJsonElement.priority.text;
             } else {
               if (this.curentElement.labels.length > 1) {
-                if (this.addLabelEvent(event, this.curentElement, {type: 'time'})) {
+                if (this.addLabelEvent(event, this.curentElement, { type: 'time' })) {
                   textOfPrevElement = linkOfJsonElement.priority.text;
                 } else {
-                  this.addLabelEvent(event, this.curentElement, {type: 'code'});
+                  this.addLabelEvent(event, this.curentElement, { type: 'code' });
                   textOfPrevElement = linkOfJsonElement.priority.text;
                 }
               }
             }
           }
-          this.diagram.get('eventBus').fire('element.tab', {element: this.curentElement.labels[this.curentElement.labels.length - 1]});
+          this.diagram.get('eventBus').fire('element.tab', { element: this.curentElement.labels[this.curentElement.labels.length - 1] });
           if (textOfPrevElement.__text === 'time' || textOfPrevElement.__text === 'code' || textOfPrevElement.__text === 'priority' || textOfPrevElement.__text === 'cond') {
             lastAddedElement = this.curentElement.labels.find(element => element.text === textOfPrevElement.__text);
             this.canvas._removeElement(lastAddedElement, 'cpn:Label');
@@ -1554,9 +1564,9 @@ export class ModelEditorComponent implements OnInit {
             this.canvas._removeElement(this.testElemForRemove, 'shape')
             this.transLabelCount = 0;
           }*/
-          this.addLabelEvent(event, this.curentElement, {type: 'cond'});
+          this.addLabelEvent(event, this.curentElement, { type: 'cond' });
           // this.labelEditingProvider.startActivateDirectEdit(this.curentElement.labels[ this.curentElement.labels.length - 1], true);
-          this.diagram.get('eventBus').fire('element.tab', {element: this.curentElement.labels[this.curentElement.labels.length - 1]});
+          this.diagram.get('eventBus').fire('element.tab', { element: this.curentElement.labels[this.curentElement.labels.length - 1] });
         }
       } else if (this.curentElement.type === 'cpn:Place') {
         if (this.curentElement.labels.length) {
@@ -1572,10 +1582,10 @@ export class ModelEditorComponent implements OnInit {
             linkOfJsonElement = page.place;
           }
           if (lastAddedElement.labelType === 'initmark') {
-            this.addLabelEvent(event, this.curentElement, {type: 'type'});
+            this.addLabelEvent(event, this.curentElement, { type: 'type' });
             textOfPrevElement = linkOfJsonElement.initmark.text;
           } else if (lastAddedElement.labelType === 'type') {
-            this.addLabelEvent(event, this.curentElement, {type: 'initmark'});
+            this.addLabelEvent(event, this.curentElement, { type: 'initmark' });
             textOfPrevElement = linkOfJsonElement.type.text;
           }
           if (textOfPrevElement.__text === 'type' || textOfPrevElement.__text === 'initmark') {
@@ -1585,7 +1595,7 @@ export class ModelEditorComponent implements OnInit {
           }
 
         } else {
-          this.addLabelEvent(event, this.curentElement, {type: 'initmark'});
+          this.addLabelEvent(event, this.curentElement, { type: 'initmark' });
         }
 
         /*if (this.placeLabelCount === 0) {
@@ -1597,10 +1607,10 @@ export class ModelEditorComponent implements OnInit {
 
         }*/
       } else if (this.curentElement.type === 'cpn:Connection') {
-        this.addLabelEvent(event, this.curentElement, {type: 'annot'});
+        this.addLabelEvent(event, this.curentElement, { type: 'annot' });
         // to do проверить как будет работать при создании пустой стрелки после этапа добавления любого элемента в модель
       } else {
-        this.diagram.get('eventBus').fire('element.tab', {element: this.curentElement.labels[this.curentElement.labels.length - 1]});
+        this.diagram.get('eventBus').fire('element.tab', { element: this.curentElement.labels[this.curentElement.labels.length - 1] });
       }
 
     }
@@ -1622,7 +1632,7 @@ export class ModelEditorComponent implements OnInit {
       //     element: event.element
       //   });
 
-      this.eventService.send(Message.SHAPE_SELECT, {element: event.element});
+      this.eventService.send(Message.SHAPE_SELECT, { element: event.element });
     }
   }
 
@@ -1659,7 +1669,7 @@ export class ModelEditorComponent implements OnInit {
     this.canvas.addShape(t1, root);
 
     this.labelEditingProvider.update(t1, '222222222222');
-    assign(t1.label, {stroke: 'green'});
+    assign(t1.label, { stroke: 'green' });
     // console.log('labelEditingProvider.update(t1) !!!, t1.label = ', t1.label);
 
     const p2 = this.elementFactory.createShape({
@@ -1678,9 +1688,9 @@ export class ModelEditorComponent implements OnInit {
     let attrs: any = {
       type: 'cpn:Connection',
       waypoints: [
-        {x: 150, y: 110},
-        {x: 200, y: 200},
-        {x: 450, y: 105}
+        { x: 150, y: 110 },
+        { x: 200, y: 200 },
+        { x: 450, y: 105 }
       ],
       stroke: 'red',
       strokeWidth: 1,
@@ -1690,9 +1700,9 @@ export class ModelEditorComponent implements OnInit {
       type: 'cpn:Connection',
       // id: "connection1",
       waypoints: [
-        {x: 750, y: 110},
+        { x: 750, y: 110 },
         // { x: 200, y: 200 },
-        {x: 450, y: 105}
+        { x: 450, y: 105 }
       ],
       stroke: 'red',
       strokeWidth: 1,
@@ -1837,7 +1847,7 @@ export class ModelEditorComponent implements OnInit {
       const vb = modelBounds;
       this.canvas.viewbox(vb);
 
-      this.canvas.zoom(0.7, {x: vb.width / 2, y: vb.height / 2});
+      this.canvas.zoom(0.7, { x: vb.width / 2, y: vb.height / 2 });
     }
   }
 
@@ -1873,16 +1883,16 @@ export class ModelEditorComponent implements OnInit {
         // var y = -1.0 * labelNode.posattr["@attributes"].y;
         const x = 1.0 * labelNode.posattr._x;
         const y = -1.0 * labelNode.posattr._y;
-        pos = {x: x, y: y};
+        pos = { x: x, y: y };
       }
 
-      let attrs = {stroke: 'black', labelType: labelType};
+      let attrs = { stroke: 'black', labelType: labelType };
       if (labelNode.textattr) {
         let stroke = shape.stroke || 'black';
         // var stroke = labelNode.textattr["@attributes"].color || 'black';
         stroke = this.correctColor[stroke] || stroke;
 
-        attrs = {stroke: stroke, labelType: labelType};
+        attrs = { stroke: stroke, labelType: labelType };
       }
       const textLabel = typeof labelNode.text === 'string' ? labelNode.text : labelNode.text.__text;
       const label = this.createLabel(shape, textLabel, pos, attrs, labelNode._id);
@@ -1922,7 +1932,7 @@ export class ModelEditorComponent implements OnInit {
     console.log('createLabel(), element, semantic, labelText = ', element, semantic, labelText);
 
     if (!pos) {
-      pos = {x: Math.round(bounds.x), y: Math.round(bounds.y)};
+      pos = { x: Math.round(bounds.x), y: Math.round(bounds.y) };
     }
 
     // bounds = getExternalLabelBounds(semantic, element);
@@ -2176,7 +2186,7 @@ export class ModelEditorComponent implements OnInit {
         cpnElement: arc
       };
 
-      return {source: source, target: target, attrs: attrs};
+      return { source: source, target: target, attrs: attrs };
     }
 
     return undefined;

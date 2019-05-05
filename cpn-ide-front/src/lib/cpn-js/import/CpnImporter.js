@@ -3,7 +3,7 @@ import {
   map
 } from 'min-dash';
 
-import { CPN_PLACE, is, isCpn, CPN_TRANSITION, CPN_CONNECTION, CPN_LABEL } from '../util/ModelUtil';
+import { CPN_PLACE, is, isCpn, CPN_TRANSITION, CPN_CONNECTION, CPN_LABEL, CPN_TEXT_ANNOTATION } from '../util/ModelUtil';
 
 import {
   isLabelExternal,
@@ -79,7 +79,7 @@ CpnImporter.$inject = [
  * Add cpn element (cpnElement) to the canvas onto the
  * specified parent shape.
  */
-CpnImporter.prototype.add = function (cpnElement, type) {
+CpnImporter.prototype.add = function (pageObject, cpnElement, type) {
 
   console.log('CpnImporter.prototype.add, cpnElement = ', cpnElement, ', type = ', type);
 
@@ -110,9 +110,10 @@ CpnImporter.prototype.add = function (cpnElement, type) {
     element = this._elementFactory.createShape(attrs);
     this._canvas.addShape(element, root);
 
-    for (var key of ['cond', 'time', 'code', 'priority']) {
+    for (var key of ['cond', 'time', 'code', 'priority', 'subst']) {
       if (cpnElement[key]) {
-        attrs = this.getLabelAttrs(element, cpnElement[key], key);
+        const e = key === 'subst' ? cpnElement[key].subpageinfo : cpnElement[key];
+        attrs = this.getLabelAttrs(element, e, key);
         label = this._elementFactory.createLabel(attrs);
         this._canvas.addShape(label, element);
       }
@@ -128,20 +129,28 @@ CpnImporter.prototype.add = function (cpnElement, type) {
     console.log('CpnImporter.prototype.add, connection, trans = ', transShape);
 
     if (placeShape && transShape) {
-      const data = this.getArcData(cpnElement, type, placeShape, transShape);
+      const data = this.getArcData(pageObject, cpnElement, type, placeShape, transShape);
       if (data) {
         element = this._modeling.connect(data.source, data.target, data.attrs, null);
 
-        // for (var key of ['annot']) {
-        //   if (cpnElement[key]) {
-        //     attrs = this.getLabelAttrs(element, cpnElement[key], key);
-        //     label = this._elementFactory.createLabel(attrs);
-        //     this._canvas.addShape(label, element);
-        //   }
-        // }
+        for (var key of ['annot']) {
+          if (cpnElement[key]) {
+            attrs = this.getLabelAttrs(element, cpnElement[key], key);
+            label = this._elementFactory.createLabel(attrs);
+            this._canvas.addShape(label, element);
+          }
+        }
       }
     }
   }
+
+  // Transition object
+  if (type === CPN_TEXT_ANNOTATION) {
+    attrs = this.getLabelAttrs(undefined, cpnElement, 'aux');
+    label = this._elementFactory.createLabel(attrs);
+    this._canvas.addShape(label, root);
+  }
+
 
   this._eventBus.fire('cpnElement.added', { element: element });
 
@@ -278,17 +287,38 @@ CpnImporter.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, la
   var x = Math.round(cpnLabelElement.posattr._x);
   var y = Math.round(cpnLabelElement.posattr._y) * -1;
 
-  var text = cpnLabelElement._type || cpnLabelElement.text.__text || '';
+  var text, defaultValue;
+
+  if (labelType === 'port') {
+    text = cpnLabelElement._type; // for port label
+    if (text === 'I/O') {
+      text = 'In/Out';
+    }
+  }
+  else if (labelType === 'subst')
+    text = cpnLabelElement._name; // for subst label
+  else if (labelType === 'aux')
+    text = cpnLabelElement.text; // for aux label
+  else
+    text = cpnLabelElement.text.__text; // for shape external label
+
   console.log('CpnImporter.prototype.getLabelAttrs(), text = ', text);
-  if (text === 'I/O') {
-    text = 'In/Out';
+
+  // if label is empty check for default values
+  if (labelType) {
+    defaultValue = this._modeling.getDefaultValue(labelType);
+    console.log('CpnImporter.prototype.getLabelAttrs(), defualt text = ', defaultValue);
   }
 
-  var bounds = { x: x, y: y, width: 200, height: 20 };
-  bounds = this._textRenderer.getExternalLabelBounds(bounds, text);
+  text = text || '';
 
-  x -= bounds.width / 2;
-  y -= bounds.height / 2;
+  var bounds = { x: x, y: y, width: 200, height: 20 };
+  bounds = this._textRenderer.getExternalLabelBounds(bounds, defaultValue && text.trim() === '' ? defaultValue : text);
+
+  if (labelType !== 'aux') {
+    x -= bounds.width / 2;
+    y -= bounds.height / 2;
+  }
 
   var attrs = {
     type: CPN_LABEL,
@@ -296,12 +326,18 @@ CpnImporter.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, la
     cpnElement: cpnLabelElement,
     labelType: labelType,
     text: text,
-    labelTarget: labelTarget,
     x: x,
     y: y,
     width: bounds.width,
     height: bounds.height
   };
+
+  if (labelTarget) {
+    attrs.labelTarget = labelTarget;
+  }
+  if (defaultValue) {
+    attrs.defaultValue = defaultValue;
+  }
 
   return attrs;
 }
@@ -328,7 +364,7 @@ CpnImporter.prototype.getTransAttrs = function (cpnTransElement, type) {
   return attrs;
 }
 
-CpnImporter.prototype.getArcData = function (cpnArcElement, type, placeShape, transShape) {
+CpnImporter.prototype.getArcData = function (pageObject, cpnArcElement, type, placeShape, transShape) {
   let stroke = cpnArcElement.lineattr._colour || 'black';
   const strokeWidth = cpnArcElement.lineattr._thick || 1;
 
@@ -400,13 +436,17 @@ CpnImporter.prototype.getArcData = function (cpnArcElement, type, placeShape, tr
       waypoints[n - 1].x = waypoints[n - 2].x;
     }
 
-  } else {
+  }
 
-    // for (const verArc of pageObject.arc) {
-    //   if (cpnElement._id !== verArc._id && ((cpnElement.placeend._idref === verArc.transend._idref && cpnElement.transend._idref === verArc.placeend._idref) || (cpnElement.placeend._idref === verArc.placeend._idref && cpnElement.transend._idref === verArc.transend._idref))) {
-    //     waypoints = optimiseEqualsArcsByWayoints(waypoints, source.width / 8);
-    //   }
-    // }
+  else if (pageObject) {
+
+    for (const arc of pageObject.arc) {
+      if (cpnArcElement._id !== arc._id &&
+        ((cpnArcElement.placeend._idref === arc.transend._idref && cpnArcElement.transend._idref === arc.placeend._idref) ||
+          (cpnArcElement.placeend._idref === arc.placeend._idref && cpnArcElement.transend._idref === arc.transend._idref))) {
+        waypoints = optimiseEqualsArcsByWayoints(waypoints, source.width / 8);
+      }
+    }
 
   }
 
@@ -417,13 +457,19 @@ CpnImporter.prototype.getArcData = function (cpnArcElement, type, placeShape, tr
       waypoints: waypoints,
       stroke: stroke,
       strokeWidth: strokeWidth,
-      cpnElement: cpnArcElement
+
+      cpnElement: cpnArcElement,
+      cpnPlace: placeShape.cpnElement,
+      cpnTransition: transShape.cpnElement
     };
     return { source: source, target: target, attrs: attrs };
   }
 
   return undefined;
 }
+
+// Helpers
+// ------------------------------------------------------------
 
 function angle(cx, cy, ex, ey) {
   const dy = ey - cy;
@@ -440,8 +486,10 @@ function optimiseEqualsArcsByWayoints(arc, delta) {
 
   arc[0].x = arc[0].x + dx;
   arc[0].y = arc[0].y + dy;
+
   arc[1].x = arc[1].x + dx;
   arc[1].y = arc[1].y + dy;
 
   return arc;
 }
+

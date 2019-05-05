@@ -149,7 +149,7 @@ TextBox.prototype.create = function (bounds, style, value, options) {
     boxSizing: 'border-box',
     width: '100%',
     outline: 'none',
-    wordWrap: 'break-word'
+    wordWrap: 'break-word',
   }, contentStyle);
 
   if (options.centerVertically) {

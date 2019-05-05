@@ -140,5 +140,5 @@ export default function CpnUpdater(eventBus, connectionDocking, selection) {
       cpnElement.box._h = shape.height;
     }
   }
-
 }
+

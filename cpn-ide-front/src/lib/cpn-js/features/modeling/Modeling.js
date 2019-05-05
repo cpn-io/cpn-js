@@ -19,6 +19,8 @@ export default function Modeling(eventBus, elementFactory, commandStack, cpnRule
   BaseModeling.call(this, eventBus, elementFactory, commandStack);
 
   this._cpnRules = cpnRules;
+
+  this._defaultValues = [];
 }
 
 inherits(Modeling, BaseModeling);
@@ -94,3 +96,14 @@ Modeling.prototype.setColor = function(elements, colors) {
 //   console.log('Modeling.prototype.getElementById(), result = ', result);
 //   return result;
 // };
+
+Modeling.prototype.setDefaultValue = function (key, value) {
+  this._defaultValues[key] = value;
+  console.log('Modeling.prototype.setDefaultValue(), this._defaultValues = ', this._defaultValues);
+}
+
+Modeling.prototype.getDefaultValue = function (key) {
+  console.log('Modeling.prototype.getDefaultValue(), this._defaultValues = ', this._defaultValues);
+  return this._defaultValues[key];
+}
+

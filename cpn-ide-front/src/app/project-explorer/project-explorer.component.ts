@@ -215,12 +215,12 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     // подписка на событие
     this.eventService.on(Message.SHAPE_HOVER, (data) => {
-      console.log(' ----- SHAPE_HOVER, data = ' + data);
+      // console.log(' ----- SHAPE_HOVER, data = ' + data);
       this.underlineRelations(data.element);
     });
 
     this.eventService.on(Message.SHAPE_OUT, (data) => {
-      console.log(' ----- SHAPE_OUT, data = ' + data);
+      // console.log(' ----- SHAPE_OUT, data = ' + data);
       this.doUnderlineNodeLabel(false);
     });
 
@@ -244,16 +244,15 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     this.doUnderlineNodeLabel(false);
     let elementId;
 
-    // подчеркиваем color
     if (element.type === 'cpn:Place') {
+      // подчеркиваем Types
       this.underlineRelationsRecursively(this.nodes[0], element.cpnElement.type.text.toString());
-      elementId = element.cpnElement._id;
+      // подчеркиваем val|fun
+      this.underlineRelationsRecursively(this.nodes[0], element.cpnElement.initmark.text.toString());
+      // elementId = element.cpnElement._id;
+
     } else if (element.type === 'cpn:Transition') {
       elementId = element.cpnElement._id;
-    }
-
-    // подчеркиваем var
-    if (element.type === 'cpn:Place' || element.type === 'cpn:Transition') {
       if (this.modelService.getcpnet()) {
         if (this.modelService.getcpnet().page instanceof Array) {
           for (const page of this.modelService.getcpnet().page) {
@@ -264,6 +263,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         }
       }
     }
+
   }
 
   processPage(page: any, elementId: string) {
@@ -278,27 +278,60 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   processArc(arc: any, elementId: string) {
     if ((arc.placeend && arc.placeend._idref === elementId) || (arc.transend && arc.transend._idref === elementId)) {
-      this.underlineRelationsRecursively(this.nodes[0], arc.annot.text.toString());
+      this.processArcAnnotRecursively(arc.annot.text.toString());
+    }
+  }
+
+  processArcAnnotRecursively(str: string) {
+    const lastOpenBracket = str.lastIndexOf('(');
+    if (lastOpenBracket > -1) {
+      const nextCloseBracket = (str.substring(lastOpenBracket)).indexOf(')') + lastOpenBracket;
+      this.processArcAnnotRecursively(str.substring(0, lastOpenBracket) + str.substring(nextCloseBracket + 1));
+      this.processArcAnnotRecursively(str.substring(lastOpenBracket + 1, nextCloseBracket));
+    } else {
+      const vars = str.split(',');
+      for (const variable of vars) {
+        const beautyVars = variable.match('[a-zA-Z0-9]+');
+        if (beautyVars) {
+          this.underlineRelationsRecursively(this.nodes[0], beautyVars[0]);
+        }
+      }
     }
   }
 
   /**
    * рекурсивный пеербор узлов
    * @param parentNode родительский узел
-   * @param id идентификатор родительского узла
+   * @param name имя типа или функции, которое нужно найти и подчеркнуть в дереве
    */
-  underlineRelationsRecursively(parentNode: any, id: string): boolean {
+  underlineRelationsRecursively(parentNode: any, name: string): boolean {
+    // console.log('underlineRelationsRecursively name = ' + name);
     if (parentNode.children) {
       for (const node of parentNode.children) {
-        if (this.underlineRelationsRecursively(node, id)) {
+        if (this.underlineRelationsRecursively(node, name)) {
           this.doUnderlineNodeLabel(true, node.id);
           return true;
         }
       }
     } else {
-      if (parentNode.object.id === id) {
+      if (parentNode.object.id && parentNode.object.id === name ) {
+        // это проверка на то, что строка является декларацией переменной (не перечисление)
         this.doUnderlineNodeLabel(true, parentNode.id);
         return true;
+      } else if (parentNode.object.toString().match('^\\s*(val|fun){1}\\s+' + name + '\\s*[=(]{1}')) {
+        // это проверка на то, что строка является декларацией функции или val (что это за тип?)
+        this.doUnderlineNodeLabel(true, parentNode.id);
+        return true;
+      } else if (parentNode.object.id) {
+        // это проверка на то, что строка является декларацией переменной (перечисление)
+        const sub1 = parentNode.object.id.toString().split(':');
+        const sub2 = sub1[0].split(',');
+        for (const str of sub2) {
+          if (str === name) {
+            this.doUnderlineNodeLabel(true, parentNode.id);
+            return true;
+          }
+        }
       }
     }
     return false;
@@ -324,7 +357,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       }
     }
   }
-
 
   /**
    * Subscribe to event emitter for receiveing project event

@@ -6,6 +6,8 @@ import UpdateLabelHandler from '../label-editing/cmd/UpdateLabelHandler';
 
 import {
   CPN_LABEL,
+  CPN_TOKEN_LABEL,
+  CPN_MARKING_LABEL,
   isCpn,
 } from '../../util/ModelUtil';
 import CpnImporter from "../../import/CpnImporter";
@@ -259,6 +261,78 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
   return attrs;
 }
 
+Modeling.prototype.getTokenLabelAttrs = function (labelTarget, cpnTokenLabelElement, labelType) {
+  var x = Math.round(cpnTokenLabelElement._x);
+  var y = Math.round(cpnTokenLabelElement._y) * -1;
+
+  var text = '8';
+
+  var bounds = { x: x, y: y, width: 200, height: 20 };
+  bounds = this._textRenderer.getExternalLabelBounds(bounds, text);
+
+  if (x === 0) {
+    x -= bounds.width / 2;
+  }
+  if (y === 0) {
+    y -= bounds.height / 2;
+  }
+
+  x += Math.round(labelTarget.x + labelTarget.width);
+  y += Math.round(labelTarget.y + labelTarget.height / 2);
+
+  var attrs = {
+    type: CPN_TOKEN_LABEL,
+    id: CPN_TOKEN_LABEL + '_' + labelTarget.id,
+    cpnElement: cpnTokenLabelElement,
+    text: text,
+    x: x,
+    y: y,
+    width: bounds.width,
+    height: bounds.height
+  };
+
+  if (labelTarget) {
+    attrs.labelTarget = labelTarget;
+  }
+
+  return attrs;
+}
+
+Modeling.prototype.getMarkingLabelAttrs = function (labelTarget, cpnMarkingLabelElement, labelType) {
+  var x = Math.round(cpnMarkingLabelElement._x);
+  var y = Math.round(cpnMarkingLabelElement._y) * -1;
+
+  var text = '2`0@0,0\n2`0@0,0\n2`0@0,0\n2`0@0,0';
+
+  var bounds = { x: x, y: y, width: 200, height: 20 };
+  bounds = this._textRenderer.getExternalLabelBounds(bounds, text);
+
+  y -= bounds.height / 2;
+
+  x += Math.round(labelTarget.x + labelTarget.width * 3);
+  y += Math.round(labelTarget.y + labelTarget.height / 2);
+
+  var attrs = {
+    type: CPN_MARKING_LABEL,
+    id: CPN_MARKING_LABEL + '_' + labelTarget.id,
+    cpnElement: cpnMarkingLabelElement,
+    text: text,
+
+    x: x,
+    y: y,
+    width: bounds.width,
+    height: bounds.height,
+
+    hidden: !(cpnMarkingLabelElement._hidden === 'false')
+  };
+
+  if (labelTarget) {
+    attrs.labelTarget = labelTarget;
+  }
+
+  return attrs;
+}
+
 Modeling.prototype.getTransAttrs = function (cpnTransElement, type) {
   var x = Math.round(cpnTransElement.posattr._x);
   var y = Math.round(cpnTransElement.posattr._y) * -1;
@@ -415,9 +489,10 @@ function optimiseEqualsArcsByWayoints(arc, delta) {
 
 /**
  * saving the created place in the model json
+ *
  * @param element
  */
-createElementInModel(element) {
+function createElementInModel(element) {
   let form;
   form['cpn:Place'] = 'ellipse';
   form['cpn:Transotopn'] = 'ellipse';
@@ -488,7 +563,7 @@ createElementInModel(element) {
  * saving the created transition in the model json
  * @param element
  */
-createTransitionInModel(element) {
+function createTransitionInModel(element) {
   const page = this.jsonPageObject;
   console.log('actual data -------' + JSON.stringify(page.trans));
   console.log('Created element PLACE' + element);

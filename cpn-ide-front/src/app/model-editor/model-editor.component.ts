@@ -71,18 +71,18 @@ export class ModelEditorComponent implements OnInit {
 
     const eventBus = this.diagram.get('eventBus');
 
-    // eventBus.on('element.hover', (event) => {
-    //   if (event.element.type === 'cpn:Transition' ||
-    //     event.element.type === 'cpn:Place') {
-    //     this.eventService.send(Message.SHAPE_HOVER, {element: event.element});
-    //   }
-    // });
-    // eventBus.on('element.out', (event) => {
-    //   if (event.element.type === 'cpn:Transition' ||
-    //     event.element.type === 'cpn:Place') {
-    //     this.eventService.send(Message.SHAPE_OUT, {element: event.element});
-    //   }
-    // });
+    eventBus.on('element.hover', (event) => {
+      if (event.element.type === 'cpn:Transition' ||
+        event.element.type === 'cpn:Place') {
+        this.eventService.send(Message.SHAPE_HOVER, {element: event.element});
+      }
+    });
+    eventBus.on('element.out', (event) => {
+      if (event.element.type === 'cpn:Transition' ||
+        event.element.type === 'cpn:Place') {
+        this.eventService.send(Message.SHAPE_OUT, {element: event.element});
+      }
+    });
 
     eventBus.on('element.click', (event) => {
      /* if(event.element.type === 'cpn:Place') {

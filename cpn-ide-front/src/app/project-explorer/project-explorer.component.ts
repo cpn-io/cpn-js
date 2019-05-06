@@ -215,11 +215,12 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     // подписка на событие
     this.eventService.on(Message.SHAPE_HOVER, (data) => {
-      console.log(' ----- An element hover, data = ' + data);
+      console.log(' ----- SHAPE_HOVER, data = ' + data);
       this.underlineRelations(data.element);
     });
 
     this.eventService.on(Message.SHAPE_OUT, (data) => {
+      console.log(' ----- SHAPE_OUT, data = ' + data);
       this.doUnderlineNodeLabel(false);
     });
 
@@ -238,7 +239,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   /**
    * подчеркнуть все, что связано с данным элементом
-    */
+   */
   underlineRelations(element: any) {
     this.doUnderlineNodeLabel(false);
     let elementId;
@@ -263,23 +264,23 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         }
       }
     }
-   }
+  }
 
-   processPage(page: any, elementId: string) {
-     if (page.arc instanceof Array) {
-       for (const arc of page.arc) {
-         this.processArc(arc, elementId);
-       }
-     } else {
-       this.processArc(page.arc, elementId);
-     }
-   }
+  processPage(page: any, elementId: string) {
+    if (page.arc instanceof Array) {
+      for (const arc of page.arc) {
+        this.processArc(arc, elementId);
+      }
+    } else {
+      this.processArc(page.arc, elementId);
+    }
+  }
 
-   processArc(arc: any, elementId: string) {
-     if ((arc.placeend && arc.placeend._idref === elementId) || (arc.transend && arc.transend._idref === elementId)) {
-       this.underlineRelationsRecursively(this.nodes[0], arc.annot.text.toString());
-     }
-   }
+  processArc(arc: any, elementId: string) {
+    if ((arc.placeend && arc.placeend._idref === elementId) || (arc.transend && arc.transend._idref === elementId)) {
+      this.underlineRelationsRecursively(this.nodes[0], arc.annot.text.toString());
+    }
+  }
 
   /**
    * рекурсивный пеербор узлов
@@ -289,9 +290,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   underlineRelationsRecursively(parentNode: any, id: string): boolean {
     if (parentNode.children) {
       for (const node of parentNode.children) {
-          if (this.underlineRelationsRecursively(node, id)) {
-            this.doUnderlineNodeLabel(true, node.id);
-            return true;
+        if (this.underlineRelationsRecursively(node, id)) {
+          this.doUnderlineNodeLabel(true, node.id);
+          return true;
         }
       }
     } else {

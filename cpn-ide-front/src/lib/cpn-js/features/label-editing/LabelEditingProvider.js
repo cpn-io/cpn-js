@@ -6,7 +6,15 @@ import {
   getLabel
 } from './LabelEditingUtil';
 
-import { CPN_CONNECTION, CPN_TEXT_ANNOTATION, CPN_LABEL, is, isCpn, isAny, CPN_PLACE, CPN_TRANSITION, isCpnPortOrSubst } from '../../util/ModelUtil';
+import {
+  CPN_PLACE, CPN_TRANSITION,
+  CPN_CONNECTION,
+  CPN_TEXT_ANNOTATION,
+  CPN_LABEL,
+  CPN_TOKEN_LABEL,
+  CPN_MARKING_LABEL,
+  is, isCpn, isAny, isCpnPortOrSubst
+} from '../../util/ModelUtil';
 
 import {
   getExternalLabelMid,
@@ -317,7 +325,8 @@ LabelEditingProvider.prototype.gotoNext = function (element) {
 
   tabElementsList.push(shapeElement);
   for (var l of shapeElement.labels.filter(e => !isCpnPortOrSubst(e))) {
-    tabElementsList.push(l);
+    if (!is(l, CPN_TOKEN_LABEL) && !is(l, CPN_MARKING_LABEL))
+      tabElementsList.push(l);
   }
 
   console.log('LabelEditingProvider.prototype.gotoNext(), tabElementsList = ', tabElementsList);

@@ -3,7 +3,17 @@ import {
   map
 } from 'min-dash';
 
-import { CPN_PLACE, is, isCpn, CPN_TRANSITION, CPN_CONNECTION, CPN_LABEL, CPN_TEXT_ANNOTATION } from '../util/ModelUtil';
+import {
+  is,
+  isCpn,
+  CPN_PLACE,
+  CPN_TRANSITION,
+  CPN_CONNECTION,
+  CPN_LABEL,
+  CPN_TOKEN_LABEL,
+  CPN_MARKING_LABEL,
+  CPN_TEXT_ANNOTATION
+} from '../util/ModelUtil';
 
 import {
   isLabelExternal,
@@ -102,6 +112,21 @@ CpnImporter.prototype.add = function (pageObject, cpnElement, type) {
         this._canvas.addShape(label, element);
       }
     }
+
+    // add token label
+    if (cpnElement.token) {
+      attrs = this.getTokenLabelAttrs(element, cpnElement.token, 'token');
+      var tokenLabel = this._elementFactory.createLabel(attrs);
+      this._canvas.addShape(tokenLabel, element);
+
+      // add marking label
+      if (cpnElement.marking) {
+        attrs = this.getMarkingLabelAttrs(tokenLabel, cpnElement.marking, 'marking');
+        var markingLabel = this._elementFactory.createLabel(attrs);
+        this._canvas.addShape(markingLabel, tokenLabel);
+      }
+    }
+
   }
 
   // Transition object
@@ -341,6 +366,79 @@ CpnImporter.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, la
 
   return attrs;
 }
+
+CpnImporter.prototype.getTokenLabelAttrs = function (labelTarget, cpnTokenLabelElement, labelType) {
+  var x = Math.round(cpnTokenLabelElement._x);
+  var y = Math.round(cpnTokenLabelElement._y) * -1;
+
+  var text = '8';
+
+  var bounds = { x: x, y: y, width: 200, height: 20 };
+  bounds = this._textRenderer.getExternalLabelBounds(bounds, text);
+
+  if (x === 0) {
+    x -= bounds.width / 2;
+  }
+  if (y === 0) {
+    y -= bounds.height / 2;
+  }
+
+  x += Math.round(labelTarget.x + labelTarget.width);
+  y += Math.round(labelTarget.y + labelTarget.height / 2);
+
+  var attrs = {
+    type: CPN_TOKEN_LABEL,
+    id: CPN_TOKEN_LABEL + '_' + labelTarget.id,
+    cpnElement: cpnTokenLabelElement,
+    text: text,
+    x: x,
+    y: y,
+    width: bounds.width,
+    height: bounds.height
+  };
+
+  if (labelTarget) {
+    attrs.labelTarget = labelTarget;
+  }
+
+  return attrs;
+}
+
+CpnImporter.prototype.getMarkingLabelAttrs = function (labelTarget, cpnMarkingLabelElement, labelType) {
+  var x = Math.round(cpnMarkingLabelElement._x);
+  var y = Math.round(cpnMarkingLabelElement._y) * -1;
+
+  var text = '2`0@0,0\n2`0@0,0\n2`0@0,0\n2`0@0,0';
+
+  var bounds = { x: x, y: y, width: 200, height: 20 };
+  bounds = this._textRenderer.getExternalLabelBounds(bounds, text);
+
+  y -= bounds.height / 2;
+
+  x += Math.round(labelTarget.x + labelTarget.width * 3);
+  y += Math.round(labelTarget.y + labelTarget.height / 2);
+
+  var attrs = {
+    type: CPN_MARKING_LABEL,
+    id: CPN_MARKING_LABEL + '_' + labelTarget.id,
+    cpnElement: cpnMarkingLabelElement,
+    text: text,
+
+    x: x,
+    y: y,
+    width: bounds.width,
+    height: bounds.height,
+
+    hidden: !(cpnMarkingLabelElement._hidden === 'false')
+  };
+
+  if (labelTarget) {
+    attrs.labelTarget = labelTarget;
+  }
+
+  return attrs;
+}
+
 
 CpnImporter.prototype.getTransAttrs = function (cpnTransElement, type) {
   var x = Math.round(cpnTransElement.posattr._x);

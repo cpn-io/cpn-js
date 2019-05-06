@@ -15,6 +15,8 @@ import {
   CPN_PLACE,
   CPN_TRANSITION,
   CPN_LABEL,
+  CPN_TOKEN_LABEL,
+  CPN_MARKING_LABEL,
   CPN_CONNECTION,
   CPN_TEXT_ANNOTATION,
   is,
@@ -57,6 +59,9 @@ var ERROR_STROKE_THICK = 5;
 
 var PORT_FILL_COLOR = '#e0e0fd';
 var PORT_STROKE_COLOR = '#4c66cc';
+
+var TOKEN_FILL_COLOR = '#6fe117';
+var MARKING_FILL_COLOR = '#bcfd8b';
 
 export default function CpnRenderer(
   config, eventBus, styles, pathMap,
@@ -320,6 +325,8 @@ export default function CpnRenderer(
 
   function renderLabel(parentGfx, element, attrs) {
 
+    // render port label frame
+    // ---------------------------------------------
     if (isCpnPortOrSubst(element)) {
       var rect = svgCreate('rect');
       svgAttr(rect, {
@@ -336,6 +343,51 @@ export default function CpnRenderer(
 
       attrs.style.fill = PORT_STROKE_COLOR;
     }
+
+    // render token label frame
+    // ---------------------------------------------
+    if (is(element, CPN_TOKEN_LABEL)) {
+
+      var rectAttrs = {
+        x: -6, y: -3,
+        width: attrs.box.width + 11, height: attrs.box.height + 5,
+        rx: 9, ry: 9,
+      };
+
+      var rect = svgCreate('rect');
+      svgAttr(rect, assign({}, rectAttrs, { x: rectAttrs.x + 1, y: rectAttrs.y + 1, fill: 'grey' }));
+      svgAppend(parentGfx, rect);
+
+      rect = svgCreate('rect');
+      svgAttr(rect, assign({}, rectAttrs, { fill: TOKEN_FILL_COLOR }));
+      svgAppend(parentGfx, rect);
+
+      attrs.style.fill = 'black';
+    }
+
+    // render marking label frame
+    // ---------------------------------------------
+    if (is(element, CPN_MARKING_LABEL)) {
+
+      var rectAttrs = {
+        x: -6, y: -3,
+        width: attrs.box.width + 10, height: attrs.box.height + 5,
+      };
+
+      var rect = svgCreate('rect');
+      svgAttr(rect, assign({}, rectAttrs, { x: rectAttrs.x + 1, y: rectAttrs.y + 1, fill: 'grey' }));
+      svgAppend(parentGfx, rect);
+
+      rect = svgCreate('rect');
+      svgAttr(rect, assign({}, rectAttrs, { fill: MARKING_FILL_COLOR }));
+      svgAppend(parentGfx, rect);
+
+      attrs.style.fill = 'black';
+    }
+
+
+    attrs.box.x += 1;
+    attrs.box.y += 1;
 
     var text = textRenderer.createText(getText(element) || '', attrs);
     svgClasses(text).add('djs-label');
@@ -680,94 +732,102 @@ export default function CpnRenderer(
     svgAppend(parentGfx, a);
   }
 
+  var handlers = this.handlers = [];
 
-  var handlers = this.handlers = {
-    // CPN
-    'cpn:Place': function (parentGfx, element) {
-      var shape = drawPlace(parentGfx, textRenderer, element);
-      renderEmbeddedLabel(parentGfx, element);
-      attachTaskMarkers(parentGfx, element);
-      return shape;
-    },
-
-    'cpn:Transition': function (parentGfx, element) {
-      var shape = drawTransition(parentGfx, textRenderer, element);
-      renderEmbeddedLabel(parentGfx, element);
-      attachTaskMarkers(parentGfx, element);
-      return shape;
-    },
-
-    'cpn:Connection': function (parentGfx, element) {
-      var pathData = createPathFromConnection(element);
-      // var path = drawArc(parentGfx, element, pathData);
-      // return path;
-
-      var pathData = createPathFromConnection(element);
-
-      var fill = getFillColor(element), stroke = getStrokeColor(element);
-
-      var attrs = {
-        strokeLinejoin: 'round',
-        markerEnd: marker('sequenceflow-end', fill, stroke),
-        stroke: getStrokeColor(element),
-        strokeWidth: getStrokeWidth(element)
-      };
-
-      if (element.iserror) {
-        var attrsError = {
-          strokeLinejoin: 'round',
-          // markerEnd: marker('sequenceflow-end', fill, 1),
-          stroke: 'red',
-          strokeWidth: 7
-        };
-        var path = drawPath(parentGfx, pathData, attrsError);
-      }
-      var path = drawPath(parentGfx, pathData, attrs);
-
-      return path;
-    },
-
-    // -------------------------------------------------
-
-    'cpn:Label': function (parentGfx, element) {
-      return renderExternalLabel(parentGfx, element);
-    },
-
-    'cpn:TextAnnotation': function (parentGfx, element) {
-      var style = {
-        'fill': 'none',
-        'stroke': 'none'
-      };
-
-      var textElement = drawRect(parentGfx, element.width, element.height, 0, 0, style);
-
-      var textPathData = pathMap.getScaledPath('TEXT_ANNOTATION', {
-        xScaleFactor: 1,
-        yScaleFactor: 1,
-        containerWidth: element.width,
-        containerHeight: element.height,
-        position: {
-          mx: 0.0,
-          my: 0.0
-        }
-      });
-
-      drawPath(parentGfx, textPathData, {
-        stroke: getStrokeColor(element)
-      });
-
-      renderLabel(parentGfx, element, {
-        box: element,
-        align: 'left-top',
-        // padding: 5,
-        style: {
-          fill: getStrokeColor(element)
-        }
-      });
-
-      return textElement;
-    },
+  handlers[CPN_PLACE] = function (parentGfx, element) {
+    var shape = drawPlace(parentGfx, textRenderer, element);
+    renderEmbeddedLabel(parentGfx, element);
+    attachTaskMarkers(parentGfx, element);
+    return shape;
   };
+
+  handlers[CPN_TRANSITION] = function (parentGfx, element) {
+    var shape = drawTransition(parentGfx, textRenderer, element);
+    renderEmbeddedLabel(parentGfx, element);
+    attachTaskMarkers(parentGfx, element);
+    return shape;
+  };
+
+  handlers[CPN_CONNECTION] = function (parentGfx, element) {
+    var pathData = createPathFromConnection(element);
+    // var path = drawArc(parentGfx, element, pathData);
+    // return path;
+
+    var pathData = createPathFromConnection(element);
+
+    var fill = getFillColor(element), stroke = getStrokeColor(element);
+
+    var attrs = {
+      strokeLinejoin: 'round',
+      markerEnd: marker('sequenceflow-end', fill, stroke),
+      stroke: getStrokeColor(element),
+      strokeWidth: getStrokeWidth(element)
+    };
+
+    if (element.iserror) {
+      var attrsError = {
+        strokeLinejoin: 'round',
+        // markerEnd: marker('sequenceflow-end', fill, 1),
+        stroke: 'red',
+        strokeWidth: 7
+      };
+      var path = drawPath(parentGfx, pathData, attrsError);
+    }
+    var path = drawPath(parentGfx, pathData, attrs);
+
+    return path;
+  };
+
+  // -------------------------------------------------
+
+  handlers[CPN_LABEL] = function (parentGfx, element) {
+    return renderExternalLabel(parentGfx, element);
+  };
+
+  handlers[CPN_TOKEN_LABEL] = function (parentGfx, element) {
+    return renderExternalLabel(parentGfx, element);
+  };
+
+  handlers[CPN_MARKING_LABEL] = function (parentGfx, element) {
+    return renderExternalLabel(parentGfx, element);
+  };
+
+  handlers[CPN_TEXT_ANNOTATION] = function (parentGfx, element) {
+    var style = {
+      'fill': 'none',
+      'stroke': 'none'
+    };
+
+    var textElement = drawRect(parentGfx, element.width, element.height, 0, 0, style);
+
+    var textPathData = pathMap.getScaledPath('TEXT_ANNOTATION', {
+      xScaleFactor: 1,
+      yScaleFactor: 1,
+      containerWidth: element.width,
+      containerHeight: element.height,
+      position: {
+        mx: 0.0,
+        my: 0.0
+      }
+    });
+
+    drawPath(parentGfx, textPathData, {
+      stroke: getStrokeColor(element)
+    });
+
+    renderLabel(parentGfx, element, {
+      box: element,
+      align: 'left-top',
+      // padding: 5,
+      style: {
+        fill: getStrokeColor(element)
+      }
+    });
+
+    return textElement;
+  };
+
+  // end handlers definitions
 
   function attachTaskMarkers(parentGfx, element, taskMarkers) {
     var obj = element;
@@ -869,7 +929,10 @@ CpnRenderer.prototype.drawShape = function (parentGfx, element) {
   var type = element.type;
   var h = this.handlers[type];
   /* jshint -W040 */
-  return h(parentGfx, element);
+  if (h) {
+    return h(parentGfx, element);
+  }
+  return undefined;
 };
 
 CpnRenderer.prototype.drawConnection = function (parentGfx, element) {

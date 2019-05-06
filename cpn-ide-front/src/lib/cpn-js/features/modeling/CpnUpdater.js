@@ -114,7 +114,8 @@ export default function CpnUpdater(eventBus, connectionDocking, selection) {
   function updateLabel(e) {
     // console.log('CpnUpdater(), updateLabel(), e = ', e);
     var shape = e.element;
-    if (is(shape, CPN_LABEL)) {
+    // if (is(shape, CPN_LABEL)) {
+    if (shape.labelTarget) {
       shape.parent = shape.labelTarget;
     }
   }

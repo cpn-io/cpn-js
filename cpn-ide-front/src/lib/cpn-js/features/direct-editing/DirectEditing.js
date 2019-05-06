@@ -4,6 +4,7 @@ import {
 } from 'min-dash';
 
 import TextBox from './TextBox';
+import { is, CPN_PLACE, CPN_TRANSITION, CPN_LABEL, CPN_TOKEN_LABEL, CPN_MARKING_LABEL } from '../../util/ModelUtil';
 
 /**
  * A direct editing component that allows users
@@ -203,6 +204,10 @@ DirectEditing.prototype.activate = function (element) {
   // console.log('DirectEditing.prototype.activate, element = ', element);
   // console.log('DirectEditing.prototype.activate, context = ', context);
 
+  // disable editing for token elements
+  if (is(element, CPN_TOKEN_LABEL)) {
+    return;
+  }
 
   // check if activation took place
   if (context) {

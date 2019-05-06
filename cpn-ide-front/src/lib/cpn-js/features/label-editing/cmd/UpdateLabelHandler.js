@@ -11,7 +11,8 @@ import {
 } from '../../../util/LabelUtil';
 
 import {
-  CPN_LABEL, CPN_TEXT_ANNOTATION,
+  CPN_LABEL,
+  CPN_TEXT_ANNOTATION,
   getBusinessObject,
   is
 } from '../../../util/ModelUtil';

@@ -5,6 +5,8 @@ import {
 export const CPN_TRANSITION = 'cpn:Transition';
 export const CPN_PLACE = 'cpn:Place';
 export const CPN_LABEL = 'cpn:Label';
+export const CPN_TOKEN_LABEL = 'cpn:TokenLabel';
+export const CPN_MARKING_LABEL = 'cpn:MarkingLabel';
 export const CPN_CONNECTION = 'cpn:Connection';
 export const CPN_TEXT_ANNOTATION = 'cpn:TextAnnotation';
 

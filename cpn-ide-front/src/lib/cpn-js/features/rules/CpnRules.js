@@ -6,8 +6,11 @@ import {
   CPN_PLACE,
   CPN_TRANSITION,
   CPN_LABEL,
+  CPN_CONNECTION,
+  CPN_TOKEN_LABEL,
+  CPN_MARKING_LABEL,
   is,
-  isCpn, CPN_CONNECTION,
+  isCpn
 } from '../../util/ModelUtil';
 
 export default function CpnRules(eventBus) {
@@ -55,7 +58,7 @@ CpnRules.prototype.init = function () {
 };
 
 function canAttach(target, shape) {
-  return !isCpn(target);
+  return is(shape, CPN_LABEL) || !isCpn(target);
 }
 
 function canCreate(target, shape) {
@@ -69,5 +72,11 @@ function canConnect(source, target) {
 }
 
 function canResize(shape) {
-  return (isCpn(shape) && !is(shape, CPN_CONNECTION) && !is(shape, CPN_LABEL));
+  return (
+    isCpn(shape) &&
+    !is(shape, CPN_CONNECTION) &&
+    !is(shape, CPN_LABEL) &&
+    !is(shape, CPN_TOKEN_LABEL) &&
+    !is(shape, CPN_MARKING_LABEL)
+  );
 }

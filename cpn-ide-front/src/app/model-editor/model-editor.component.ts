@@ -114,17 +114,19 @@ export class ModelEditorComponent implements OnInit {
           })
       }*/
 
-      this.emitterService.getMarking(undefined).subscribe(
-        (data: any) => {
-          let dlog = data;
-          console.log('daTA ', dlog);
-        })
+      // this.emitterService.getMarking(undefined).subscribe(
+      //   (data: any) => {
+      //     let dlog = data;
+      //     console.log('daTA ', dlog);
+      //   });
+
       // this.emitterService.getEnableTransitions(event.element.id).subscribe(
       //   (data: any) => {
       //     let datalog = data;
       //     console.log('daTA ', datalog);
       //   })
       // console.log('click on, event = ', event);
+      
       this.fireSelectionEvent(event);
     });
 

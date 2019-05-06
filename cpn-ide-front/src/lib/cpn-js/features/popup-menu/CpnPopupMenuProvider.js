@@ -2,15 +2,17 @@ import {
   forEach,
   filter
 } from 'min-dash';
+import { is, CPN_PLACE } from '../../util/ModelUtil';
 
 /**
  * This module is an element agnostic replace menu provider for the popup menu.
  */
 export default function CpnPopupMenuProvider(
-  popupMenu, modeling, rules, translate) {
+  popupMenu, modeling, connect, rules, translate) {
 
   this._popupMenu = popupMenu;
   this._modeling = modeling;
+  this._connect = connect;
   this._rules = rules;
   this._translate = translate;
 
@@ -20,6 +22,7 @@ export default function CpnPopupMenuProvider(
 CpnPopupMenuProvider.$inject = [
   'popupMenu',
   'modeling',
+  'connect',
   'rules',
   'translate'
 ];
@@ -43,18 +46,50 @@ CpnPopupMenuProvider.prototype.register = function () {
  */
 CpnPopupMenuProvider.prototype.getEntries = function (element) {
 
+  const self = this;
+
   console.log('CpnPopupMenuProvider.prototype.getEntries, element = ', element);
 
-  var entries = [];
+  var menuEntry, entries = [];
 
-  const menuEntry = {
-    id: '_createPlace',
-    label: 'Create Place',
-    // className: 'context-pad-icon-connect',
-    action: function () { alert('aaaaaaaaaaaaa'); }
-  };
+  if (is(element, CPN_PLACE)) {
+     menuEntry = {
+      id: '_menuItem_createPlace',
+      label: 'Create Transition',
+      action: function () { alert('Create Transition'); }
+    };
+    entries.push(menuEntry);
 
-  entries.push(menuEntry);
+    // menuEntry = {
+    //   id: '_separator',
+    //   label: 'Separator',
+    //   className: 'separator'
+    // };
+    // entries.push(menuEntry);
+
+
+    menuEntry = {
+      id: '_menuItem_delete',
+      label: 'Delete',
+      action: function () { 
+        // alert('Delete Place');
+        self._popupMenu.close();
+        self._modeling.removeElements([element]); 
+      }
+    };
+    entries.push(menuEntry);
+
+    menuEntry = {
+      id: '_menuItem_connect',
+      label: 'Connect',
+      action: function () { 
+        // alert('Connect Place'); 
+        self._popupMenu.close();
+        self._connect.start(event, element);
+      }
+    };
+    entries.push(menuEntry);
+  }
 
   return entries;
 };
@@ -69,17 +104,5 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
  * @return {Array<Object>} a list of menu entry items
  */
 CpnPopupMenuProvider.prototype.getHeaderEntries = function (element) {
-
-  console.log('CpnPopupMenuProvider.prototype.getHeaderEntries, element = ', element);
-
-  var headerEntries = [];
-
-  // const menuEntry = {
-  //   id: '_createPlace_2',
-  //   label: 'Create Place 2',
-  //   action: function () { alert('aaaaaaaaaaaaa'); }
-  // };
-  // headerEntries.push(menuEntry);
-
-  return headerEntries;
+  return [];
 };

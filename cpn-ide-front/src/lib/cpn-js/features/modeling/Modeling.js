@@ -314,7 +314,7 @@ Modeling.prototype.getMarkingLabelAttrs = function (labelTarget, cpnMarkingLabel
 
   var attrs = {
     type: CPN_MARKING_LABEL,
-    id: CPN_MARKING_LABEL + '_' + labelTarget.id,
+    id: CPN_MARKING_LABEL + '_' + labelTarget.labelTarget.id,
     cpnElement: cpnMarkingLabelElement,
     text: text,
 

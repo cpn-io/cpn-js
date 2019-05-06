@@ -87,6 +87,8 @@ export default function TextBox(options) {
 TextBox.prototype.create = function (bounds, style, value, options) {
   var self = this;
 
+  // console.log('TextBox.prototype.create(), options = ', options);
+
   var parent = this.parent,
     content = this.content,
     container = this.container;
@@ -151,6 +153,12 @@ TextBox.prototype.create = function (bounds, style, value, options) {
     outline: 'none',
     wordWrap: 'break-word',
   }, contentStyle);
+
+  if (options.backgroundColor) {
+    assign(content.style, {
+      backgroundColor: options.backgroundColor,
+    }, contentStyle);
+  }
 
   if (options.centerVertically) {
     assign(content.style, {

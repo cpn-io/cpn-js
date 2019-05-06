@@ -1,16 +1,16 @@
-import {Component, ElementRef, HostListener, Input, OnInit, ViewChild} from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
 
-import {assign} from 'min-dash';
+import { assign } from 'min-dash';
 import Diagram from 'diagram-js';
 import CpnDiagramModule from '../../lib/cpn-js/core';
 
-import {EmitterService} from '../services/emitter.service';
-import {HttpClient} from '@angular/common/http';
-import {Message} from '../common/message';
-import {EventService} from '../services/event.service';
-import {ModelService} from '../services/model.service';
+import { EmitterService } from '../services/emitter.service';
+import { HttpClient } from '@angular/common/http';
+import { Message } from '../common/message';
+import { EventService } from '../services/event.service';
+import { ModelService } from '../services/model.service';
 
-import {importCpnPage} from '../../lib/cpn-js/import/Importer';
+import { importCpnPage } from '../../lib/cpn-js/import/Importer';
 
 
 @Component({
@@ -21,9 +21,9 @@ import {importCpnPage} from '../../lib/cpn-js/import/Importer';
 export class ModelEditorComponent implements OnInit {
 
   constructor(private eventService: EventService,
-              private emitterService: EmitterService,
-              private http: HttpClient,
-              private modelService: ModelService) {
+    private emitterService: EmitterService,
+    private http: HttpClient,
+    private modelService: ModelService) {
   }
 
   @ViewChild('container') containerElementRef: ElementRef;
@@ -70,6 +70,23 @@ export class ModelEditorComponent implements OnInit {
     });
 
     const eventBus = this.diagram.get('eventBus');
+
+    eventBus.on('import.render.complete', (event) => {
+      const pageElement = event.source;
+
+      // console.log('import.render.complete, event = ', event);
+
+      // get Places status
+      if (pageElement && pageElement.place && pageElement.place.length > 0) {
+        for (const place of pageElement.place) {
+          this.emitterService.getMarking(place._id).subscribe(
+            (data: any) => {
+              console.log('this.emitterService.getMarking(), data = ', data);
+            });
+        }
+      }
+    });
+
 
     eventBus.on('element.hover', (event) => {
       if (event.element.type === 'cpn:Transition' || event.element.type === 'cpn:Place') {
@@ -537,11 +554,11 @@ export class ModelEditorComponent implements OnInit {
     //   });
     // console.log('CANCEL!!!!!!!!');
 
-    this.eventService.send(Message.MODEL_UPDATE, {pageObject: page});
+    this.eventService.send(Message.MODEL_UPDATE, { pageObject: page });
   }
 
   changeSubPageName(subpage) {
-    this.eventService.send(Message.CHANGE_NAME_PAGE, {id: subpage.subpageid, name: subpage.name, changedElement: 'tran'});
+    this.eventService.send(Message.CHANGE_NAME_PAGE, { id: subpage.subpageid, name: subpage.name, changedElement: 'tran' });
   }
 
   // /**
@@ -984,10 +1001,10 @@ export class ModelEditorComponent implements OnInit {
       if (subpage) {
         newTranc['subst'] = {
           subpageinfo: {
-            fillattr: {_colour: 'White', _pattern: 'Solid', _filled: 'false'},
-            lineattr: {_colour: 'Black', _thick: '0', _type: 'Solid'},
-            posattr: {_x: newTranc.posattr._x, _y: newTranc.posattr._y},
-            textattr: {_colour: 'Black', _bold: 'false'},
+            fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
+            lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
+            posattr: { _x: newTranc.posattr._x, _y: newTranc.posattr._y },
+            textattr: { _colour: 'Black', _bold: 'false' },
             _id: newTranc._id + 'e',
             _name: 'Supplier'
           },                  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1671,7 +1688,7 @@ export class ModelEditorComponent implements OnInit {
       //     element: event.element
       //   });
 
-      this.eventService.send(Message.SHAPE_SELECT, {element: event.element});
+      this.eventService.send(Message.SHAPE_SELECT, { element: event.element });
     }
   }
 

@@ -14,7 +14,8 @@ import {
   CPN_LABEL,
   CPN_TEXT_ANNOTATION,
   getBusinessObject,
-  is
+  is,
+  CPN_MARKING_LABEL
 } from '../../../util/ModelUtil';
 import { getText } from '../../../draw/CpnRenderUtil';
 
@@ -40,14 +41,14 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
   function setText(element, text) {
 
     // external label if present
-   // var label = element.label || element;
+    // var label = element.label || element;
     var label = is(element, CPN_LABEL) ? element.label || element : element;
 
     var labelTarget = element.labelTarget || element;
 
     setLabel(label, text, labelTarget !== label);
 
-    return [ label, labelTarget ];
+    return [label, labelTarget];
   }
 
   function setNameText(element, text) {
@@ -59,18 +60,18 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
 
     setLabel(label, text, labelTarget !== label);
 
-    return [ label, labelTarget ];
+    return [label, labelTarget];
   }
 
   function preExecute(ctx) {
     var element = ctx.element,
-        businessObject = element.businessObject,
-        newLabel = ctx.newLabel;
+      businessObject = element.businessObject,
+      newLabel = ctx.newLabel;
 
     if (!isLabel(element)
-        && isLabelExternal(element)
-        && !hasExternalLabel(element)
-        && !isEmptyText(newLabel)) {
+      && isLabelExternal(element)
+      && !hasExternalLabel(element)
+      && !isEmptyText(newLabel)) {
 
       // create label
       var paddingTop = 7;
@@ -103,10 +104,10 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
     console.log('UpdateLabelHandler.postExecute(), ctx = ', ctx);
 
     var element = ctx.element,
-        label = element.label || element,
-        newLabel = ctx.newLabel,
-        newBounds = ctx.newBounds,
-        hints = ctx.hints || {};
+      label = element.label || element,
+      newLabel = ctx.newLabel,
+      newBounds = ctx.newBounds,
+      hints = ctx.hints || {};
 
     if (isLabel(label) && isEmptyText(newLabel)) {
 
@@ -118,7 +119,10 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
     }
 
     // ignore internal labels for elements except text annotations
-    if (!isLabelExternal(element) && !is(element, CPN_TEXT_ANNOTATION) && !is(element, CPN_LABEL)) {
+    if (!isLabelExternal(element)
+      && !is(element, CPN_TEXT_ANNOTATION)
+      && !is(element, CPN_LABEL)
+      && !is(element, CPN_MARKING_LABEL)) {
       return;
     }
 
@@ -161,5 +165,5 @@ UpdateLabelHandler.$inject = [
 
 function isEmptyText(label) {
   if (typeof label === 'string') return !label || !label.trim(); else
-  return !label || !label.text.trim();
+    return !label || !label.text.trim();
 }

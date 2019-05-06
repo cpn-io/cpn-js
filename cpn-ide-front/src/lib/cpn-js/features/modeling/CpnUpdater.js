@@ -4,10 +4,11 @@ import CommandInterceptor from 'diagram-js/lib/command/CommandInterceptor';
 
 inherits(CpnUpdater, CommandInterceptor);
 
-import {CPN_CONNECTION, CPN_LABEL, CPN_PLACE, is, isCpn} from '../../util/ModelUtil';
+import {CPN_CONNECTION, CPN_LABEL, CPN_PLACE, is, isCpn, CPN_TOKEN_LABEL, CPN_MARKING_LABEL} from '../../util/ModelUtil';
 
 CpnUpdater.$inject = [
   'eventBus',
+  'modeling',
   'connectionDocking',
   'selection'
 ];
@@ -16,7 +17,7 @@ CpnUpdater.$inject = [
  * A handler responsible for updating
  * once changes on the diagram happen
  */
-export default function CpnUpdater(eventBus, connectionDocking, selection) {
+export default function CpnUpdater(eventBus, modeling, connectionDocking, selection) {
   console.log('CpnUpdater()');
 
   CommandInterceptor.call(this, eventBus);
@@ -60,10 +61,20 @@ export default function CpnUpdater(eventBus, connectionDocking, selection) {
     }
   });
 
-  // eventBus.on('element.click', function(event) {
-  //   console.log('CpnUpdater(), element.click, event = ', event);
-  // });
+  eventBus.on('element.click', function(event) {
+    console.log('CpnUpdater(), element.click, event = ', event);
 
+    if (event.element && is(event.element, CPN_TOKEN_LABEL))
+      showHideMarking(event.element);
+  });
+
+  function showHideMarking(tokenElement) {
+    if (!tokenElement || !tokenElement.label || !is(tokenElement.label, CPN_MARKING_LABEL))
+      return;
+
+      tokenElement.label.hidden = !tokenElement.label.hidden;
+      modeling.updateElement(tokenElement.label);
+  }
 
   // crop connection ends during create/update
   function cropConnection(e) {

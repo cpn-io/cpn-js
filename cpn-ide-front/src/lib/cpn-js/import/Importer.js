@@ -37,7 +37,7 @@ export function importCpnPage(diagram, cpnPageElement) {
       canvas.zoom(0.7);
     }
 
-    eventBus.fire('import.render.complete', { error: error, warnings: warnings });
+    eventBus.fire('import.render.complete', { source: cpnPageElement, error: error, warnings: warnings });
   } catch (e) {
     console.error('ERROR rendering CPN page diagram, e = ', e);
     error = e;

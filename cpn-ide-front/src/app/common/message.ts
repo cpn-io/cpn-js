@@ -4,6 +4,7 @@ export class Message {
   public static PAGE_OPEN = 'page.open';
 
   static SHAPE_SELECT = 'shape.select';
+
   static SHAPE_HOVER = 'shape.hover';
   static SHAPE_OUT = 'shape.out';
   static SML_VERIFY = 'sml.verify';

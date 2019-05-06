@@ -10,6 +10,7 @@ import Modeling from './Modeling';
 import CpnLayouter from './CpnLayouter';
 import CpnUpdater from './CpnUpdater';
 import AdaptiveLabelPositioningBehavior from './AdaptiveLabelPositioningBehavior';
+import CpnFactory from "./CpnFactory";
 
 export default {
   __depends__: [
@@ -24,9 +25,11 @@ export default {
     'layouter',
     'cpnUpdater',
     'adaptiveLabelPositioningBehavior',
+    'cpnFactory',
   ],
   modeling: [ 'type', Modeling ],
   layouter: [ 'type', CpnLayouter ],
   cpnUpdater: [ 'type', CpnUpdater ],
   adaptiveLabelPositioningBehavior: [ 'type', AdaptiveLabelPositioningBehavior ],
+  cpnFactory : [ 'type', CpnFactory],
 };

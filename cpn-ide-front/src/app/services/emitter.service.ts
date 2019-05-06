@@ -60,14 +60,19 @@ export class EmitterService {
     // return this.http.post('api/cpn/verifi', [{'xml': JSON.stringify(netJson)}]);
   }
 
-  getMarking(elemType: String, id: String) {
+  getMarking(id: String) {
     console.log('getMarking for place ' + id);
-    return this.http.post('api/cpn/marking', [{ 'id': id, 'sessionId': 'testid'}]);
+    return this.http.post('api/cpn/marking', [{ 'id': id ? id : '', 'sessionId': 'testid'}]);
   }
 
-  makeStep(elemType: String, id: String) {
-    console.log('getMarking for place ' + id);
+  makeStep( id: String) {
+    console.log('makeStep for trans ' + id);
     return this.http.post('api/cpn/step', [{ 'id': id, 'sessionId': 'testid'}]);
+  }
+
+  getEnableTransitions(id: String) {
+    console.log('getMarking for place ' + id);
+    return this.http.post('api/cpn/enable', [{ 'id': id, 'sessionId': 'testid'}]);
   }
 
 

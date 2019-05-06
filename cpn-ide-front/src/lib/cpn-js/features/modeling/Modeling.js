@@ -5,8 +5,10 @@ import BaseModeling from 'diagram-js/lib/features/modeling/Modeling';
 import UpdateLabelHandler from '../label-editing/cmd/UpdateLabelHandler';
 
 import {
+  CPN_LABEL,
   isCpn,
 } from '../../util/ModelUtil';
+import CpnImporter from "../../import/CpnImporter";
 
 /**
  * CPN modeling features activator
@@ -16,7 +18,7 @@ import {
  * @param {CommandStack} commandStack
  * @param {CpnRules} cpnRules
  */
-export default function Modeling(eventBus, elementFactory, elementRegistry, commandStack, cpnRules) {
+export default function Modeling(eventBus, elementFactory, elementRegistry, commandStack, cpnRules, textRenderer ) {
   console.log('Modeling()');
 
   BaseModeling.call(this, eventBus, elementFactory, commandStack);
@@ -24,7 +26,7 @@ export default function Modeling(eventBus, elementFactory, elementRegistry, comm
   this._eventBus = eventBus;
   this._cpnRules = cpnRules;
   this._elementRegistry = elementRegistry;
-
+  this._textRenderer = textRenderer;
   this._defaultValues = [];
 }
 
@@ -35,7 +37,8 @@ Modeling.$inject = [
   'elementFactory',
   'elementRegistry',
   'commandStack',
-  'cpnRules'
+  'cpnRules',
+  'textRenderer'
 ];
 
 
@@ -150,4 +153,523 @@ Modeling.prototype.getDefaultValue = function (key) {
   console.log('Modeling.prototype.getDefaultValue(), this._defaultValues = ', this._defaultValues);
   return this._defaultValues[key];
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Modeling.prototype.getPlaceAttrs = function (cpnPlaceElement, type) {
+  var x = Math.round(cpnPlaceElement.posattr._x);
+  var y = Math.round(cpnPlaceElement.posattr._y) * -1;
+  var w = Math.round(cpnPlaceElement.ellipse._w);
+  var h = Math.round(cpnPlaceElement.ellipse._h);
+  x -= w / 2;
+  y -= h / 2;
+
+  var attrs = {
+    type: type,
+    id: cpnPlaceElement._id,
+    cpnElement: cpnPlaceElement,
+    text: cpnPlaceElement.text,
+    x: x,
+    y: y,
+    width: w,
+    height: h
+  };
+
+  return attrs;
+}
+
+Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, labelType) {
+  var x = Math.round(cpnLabelElement.posattr._x);
+  var y = Math.round(cpnLabelElement.posattr._y) * -1;
+
+  var text, defaultValue;
+
+  if (labelType === 'port') {
+    text = cpnLabelElement._type; // for port label
+    if (text === 'I/O') {
+      text = 'In/Out';
+    }
+  }
+  else if (labelType === 'subst')
+    text = cpnLabelElement._name; // for subst label
+  else if (labelType === 'aux')
+    text = cpnLabelElement.text; // for aux label
+  else
+    text = cpnLabelElement.text.__text; // for shape external label
+
+  console.log('Modeling.prototype.getLabelAttrs(), text = ', text);
+
+  // if label is empty check for default values
+  if (labelType) {
+    defaultValue = this.getDefaultValue(labelType);
+    console.log('Modeling.prototype.getLabelAttrs(), defualt text = ', defaultValue);
+  }
+
+  text = text || '';
+
+  var bounds = { x: x, y: y, width: 200, height: 20 };
+  bounds = this._textRenderer.getExternalLabelBounds(bounds, defaultValue && text.trim() === '' ? defaultValue : text);
+
+  if (labelType !== 'aux') {
+    x -= bounds.width / 2;
+    y -= bounds.height / 2;
+  }
+
+  var attrs = {
+    type: CPN_LABEL,
+    id: cpnLabelElement._id,
+    cpnElement: cpnLabelElement,
+    labelType: labelType,
+    text: text,
+    x: x,
+    y: y,
+    width: bounds.width,
+    height: bounds.height
+  };
+
+  if (labelTarget) {
+    attrs.labelTarget = labelTarget;
+  }
+  if (defaultValue) {
+    attrs.defaultValue = defaultValue;
+  }
+
+  return attrs;
+}
+
+Modeling.prototype.getTransAttrs = function (cpnTransElement, type) {
+  var x = Math.round(cpnTransElement.posattr._x);
+  var y = Math.round(cpnTransElement.posattr._y) * -1;
+  var w = Math.round(cpnTransElement.box._w);
+  var h = Math.round(cpnTransElement.box._h);
+  x -= w / 2;
+  y -= h / 2;
+
+  var attrs = {
+    type: type,
+    id: cpnTransElement._id,
+    cpnElement: cpnTransElement,
+    text: cpnTransElement.text,
+    x: x,
+    y: y,
+    width: w,
+    height: h
+  };
+
+  return attrs;
+}
+
+Modeling.prototype.getArcData = function (pageObject, cpnArcElement, type, placeShape, transShape) {
+  let stroke = cpnArcElement.lineattr._colour || 'black';
+  const strokeWidth = cpnArcElement.lineattr._thick || 1;
+
+  // var orientation = arc["@attributes"].orientation;
+  const orientation = cpnArcElement._orientation;
+  let source = placeShape;
+  let target = transShape;
+  let reverse = false;
+  if (orientation && orientation == 'TtoP') {
+    source = transShape;
+    target = placeShape;
+    reverse = true;
+  }
+
+  let waypoints = [];
+  waypoints.push({
+    x: source.x + Math.abs(source.width / 2),
+    y: source.y + Math.abs(source.height / 2),
+    id: source.id
+  });
+
+  if (cpnArcElement.bendpoint) {
+    if (cpnArcElement.bendpoint.posattr) {
+      // @ts-ignore
+      waypoints.push({
+        x: 1 * cpnArcElement.bendpoint.posattr._x,
+        y: -1 * cpnArcElement.bendpoint.posattr._y,
+        id: cpnArcElement.bendpoint._id
+      });
+    }
+    if (cpnArcElement.bendpoint instanceof Array) {
+      const arr = cpnArcElement.bendpoint;
+      if (!reverse) {
+        arr.reverse();
+      }
+      arr.forEach(p => {
+        waypoints.push({
+          x: 1 * p.posattr._x,
+          y: -1 * p.posattr._y,
+          id: p._id
+        });
+      });
+    }
+  }
+
+  waypoints.push({
+    x: target.x + Math.abs(target.width / 2),
+    y: target.y + Math.abs(target.height / 2),
+    id: target.id
+  });
+
+  // выравнивание точек соединения по bendpoins
+  const n = waypoints.length;
+  if (n > 2) {
+
+    // y
+    if (Math.abs(waypoints[0].y - waypoints[1].y) < 20) {
+      waypoints[0].y = waypoints[1].y;
+    }
+    if (Math.abs(waypoints[n - 1].y - waypoints[n - 2].y) < 20) {
+      waypoints[n - 1].y = waypoints[n - 2].y;
+    }
+
+    // x
+    if (Math.abs(waypoints[0].x - waypoints[1].x) < 20) {
+      waypoints[0].x = waypoints[1].x;
+    }
+    if (Math.abs(waypoints[n - 1].x - waypoints[n - 2].x) < 20) {
+      waypoints[n - 1].x = waypoints[n - 2].x;
+    }
+
+  }
+
+  else if (pageObject) {
+
+    for (const arc of pageObject.arc) {
+      if (cpnArcElement._id !== arc._id &&
+        ((cpnArcElement.placeend._idref === arc.transend._idref && cpnArcElement.transend._idref === arc.placeend._idref) ||
+          (cpnArcElement.placeend._idref === arc.placeend._idref && cpnArcElement.transend._idref === arc.transend._idref))) {
+        waypoints = optimiseEqualsArcsByWayoints(waypoints, source.width / 8);
+      }
+    }
+
+  }
+
+  if (source && target) {
+    const attrs = {
+      type: type,
+      id: cpnArcElement._id,
+      waypoints: waypoints,
+      stroke: stroke,
+      strokeWidth: strokeWidth,
+
+      cpnElement: cpnArcElement,
+      cpnPlace: placeShape.cpnElement,
+      cpnTransition: transShape.cpnElement
+    };
+    return { source: source, target: target, attrs: attrs };
+  }
+
+  return undefined;
+}
+
+// Helpers
+// ------------------------------------------------------------
+
+function angle(cx, cy, ex, ey) {
+  const dy = ey - cy;
+  const dx = ex - cx;
+  const theta = Math.atan2(dy, dx); // range (-PI, PI]
+  // theta *= 180 / Math.PI; // rads to degs, range (-180, 180]
+  // if (theta < 0) theta = 360 + theta; // range [0, 360)
+  return theta;
+}
+
+function optimiseEqualsArcsByWayoints(arc, delta) {
+  const dx = Math.sin(angle(arc[0].x, arc[0].y, arc[1].x, arc[1].y) - Math.PI) * delta;
+  const dy = Math.cos(angle(arc[0].x, arc[0].y, arc[1].x, arc[1].y) - Math.PI) * delta;
+
+  arc[0].x = arc[0].x + dx;
+  arc[0].y = arc[0].y + dy;
+
+  arc[1].x = arc[1].x + dx;
+  arc[1].y = arc[1].y + dy;
+
+  return arc;
+}
+
+
+
+
+/**
+ * saving the created place in the model json
+ * @param element
+ */
+createElementInModel(element) {
+  let form;
+  form['cpn:Place'] = 'ellipse';
+  form['cpn:Transotopn'] = 'ellipse';
+  let bounds = {
+    width: 200, // 90,
+    height: 30,
+    x: element.x,
+    y: element.y
+  };
+
+
+  bounds = this.textRenderer.getExternalLabelBounds(bounds, 'Default');
+  const newElement = {
+    posattr: {
+      _x: element.x, // -294.000000
+      _y: element.y  // 156.000000
+    },
+    fillattr: {
+      _colour: 'White',
+      _pattern: '',
+      _filled: false
+    },
+    lineattr: {
+      _colour: 'Black',
+      _thick: 1,
+      _type: 'Solid'
+    },
+    textattr: {
+      _colour: 'Black',
+      _bold: false
+    },
+    text: '',
+    token: {
+      _x: -80.000000,
+      _y: -49.000000
+    },
+    marking: {
+      snap: {
+        _snap_id: 9,
+        '_anchor.horizontal': 1,
+        '_anchor.vertical': 3
+      },
+      _x: -4.000000,
+      _y: -10.000000,
+      _hidden: false
+    },
+    _id: element.id // 'ID1412328424'
+  };
+
+  newElement
+  // let attrs = this.getPlaceShapeAttrs(newPlace);
+  //  let shape = this.elementFactory.createShape(attrs);
+  // shape = this.canvas.addShape(shape, this.canvas.getRootElement());
+
+  element.name = newPlace.text;
+  element.stroke = newPlace.lineattr._colour;
+  element.strokeWidth = newPlace.lineattr._thick;
+  //  this.placeShapes[attrs.id] = shape;
+  this.placeShapes[element.id] = element;
+  this.jsonPageObject.place.push(newPlace);
+  // this.modelUpdate();
+
+
+}
+
+
+/**
+ * saving the created transition in the model json
+ * @param element
+ */
+createTransitionInModel(element) {
+  const page = this.jsonPageObject;
+  console.log('actual data -------' + JSON.stringify(page.trans));
+  console.log('Created element PLACE' + element);
+  let bounds = {
+    width: 200, // 90,
+    height: 30,
+    x: element.x,
+    y: element.y
+  };
+  bounds = this.textRenderer.getExternalLabelBounds(bounds, 'AVert');
+  const newTranc = {
+    posattr: {
+      _x: element.x,
+      _y: element.y
+    },
+    fillattr: {
+      _colour: 'White',
+      _pattern: '',
+      _filled: false
+    },
+    lineattr: {
+      _colour: 'Black',
+      _thick: 1,
+      _type: 'solid'
+    },
+    textattr: {
+      _colour: 'Black',
+      _bold: false
+    },
+    text: '',
+    box: {
+      _w: element.width,
+      _h: element.height
+    },
+    binding: {
+      _x: 7.200000,
+      _y: -3.000000
+    },
+    cond: {
+      posattr: {
+        _x: element.x + Math.round(bounds.width) / 2 - element.width / 4,
+        _y: -1 * element.y - Math.round(bounds.height) / 2 + element.height / 4
+      },
+      fillattr: {
+        _colour: 'White',
+        _pattern: 'Solid',
+        _filled: false
+      },
+      lineattr: {
+        _colour: 'Black',
+        _thick: 0,
+        _type: 'Solid'
+      },
+      textattr: {
+        _colour: 'Black',
+        _bold: false
+      },
+      text: {
+        _tool: 'CPN Tools',
+        _version: '4.0.1'
+      },
+      _id: element.id + 'co'
+    },
+    time: {
+      posattr: {
+        _x: element.x + Math.round(bounds.width) / 2 + element.width, /// 55.500000,
+        _y: -1 * element.y - Math.round(bounds.height) / 2 + element.height / 4 // 102.000000
+      },
+      fillattr: {
+        _colour: 'White',
+        _pattern: 'Solid',
+        _filled: false
+      },
+      lineattr: {
+        _colour: 'Black',
+        _thick: 0,
+        _type: 'Solid'
+      },
+      textattr: {
+        _colour: 'Black',
+        _bold: false
+      },
+      text: {
+        _tool: 'CPN Tools',
+        _version: '4.0.1'
+      },
+      _id: element.id + 'tm'
+    },
+    code: {
+      posattr: {
+        _x: element.x + Math.round(bounds.width) / 2 + element.width,
+        _y: -1 * element.y - Math.round(bounds.height) / 2 - element.height
+      },
+      fillattr: {
+        _colour: 'White',
+        _pattern: 'Solid',
+        _filled: false
+      },
+      lineattr: {
+        _colour: 'Black',
+        _thick: 0,
+        _type: 'Solid'
+      },
+      textattr: {
+        _colour: 'Black',
+        _bold: false
+      },
+      text: {
+        _tool: 'CPN Tools',
+        _version: '4.0.1'
+      },
+      _id: element.id + 'cd'
+    },
+    priority: {
+      posattr: {
+        _x: element.x + Math.round(bounds.width) / 2 - element.width / 4,
+        _y: -1 * element.y - Math.round(bounds.height) / 2 - element.height
+      },
+      fillattr: {
+        _colour: 'White',
+        _pattern: 'Solid',
+        _filled: false
+      },
+      lineattr: {
+        _colour: 'Black',
+        _thick: 0,
+        _type: 'Solid'
+      },
+      textattr: {
+        _colour: 'Black',
+        _bold: false
+      },
+      text: {
+        _tool: 'CPN Tools',
+        _version: '4.0.1'
+      },
+      _id: element.id + 'p'
+    },
+    _id: element.id,
+    _explicit: false
+  };
+  // businessObject: {
+  //   text: obj.text,
+  // }
+  element.name = newTranc.text;
+  element.stroke = newTranc.lineattr._colour;
+  element.strokeWidth = newTranc.lineattr._thick;
+  element.hierar = element.hierar ? element.hierar : 'tran';
+  if (element.hierar) {
+    const subpage = this.subpages.find(e => e.tranid === newTranc._id);
+    if (!element.name) {
+      element.name = subpage && subpage.name ? subpage.name : '';
+    }
+    if (subpage) {
+      newTranc['subst'] = {
+        subpageinfo: {
+          fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
+          lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
+          posattr: { _x: newTranc.posattr._x, _y: newTranc.posattr._y },
+          textattr: { _colour: 'Black', _bold: 'false' },
+          _id: newTranc._id + 'e',
+          _name: 'Supplier'
+        },                  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        _portsock: '',     /// <<--------------------------------------------------------------------TO DO FILL THIS FIELD ARCS ID---------------------------------------------------------------------
+        _subpage: subpage.subpageid ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      };
+    }
+  }
+  this.transShapes[element.id] = element;
+  if (this.jsonPageObject.trans.length || this.jsonPageObject.trans.length === 0) {
+    this.jsonPageObject.trans.push(newTranc);
+  } else {
+    const curTran = this.jsonPageObject.trans;
+    this.jsonPageObject.trans = [];
+    this.jsonPageObject.trans.push(curTran);
+    this.jsonPageObject.trans.push(newTranc);
+  }
+  // this.modelUpdate();
+}
+
+
+
+
 

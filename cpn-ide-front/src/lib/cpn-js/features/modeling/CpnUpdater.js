@@ -4,20 +4,22 @@ import CommandInterceptor from 'diagram-js/lib/command/CommandInterceptor';
 
 inherits(CpnUpdater, CommandInterceptor);
 
-import {CPN_CONNECTION, CPN_LABEL, CPN_PLACE, is, isCpn, CPN_TOKEN_LABEL, CPN_MARKING_LABEL} from '../../util/ModelUtil';
+import { CPN_CONNECTION, CPN_LABEL, CPN_PLACE, is, isCpn, CPN_TOKEN_LABEL, CPN_MARKING_LABEL } from '../../util/ModelUtil';
 
 CpnUpdater.$inject = [
   'eventBus',
   'modeling',
   'connectionDocking',
-  'selection'
+  'selection',
+  'popupMenu',
+  'canvas'
 ];
 
 /**
  * A handler responsible for updating
  * once changes on the diagram happen
  */
-export default function CpnUpdater(eventBus, modeling, connectionDocking, selection) {
+export default function CpnUpdater(eventBus, modeling, connectionDocking, selection, popupMenu, canvas) {
   console.log('CpnUpdater()');
 
   CommandInterceptor.call(this, eventBus);
@@ -61,19 +63,33 @@ export default function CpnUpdater(eventBus, modeling, connectionDocking, select
     }
   });
 
-  eventBus.on('element.click', function(event) {
+  eventBus.on('element.click', function (event) {
     console.log('CpnUpdater(), element.click, event = ', event);
 
     if (event.element && is(event.element, CPN_TOKEN_LABEL))
       showHideMarking(event.element);
   });
 
+  eventBus.on('popupMenu.open', function (event) {
+    console.log('CpnUpdater(), popupMenu.open, event = ', event);
+  });
+
+  eventBus.on('element.mousedown', function (event) {
+    console.log('CpnUpdater(), element.mousedown, event = ', event);
+
+    var zoom = canvas.zoom();
+
+    const position = {cursor: { x: event.originalEvent.x, y: event.originalEvent.y }};
+    popupMenu.open(event.element, 'cpnPopupMenu', position);
+  });
+
+
   function showHideMarking(tokenElement) {
     if (!tokenElement || !tokenElement.label || !is(tokenElement.label, CPN_MARKING_LABEL))
       return;
 
-      tokenElement.label.hidden = !tokenElement.label.hidden;
-      modeling.updateElement(tokenElement.label);
+    tokenElement.label.hidden = !tokenElement.label.hidden;
+    modeling.updateElement(tokenElement.label);
   }
 
   // crop connection ends during create/update

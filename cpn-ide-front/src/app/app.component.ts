@@ -20,6 +20,6 @@ export class AppComponent {
   onContextMenu(e) {
     console.log("AppComponent.onContextMenu, e = ", e);
 
-    event.preventDefault();
+    e.preventDefault();
   }
 }

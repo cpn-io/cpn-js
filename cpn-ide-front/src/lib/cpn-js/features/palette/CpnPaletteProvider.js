@@ -44,10 +44,11 @@ CpnPaletteProvider.prototype.getPaletteEntries = function() {
       title: 'Create Transition',
       action: {
         click: function() {
-      /*    var shape = elementFactory.createShape({
+          var shape = elementFactory.createShape({
             width: 100,
-            height: 80
-          });*/
+            height: 80,
+            type: 'cpn:Transition'
+          });
         //  event.context.type = 'cpn:Transition';
           create.start(event, {width: 100,  height: 80});
         }
@@ -61,7 +62,8 @@ CpnPaletteProvider.prototype.getPaletteEntries = function() {
         click: function() {
           var shape = elementFactory.createShape({
             width: 100,
-            height: 80
+            height: 80,
+            type: 'cpn:Place'
           });
          // event.context.type = 'cpn:Place';
           create.start(event, shape);

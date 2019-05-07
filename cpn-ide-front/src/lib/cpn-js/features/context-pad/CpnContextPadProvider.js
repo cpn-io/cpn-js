@@ -1,11 +1,12 @@
-import {CPN_CONNECTION, CPN_PLACE, CPN_TRANSITION, is} from '../../util/ModelUtil';
+import { CPN_CONNECTION, CPN_PLACE, CPN_TRANSITION, is } from '../../util/ModelUtil';
 
 /**
  * A example context pad provider.
  */
-export default function CpnContextPadProvider(connect, contextPad, modeling) {
+export default function CpnContextPadProvider(connect, contextPad, modeling, popupMenu) {
   this._connect = connect;
   this._modeling = modeling;
+  this._popupMenu = popupMenu;
 
   contextPad.registerProvider(this);
 }
@@ -13,13 +14,15 @@ export default function CpnContextPadProvider(connect, contextPad, modeling) {
 CpnContextPadProvider.$inject = [
   'connect',
   'contextPad',
-  'modeling'
+  'modeling',
+  'popupMenu'
 ];
 
 
 CpnContextPadProvider.prototype.getContextPadEntries = function (element) {
   var connect = this._connect,
-    modeling = this._modeling;
+    modeling = this._modeling,
+    popupMenu = this._popupMenu;
 
   function removeElement() {
     modeling.removeElements([element]);
@@ -42,7 +45,7 @@ CpnContextPadProvider.prototype.getContextPadEntries = function (element) {
   //       }
   //     }
   //   };
-  //
+
   // if (is(element, CPN_PLACE) || is(element, CPN_TRANSITION))
   //   return {
   //     'delete': {
@@ -62,7 +65,8 @@ CpnContextPadProvider.prototype.getContextPadEntries = function (element) {
   //         click: startConnect,
   //         dragstart: startConnect
   //       }
-  //     }
+  //     },
+
   //   };
 
   return null;

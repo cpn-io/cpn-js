@@ -943,7 +943,7 @@ CpnRenderer.prototype.drawConnection = function (parentGfx, element) {
 };
 
 CpnRenderer.prototype.getShapePath = function (element) {
-  console.log('CpnRenderer.prototype.getShapePath(), element = ', element);
+  // console.log('CpnRenderer.prototype.getShapePath(), element = ', element);
 
   if (is(element, CPN_PLACE))
     return getEllipsePath(element);

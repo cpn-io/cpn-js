@@ -1,5 +1,5 @@
-import {EventEmitter, Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import { EventEmitter, Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import * as X2JS from 'src/lib/x2js/xml2json.js';
 
 
@@ -56,23 +56,23 @@ export class EmitterService {
     //   const gr = this.getXMlDescription(netJson);
     const xml = (x2js.json2xml_str(JSON.parse(JSON.stringify(netJson)))); /// netJson
     // console.log('NET xml--' + xml);
-    return this.http.post('api/cpn/verifi', [{'xml': xml, 'sessionId': 'testid'}]);
+    return this.http.post('api/cpn/verifi', [{ 'xml': xml, 'sessionId': 'testid' }]);
     // return this.http.post('api/cpn/verifi', [{'xml': JSON.stringify(netJson)}]);
   }
 
   getMarking(id: String) {
     console.log('getMarking for place ' + id);
-    return this.http.post('api/cpn/marking', [{ 'id': id ? id : '', 'sessionId': 'testid'}]);
+    return this.http.post('api/cpn/marking', [{ 'id': id ? id : '', 'sessionId': 'testid' }]);
   }
 
-  makeStep( id: String) {
+  makeStep(id: String) {
     console.log('makeStep for trans ' + id);
-    return this.http.post('api/cpn/step', [{ 'id': id, 'sessionId': 'testid'}]);
+    return this.http.post('api/cpn/step', [{ 'id': id, 'sessionId': 'testid' }]);
   }
 
   getEnableTransitions(id: String) {
     console.log('getMarking for place ' + id);
-    return this.http.post('api/cpn/enable', [{ 'id': id, 'sessionId': 'testid'}]);
+    return this.http.post('api/cpn/enable', [{ 'id': id, 'sessionId': 'testid' }]);
   }
 
 
@@ -157,13 +157,13 @@ export class EmitterService {
     /*  const x2js = new X2JS();
       const json = (x2js.json2xml_str( JSON.parse(JSON.stringify(netJson)) ))
       console.log('NET --' + json);*/
-    return this.http.post('api/cpn/verify', [{'sml': sml, 'sessionId': 'testid'}]);
+    return this.http.post('api/cpn/verify', [{ 'sml': sml, 'sessionId': 'testid' }]);
     // return this.http.post('api/cpn/verify', [{'xml': JSON.stringify(netJson)}]);
   }
 
 
   postDataOriginXMl(netXml: string) {
     console.log('NET --' + netXml);
-    return this.http.post('api/cpn/verify', [{'xml': netXml, 'sessionId': 'testid'}]);
+    return this.http.post('api/cpn/verify', [{ 'xml': netXml, 'sessionId': 'testid' }]);
   }
 }

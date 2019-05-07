@@ -9,6 +9,7 @@ import LassoToolModule from 'diagram-js/lib/features/lasso-tool';
 import PaletteModule from 'diagram-js/lib/features/palette';
 import CreateModule from 'diagram-js/lib/features/create';
 import ContextPadModule from 'diagram-js/lib/features/context-pad';
+import PopupMenuModule from 'diagram-js/lib/features/popup-menu';
 import ConnectModule from 'diagram-js/lib/features/connect';
 import SnappingModule from 'diagram-js/lib/features/snapping';
 import BendpointsModule from 'diagram-js/lib/features/bendpoints';
@@ -16,10 +17,12 @@ import AttachSupportModule from 'diagram-js/lib/features/attach-support';
 
 import CroppingConnectionDocking from 'diagram-js/lib/layout/CroppingConnectionDocking';
 
-import CpnContextPadProvider from '../features/context-pad/CpnContextPadProvider';
 import CpnPaletteProvider from '../features/palette/CpnPaletteProvider';
 import CpnRulesModule from '../features/rules';
 import CpnResizeModule from '../features/resize';
+
+import CpnContextPadProvider from '../features/context-pad/CpnContextPadProvider';
+import CpnPopupMenuProvider from '../features/popup-menu/CpnPopupMenuProvider';
 
 import CpnSnappingModule from '../features/snapping';
 import CpnModelingModule from '../features/modeling';
@@ -42,6 +45,7 @@ export default {
     PaletteModule,
     CreateModule,
     ContextPadModule,
+    PopupMenuModule,
     ConnectModule,
     SnappingModule,
     BendpointsModule,
@@ -63,9 +67,11 @@ export default {
   ],
   __init__: [
     'contextPadProvider',
+    'popupMenuProvider',
     'paletteProvider',
   ],
   connectionDocking: ['type', CroppingConnectionDocking],
   contextPadProvider: ['type', CpnContextPadProvider],
+  popupMenuProvider: ['type', CpnPopupMenuProvider],
   paletteProvider: ['type', CpnPaletteProvider],
 };

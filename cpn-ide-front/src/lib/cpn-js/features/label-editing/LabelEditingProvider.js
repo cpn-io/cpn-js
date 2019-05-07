@@ -169,11 +169,12 @@ LabelEditingProvider.prototype.activate = function (element) {
   var options = {};
 
   // tasks
-  if (is(element, CPN_LABEL)) {
+  if (is(element, CPN_LABEL) || is(element, CPN_MARKING_LABEL)) {
     assign(options, {
       centerVertically: false,
       centerHorizontally: false,
-      autoResize: true
+      autoResize: true,
+      backgroundColor: '#ffffee'
     });
   } else if (isCpn(element)) {
     assign(options, {
@@ -276,7 +277,7 @@ LabelEditingProvider.prototype.update = function (element, newLabel, activeConte
   element.name = element.text = newLabel;
   this._eventBus.fire('element.changed', { element: element });
 
-  if (is(element, CPN_LABEL)) {
+  if (is(element, CPN_LABEL) || is(element, CPN_MARKING_LABEL)) {
     // newBounds = {
     //   x: element.x,
     //   y: element.y,
@@ -285,6 +286,8 @@ LabelEditingProvider.prototype.update = function (element, newLabel, activeConte
     // };
 
     newBounds = this._textRenderer.getExternalLabelBounds(element, newLabel);
+
+    console.log('LabelEditingProvider.prototype.update(), newBounds = ', newBounds);
 
     this._modeling.updateLabel(element, newLabel, newBounds);
     // this._modeling.resizeShape(element, newBounds, {width: 0, height: 0});

@@ -71,15 +71,30 @@ export class ModelEditorComponent implements OnInit {
 
     const eventBus = this.diagram.get('eventBus');
 
+    eventBus.on('import.render.complete', (event) => {
+      const pageElement = event.source;
+
+      // console.log('import.render.complete, event = ', event);
+
+      // get Places status
+      if (pageElement && pageElement.place && pageElement.place.length > 0) {
+        for (const place of pageElement.place) {
+          this.emitterService.getMarking(place._id).subscribe(
+            (data: any) => {
+              console.log('this.emitterService.getMarking(), data = ', data);
+            });
+        }
+      }
+    });
+
+
     eventBus.on('element.hover', (event) => {
-      if (event.element.type === 'cpn:Transition' ||
-        event.element.type === 'cpn:Place') {
+      if (event.element.type === 'cpn:Transition' || event.element.type === 'cpn:Place') {
         this.eventService.send(Message.SHAPE_HOVER, {element: event.element});
       }
     });
     eventBus.on('element.out', (event) => {
-      if (event.element.type === 'cpn:Transition' ||
-        event.element.type === 'cpn:Place') {
+      if (event.element.type === 'cpn:Transition' || event.element.type === 'cpn:Place') {
         this.eventService.send(Message.SHAPE_OUT, {element: event.element});
       }
     });
@@ -99,17 +114,19 @@ export class ModelEditorComponent implements OnInit {
           })
       }*/
 
-      this.emitterService.getMarking(undefined).subscribe(
-        (data: any) => {
-          let dlog = data;
-          console.log('daTA ', dlog);
-        })
+      // this.emitterService.getMarking(undefined).subscribe(
+      //   (data: any) => {
+      //     let dlog = data;
+      //     console.log('daTA ', dlog);
+      //   });
+
       // this.emitterService.getEnableTransitions(event.element.id).subscribe(
       //   (data: any) => {
       //     let datalog = data;
       //     console.log('daTA ', datalog);
       //   })
       // console.log('click on, event = ', event);
+      
       this.fireSelectionEvent(event);
     });
 

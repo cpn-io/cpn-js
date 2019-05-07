@@ -2,21 +2,44 @@ import inherits from 'inherits';
 
 import CommandInterceptor from 'diagram-js/lib/command/CommandInterceptor';
 
+import {
+  toPoint
+} from 'diagram-js/lib/util/Event';
+
+import {
+  closest as domClosest
+} from 'min-dom';
+
+function getGfx(target) {
+  var node = domClosest(target, 'svg, .djs-element', true);
+  return node;
+}
+
 inherits(CpnUpdater, CommandInterceptor);
 
-import {CPN_CONNECTION, CPN_LABEL, CPN_PLACE, is, isCpn} from '../../util/ModelUtil';
+import { CPN_CONNECTION, CPN_LABEL, CPN_PLACE, is, isCpn, CPN_TOKEN_LABEL, CPN_MARKING_LABEL } from '../../util/ModelUtil';
 
 CpnUpdater.$inject = [
   'eventBus',
+  'modeling',
+  'elementRegistry',
   'connectionDocking',
-  'selection'
+  'selection',
+  'popupMenu',
+  'canvas'
 ];
+
+import {
+  event as domEvent
+} from 'min-dom';
 
 /**
  * A handler responsible for updating
  * once changes on the diagram happen
  */
-export default function CpnUpdater(eventBus, connectionDocking, selection) {
+export default function CpnUpdater(eventBus, modeling, elementRegistry,
+  connectionDocking, selection, popupMenu, canvas) {
+
   console.log('CpnUpdater()');
 
   CommandInterceptor.call(this, eventBus);
@@ -60,10 +83,68 @@ export default function CpnUpdater(eventBus, connectionDocking, selection) {
     }
   });
 
-  // eventBus.on('element.click', function(event) {
-  //   console.log('CpnUpdater(), element.click, event = ', event);
-  // });
+  eventBus.on('element.click', function (event) {
+    console.log('CpnUpdater(), element.click, event = ', event);
 
+    if (event.element && is(event.element, CPN_TOKEN_LABEL))
+      showHideMarking(event.element);
+  });
+
+  eventBus.on('popupMenu.open', function (event) {
+    console.log('CpnUpdater(), popupMenu.open, event = ', event);
+  });
+
+  eventBus.on('element.mousedown', function (event) {
+    console.log('CpnUpdater(), element.mousedown, event = ', event);
+
+    // console.log('CpnUpdater(), element.mousedown, popup menu, x,y = ', event.originalEvent.x, event.originalEvent.y);
+    // var zoom = canvas.zoom();
+    // const position = { cursor: { x: event.originalEvent.x, y: event.originalEvent.y } };
+    // popupMenu.open(event.element, 'cpnPopupMenu', position);
+  });
+
+  domEvent.bind(document, 'mousedown', function (event) {
+    console.log('CpnUpdater(), domEvent, mousedown, event = ', event);
+
+    if (event.button === 2) {
+      event.stopPropagation();
+      event.preventDefault();
+
+      console.log('CpnUpdater(), domEvent, mousedown, popup menu, x,y = ', event.x, event.y);
+
+      const position = toPoint(event);
+
+      // damn expensive operation, ouch!
+      const target = document.elementFromPoint(position.x, position.y);
+      const gfx = getGfx(target);
+
+      var element;
+
+      if (gfx) {
+        element = elementRegistry.get(gfx);
+      }
+
+      if (element) {
+        console.log('CpnUpdater(), domEvent, mousedown, popup menu, element = ', element);
+
+        var zoom = canvas.zoom();
+        // const p = { cursor: { x: event.x, y: event.y } };
+        const p = { cursor: { x: position.x, y: position.y } };
+        popupMenu.open(element, 'cpnPopupMenu', p);
+      }
+
+      // eventBus.fire('element.showPopupMenu', { event: event });
+    }
+  });
+
+
+  function showHideMarking(tokenElement) {
+    if (!tokenElement || !tokenElement.label || !is(tokenElement.label, CPN_MARKING_LABEL))
+      return;
+
+    tokenElement.label.hidden = !tokenElement.label.hidden;
+    modeling.updateElement(tokenElement.label);
+  }
 
   // crop connection ends during create/update
   function cropConnection(e) {

@@ -23,6 +23,8 @@ inherits(CpnRules, RuleProvider);
 
 CpnRules.prototype.init = function () {
 
+  const self = this;
+
   this.addRule('shape.create', function (context) {
     // console.log('RULE shape.create, context = ', context);
     return canCreate(context.target, context.shape);
@@ -46,7 +48,7 @@ CpnRules.prototype.init = function () {
 
   this.addRule('connection.create', function (context) {
     console.log('RULE connection.create, context = ', context);
-    return canConnect(context.source, context.target);
+    return self.canConnect(context.source, context.target);
   });
 
   this.addRule('elements.move', function (context) {
@@ -65,7 +67,7 @@ function canCreate(target, shape) {
   return !isCpn(target);
 }
 
-function canConnect(source, target) {
+CpnRules.prototype.canConnect = function(source, target) {
   return (
     is(source, CPN_PLACE) && is(target, CPN_TRANSITION) ||
     is(target, CPN_PLACE) && is(source, CPN_TRANSITION));

@@ -492,10 +492,10 @@ function optimiseEqualsArcsByWayoints(arc, delta) {
  *
  * @param element
  */
-function createElementInModel(element) {
-  let form;
-  form['cpn:Place'] = 'ellipse';
-  form['cpn:Transotopn'] = 'ellipse';
+function createElementInModel(context, type) {
+  let formCase;
+  formCase['cpn:Place'] = 'ellipse';
+  formCase['cpn:Transition'] = 'box';
   let bounds = {
     width: 200, // 90,
     height: 30,
@@ -507,8 +507,8 @@ function createElementInModel(element) {
   bounds = this.textRenderer.getExternalLabelBounds(bounds, 'Default');
   const newElement = {
     posattr: {
-      _x: element.x, // -294.000000
-      _y: element.y  // 156.000000
+      _x: context.position.x, // -294.000000
+      _y: context.position.y  // 156.000000
     },
     fillattr: {
       _colour: 'White',
@@ -526,8 +526,8 @@ function createElementInModel(element) {
     },
     text: '',
     token: {
-      _x: -80.000000,
-      _y: -49.000000
+      _x: context.position.x,
+      _y: context.position.x
     },
     marking: {
       snap: {
@@ -535,14 +535,17 @@ function createElementInModel(element) {
         '_anchor.horizontal': 1,
         '_anchor.vertical': 3
       },
-      _x: -4.000000,
-      _y: -10.000000,
+      _x: context.position.x,
+      _y: context.position.x,
       _hidden: false
     },
     _id: element.id // 'ID1412328424'
   };
-
-  newElement
+  let form  = formCase[type];
+  if(form) newElement[form] =  {
+    _w: this.getDefaultValue(form),//element.width,
+    _h: this.getDefaultValue(form)//element.height
+  };
   // let attrs = this.getPlaceShapeAttrs(newPlace);
   //  let shape = this.elementFactory.createShape(attrs);
   // shape = this.canvas.addShape(shape, this.canvas.getRootElement());

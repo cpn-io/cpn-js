@@ -200,7 +200,10 @@ public class CpnController {
             String id = requestBody.get(0).get("id").toString();
             String sessionId = requestBody.get(0).get("sessionId").toString();
             final HighLevelSimulator s = petriNetModel.getHighLevelSimulator();
-            // final Checker checker = new Checker(petriNetModel.getPetriNet(sessionId), null, s);
+
+            final Checker checker = new Checker(petriNetModel.getPetriNet(sessionId), null, s);
+            s.setTarget((org.cpntools.accesscpn.model.impl.PetriNetImpl) petriNetModel.getPetriNet(sessionId));
+
             List<Instance<PlaceNode>> places = s.getAllPlaceInstances();
             Instance<PlaceNode> placeNode = null;
 

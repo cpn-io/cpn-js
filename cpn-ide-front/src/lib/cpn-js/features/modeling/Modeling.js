@@ -511,23 +511,24 @@ function optimiseEqualsArcsByWayoints(arc, delta) {
  *
  * @param element
  */
-function createElementInModel(context, type) {
-  let formCase;
-  formCase['cpn:Place'] = 'ellipse';
-  formCase['cpn:Transition'] = 'box';
+Modeling.prototype.createElementInModel = function(event, type) {
+  let formCase = [];
+  formCase['cpn:Place'] = {form: 'ellipse', entry:  ['initmark', 'type']};
+  formCase['cpn:Transition'] = { form: 'box', entry: ['time', 'code', 'priority', 'cond']};
+  formCase['cpn:Connection'] = { entry: ['annot']};
   let bounds = {
     width: 200, // 90,
     height: 30,
-    x: element.x,
-    y: element.y
+    x: event.context.position.x,
+    y: event.context.position.y
   };
 
 
-  bounds = this.textRenderer.getExternalLabelBounds(bounds, 'Default');
+  bounds = this._textRenderer.getExternalLabelBounds(bounds, 'Default');
   const newElement = {
     posattr: {
-      _x: context.position.x, // -294.000000
-      _y: context.position.y  // 156.000000
+      _x: event.context.position.x, // -294.000000
+      _y: -1*event.context.position.y  // 156.000000
     },
     fillattr: {
       _colour: 'White',
@@ -543,10 +544,10 @@ function createElementInModel(context, type) {
       _colour: 'Black',
       _bold: false
     },
-    text: '',
+    text: 'gfgfg',
     token: {
-      _x: context.position.x,
-      _y: context.position.x
+      _x: event.context.position.x,
+      _y: event.context.position.x
     },
     marking: {
       snap: {
@@ -554,32 +555,56 @@ function createElementInModel(context, type) {
         '_anchor.horizontal': 1,
         '_anchor.vertical': 3
       },
-      _x: context.position.x,
-      _y: context.position.x,
+      _x: event.context.position.x,
+      _y: event.context.position.x,
       _hidden: false
     },
-    _id: element.id // 'ID1412328424'
+    _id: 'ID' + new Date().getTime()  // 'ID1412328424'
   };
-  let form = formCase[type];
-  if (form) newElement[form] = {
-    _w: this.getDefaultValue(form),//element.width,
-    _h: this.getDefaultValue(form)//element.height
-  };
-  // let attrs = this.getPlaceShapeAttrs(newPlace);
-  //  let shape = this.elementFactory.createShape(attrs);
-  // shape = this.canvas.addShape(shape, this.canvas.getRootElement());
+  let elemType  = formCase[type];
+  if(elemType) {
+    if(elemType.form) {
+      newElement[elemType.form] = {
+        _w: this.getDefaultValue(elemType.form).w,//element.width,
+        _h: this.getDefaultValue(elemType.form).h//element.height
 
-  element.name = newPlace.text;
-  element.stroke = newPlace.lineattr._colour;
-  element.strokeWidth = newPlace.lineattr._thick;
-  //  this.placeShapes[attrs.id] = shape;
-  this.placeShapes[element.id] = element;
-  this.jsonPageObject.place.push(newPlace);
+      };
+    }
+    for(let label of elemType.entry) {
+      newElement[label] = {
+        posattr: {
+          _x: event.context.position.x + Math.round(bounds.width) / 2 + 100,//+ element.width, /// 55.500000,
+          _y: -1 * event.context.position.y - Math.round(bounds.height) / 2 + 80 /4 ///+ element.height / 4 // 102.000000
+        },
+        fillattr: {
+          _colour: 'White',
+          _pattern: 'Solid',
+          _filled: false
+        },
+        lineattr: {
+          _colour: 'Black',
+          _thick: 0,
+          _type: 'Solid'
+        },
+        textattr: {
+          _colour: 'Black',
+          _bold: false
+        },
+        text: {
+          _tool: 'CPN Tools',
+          _version: '4.0.1'
+        },
+        _id: newElement._id + '' + label
+
+
+      }
+    }
+  }
+
   // this.modelUpdate();
 
-
+  return newElement;
 }
-
 
 
 

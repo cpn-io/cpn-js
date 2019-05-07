@@ -7,6 +7,8 @@ import org.cpntools.accesscpn.engine.highlevel.HighLevelSimulator;
 import org.cpntools.accesscpn.engine.highlevel.LocalCheckFailed;
 import org.cpntools.accesscpn.engine.highlevel.Util;
 import org.cpntools.accesscpn.engine.highlevel.checker.Checker;
+import org.cpntools.accesscpn.engine.highlevel.instance.Binding;
+import org.cpntools.accesscpn.engine.highlevel.instance.Instance;
 import org.cpntools.accesscpn.model.*;
 import org.cpntools.accesscpn.model.Object;
 import org.cpntools.accesscpn.model.importer.DOMParser;
@@ -14,11 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.cpntools.accesscpn.engine.highlevel.instance.State;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +31,49 @@ import java.util.Map;
 @SessionAttributes("petriNetModel")
 @RestController
 public class CpnController {
+
+
+    class Json {
+        String id;
+        String marking;
+        String tokens;
+
+        Json(String id, String marking, String tokens){
+            this.id =  id;
+            this.marking = marking;
+            this.tokens = tokens;
+        }
+
+        Json(){
+            this.id =  "";
+            this.marking = "";
+            this.tokens = "";
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getMarking() {
+            return marking;
+        }
+
+        public void setMarking(String marking) {
+            this.marking = marking;
+        }
+
+        public String getTokens() {
+            return tokens;
+        }
+
+        public void setTokens(String tokens) {
+            this.tokens = tokens;
+        }
+    }
 
    // private static final Logger log = Logger.getLogger(CpnController.class);
     //private  PetriNet petriNet = null;
@@ -57,7 +104,10 @@ public class CpnController {
                 //String.format("Changed markets: %s; new markets: %s", "sdsdsdsds","seeefe");
                 //  String ev = null;
                 final HighLevelSimulator s = petriNetModel.getHighLevelSimulator();
-                final Checker checker = new Checker(petriNetModel.getPetriNet(sessionId), null, s);
+
+                //testMarrking(sessionId, s);
+                checkEntireModel(petriNetModel.getPetriNet(sessionId), s) ;
+                /*final Checker checker = new Checker(petriNetModel.getPetriNet(sessionId), null, s);
                 check(petriNetModel.getPetriNet(sessionId));
                 checker.localCheck();
                 checker.checkInitializing();
@@ -70,7 +120,7 @@ public class CpnController {
                 checker.initialiseSimulationScheduler();
                // checker.instantiateSMLInterface();
 
-//                checker.checkEntireModel();
+//                checker.checkEntireModel();*/
             } else {
                 //petriNetModel.setPetriNet(DOMParser.parse(new URL("file://" + fileName)));
                 String sessionId = requestBody.get(0).get("sessionId").toString();
@@ -102,6 +152,109 @@ public class CpnController {
         result = new ResponseEntity<>(message, HttpStatus.OK);
         return result;
     }
+
+
+    @PostMapping(value = "/step")
+    public ResponseEntity<java.lang.Object> getMarkinById(
+            @RequestBody List<Map> requestBody,
+            HttpServletRequest request) throws RuntimeException {
+        ResponseEntity<java.lang.Object> result = null;
+        //String type = requestBody.get(0).get("type").toString();
+       try {
+           String id = requestBody.get(0).get("id").toString();
+           String sessionId = requestBody.get(0).get("sessionId").toString();
+           final HighLevelSimulator s = petriNetModel.getHighLevelSimulator();
+           // final Checker checker = new Checker(petriNetModel.getPetriNet(sessionId), null, s);
+           List<Binding> bindings = new LinkedList<Binding>();
+           List<Instance<Transition>> tis = s.getAllTransitionInstances();
+           for (Instance<Transition> ti : tis) {
+               if (ti.getNode().getId().equals(id) && s.isEnabled(ti) )
+                   bindings.addAll(s.getBindings(ti));
+           }
+           //for(Binding b : bindings) {
+              // s.execute(b);
+         //  }
+           s.execute(bindings.get(0));
+           List<Instance<PlaceNode>> places = s.getAllPlaceInstances();
+           int i = 0;
+
+
+           Json arr[] = new Json[places.size()];
+           for (Instance<PlaceNode> p : places) {
+               arr[i] = new Json(p.getNode().getId(), s.getMarking(p), String.valueOf(s.getTokens(p)));
+               i++;
+           }
+           result = new ResponseEntity<>(arr, HttpStatus.OK);
+       } catch(Exception e) {
+           System.out.println(e.getMessage());
+           result = new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
+       }
+     return result;
+    }
+
+
+    @PostMapping(value = "/marking")
+    public ResponseEntity<java.lang.Object> makeStep(
+            @RequestBody List<Map> requestBody,
+            HttpServletRequest request) throws RuntimeException {
+        ResponseEntity<java.lang.Object> result = null;
+        //String type = requestBody.get(0).get("type").toString();
+        try {
+            String id = requestBody.get(0).get("id").toString();
+            String sessionId = requestBody.get(0).get("sessionId").toString();
+            final HighLevelSimulator s = petriNetModel.getHighLevelSimulator();
+            // final Checker checker = new Checker(petriNetModel.getPetriNet(sessionId), null, s);
+            List<Instance<PlaceNode>> places = s.getAllPlaceInstances();
+            Instance<PlaceNode> placeNode = null;
+            Json arr[] = new Json[id.trim().equals("") ? places.size() : 1];
+            int i = 0;
+            for (Instance<PlaceNode> p : places) {
+                if (id.trim().equals("") || p.getNode().getId().equals(id)) {
+                    placeNode = p;
+                    arr[i] = new Json(p.getNode().getId(), s.getMarking(p), String.valueOf(s.getTokens(p)));
+                    if(!id.trim().equals("")) break;
+                    i++;
+                }
+            }
+
+            result = new ResponseEntity<>(arr, HttpStatus.OK);
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
+            result = new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
+        }
+        return result;
+    }
+
+
+    @PostMapping(value = "/enable")
+    public ResponseEntity<java.lang.Object> getEnableTransitions(
+            @RequestBody List<Map> requestBody,
+            HttpServletRequest request) throws RuntimeException {
+        ResponseEntity<java.lang.Object> result = null;
+        //String type = requestBody.get(0).get("type").toString();
+        try {
+            String id = requestBody.get(0).get("id").toString();
+            //String sessionId = requestBody.get(0).get("sessionId").toString();
+            final HighLevelSimulator s = petriNetModel.getHighLevelSimulator();
+            // final Checker checker = new Checker(petriNetModel.getPetriNet(sessionId), null, s);
+            //List<Binding> bindings = new LinkedList<Binding>();
+            List<Instance<Transition>> tis = s.getAllTransitionInstances();
+            String arr[] = new String[tis.size()];
+            int i = 0;
+            for (Instance<Transition> ti : tis) {
+                if (s.isEnabled(ti) )
+                    //bindings.addAll(s.getBindings(ti));
+                    arr[i] = ti.getNode().getId();
+                    i++;
+            }
+            result = new ResponseEntity<>(arr, HttpStatus.OK);
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
+            result = new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
+        }
+        return result;
+    }
+
 
 
 
@@ -148,6 +301,26 @@ public class CpnController {
 
         }
     }
+
+    public void checkEntireModel(final PetriNet net, final HighLevelSimulator sim) throws Exception {
+        Checker c = new Checker(net, null, sim);
+        c.checkEntireModel();
+    }
+
+    public void testMarrking(String sessionId, HighLevelSimulator s ) throws  Exception{
+        // s.setTarget((org.cpntools.accesscpn.model.impl.PetriNetImpl) petriNetModel.getPetriNet(sessionId));
+        checkEntireModel(petriNetModel.getPetriNet(sessionId), s) ;
+        List<Instance<PlaceNode>> instanses =  s.getAllPlaceInstances();
+
+        for(Instance<PlaceNode> node : instanses ) {
+            int tok = s.getTokens(node)   ;
+            State st = s.getMarking();
+            String mark =  s.getMarking(node);
+            System.out.println("dfdfd"+tok+ " " + st+ " " + mark);
+
+        }
+    }
+
 
 
 }

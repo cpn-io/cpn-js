@@ -63,14 +63,14 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
     // menuEntry = {
     //   id: '_separator',
     //   label: 'Separator',
-    //   className: 'separator'
+    //   className: 'popup-menu-separator'
     // };
     // entries.push(menuEntry);
-
 
     menuEntry = {
       id: '_menuItem_delete',
       label: 'Delete',
+      className: 'popup-menu-icon-delete',
       action: function () { 
         // alert('Delete Place');
         self._popupMenu.close();
@@ -82,6 +82,7 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
     menuEntry = {
       id: '_menuItem_connect',
       label: 'Connect',
+      className: 'popup-menu-icon-connect',
       action: function () { 
         // alert('Connect Place'); 
         self._popupMenu.close();

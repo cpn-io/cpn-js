@@ -233,7 +233,7 @@ public class CpnController {
         ResponseEntity<java.lang.Object> result = null;
         //String type = requestBody.get(0).get("type").toString();
         try {
-            String id = requestBody.get(0).get("id").toString();
+            //String id = requestBody.get(0).get("id").toString();
             //String sessionId = requestBody.get(0).get("sessionId").toString();
             final HighLevelSimulator s = petriNetModel.getHighLevelSimulator();
             // final Checker checker = new Checker(petriNetModel.getPetriNet(sessionId), null, s);

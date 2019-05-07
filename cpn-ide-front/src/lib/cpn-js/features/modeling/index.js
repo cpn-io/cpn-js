@@ -11,7 +11,7 @@ import CpnLayouter from './CpnLayouter';
 import CpnUpdater from './CpnUpdater';
 import CpnFactory from "./CpnFactory";
 import AdaptiveLabelPositioningBehavior from './AdaptiveLabelPositioningBehavior';
-import TokenProvider from './TokenProvider';
+import StateProvider from './StateProvider';
 import ChangeSupporter from './ChangeSupporter';
 
 export default {
@@ -28,7 +28,7 @@ export default {
     'cpnUpdater',
     'cpnFactory',
     'adaptiveLabelPositioningBehavior',
-    'tokenProvider',
+    'stateProvider',
     'changeSupporter',
   ],
   modeling: [ 'type', Modeling ],
@@ -36,6 +36,6 @@ export default {
   cpnUpdater: [ 'type', CpnUpdater ],
   cpnFactory : [ 'type', CpnFactory],
   adaptiveLabelPositioningBehavior: [ 'type', AdaptiveLabelPositioningBehavior ],
-  tokenProvider: [ 'type', TokenProvider ],
+  stateProvider: [ 'type', StateProvider ],
   changeSupporter: [ 'type', ChangeSupporter ],
 };

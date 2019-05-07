@@ -116,6 +116,9 @@ export class ProjectConsoleComponent implements OnInit, OnDestroy {
     this.emitterService.verifyAllNet(net)
       .subscribe(
         (data: any) => {
+
+          console.log('VERIFICATION_DONE (1)');
+
           const elapsed = new Date().getTime() - timeStart;
           this.logSuccess(data ? data : 'Complete in ' + this.timeConversion(elapsed) + '. Model is correct.');
 
@@ -127,6 +130,11 @@ export class ProjectConsoleComponent implements OnInit, OnDestroy {
             this.parseErrorText(undefined);
           }
           //  this.done = true;
+
+          console.log('VERIFICATION_DONE (2)');
+
+          this.eventService.send(Message.VERIFICATION_DONE, { data: undefined });
+
         },
         error => {
           this.success = false;

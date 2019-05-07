@@ -245,11 +245,12 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     let elementId;
 
     if (element.type === 'cpn:Place') {
-      // подчеркиваем Types
+
+      // подчеркиваем тип
       this.underlineRelationsRecursively(this.nodes[0], element.cpnElement.type.text.toString());
-      // подчеркиваем val|fun
-      this.underlineRelationsRecursively(this.nodes[0], element.cpnElement.initmark.text.toString());
-      // elementId = element.cpnElement._id;
+
+      // разбираем инитмарк и находим в нем литералы
+      this.processMlCodeRecursively(element.cpnElement.initmark.text.toString());
 
     } else if (element.type === 'cpn:Transition') {
       elementId = element.cpnElement._id;
@@ -263,9 +264,13 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         }
       }
     }
-
   }
 
+  /**
+   * поиск всех арков на странице
+   * @param page страница
+   * @param elementId ид элемента
+   */
   processPage(page: any, elementId: string) {
     if (page.arc instanceof Array) {
       for (const arc of page.arc) {
@@ -276,33 +281,56 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * выбор арков, связанных с нашим элементом
+   * @param arc объект arc
+   * @param elementId идентификатор элемента, для которого мы ищем арки
+   */
   processArc(arc: any, elementId: string) {
     if ((arc.placeend && arc.placeend._idref === elementId) || (arc.transend && arc.transend._idref === elementId)) {
-      this.processArcAnnotRecursively(arc.annot.text.toString());
+      this.processMlCodeRecursively(arc.annot.text.toString());
     }
   }
 
-  processArcAnnotRecursively(str: string) {
+  /**
+   * Обработка кода на языке моделирования с целью выделения из него литералов
+   * @param str код на языке моделирования
+   */
+  processMlCodeRecursively(str: string) {
+    // ищем самые глубоко вложенные скобки, и разбиваем строку на две подстроки:
+    // первая - все вокруг этих скобок, вторая - все внутри этих скобок
+    // если скобок не нашли, значит имеем строку, не содержащую скобок, из которой нам надо выделить литералы
     const lastOpenBracket = str.lastIndexOf('(');
     if (lastOpenBracket > -1) {
       const nextCloseBracket = (str.substring(lastOpenBracket)).indexOf(')') + lastOpenBracket;
-      this.processArcAnnotRecursively(str.substring(0, lastOpenBracket) + str.substring(nextCloseBracket + 1));
-      this.processArcAnnotRecursively(str.substring(lastOpenBracket + 1, nextCloseBracket));
+      this.processMlCodeRecursively(str.substring(0, lastOpenBracket) + str.substring(nextCloseBracket + 1));
+      this.processMlCodeRecursively(str.substring(lastOpenBracket + 1, nextCloseBracket));
     } else {
-      const vars = str.split(',');
-      for (const variable of vars) {
-        const beautyVars = variable.match('[a-zA-Z0-9]+');
-        if (beautyVars) {
-          this.underlineRelationsRecursively(this.nodes[0], beautyVars[0]);
+      this.processLiteralsFromMlString(str);
+    }
+  }
+
+  /**
+   * Обработка строки на языке моделирования, не содержащую скобок, из которой нам надо выделить литералы
+   * @param str строка на языке моделирования, не содержащая скобок
+   */
+  processLiteralsFromMlString(str: string) {
+    const literals = str.split(',');
+    for (const someLiteral of literals) {
+      const goodLiterals = someLiteral.match('[a-zA-Z0-9_]+');
+      if (goodLiterals) {
+        for (const lit of goodLiterals) {
+          this.underlineRelationsRecursively(this.nodes[0], lit);
         }
       }
     }
   }
 
+
   /**
-   * рекурсивный пеербор узлов
+   * рекурсивный пеербор узлов дерева в поисках имени узла, которое требуется подсветить
    * @param parentNode родительский узел
-   * @param name имя типа или функции, которое нужно найти и подчеркнуть в дереве
+   * @param name имя типа или функции, которое нужно найти и подчеркнуть в дереве,
    */
   underlineRelationsRecursively(parentNode: any, name: string): boolean {
     // console.log('underlineRelationsRecursively name = ' + name);
@@ -314,24 +342,30 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         }
       }
     } else {
-      console.log('underlineRelationsRecursively(), parentNode.object = ', parentNode.object);
-      console.log('underlineRelationsRecursively(), name = ', name);
-
-      if (parentNode.object.id && parentNode.object.id === name) {
-        // это проверка на то, что строка является декларацией переменной (не перечисление)
-        this.doUnderlineNodeLabel(true, parentNode.id);
-        return true;
-      } else if (parentNode.object.toString().match('^\\s*(val|fun){1}\\s+' + name + '\\s*[=(]{1}')) {
+      if (parentNode.object.toString().match('^\\s*(val|fun){1}\\s+' + name + '\\s*[=(]{1}')) {
         // это проверка на то, что строка является декларацией функции или val (что это за тип?)
         this.doUnderlineNodeLabel(true, parentNode.id);
         return true;
+
       } else if (parentNode.object.id) {
-        // это проверка на то, что строка является декларацией переменной (перечисление)
-        const sub1 = parentNode.object.id.toString().split(':');
-        const sub2 = sub1[0].split(',');
-        for (const str of sub2) {
-          if (str === name) {
+
+        // здесь подчеркиваем переменные и их типы
+        if (parentNode.object.id instanceof Array) {
+          for (const someId of parentNode.object.id) {
+            if (someId === name) {
+              this.doUnderlineNodeLabel(true, parentNode.id);
+              if (parentNode.object.type) {
+                this.underlineRelationsRecursively(this.nodes[0], parentNode.object.type.id);
+              }
+              return true;
+            }
+          }
+        } else {
+          if (parentNode.object.id === name) {
             this.doUnderlineNodeLabel(true, parentNode.id);
+            if (parentNode.object.type) {
+              this.underlineRelationsRecursively(this.nodes[0], parentNode.object.type.id);
+            }
             return true;
           }
         }

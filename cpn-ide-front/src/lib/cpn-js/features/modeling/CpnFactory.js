@@ -18,19 +18,27 @@ export default function CpnFactory(eventBus, elementFactory, modeling, canvas) {
 
   function createShape(e) {
     console.log('CpnFactory - Event ', e)
-    let cpnElement = modeling.createElementInModel(e, 'cpn:Place');
-    let attrs = modeling.getPlaceAttrs(cpnElement, 'cpn:Place');
+    let cpnElement = modeling.createElementInModel(e, e.context.shape.type);
+    let attrs;
+    if(e.context.shape.type === 'cpn:Transition') {
+      attrs = modeling.getTransAttrs(cpnElement, e.context.shape.type);
+    } else if(e.context.shape.type === 'cpn:Place') {
+      attrs = modeling.getPlaceAttrs(cpnElement, e.context.shape.type);
+    } else {
+      attrs = modeling.getArcData(cpnElement, e.context.shape.type);
+    }
+
     let element = elementFactory.createShape(attrs);
     canvas.addShape(element, canvas.getRootElement());
     let label
-    for (var key of ['type', 'initmark', 'port']) {
+    /*for (var key of ['type', 'initmark', 'port']) {
       if (cpnElement[key]) {
         attrs = modeling.getLabelAttrs(element, cpnElement[key], key);
         label = elementFactory.createLabel(attrs);
         canvas.addShape(label, element);
       }
 
-    }
+    }*/
   }
 
 }

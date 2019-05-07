@@ -1,11 +1,12 @@
 /**
  * A example palette provider.
  */
-export default function CpnPaletteProvider(create, elementFactory, lassoTool, palette) {
+export default function CpnPaletteProvider(create, elementFactory, lassoTool, palette,  dragging) {
   this._create = create;
   this._elementFactory = elementFactory;
   this._lassoTool = lassoTool;
   this._palette = palette;
+  this._dragging =  eventBus;
 
   palette.registerProvider(this);
 }
@@ -14,7 +15,9 @@ CpnPaletteProvider.$inject = [
   'create',
   'elementFactory',
   'lassoTool',
-  'palette'
+  'palette',
+  'eventBus',
+  'dragging'
 ];
 
 
@@ -44,13 +47,15 @@ CpnPaletteProvider.prototype.getPaletteEntries = function() {
       title: 'Create Transition',
       action: {
         click: function() {
-          var shape = elementFactory.createShape({
+         /* var shape = elementFactory.createShape({
             width: 100,
             height: 80,
             type: 'cpn:Transition'
-          });
+          });*/
         //  event.context.type = 'cpn:Transition';
-          create.start(event, {width: 100,  height: 80});
+         // create.start(event, {width: 100,  height: 80, type: 'cpn:Transition'});
+        //  create.start(event, shape);
+
         }
       }
     },
@@ -60,13 +65,26 @@ CpnPaletteProvider.prototype.getPaletteEntries = function() {
       title: 'Create Place',
       action: {
         click: function() {
-          var shape = elementFactory.createShape({
+         /* var shape = elementFactory.createShape({
             width: 100,
             height: 80,
             type: 'cpn:Place'
-          });
+          });*/
          // event.context.type = 'cpn:Place';
-          create.start(event, shape);
+        // create.start(event, {width: 100,  height: 80, type: 'cpn:Place'});
+          //create.start(event, shape);
+
+          dragging.init(event, 'create', {
+            cursor: 'grabbing',
+            autoActivate: true,
+            data: {
+              shape: shape,
+              context: {
+                shape: shape,
+                source: source
+              }
+            }
+          });
         }
       }
     }

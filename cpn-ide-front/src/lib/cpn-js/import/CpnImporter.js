@@ -157,6 +157,7 @@ CpnImporter.prototype.add = function (pageObject, cpnElement, type) {
       const data = this._modeling.getArcData(pageObject, cpnElement, type, placeShape, transShape);
       if (data) {
         element = this._modeling.connect(data.source, data.target, data.attrs, null);
+        // element = this._modeling.createConnection(placeShape, transShape);
 
         for (var key of ['annot']) {
           if (cpnElement[key]) {
@@ -169,7 +170,7 @@ CpnImporter.prototype.add = function (pageObject, cpnElement, type) {
     }
   }
 
-  // Transition object
+  // Text annotation object
   if (type === CPN_TEXT_ANNOTATION) {
     attrs = this._modeling.getLabelAttrs(undefined, cpnElement, 'aux');
     label = this._elementFactory.createLabel(attrs);

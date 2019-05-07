@@ -1,7 +1,7 @@
 import inherits from 'inherits';
 
 import CommandInterceptor from 'diagram-js/lib/command/CommandInterceptor';
-import { CPN_PLACE, CPN_TRANSITION } from "../../util/ModelUtil";
+import { CPN_PLACE, CPN_TRANSITION, CPN_CONNECTION } from "../../util/ModelUtil";
 
 inherits(CpnFactory, CommandInterceptor);
 
@@ -60,6 +60,8 @@ CpnFactory.prototype.createShape = function (position, type) {
 
   }*/
 
+
+  // Place object
   if (type === CPN_PLACE) {
     for (var key of ['type', 'initmark', 'port']) {
       if (cpnElement[key]) {
@@ -80,6 +82,19 @@ CpnFactory.prototype.createShape = function (position, type) {
         attrs = this._modeling.getMarkingLabelAttrs(tokenLabel, cpnElement.marking, 'marking');
         var markingLabel = this._elementFactory.createLabel(attrs);
         // this._canvas.addShape(markingLabel, tokenLabel);
+      }
+    }
+  }
+
+
+  // Transition object
+  if (type === CPN_TRANSITION) {
+    for (var key of ['cond', 'time', 'code', 'priority', 'subst']) {
+      if (cpnElement[key]) {
+        const e = key === 'subst' ? cpnElement[key].subpageinfo : cpnElement[key];
+        attrs = this._modeling.getLabelAttrs(element, e, key);
+        label = this._elementFactory.createLabel(attrs);
+        // this._canvas.addShape(label, element);
       }
     }
   }

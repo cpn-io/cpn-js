@@ -349,8 +349,8 @@ export class ModelEditorComponent implements OnInit {
     this.modeling.setDefaultValue('code', 'input();\noutput();\naction();\n');
     this.modeling.setDefaultValue('priority', 'P_NORMAL');
     this.modeling.setDefaultValue('annot', 'expr');
-    this.modeling.setDefaultValue('ellipse', { h: 100, w: 100 });
-    this.modeling.setDefaultValue('box', { h: 80, w: 100 });
+    this.modeling.setDefaultValue('ellipse', { h: 50, w: 80 });
+    this.modeling.setDefaultValue('box', { h: 50, w: 80 });
   }
 
   subscripeToAppMessage() {

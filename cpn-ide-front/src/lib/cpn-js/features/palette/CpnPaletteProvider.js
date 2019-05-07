@@ -47,6 +47,8 @@ CpnPaletteProvider.prototype.getPaletteEntries = function() {
       title: 'Create Transition',
       action: {
         click: function() {
+
+          var shape = elementFactory.createShape({
          /* var shape = elementFactory.createShape({
             width: 100,
             height: 80,
@@ -90,3 +92,7 @@ CpnPaletteProvider.prototype.getPaletteEntries = function() {
     }
   };
 };
+
+
+CpnPaletteProvider.prototype._createPlace = function() {
+}

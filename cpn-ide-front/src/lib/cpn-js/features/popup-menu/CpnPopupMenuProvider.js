@@ -2,7 +2,7 @@ import {
   forEach,
   filter
 } from 'min-dash';
-import { is, CPN_PLACE } from '../../util/ModelUtil';
+import { is, CPN_PLACE, CPN_TRANSITION } from '../../util/ModelUtil';
 
 /**
  * This module is an element agnostic replace menu provider for the popup menu.
@@ -52,44 +52,55 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
 
   var menuEntry, entries = [];
 
+  var createPlaceMenuEntry = {
+    id: '_menuItem_createPlace',
+    label: 'Create place',
+    action: function () { alert('Create place'); }
+  };
+
+  var createTransitionMenuEntry = {
+    id: '_menuItem_createTransition',
+    label: 'Create transition',
+    action: function () { alert('Create transition'); }
+  };
+
+
+  var deleteMenuEntry = {
+    id: '_menuItem_delete',
+    label: 'Delete',
+    className: 'popup-menu-icon-delete',
+    action: function () {
+      // alert('Delete Place');
+      self._popupMenu.close();
+      self._modeling.removeElements([element]);
+    }
+  };
+
+  var connectMenuEntry = {
+    id: '_menuItem_connect',
+    label: 'Connect',
+    className: 'popup-menu-icon-connect',
+    action: function () {
+      self._popupMenu.close();
+      self._connect.start(event, element);
+    }
+  };
+
+  if (element.id === '__implicitroot') {
+    entries.push(createPlaceMenuEntry);
+    entries.push(createTransitionMenuEntry);
+  }
+
   if (is(element, CPN_PLACE)) {
-     menuEntry = {
-      id: '_menuItem_createPlace',
-      label: 'Create Transition',
-      action: function () { alert('Create Transition'); }
-    };
-    entries.push(menuEntry);
+    entries.push(createTransitionMenuEntry);
+    entries.push(connectMenuEntry);
+    entries.push(deleteMenuEntry);
+  }
 
-    // menuEntry = {
-    //   id: '_separator',
-    //   label: 'Separator',
-    //   className: 'popup-menu-separator'
-    // };
-    // entries.push(menuEntry);
-
-    menuEntry = {
-      id: '_menuItem_delete',
-      label: 'Delete',
-      className: 'popup-menu-icon-delete',
-      action: function () { 
-        // alert('Delete Place');
-        self._popupMenu.close();
-        self._modeling.removeElements([element]); 
-      }
-    };
-    entries.push(menuEntry);
-
-    menuEntry = {
-      id: '_menuItem_connect',
-      label: 'Connect',
-      className: 'popup-menu-icon-connect',
-      action: function () { 
-        // alert('Connect Place'); 
-        self._popupMenu.close();
-        self._connect.start(event, element);
-      }
-    };
-    entries.push(menuEntry);
+  if (is(element, CPN_TRANSITION)) {
+    entries.push(createPlaceMenuEntry);
+    entries.push(connectMenuEntry);
+    entries.push(deleteMenuEntry);
   }
 
   return entries;

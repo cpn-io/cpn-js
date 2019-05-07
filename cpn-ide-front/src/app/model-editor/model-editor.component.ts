@@ -77,42 +77,55 @@ export class ModelEditorComponent implements OnInit {
       // console.log('import.render.complete, event = ', event);
 
       // get Places status
-      if (pageElement && pageElement.place && pageElement.place.length > 0) {
-        for (const place of pageElement.place) {
-          this.emitterService.getMarking(place._id).subscribe(
-            (data: any) => {
-              console.log('this.emitterService.getMarking(), data = ', data);
-            });
-        }
-      }
+      // if (pageElement && pageElement.place && pageElement.place.length > 0) {
+      //   for (const place of pageElement.place) {
+      //     this.emitterService.getMarking(place._id).subscribe(
+      //       (data: any) => {
+      //         console.log('this.emitterService.getMarking(), data = ', data);
+      //       });
+      //   }
+      // }
+
+      this.emitterService.getMarking(undefined).subscribe(
+        (data: any) => {
+          console.log('this.emitterService.getMarking(), data = ', data);
+
+          eventBus.fire('model.update.tokens', { data: data });
+        });
+
+      this.emitterService.getEnableTransitions('ID0000001').subscribe(
+        (data: any) => {
+          console.log('this.emitterService.getEnableTransitions(), data = ', data);
+        });
+
     });
 
 
     eventBus.on('element.hover', (event) => {
       if (event.element.type === 'cpn:Transition' || event.element.type === 'cpn:Place') {
-        this.eventService.send(Message.SHAPE_HOVER, {element: event.element});
+        this.eventService.send(Message.SHAPE_HOVER, { element: event.element });
       }
     });
     eventBus.on('element.out', (event) => {
       if (event.element.type === 'cpn:Transition' || event.element.type === 'cpn:Place') {
-        this.eventService.send(Message.SHAPE_OUT, {element: event.element});
+        this.eventService.send(Message.SHAPE_OUT, { element: event.element });
       }
     });
 
     eventBus.on('element.click', (event) => {
-     /* if(event.element.type === 'cpn:Place') {
-        this.emitterService.getMarking(event.element.id).subscribe(
-          (data: any) => {
-            let dlog = data;
-            console.log('daTA ', dlog);
-          })
-      } else {
-        this.emitterService.makeStep( event.element.id).subscribe(
-          (data: any) => {
-            let datalog = data;
-            console.log('daTA ', datalog);
-          })
-      }*/
+      /* if(event.element.type === 'cpn:Place') {
+         this.emitterService.getMarking(event.element.id).subscribe(
+           (data: any) => {
+             let dlog = data;
+             console.log('daTA ', dlog);
+           })
+       } else {
+         this.emitterService.makeStep( event.element.id).subscribe(
+           (data: any) => {
+             let datalog = data;
+             console.log('daTA ', datalog);
+           })
+       }*/
 
       // this.emitterService.getMarking(undefined).subscribe(
       //   (data: any) => {
@@ -340,8 +353,8 @@ export class ModelEditorComponent implements OnInit {
     this.modeling.setDefaultValue('code', 'input();\noutput();\naction();\n');
     this.modeling.setDefaultValue('priority', 'P_NORMAL');
     this.modeling.setDefaultValue('annot', 'expr');
-    this.modeling.setDefaultValue('ellipse', {h: 100, w: 100});
-    this.modeling.setDefaultValue('box', {h: 80, w: 100});
+    this.modeling.setDefaultValue('ellipse', { h: 100, w: 100 });
+    this.modeling.setDefaultValue('box', { h: 80, w: 100 });
   }
 
   subscripeToAppMessage() {

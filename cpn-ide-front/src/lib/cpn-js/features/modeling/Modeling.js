@@ -492,24 +492,23 @@ function optimiseEqualsArcsByWayoints(arc, delta) {
  *
  * @param element
  */
-Modeling.prototype.createElementInModel = function(event, type) {
-  let formCase = [];
-  formCase['cpn:Place'] = {form: 'ellipse', entry:  ['initmark', 'type']};
-  formCase['cpn:Transition'] = { form: 'box', entry: ['time', 'code', 'priority', 'cond']};
-  formCase['cpn:Connection'] = { entry: ['annot']};
+function createElementInModel(context, type) {
+  let formCase;
+  formCase['cpn:Place'] = 'ellipse';
+  formCase['cpn:Transition'] = 'box';
   let bounds = {
     width: 200, // 90,
     height: 30,
-    x: event.context.position.x,
-    y: event.context.position.y
+    x: element.x,
+    y: element.y
   };
 
 
-  bounds = this._textRenderer.getExternalLabelBounds(bounds, 'Default');
+  bounds = this.textRenderer.getExternalLabelBounds(bounds, 'Default');
   const newElement = {
     posattr: {
-      _x: event.context.position.x, // -294.000000
-      _y: -1*event.context.position.y  // 156.000000
+      _x: context.position.x, // -294.000000
+      _y: context.position.y  // 156.000000
     },
     fillattr: {
       _colour: 'White',
@@ -525,10 +524,10 @@ Modeling.prototype.createElementInModel = function(event, type) {
       _colour: 'Black',
       _bold: false
     },
-    text: 'gfgfg',
+    text: '',
     token: {
-      _x: event.context.position.x,
-      _y: event.context.position.x
+      _x: context.position.x,
+      _y: context.position.x
     },
     marking: {
       snap: {
@@ -536,11 +535,11 @@ Modeling.prototype.createElementInModel = function(event, type) {
         '_anchor.horizontal': 1,
         '_anchor.vertical': 3
       },
-      _x: event.context.position.x,
-      _y: event.context.position.x,
+      _x: context.position.x,
+      _y: context.position.x,
       _hidden: false
     },
-    _id: 'ID' + new Date().getTime()  // 'ID1412328424'
+    _id: element.id // 'ID1412328424'
   };
   let elemType  = formCase[type];
   if(elemType) {
@@ -577,14 +576,15 @@ Modeling.prototype.createElementInModel = function(event, type) {
           },
           _id: newElement._id + '' + label
 
-
-        }
-    }
-  }
-
+  element.name = newPlace.text;
+  element.stroke = newPlace.lineattr._colour;
+  element.strokeWidth = newPlace.lineattr._thick;
+  //  this.placeShapes[attrs.id] = shape;
+  this.placeShapes[element.id] = element;
+  this.jsonPageObject.place.push(newPlace);
   // this.modelUpdate();
 
-    return newElement;
+
 }
 
 

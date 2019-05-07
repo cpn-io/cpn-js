@@ -1,10 +1,10 @@
-import {Component, HostListener, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import { Component, HostListener, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 // import {NgxXml2jsonService} from 'ngx-xml2json';
-import {EventService} from '../services/event.service';
-import {Message} from '../common/message';
-import {ProjectService} from '../services/project.service';
-import {TreeComponent, TREE_ACTIONS} from 'angular-tree-component';
-import {ModelService} from '../services/model.service';
+import { EventService } from '../services/event.service';
+import { Message } from '../common/message';
+import { ProjectService } from '../services/project.service';
+import { TreeComponent, TREE_ACTIONS } from 'angular-tree-component';
+import { ModelService } from '../services/model.service';
 
 // import {TreeComponent} from 'angular-tree-component';
 
@@ -84,7 +84,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   //
   options = {
     allowDrag: true,
-    allowDrop: (element, {parent, index}) => {
+    allowDrop: (element, { parent, index }) => {
       let elemHeaderCatalog = this.getHeaderCatalog(element);
       let parentHeaderCatalog = this.getHeaderCatalog(parent);
       //console.log( 'elemHeaderCatalog: ' + elemHeaderCatalog.id + '  parentHeaderCatalog: ' + parentHeaderCatalog.id + ' parent: ' + element.parent.id);
@@ -100,7 +100,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         contextMenu: (model: any, node: any, event: any) => {
           this.onTreeNodeContextMenu(event, node);
         },
-        drop: (tree, node, $event, {from, to}) => {
+        drop: (tree, node, $event, { from, to }) => {
           console.log('drag', from, to);
           console.log('onMoveNode', node.name, 'to', to.parent.name, 'at index', to.index);
           let parentJson = from.parent.data.object;//(this.treeComponent.treeModel.getNodeById(node.id)).parent.data.object;
@@ -125,7 +125,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
             this.treeComponent.treeModel.setState(tree.getState());
 
           } else {
-            TREE_ACTIONS.MOVE_NODE(tree, node, $event, {from, to});
+            TREE_ACTIONS.MOVE_NODE(tree, node, $event, { from, to });
           }
         }
       }
@@ -182,7 +182,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         if (newNodeId) {
           const nodeForEdit = this.treeComponent.treeModel.getNodeById(newNodeId);
           if (!data.comonBlock) {
-            this.eventService.send(Message.OPEN_DECLARATION_BLOCK, {id: this.getCurrentBlock(nodeForEdit).id});
+            this.eventService.send(Message.OPEN_DECLARATION_BLOCK, { id: this.getCurrentBlock(nodeForEdit).id });
           }
           let expnNode = nodeForEdit;
           while (expnNode.id !== 'project') {
@@ -245,11 +245,12 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     let elementId;
 
     if (element.type === 'cpn:Place') {
-      // подчеркиваем Types
+
+      // подчеркиваем тип
       this.underlineRelationsRecursively(this.nodes[0], element.cpnElement.type.text.toString());
-      // подчеркиваем val|fun
-      this.underlineRelationsRecursively(this.nodes[0], element.cpnElement.initmark.text.toString());
-      // elementId = element.cpnElement._id;
+
+      // разбираем инитмарк и находим в нем литералы
+      this.processMlCodeRecursively(element.cpnElement.initmark.text.toString());
 
     } else if (element.type === 'cpn:Transition') {
       elementId = element.cpnElement._id;
@@ -263,9 +264,13 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         }
       }
     }
-
   }
 
+  /**
+   * поиск всех арков на странице
+   * @param page страница
+   * @param elementId ид элемента
+   */
   processPage(page: any, elementId: string) {
     if (page.arc instanceof Array) {
       for (const arc of page.arc) {
@@ -276,33 +281,56 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * выбор арков, связанных с нашим элементом
+   * @param arc объект arc
+   * @param elementId идентификатор элемента, для которого мы ищем арки
+   */
   processArc(arc: any, elementId: string) {
     if ((arc.placeend && arc.placeend._idref === elementId) || (arc.transend && arc.transend._idref === elementId)) {
-      this.processArcAnnotRecursively(arc.annot.text.toString());
+      this.processMlCodeRecursively(arc.annot.text.toString());
     }
   }
 
-  processArcAnnotRecursively(str: string) {
+  /**
+   * Обработка кода на языке моделирования с целью выделения из него литералов
+   * @param str код на языке моделирования
+   */
+  processMlCodeRecursively(str: string) {
+    // ищем самые глубоко вложенные скобки, и разбиваем строку на две подстроки:
+    // первая - все вокруг этих скобок, вторая - все внутри этих скобок
+    // если скобок не нашли, значит имеем строку, не содержащую скобок, из которой нам надо выделить литералы
     const lastOpenBracket = str.lastIndexOf('(');
     if (lastOpenBracket > -1) {
       const nextCloseBracket = (str.substring(lastOpenBracket)).indexOf(')') + lastOpenBracket;
-      this.processArcAnnotRecursively(str.substring(0, lastOpenBracket) + str.substring(nextCloseBracket + 1));
-      this.processArcAnnotRecursively(str.substring(lastOpenBracket + 1, nextCloseBracket));
+      this.processMlCodeRecursively(str.substring(0, lastOpenBracket) + str.substring(nextCloseBracket + 1));
+      this.processMlCodeRecursively(str.substring(lastOpenBracket + 1, nextCloseBracket));
     } else {
-      const vars = str.split(',');
-      for (const variable of vars) {
-        const beautyVars = variable.match('[a-zA-Z0-9]+');
-        if (beautyVars) {
-          this.underlineRelationsRecursively(this.nodes[0], beautyVars[0]);
+      this.processLiteralsFromMlString(str);
+    }
+  }
+
+  /**
+   * Обработка строки на языке моделирования, не содержащую скобок, из которой нам надо выделить литералы
+   * @param str строка на языке моделирования, не содержащая скобок
+   */
+  processLiteralsFromMlString(str: string) {
+    const literals = str.split(',');
+    for (const someLiteral of literals) {
+      const goodLiterals = someLiteral.match('[a-zA-Z0-9_]+');
+      if (goodLiterals) {
+        for (const lit of goodLiterals) {
+          this.underlineRelationsRecursively(this.nodes[0], lit);
         }
       }
     }
   }
 
+
   /**
-   * рекурсивный пеербор узлов
+   * рекурсивный пеербор узлов дерева в поисках имени узла, которое требуется подсветить
    * @param parentNode родительский узел
-   * @param name имя типа или функции, которое нужно найти и подчеркнуть в дереве
+   * @param name имя типа или функции, которое нужно найти и подчеркнуть в дереве,
    */
   underlineRelationsRecursively(parentNode: any, name: string): boolean {
     // console.log('underlineRelationsRecursively name = ' + name);
@@ -314,21 +342,30 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         }
       }
     } else {
-      if (parentNode.object.id && parentNode.object.id === name ) {
-        // это проверка на то, что строка является декларацией переменной (не перечисление)
-        this.doUnderlineNodeLabel(true, parentNode.id);
-        return true;
-      } else if (parentNode.object.toString().match('^\\s*(val|fun){1}\\s+' + name + '\\s*[=(]{1}')) {
+      if (parentNode.object.toString().match('^\\s*(val|fun){1}\\s+' + name + '\\s*[=(]{1}')) {
         // это проверка на то, что строка является декларацией функции или val (что это за тип?)
         this.doUnderlineNodeLabel(true, parentNode.id);
         return true;
+
       } else if (parentNode.object.id) {
-        // это проверка на то, что строка является декларацией переменной (перечисление)
-        const sub1 = parentNode.object.id.toString().split(':');
-        const sub2 = sub1[0].split(',');
-        for (const str of sub2) {
-          if (str === name) {
+
+        // здесь подчеркиваем переменные и их типы
+        if (parentNode.object.id instanceof Array) {
+          for (const someId of parentNode.object.id) {
+            if (someId === name) {
+              this.doUnderlineNodeLabel(true, parentNode.id);
+              if (parentNode.object.type) {
+                this.underlineRelationsRecursively(this.nodes[0], parentNode.object.type.id);
+              }
+              return true;
+            }
+          }
+        } else {
+          if (parentNode.object.id === name) {
             this.doUnderlineNodeLabel(true, parentNode.id);
+            if (parentNode.object.type) {
+              this.underlineRelationsRecursively(this.nodes[0], parentNode.object.type.id);
+            }
             return true;
           }
         }
@@ -552,7 +589,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     console.log('openNode(), event = ', event);
     const currentNode = this.getCurrentBlock(node);
     console.log(currentNode);
-    this.eventService.send(Message.OPEN_DECLARATION_BLOCK, {id: currentNode.id});
+    this.eventService.send(Message.OPEN_DECLARATION_BLOCK, { id: currentNode.id });
     this.sendMlToMlEditor(node.data.name);
 
     event.preventDefault();
@@ -599,7 +636,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   sendMlToMlEditor(value: any) {
-    this.eventService.send(Message.SML_TO_EDITOR, {fn: {data: value}});
+    this.eventService.send(Message.SML_TO_EDITOR, { fn: { data: value } });
   }
 
   getCurrentBlock(currentNode): any {
@@ -722,7 +759,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       parentNod = node.parent;
       // node.parent.data.children = node.parent.data.children.filter(x => x.id !== node.id);
       this.deleteNode(this.nodes[0], node.id);
-      this.eventService.send(Message.DELETE_PAGE, {id: node.id, parent: node.parent.data.name});
+      this.eventService.send(Message.DELETE_PAGE, { id: node.id, parent: node.parent.data.name });
       this.updateTree();
       this.focusedNode(parentNod);
       // this.eventService.send(Message.PAGE_OPEN, {pageObject: undefined, subPages: undefined});
@@ -740,7 +777,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   focusedNode(node) {
     if (node) {
       const newfocusedBlock = this.getCurrentBlock(node);
-      this.eventService.send(Message.OPEN_DECLARATION_BLOCK, {id: newfocusedBlock.id});
+      this.eventService.send(Message.OPEN_DECLARATION_BLOCK, { id: newfocusedBlock.id });
       this.treeComponent.treeModel.setFocusedNode(newfocusedBlock);
       this.treeComponent.treeModel.setActiveNode(newfocusedBlock, true, false);
       this.treeComponent.treeModel.setSelectedNode(newfocusedBlock, true);
@@ -1156,13 +1193,13 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
                 if (page.trans && page.trans.length) {
                   for (const tran of page.trans) {
                     if (tran.subst) {
-                      this.subpages.push({subpageid: tran.subst._subpage, tranid: tran._id});
+                      this.subpages.push({ subpageid: tran.subst._subpage, tranid: tran._id });
                       // this.subpages.push(tran._id);
                     }
                   }
                 } else {
                   if (page.trans && page.trans.subst) {
-                    this.subpages.push({subpageid: page.trans.subst._subpage, tranid: page.trans._id});
+                    this.subpages.push({ subpageid: page.trans.subst._subpage, tranid: page.trans._id });
                     // this.subpages.push(page.trans._id);
                   }
                 }
@@ -1251,7 +1288,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
               object: trans
             };
             if (trans.subst) {
-              for (const subpage of  cpnet.page) {
+              for (const subpage of cpnet.page) {
                 if (subpage._id === trans.subst._subpage) {
                   this.setPage(subpage, pageNode, cpnet, true);
                 }
@@ -1310,7 +1347,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   downloadFile(data: string) {
-    const blob = new Blob([data], {type: 'text/json'});
+    const blob = new Blob([data], { type: 'text/json' });
     const url = window.URL.createObjectURL(blob);
     window.open(url);
   }
@@ -1349,7 +1386,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       //     subPages: this.subpages
       //   });
 
-      this.eventService.send(Message.PAGE_OPEN, {pageObject: pageObject, subPages: this.subpages});
+      this.eventService.send(Message.PAGE_OPEN, { pageObject: pageObject, subPages: this.subpages });
     }
   }
 

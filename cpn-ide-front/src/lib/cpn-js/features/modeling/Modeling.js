@@ -9,6 +9,7 @@ import {
   CPN_TOKEN_LABEL,
   CPN_MARKING_LABEL,
   isCpn,
+  is,
 } from '../../util/ModelUtil';
 import CpnImporter from "../../import/CpnImporter";
 
@@ -20,7 +21,7 @@ import CpnImporter from "../../import/CpnImporter";
  * @param {CommandStack} commandStack
  * @param {CpnRules} cpnRules
  */
-export default function Modeling(eventBus, elementFactory, elementRegistry, commandStack, cpnRules, textRenderer ) {
+export default function Modeling(eventBus, elementFactory, elementRegistry, commandStack, cpnRules, textRenderer) {
   console.log('Modeling()');
 
   BaseModeling.call(this, eventBus, elementFactory, commandStack);
@@ -44,7 +45,7 @@ Modeling.$inject = [
 ];
 
 
-Modeling.prototype.getHandlers = function() {
+Modeling.prototype.getHandlers = function () {
   console.log('Modeling().getHandlers()');
 
   var handlers = BaseModeling.prototype.getHandlers.call(this);
@@ -55,7 +56,7 @@ Modeling.prototype.getHandlers = function() {
 };
 
 
-Modeling.prototype.updateLabel = function(element, newLabel, newBounds, hints) {
+Modeling.prototype.updateLabel = function (element, newLabel, newBounds, hints) {
   console.log('Modeling().updateLabel(), newBounds = ', newBounds);
 
   this._commandStack.execute('element.updateLabel', {
@@ -66,16 +67,22 @@ Modeling.prototype.updateLabel = function(element, newLabel, newBounds, hints) {
   });
 };
 
-Modeling.prototype.updateElement = function(element) {
+Modeling.prototype.updateElement = function (element) {
   console.log('Modeling().updateElement(), element = ', element);
 
   if (element) {
     this._eventBus.fire('element.changed', { element: element });
+
+    if (element.labels) {
+      for (const l of element.labels) {
+        this.updateElement(l);
+      }
+    }
   }
 };
 
 
-Modeling.prototype.connect = function(source, target, attrs, hints) {
+Modeling.prototype.connect = function (source, target, attrs, hints) {
   var cpnRules = this._cpnRules;
 
   if (!attrs) {
@@ -89,9 +96,9 @@ Modeling.prototype.connect = function(source, target, attrs, hints) {
   return this.createConnection(source, target, attrs, source.parent, hints);
 };
 
-Modeling.prototype.setColor = function(elements, colors) {
+Modeling.prototype.setColor = function (elements, colors) {
   if (!elements.length) {
-    elements = [ elements ];
+    elements = [elements];
   }
 
   this._commandStack.execute('element.setColor', {
@@ -100,11 +107,11 @@ Modeling.prototype.setColor = function(elements, colors) {
   });
 };
 
-Modeling.prototype.getElementById = function(id) {
+Modeling.prototype.getElementById = function (id) {
   return this._elementRegistry.get(id);
 };
 
-Modeling.prototype.getElementByCpnElement = function(cpnElement) {
+Modeling.prototype.getElementByCpnElement = function (cpnElement) {
   var result;
 
   for (const key of Object.keys(this._elementRegistry._elements)) {
@@ -119,7 +126,7 @@ Modeling.prototype.getElementByCpnElement = function(cpnElement) {
   return result;
 };
 
-Modeling.prototype.getElementByCpnElementId = function(cpnElementId) {
+Modeling.prototype.getElementByCpnElementId = function (cpnElementId) {
   var result;
 
   for (const key of Object.keys(this._elementRegistry._elements)) {
@@ -134,7 +141,37 @@ Modeling.prototype.getElementByCpnElementId = function(cpnElementId) {
   return result;
 };
 
-Modeling.prototype.clearErrorMarking = function() {
+Modeling.prototype.getTokenLabelElement = function (element) {
+  var result;
+
+  if (element && element.labels) {
+    for (const l of element.labels) {
+      if (is(l, CPN_TOKEN_LABEL)) {
+        result = l;
+        break;
+      }
+    }
+  }
+
+  return result;
+};
+
+Modeling.prototype.getMarkingLabelElement = function (element) {
+  var result;
+
+  if (element && element.labels)
+    for (const l of element.labels) {
+      if (is(l, CPN_MARKING_LABEL)) {
+        result = l;
+        break;
+      }
+    }
+
+  return result;
+};
+
+
+Modeling.prototype.clearErrorMarking = function () {
   for (const key of Object.keys(this._elementRegistry._elements)) {
     const element = this._elementRegistry._elements[key].element;
 
@@ -265,7 +302,8 @@ Modeling.prototype.getTokenLabelAttrs = function (labelTarget, cpnTokenLabelElem
   var x = Math.round(cpnTokenLabelElement._x);
   var y = Math.round(cpnTokenLabelElement._y) * -1;
 
-  var text = '8';
+  // var text = '8';
+  var text = '';
 
   var bounds = { x: x, y: y, width: 200, height: 20 };
   bounds = this._textRenderer.getExternalLabelBounds(bounds, text);
@@ -288,7 +326,9 @@ Modeling.prototype.getTokenLabelAttrs = function (labelTarget, cpnTokenLabelElem
     x: x,
     y: y,
     width: bounds.width,
-    height: bounds.height
+    height: bounds.height,
+
+    hidden: true
   };
 
   if (labelTarget) {
@@ -302,7 +342,8 @@ Modeling.prototype.getMarkingLabelAttrs = function (labelTarget, cpnMarkingLabel
   var x = Math.round(cpnMarkingLabelElement._x);
   var y = Math.round(cpnMarkingLabelElement._y) * -1;
 
-  var text = '2`0@0,0\n2`0@0,0\n2`0@0,0\n2`0@0,0';
+  // var text = '2`0@0,0\n2`0@0,0\n2`0@0,0\n2`0@0,0';
+  var text = '';
 
   var bounds = { x: x, y: y, width: 200, height: 20 };
   bounds = this._textRenderer.getExternalLabelBounds(bounds, text);
@@ -311,6 +352,8 @@ Modeling.prototype.getMarkingLabelAttrs = function (labelTarget, cpnMarkingLabel
 
   x += Math.round(labelTarget.x + labelTarget.width * 3);
   y += Math.round(labelTarget.y + labelTarget.height / 2);
+
+  var hidden = text === '' || !(cpnMarkingLabelElement._hidden === 'false');
 
   var attrs = {
     type: CPN_MARKING_LABEL,
@@ -323,7 +366,7 @@ Modeling.prototype.getMarkingLabelAttrs = function (labelTarget, cpnMarkingLabel
     width: bounds.width,
     height: bounds.height,
 
-    hidden: !(cpnMarkingLabelElement._hidden === 'false')
+    hidden: hidden
   };
 
   if (labelTarget) {
@@ -541,8 +584,8 @@ function createElementInModel(context, type) {
     },
     _id: element.id // 'ID1412328424'
   };
-  let form  = formCase[type];
-  if(form) newElement[form] =  {
+  let form = formCase[type];
+  if (form) newElement[form] = {
     _w: this.getDefaultValue(form),//element.width,
     _h: this.getDefaultValue(form)//element.height
   };

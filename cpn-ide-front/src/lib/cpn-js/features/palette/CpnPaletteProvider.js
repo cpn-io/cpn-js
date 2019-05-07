@@ -38,17 +38,32 @@ CpnPaletteProvider.prototype.getPaletteEntries = function() {
       group: 'tools',
       separator: true
     },
-    'create-shape': {
+    'create-transition': {
       group: 'create',
       className: 'palette-icon-create-shape',
       title: 'Create Transition',
+      action: {
+        click: function() {
+      /*    var shape = elementFactory.createShape({
+            width: 100,
+            height: 80
+          });*/
+        //  event.context.type = 'cpn:Transition';
+          create.start(event, {width: 100,  height: 80});
+        }
+      }
+    },
+    'create-place': {
+      group: 'create',
+      className: 'bpmn-icon-start-event-none',
+      title: 'Create Place',
       action: {
         click: function() {
           var shape = elementFactory.createShape({
             width: 100,
             height: 80
           });
-
+         // event.context.type = 'cpn:Place';
           create.start(event, shape);
         }
       }

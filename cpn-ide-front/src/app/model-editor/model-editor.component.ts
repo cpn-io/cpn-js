@@ -126,7 +126,7 @@ export class ModelEditorComponent implements OnInit {
       //     console.log('daTA ', datalog);
       //   })
       // console.log('click on, event = ', event);
-      
+
       this.fireSelectionEvent(event);
     });
 

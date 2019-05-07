@@ -172,9 +172,9 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
   function updateNewShape(e) {
     console.log('CpnUpdater(), updateNewShape(e), e = ', e);
-    const context = e.context;
+   /* const context = e.context;
     const shape = context.shape;
-    shape.type = CPN_PLACE;
+    shape.type = CPN_PLACE;*/
   }
 
   // update bounds

@@ -71,12 +71,13 @@ CpnRenderer.$inject = [
   'styles',
   'pathMap',
   'canvas',
-  'textRenderer'
+  'textRenderer',
+  'stateProvider'
 ];
 
 export default function CpnRenderer(
   config, eventBus, styles, pathMap,
-  canvas, textRenderer, priority) {
+  canvas, textRenderer, stateProvider, priority) {
 
   BaseRenderer.call(this, eventBus, priority);
 

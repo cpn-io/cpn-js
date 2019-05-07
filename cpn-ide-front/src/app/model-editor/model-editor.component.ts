@@ -74,17 +74,14 @@ export class ModelEditorComponent implements OnInit {
     eventBus.on('import.render.complete', (event) => {
       const pageElement = event.source;
 
-      // console.log('import.render.complete, event = ', event);
+      console.log('import.render.complete, event = ', event);
 
-      // get Places status
-      // if (pageElement && pageElement.place && pageElement.place.length > 0) {
-      //   for (const place of pageElement.place) {
-      //     this.emitterService.getMarking(place._id).subscribe(
-      //       (data: any) => {
-      //         console.log('this.emitterService.getMarking(), data = ', data);
-      //       });
-      //   }
-      // }
+      this.eventService.send(Message.MODEL_UPDATE, {pageObject:  pageElement});
+
+    });
+
+    this.eventService.on(Message.VERIFICATION_DONE, () => {
+      console.log('VERIFICATION_DONE (3)');
 
       this.emitterService.getMarking(undefined).subscribe(
         (data: any) => {
@@ -97,7 +94,6 @@ export class ModelEditorComponent implements OnInit {
         (data: any) => {
           console.log('this.emitterService.getEnableTransitions(), data = ', data);
         });
-
     });
 
 

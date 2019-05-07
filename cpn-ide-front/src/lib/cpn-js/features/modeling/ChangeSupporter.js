@@ -59,6 +59,8 @@ export default function ChangeSupporter(eventBus, modeling, textRenderer) {
               if (item.marking && item.marking != '' && item.marking != 'empty') {
                 markingElement.text = item.marking;
                 updateElementSize(markingElement);
+                markingElement.x = parseInt(markingElement.cpnElement._x) + Math.round(markingElement.labelTarget.x + markingElement.labelTarget.width * 3);
+                markingElement.y = parseInt(markingElement.cpnElement._y) + Math.round(markingElement.labelTarget.y);
               } else {
                 markingElement.text = item.marking;
                 updateElementSize(markingElement);

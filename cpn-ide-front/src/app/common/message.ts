@@ -20,6 +20,8 @@ export class Message {
   static SUBPAGE_CREATE = 'subpage.create';
   static OPEN_DECLARATION_BLOCK = 'open.declaration.block';
   static CHANGE_EXPLORER_TREE = 'change.explorer.tree';
+  static VERIFICATION_DONE = 'verification.done';
+
   id: string;
   data: object;
 }

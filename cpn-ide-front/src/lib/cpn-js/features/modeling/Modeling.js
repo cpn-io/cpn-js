@@ -193,30 +193,6 @@ Modeling.prototype.getDefaultValue = function (key) {
   return this._defaultValues[key];
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 Modeling.prototype.getPlaceAttrs = function (cpnPlaceElement, type) {
   var x = Math.round(cpnPlaceElement.posattr._x);
   var y = Math.round(cpnPlaceElement.posattr._y) * -1;

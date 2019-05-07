@@ -21,10 +21,7 @@ import org.cpntools.accesscpn.engine.highlevel.instance.State;
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @CrossOrigin(origins = "*")
 @RequestMapping("/api/cpn")
@@ -38,14 +35,14 @@ public class CpnController {
         String marking;
         String tokens;
 
-        Json(String id, String marking, String tokens){
-            this.id =  id;
+        Json(String id, String marking, String tokens) {
+            this.id = id;
             this.marking = marking;
             this.tokens = tokens;
         }
 
-        Json(){
-            this.id =  "";
+        Json() {
+            this.id = "";
             this.marking = "";
             this.tokens = "";
         }
@@ -75,30 +72,31 @@ public class CpnController {
         }
     }
 
-   // private static final Logger log = Logger.getLogger(CpnController.class);
+    // private static final Logger log = Logger.getLogger(CpnController.class);
     //private  PetriNet petriNet = null;
     @Autowired
     PetriNetModel petriNetModel;
 
-    private static final ModelFactory factory = ModelFactory.INSTANCE;;
+    private static final ModelFactory factory = ModelFactory.INSTANCE;
+    ;
 
     @PostMapping(value = "/verifi")
     public ResponseEntity<java.lang.Object> verifiPetriNet(
             @RequestBody List<Map> requestBody,
             HttpServletRequest request) throws RuntimeException {
-         //final String fileName = "/home/awahtel/eclipse-workspace/org.cpntools.accesscpn.model.tests/resources/models/erdp.cpnide";
-      //  final String fileName = "/home/awahtel/avahtel/cpnide/hoponhopoff-color.cpnide";
+        //final String fileName = "/home/awahtel/eclipse-workspace/org.cpntools.accesscpn.model.tests/resources/models/erdp.cpnide";
+        //  final String fileName = "/home/awahtel/avahtel/cpnide/hoponhopoff-color.cpnide";
         final String fileName = "/home/awahtel/avahtel/cpnide/discret_model2.cpnide";
-      //  log.info(String.format("saveMarket() - POST request %s, ", request.getRequestURI()));
-      //  log.debug(String.format("saveMarket() - POST %s, body = %s, ", request.getRequestURI(), requestBody.get(0)));
+        //  log.info(String.format("saveMarket() - POST request %s, ", request.getRequestURI()));
+        //  log.debug(String.format("saveMarket() - POST %s, body = %s, ", request.getRequestURI(), requestBody.get(0)));
         ResponseEntity<java.lang.Object> result = null;
         String message = null;
         try {
-            if(requestBody.get(0).containsKey("xml")) {
+            if (requestBody.get(0).containsKey("xml")) {
                 String jsonstr = requestBody.get(0).get("xml").toString();
                 String sessionId = requestBody.get(0).get("sessionId").toString();
-                petriNetModel.setPetriNet(sessionId ,DOMParser.parse(new ByteArrayInputStream(jsonstr.getBytes(StandardCharsets.UTF_8)), "myNet.cpnide"));
-               // petriNetModel.setPetriNet(sessionId ,DOMParser.parse(new URL("file://" + fileName)));
+                petriNetModel.setPetriNet(sessionId, DOMParser.parse(new ByteArrayInputStream(jsonstr.getBytes(StandardCharsets.UTF_8)), "myNet.cpnide"));
+                // petriNetModel.setPetriNet(sessionId ,DOMParser.parse(new URL("file://" + fileName)));
 
                 // final PetriNet petriNet = DOMParser.parse(new URL("file://" + fileName));
                 //String.format("Changed markets: %s; new markets: %s", "sdsdsdsds","seeefe");
@@ -106,7 +104,7 @@ public class CpnController {
                 final HighLevelSimulator s = petriNetModel.getHighLevelSimulator();
 
                 //testMarrking(sessionId, s);
-                checkEntireModel(petriNetModel.getPetriNet(sessionId), s) ;
+                checkEntireModel(petriNetModel.getPetriNet(sessionId), s);
                 /*final Checker checker = new Checker(petriNetModel.getPetriNet(sessionId), null, s);
                 check(petriNetModel.getPetriNet(sessionId));
                 checker.localCheck();
@@ -127,7 +125,7 @@ public class CpnController {
                 String jsonstr = requestBody.get(0).get("sml").toString();
                 final HighLevelSimulator s = petriNetModel.getHighLevelSimulator();
                 final Checker checker = new Checker(petriNetModel.getPetriNet(sessionId), null, s);
-               // checker.checkEntireModel();
+                // checker.checkEntireModel();
                 checker.localCheck();
                 checker.checkInitializing();
                 checker.checkDeclarations();
@@ -140,10 +138,9 @@ public class CpnController {
                 s.evaluate(jsonstr);
 
             }
-             //   message = s.evaluate(switchContent);
+            //   message = s.evaluate(switchContent);
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             message = e.getMessage();
 
@@ -160,36 +157,36 @@ public class CpnController {
             HttpServletRequest request) throws RuntimeException {
         ResponseEntity<java.lang.Object> result = null;
         //String type = requestBody.get(0).get("type").toString();
-       try {
-           String id = requestBody.get(0).get("id").toString();
-           String sessionId = requestBody.get(0).get("sessionId").toString();
-           final HighLevelSimulator s = petriNetModel.getHighLevelSimulator();
-           // final Checker checker = new Checker(petriNetModel.getPetriNet(sessionId), null, s);
-           List<Binding> bindings = new LinkedList<Binding>();
-           List<Instance<Transition>> tis = s.getAllTransitionInstances();
-           for (Instance<Transition> ti : tis) {
-               if (ti.getNode().getId().equals(id) && s.isEnabled(ti) )
-                   bindings.addAll(s.getBindings(ti));
-           }
-           //for(Binding b : bindings) {
-              // s.execute(b);
-         //  }
-           s.execute(bindings.get(0));
-           List<Instance<PlaceNode>> places = s.getAllPlaceInstances();
-           int i = 0;
+        try {
+            String id = requestBody.get(0).get("id").toString();
+            String sessionId = requestBody.get(0).get("sessionId").toString();
+            final HighLevelSimulator s = petriNetModel.getHighLevelSimulator();
+            // final Checker checker = new Checker(petriNetModel.getPetriNet(sessionId), null, s);
+            List<Binding> bindings = new LinkedList<Binding>();
+            List<Instance<Transition>> tis = s.getAllTransitionInstances();
+            for (Instance<Transition> ti : tis) {
+                if (ti.getNode().getId().equals(id) && s.isEnabled(ti))
+                    bindings.addAll(s.getBindings(ti));
+            }
+            //for(Binding b : bindings) {
+            // s.execute(b);
+            //  }
+            s.execute(bindings.get(0));
+            List<Instance<PlaceNode>> places = s.getAllPlaceInstances();
+            int i = 0;
 
 
-           Json arr[] = new Json[places.size()];
-           for (Instance<PlaceNode> p : places) {
-               arr[i] = new Json(p.getNode().getId(), s.getMarking(p), String.valueOf(s.getTokens(p)));
-               i++;
-           }
-           result = new ResponseEntity<>(arr, HttpStatus.OK);
-       } catch(Exception e) {
-           System.out.println(e.getMessage());
-           result = new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
-       }
-     return result;
+            Json arr[] = new Json[places.size()];
+            for (Instance<PlaceNode> p : places) {
+                arr[i] = new Json(p.getNode().getId(), s.getMarking(p), String.valueOf(s.getTokens(p)));
+                i++;
+            }
+            result = new ResponseEntity<>(arr, HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            result = new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
+        }
+        return result;
     }
 
 
@@ -206,19 +203,32 @@ public class CpnController {
             // final Checker checker = new Checker(petriNetModel.getPetriNet(sessionId), null, s);
             List<Instance<PlaceNode>> places = s.getAllPlaceInstances();
             Instance<PlaceNode> placeNode = null;
-            Json arr[] = new Json[id.trim().equals("") ? places.size() : 1];
-            int i = 0;
+
+            ArrayList<Json> arr = new ArrayList<>();
+            // Json arr[] = new Json[id.trim().equals("") ? places.size() : 1];
+            // int i = 0;
             for (Instance<PlaceNode> p : places) {
                 if (id.trim().equals("") || p.getNode().getId().equals(id)) {
                     placeNode = p;
-                    arr[i] = new Json(p.getNode().getId(), s.getMarking(p), String.valueOf(s.getTokens(p)));
-                    if(!id.trim().equals("")) break;
-                    i++;
+
+                    try {
+                        int tokens = s.getTokens(p);
+                        String marking = s.getMarking(p);
+                        arr.add(new Json(p.getNode().getId(), s.getMarking(p), String.valueOf(tokens)));
+
+                        // arr[i] = new Json(p.getNode().getId(), s.getMarking(p), String.valueOf(tokens));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+
+                    if (!id.trim().equals(""))
+                        break;
+                    // i++;
                 }
             }
 
             result = new ResponseEntity<>(arr, HttpStatus.OK);
-        } catch(Exception e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             result = new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
         }
@@ -242,13 +252,13 @@ public class CpnController {
             String arr[] = new String[tis.size()];
             int i = 0;
             for (Instance<Transition> ti : tis) {
-                if (s.isEnabled(ti) )
+                if (s.isEnabled(ti))
                     //bindings.addAll(s.getBindings(ti));
                     arr[i] = ti.getNode().getId();
-                    i++;
+                i++;
             }
             result = new ResponseEntity<>(arr, HttpStatus.OK);
-        } catch(Exception e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             result = new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
         }
@@ -256,13 +266,11 @@ public class CpnController {
     }
 
 
-
-
     public void check(PetriNet petriNet) throws LocalCheckFailed {
         Iterator var3 = petriNet.getPage().iterator();
 
-        while(var3.hasNext()) {
-            Page page = (Page)var3.next();
+        while (var3.hasNext()) {
+            Page page = (Page) var3.next();
             this.checkPage(page);
         }
 
@@ -290,9 +298,9 @@ public class CpnController {
         } else {
             Iterator var3 = page.getObject().iterator();
 
-            while(var3.hasNext()) {
-                Object object = (Object)var3.next();
-                if ( object.getName() == null) {
+            while (var3.hasNext()) {
+                Object object = (Object) var3.next();
+                if (object.getName() == null) {
                     Name tempName = factory.createName();
                     tempName.setText(object.getId());
                     object.setName(tempName);
@@ -307,20 +315,19 @@ public class CpnController {
         c.checkEntireModel();
     }
 
-    public void testMarrking(String sessionId, HighLevelSimulator s ) throws  Exception{
+    public void testMarrking(String sessionId, HighLevelSimulator s) throws Exception {
         // s.setTarget((org.cpntools.accesscpn.model.impl.PetriNetImpl) petriNetModel.getPetriNet(sessionId));
-        checkEntireModel(petriNetModel.getPetriNet(sessionId), s) ;
-        List<Instance<PlaceNode>> instanses =  s.getAllPlaceInstances();
+        checkEntireModel(petriNetModel.getPetriNet(sessionId), s);
+        List<Instance<PlaceNode>> instanses = s.getAllPlaceInstances();
 
-        for(Instance<PlaceNode> node : instanses ) {
-            int tok = s.getTokens(node)   ;
+        for (Instance<PlaceNode> node : instanses) {
+            int tok = s.getTokens(node);
             State st = s.getMarking();
-            String mark =  s.getMarking(node);
-            System.out.println("dfdfd"+tok+ " " + st+ " " + mark);
+            String mark = s.getMarking(node);
+            System.out.println("dfdfd" + tok + " " + st + " " + mark);
 
         }
     }
-
 
 
 }

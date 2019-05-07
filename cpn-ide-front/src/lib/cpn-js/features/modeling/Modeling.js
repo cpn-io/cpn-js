@@ -9,6 +9,7 @@ import {
   CPN_TOKEN_LABEL,
   CPN_MARKING_LABEL,
   isCpn,
+  is,
 } from '../../util/ModelUtil';
 import CpnImporter from "../../import/CpnImporter";
 
@@ -20,7 +21,7 @@ import CpnImporter from "../../import/CpnImporter";
  * @param {CommandStack} commandStack
  * @param {CpnRules} cpnRules
  */
-export default function Modeling(eventBus, elementFactory, elementRegistry, commandStack, cpnRules, textRenderer ) {
+export default function Modeling(eventBus, elementFactory, elementRegistry, commandStack, cpnRules, textRenderer) {
   console.log('Modeling()');
 
   BaseModeling.call(this, eventBus, elementFactory, commandStack);
@@ -44,7 +45,7 @@ Modeling.$inject = [
 ];
 
 
-Modeling.prototype.getHandlers = function() {
+Modeling.prototype.getHandlers = function () {
   console.log('Modeling().getHandlers()');
 
   var handlers = BaseModeling.prototype.getHandlers.call(this);
@@ -55,7 +56,7 @@ Modeling.prototype.getHandlers = function() {
 };
 
 
-Modeling.prototype.updateLabel = function(element, newLabel, newBounds, hints) {
+Modeling.prototype.updateLabel = function (element, newLabel, newBounds, hints) {
   console.log('Modeling().updateLabel(), newBounds = ', newBounds);
 
   this._commandStack.execute('element.updateLabel', {
@@ -66,16 +67,22 @@ Modeling.prototype.updateLabel = function(element, newLabel, newBounds, hints) {
   });
 };
 
-Modeling.prototype.updateElement = function(element) {
+Modeling.prototype.updateElement = function (element) {
   console.log('Modeling().updateElement(), element = ', element);
 
   if (element) {
     this._eventBus.fire('element.changed', { element: element });
+
+    if (element.labels) {
+      for (const l of element.labels) {
+        this.updateElement(l);
+      }
+    }
   }
 };
 
 
-Modeling.prototype.connect = function(source, target, attrs, hints) {
+Modeling.prototype.connect = function (source, target, attrs, hints) {
   var cpnRules = this._cpnRules;
 
   if (!attrs) {
@@ -89,9 +96,9 @@ Modeling.prototype.connect = function(source, target, attrs, hints) {
   return this.createConnection(source, target, attrs, source.parent, hints);
 };
 
-Modeling.prototype.setColor = function(elements, colors) {
+Modeling.prototype.setColor = function (elements, colors) {
   if (!elements.length) {
-    elements = [ elements ];
+    elements = [elements];
   }
 
   this._commandStack.execute('element.setColor', {
@@ -100,11 +107,11 @@ Modeling.prototype.setColor = function(elements, colors) {
   });
 };
 
-Modeling.prototype.getElementById = function(id) {
+Modeling.prototype.getElementById = function (id) {
   return this._elementRegistry.get(id);
 };
 
-Modeling.prototype.getElementByCpnElement = function(cpnElement) {
+Modeling.prototype.getElementByCpnElement = function (cpnElement) {
   var result;
 
   for (const key of Object.keys(this._elementRegistry._elements)) {
@@ -119,7 +126,7 @@ Modeling.prototype.getElementByCpnElement = function(cpnElement) {
   return result;
 };
 
-Modeling.prototype.getElementByCpnElementId = function(cpnElementId) {
+Modeling.prototype.getElementByCpnElementId = function (cpnElementId) {
   var result;
 
   for (const key of Object.keys(this._elementRegistry._elements)) {
@@ -134,7 +141,37 @@ Modeling.prototype.getElementByCpnElementId = function(cpnElementId) {
   return result;
 };
 
-Modeling.prototype.clearErrorMarking = function() {
+Modeling.prototype.getTokenLabelElement = function (element) {
+  var result;
+
+  if (element && element.labels) {
+    for (const l of element.labels) {
+      if (is(l, CPN_TOKEN_LABEL)) {
+        result = l;
+        break;
+      }
+    }
+  }
+
+  return result;
+};
+
+Modeling.prototype.getMarkingLabelElement = function (element) {
+  var result;
+
+  if (element && element.labels)
+    for (const l of element.labels) {
+      if (is(l, CPN_MARKING_LABEL)) {
+        result = l;
+        break;
+      }
+    }
+
+  return result;
+};
+
+
+Modeling.prototype.clearErrorMarking = function () {
   for (const key of Object.keys(this._elementRegistry._elements)) {
     const element = this._elementRegistry._elements[key].element;
 
@@ -265,7 +302,8 @@ Modeling.prototype.getTokenLabelAttrs = function (labelTarget, cpnTokenLabelElem
   var x = Math.round(cpnTokenLabelElement._x);
   var y = Math.round(cpnTokenLabelElement._y) * -1;
 
-  var text = '8';
+  // var text = '8';
+  var text = '';
 
   var bounds = { x: x, y: y, width: 200, height: 20 };
   bounds = this._textRenderer.getExternalLabelBounds(bounds, text);
@@ -288,7 +326,9 @@ Modeling.prototype.getTokenLabelAttrs = function (labelTarget, cpnTokenLabelElem
     x: x,
     y: y,
     width: bounds.width,
-    height: bounds.height
+    height: bounds.height,
+
+    hidden: true
   };
 
   if (labelTarget) {
@@ -302,7 +342,8 @@ Modeling.prototype.getMarkingLabelAttrs = function (labelTarget, cpnMarkingLabel
   var x = Math.round(cpnMarkingLabelElement._x);
   var y = Math.round(cpnMarkingLabelElement._y) * -1;
 
-  var text = '2`0@0,0\n2`0@0,0\n2`0@0,0\n2`0@0,0';
+  // var text = '2`0@0,0\n2`0@0,0\n2`0@0,0\n2`0@0,0';
+  var text = '';
 
   var bounds = { x: x, y: y, width: 200, height: 20 };
   bounds = this._textRenderer.getExternalLabelBounds(bounds, text);
@@ -311,6 +352,8 @@ Modeling.prototype.getMarkingLabelAttrs = function (labelTarget, cpnMarkingLabel
 
   x += Math.round(labelTarget.x + labelTarget.width * 3);
   y += Math.round(labelTarget.y + labelTarget.height / 2);
+
+  var hidden = text === '' || !(cpnMarkingLabelElement._hidden === 'false');
 
   var attrs = {
     type: CPN_MARKING_LABEL,
@@ -323,7 +366,7 @@ Modeling.prototype.getMarkingLabelAttrs = function (labelTarget, cpnMarkingLabel
     width: bounds.width,
     height: bounds.height,
 
-    hidden: !(cpnMarkingLabelElement._hidden === 'false')
+    hidden: hidden
   };
 
   if (labelTarget) {
@@ -492,24 +535,23 @@ function optimiseEqualsArcsByWayoints(arc, delta) {
  *
  * @param element
  */
-Modeling.prototype.createElementInModel = function(event, type) {
-  let formCase = [];
-  formCase['cpn:Place'] = {form: 'ellipse', entry:  ['initmark', 'type']};
-  formCase['cpn:Transition'] = { form: 'box', entry: ['time', 'code', 'priority', 'cond']};
-  formCase['cpn:Connection'] = { entry: ['annot']};
+function createElementInModel(context, type) {
+  let formCase;
+  formCase['cpn:Place'] = 'ellipse';
+  formCase['cpn:Transition'] = 'box';
   let bounds = {
     width: 200, // 90,
     height: 30,
-    x: event.context.position.x,
-    y: event.context.position.y
+    x: element.x,
+    y: element.y
   };
 
 
-  bounds = this._textRenderer.getExternalLabelBounds(bounds, 'Default');
+  bounds = this.textRenderer.getExternalLabelBounds(bounds, 'Default');
   const newElement = {
     posattr: {
-      _x: event.context.position.x, // -294.000000
-      _y: -1*event.context.position.y  // 156.000000
+      _x: context.position.x, // -294.000000
+      _y: context.position.y  // 156.000000
     },
     fillattr: {
       _colour: 'White',
@@ -525,10 +567,10 @@ Modeling.prototype.createElementInModel = function(event, type) {
       _colour: 'Black',
       _bold: false
     },
-    text: 'gfgfg',
+    text: '',
     token: {
-      _x: event.context.position.x,
-      _y: event.context.position.x
+      _x: context.position.x,
+      _y: context.position.x
     },
     marking: {
       snap: {
@@ -536,55 +578,30 @@ Modeling.prototype.createElementInModel = function(event, type) {
         '_anchor.horizontal': 1,
         '_anchor.vertical': 3
       },
-      _x: event.context.position.x,
-      _y: event.context.position.x,
+      _x: context.position.x,
+      _y: context.position.x,
       _hidden: false
     },
-    _id: 'ID' + new Date().getTime()  // 'ID1412328424'
+    _id: element.id // 'ID1412328424'
   };
-  let elemType  = formCase[type];
-  if(elemType) {
-    if(elemType.form) {
-      newElement[elemType.form] = {
-        _w: this.getDefaultValue(elemType.form).w,//element.width,
-        _h: this.getDefaultValue(elemType.form).h//element.height
+  let form = formCase[type];
+  if (form) newElement[form] = {
+    _w: this.getDefaultValue(form),//element.width,
+    _h: this.getDefaultValue(form)//element.height
+  };
+  // let attrs = this.getPlaceShapeAttrs(newPlace);
+  //  let shape = this.elementFactory.createShape(attrs);
+  // shape = this.canvas.addShape(shape, this.canvas.getRootElement());
 
-      };
-    }
-    for(let label of elemType.entry) {
-      newElement[label] = {
-        posattr: {
-          _x: event.context.position.x + Math.round(bounds.width) / 2 + 100,//+ element.width, /// 55.500000,
-          _y: -1 * event.context.position.y - Math.round(bounds.height) / 2 + 80 /4 ///+ element.height / 4 // 102.000000
-        },
-        fillattr: {
-          _colour: 'White',
-          _pattern: 'Solid',
-          _filled: false
-        },
-        lineattr: {
-          _colour: 'Black',
-          _thick: 0,
-          _type: 'Solid'
-        },
-        textattr: {
-          _colour: 'Black',
-          _bold: false
-        },
-        text: {
-          _tool: 'CPN Tools',
-          _version: '4.0.1'
-        },
-        _id: newElement._id + '' + label
-
-
-      }
-    }
-  }
-
+  element.name = newPlace.text;
+  element.stroke = newPlace.lineattr._colour;
+  element.strokeWidth = newPlace.lineattr._thick;
+  //  this.placeShapes[attrs.id] = shape;
+  this.placeShapes[element.id] = element;
+  this.jsonPageObject.place.push(newPlace);
   // this.modelUpdate();
 
-  return newElement;
+
 }
 
 

@@ -25,7 +25,7 @@ CpnUpdater.$inject = [
   'elementRegistry',
   'connectionDocking',
   'selection',
-  'popupMenu',
+  'popupMenuProvider',
   'canvas'
 ];
 
@@ -38,7 +38,7 @@ import {
  * once changes on the diagram happen
  */
 export default function CpnUpdater(eventBus, modeling, elementRegistry,
-  connectionDocking, selection, popupMenu, canvas) {
+  connectionDocking, selection, popupMenuProvider, canvas) {
 
   console.log('CpnUpdater()');
 
@@ -96,11 +96,6 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
   eventBus.on('element.mousedown', function (event) {
     console.log('CpnUpdater(), element.mousedown, event = ', event);
-
-    // console.log('CpnUpdater(), element.mousedown, popup menu, x,y = ', event.originalEvent.x, event.originalEvent.y);
-    // var zoom = canvas.zoom();
-    // const position = { cursor: { x: event.originalEvent.x, y: event.originalEvent.y } };
-    // popupMenu.open(event.element, 'cpnPopupMenu', position);
   });
 
   domEvent.bind(document, 'mousedown', function (event) {
@@ -127,13 +122,8 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
       if (element) {
         console.log('CpnUpdater(), domEvent, mousedown, popup menu, element = ', element);
 
-        var zoom = canvas.zoom();
-        // const p = { cursor: { x: event.x, y: event.y } };
-        const p = { cursor: { x: position.x, y: position.y } };
-        popupMenu.open(element, 'cpnPopupMenu', p);
+        popupMenuProvider.open(element, { cursor: { x: position.x, y: position.y } });
       }
-
-      // eventBus.fire('element.showPopupMenu', { event: event });
     }
   });
 

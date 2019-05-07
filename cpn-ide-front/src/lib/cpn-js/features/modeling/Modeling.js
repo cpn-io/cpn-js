@@ -10,6 +10,9 @@ import {
   CPN_MARKING_LABEL,
   isCpn,
   is,
+  CPN_PLACE,
+  CPN_TRANSITION,
+  CPN_CONNECTION,
 } from '../../util/ModelUtil';
 import CpnImporter from "../../import/CpnImporter";
 
@@ -511,24 +514,33 @@ function optimiseEqualsArcsByWayoints(arc, delta) {
  *
  * @param element
  */
-Modeling.prototype.createElementInModel = function(event, type) {
+Modeling.prototype.createElementInModel = function (position, type) {
+
   let formCase = [];
-  formCase['cpn:Place'] = {form: 'ellipse', entry:  ['initmark', 'type']};
-  formCase['cpn:Transition'] = { form: 'box', entry: ['time', 'code', 'priority', 'cond']};
-  formCase['cpn:Connection'] = { entry: ['annot']};
+  formCase[CPN_PLACE] = { form: 'ellipse', entry: ['initmark', 'type'] };
+  formCase[CPN_TRANSITION] = { form: 'box', entry: ['time', 'code', 'priority', 'cond'] };
+  formCase[CPN_CONNECTION] = { entry: ['annot'] };
+
+  let names = [];
+  names[CPN_PLACE] = 'P';
+  names[CPN_TRANSITION] = 'T';
+
   let bounds = {
-    width: 200, // 90,
+    x: position.x,
+    y: position.y,
+    width: 80, // 90,
     height: 30,
-    x: event.context.position.x,
-    y: event.context.position.y
   };
 
+  let relPos = [];
+  relPos['initmark'] = { _x: bounds.x + bounds.width, _y: bounds.y * -1 };
+  relPos['type'] = { _x: bounds.x + bounds.width, _y: (bounds.y + bounds.height) * -1 };
 
   bounds = this._textRenderer.getExternalLabelBounds(bounds, 'Default');
   const newElement = {
     posattr: {
-      _x: event.context.position.x, // -294.000000
-      _y: -1*event.context.position.y  // 156.000000
+      _x: position.x, // -294.000000
+      _y: -1 * position.y  // 156.000000
     },
     fillattr: {
       _colour: 'White',
@@ -544,10 +556,10 @@ Modeling.prototype.createElementInModel = function(event, type) {
       _colour: 'Black',
       _bold: false
     },
-    text: 'gfgfg',
+    text: names[type],
     token: {
-      _x: event.context.position.x,
-      _y: event.context.position.x
+      _x: 0,
+      _y: 0
     },
     marking: {
       snap: {
@@ -555,27 +567,35 @@ Modeling.prototype.createElementInModel = function(event, type) {
         '_anchor.horizontal': 1,
         '_anchor.vertical': 3
       },
-      _x: event.context.position.x,
-      _y: event.context.position.x,
-      _hidden: false
+      _x: 0,
+      _y: 0,
+      _hidden: true
     },
     _id: 'ID' + new Date().getTime()  // 'ID1412328424'
   };
-  let elemType  = formCase[type];
-  if(elemType) {
-    if(elemType.form) {
+
+  let elemType = formCase[type];
+  if (elemType) {
+    if (elemType.form) {
       newElement[elemType.form] = {
         _w: this.getDefaultValue(elemType.form).w,//element.width,
         _h: this.getDefaultValue(elemType.form).h//element.height
 
       };
     }
-    for(let label of elemType.entry) {
+
+    const defPos = {
+      _x: position.x + Math.round(bounds.width) / 2 + 100,//+ element.width, /// 55.500000,
+      _y: -1 * position.y - Math.round(bounds.height) / 2 + 80 / 4 ///+ element.height / 4 // 102.000000
+    };
+
+    for (let label of elemType.entry) {
       newElement[label] = {
-        posattr: {
-          _x: event.context.position.x + Math.round(bounds.width) / 2 + 100,//+ element.width, /// 55.500000,
-          _y: -1 * event.context.position.y - Math.round(bounds.height) / 2 + 80 /4 ///+ element.height / 4 // 102.000000
-        },
+        posattr: relPos[label] || defPos,
+        // posattr: {
+        //   _x: position.x + Math.round(bounds.width) / 2 + 100,//+ element.width, /// 55.500000,
+        //   _y: -1 * position.y - Math.round(bounds.height) / 2 + 80 / 4 ///+ element.height / 4 // 102.000000
+        // },
         fillattr: {
           _colour: 'White',
           _pattern: 'Solid',
@@ -595,8 +615,6 @@ Modeling.prototype.createElementInModel = function(event, type) {
           _version: '4.0.1'
         },
         _id: newElement._id + '' + label
-
-
       }
     }
   }

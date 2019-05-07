@@ -34,7 +34,8 @@ export function importCpnPage(diagram, cpnPageElement) {
     const vb = getViewbox();
     if (vb) {
       canvas.viewbox(vb);
-      canvas.zoom(0.7);
+      canvas.zoom(1.0);
+      // canvas.zoom(0.7);
     }
 
     eventBus.fire('import.render.complete', { source: cpnPageElement, error: error, warnings: warnings });

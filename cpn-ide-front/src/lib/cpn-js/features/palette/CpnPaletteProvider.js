@@ -3,7 +3,7 @@ import { CPN_PLACE, CPN_TRANSITION } from "../../util/ModelUtil";
 /**
  * A example palette provider.
  */
-export default function CpnPaletteProvider(create, elementFactory, cpnFactory, lassoTool, 
+export default function CpnPaletteProvider(create, elementFactory, cpnFactory, lassoTool,
   globalConnect, palette, eventBus, modeling, dragging) {
   this._create = create;
   this._elementFactory = elementFactory;
@@ -53,10 +53,10 @@ CpnPaletteProvider.prototype.getPaletteEntries = function () {
     'global-connect-tool': {
       group: 'tools',
       className: 'bpmn-icon-connection-multi',
-      title: 'Activate the global connect tool',
+      title: 'Activate Connection Tool',
       action: {
         click: function(event) {
-          globalConnect.toggle(event);
+          // globalConnect.toggle(event);
         }
       }
     },

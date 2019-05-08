@@ -19,6 +19,7 @@ export class MainToolbarComponent implements OnInit {
   }
 
   newCPNet() {
+    this.projectService.generateUserSession();
     this.projectService.loadEmptyProject();
 
   }

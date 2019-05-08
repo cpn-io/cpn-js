@@ -5,6 +5,11 @@
 label.node {
   margin: 0;
   padding: 3px 5px;
+  white-space: pre-wrap;
+}
+
+div.node {
+  white-space: nowrap;
 }
 
 .navbar-sm {
@@ -24,17 +29,32 @@ label.node {
   position: fixed !important;
 }
 
-label.node-underline {
-  text-decoration: solid #007bff underline;
-  //border-bottom: solid #007bff 2px;
+td.node-highlight-bottom {
+  border-bottom: solid #007bff 1px;
+}
+
+td.node-highlight-all {
+  border: solid #007bff 1px;
+}
+
+.node {
+  border: solid transparent 1px;
 }
 
 .btn-more {
   cursor:pointer;
-  border: solid grey 1px;
-  background-color: #e9ecef;
-  border-radius: 3px;
-  font-size: 7px;
-  padding: 0 3px;
+  border: none;
+  padding: 0 2px 0 0;
   white-space: nowrap;
+  vertical-align: top;
+}
+
+.table-textarea {
+  margin: 0;
+}
+
+.table-textarea td {
+  white-space: pre-wrap;
+  vertical-align: top;
+  padding: 0;
 }

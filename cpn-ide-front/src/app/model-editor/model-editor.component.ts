@@ -11,6 +11,7 @@ import { EventService } from '../services/event.service';
 import { ModelService } from '../services/model.service';
 
 import { importCpnPage } from '../../lib/cpn-js/import/Importer';
+import {element} from 'protractor';
 
 
 @Component({
@@ -1705,8 +1706,12 @@ export class ModelEditorComponent implements OnInit {
       //     id: Constants.ACTION_SHAPE_SELECT,
       //     element: event.element
       //   });
+      let labels = [];
+      for(let lab  of event.element.labels){
+        labels[lab.labelType] = lab.cpnElement;
+      }
 
-      this.eventService.send(Message.SHAPE_SELECT, { element: event.element });
+      this.eventService.send(Message.SHAPE_SELECT, { element: event.element, labels: labels, cpnElement: event.element.cpnElement, type: event.element.type});
     }
   }
 

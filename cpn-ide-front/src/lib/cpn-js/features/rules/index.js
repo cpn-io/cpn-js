@@ -6,6 +6,10 @@ export default {
   __depends__: [
     RulesModule
   ],
-  __init__: [ 'cpnRules' ],
+  __init__: [
+    // 'rules',
+    'cpnRules',
+  ],
+  // rules: [ 'type', CpnRules ],
   cpnRules: [ 'type', CpnRules ]
 };

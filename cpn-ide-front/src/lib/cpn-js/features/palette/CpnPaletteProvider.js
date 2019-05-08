@@ -1,13 +1,15 @@
-import { CPN_PLACE } from "../../util/ModelUtil";
+import { CPN_PLACE, CPN_TRANSITION } from "../../util/ModelUtil";
 
 /**
  * A example palette provider.
  */
-export default function CpnPaletteProvider(create, elementFactory, cpnFactory, lassoTool, palette, eventBus, modeling, dragging) {
+export default function CpnPaletteProvider(create, elementFactory, cpnFactory, lassoTool,
+  globalConnect, palette, eventBus, modeling, dragging) {
   this._create = create;
   this._elementFactory = elementFactory;
   this._cpnFactory = cpnFactory;
   this._lassoTool = lassoTool;
+  this._globalConnect = globalConnect;
   this._palette = palette;
   this._dragging = dragging;
   this._modeling = modeling;
@@ -20,6 +22,7 @@ CpnPaletteProvider.$inject = [
   'elementFactory',
   'cpnFactory',
   'lassoTool',
+  'globalConnect',
   'palette',
   'eventBus',
   'modeling',
@@ -30,6 +33,7 @@ CpnPaletteProvider.$inject = [
 CpnPaletteProvider.prototype.getPaletteEntries = function () {
   var create = this._create,
     elementFactory = this._elementFactory,
+    globalConnect = this._globalConnect,
     lassoTool = this._lassoTool;
 
   const self = this;
@@ -37,11 +41,22 @@ CpnPaletteProvider.prototype.getPaletteEntries = function () {
   return {
     'lasso-tool': {
       group: 'tools',
-      className: 'palette-icon-lasso-tool',
+      className: 'bpmn-icon-lasso-tool',
       title: 'Activate Lasso Tool',
       action: {
         click: function (event) {
           lassoTool.activateSelection(event);
+        }
+      }
+    },
+
+    'global-connect-tool': {
+      group: 'tools',
+      className: 'bpmn-icon-connection-multi',
+      title: 'Activate Connection Tool',
+      action: {
+        click: function(event) {
+          // globalConnect.toggle(event);
         }
       }
     },
@@ -51,42 +66,39 @@ CpnPaletteProvider.prototype.getPaletteEntries = function () {
       separator: true
     },
 
-    'create-transition': {
-      group: 'create',
-      className: 'palette-icon-create-shape',
-      title: 'Create Transition',
-      action: {
-        click: function () {
-
-          var shape = elementFactory.createShape({
-            /* var shape = elementFactory.createShape({
-               width: 100,
-               height: 80,
-               type: 'cpn:Transition'
-             });*/
-            //  event.context.type = 'cpn:Transition';
-            // create.start(event, {width: 100,  height: 80, type: 'cpn:Transition'});
-            //  create.start(event, shape);
-
-          });
-        }
-      }
-    },
-
     'create-place': {
       group: 'create',
       className: 'bpmn-icon-start-event-none',
       title: 'Create Place',
       action: function() { self._createPlace(event) }
-    }
+    },
+
+    'create-transition': {
+      group: 'create',
+      className: 'bpmn-icon-task',
+      title: 'Create Transition',
+      action: function() { self._createTransition(event) }
+    },
+
+    'tool-separator': {
+      group: 'create',
+      separator: true
+    },
+
   };
 };
 
 
 CpnPaletteProvider.prototype._createPlace = function (event) {
-  console.log('CpnPaletteProvider.prototype._createPlace, event = ', event);
+//  console.log('CpnPaletteProvider.prototype._createPlace, event = ', event);
 
   const shape = this._cpnFactory.createShape({ x: 0, y: 0 }, CPN_PLACE);
+  this._create.start(event, shape);
+}
 
+CpnPaletteProvider.prototype._createTransition = function (event) {
+//  console.log('CpnPaletteProvider.prototype._createTransition, event = ', event);
+
+  const shape = this._cpnFactory.createShape({ x: 0, y: 0 }, CPN_TRANSITION);
   this._create.start(event, shape);
 }

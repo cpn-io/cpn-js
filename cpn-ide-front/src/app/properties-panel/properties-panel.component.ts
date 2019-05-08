@@ -160,7 +160,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
           let updatedfield = htmlElement.parentNode.parentNode.childNodes[0].textContent;
           updatedfield = this.tableMapNames['invert'][updatedfield] ? this.tableMapNames['invert'][updatedfield] : updatedfield;
           const newValue = htmlElement['value'];
-          let table = this.getTable(htmlElement.offsetParent['offsetParent'].id);
+          const table = this.getTable(htmlElement.offsetParent['offsetParent'].id);
           this.modelService.setDescendantProp(this.cpnElement, this.setValueForTableByIdandReturnPath(newValue, table, updatedfield).replace('cpnElement.', ''), newValue);
           const emiterData = {
             id: Constants.ACTION_PROPERTY_UPDATE,
@@ -648,14 +648,19 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   showShapeAttrs(shapeObject, cpnElement, elementType) {
     console.log(this.constructor.name, 'showShapeAttrs(), shapeObject = ', shapeObject, cpnElement, elementType);
 
-    if (!shapeObject || !cpnElement || !elementType)
+    if (!shapeObject || !cpnElement || !elementType) {
       return;
+    }
+
+    if (['cpn:Place', 'cpn:Transition', 'cpn:Connection'].indexOf(shapeObject.type) < 0) {
+      return;
+    }
 
     this.elementType = elementType;
     this.clearData();
 
     this.shapeObject = shapeObject;
-    let type = elementType;///shapeObject.type.replace(/^bpmn:/, '');
+    let type = elementType; /// shapeObject.type.replace(/^bpmn:/, '');
     type = type.replace(/^cpn:/, '');
 
     // this.title = type;
@@ -694,7 +699,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     // }) : this.currentProjectModel.data.workspaceElements.cpnet.page;
 
     //  this.pageInModel = pageInModel;
-    let elementShape = undefined;
+    let elementShape;
     if (elementType !== 'cpn:Connection') {
       elementShape = elementType === 'cpn:Transition' ? 'box' : 'ellipse';
     }
@@ -741,8 +746,8 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
         labelElem.push({ name: 'Type', value: type, hide: true });
         labelElem.push({ name: 'X', value: cpnElement[label].posattr._x, path: 'cpnElement.' + label + '.posattr._x' });
         labelElem.push({ name: 'Y', value: cpnElement[label].posattr._y, path: 'cpnElement.' + label + '.posattr._y' });
-        //labelElem.push({name: 'Width', value: label.width});
-        //labelElem.push({name: 'Height', value: label.height});
+        // labelElem.push({name: 'Width', value: label.width});
+        // labelElem.push({name: 'Height', value: label.height});
         labelElem.push({ name: 'Text', value: cpnElement[label].text.__text ? cpnElement[label].text.__text : this.projectService.appSettings[label], path: 'cpnElement.' + label + '.text.__text' });
         labelElem.push({ name: 'Stroke', value: cpnElement[label].lineattr._colour, path: 'cpnElement.' + label + '.lineattr._colou' });
         labelElem.push({ name: 'strokeWidth', value: cpnElement[label].lineattr._thick, path: 'cpnElement.' + label + '.lineattr._thick' });

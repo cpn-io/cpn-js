@@ -22,6 +22,8 @@ export class Message {
   static CHANGE_EXPLORER_TREE = 'change.explorer.tree';
   static VERIFICATION_DONE = 'verification.done';
 
+  static MODEL_EDITOR_FULLSCREEN = 'model.editor.fullscreen';
+
   id: string;
   data: object;
 }

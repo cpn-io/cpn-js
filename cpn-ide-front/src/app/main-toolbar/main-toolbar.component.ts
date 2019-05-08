@@ -1,7 +1,9 @@
-import {Component, OnInit} from '@angular/core';
-import {ProjectService} from '../services/project.service';
-import {AppVersion} from "../app.version";
-import {ModelService} from '../services/model.service';
+import { Component, OnInit } from '@angular/core';
+import { ProjectService } from '../services/project.service';
+import { AppVersion } from "../app.version";
+import { ModelService } from '../services/model.service';
+import { EventService } from '../services/event.service';
+import { Message } from '../common/message';
 
 @Component({
   selector: 'app-main-toolbar',
@@ -12,7 +14,10 @@ export class MainToolbarComponent implements OnInit {
 
   version = AppVersion.buildVersion;
 
-  constructor(private projectService: ProjectService, private modelService: ModelService) {
+  constructor(
+    private projectService: ProjectService,
+    private modelService: ModelService,
+    private eventService: EventService) {
   }
 
   ngOnInit() {
@@ -29,9 +34,14 @@ export class MainToolbarComponent implements OnInit {
     this.modelService.cancelModelChanges('undo');
   }
 
-  redoChanges(){
+  redoChanges() {
     this.modelService.cancelModelChanges('redo');
   }
+
+  fullScreen() {
+    this.eventService.send(Message.MODEL_EDITOR_FULLSCREEN, {});
+  }
+
   openProject() {
     // EmitterService.getAppMessageEmitter().emit(
     //   {

@@ -56,12 +56,12 @@ CpnRules.prototype.init = function () {
     return self.canConnect(context.source, context.target);
   });
 
-  this.addRule('elements.move', function (context) {
-    console.log('RULE elements.move, context = ', context);
-    var shapes = context.shapes,
-      target = context.target;
-    return canAttach(target, shapes[0]);
-  });
+  // this.addRule('elements.move', function (context) {
+  //   console.log('RULE elements.move, context = ', context);
+  //   var shapes = context.shapes,
+  //     target = context.target;
+  //   return canAttach(target, shapes[0]);
+  // });
 };
 
 function canAttach(target, shape) {

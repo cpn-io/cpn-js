@@ -45,24 +45,24 @@ export default function CpnSnapping(eventBus, canvas, cpnRules, elementRegistry)
   // instantiate super
   Snapping.call(this, eventBus, canvas);
 
-  eventBus.on('create.start', function (event) {
+  // eventBus.on('create.start', function (event) {
 
-    var context = event.context,
-      shape = context.shape,
-      rootElement = canvas.getRootElement();
-  });
+  //   var context = event.context,
+  //     shape = context.shape,
+  //     rootElement = canvas.getRootElement();
+  // });
 
-  eventBus.on(['create.move', 'create.end'], HIGH_PRIORITY, function (event) {
-    var context = event.context,
-      shape = context.shape;
-  });
+  // eventBus.on(['create.move', 'create.end'], HIGH_PRIORITY, function (event) {
+  //   var context = event.context,
+  //     shape = context.shape;
+  // });
 
-  eventBus.on('shape.move.start', function (event) {
+  // eventBus.on('shape.move.start', function (event) {
 
-    var context = event.context,
-      shape = context.shape,
-      rootElement = canvas.getRootElement();
-  });
+  //   var context = event.context,
+  //     shape = context.shape,
+  //     rootElement = canvas.getRootElement();
+  // });
 
 
   function canAttach(shape, target, position) {
@@ -78,21 +78,21 @@ export default function CpnSnapping(eventBus, canvas, cpnRules, elementRegistry)
   /**
    * Snap boundary events to elements border
    */
-  eventBus.on([
-    'create.move',
-    'create.end',
-    'shape.move.move',
-    'shape.move.end'
-  ], HIGH_PRIORITY, function (event) {
+  // eventBus.on([
+  //   'create.move',
+  //   'create.end',
+  //   'shape.move.move',
+  //   'shape.move.end'
+  // ], HIGH_PRIORITY, function (event) {
 
-    var context = event.context,
-      target = context.target,
-      shape = context.shape;
+  //   var context = event.context,
+  //     target = context.target,
+  //     shape = context.shape;
 
-    if (target && !isSnapped(event) && canAttach(shape, target, event)) {
-      snapBoundaryEvent(event, shape, target);
-    }
-  });
+  //   if (target && !isSnapped(event) && canAttach(shape, target, event)) {
+  //     snapBoundaryEvent(event, shape, target);
+  //   }
+  // });
 
   // /**
   //  * Adjust parent for flowElements to the target participant
@@ -114,6 +114,8 @@ export default function CpnSnapping(eventBus, canvas, cpnRules, elementRegistry)
   /**
    * Snap sequence flows.
    */
+
+
   eventBus.on([
     'connect.move',
     'connect.hover',

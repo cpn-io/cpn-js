@@ -97,7 +97,22 @@ CpnImporter.prototype.add = function (pageObject, cpnElement, type) {
     translate = this._translate,
     hidden;
 
-  const root = this._canvas.getRootElement();
+  // create root
+  // -----------------------------------------------------
+  var root = this._canvas.getRootElement();
+
+  // if (root.id !== 'root') {
+  //   root = this._elementFactory.createRoot({ id: 'root' });
+  //   try {
+  //     this._canvas.setRootElement(root, true);
+  //   } catch (error) {
+  //     console.error('CREATE ROOT ELEMENT ERROR = ', error);
+  //   }
+
+  //   root = this._canvas.getRootElement();
+  //   console.log('CREATE ROOT ELEMENT, root = ', root);
+  // }
+  // console.log('IMPORT ROOT ELEMENT, root = ', root);
 
   // Place object
   if (type === CPN_PLACE) {
@@ -109,7 +124,7 @@ CpnImporter.prototype.add = function (pageObject, cpnElement, type) {
       if (cpnElement[key]) {
         attrs = this._modeling.getLabelAttrs(element, cpnElement[key], key);
         label = this._elementFactory.createLabel(attrs);
-        this._canvas.addShape(label, element);
+        this._canvas.addShape(label, root);
       }
     }
 
@@ -117,7 +132,7 @@ CpnImporter.prototype.add = function (pageObject, cpnElement, type) {
     if (cpnElement.token) {
       attrs = this._modeling.getTokenLabelAttrs(element, cpnElement.token, 'token');
       var tokenLabel = this._elementFactory.createLabel(attrs);
-      this._canvas.addShape(tokenLabel, element);
+      this._canvas.addShape(tokenLabel, root);
 
       // add marking label
       if (cpnElement.marking) {
@@ -140,7 +155,7 @@ CpnImporter.prototype.add = function (pageObject, cpnElement, type) {
         const e = key === 'subst' ? cpnElement[key].subpageinfo : cpnElement[key];
         attrs = this._modeling.getLabelAttrs(element, e, key);
         label = this._elementFactory.createLabel(attrs);
-        this._canvas.addShape(label, element);
+        this._canvas.addShape(label, root);
       }
     }
   }
@@ -163,7 +178,7 @@ CpnImporter.prototype.add = function (pageObject, cpnElement, type) {
           if (cpnElement[key]) {
             attrs = this._modeling.getLabelAttrs(element, cpnElement[key], key);
             label = this._elementFactory.createLabel(attrs);
-            this._canvas.addShape(label, element);
+            this._canvas.addShape(label, root);
           }
         }
       }

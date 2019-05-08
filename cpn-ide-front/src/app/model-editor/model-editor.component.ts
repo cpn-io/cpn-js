@@ -71,12 +71,37 @@ export class ModelEditorComponent implements OnInit {
 
     const eventBus = this.diagram.get('eventBus');
 
+    this.elementFactory = this.diagram.get('elementFactory');
+    this.dragging = this.diagram.get('dragging');
+    this.canvas = this.diagram.get('canvas');
+    this.modeling = this.diagram.get('modeling');
+    this.labelEditingProvider = this.diagram.get('labelEditingProvider');
+    this.textRenderer = this.diagram.get('textRenderer');
+
+
+    // set defualt values to diagram
+    // -----------------------------------------------------
+    this.modeling.setDefaultValue('type', 'UINT');
+    this.modeling.setDefaultValue('initmark', 'INIT MARK');
+
+    this.modeling.setDefaultValue('cond', '[]');
+    this.modeling.setDefaultValue('time', '@+');
+    this.modeling.setDefaultValue('code', 'input();\noutput();\naction();\n');
+    this.modeling.setDefaultValue('priority', 'P_NORMAL');
+    this.modeling.setDefaultValue('annot', 'expr');
+    this.modeling.setDefaultValue('ellipse', { h: 50, w: 80 });
+    this.modeling.setDefaultValue('box', { h: 50, w: 80 });
+
+
+
+
+
     eventBus.on('import.render.complete', (event) => {
       const pageElement = event.source;
 
       console.log('import.render.complete, event = ', event);
 
-      this.eventService.send(Message.MODEL_UPDATE, {pageObject:  pageElement});
+      this.eventService.send(Message.MODEL_UPDATE, { pageObject: pageElement });
 
     });
 
@@ -328,29 +353,6 @@ export class ModelEditorComponent implements OnInit {
     //     this.canvas._clear();
     //   }
     // });
-
-    const that = this;
-    // this.diagram.createDiagram(function () {
-    //   // that.loadTestModel();
-    // });
-
-    this.elementFactory = this.diagram.get('elementFactory');
-    this.dragging = this.diagram.get('dragging');
-    this.canvas = this.diagram.get('canvas');
-    this.modeling = this.diagram.get('modeling');
-    this.labelEditingProvider = this.diagram.get('labelEditingProvider');
-    this.textRenderer = this.diagram.get('textRenderer');
-
-    this.modeling.setDefaultValue('type', 'UINT');
-    this.modeling.setDefaultValue('initmark', 'INIT MARK');
-
-    this.modeling.setDefaultValue('cond', '[]');
-    this.modeling.setDefaultValue('time', '@+');
-    this.modeling.setDefaultValue('code', 'input();\noutput();\naction();\n');
-    this.modeling.setDefaultValue('priority', 'P_NORMAL');
-    this.modeling.setDefaultValue('annot', 'expr');
-    this.modeling.setDefaultValue('ellipse', { h: 50, w: 80 });
-    this.modeling.setDefaultValue('box', { h: 50, w: 80 });
   }
 
   subscripeToAppMessage() {

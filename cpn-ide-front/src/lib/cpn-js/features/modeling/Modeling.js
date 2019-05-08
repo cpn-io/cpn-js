@@ -144,6 +144,8 @@ Modeling.prototype.createNewConnection = function (placeShape, transShape) {
   console.log('Modeling.prototype.createNewConnection(), place = ', placeShape);
   console.log('Modeling.prototype.createNewConnection(), trans = ', transShape);
 
+  var root = this._canvas.getRootElement();
+
   if (placeShape && transShape) {
     var pageObject = undefined;
     var cpnElement = this.createArcInModel(placeShape.cpnElement, transShape.cpnElement);
@@ -156,7 +158,7 @@ Modeling.prototype.createNewConnection = function (placeShape, transShape) {
         if (cpnElement[key]) {
           var attrs = this.getLabelAttrs(connection, cpnElement[key], key);
           var label = this._elementFactory.createLabel(attrs);
-          this._canvas.addShape(label, connection);
+          this._canvas.addShape(label, root);
         }
       }
 

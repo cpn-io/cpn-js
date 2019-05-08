@@ -149,10 +149,12 @@ CpnPopupMenuProvider.prototype._createShape = function (event, type) {
   this._popupMenu.close();
   // this._create.start(event, shape);
 
+  var root = this._canvas.getRootElement();
+
   this._canvas.addShape(shape, this._canvas.getRootElement());
   // add all child labels
   for (const l of shape.labels) {
-    this._canvas.addShape(l, shape);
+    this._canvas.addShape(l, root);
     for (const l2 of l.labels) {
       this._canvas.addShape(l2, l);
     }

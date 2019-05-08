@@ -75,7 +75,7 @@ Modeling.prototype.updateLabel = function (element, newLabel, newBounds, hints) 
 };
 
 Modeling.prototype.updateElement = function (element) {
-  console.log('Modeling().updateElement(), element = ', element);
+  // console.log('Modeling().updateElement(), element = ', element);
 
   if (element) {
     this._eventBus.fire('element.changed', { element: element });

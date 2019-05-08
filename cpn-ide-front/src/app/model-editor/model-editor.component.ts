@@ -1132,235 +1132,239 @@ export class ModelEditorComponent implements OnInit {
 
     // console.log(JSON.stringify(this.transShapes));
     //  console.log( JSON.stringify(this.arcShapes));
-    let bounds;
-    let updatedPlace;
-    if (!(page.place.length === 0 && !page.place._id)) {
-      for (const place of page.place) {
-        updatedPlace = this.placeShapes[place._id];
-        place.posattr._x = updatedPlace.x + place.ellipse._w / 2;
-        place.posattr._y = -1 * updatedPlace.y - place.ellipse._h / 2;
-        place.ellipse._w = updatedPlace.width;
-        place.ellipse._h = updatedPlace.height;
-        place.lineattr._colour = updatedPlace.stroke;
-        place.lineattr._thick = updatedPlace.strokeWidth;
-        place.text = updatedPlace.name;
 
-        for (const label of this.placeShapes[place._id].labels) {
-          if (label.labelNodeId === place.type._id) {
-            bounds = {
-              width: 200, // 90,
-              height: 30,
-              x: place.type.posattr._x,
-              y: place.type.posattr._y
-            };
-            bounds = this.textRenderer.getExternalLabelBounds(bounds, place.type.text.__text ? place.type.text.__text : '');
-            place.type.lineattr._colour = label.stroke;
-            place.type.posattr._x = label.x + Math.round(bounds.width) / 2;
-            place.type.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
-            place.type.text.__text = label.text;
-          }
-          if (label.labelNodeId === place.initmark._id) {
-            bounds = {
-              width: 200, // 90,
-              height: 30,
-              x: place.initmark.posattr._x,
-              y: place.initmark.posattr._y
-            };
-            bounds = this.textRenderer.getExternalLabelBounds(bounds, place.initmark.text.__text ? place.initmark.text.__text : '');
-            place.initmark.lineattr._colour = label.stroke;
-            place.initmark.posattr._x = label.x + Math.round(bounds.width) / 2;
-            place.initmark.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
-            place.initmark.text.__text = label.text;
-          }
-        }
-      }
-    }
-    if (!(page.trans.length === 0 && !page.trans._id)) {
-      let updatedTran;
-      if (page.trans.length) {
-        for (const tran of page.trans) {
-          updatedTran = this.transShapes[tran._id];
-          tran.posattr._x = updatedTran.x + tran.box._w / 2;
-          tran.posattr._y = -1 * updatedTran.y - tran.box._h / 2;
-          tran.box._w = updatedTran.width;
-          tran.box._h = updatedTran.height;
-          tran.lineattr._colour = updatedTran.stroke;
-          tran.lineattr._thick = updatedTran.strokeWidth;
-          tran.text = updatedTran.name;
 
-          for (const label of this.transShapes[tran._id].labels) {
-            if (label.labelNodeId === tran.cond._id) {
-              bounds = {
-                width: 200, // 90,
-                height: 30,
-                x: tran.cond.posattr._x,
-                y: tran.cond.posattr._y
-              };
-              bounds = this.textRenderer.getExternalLabelBounds(bounds, tran.cond.text.__text ? tran.cond.text.__text : '');
-              tran.cond.lineattr._colour = label.stroke;
-              tran.cond.posattr._x = label.x + Math.round(bounds.width) / 2;
-              tran.cond.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
-              tran.cond.text.__text = label.text;
-            }
-            if (label.labelNodeId === tran.time._id) {
-              bounds = {
-                width: 200, // 90,
-                height: 30,
-                x: tran.time.posattr._x,
-                y: tran.time.posattr._y
-              };
-              bounds = this.textRenderer.getExternalLabelBounds(bounds, tran.time.text.__text ? tran.time.text.__text : '');
-              tran.time.lineattr._colour = label.stroke;
-              tran.time.posattr._x = label.x + Math.round(bounds.width) / 2;
-              tran.time.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
-              tran.time.text.__text = label.text;
-            }
-            if (label.labelNodeId === tran.code._id) {
-              bounds = {
-                width: 200, // 90,
-                height: 30,
-                x: tran.time.posattr._x,
-                y: tran.code.posattr._y
-              };
-              bounds = this.textRenderer.getExternalLabelBounds(bounds, tran.code.text.__text ? tran.code.text.__text : '');
-              tran.code.lineattr._colour = label.stroke;
-              tran.code.posattr._x = label.x + Math.round(bounds.width) / 2;
-              tran.code.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
-              tran.code.text.__text = label.text;
-            }
-            if (label.labelNodeId === tran.priority._id) {
-              bounds = {
-                width: 200, // 90,
-                height: 30,
-                x: tran.priority.posattr._x,
-                y: tran.priority.posattr._y
-              };
-              bounds = this.textRenderer.getExternalLabelBounds(bounds, tran.priority.text.__text ? tran.priority.text.__text : '');
-              tran.priority.lineattr._colour = label.stroke;
-              tran.priority.posattr._x = label.x + Math.round(bounds.width) / 2;
-              tran.priority.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
-              tran.priority.text.__text = label.text;
-            }
-          }
-        }
-      } else {
-        const tran = page.trans;
-        updatedTran = this.transShapes[tran._id];
-        tran.posattr._x = updatedTran.x + tran.box._w / 2;
-        tran.posattr._y = -1 * updatedTran.y - tran.box._h / 2;
-        tran.box._w = updatedTran.width;
-        tran.box._h = updatedTran.height;
-        tran.lineattr._colour = updatedTran.stroke;
-        tran.lineattr._thick = updatedTran.strokeWidth;
-        tran.text = updatedTran.name;
+    // let bounds;
+    // let updatedPlace;
+    // if (!(page.place.length === 0 && !page.place._id)) {
+    //   for (const place of page.place) {
+    //     updatedPlace = this.placeShapes[place._id];
+    //     place.posattr._x = updatedPlace.x + place.ellipse._w / 2;
+    //     place.posattr._y = -1 * updatedPlace.y - place.ellipse._h / 2;
+    //     place.ellipse._w = updatedPlace.width;
+    //     place.ellipse._h = updatedPlace.height;
+    //     place.lineattr._colour = updatedPlace.stroke;
+    //     place.lineattr._thick = updatedPlace.strokeWidth;
+    //     place.text = updatedPlace.name;
 
-        for (const label of this.transShapes[tran._id].labels) {
-          if (label.labelNodeId === tran.cond._id) {
-            bounds = {
-              width: 200, // 90,
-              height: 30,
-              x: tran.cond.posattr._x,
-              y: tran.cond.posattr._y
-            };
-            bounds = this.textRenderer.getExternalLabelBounds(bounds, tran.cond.text.__text ? tran.cond.text.__text : '');
-            tran.cond.lineattr._colour = label.stroke;
-            tran.cond.posattr._x = label.x + Math.round(bounds.width) / 2;
-            tran.cond.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
-            tran.cond.text.__text = label.text;
-          }
-          if (label.labelNodeId === tran.time._id) {
-            bounds = {
-              width: 200, // 90,
-              height: 30,
-              x: tran.time.posattr._x,
-              y: tran.time.posattr._y
-            };
-            bounds = this.textRenderer.getExternalLabelBounds(bounds, tran.time.text.__text ? tran.time.text.__text : '');
-            tran.time.lineattr._colour = label.stroke;
-            tran.time.posattr._x = label.x + Math.round(bounds.width) / 2;
-            tran.time.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
-            tran.time.text.__text = label.text;
-          }
-          if (label.labelNodeId === tran.code._id) {
-            bounds = {
-              width: 200, // 90,
-              height: 30,
-              x: tran.time.posattr._x,
-              y: tran.code.posattr._y
-            };
-            bounds = this.textRenderer.getExternalLabelBounds(bounds, tran.code.text.__text ? tran.code.text.__text : '');
-            tran.code.lineattr._colour = label.stroke;
-            tran.code.posattr._x = label.x + Math.round(bounds.width) / 2;
-            tran.code.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
-            tran.code.text.__text = label.text;
-          }
-          if (label.labelNodeId === tran.priority._id) {
-            bounds = {
-              width: 200, // 90,
-              height: 30,
-              x: tran.priority.posattr._x,
-              y: tran.priority.posattr._y
-            };
-            bounds = this.textRenderer.getExternalLabelBounds(bounds, tran.priority.text.__text ? tran.priority.text.__text : '');
-            tran.priority.lineattr._colour = label.stroke;
-            tran.priority.posattr._x = label.x + Math.round(bounds.width) / 2;
-            tran.priority.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
-            tran.priority.text.__text = label.text;
-          }
-        }
+    //     for (const label of this.placeShapes[place._id].labels) {
+    //       if (label.labelNodeId === place.type._id) {
+    //         bounds = {
+    //           width: 200, // 90,
+    //           height: 30,
+    //           x: place.type.posattr._x,
+    //           y: place.type.posattr._y
+    //         };
+    //         bounds = this.textRenderer.getExternalLabelBounds(bounds, place.type.text.__text ? place.type.text.__text : '');
+    //         place.type.lineattr._colour = label.stroke;
+    //         place.type.posattr._x = label.x + Math.round(bounds.width) / 2;
+    //         place.type.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
+    //         place.type.text.__text = label.text;
+    //       }
+    //       if (label.labelNodeId === place.initmark._id) {
+    //         bounds = {
+    //           width: 200, // 90,
+    //           height: 30,
+    //           x: place.initmark.posattr._x,
+    //           y: place.initmark.posattr._y
+    //         };
+    //         bounds = this.textRenderer.getExternalLabelBounds(bounds, place.initmark.text.__text ? place.initmark.text.__text : '');
+    //         place.initmark.lineattr._colour = label.stroke;
+    //         place.initmark.posattr._x = label.x + Math.round(bounds.width) / 2;
+    //         place.initmark.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
+    //         place.initmark.text.__text = label.text;
+    //       }
+    //     }
+    //   }
+    // }
+    // if (!(page.trans.length === 0 && !page.trans._id)) {
+    //   let updatedTran;
+    //   if (page.trans.length) {
+    //     for (const tran of page.trans) {
+    //       updatedTran = this.transShapes[tran._id];
+    //       tran.posattr._x = updatedTran.x + tran.box._w / 2;
+    //       tran.posattr._y = -1 * updatedTran.y - tran.box._h / 2;
+    //       tran.box._w = updatedTran.width;
+    //       tran.box._h = updatedTran.height;
+    //       tran.lineattr._colour = updatedTran.stroke;
+    //       tran.lineattr._thick = updatedTran.strokeWidth;
+    //       tran.text = updatedTran.name;
 
-      }
-    }
-    if (!(page.arc.length === 0 && !page.arc._id)) {
-      let uodatedCon;
-      for (const arc of page.arc) {
-        for (const modelArc of this.arcShapes) {
-          if (modelArc.id === arc._id) {
-            uodatedCon = modelArc;
-          }
-        }
-        if (arc.bendpoint) {
-          if (arc.bendpoint.length) {
-            for (const point of arc.bendpoint) {
-              for (const updWayPoint of uodatedCon.waypoints) {
-                if (point._id === updWayPoint.id) {
-                  point.posattr._x = updWayPoint.x;
-                  point.posattr._y = -1 * updWayPoint.y;
-                }
-              }
-            }
-          } else {
-            for (const updWayPoint of uodatedCon.waypoints) {
-              if (arc.bendpoint._id === updWayPoint.id) {
-                arc.bendpoint.posattr._x = updWayPoint.x;
-                arc.bendpoint.posattr._y = -1 * updWayPoint.y;
-              }
-            }
-          }
+    //       for (const label of this.transShapes[tran._id].labels) {
+    //         if (label.labelNodeId === tran.cond._id) {
+    //           bounds = {
+    //             width: 200, // 90,
+    //             height: 30,
+    //             x: tran.cond.posattr._x,
+    //             y: tran.cond.posattr._y
+    //           };
+    //           bounds = this.textRenderer.getExternalLabelBounds(bounds, tran.cond.text.__text ? tran.cond.text.__text : '');
+    //           tran.cond.lineattr._colour = label.stroke;
+    //           tran.cond.posattr._x = label.x + Math.round(bounds.width) / 2;
+    //           tran.cond.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
+    //           tran.cond.text.__text = label.text;
+    //         }
+    //         if (label.labelNodeId === tran.time._id) {
+    //           bounds = {
+    //             width: 200, // 90,
+    //             height: 30,
+    //             x: tran.time.posattr._x,
+    //             y: tran.time.posattr._y
+    //           };
+    //           bounds = this.textRenderer.getExternalLabelBounds(bounds, tran.time.text.__text ? tran.time.text.__text : '');
+    //           tran.time.lineattr._colour = label.stroke;
+    //           tran.time.posattr._x = label.x + Math.round(bounds.width) / 2;
+    //           tran.time.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
+    //           tran.time.text.__text = label.text;
+    //         }
+    //         if (label.labelNodeId === tran.code._id) {
+    //           bounds = {
+    //             width: 200, // 90,
+    //             height: 30,
+    //             x: tran.time.posattr._x,
+    //             y: tran.code.posattr._y
+    //           };
+    //           bounds = this.textRenderer.getExternalLabelBounds(bounds, tran.code.text.__text ? tran.code.text.__text : '');
+    //           tran.code.lineattr._colour = label.stroke;
+    //           tran.code.posattr._x = label.x + Math.round(bounds.width) / 2;
+    //           tran.code.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
+    //           tran.code.text.__text = label.text;
+    //         }
+    //         if (label.labelNodeId === tran.priority._id) {
+    //           bounds = {
+    //             width: 200, // 90,
+    //             height: 30,
+    //             x: tran.priority.posattr._x,
+    //             y: tran.priority.posattr._y
+    //           };
+    //           bounds = this.textRenderer.getExternalLabelBounds(bounds, tran.priority.text.__text ? tran.priority.text.__text : '');
+    //           tran.priority.lineattr._colour = label.stroke;
+    //           tran.priority.posattr._x = label.x + Math.round(bounds.width) / 2;
+    //           tran.priority.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
+    //           tran.priority.text.__text = label.text;
+    //         }
+    //       }
+    //     }
+    //   } else {
+    //     const tran = page.trans;
+    //     updatedTran = this.transShapes[tran._id];
+    //     tran.posattr._x = updatedTran.x + tran.box._w / 2;
+    //     tran.posattr._y = -1 * updatedTran.y - tran.box._h / 2;
+    //     tran.box._w = updatedTran.width;
+    //     tran.box._h = updatedTran.height;
+    //     tran.lineattr._colour = updatedTran.stroke;
+    //     tran.lineattr._thick = updatedTran.strokeWidth;
+    //     tran.text = updatedTran.name;
 
-        }
-        arc.lineattr._colour = uodatedCon.stroke;
-        arc.lineattr._thick = uodatedCon.strokeWidth;
-        for (const label of uodatedCon.labels) {
-          if (label.labelNodeId === arc.annot._id) {
-            bounds = {
-              width: 200, // 90,
-              height: 30,
-              x: arc.annot.posattr._x,
-              y: arc.annot.posattr._y
-            };
-            bounds = this.textRenderer.getExternalLabelBounds(bounds, arc.annot.text.__text ? arc.annot.text.__text : '');
-            arc.annot.lineattr._colour = label.stroke;
-            arc.annot.posattr._x = label.x + Math.round(bounds.width) / 2;
-            arc.annot.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
-            arc.annot.__text = label.text;
-            arc.annot.text.__text = label.text;
-          }
+    //     for (const label of this.transShapes[tran._id].labels) {
+    //       if (label.labelNodeId === tran.cond._id) {
+    //         bounds = {
+    //           width: 200, // 90,
+    //           height: 30,
+    //           x: tran.cond.posattr._x,
+    //           y: tran.cond.posattr._y
+    //         };
+    //         bounds = this.textRenderer.getExternalLabelBounds(bounds, tran.cond.text.__text ? tran.cond.text.__text : '');
+    //         tran.cond.lineattr._colour = label.stroke;
+    //         tran.cond.posattr._x = label.x + Math.round(bounds.width) / 2;
+    //         tran.cond.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
+    //         tran.cond.text.__text = label.text;
+    //       }
+    //       if (label.labelNodeId === tran.time._id) {
+    //         bounds = {
+    //           width: 200, // 90,
+    //           height: 30,
+    //           x: tran.time.posattr._x,
+    //           y: tran.time.posattr._y
+    //         };
+    //         bounds = this.textRenderer.getExternalLabelBounds(bounds, tran.time.text.__text ? tran.time.text.__text : '');
+    //         tran.time.lineattr._colour = label.stroke;
+    //         tran.time.posattr._x = label.x + Math.round(bounds.width) / 2;
+    //         tran.time.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
+    //         tran.time.text.__text = label.text;
+    //       }
+    //       if (label.labelNodeId === tran.code._id) {
+    //         bounds = {
+    //           width: 200, // 90,
+    //           height: 30,
+    //           x: tran.time.posattr._x,
+    //           y: tran.code.posattr._y
+    //         };
+    //         bounds = this.textRenderer.getExternalLabelBounds(bounds, tran.code.text.__text ? tran.code.text.__text : '');
+    //         tran.code.lineattr._colour = label.stroke;
+    //         tran.code.posattr._x = label.x + Math.round(bounds.width) / 2;
+    //         tran.code.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
+    //         tran.code.text.__text = label.text;
+    //       }
+    //       if (label.labelNodeId === tran.priority._id) {
+    //         bounds = {
+    //           width: 200, // 90,
+    //           height: 30,
+    //           x: tran.priority.posattr._x,
+    //           y: tran.priority.posattr._y
+    //         };
+    //         bounds = this.textRenderer.getExternalLabelBounds(bounds, tran.priority.text.__text ? tran.priority.text.__text : '');
+    //         tran.priority.lineattr._colour = label.stroke;
+    //         tran.priority.posattr._x = label.x + Math.round(bounds.width) / 2;
+    //         tran.priority.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
+    //         tran.priority.text.__text = label.text;
+    //       }
+    //     }
 
-        }
+    //   }
+    // }
+    // if (!(page.arc.length === 0 && !page.arc._id)) {
+    //   let uodatedCon;
+    //   for (const arc of page.arc) {
+    //     for (const modelArc of this.arcShapes) {
+    //       if (modelArc.id === arc._id) {
+    //         uodatedCon = modelArc;
+    //       }
+    //     }
+    //     if (arc.bendpoint) {
+    //       if (arc.bendpoint.length) {
+    //         for (const point of arc.bendpoint) {
+    //           for (const updWayPoint of uodatedCon.waypoints) {
+    //             if (point._id === updWayPoint.id) {
+    //               point.posattr._x = updWayPoint.x;
+    //               point.posattr._y = -1 * updWayPoint.y;
+    //             }
+    //           }
+    //         }
+    //       } else {
+    //         for (const updWayPoint of uodatedCon.waypoints) {
+    //           if (arc.bendpoint._id === updWayPoint.id) {
+    //             arc.bendpoint.posattr._x = updWayPoint.x;
+    //             arc.bendpoint.posattr._y = -1 * updWayPoint.y;
+    //           }
+    //         }
+    //       }
 
-      }
-    }
+    //     }
+    //     arc.lineattr._colour = uodatedCon.stroke;
+    //     arc.lineattr._thick = uodatedCon.strokeWidth;
+    //     for (const label of uodatedCon.labels) {
+    //       if (label.labelNodeId === arc.annot._id) {
+    //         bounds = {
+    //           width: 200, // 90,
+    //           height: 30,
+    //           x: arc.annot.posattr._x,
+    //           y: arc.annot.posattr._y
+    //         };
+    //         bounds = this.textRenderer.getExternalLabelBounds(bounds, arc.annot.text.__text ? arc.annot.text.__text : '');
+    //         arc.annot.lineattr._colour = label.stroke;
+    //         arc.annot.posattr._x = label.x + Math.round(bounds.width) / 2;
+    //         arc.annot.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
+    //         arc.annot.__text = label.text;
+    //         arc.annot.text.__text = label.text;
+    //       }
+
+    //     }
+
+    //   }
+    // }
+
+
     // this.eventService.send(Message.MODEL_UPDATE, {pageObject:  page});
     // EmitterService.getAppMessageEmitter().emit(
     //  {

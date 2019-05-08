@@ -24,6 +24,7 @@ import CpnResizeModule from '../features/resize';
 
 import CpnContextPadProvider from '../features/context-pad/CpnContextPadProvider';
 import CpnPopupMenuProvider from '../features/popup-menu/CpnPopupMenuProvider';
+import CpnOrderingProvider from '../features/ordering/CpnOrderingProvider';
 
 import CpnSnappingModule from '../features/snapping';
 import CpnModelingModule from '../features/modeling';
@@ -71,9 +72,11 @@ export default {
     'contextPadProvider',
     'popupMenuProvider',
     'paletteProvider',
+    'cpnOrderingProvider'
   ],
   connectionDocking: ['type', CroppingConnectionDocking],
   contextPadProvider: ['type', CpnContextPadProvider],
   popupMenuProvider: ['type', CpnPopupMenuProvider],
   paletteProvider: ['type', CpnPaletteProvider],
+  cpnOrderingProvider: [ 'type', CpnOrderingProvider ]
 };

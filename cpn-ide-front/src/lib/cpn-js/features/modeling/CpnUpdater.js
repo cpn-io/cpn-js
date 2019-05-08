@@ -59,10 +59,6 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     'shape.create',
   ], updateNewShape);
 
-  // this.executed([
-  //   'shape.changed',
-  // ], updateLabel);
-
   // this.reverted(['connection.layout'], function (e) {
   //   delete e.context.cropped;
   // });
@@ -162,9 +158,9 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
   function updateNewShape(e) {
     console.log('CpnUpdater(), updateNewShape(e), e = ', e);
-   /* const context = e.context;
-    const shape = context.shape;
-    shape.type = CPN_PLACE;*/
+    /* const context = e.context;
+     const shape = context.shape;
+     shape.type = CPN_PLACE;*/
   }
 
   // update bounds
@@ -192,6 +188,9 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   }
 
   function updateCpnElement(e) {
+
+    console.log('CpnUpdater().updateCpnElement(), e = ', e);
+
     var shape = e.element;
 
     const cpnElement = shape.cpnElement;

@@ -290,7 +290,6 @@ export default function CpnRenderer(
     // render marking label frame
     // ---------------------------------------------
     if (is(element, CPN_MARKING_LABEL)) {
-
       var rectAttrs = {
         x: -6, y: -3,
         width: attrs.box.width + 10, height: attrs.box.height + 5,
@@ -307,9 +306,6 @@ export default function CpnRenderer(
       attrs.style.fill = 'black';
     }
 
-
-    attrs.box.x += 1;
-    attrs.box.y += 1;
 
     var text = textRenderer.createText(getText(element) || '', attrs);
     svgClasses(text).add('djs-label');

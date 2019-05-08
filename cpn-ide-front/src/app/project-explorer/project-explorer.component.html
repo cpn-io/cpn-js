@@ -83,40 +83,28 @@
         <div class="scroll-y">
           <div class="pane" style="padding:10px">
 
-            <tree-root #tree [nodes]="nodes" [options]="options" (activate)="activateNode($event)">
+            <tree-root #tree [nodes]="nodes" [options]="options" (activate)="activateNode($event)" >
               <ng-template #treeNodeTemplate let-node let-index="index">
 
-                <div [ngClass]="node.data.classes" class="node">
+                <div [ngClass]="node.data.classes" >
 
-                  <!-- Большие тексты в узлах дерева сделаны разворачивающимися-->
-                  <label *ngIf="editableNode !== node" [ngClass]="{'node-underline': underlineNodeSet.has(node.id)}"
-                         (click)="openNode($event, node)"
-                         (dblclick)="onEditNode(node)"
-                         class="node">
-                    <span *ngIf="needToCollapse(node); else notCollapsible">
-                      <span *ngIf="collapsedLabel[node.id] === true || collapsedLabel[node.id] === undefined">
-                        {{getShortLabel(node.data.name.toString())}} <span class="btn-more" (click)="collapseExpandClick(node.id)" > >> </span></span>
-                      <span *ngIf="collapsedLabel[node.id] === false">
-                        {{node.data.name}}  <span class="btn-more" (click)="collapseExpandClick(node.id)" > << </span></span>
-                    </span>
-                    <ng-template #notCollapsible>{{node.data.name}}</ng-template>
-                    <!--{{node.data.name}}-->
-                  </label>
-
-                  <input (currentTabChange)="inputNewNameEvent(node, value)"
-                         (focus)="autoWidth($event)" (focusout)="closeNodeEditor($event)"
-                         (keydown)="autoWidth($event)" *ngIf="editableNode === node"
-                         [defaultValue]="node.data.name"
-                         autofocus
-                         id="textinpfield"
-                         name="textinpfield"
-                         type="text">
-
-                  <!--<input type="text" [defaultValue]="node.data.name"-->
-                  <!--id="textinpfield" name="textinpfield"-->
-                  <!--autofocus-->
-                  <!--onkeydown="this.style.width = ((this.value.length + 1) * 8) + 'px';"-->
-                  <!--(currentTabChange)="inputNewNameEvent(node, value)">-->
+                  <table class="table-textarea">
+                    <tr>
+                      <td >
+                        <span *ngIf="needToCollapse(node)">
+                          <span *ngIf="collapsedLabel[node.id] === true || collapsedLabel[node.id] === undefined"
+                                class="btn-more" (click)="onNodeArrowClick($event, node)">&#9658;</span>
+                          <span *ngIf="collapsedLabel[node.id] === false" class="btn-more"
+                                (click)="onNodeArrowClick($event, node)">&#9660;</span>
+                        </span>
+                      </td>
+                      <td class="textinpfield node" [contentEditable]="collapsedLabel[node.id] === false"
+                          (click)="onNodeLabelClick($event, node)"
+                          (focusout)="closeNodeEditor($event)"
+                          [ngClass]="{'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id)}">{{getLabel(node)}}
+                      </td>
+                    </tr>
+                  </table>
 
                   <div *ngIf="canCreate(node) || canEdit(node) || canDelete(node) || canCreateDeclaration(node)"
                        class="dropdown-menu dropdown-menu-fixed shadow"

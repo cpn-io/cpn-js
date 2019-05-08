@@ -1,21 +1,15 @@
 import {
-  // ChangeDetectionStrategy,
   Component,
-  // ComponentFactoryResolver,
-  // ElementRef,
-  // NgZone,
   OnDestroy,
   OnInit,
-  // ViewChild,
-  // ViewContainerRef
 } from '@angular/core';
-import {ProjectExplorerComponent} from '../project-explorer/project-explorer.component';
-import {EditorPanelComponent} from '../editor-panel/editor-panel.component';
-import {ProjectDetailsComponent} from '../project-details/project-details.component';
-import {ProjectConsoleComponent} from '../project-console/project-console.component';
-import {PropertiesPanelComponent} from '../properties-panel/properties-panel.component';
-import {Message} from '../common/message';
-import {EventService} from '../services/event.service';
+import { ProjectExplorerComponent } from '../project-explorer/project-explorer.component';
+import { EditorPanelComponent } from '../editor-panel/editor-panel.component';
+import { ProjectDetailsComponent } from '../project-details/project-details.component';
+import { ProjectConsoleComponent } from '../project-console/project-console.component';
+import { PropertiesPanelComponent } from '../properties-panel/properties-panel.component';
+import { Message } from '../common/message';
+import { EventService } from '../services/event.service';
 
 
 @Component({
@@ -26,26 +20,20 @@ import {EventService} from '../services/event.service';
 })
 export class MainFrameComponent implements OnInit, OnDestroy {
 
-//   @ViewChild('explorerArea') explorerAreaElementRef: ElementRef;
-//   @ViewChild('editorArea') editorAreaElementRef: ElementRef;
-//   @ViewChild('detailsArea') detailsAreaElementRef: ElementRef;
-//
-//   @ViewChild('propertiesArea') propertiesAreaElementRef: ElementRef;
-// //  @ViewChild('declarationArea') declarationAreaElementRef: ElementRef;
-//   @ViewChild('valuesArea') valuesAreaElementRef: ElementRef;
-//   @ViewChild('consoleArea') consoleAreaElementRef: ElementRef;
-
   localStorageName = 'angular-split-ws';
-
-  // subscription: Subscription;
 
   explorerWidth = 25;
 
-  constructor(private eventService: EventService,
-              // private viewContainer: ViewContainerRef,
-              // private componentFactoryResolver: ComponentFactoryResolver
-              // , private zone: NgZone
-  ) {
+  gutterSize = 3;
+
+  leftSplitPaneSize = 25;
+  centerSplitPaneSize = 55;
+  rightSplitPaneSize = 20;
+
+  editorSplitPaneSize = 70;
+  consoleSplitPaneSize = 30;
+
+  constructor(private eventService: EventService) {
   }
 
   ngOnInit() {
@@ -65,53 +53,30 @@ export class MainFrameComponent implements OnInit, OnDestroy {
     //   this.resetConfig();
     // }
 
-    // this.zone.run(() => {
-    //   this.createComponent(this.explorerAreaElementRef, ProjectExplorerComponent);
-    //   this.createComponent(this.editorAreaElementRef, EditorPanelComponent);
-    //   this.createComponent(this.detailsAreaElementRef, ProjectDetailsComponent);
-    //
-    //   this.createComponent(this.propertiesAreaElementRef, PropertiesPanelComponent);
-    //  // this.createComponent(this.declarationAreaElementRef, DeclarationPanelComponent);
-    //   // this.createComponent(this.valuesAreaElementRef, ProjectDetailsComponent);
-    //   this.createComponent(this.consoleAreaElementRef, ProjectConsoleComponent);
-    // });
-  }
 
-  // createComponent(elementRef, componentClass) {
-  //   let factory = this.componentFactoryResolver.resolveComponentFactory(componentClass);
-  //   let compRef = this.viewContainer.createComponent(factory);
-  //   elementRef.nativeElement.append(compRef.location.nativeElement);
-  // }
+    this.eventService.on(Message.MODEL_EDITOR_FULLSCREEN, () => {
+      console.log('MainFrameComponent, MODEL_EDITOR_FULLSCREEN');
+
+      if (this.centerSplitPaneSize === 100) {
+        this.leftSplitPaneSize = 25;
+        this.rightSplitPaneSize = 20;
+        this.consoleSplitPaneSize = 30;
+      } else {
+        this.leftSplitPaneSize = 0;
+        this.rightSplitPaneSize = 0;
+        this.consoleSplitPaneSize = 0;
+      }
+
+      this.centerSplitPaneSize = 100 - (this.leftSplitPaneSize + this.rightSplitPaneSize);
+      this.editorSplitPaneSize = 100 - this.consoleSplitPaneSize;
+    });
+  }
 
   ngOnDestroy() {
-    // this.subscription.unsubscribe();
   }
-
-  // resetConfig() {
-  //   this.config = cloneDeep(defaultConfig);
-
-  //   localStorage.removeItem(this.localStorageName);
-  // }
-
-  // subscribeToProject() {
-  //   this.subscription = EmitterService.getAppMessageEmitter().subscribe((data: any) => {
-  //     if (data && data.id) {
-  //       if (data.id === Constants.ACTION_PROJECT_LOAD_DATA) {
-  //         console.log('TESTTTEMIT');
-  //         if (data.project)
-  //           this.loadProjectData(data.project);
-  //       }
-  //     }
-  //   });
-  // }
 
   loadProjectData(project: any) {
     console.log('MainFrameComponent, loadProjectData(), project = ', project);
-
     this.explorerWidth = 25;
-
-    // this.zone.run(() => {
-    //   console.log('repaint component !!!');
-    // });
   }
 }

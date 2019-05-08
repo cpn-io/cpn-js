@@ -39,7 +39,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   private shapeObject;
   private pageId;
   private selectedElement;
-
+  private labels;
   private tables = [];
 
   private tableMapNames;
@@ -160,8 +160,13 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
           let updatedfield = htmlElement.parentNode.parentNode.childNodes[0].textContent;
           updatedfield = this.tableMapNames['invert'][updatedfield] ? this.tableMapNames['invert'][updatedfield] : updatedfield;
           const newValue = htmlElement['value'];
-          const table = this.getTable(htmlElement.offsetParent['offsetParent'].id);
-          this.modelService.setDescendantProp(this.cpnElement, this.setValueForTableByIdandReturnPath(newValue, table, updatedfield).replace('cpnElement.', ''), newValue);
+          const tabId = htmlElement.offsetParent['offsetParent'].id;
+          const table = this.getTable(tabId);
+          let changingCpnElement
+          if(tabId === 'commonNodes' && Object.keys(this.labels).includes(updatedfield)) {
+            changingCpnElement = this.labels[updatedfield];
+          } else  changingCpnElement = Object.keys(this.labels).includes(tabId) ? this.labels[tabId] : this.cpnElement;
+          this.modelService.setDescendantProp(changingCpnElement, this.setValueForTableByIdandReturnPath(newValue, table, updatedfield), newValue);
           const emiterData = {
             id: Constants.ACTION_PROPERTY_UPDATE,
             labels: [],
@@ -570,8 +575,9 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
       }
 
       const element = data.element.type === 'cpn:Label' ? data.element.parent : data.element;
-      this.cpnElement = element.cpnElement;
-      this.showShapeAttrs(element, element.cpnElement, element.type);
+      this.cpnElement = data.cpnElement;
+      this.labels =  data.labels;
+      this.showShapeAttrs(element, data.cpnElement, data.type, data.labels);
     });
   }
 
@@ -645,7 +651,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
    * function that fills the data setd for fields in the properties panel
    * @param shapeObject - model shape object
    */
-  showShapeAttrs(shapeObject, cpnElement, elementType) {
+  showShapeAttrs(shapeObject, cpnElement, elementType, labels) {
     console.log(this.constructor.name, 'showShapeAttrs(), shapeObject = ', shapeObject, cpnElement, elementType);
 
     if (!shapeObject || !cpnElement || !elementType) {
@@ -703,17 +709,17 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     if (elementType !== 'cpn:Connection') {
       elementShape = elementType === 'cpn:Transition' ? 'box' : 'ellipse';
     }
-    nodes.push({ name: 'Id', value: cpnElement._id, hide: true, path: 'cpnElement._id' });
-    nodes.push({ name: 'Name', value: cpnElement.text, path: 'cpnElement.text' });
+    nodes.push({ name: 'Id', value: cpnElement._id, hide: true, path: '_id' });
+    nodes.push({ name: 'Name', value: cpnElement.text, path: 'text' });
     nodes.push({ name: 'Type', value: elementType, hide: true });
-    nodes.push({ name: 'X', value: cpnElement.posattr._x, path: 'cpnElement.posattr._x' });
-    nodes.push({ name: 'Y', value: cpnElement.posattr._y, path: 'cpnElement.posattr._y' });
-    nodes.push({ name: 'Width', value: elementShape ? cpnElement[elementShape]._w : ' - ', path: elementShape ? 'cpnElement' + elementShape + '._w' : undefined });
-    nodes.push({ name: 'Height', value: elementShape ? cpnElement[elementShape]._h : ' - ', path: elementShape ? 'cpnElement' + elementShape + '._h' : undefined });
-    nodes.push({ name: 'Stroke', value: cpnElement.lineattr._colour, path: 'cpnElement.lineattr._colour' });
-    nodes.push({ name: 'strokeWidth', value: cpnElement.lineattr._thick, path: 'cpnElement.lineattr._thick' });
-    nodes.push({ name: 'BackGround', value: cpnElement.fillattr._colour, path: 'cpnElement.fillattr._colour' });
-    commonNodes.push({ name: 'Name', value: cpnElement.text, path: 'cpnElement.text' });
+    nodes.push({ name: 'X', value: cpnElement.posattr._x, path: 'posattr._x' });
+    nodes.push({ name: 'Y', value: cpnElement.posattr._y, path: 'posattr._y' });
+    nodes.push({ name: 'Width', value: elementShape ? cpnElement[elementShape]._w : ' - ', path: elementShape ?  elementShape + '._w' : undefined });
+    nodes.push({ name: 'Height', value: elementShape ? cpnElement[elementShape]._h : ' - ', path: elementShape ?  elementShape + '._h' : undefined });
+    nodes.push({ name: 'Stroke', value: cpnElement.lineattr._colour, path: 'lineattr._colour' });
+    nodes.push({ name: 'strokeWidth', value: cpnElement.lineattr._thick, path: 'lineattr._thick' });
+    nodes.push({ name: 'BackGround', value: cpnElement.fillattr._colour, path: 'fillattr._colour' });
+    commonNodes.push({ name: 'Name', value: cpnElement.text, path: 'text' });
 
 
     /*nodes.push({name: 'Id', value: type === 'cpn:Label' ? shapeObject.labelNodeId : shapeObject.id, hide: true});
@@ -742,20 +748,20 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
       const t = this.getTable(label);
       if (t) {
         labelElem = t.data;
-        labelElem.push({ name: 'Id', value: cpnElement[label]._id, hide: true, path: 'cpnElement.' + label + '._id' });
+        labelElem.push({ name: 'Id', value: labels[label]._id, hide: true, path: '_id' });
         labelElem.push({ name: 'Type', value: type, hide: true });
-        labelElem.push({ name: 'X', value: cpnElement[label].posattr._x, path: 'cpnElement.' + label + '.posattr._x' });
-        labelElem.push({ name: 'Y', value: cpnElement[label].posattr._y, path: 'cpnElement.' + label + '.posattr._y' });
+        labelElem.push({ name: 'X', value: labels[label].posattr._x, path: 'posattr._x' });
+        labelElem.push({ name: 'Y', value: labels[label].posattr._y, path: 'posattr._y' });
         // labelElem.push({name: 'Width', value: label.width});
         // labelElem.push({name: 'Height', value: label.height});
-        labelElem.push({ name: 'Text', value: cpnElement[label].text.__text ? cpnElement[label].text.__text : this.projectService.appSettings[label], path: 'cpnElement.' + label + '.text.__text' });
-        labelElem.push({ name: 'Stroke', value: cpnElement[label].lineattr._colour, path: 'cpnElement.' + label + '.lineattr._colou' });
-        labelElem.push({ name: 'strokeWidth', value: cpnElement[label].lineattr._thick, path: 'cpnElement.' + label + '.lineattr._thick' });
-        labelElem.push({ name: 'BackGround', value: cpnElement[label].fillattr._colour, path: 'cpnElement.' + label + '.fillattr._colour' });
-        commonNodes.push({ name: label, value: cpnElement[label].text.__text ? cpnElement[label].text.__text : this.projectService.appSettings[label], path: 'cpnElement.' + label + '.text.__text' });
+        labelElem.push({ name: 'Text', value: labels[label].text.__text ? labels[label].text.__text : this.projectService.appSettings[label], path: 'text.__text' });
+        labelElem.push({ name: 'Stroke', value: labels[label].lineattr._colour, path: 'lineattr._colou' });
+        labelElem.push({ name: 'strokeWidth', value: labels[label].lineattr._thick, path: 'lineattr._thick' });
+        labelElem.push({ name: 'BackGround', value: labels[label].fillattr._colour, path: 'fillattr._colour' });
+        commonNodes.push({ name: label, value: labels[label].text.__text ? labels[label].text.__text : this.projectService.appSettings[label], path: 'text.__text' });
       }
     }
-    commonNodes.push({ name: 'Stroke', value: cpnElement.lineattr._colour, path: 'cpnElement.lineattr._colour' });
+    commonNodes.push({ name: 'Stroke', value: cpnElement.lineattr._colour, path: 'lineattr._colour' });
     /*for (const label of shapeObject.labels) {
       // labelElem = this.getLabelProperties(label);
 

@@ -16,6 +16,8 @@ import {
 } from '../../util/ModelUtil';
 import CpnImporter from "../../import/CpnImporter";
 
+
+
 /**
  * CPN modeling features activator
  *
@@ -99,20 +101,46 @@ function isString(v) {
  * @param {*} element
  */
 function updateShapeByCpnElement(element) {
-  const cpnElement = element.cpnElement;
 
-  if (cpnElement && cpnElement._name) {
-    element.text = cpnElement._name;
-    element.name = cpnElement._name;
+  const changeName = (cpnElement) => {
+    if (cpnElement && cpnElement._name) {
+      element.text = cpnElement._name;
+      element.name = cpnElement._name;
+    }
+    // console.log('Modeling.updateShapeByCpnElement(), cpnElement.text instanceof String = ',  typeof cpnElement.text === 'string');
+
+    if (cpnElement && isString(cpnElement.text)) {
+      element.name = cpnElement.text;
+      element.text = cpnElement.text;
+    }
+
+    if(cpnElement.text && cpnElement.text.__text) {
+      element.text = cpnElement.text.__text;
+    }
+  };
+
+  const changePosition = (cpnElement) => {
+    if(cpnElement.posattr) {
+         element.x = Math.round( cpnElement.posattr._x);
+         element.y = Math.round( cpnElement.posattr._y) * -1;
+       }
+  };
+
+  const resize = (cpnElement) =>{
+     if(cpnElement.ellipse || cpnElement.box) {
+       let form = cpnElement.ellipse ? 'ellipse' : 'box';
+       element.width = cpnElement[form]._w;
+       element.height = cpnElement[form]._h;
+     }
   }
-  // console.log('Modeling.updateShapeByCpnElement(), cpnElement.text instanceof String = ',  typeof cpnElement.text === 'string');
 
-  if (cpnElement && isString(cpnElement.text)) {
-    element.name = cpnElement.text;
-    element.text = cpnElement.text;
-  }
+  changeName(element.cpnElement);
+  //changePosition(element.cpnElement);
+  resize(element.cpnElement);
 
-  // console.log('Modeling.updateShapeByCpnElement(), element = ', element);
+
+
+   console.log('Modeling.updateShapeByCpnElement(), element = ', element);
 }
 
 Modeling.prototype.connect = function (source, target, attrs, hints) {
@@ -271,8 +299,8 @@ Modeling.prototype.getPlaceAttrs = function (cpnPlaceElement, type) {
   var y = Math.round(cpnPlaceElement.posattr._y) * -1;
   var w = Math.round(cpnPlaceElement.ellipse._w);
   var h = Math.round(cpnPlaceElement.ellipse._h);
-  x -= w / 2;
-  y -= h / 2;
+   x -= w / 2;
+   y -= h / 2;
 
   var attrs = {
     type: type,
@@ -430,8 +458,8 @@ Modeling.prototype.getTransAttrs = function (cpnTransElement, type) {
   var y = Math.round(cpnTransElement.posattr._y) * -1;
   var w = Math.round(cpnTransElement.box._w);
   var h = Math.round(cpnTransElement.box._h);
-  x -= w / 2;
-  y -= h / 2;
+   x -= w / 2;
+   y -= h / 2;
 
   var attrs = {
     type: type,
@@ -585,11 +613,11 @@ function optimiseEqualsArcsByWayoints(arc, delta) {
  * @param element
  */
 Modeling.prototype.createElementInModel = function (position, type) {
-
   let formCase = [];
   formCase[CPN_PLACE] = { form: 'ellipse', entry: ['initmark', 'type'] };
   formCase[CPN_TRANSITION] = { form: 'box', entry: ['time', 'code', 'priority', 'cond'] };
   formCase[CPN_CONNECTION] = { entry: ['annot'] };
+
 
   let names = [];
   names[CPN_PLACE] = 'P';

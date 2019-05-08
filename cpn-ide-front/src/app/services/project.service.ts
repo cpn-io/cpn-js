@@ -15,6 +15,7 @@ export class ProjectService {
   public appSettings = [];
   private currentSelectedElement;
   currentPageId;
+  userSessionId;
 
   constructor(private eventService: EventService, private http: HttpClient) {
     console.log('ProjectService instance CREATED!');
@@ -22,6 +23,17 @@ export class ProjectService {
     this.loadEmptyProject();
     this.setDefaultAppSettings();
   }
+
+  public generateUserSession() {
+    this.userSessionId = 'ID' + new Date().getTime();
+    console.log('generateUserSession - new id -', this.userSessionId);
+    return this.userSessionId;
+  }
+
+  getUserSessionId() {
+    return this.userSessionId;
+  }
+
 
   public getProjectData() {
     return this.projectData;
@@ -47,6 +59,7 @@ export class ProjectService {
    * @param {File} file
    */
   loadProjectFile(file: File) {
+    this.generateUserSession();
     const reader: FileReader = new FileReader();
     reader.readAsText(file);
     reader.onload = e => {

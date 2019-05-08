@@ -77,8 +77,6 @@ public class CpnController {
     @Autowired
     PetriNetModel petriNetModel;
 
-    private static final ModelFactory factory = ModelFactory.INSTANCE;
-    ;
 
     @PostMapping(value = "/verifi")
     public ResponseEntity<java.lang.Object> verifiPetriNet(
@@ -95,7 +93,8 @@ public class CpnController {
             if (requestBody.get(0).containsKey("xml")) {
                 String jsonstr = requestBody.get(0).get("xml").toString();
                 String sessionId = requestBody.get(0).get("sessionId").toString();
-                petriNetModel.setPetriNet(sessionId, DOMParser.parse(new ByteArrayInputStream(jsonstr.getBytes(StandardCharsets.UTF_8)), "myNet.cpnide"));
+                System.out.println("new SESSION ID ------- " + sessionId );
+                if(! petriNetModel.isContain(sessionId)) petriNetModel.setPetriNet(sessionId, DOMParser.parse(new ByteArrayInputStream(jsonstr.getBytes(StandardCharsets.UTF_8)), "myNet.cpnide"));
                 // petriNetModel.setPetriNet(sessionId ,DOMParser.parse(new URL("file://" + fileName)));
 
                 // final PetriNet petriNet = DOMParser.parse(new URL("file://" + fileName));
@@ -104,9 +103,9 @@ public class CpnController {
                 final HighLevelSimulator s = petriNetModel.getHighLevelSimulator();
 
                 //testMarrking(sessionId, s);
-                checkEntireModel(petriNetModel.getPetriNet(sessionId), s);
-                /*final Checker checker = new Checker(petriNetModel.getPetriNet(sessionId), null, s);
-                check(petriNetModel.getPetriNet(sessionId));
+             //   checkEntireModel(petriNetModel.getPetriNet(sessionId), s);
+                final Checker checker = new Checker(petriNetModel.getPetriNet(sessionId), null, s);
+                petriNetModel.check(petriNetModel.getPetriNet(sessionId));
                 checker.localCheck();
                 checker.checkInitializing();
                 checker.checkDeclarations();
@@ -118,7 +117,7 @@ public class CpnController {
                 checker.initialiseSimulationScheduler();
                // checker.instantiateSMLInterface();
 
-//                checker.checkEntireModel();*/
+//                checker.checkEntireModel();
             } else {
                 //petriNetModel.setPetriNet(DOMParser.parse(new URL("file://" + fileName)));
                 String sessionId = requestBody.get(0).get("sessionId").toString();
@@ -152,7 +151,7 @@ public class CpnController {
 
 
     @PostMapping(value = "/step")
-    public ResponseEntity<java.lang.Object> getMarkinById(
+    public ResponseEntity<java.lang.Object> makeStep(
             @RequestBody List<Map> requestBody,
             HttpServletRequest request) throws RuntimeException {
         ResponseEntity<java.lang.Object> result = null;
@@ -191,7 +190,7 @@ public class CpnController {
 
 
     @PostMapping(value = "/marking")
-    public ResponseEntity<java.lang.Object> makeStep(
+    public ResponseEntity<java.lang.Object> getMarkinById(
             @RequestBody List<Map> requestBody,
             HttpServletRequest request) throws RuntimeException {
         ResponseEntity<java.lang.Object> result = null;
@@ -269,58 +268,10 @@ public class CpnController {
     }
 
 
-    public void check(PetriNet petriNet) throws LocalCheckFailed {
-        Iterator var3 = petriNet.getPage().iterator();
-
-        while (var3.hasNext()) {
-            Page page = (Page) var3.next();
-            this.checkPage(page);
-        }
-
-    }
-
-    private void checkPage(Page page) throws LocalCheckFailed {
-        this.checkAllNames(page);
-    }
-
-
-    public static String getName(HasName object) {
-        String name = object.getName().getText();
-        if (name == null) {
-            return "";
-        } else {
-            name = Util.mlEscape(name);
-            name = name.replaceFirst("[^\\p{Alnum}'_].*", "");
-            return !name.matches("^[\\p{Alpha}].*") ? "" : name;
-        }
-    }
-
-    private void checkAllNames(Page page) throws LocalCheckFailed {
-        if ("".equals(getName(page))) {
-            throw new LocalCheckFailed(page.getId(), "Page has no or illegal name (name is `" + page.getName().getText() + "')");
-        } else {
-            Iterator var3 = page.getObject().iterator();
-
-            while (var3.hasNext()) {
-                Object object = (Object) var3.next();
-                if (object.getName() == null) {
-                    Name tempName = factory.createName();
-                    tempName.setText(object.getId());
-                    object.setName(tempName);
-                }
-            }
-
-        }
-    }
-
-    public void checkEntireModel(final PetriNet net, final HighLevelSimulator sim) throws Exception {
-        Checker c = new Checker(net, null, sim);
-        c.checkEntireModel();
-    }
 
     public void testMarrking(String sessionId, HighLevelSimulator s) throws Exception {
         // s.setTarget((org.cpntools.accesscpn.model.impl.PetriNetImpl) petriNetModel.getPetriNet(sessionId));
-        checkEntireModel(petriNetModel.getPetriNet(sessionId), s);
+        petriNetModel.checkEntireModel(petriNetModel.getPetriNet(sessionId), s);
         List<Instance<PlaceNode>> instanses = s.getAllPlaceInstances();
 
         for (Instance<PlaceNode> node : instanses) {

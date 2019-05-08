@@ -1,7 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import * as X2JS from 'src/lib/x2js/xml2json.js';
-
+import {ProjectService} from '../services/project.service';
 
 @Injectable()
 export class EmitterService {
@@ -22,7 +22,7 @@ export class EmitterService {
     return this.get('appMessage');
   }
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private projectService: ProjectService) {
   }
 
 
@@ -56,23 +56,28 @@ export class EmitterService {
     //   const gr = this.getXMlDescription(netJson);
     const xml = (x2js.json2xml_str(JSON.parse(JSON.stringify(netJson)))); /// netJson
     // console.log('NET xml--' + xml);
-    return this.http.post('api/cpn/verifi', [{ 'xml': xml, 'sessionId': 'testid' }]);
+    let userId = this.projectService.getUserSessionId();
+    console.log('verifyAllNet generate sessionID --', userId)
+    return this.http.post('api/cpn/verifi', [{ 'xml': xml, 'sessionId': userId ? userId : this.projectService.generateUserSession()}]);
     // return this.http.post('api/cpn/verifi', [{'xml': JSON.stringify(netJson)}]);
   }
 
   getMarking(id: String) {
     console.log('getMarking for place ' + id);
-    return this.http.post('api/cpn/marking', [{ 'id': id ? id : '', 'sessionId': 'testid' }]);
+    let userId = this.projectService.getUserSessionId();
+    return this.http.post('api/cpn/marking', [{ 'id': id ? id : '', 'sessionId': userId }]);
   }
 
   makeStep(id: String) {
     console.log('makeStep for trans ' + id);
-    return this.http.post('api/cpn/step', [{ 'id': id, 'sessionId': 'testid' }]);
+    let userId = this.projectService.getUserSessionId();
+    return this.http.post('api/cpn/step', [{ 'id': id, 'sessionId': userId }]);
   }
 
   getEnableTransitions(id: String) {
     console.log('getMarking for place ' + id);
-    return this.http.post('api/cpn/enable', [{ 'id': id, 'sessionId': 'testid' }]);
+    let userId = this.projectService.getUserSessionId();
+    return this.http.post('api/cpn/enable', [{ 'id': id, 'sessionId': userId }]);
   }
 
 

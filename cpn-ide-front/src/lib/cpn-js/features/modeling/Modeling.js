@@ -78,6 +78,8 @@ Modeling.prototype.updateElement = function (element) {
   // console.log('Modeling().updateElement(), element = ', element);
 
   if (element) {
+    updateShapeByCpnElement(element);
+
     this._eventBus.fire('element.changed', { element: element });
 
     if (element.labels) {
@@ -88,9 +90,32 @@ Modeling.prototype.updateElement = function (element) {
   }
 };
 
+function isString(v) {
+  return (typeof v === 'string' || v instanceof String);
+}
+
+/**
+ *
+ * @param {*} element
+ */
+function updateShapeByCpnElement(element) {
+  const cpnElement = element.cpnElement;
+
+  if (cpnElement && cpnElement._name) {
+    element.text = cpnElement._name;
+    element.name = cpnElement._name;
+  }
+  // console.log('Modeling.updateShapeByCpnElement(), cpnElement.text instanceof String = ',  typeof cpnElement.text === 'string');
+
+  if (cpnElement && isString(cpnElement.text)) {
+    element.name = cpnElement.text;
+    element.text = cpnElement.text;
+  }
+
+  // console.log('Modeling.updateShapeByCpnElement(), element = ', element);
+}
 
 Modeling.prototype.connect = function (source, target, attrs, hints) {
-  console.log('Modeling.prototype.connect(), attrs', attrs);
 
   // var cpnRules = this._cpnRules;
   // if (!attrs) {

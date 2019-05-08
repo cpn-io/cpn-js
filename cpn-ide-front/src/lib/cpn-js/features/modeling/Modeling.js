@@ -24,15 +24,18 @@ import CpnImporter from "../../import/CpnImporter";
  * @param {CommandStack} commandStack
  * @param {CpnRules} cpnRules
  */
-export default function Modeling(eventBus, elementFactory, elementRegistry, commandStack, cpnRules, textRenderer) {
+export default function Modeling(eventBus, elementFactory, elementRegistry, commandStack, cpnRules, textRenderer, canvas) {
   console.log('Modeling()');
 
   BaseModeling.call(this, eventBus, elementFactory, commandStack);
 
   this._eventBus = eventBus;
-  this._cpnRules = cpnRules;
+  this._elementFactory = elementFactory;
   this._elementRegistry = elementRegistry;
+  this._cpnRules = cpnRules;
   this._textRenderer = textRenderer;
+  this._canvas = canvas;
+
   this._defaultValues = [];
 }
 
@@ -44,7 +47,8 @@ Modeling.$inject = [
   'elementRegistry',
   'commandStack',
   'cpnRules',
-  'textRenderer'
+  'textRenderer',
+  'canvas'
 ];
 
 
@@ -86,18 +90,59 @@ Modeling.prototype.updateElement = function (element) {
 
 
 Modeling.prototype.connect = function (source, target, attrs, hints) {
-  var cpnRules = this._cpnRules;
+  console.log('Modeling.prototype.connect(), attrs', attrs);
 
-  if (!attrs) {
-    attrs = cpnRules.canConnect(source, target);
-  }
-  if (!attrs) {
-    return;
+  // var cpnRules = this._cpnRules;
+  // if (!attrs) {
+  //   attrs = cpnRules.canConnect(source, target);
+  // }
+
+  if (attrs) {
+    return this.createConnection(source, target, attrs, source.parent, hints);
+  } else {
+    var placeShape;
+    var transShape;
+
+    if (is(source, CPN_PLACE)) placeShape = source;
+    if (is(target, CPN_PLACE)) placeShape = target;
+    if (is(source, CPN_TRANSITION)) transShape = source;
+    if (is(target, CPN_TRANSITION)) transShape = target;
+
+    if (placeShape && transShape)
+      return this.createNewConnection(placeShape, transShape);
   }
 
-  // console.log('Modeling.prototype.connect()', source, target, attrs, source.parent, hints);
-  return this.createConnection(source, target, attrs, source.parent, hints);
+  return undefined;
 };
+
+Modeling.prototype.createNewConnection = function (placeShape, transShape) {
+  console.log('Modeling.prototype.createNewConnection(), place = ', placeShape);
+  console.log('Modeling.prototype.createNewConnection(), trans = ', transShape);
+
+  if (placeShape && transShape) {
+    var pageObject = undefined;
+    var cpnElement = this.createArcInModel(placeShape.cpnElement, transShape.cpnElement);
+
+    const data = this.getArcData(pageObject, cpnElement, CPN_CONNECTION, placeShape, transShape);
+    if (data) {
+      var connection = this.connect(data.source, data.target, data.attrs, null);
+
+      for (var key of ['annot']) {
+        if (cpnElement[key]) {
+          var attrs = this.getLabelAttrs(connection, cpnElement[key], key);
+          var label = this._elementFactory.createLabel(attrs);
+          this._canvas.addShape(label, connection);
+        }
+      }
+
+      return connection;
+    }
+  }
+
+  return undefined;
+}
+
+
 
 Modeling.prototype.setColor = function (elements, colors) {
   if (!elements.length) {
@@ -532,10 +577,6 @@ Modeling.prototype.createElementInModel = function (position, type) {
     height: 30,
   };
 
-  let relPos = [];
-  relPos['initmark'] = { _x: bounds.x + bounds.width, _y: bounds.y * -1 };
-  relPos['type'] = { _x: bounds.x + bounds.width, _y: (bounds.y + bounds.height) * -1 };
-
   bounds = this._textRenderer.getExternalLabelBounds(bounds, 'Default');
   const newElement = {
     posattr: {
@@ -571,23 +612,42 @@ Modeling.prototype.createElementInModel = function (position, type) {
       _y: 0,
       _hidden: true
     },
-    _id: 'ID' + new Date().getTime()  // 'ID1412328424'
+    _id: getNextId()
   };
+
+  var x = newElement.posattr._x;
+  var y = newElement.posattr._y;
+  var w = bounds.width;
+  var h = bounds.height;
+
+  const defPos = {
+    _x: x,
+    _y: y
+  };
+
+  let relPos = [];
 
   let elemType = formCase[type];
   if (elemType) {
     if (elemType.form) {
-      newElement[elemType.form] = {
-        _w: this.getDefaultValue(elemType.form).w,//element.width,
-        _h: this.getDefaultValue(elemType.form).h//element.height
 
+      w = this.getDefaultValue(elemType.form).w;
+      h = this.getDefaultValue(elemType.form).h;
+
+      newElement[elemType.form] = {
+        _w: w,
+        _h: h
       };
     }
 
-    const defPos = {
-      _x: position.x + Math.round(bounds.width) / 2 + 100,//+ element.width, /// 55.500000,
-      _y: -1 * position.y - Math.round(bounds.height) / 2 + 80 / 4 ///+ element.height / 4 // 102.000000
-    };
+    relPos['initmark'] = { _x: x + w, _y: y - h / 2 };
+    relPos['type'] = { _x: x + w, _y: y + h / 2 };
+
+    relPos['time'] = { _x: x + w, _y: y + h / 2 };
+    relPos['code'] = { _x: x + w, _y: y - h / 2 };
+    relPos['cond'] = { _x: x - w, _y: y + h / 2 };
+    relPos['priority'] = { _x: x - w, _y: y - h / 2 };
+
 
     for (let label of elemType.entry) {
       newElement[label] = {
@@ -625,7 +685,84 @@ Modeling.prototype.createElementInModel = function (position, type) {
 }
 
 
+Modeling.prototype.createArcInModel = function (placeCpnElement, transCpnElement) {
+  var cpnArcElement =
+  {
+    posattr: getDefPosattr(),
+    fillattr: getDefFillattr(),
+    lineattr: getDefLineattr(),
+    textattr: getDefTextattr(),
+    arrowattr: {
+      _headsize: 1,
+      _currentcyckle: 2
+    },
+    transend: {
+      _idref: transCpnElement._id
+    },
+    placeend: {
+      _idref: placeCpnElement._id
+    },
+    // bendpoint: {
+    //   posattr: getDefPosattr(),
+    //   fillattr: getDefFillattr(),
+    //   lineattr: getDefLineattr(),
+    //   textattr: getDefTextattr(),
+    //   _id: getNextId() + 'b',
+    //   _serial: "1"
+    // },
+    annot: {
+      posattr: getDefPosattr(),
+      fillattr: getDefFillattr(),
+      lineattr: getDefLineattr(),
+      textattr: getDefTextattr(),
+      text: getDefText(),
+      _id: getNextId() + 'a'
+    },
+    _id: getNextId(),
+    _orientation: "BOTHDIR",
+    _order: 1
+  };
 
+  return cpnArcElement;
+}
 
+function getDefPosattr() {
+  return {
+    _x: 0,
+    _y: 0
+  };
+}
 
+function getDefFillattr() {
+  return {
+    _colour: "White",
+    _pattern: "Solid",
+    _filled: "false"
+  };
+}
 
+function getDefLineattr() {
+  return {
+    _colour: "Black",
+    _thick: "1",
+    _type: "Solid"
+  };
+}
+
+function getDefTextattr() {
+  return {
+    _colour: "Black",
+    _bold: "false"
+  };
+}
+
+function getDefText() {
+  return {
+    _tool: "CPN Tools",
+    _version: "4.0.1"
+  };
+}
+
+function getNextId() {
+  return 'ID' + new Date().getTime();
+}

@@ -46,6 +46,11 @@ CpnRules.prototype.init = function () {
     return canResize(context.shape);
   });
 
+  this.addRule('connection.start', function (context) {
+    console.log('RULE connection.start, context = ', context);
+    return self.canStartConnect(context.source);
+  });
+
   this.addRule('connection.create', function (context) {
     console.log('RULE connection.create, context = ', context);
     return self.canConnect(context.source, context.target);
@@ -71,6 +76,10 @@ CpnRules.prototype.canConnect = function(source, target) {
   return (
     is(source, CPN_PLACE) && is(target, CPN_TRANSITION) ||
     is(target, CPN_PLACE) && is(source, CPN_TRANSITION));
+}
+
+CpnRules.prototype.canStartConnect = function(source) {
+  return is(source, CPN_PLACE) || is(source, CPN_TRANSITION);
 }
 
 function canResize(shape) {

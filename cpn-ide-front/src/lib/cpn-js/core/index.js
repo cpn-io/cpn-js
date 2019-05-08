@@ -14,6 +14,7 @@ import ConnectModule from 'diagram-js/lib/features/connect';
 import SnappingModule from 'diagram-js/lib/features/snapping';
 import BendpointsModule from 'diagram-js/lib/features/bendpoints';
 import AttachSupportModule from 'diagram-js/lib/features/attach-support';
+import GlobalConnectModule from 'diagram-js/lib/features/global-connect';
 
 import CroppingConnectionDocking from 'diagram-js/lib/layout/CroppingConnectionDocking';
 
@@ -50,6 +51,7 @@ export default {
     SnappingModule,
     BendpointsModule,
     AttachSupportModule,
+    GlobalConnectModule,
 
     CroppingConnectionDocking,
 

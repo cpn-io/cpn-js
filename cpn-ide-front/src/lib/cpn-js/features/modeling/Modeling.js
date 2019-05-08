@@ -114,33 +114,32 @@ function updateShapeByCpnElement(element) {
       element.text = cpnElement.text;
     }
 
-    if(cpnElement.text && cpnElement.text.__text) {
+    if (cpnElement.text && cpnElement.text.__text) {
       element.text = cpnElement.text.__text;
     }
   };
 
   const changePosition = (cpnElement) => {
-    if(cpnElement.posattr) {
-         element.x = Math.round( cpnElement.posattr._x);
-         element.y = Math.round( cpnElement.posattr._y) * -1;
-       }
+    if (cpnElement.posattr) {
+      element.x = Math.round(cpnElement.posattr._x);
+      element.y = Math.round(cpnElement.posattr._y) * -1;
+    }
   };
 
-  const resize = (cpnElement) =>{
-     if(cpnElement.ellipse || cpnElement.box) {
-       let form = cpnElement.ellipse ? 'ellipse' : 'box';
-       element.width = cpnElement[form]._w;
-       element.height = cpnElement[form]._h;
-     }
+  const resize = (cpnElement) => {
+    if (cpnElement.ellipse || cpnElement.box) {
+      let form = cpnElement.ellipse ? 'ellipse' : 'box';
+      element.width = cpnElement[form]._w;
+      element.height = cpnElement[form]._h;
+    }
   }
 
   changeName(element.cpnElement);
-  //changePosition(element.cpnElement);
-  resize(element.cpnElement);
 
+  // changePosition(element.cpnElement);
+  // resize(element.cpnElement);
 
-
-   console.log('Modeling.updateShapeByCpnElement(), element = ', element);
+  console.log('Modeling.updateShapeByCpnElement(), element = ', element);
 }
 
 Modeling.prototype.connect = function (source, target, attrs, hints) {
@@ -301,8 +300,8 @@ Modeling.prototype.getPlaceAttrs = function (cpnPlaceElement, type) {
   var y = Math.round(cpnPlaceElement.posattr._y) * -1;
   var w = Math.round(cpnPlaceElement.ellipse._w);
   var h = Math.round(cpnPlaceElement.ellipse._h);
-   x -= w / 2;
-   y -= h / 2;
+  x -= w / 2;
+  y -= h / 2;
 
   var attrs = {
     type: type,
@@ -460,8 +459,8 @@ Modeling.prototype.getTransAttrs = function (cpnTransElement, type) {
   var y = Math.round(cpnTransElement.posattr._y) * -1;
   var w = Math.round(cpnTransElement.box._w);
   var h = Math.round(cpnTransElement.box._h);
-   x -= w / 2;
-   y -= h / 2;
+  x -= w / 2;
+  y -= h / 2;
 
   var attrs = {
     type: type,

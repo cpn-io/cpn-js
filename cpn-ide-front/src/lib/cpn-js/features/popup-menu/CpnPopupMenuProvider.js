@@ -47,13 +47,6 @@ CpnPopupMenuProvider.prototype.open = function (element, position) {
   this._element = element;
   this._position = position.cursor;
 
-  // const zoom = this._canvas.zoom();
-  // position.cursor.y -= 100 / this._canvas.zoom();
-  // position.cursor.y += position.cursor.y * this._canvas.zoom();
-
-  // console.log('CpnPopupMenuProvider.prototype.open, position.cursor = ', position.cursor);
-  // console.log('CpnPopupMenuProvider.prototype.open, zoom = ', zoom);
-
   this._popupMenu.open(element, 'cpnPopupMenu', position);
 };
 
@@ -143,22 +136,9 @@ CpnPopupMenuProvider.prototype.getHeaderEntries = function (element) {
 CpnPopupMenuProvider.prototype._createShape = function (event, type) {
   // console.log('CpnPopupMenuProvider.prototype._createPlace, this.position = ', this._position);
 
-  const position = toLocalPoint(this._canvas, this._position);
-
-  const shape = this._cpnFactory.createShape(position, type);
   this._popupMenu.close();
-  // this._create.start(event, shape);
-
-  var root = this._canvas.getRootElement();
-
-  this._canvas.addShape(shape, this._canvas.getRootElement());
-  // add all child labels
-  for (const l of shape.labels) {
-    this._canvas.addShape(l, root);
-    for (const l2 of l.labels) {
-      this._canvas.addShape(l2, l);
-    }
-  }
+  const position = toLocalPoint(this._canvas, this._position);
+  this._cpnFactory.createShape(undefined, undefined, type, position, true);
 }
 
 /**

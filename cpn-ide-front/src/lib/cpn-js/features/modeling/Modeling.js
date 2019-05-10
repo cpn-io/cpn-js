@@ -347,7 +347,8 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
   text = text || '';
 
   var bounds = { x: x, y: y, width: 200, height: 20 };
-  bounds = this._textRenderer.getExternalLabelBounds(bounds, defaultValue && text.trim() === '' ? defaultValue : text);
+  bounds = this._textRenderer.getExternalLabelBounds(bounds,
+    defaultValue && text.trim() === '' ? defaultValue : text);
 
   if (labelType !== 'aux') {
     x -= bounds.width / 2;
@@ -372,6 +373,9 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
   if (defaultValue) {
     attrs.defaultValue = defaultValue;
   }
+
+  if (text.trim() === '' || text === defaultValue)
+    attrs.hidden = true;
 
   return attrs;
 }

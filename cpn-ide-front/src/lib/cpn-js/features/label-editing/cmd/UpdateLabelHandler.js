@@ -129,7 +129,7 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
     var text = getText(label);
 
     // don't resize without text
-    if (!text) {
+    if (!text || text.trim() === '') {
       return;
     }
 
@@ -145,6 +145,18 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
 
       modeling.resizeShape(label, newBounds, NULL_DIMENSIONS);
     }
+
+    // update visibility
+    var hidden = element.hidden;
+    if (text.trim() !== '' && text.trim() !== element.defaultValue) {
+      element.hidden = false;
+    }
+    else {
+      element.hidden = true;
+    }
+
+    if (hidden !== element.hidden)
+      modeling.updateElement(element);
   }
 
   // API

@@ -14,9 +14,8 @@ import {
   CPN_TRANSITION,
   CPN_CONNECTION,
 } from '../../util/ModelUtil';
-import CpnImporter from "../../import/CpnImporter";
 
-
+import { getText, getBox } from '../../draw/CpnRenderUtil';
 
 /**
  * CPN modeling features activator
@@ -67,6 +66,8 @@ Modeling.prototype.getHandlers = function () {
 
 Modeling.prototype.updateLabel = function (element, newLabel, newBounds, hints) {
   console.log('Modeling().updateLabel(), newBounds = ', newBounds);
+  if (newBounds.width < 10)
+    newBounds.width = 10;
 
   this._commandStack.execute('element.updateLabel', {
     element: element,
@@ -87,6 +88,7 @@ Modeling.prototype.updateElement = function (element) {
     if (element.labels) {
       for (const l of element.labels) {
         this.updateElement(l);
+        // this.updateLabel(l, getText(l), getBox(l));
       }
     }
   }
@@ -274,8 +276,13 @@ Modeling.prototype.getMarkingLabelElement = function (element) {
 
 
 Modeling.prototype.clearErrorMarking = function () {
-  for (const key of Object.keys(this._elementRegistry._elements)) {
-    const element = this._elementRegistry._elements[key].element;
+  const elements = this._canvas._elementRegistry._elements;
+  console.log('Modeling.prototype.clearErrorMarking(), elements = ', elements);
+  for (const key of Object.keys(elements)) {
+    console.log('Modeling.prototype.clearErrorMarking(), key = ', key);
+    console.log('Modeling.prototype.clearErrorMarking(), elements[key] = ', elements[key]);
+
+    const element = elements[key].element;
 
     if (isCpn(element)) {
       element.iserror = false;

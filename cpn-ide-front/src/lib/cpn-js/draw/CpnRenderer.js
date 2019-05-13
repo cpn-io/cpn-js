@@ -57,7 +57,7 @@ var RENDERER_IDS = new Ids();
 var ERROR_STROKE_COLOR = '#ff999966';
 var ERROR_STROKE_THICK = 5;
 
-var DEFAULT_FILL_COLOR = '#e0e0e0';
+var DEFAULT_FILL_COLOR = '#ebebeb';
 
 var PORT_FILL_COLOR = '#e0e0fd';
 var PORT_STROKE_COLOR = '#4c66cc';

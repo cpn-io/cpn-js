@@ -129,43 +129,35 @@ function updateShapeByCpnElement(element) {
       let h;
       try {
         w = changingElement.cpnElement[form] ? changingElement.cpnElement[form]._w : undefined;
-        h = changingElement.cpnElement[form] ? changingElement.cpnElement[form]._h: undefined;
-      } catch( e) {
+        h = changingElement.cpnElement[form] ? changingElement.cpnElement[form]._h : undefined;
+      } catch (e) {
         if (!(w && h)) {
           w = changingElement.width;
           h = changingElement.height;
         }
       }
-      let x =  Math.round(changingEntry._x);
-      let y =  Math.round(changingEntry._y) * -1;
-      if( isString(changingEntry._x) || isString(changingEntry._y)) {
+      let x = Math.round(changingEntry._x);
+      let y = Math.round(changingEntry._y) * -1;
+      if (isString(changingEntry._x) || isString(changingEntry._y)) {
         x -= w / 2;
         y -= h / 2;
       }
-      delta.w = w;
-      delta.h = h;
-     // element.x =  delta.x;
-    //  element.y =  delta.y;
-      if(dposition) {
-         changingElement.x =  changingElement.x + dposition.x;
-         changingElement.y =  changingElement.y + dposition.y;
-         changingEntry._x = changingElement.x ;
-         changingEntry._y =  changingElement.y;
-      } else {
-        delta.x = x - changingElement.x;
-        delta.y = y - changingElement.y;
-        // let gfx;
-        // for( let label of element.labels) {
-        //   label.x += delta.x;
-        //   label.y += delta.y;
-        //   gfx = this.canvas._elementRegistry.getGraphics(label);
-        //   this._eventBus.fire()
-        //
-        // }
-        changingElement.x = x;
-        changingElement.y = y;
+      // element.x =  delta.x;
+      //  element.y =  delta.y;
+      delta.x = x - changingElement.x;
+      delta.y = y - changingElement.y;
+      // let gfx;
+      // for( let label of element.labels) {
+      //   label.x += delta.x;
+      //   label.y += delta.y;
+      //   gfx = this.canvas._elementRegistry.getGraphics(label);
+      //   this._eventBus.fire()
+      //
+      // }
+      changingElement.x = x;
+      changingElement.y = y;
     }
-    return  delta;
+
   };
 
   const resize = (cpnElement) => {
@@ -352,7 +344,8 @@ Modeling.prototype.getPlaceAttrs = function (cpnPlaceElement, type) {
   var h = Math.round(cpnPlaceElement.ellipse._h);
   x -= w / 2;
   y -= h / 2;
-
+  // cpnPlaceElement.posattr._x = x;
+  // cpnPlaceElement.posattr._y = y;
   var attrs = {
     type: type,
     id: cpnPlaceElement._id,
@@ -515,7 +508,8 @@ Modeling.prototype.getTransAttrs = function (cpnTransElement, type) {
   var h = Math.round(cpnTransElement.box._h);
   x -= w / 2;
   y -= h / 2;
-
+  // cpnTransElement.posattr._x = x;
+  // cpnTransElement.posattr._y = y;
   var attrs = {
     type: type,
     id: cpnTransElement._id,

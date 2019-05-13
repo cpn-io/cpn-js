@@ -62,7 +62,7 @@
                     <tr (click)="selectClick(item, tab.id, 'globref')" *ngFor="let item of tab['globref']"
                     >
                       <td style="width: 60px;">globref</td>
-                      <td contenteditable='true'>{{getGlobrefStringValue(item) }}</td>
+                      <td contenteditable='true' (focusout)="saveEditedData($event)">{{getGlobrefStringValue(item) }}</td>
                     </tr>
                   </table>
                 </div>
@@ -70,7 +70,7 @@
                   <table [id]="'declarationPanel-var-'+tab.id" class="table table-bordered table-hover table-small">
                     <tr (click)="selectClick(item, tab.id, 'var')" *ngFor="let item of tab['var']">
                       <td style="width: 60px;">var</td>
-                      <td contenteditable='true'>{{getVariableStringValue(item)}}</td>
+                      <td contenteditable='true' (focusout)="saveEditedData($event)">{{getVariableStringValue(item)}}</td>
                     </tr>
                   </table>
                 </div>
@@ -78,7 +78,7 @@
                   <table [id]="'declarationPanel-color-'+tab.id" class="table table-bordered table-hover table-small">
                     <tr (click)="selectClick(item, tab.id, 'color')" *ngFor="let item of tab['color']">
                       <td style="width: 60px;">colset</td>
-                      <td contenteditable='true'>{{ getColorStringValue(item)}}</td>
+                      <td contenteditable='true' (focusout)="saveEditedData($event)">{{ getColorStringValue(item)}}</td>
                     </tr>
                   </table>
                 </div>
@@ -87,7 +87,7 @@
                   <table [id]="'declarationPanel-ml-'+tab.id" class="table table-bordered table-hover table-small">
                     <tr (click)="selectClick(item, tab.id, 'ml')" *ngFor="let item of tab['ml']" c>
                       <td style="width: 60px;">fun</td>
-                      <td (click)="sendMlToMlEditor(item)" contenteditable='true'>{{ item}}</td>
+                      <td (click)="sendMlToMlEditor(item)" contenteditable='true' (focusout)="saveEditedData($event)">{{ item}}</td>
                     </tr>
                   </table>
                 </div>
@@ -113,7 +113,7 @@
                           item: item,
                           flag: 'ml'
                         } : undefined, tab.id)}}</td>
-                        <td contenteditable='true'>{{ getBlockElemeStringValue(item, tab.id)}}</td>
+                        <td contenteditable='true' (focusout)="saveEditedData($event)">{{ getBlockElemeStringValue(item, tab.id)}}</td>
                       </tr>
                     </table>
                   </div>

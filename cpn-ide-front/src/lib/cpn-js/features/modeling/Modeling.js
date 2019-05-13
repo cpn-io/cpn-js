@@ -129,16 +129,16 @@ function updateShapeByCpnElement(element) {
       let h;
       try {
         w = changingElement.cpnElement[form] ? changingElement.cpnElement[form]._w : undefined;
-        h = changingElement.cpnElement[form] ? changingElement.cpnElement[form]._h : undefined;
-      } catch (e) {
+        h = changingElement.cpnElement[form] ? changingElement.cpnElement[form]._h: undefined;
+      } catch( e) {
         if (!(w && h)) {
           w = changingElement.width;
           h = changingElement.height;
         }
       }
-      let x = Math.round(changingEntry._x);
-      let y = Math.round(changingEntry._y) * -1;
-      if (isString(changingEntry._x) || isString(changingEntry._y)) {
+      let x =  Math.round(changingEntry._x);
+      let y =  Math.round(changingEntry._y) * -1;
+      if( isString(changingEntry._x) || isString(changingEntry._y)) {
         x -= w / 2;
         y -= h / 2;
       }
@@ -157,7 +157,7 @@ function updateShapeByCpnElement(element) {
       changingElement.x = x;
       changingElement.y = y;
     }
-
+    return  delta;
   };
 
   const resize = (cpnElement) => {
@@ -344,8 +344,7 @@ Modeling.prototype.getPlaceAttrs = function (cpnPlaceElement, type) {
   var h = Math.round(cpnPlaceElement.ellipse._h);
   x -= w / 2;
   y -= h / 2;
-  // cpnPlaceElement.posattr._x = x;
-  // cpnPlaceElement.posattr._y = y;
+
   var attrs = {
     type: type,
     id: cpnPlaceElement._id,
@@ -508,8 +507,7 @@ Modeling.prototype.getTransAttrs = function (cpnTransElement, type) {
   var h = Math.round(cpnTransElement.box._h);
   x -= w / 2;
   y -= h / 2;
-  // cpnTransElement.posattr._x = x;
-  // cpnTransElement.posattr._y = y;
+
   var attrs = {
     type: type,
     id: cpnTransElement._id,

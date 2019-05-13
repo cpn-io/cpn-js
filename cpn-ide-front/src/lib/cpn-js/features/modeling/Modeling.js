@@ -104,6 +104,7 @@ function isString(v) {
  */
 function updateShapeByCpnElement(element) {
   let form = element.cpnElement.ellipse ? 'ellipse' : 'box';
+
   const changeName = (cpnElement) => {
     if (cpnElement && cpnElement._name) {
       element.text = cpnElement._name;
@@ -164,6 +165,7 @@ function updateShapeByCpnElement(element) {
         // }
         changingElement.x = x;
         changingElement.y = y;
+      }
     }
     return  delta;
   };
@@ -176,7 +178,7 @@ function updateShapeByCpnElement(element) {
   }
 
   changeName(element.cpnElement);
-  let delta = changePosition(element, undefined);
+  delta = changePosition(element, undefined);
   /*if(delta && element.labels.length > 0) {
     for( let label of element.labels) {
       changePosition(label, delta)

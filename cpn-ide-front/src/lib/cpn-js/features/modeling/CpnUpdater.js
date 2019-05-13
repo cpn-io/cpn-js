@@ -17,7 +17,10 @@ function getGfx(target) {
 
 inherits(CpnUpdater, CommandInterceptor);
 
-import { CPN_CONNECTION, CPN_LABEL, CPN_PLACE, is, isCpn, CPN_TOKEN_LABEL, CPN_MARKING_LABEL } from '../../util/ModelUtil';
+import {
+  is, isCpn, isAny,
+  CPN_CONNECTION, CPN_LABEL, CPN_PLACE, CPN_TOKEN_LABEL, CPN_MARKING_LABEL, CPN_TRANSITION
+} from '../../util/ModelUtil';
 
 CpnUpdater.$inject = [
   'eventBus',
@@ -26,6 +29,7 @@ CpnUpdater.$inject = [
   'connectionDocking',
   'selection',
   'popupMenuProvider',
+  'contextPad',
   'canvas'
 ];
 
@@ -38,7 +42,7 @@ import {
  * once changes on the diagram happen
  */
 export default function CpnUpdater(eventBus, modeling, elementRegistry,
-  connectionDocking, selection, popupMenuProvider, canvas) {
+  connectionDocking, selection, popupMenuProvider, contextPad, canvas) {
 
   console.log('CpnUpdater()');
 
@@ -70,11 +74,12 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
   eventBus.on('element.hover', function (event) {
     var element = event.element;
-
     console.log('CpnUpdater(), element.hover, element = ', element);
 
     // eventBus.fire('element.click', { element: element });
     if (isCpn(element) && !is(element, CPN_LABEL) && !is(element, CPN_CONNECTION)) {
+      popupMenuProvider.close();
+
       selection.select(element);
     }
   });
@@ -94,31 +99,45 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     console.log('CpnUpdater(), element.mousedown, event = ', event);
   });
 
+  // domEvent.bind(document, 'mouseup', function (event) {
+  //   console.log('CpnUpdater(), domEvent, mouseup, event = ', event);
+  // });
+
   domEvent.bind(document, 'mousedown', function (event) {
     console.log('CpnUpdater(), domEvent, mousedown, event = ', event);
+
+    const position = toPoint(event);
+    const target = document.elementFromPoint(position.x, position.y);
+    const gfx = getGfx(target);
+    var element;
+    if (gfx) {
+      element = elementRegistry.get(gfx);
+    }
+
+    if (element === canvas.getRootElement()) {
+      popupMenuProvider.close();
+      contextPad.close();
+    }
 
     if (event.button === 2) {
       event.stopPropagation();
       event.preventDefault();
 
+      popupMenuProvider.close();
+
       console.log('CpnUpdater(), domEvent, mousedown, popup menu, x,y = ', event.x, event.y);
 
-      const position = toPoint(event);
-
-      // damn expensive operation, ouch!
-      const target = document.elementFromPoint(position.x, position.y);
-      const gfx = getGfx(target);
-
-      var element;
-
-      if (gfx) {
-        element = elementRegistry.get(gfx);
-      }
 
       if (element) {
         console.log('CpnUpdater(), domEvent, mousedown, popup menu, element = ', element);
 
-        popupMenuProvider.open(element, { cursor: { x: position.x, y: position.y } });
+        if (isAny(element, [CPN_PLACE, CPN_TRANSITION, CPN_CONNECTION])) {
+          popupMenuProvider.close();
+          contextPad.open(element);
+        } else {
+          contextPad.close();
+          popupMenuProvider.open(element, { cursor: { x: position.x, y: position.y } });
+        }
       }
     }
   });

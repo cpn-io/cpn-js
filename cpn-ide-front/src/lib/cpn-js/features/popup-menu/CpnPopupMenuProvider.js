@@ -50,6 +50,10 @@ CpnPopupMenuProvider.prototype.open = function (element, position) {
   this._popupMenu.open(element, 'cpnPopupMenu', position);
 };
 
+CpnPopupMenuProvider.prototype.close = function () {
+  this._popupMenu.close();
+};
+
 
 /**
  * Get all entries from replaceOptions for the given element and apply filters
@@ -70,52 +74,54 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
 
   var createPlaceMenuEntry = {
     id: '_menuItem_createPlace',
-    label: 'Create place',
+    label: 'New Place',
+    className: 'bpmn-icon-start-event-none',
     action: function () { self._createShape(event, CPN_PLACE) }
   };
 
   var createTransitionMenuEntry = {
     id: '_menuItem_createTransition',
-    label: 'Create transition',
+    label: 'New Transition',
+    className: 'bpmn-icon-task',
     action: function () { self._createShape(event, CPN_TRANSITION) }
   };
 
-  var deleteMenuEntry = {
-    id: '_menuItem_delete',
-    label: 'Delete',
-    className: 'popup-menu-icon-delete',
-    action: function () {
-      self._popupMenu.close();
-      self._modeling.removeElements([element]);
-    }
-  };
+  // var deleteMenuEntry = {
+  //   id: '_menuItem_delete',
+  //   label: 'Delete',
+  //   className: 'popup-menu-icon-delete',
+  //   action: function () {
+  //     self._popupMenu.close();
+  //     self._modeling.removeElements([element]);
+  //   }
+  // };
 
-  var connectMenuEntry = {
-    id: '_menuItem_connect',
-    label: 'Connect',
-    className: 'popup-menu-icon-connect',
-    action: function () {
-      self._popupMenu.close();
-      self._connect.start(event, element);
-    }
-  };
+  // var connectMenuEntry = {
+  //   id: '_menuItem_connect',
+  //   label: 'Connect',
+  //   className: 'popup-menu-icon-connect',
+  //   action: function () {
+  //     self._popupMenu.close();
+  //     self._connect.start(event, element);
+  //   }
+  // };
 
   if (element.id === '__implicitroot') {
     entries.push(createPlaceMenuEntry);
     entries.push(createTransitionMenuEntry);
   }
 
-  if (is(element, CPN_PLACE)) {
-    entries.push(createTransitionMenuEntry);
-    entries.push(connectMenuEntry);
-    entries.push(deleteMenuEntry);
-  }
+  // if (is(element, CPN_PLACE)) {
+  //   entries.push(createTransitionMenuEntry);
+  //   entries.push(connectMenuEntry);
+  //   entries.push(deleteMenuEntry);
+  // }
 
-  if (is(element, CPN_TRANSITION)) {
-    entries.push(createPlaceMenuEntry);
-    entries.push(connectMenuEntry);
-    entries.push(deleteMenuEntry);
-  }
+  // if (is(element, CPN_TRANSITION)) {
+  //   entries.push(createPlaceMenuEntry);
+  //   entries.push(connectMenuEntry);
+  //   entries.push(deleteMenuEntry);
+  // }
 
   return entries;
 };
@@ -134,7 +140,7 @@ CpnPopupMenuProvider.prototype.getHeaderEntries = function (element) {
 };
 
 CpnPopupMenuProvider.prototype._createShape = function (event, type) {
-  // console.log('CpnPopupMenuProvider.prototype._createPlace, this.position = ', this._position);
+  console.log('CpnPopupMenuProvider.prototype._createPlace, this.position = ', this._position);
 
   this._popupMenu.close();
   const position = toLocalPoint(this._canvas, this._position);

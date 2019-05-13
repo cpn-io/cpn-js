@@ -6,9 +6,8 @@ import ModelingModule from 'diagram-js/lib/features/modeling';
 import MoveModule from 'diagram-js/lib/features/move';
 import OutlineModule from 'diagram-js/lib/features/outline';
 import LassoToolModule from 'diagram-js/lib/features/lasso-tool';
-import PaletteModule from 'diagram-js/lib/features/palette';
+// import PaletteModule from 'diagram-js/lib/features/palette';
 import CreateModule from 'diagram-js/lib/features/create';
-import ContextPadModule from 'diagram-js/lib/features/context-pad';
 import PopupMenuModule from 'diagram-js/lib/features/popup-menu';
 import ConnectModule from 'diagram-js/lib/features/connect';
 import SnappingModule from 'diagram-js/lib/features/snapping';
@@ -19,16 +18,16 @@ import LabelSupportModule from 'diagram-js/lib/features/label-support';
 
 import CroppingConnectionDocking from 'diagram-js/lib/layout/CroppingConnectionDocking';
 
-import CpnPaletteProvider from '../features/palette/CpnPaletteProvider';
+// import CpnPaletteProvider from '../features/palette/CpnPaletteProvider';
 import CpnRulesModule from '../features/rules';
 import CpnResizeModule from '../features/resize';
 
-import CpnContextPadProvider from '../features/context-pad/CpnContextPadProvider';
 import CpnPopupMenuProvider from '../features/popup-menu/CpnPopupMenuProvider';
 import CpnOrderingProvider from '../features/ordering/CpnOrderingProvider';
 
 import CpnSnappingModule from '../features/snapping';
 import CpnModelingModule from '../features/modeling';
+import CpnContextPadModule from '../features/context-pad';
 import CpnImportModule from '../import';
 
 import DirectEditingModule from '../features/direct-editing';
@@ -45,9 +44,8 @@ export default {
     MoveModule,
     OutlineModule,
     LassoToolModule,
-    PaletteModule,
+//    PaletteModule,
     CreateModule,
-    ContextPadModule,
     PopupMenuModule,
     ConnectModule,
     SnappingModule,
@@ -64,6 +62,7 @@ export default {
     CpnRulesModule,
     CpnResizeModule,
     CpnImportModule,
+    CpnContextPadModule,
 
     // Custom
     DrawModule,
@@ -71,14 +70,12 @@ export default {
     LabelEditingModule,
   ],
   __init__: [
-    'contextPadProvider',
     'popupMenuProvider',
-    'paletteProvider',
+//    'paletteProvider',
     'cpnOrderingProvider'
   ],
   connectionDocking: ['type', CroppingConnectionDocking],
-  contextPadProvider: ['type', CpnContextPadProvider],
   popupMenuProvider: ['type', CpnPopupMenuProvider],
-  paletteProvider: ['type', CpnPaletteProvider],
+//  paletteProvider: ['type', CpnPaletteProvider],
   cpnOrderingProvider: [ 'type', CpnOrderingProvider ]
 };

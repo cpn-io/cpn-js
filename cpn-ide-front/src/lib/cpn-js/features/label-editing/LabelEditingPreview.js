@@ -31,7 +31,7 @@ export default function LabelEditingPreview(eventBus, canvas, modeling, elementR
   var defaultLayer = canvas.getDefaultLayer();
 
   var element, absoluteElementBBox, gfx;
-  
+
   this._modeling = modeling;
 
   eventBus.on('directEditing.activate', function (context) {
@@ -129,6 +129,9 @@ export default function LabelEditingPreview(eventBus, canvas, modeling, elementR
   });
 
   eventBus.on(['directEditing.complete', 'directEditing.cancel'], function (context) {
+
+    console.log('LabelEditiongPreview, directEditing[.complete|.cancel], context = ', context);
+
     var activeProvider = context.active;
 
     if (activeProvider) {

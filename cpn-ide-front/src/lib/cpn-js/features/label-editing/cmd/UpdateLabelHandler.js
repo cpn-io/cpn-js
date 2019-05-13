@@ -109,14 +109,12 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
       newBounds = ctx.newBounds,
       hints = ctx.hints || {};
 
-    if (isLabel(label) && isEmptyText(newLabel)) {
-
-      if (hints.removeShape !== false) {
-        modeling.removeShape(label, { unsetLabel: false });
-      }
-
-      return;
-    }
+    // if (isLabel(label) && isEmptyText(newLabel)) {
+    //   if (hints.removeShape !== false) {
+    //     modeling.removeShape(label, { unsetLabel: false });
+    //   }
+    //   return;
+    // }
 
     // ignore internal labels for elements except text annotations
     if (!isLabelExternal(element)

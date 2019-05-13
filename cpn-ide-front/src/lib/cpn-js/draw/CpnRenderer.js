@@ -57,6 +57,8 @@ var RENDERER_IDS = new Ids();
 var ERROR_STROKE_COLOR = '#ff999966';
 var ERROR_STROKE_THICK = 5;
 
+var DEFAULT_FILL_COLOR = '#ebebeb';
+
 var PORT_FILL_COLOR = '#e0e0fd';
 var PORT_STROKE_COLOR = '#4c66cc';
 
@@ -247,9 +249,13 @@ export default function CpnRenderer(
 
   function renderLabel(parentGfx, element, attrs) {
 
+    var defaultLabel = true;
+
     // render port label frame
     // ---------------------------------------------
     if (isCpnPortOrSubst(element)) {
+      defaultLabel = false;
+
       var rect = svgCreate('rect');
       svgAttr(rect, {
         x: -3,
@@ -269,6 +275,7 @@ export default function CpnRenderer(
     // render token label frame
     // ---------------------------------------------
     if (is(element, CPN_TOKEN_LABEL)) {
+      defaultLabel = false;
 
       var rectAttrs = {
         x: -6, y: -3,
@@ -290,6 +297,8 @@ export default function CpnRenderer(
     // render marking label frame
     // ---------------------------------------------
     if (is(element, CPN_MARKING_LABEL)) {
+      defaultLabel = false;
+
       var rectAttrs = {
         x: -6, y: -3,
         width: attrs.box.width + 10, height: attrs.box.height + 5,
@@ -304,6 +313,18 @@ export default function CpnRenderer(
       svgAppend(parentGfx, rect);
 
       attrs.style.fill = 'black';
+    }
+
+    if (defaultLabel && attrs.external) {
+      var rect = svgCreate('rect');
+      svgAttr(rect, {
+        x: 0,
+        y: 0,
+        width: attrs.box.width - 2,
+        height: attrs.box.height - 1,
+        fill: DEFAULT_FILL_COLOR,
+      });
+      svgAppend(parentGfx, rect);
     }
 
 
@@ -333,7 +354,8 @@ export default function CpnRenderer(
       // padding: 5,
       style: {
         fill: getStrokeColor(element)
-      }
+      },
+      external: true,
     });
   }
 

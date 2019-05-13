@@ -271,6 +271,9 @@ LabelEditingProvider.prototype.update = function (element, newLabel, activeConte
   console.log('LabelEditingProvider.prototype.update(), newLabel = ', newLabel);
   console.log('LabelEditingProvider.prototype.update(), activeContextText = ', activeContextText);
 
+  if (newLabel.trim() === '' && element.defaultValue)
+    newLabel = element.defaultValue;
+
   var newBounds,
     bbox;
 

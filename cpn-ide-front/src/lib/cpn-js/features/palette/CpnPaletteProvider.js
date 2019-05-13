@@ -88,17 +88,12 @@ CpnPaletteProvider.prototype.getPaletteEntries = function () {
   };
 };
 
-
 CpnPaletteProvider.prototype._createPlace = function (event) {
-//  console.log('CpnPaletteProvider.prototype._createPlace, event = ', event);
-
-  const shape = this._cpnFactory.createShape({ x: 0, y: 0 }, CPN_PLACE);
+  const shape = this._cpnFactory.createShape(undefined, undefined, CPN_PLACE, { x: 0, y: 0 }, false);
   this._create.start(event, shape);
 }
 
 CpnPaletteProvider.prototype._createTransition = function (event) {
-//  console.log('CpnPaletteProvider.prototype._createTransition, event = ', event);
-
-  const shape = this._cpnFactory.createShape({ x: 0, y: 0 }, CPN_TRANSITION);
+  const shape = this._cpnFactory.createShape(undefined, undefined, CPN_TRANSITION, { x: 0, y: 0 }, false);
   this._create.start(event, shape);
 }

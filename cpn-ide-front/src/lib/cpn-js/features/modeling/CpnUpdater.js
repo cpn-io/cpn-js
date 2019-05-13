@@ -181,10 +181,10 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   function updateLabel(e) {
     // console.log('CpnUpdater(), updateLabel(), e = ', e);
     var shape = e.element;
-    // if (is(shape, CPN_LABEL)) {
-    if (shape.labelTarget) {
-      shape.parent = shape.labelTarget;
-    }
+
+    // if (shape.labelTarget) {
+    //   shape.parent = shape.labelTarget;
+    // }
   }
 
   function updateCpnElement(e) {

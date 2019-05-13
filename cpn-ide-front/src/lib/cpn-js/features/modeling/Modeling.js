@@ -14,9 +14,8 @@ import {
   CPN_TRANSITION,
   CPN_CONNECTION,
 } from '../../util/ModelUtil';
-import CpnImporter from "../../import/CpnImporter";
 
-
+import { getText, getBox } from '../../draw/CpnRenderUtil';
 
 /**
  * CPN modeling features activator
@@ -67,6 +66,8 @@ Modeling.prototype.getHandlers = function () {
 
 Modeling.prototype.updateLabel = function (element, newLabel, newBounds, hints) {
   console.log('Modeling().updateLabel(), newBounds = ', newBounds);
+  if (newBounds.width < 10)
+    newBounds.width = 10;
 
   this._commandStack.execute('element.updateLabel', {
     element: element,
@@ -87,6 +88,7 @@ Modeling.prototype.updateElement = function (element) {
     if (element.labels) {
       for (const l of element.labels) {
         this.updateElement(l);
+        // this.updateLabel(l, getText(l), getBox(l));
       }
     }
   }
@@ -114,33 +116,32 @@ function updateShapeByCpnElement(element) {
       element.text = cpnElement.text;
     }
 
-    if(cpnElement.text && cpnElement.text.__text) {
+    if (cpnElement.text && cpnElement.text.__text) {
       element.text = cpnElement.text.__text;
     }
   };
 
   const changePosition = (cpnElement) => {
-    if(cpnElement.posattr) {
-         element.x = Math.round( cpnElement.posattr._x);
-         element.y = Math.round( cpnElement.posattr._y) * -1;
-       }
+    if (cpnElement.posattr) {
+      element.x = Math.round(cpnElement.posattr._x);
+      element.y = Math.round(cpnElement.posattr._y) * -1;
+    }
   };
 
-  const resize = (cpnElement) =>{
-     if(cpnElement.ellipse || cpnElement.box) {
-       let form = cpnElement.ellipse ? 'ellipse' : 'box';
-       element.width = cpnElement[form]._w;
-       element.height = cpnElement[form]._h;
-     }
+  const resize = (cpnElement) => {
+    if (cpnElement.ellipse || cpnElement.box) {
+      let form = cpnElement.ellipse ? 'ellipse' : 'box';
+      element.width = cpnElement[form]._w;
+      element.height = cpnElement[form]._h;
+    }
   }
 
   changeName(element.cpnElement);
-  //changePosition(element.cpnElement);
-  resize(element.cpnElement);
 
+  // changePosition(element.cpnElement);
+  // resize(element.cpnElement);
 
-
-   console.log('Modeling.updateShapeByCpnElement(), element = ', element);
+  console.log('Modeling.updateShapeByCpnElement(), element = ', element);
 }
 
 Modeling.prototype.connect = function (source, target, attrs, hints) {
@@ -172,6 +173,8 @@ Modeling.prototype.createNewConnection = function (placeShape, transShape) {
   console.log('Modeling.prototype.createNewConnection(), place = ', placeShape);
   console.log('Modeling.prototype.createNewConnection(), trans = ', transShape);
 
+  var root = this._canvas.getRootElement();
+
   if (placeShape && transShape) {
     var pageObject = undefined;
     var cpnElement = this.createArcInModel(placeShape.cpnElement, transShape.cpnElement);
@@ -184,7 +187,7 @@ Modeling.prototype.createNewConnection = function (placeShape, transShape) {
         if (cpnElement[key]) {
           var attrs = this.getLabelAttrs(connection, cpnElement[key], key);
           var label = this._elementFactory.createLabel(attrs);
-          this._canvas.addShape(label, connection);
+          this._canvas.addShape(label, root);
         }
       }
 
@@ -273,8 +276,13 @@ Modeling.prototype.getMarkingLabelElement = function (element) {
 
 
 Modeling.prototype.clearErrorMarking = function () {
-  for (const key of Object.keys(this._elementRegistry._elements)) {
-    const element = this._elementRegistry._elements[key].element;
+  const elements = this._canvas._elementRegistry._elements;
+  console.log('Modeling.prototype.clearErrorMarking(), elements = ', elements);
+  for (const key of Object.keys(elements)) {
+    console.log('Modeling.prototype.clearErrorMarking(), key = ', key);
+    console.log('Modeling.prototype.clearErrorMarking(), elements[key] = ', elements[key]);
+
+    const element = elements[key].element;
 
     if (isCpn(element)) {
       element.iserror = false;
@@ -299,8 +307,8 @@ Modeling.prototype.getPlaceAttrs = function (cpnPlaceElement, type) {
   var y = Math.round(cpnPlaceElement.posattr._y) * -1;
   var w = Math.round(cpnPlaceElement.ellipse._w);
   var h = Math.round(cpnPlaceElement.ellipse._h);
-   x -= w / 2;
-   y -= h / 2;
+  x -= w / 2;
+  y -= h / 2;
 
   var attrs = {
     type: type,
@@ -346,7 +354,8 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
   text = text || '';
 
   var bounds = { x: x, y: y, width: 200, height: 20 };
-  bounds = this._textRenderer.getExternalLabelBounds(bounds, defaultValue && text.trim() === '' ? defaultValue : text);
+  bounds = this._textRenderer.getExternalLabelBounds(bounds,
+    defaultValue && text.trim() === '' ? defaultValue : text);
 
   if (labelType !== 'aux') {
     x -= bounds.width / 2;
@@ -371,6 +380,9 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
   if (defaultValue) {
     attrs.defaultValue = defaultValue;
   }
+
+  if (text.trim() === '' || text === defaultValue)
+    attrs.hidden = true;
 
   return attrs;
 }
@@ -458,8 +470,8 @@ Modeling.prototype.getTransAttrs = function (cpnTransElement, type) {
   var y = Math.round(cpnTransElement.posattr._y) * -1;
   var w = Math.round(cpnTransElement.box._w);
   var h = Math.round(cpnTransElement.box._h);
-   x -= w / 2;
-   y -= h / 2;
+  x -= w / 2;
+  y -= h / 2;
 
   var attrs = {
     type: type,

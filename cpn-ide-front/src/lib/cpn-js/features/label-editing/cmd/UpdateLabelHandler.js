@@ -109,14 +109,12 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
       newBounds = ctx.newBounds,
       hints = ctx.hints || {};
 
-    if (isLabel(label) && isEmptyText(newLabel)) {
-
-      if (hints.removeShape !== false) {
-        modeling.removeShape(label, { unsetLabel: false });
-      }
-
-      return;
-    }
+    // if (isLabel(label) && isEmptyText(newLabel)) {
+    //   if (hints.removeShape !== false) {
+    //     modeling.removeShape(label, { unsetLabel: false });
+    //   }
+    //   return;
+    // }
 
     // ignore internal labels for elements except text annotations
     if (!isLabelExternal(element)
@@ -129,7 +127,7 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
     var text = getText(label);
 
     // don't resize without text
-    if (!text) {
+    if (!text || text.trim() === '') {
       return;
     }
 
@@ -145,6 +143,18 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
 
       modeling.resizeShape(label, newBounds, NULL_DIMENSIONS);
     }
+
+    // update visibility
+    var hidden = element.hidden;
+    if (text.trim() !== '' && text.trim() !== element.defaultValue) {
+      element.hidden = false;
+    }
+    else {
+      element.hidden = true;
+    }
+
+    if (hidden !== element.hidden)
+      modeling.updateElement(element);
   }
 
   // API

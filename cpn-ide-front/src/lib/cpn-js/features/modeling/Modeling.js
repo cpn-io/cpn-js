@@ -103,7 +103,7 @@ function isString(v) {
  * @param {*} element
  */
 function updateShapeByCpnElement(element) {
-
+  let form = element.cpnElement.ellipse ? 'ellipse' : 'box';
   const changeName = (cpnElement) => {
     if (cpnElement && cpnElement._name) {
       element.text = cpnElement._name;
@@ -121,24 +121,67 @@ function updateShapeByCpnElement(element) {
     }
   };
 
-  const changePosition = (cpnElement) => {
-    if (cpnElement.posattr) {
-      element.x = Math.round(cpnElement.posattr._x);
-      element.y = Math.round(cpnElement.posattr._y) * -1;
+  const changePosition = (changingElement) => {
+    let delta = [];
+    let changingEntry = changingElement.cpnElement.posattr ? changingElement.cpnElement.posattr : changingElement.cpnElement;
+    if ((changingElement.cpnElement[form] )) {
+      let w;
+      let h;
+      try {
+        w = changingElement.cpnElement[form] ? changingElement.cpnElement[form]._w : undefined;
+        h = changingElement.cpnElement[form] ? changingElement.cpnElement[form]._h: undefined;
+      } catch( e) {
+        if (!(w && h)) {
+          w = changingElement.width;
+          h = changingElement.height;
+        }
+      }
+      let x =  Math.round(changingEntry._x);
+      let y =  Math.round(changingEntry._y) * -1;
+      if( isString(changingEntry._x) || isString(changingEntry._y)) {
+        x -= w / 2;
+        y -= h / 2;
+      }
+      delta.w = w;
+      delta.h = h;
+     // element.x =  delta.x;
+    //  element.y =  delta.y;
+      if(dposition) {
+         changingElement.x =  changingElement.x + dposition.x;
+         changingElement.y =  changingElement.y + dposition.y;
+         changingEntry._x = changingElement.x ;
+         changingEntry._y =  changingElement.y;
+      } else {
+        delta.x = x - changingElement.x;
+        delta.y = y - changingElement.y;
+        // let gfx;
+        // for( let label of element.labels) {
+        //   label.x += delta.x;
+        //   label.y += delta.y;
+        //   gfx = this.canvas._elementRegistry.getGraphics(label);
+        //   this._eventBus.fire()
+        //
+        // }
+        changingElement.x = x;
+        changingElement.y = y;
     }
+    return  delta;
   };
 
   const resize = (cpnElement) => {
     if (cpnElement.ellipse || cpnElement.box) {
-      let form = cpnElement.ellipse ? 'ellipse' : 'box';
       element.width = cpnElement[form]._w;
       element.height = cpnElement[form]._h;
     }
   }
 
   changeName(element.cpnElement);
-
-  // changePosition(element.cpnElement);
+  let delta = changePosition(element, undefined);
+  /*if(delta && element.labels.length > 0) {
+    for( let label of element.labels) {
+      changePosition(label, delta)
+    }
+  }*/
   // resize(element.cpnElement);
 
   console.log('Modeling.updateShapeByCpnElement(), element = ', element);

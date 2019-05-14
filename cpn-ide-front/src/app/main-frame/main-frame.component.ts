@@ -53,7 +53,6 @@ export class MainFrameComponent implements OnInit, OnDestroy {
     //   this.resetConfig();
     // }
 
-
     this.eventService.on(Message.MODEL_EDITOR_FULLSCREEN, () => {
       console.log('MainFrameComponent, MODEL_EDITOR_FULLSCREEN');
 

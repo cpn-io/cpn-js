@@ -14,12 +14,6 @@
               </a>
 
               <div aria-labelledby="navbarDropdown" class="dropdown-menu shadow">
-                <!--<a class="dropdown-item" href="#"><i class="fas fa-plus"></i>New</a>-->
-                <!--<a class="dropdown-item" href="#"><i class="fas fa-pen"></i>Edit</a>-->
-                <!--<a class="dropdown-item" href="#"><i class="fas fa-minus"></i>Delete</a>-->
-
-                <!--<div class="dropdown-divider" href="#"></div>-->
-
                 <a (click)="addItemClick(tab.id, 'color', undefined)" class="dropdown-item" href="#">New Color</a>
                 <a (click)="addItemClick(tab.id, 'var', undefined)" class="dropdown-item" href="#">New Var</a>
                 <a (click)="addItemClick(tab.id, 'ml', undefined)" class="dropdown-item" href="#">New ML</a>
@@ -57,23 +51,28 @@
             <div class="pane">
 
               <div style="margin:-1px">
+
                 <div *ngIf="tab.globref && showTable !== 'Globref'">
                   <table [id]="'declarationPanel-globref-'+tab.id" class="table table-bordered table-hover table-small">
                     <tr (click)="selectClick(item, tab.id, 'globref')" *ngFor="let item of tab['globref']"
                     >
                       <td style="width: 60px;">globref</td>
-                      <td contenteditable='true' (focusout)="saveEditedData($event)">{{getGlobrefStringValue(item) }}</td>
+                      <td contenteditable='true'
+                          (focusout)="saveEditedData($event)">{{getGlobrefStringValue(item) }}</td>
                     </tr>
                   </table>
                 </div>
+
                 <div *ngIf="tab['var']  && showTable !== 'Var'">
                   <table [id]="'declarationPanel-var-'+tab.id" class="table table-bordered table-hover table-small">
                     <tr (click)="selectClick(item, tab.id, 'var')" *ngFor="let item of tab['var']">
                       <td style="width: 60px;">var</td>
-                      <td contenteditable='true' (focusout)="saveEditedData($event)">{{getVariableStringValue(item)}}</td>
+                      <td contenteditable='true'
+                          (focusout)="saveEditedData($event)">{{getVariableStringValue(item)}}</td>
                     </tr>
                   </table>
                 </div>
+
                 <div *ngIf="tab['color']  && showTable !== 'Color'">
                   <table [id]="'declarationPanel-color-'+tab.id" class="table table-bordered table-hover table-small">
                     <tr (click)="selectClick(item, tab.id, 'color')" *ngFor="let item of tab['color']">
@@ -82,12 +81,14 @@
                     </tr>
                   </table>
                 </div>
+
                 <!-- ML Code -->
                 <div *ngIf="tab['ml']  && showTable !== 'Ml'">
                   <table [id]="'declarationPanel-ml-'+tab.id" class="table table-bordered table-hover table-small">
                     <tr (click)="selectClick(item, tab.id, 'ml')" *ngFor="let item of tab['ml']" c>
-                      <td style="width: 60px;">fun</td>
-                      <td (click)="sendMlToMlEditor(item)" contenteditable='true' (focusout)="saveEditedData($event)">{{ item}}</td>
+                      <td style="width: 60px;">{{getFirstCellData(item)}}</td>
+                      <td (click)="sendMlToMlEditor(item)" contenteditable='true'
+                          (focusout)="saveEditedData($event)">{{getSecondCellData(item)}}</td>
                     </tr>
                   </table>
                 </div>
@@ -113,7 +114,8 @@
                           item: item,
                           flag: 'ml'
                         } : undefined, tab.id)}}</td>
-                        <td contenteditable='true' (focusout)="saveEditedData($event)">{{ getBlockElemeStringValue(item, tab.id)}}</td>
+                        <td contenteditable='true'
+                            (focusout)="saveEditedData($event)">{{ getBlockElemeStringValue(item, tab.id)}}</td>
                       </tr>
                     </table>
                   </div>

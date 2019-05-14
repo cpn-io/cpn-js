@@ -198,7 +198,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
           this.treeComponent.treeModel.setFocusedNode(nodeForEdit);
           if (data.after !== 'delete' && data.after !== 'edit') {
-            this.onEditNode(nodeForEdit);
+            this.goToEditNode(nodeForEdit);
           }
         }
       }, 100);
@@ -341,7 +341,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         }
       }
     } else {
-      if (parentNode.object.toString().match('^\\s*(val|fun){1}\\s+' + name + '\\s*[=(]{1}')) {
+      if (parentNode.object.toString().match('^((local){1}\\s+)*(fun|val|exception){1}\\s+' + name + '\\s*[=(]{1}')) {
         // это проверка на то, что строка является декларацией функции или val
         this.doUnderlineNodeLabel(true, parentNode.id);
         return true;
@@ -404,32 +404,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   // </editor-fold>
 
-  /**
-   * Subscribe to event emitter for receiveing project event
-   */
-  // subscribeToProject() {
-  //   this.subscription = EmitterService.getAppMessageEmitter().subscribe((data: any) => {
-  //     if (data && data.id) {
-  //       if (data.id === Constants.ACTION_PROJECT_OPEN_FILE) {
-  //         if (data.file) {
-  //           this.loadProjectFile(data.file);
-  //         }
-  //       }
-  //       if (data.id === Constants.ACTION_PROJECT_LOAD_DATA) {
-  //         console.log('TESTTTEMIT');
-  //         if (data.project) {
-  //           this.loadProjectData(data.project);
-  //         }
-  //       }
-  //       if (data.id === Constants.ACTION_MODEL_UPDATE) {
-  //
-  //         this.updateModel(data);
-  //         console.log('Get DATA FROM PAGE!!!');
-  //       }
-  //     }
-  //   });
-  // }
-
   getStringValueForAddingCp(node) {
     if (node) {
       switch (node.id) {
@@ -468,7 +442,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     console.log('onAddNode(), node = ', node);
 
     if (node.data.type === 'page' || node.data.id === 'Pages') {
-      //console.log('onAddNode ' + node.data.id);
       console.log('content' + node.id + 'IsSelected ---');
       const newPage = {
         pageattr: {
@@ -489,18 +462,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         object: newPage, // page,
         children: []
       };
-      /* if (this.projectService.projectData.project.data.workspaceElements.cpnet.page.lenght)
-        this.projectService.projectData.project.data.workspaceElements.cpnet.page.push(pageNode);
-      else {
-        this.projectService.projectData.project.data.workspaceElements.cpnet.page = [this.projectService.projectData.project.data.workspaceElements.cpnet.page];
-      } */
-
-      // if (this.currentProjectModel.workspaceElements.cpnet.page.length) {
-      //   this.currentProjectModel.workspaceElements.cpnet.page.push(newPage);
-      // } else {
-      //   this.currentProjectModel.workspaceElements.cpnet.page = [this.currentProjectModel.workspaceElements.cpnet.page];
-      //   this.currentProjectModel.workspaceElements.cpnet.page.push(newPage);
-      // }
 
       this.modelService.createNewPage(newPage);
       //  let page = this.getObjects(this.nodes, 'id', node.data.id)
@@ -509,7 +470,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       this.updateTree();
       const editableNode = this.treeComponent.treeModel.getNodeById(pageNode.id);
       this.treeComponent.treeModel.setFocusedNode(editableNode);
-      this.onEditNode(this.treeComponent.treeModel.getNodeById(pageNode.id));
+      this.goToEditNode(this.treeComponent.treeModel.getNodeById(pageNode.id));
       let expnNode = editableNode;
       while (expnNode && expnNode.id !== 'project') {
         expnNode.expand();
@@ -528,12 +489,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       if (!addingElement) {
         addingElement = node.data.name;
       }
-      //this.sendChangingElementToDeclarationPanel(node, addingElement, 'add', undefined);
       this.modelService.sendChangingElementToDeclarationPanel(node, addingElement, 'add', undefined, this.getCurrentBlock(node).id, this.treeComponent.treeModel.getState());
     }
-
-    // console.log('onAddNode(), new node = ', pageN);
-
   }
 
   /*sendChangingElementToDeclarationPanel(node, elementType, action, id) {
@@ -595,11 +552,10 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
 
   onNodeArrowClick(event, node) {
-    console.log('ONNODEARROWCLICK');
     if (this.collapsedLabel[node.id] === true || this.collapsedLabel[node.id] === undefined) {
       this.collapsedLabel[node.id] = false;
       this.openNode(event, node);
-      this.onEditNode(node);
+      this.goToEditNode(node);
     } else {
       this.collapsedLabel[node.id] = true;
       this.saveEditedData(event);
@@ -607,27 +563,46 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   onNodeLabelClick(event, node) {
-    console.log('ONNODELABELCLICK');
-    if (this.needToCollapse(node)) {
+    this.openNode(event, node);
+    if (this.canCollapse(node)) {
       if (this.collapsedLabel[node.id] === true || this.collapsedLabel[node.id] === undefined) {
         this.collapsedLabel[node.id] = false;
       }
     }
-    this.openNode(event, node);
-    this.onEditNode(node);
+    this.goToEditNode(node);
+  }
+
+  /*
+   * Edit node text by click on node handler or by context menu
+   * @param node
+   */
+  goToEditNode(node) {
+    if (this.canEdit(node)) {
+      this.editableNode = node;
+      setTimeout(() => {
+
+        this.treeComponent.focused = false;
+        const inputElem = document.getElementById('textinpfield_' + node.id);
+        console.log('onEditNode(), inputElemId=', 'textinpfield_' + node.id);
+        if (inputElem) {
+          inputElem.focus();
+        }
+      }, 100);
+    }
   }
 
   openNode(event, node) {
-    console.log('OPENNODE');
     const currentNode = this.getCurrentBlock(node);
     this.eventService.send(Message.OPEN_DECLARATION_BLOCK, {id: currentNode.id});
-    this.sendMlToMlEditor(node.data.name);
-    this.treeComponent.focused = true;
+    if (this.canCollapse(node))
+      this.sendMlToMlEditor(node.data.name);
+    else
+      this.sendMlToMlEditor('');
     event.preventDefault();
   }
 
   // Функция вычисляет, будет ли схлопываться/разворачиваться содержимое метки узла.
-  needToCollapse(node: any): boolean {
+  canCollapse(node: any): boolean {
     return this.canEdit(node) && node.children === undefined;
   }
 
@@ -636,12 +611,12 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * @param {string} data - полный текст метки в узле
    */
   getLabel(node: any): string {
-    if (this.needToCollapse(node)) {
+    if (this.canCollapse(node)) {
       if (this.collapsedLabel[node.id] === true || this.collapsedLabel[node.id] === undefined) {
         let result;
         const data = node.data.name.toString();
         try {
-          const array = data.match('^[a-zA-Z0-9_\\s]*([fun|val]\\s+){1}[a-zA-Z0-9_]+');
+          const array = data.match('^((local){1}\\s+)*(fun|val|exception){1}\\s+[a-zA-Z0-9_]+');
           result = array[0];
         } catch (e) {
           try {
@@ -649,7 +624,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
             result = array[0];
           } catch (e1) {
             // console.warn(`Cannot get short label automatically. Long string = ${data}.`);
-            result = data.substring(0, 20);
+            result = data;
           }
         }
         return result;
@@ -747,26 +722,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
 
-  /*
-   * Edit node text by click on node handler or by context menu
-   * @param node
-   */
-  onEditNode(node) {
-    console.log(this.constructor.name, 'editNodeText(), node = ', node);
-
-    if (this.canEdit(node)) {
-      this.editableNode = node;
-      setTimeout(() => { // this will make the execution after the above boolean has changed
-
-        this.treeComponent.focused = false;
-        const inputElem = document.getElementById('textinpfield_' + node.id);
-        if (inputElem) {
-          inputElem.focus();
-        }
-      }, 100);
-    }
-  }
-
   /**
    * icon delete click handler
    * @param node - current page node in explorer
@@ -807,7 +762,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
   }
 
-
   /**
    * delete page node from model
    */
@@ -842,102 +796,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   updateModel(updatedData) {
-    console.log('UPDATEMODEL()');
     this.modelService.updateModel(updatedData);
-    /* const project = this.currentProjectModel;
-     if (project.workspaceElements.cpnet.page.length) {
-       for (let page of project.workspaceElements.cpnet.page) {
-         if (page.pageattr._name === updatedData.pageObject.pageattr._name) {
-           page = updatedData.pageObject;
-
-           // EmitterService.getAppMessageEmitter().emit({
-           //   id: Constants.ACTION_XML_UPDATE, // id: Constants.ACTION_PROJECT_LOAD_DATA,
-           //   project: {data: project, name: this.modelName}
-           // });
-
-           this.eventService.send(Message.XML_UPDATE, {project: {data: project, name: this.modelName}});
-         }
-       }
-     } else {
-       let page = project.workspaceElements.cpnet.page;
-       if (page.pageattr._name === updatedData.pageObject.pageattr._name) {
-         page = updatedData.pageObject;
-
-         // EmitterService.getAppMessageEmitter().emit({
-         //   id: Constants.ACTION_XML_UPDATE, // id: Constants.ACTION_PROJECT_LOAD_DATA,
-         //   project: {data: project, name: this.modelName}
-         // });
-
-         this.eventService.send(Message.XML_UPDATE, {project: {data: project, name: this.modelName}});
-       }
-     }
-     //  console.log('Get data fromPAge ----' + JSON.stringify(updatedData.pageObject));
-     // console.log('actual data -------' + JSON.stringify(proj.workspaceElements.cpnet.page));*/
   }
-
-  // loadTree() {
-  //   const headers = new HttpHeaders()
-  //     .set('Access-Control-Allow-Origin', '*')
-  //     .set('Accept', 'application/xml');
-  //
-  //   // const modelFile = 'baseModel_ID1008016.cpn';
-  //   // const modelFile = 'discretemodel_task1.cpn';
-  //   // const modelFile = 'erdp.cpn';
-  //   // const modelFile = 'hoponhopoff-color.cpn';
-  //   const modelFile = 'mynet.cpn';
-  //   // const modelFile = 'mscProtocol.cpn'
-  //   const url = './assets/cpn/' + modelFile;
-  //   this.http.get(url, {headers: headers, responseType: 'text'})
-  //     .subscribe(
-  //       (response: any) => {
-  //         // console.log('GET ' + url + ', response = ' + JSON.stringify(response));
-  //         this.loadProjectXml(modelFile, response);
-  //       },
-  //       (error) => {
-  //         console.error('GET ' + url + ', error = ' + JSON.stringify(error));
-  //       }
-  //     );
-  // }
-
-  // loadProjectFile(file: File) {
-  //   const reader: FileReader = new FileReader();
-  //   reader.readAsText(file);
-  //   reader.onload = e => {
-  //     const text: any = reader.result;
-  //     // console.log('File text : ' + text);
-  //
-  //     this.loadProjectXml(file.name, text);
-  //   };
-  // }
-
-  // loadProjectXml(filename: string, projectXml: string) {
-  //   const parser = new DOMParser();
-  //   this.modelName = filename;
-  //   const xml = parser.parseFromString(projectXml, 'text/xml');
-  //
-  //   if (!xml) {
-  //     return;
-  //   }
-  //
-  //   // let X2JS = require('x2js');
-  //   const x2js = new X2JS();
-  //   const json = x2js.xml_str2json(projectXml);
-  //   // var document = x2js.xml2js(xml);
-  //   //   const json: any = this.xml2jsonService.xmlToJson(xml);
-  //   //  json: any = xml2json(xml, "");
-  //
-  //   console.log('First convert-----' + JSON.stringify(json));
-  //   if (!json) {
-  //     return;
-  //   }
-  //
-  //
-  //   EmitterService.getAppMessageEmitter().emit({
-  //     id: Constants.ACTION_PROJECT_LOAD_DATA,
-  //     project: {data: json, name: filename}
-  //   });
-  // }
-
 
   buildGlobboxTree(block, projectNode) {
     console.log('BUILDGLOBBOXTREE()');
@@ -1377,7 +1237,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   updateTree() {
-    console.log('UPDATETREE()');
     this.treeComponent.treeModel.update();
   }
 
@@ -1391,7 +1250,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   activateNode(event) {
-    console.log('ACTIVATENODE()');
     this.selectedNode = event.node;
     console.log(event.node);
 
@@ -1430,13 +1288,10 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event) {
-    console.log(this.constructor.name, 'onDocumentClick(), event = ', event);
-
     this.hideContextMenu();
   }
 
   saveEditedData(event) {
-    console.log('SAVEEDITEDDATA()');
     const htmlElement: HTMLInputElement = <HTMLInputElement>event.target;
 
     if (htmlElement && (htmlElement.className.search('editablenode') > -1)) {
@@ -1444,6 +1299,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       if (this.editableNode.data.name.toString() !== htmlElement.innerText) {
         this.editableNode.data.name = htmlElement.innerText;
         if (this.editableNode.data.object && this.editableNode.data.object.type === 'page') {
+          console.log ('3');
           this.editableNode.data.object.pageattr._name = this.editableNode.data.name;
           this.eventService.send(Message.CHANGE_NAME_PAGE, {
             id: this.editableNode.id,
@@ -1479,10 +1335,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   changeFilter(filterText) {
-    // console.log(this.constructor.name, 'changeFilter(), filterText = ', filterText);
-
     this.filterText = filterText;
-    // this.treeComponent.treeModel.filterNodes(this.filterText, true);
 
     if (this.filterText !== '') {
       this.treeComponent.treeModel.filterNodes((node) => {

@@ -4,6 +4,7 @@ import {EventService} from '../services/event.service';
 import {TabsContainer} from '../tabs/tabs-container/tabs.container';
 import {ProjectService} from '../services/project.service';
 import {ModelService} from '../services/model.service';
+
 @Component({
   selector: 'app-project-details',
   templateUrl: './project-details.component.html',
@@ -16,11 +17,11 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   selectedBlock = undefined;
   countNewItems = 0;
   showTable = 'not';
-  paramsTypes = ['ml', 'color', 'var', 'globref']
+  paramsTypes = ['ml', 'color', 'var', 'globref'];
   standartDeclaration = ['UNIT', 'BOOL', 'INT', 'INTINF', 'TIME', 'REAL', 'STRING'];
   @ViewChild('tabsComponent') tabsComponent: TabsContainer;
 
-  constructor(private eventService: EventService,  private projectService: ProjectService, private modelService: ModelService) {
+  constructor(private eventService: EventService, private projectService: ProjectService, private modelService: ModelService) {
   }
 
   ngOnInit() {
@@ -37,14 +38,16 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     });
 
     this.eventService.on(Message.OPEN_DECLARATION_BLOCK, (data) => {
-      let tab = this.tabsComponent.tabs.find( e => e.id === data.id);
+      let tab = this.tabsComponent.tabs.find(e => e.id === data.id);
       if (tab) {
         let oldSelectedTab = this.tabsComponent.getSelectedTab();
-        if(oldSelectedTab && !this.paramsTypes.includes(oldSelectedTab.id ) ) oldSelectedTab.isHidden = true;
+        if (oldSelectedTab && !this.paramsTypes.includes(oldSelectedTab.id)) {
+          oldSelectedTab.isHidden = true;
+        }
         this.tabsComponent.selectTab(tab);
         tab.isHidden = false;
-       // let newSelectedTab = document.getElementById(tab.id);
-       // if(newSelectedTab) newSelectedTab.hidden = false;
+        // let newSelectedTab = document.getElementById(tab.id);
+        // if(newSelectedTab) newSelectedTab.hidden = false;
       }
 
     });
@@ -62,22 +65,27 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   }
 
 
-
-  explorerTreeChangeHandler(data){
-    switch(data.action){
+  explorerTreeChangeHandler(data) {
+    switch (data.action) {
       case 'add':
-        if(data.element === 'tab') {
+        if (data.element === 'tab') {
           this.createNewTab(data.state, data.target);
         } else {
           this.addItemClick(data.target, data.element, data.state);
         }
-      break;
+        break;
       case 'rename':
-          this.changeinExplorerName(data);
-          this.eventService.send(Message.UPDATE_TREE, {project: this.currentPojectModel, state: data.state, newNodeId: data.node.id, comonBlock: data.target, after: 'edit'});
-          break;
+        this.changeinExplorerName(data);
+        this.eventService.send(Message.UPDATE_TREE, {
+          project: this.currentPojectModel,
+          state: data.state,
+          newNodeId: data.node.id,
+          comonBlock: data.target,
+          after: 'edit'
+        });
+        break;
       case 'delete':
-        if(data.element === 'tab') {
+        if (data.element === 'tab') {
           this.tabsComponent.deleteTabById(data.id);
           //let cpnet = this.modelService.getcpnet();
           this.declarations = this.declarations.filter(e => e.id !== data.id);
@@ -86,9 +94,9 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
           this.eventService.send(Message.UPDATE_TREE, {project: this.currentPojectModel, state: data.state});
         } else {
           let afterDelDec;
-          if(data.element) {
+          if (data.element) {
             afterDelDec = this.declarations.find(e => e.id === data.target);
-           // afterDelDec[data.element] = afterDelDec[data.element].filter(elem => elem._id !== data.id);
+            // afterDelDec[data.element] = afterDelDec[data.element].filter(elem => elem._id !== data.id);
             this.modelService.deleteElementInBlock(afterDelDec, data.element, data.id);
           } else {
             //let block = this.declarations.find(elem => elem.id === data.target);
@@ -97,13 +105,12 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
           }
           this.eventService.send(Message.UPDATE_TREE, {project: this.currentPojectModel, state: data.state});
         }
-      break;
+        break;
 
       default:
 
     }
   }
-
 
 
   newTabDblClick(tabid) {
@@ -155,10 +162,10 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
    * add Parameters button click handler
    */
   addItemClick(blockId, elementType, state) {
-    let comBlocks = false
-    if(blockId === elementType ) {
+    let comBlocks = false;
+    if (blockId === elementType) {
       blockId = this.selectedBlock;
-      comBlocks =  true;
+      comBlocks = true;
     }
     console.log('add variable click');
     const cpnet = this.modelService.getcpnet();
@@ -175,9 +182,17 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       //   block[elementType].push(newNode);
       // }
     }
-    if(blockId) blockId = undefined;
-    this.eventService.send(Message.UPDATE_TREE, {project: this.currentPojectModel, state: state, newNodeId: newNode._id, comonBlock: comBlocks  });
+    if (blockId) {
+      blockId = undefined;
+    }
+    this.eventService.send(Message.UPDATE_TREE, {
+      project: this.currentPojectModel,
+      state: state,
+      newNodeId: newNode._id,
+      comonBlock: comBlocks
+    });
   }
+
   //
   // newElemetn(elementType): any {
   //   switch (elementType) {
@@ -228,9 +243,14 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       afterDelDec = this.declarations.find(e => e.id === this.selectedElemement.tabid);
       //afterDelDec[this.selectedElemement.type] = afterDelDec[this.selectedElemement.type].filter(elem => elem._id !== this.selectedElemement.id);
       this.modelService.deleteElementInBlock(afterDelDec, this.selectedElemement.type, this.selectedElemement.id);
-      let elemFromEntry  = afterDelDec[this.selectedElemement.type][0] || afterDelDec;
+      let elemFromEntry = afterDelDec[this.selectedElemement.type][0] || afterDelDec;
       this.selectedElemement = undefined;
-      this.eventService.send(Message.UPDATE_TREE, {project: this.currentPojectModel, state: state,  comonBlock: elemFromEntry, after: 'delete' });
+      this.eventService.send(Message.UPDATE_TREE, {
+        project: this.currentPojectModel,
+        state: state,
+        comonBlock: elemFromEntry,
+        after: 'delete'
+      });
     }
 
   }
@@ -248,7 +268,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
 
 
   selectClick(item, tabid, elemType) {
-    if(elemType) {
+    if (elemType) {
       this.selectedElemement = {id: item._id, tabid: tabid, type: elemType};
     } else {
       let splitTabId = tabid.split('-');
@@ -271,21 +291,21 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     if (cpnet) {
       if (cpnet.globbox) {
         if (cpnet.globbox) {
-         /* let defaultBlock;
-          //if (cpnet.globbox.block.color || cpnet.globbox.block.var || cpnet.globbox.block.ml || cpnet.globbox.block.globref) {
-          defaultBlock = {
-            id: 'Default'
-          };
-          if (cpnet.globbox.color) defaultBlock.color = cpnet.globbox.color;
-          if (cpnet.globbox.var) defaultBlock.var = cpnet.globbox.var;
-          if (cpnet.globbox.globref) defaultBlock.globref = cpnet.globbox.globref;
-          if (cpnet.globbox.ml) defaultBlock.ml = cpnet.globbox.ml;
-          //  }
-          if (defaultBlock) this.declarations.push(defaultBlock);*/
+          /* let defaultBlock;
+           //if (cpnet.globbox.block.color || cpnet.globbox.block.var || cpnet.globbox.block.ml || cpnet.globbox.block.globref) {
+           defaultBlock = {
+             id: 'Default'
+           };
+           if (cpnet.globbox.color) defaultBlock.color = cpnet.globbox.color;
+           if (cpnet.globbox.var) defaultBlock.var = cpnet.globbox.var;
+           if (cpnet.globbox.globref) defaultBlock.globref = cpnet.globbox.globref;
+           if (cpnet.globbox.ml) defaultBlock.ml = cpnet.globbox.ml;
+           //  }
+           if (defaultBlock) this.declarations.push(defaultBlock);*/
           // GlobBox
           // --------------------------------------
-          let params = [] ;
-          for(let paramElem of this.paramsTypes) {
+          let params = [];
+          for (let paramElem of this.paramsTypes) {
             let paramBlock = {
               id: paramElem,
               block: []
@@ -320,14 +340,18 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
-   findblockById(id, globoxBlock): any {
+  findblockById(id, globoxBlock): any {
     let result;
-     for (const block of globoxBlock) {
-       if(block.id === id) return block;
-       if(block.block )  result = this.findblockById(id, block.block);
-     }
-     return result;
-   }
+    for (const block of globoxBlock) {
+      if (block.id === id) {
+        return block;
+      }
+      if (block.block) {
+        result = this.findblockById(id, block.block);
+      }
+    }
+    return result;
+  }
 
 
   searchBlocks(currentBlock, params) {
@@ -348,87 +372,148 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       if (block.ml) {
         params['ml'].block.push({id: block.id, rows: block.ml});
       }
-      if(block.block) this.searchBlocks(block.block, params);
+      if (block.block) {
+        this.searchBlocks(block.block, params);
+      }
       //  console.log(this.dataSets);
     }
-    let rootBlock =  {
+    let rootBlock = {
       id: currentBlock.id ? currentBlock.id : 'globbox'
-    }
+    };
 
     if (currentBlock.color) {
       rootBlock['color'] = currentBlock.color;
-      params['color'].block.push({id: currentBlock.id, rows: currentBlock.color, visible: true });
+      params['color'].block.push({id: currentBlock.id, rows: currentBlock.color, visible: true});
     }
     if (currentBlock.var) {
       rootBlock['var'] = currentBlock.var;
-      params['var'].block.push({id: currentBlock.id, rows: currentBlock.var, visible: true });
+      params['var'].block.push({id: currentBlock.id, rows: currentBlock.var, visible: true});
     }
     if (currentBlock.globref) {
       rootBlock['globref'] = currentBlock.globref;
-      params['globref'].block.push({id: currentBlock.id, rows: currentBlock.globref, visible: true });
+      params['globref'].block.push({id: currentBlock.id, rows: currentBlock.globref, visible: true});
     }
     if (currentBlock.ml) {
       rootBlock['ml'] = currentBlock.ml;
-      params['ml'].block.push({id: currentBlock.id, rows: currentBlock.ml, visible: true });
+      params['ml'].block.push({id: currentBlock.id, rows: currentBlock.ml, visible: true});
     }
-    if(currentBlock.block && rootBlock.id === 'globbox') this.searchBlocks(currentBlock.block, params);
+    if (currentBlock.block && rootBlock.id === 'globbox') {
+      this.searchBlocks(currentBlock.block, params);
+    }
     this.declarations.push(rootBlock);
   }
 
 
   blocksToArray(block) {
-    if (block.color && !(block.color instanceof Array)) block.color = [block.color];
-    if (block.var && !(block.var instanceof Array)) block.var = [block.var];
-    if (block.globref && !(block.globref instanceof Array)) block.globref = [block.globref];
-    if (block.ml && !(block.ml instanceof Array)) block.ml = [block.ml];
+    if (block.color && !(block.color instanceof Array)) {
+      block.color = [block.color];
+    }
+    if (block.var && !(block.var instanceof Array)) {
+      block.var = [block.var];
+    }
+    if (block.globref && !(block.globref instanceof Array)) {
+      block.globref = [block.globref];
+    }
+    if (block.ml && !(block.ml instanceof Array)) {
+      block.ml = [block.ml];
+    }
   }
 
   getColorStringValue(color): string {
-      /*
-      let colorStringValue;
+    /*
+    let colorStringValue;
+    if (color.alias && color.alias.id) {
+      colorStringValue = color.alias.id;
+    }
+    if (color.list && color.list.id) {
+      colorStringValue = 'list ' + color.list.id;
+    }
+    if (color.product && color.product.id) {
+      colorStringValue = 'product ' + color.product.id;
+    }*/
+    const node = {
+      name: color.id,
+    };
+    if (color.layout) {
+      node.name = color.layout.substr(7);
+    } else {
       if (color.alias && color.alias.id) {
-        colorStringValue = color.alias.id;
-      }
-      if (color.list && color.list.id) {
-        colorStringValue = 'list ' + color.list.id;
-      }
-      if (color.product && color.product.id) {
-        colorStringValue = 'product ' + color.product.id;
-      }*/
-      const node = {
-        name: color.id,
-      };
-      if(color.layout) {
-        node.name = color.layout.substr(7);
+        node.name += ' = ' + color.alias.id;
+      } else if (color.list && color.list.id) {
+        node.name += ' = list ' + color.list.id;
+      } else if (color.product && color.product.id) {
+        node.name += ' = product ';
+        if (color.product.id instanceof Array) {
+          for (let i = 0; i < color.product.id.length; i++) {
+            node.name += i === 0 ? color.product.id[i] + ' ' : '* ' + color.product.id[i];
+          }
+        } else {
+          node.name += color.product.id;
+        }
       } else {
-        if (color.alias && color.alias.id) {
-          node.name += ' = ' + color.alias.id;
-        } else if (color.list && color.list.id) {
-          node.name += ' = list ' + color.list.id ;
-        } else if (color.product && color.product.id) {
-          node.name += ' = product '
-          if(color.product.id instanceof  Array) {
-            for (let i = 0; i < color.product.id.length; i++) {
-              node.name += i === 0 ? color.product.id[i] + ' ' : '* ' + color.product.id[i];
-            }
-          } else  node.name += color.product.id;
-        } else node.name += ' = ' +  color.id.toLowerCase();
-        if('timed' in color) node.name += ' timed';
+        node.name += ' = ' + color.id.toLowerCase();
       }
+      if ('timed' in color) {
+        node.name += ' timed';
+      }
+    }
     return node.name;
   }
 
   getVariableStringValue(variable) {
 
-      return variable.layout ? variable.layout.substr(4) :  variable.id + ': ' + variable.type.id;
+    return variable.layout ? variable.layout.substr(4) : variable.id + ': ' + variable.type.id;
   }
 
   getGlobrefStringValue(globref) {
-    return  globref.layout ? globref.layout.substr(8) : globref.id + ' = ' + globref.ml;
+    return globref.layout ? globref.layout.substr(8) : globref.id + ' = ' + globref.ml;
   }
 
   getFunStringValue(globref) {
     return globref.layout ? globref.layout.substr(4) : globref.__text;
+  }
+
+  getFirstCellData(globref): string {
+
+    let str;
+    if (globref instanceof Object) {
+      str = globref.layout ? globref.layout : globref.__text;
+    } else { str = globref; }
+
+    let firstCell: string;
+    let array = str.match('^((local){1}\\s+)*(fun|val|exception){1}\\s+');
+    if (array) {
+      firstCell = array[0].trim();
+    } else {
+      array = str.match('^[a-zA-Z0-9_]+\\s*:');
+      if (array) {
+        firstCell = 'var';
+      } else {
+        array = str.match('^[a-zA-Z0-9_]+\\s*=');
+        if (array) {
+          firstCell = 'colset';
+        } else {
+          firstCell = '';
+        }
+      }
+    }
+    return firstCell;
+  }
+
+  getSecondCellData(globref): string {
+    let str;
+    if (globref instanceof Object) {
+      str = globref.layout ? globref.layout : globref.__text;
+    } else { str = globref; }
+
+    let secondCell: string;
+    const array = str.match('^((local){1}\\s+)*(fun|val|exception){1}\\s+');
+    if (array) {
+      secondCell = str.substring(array[0].length);
+    } else {
+      secondCell = str;
+    }
+    return secondCell;
   }
 
   getBlockElemeStringValue(item, type) {
@@ -437,10 +522,10 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
         return item ? this.getVariableStringValue(item) : 'var';
         break;
       case 'color':
-         return item ? this.getColorStringValue(item) : 'colset';
+        return item ? this.getColorStringValue(item) : 'colset';
         break;
       case 'ml':
-        return !item.flag ? this.getFunStringValue(item) :  (item.item.layout ? item.item.layout.split(' ')[0] : item.item.__text.split(' ')[0])
+        return !item.flag ? this.getFunStringValue(item) : (item.item.layout ? item.item.layout.split(' ')[0] : item.item.__text.split(' ')[0]);
         break;
       case 'globref':
         return item ? this.getGlobrefStringValue(item) : 'globref';
@@ -537,44 +622,44 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
    * Handler for change name from explorer panel
    * @param data - params for changing
    */
-   changeinExplorerName(data){
-     let block;
-      switch (data.element) {
-        case 'ml':
-          block = this.declarations.find(e => e.id === data.target).ml
-          if (block instanceof Array) {
-            block = block.find(e => e._id === data.id);
-          }
-          this.modelService.parseVariableLayout(data.node.data.name, block, 'ml')
-          break;
-        case 'var':
-          block = this.declarations.find(e => e.id === data.target).var
-          if(block instanceof Array) {
-            block = block.find(e => e._id === data.id);
-          }
-          this.modelService.parseVariableLayout(data.node.data.name, block, 'var')
-          break;
-        case 'color':
-          block = this.declarations.find(e => e.id === data.target).color
-          if (block instanceof Array) {
-            block = block.find(e => e._id === data.id);
-          }
-          this.modelService.parseVariableLayout(data.node.data.name, block, 'color')
-          break;
-        case 'globref':
-          block = this.declarations.find(e => e.id === data.target).globref
-          if (block instanceof Array) {
-            block = block.find(e => e._id === data.id);
-          }
-          this.modelService.parseVariableLayout(data.node.data.name, block, 'globref')
-          break;
-        case 'tab':
-          block = this.declarations.find(e => e.id === data.target);
-          block.name = data.node.data.name;
-          block.id = data.node.data.name;
-          break;
-      }
-   }
+  changeinExplorerName(data) {
+    let block;
+    switch (data.element) {
+      case 'ml':
+        block = this.declarations.find(e => e.id === data.target).ml;
+        if (block instanceof Array) {
+          block = block.find(e => e._id === data.id);
+        }
+        this.modelService.parseVariableLayout(data.node.data.name, block, 'ml');
+        break;
+      case 'var':
+        block = this.declarations.find(e => e.id === data.target).var;
+        if (block instanceof Array) {
+          block = block.find(e => e._id === data.id);
+        }
+        this.modelService.parseVariableLayout(data.node.data.name, block, 'var');
+        break;
+      case 'color':
+        block = this.declarations.find(e => e.id === data.target).color;
+        if (block instanceof Array) {
+          block = block.find(e => e._id === data.id);
+        }
+        this.modelService.parseVariableLayout(data.node.data.name, block, 'color');
+        break;
+      case 'globref':
+        block = this.declarations.find(e => e.id === data.target).globref;
+        if (block instanceof Array) {
+          block = block.find(e => e._id === data.id);
+        }
+        this.modelService.parseVariableLayout(data.node.data.name, block, 'globref');
+        break;
+      case 'tab':
+        block = this.declarations.find(e => e.id === data.target);
+        block.name = data.node.data.name;
+        block.id = data.node.data.name;
+        break;
+    }
+  }
 
   editVarTable(tabId, table) {
     let block = this.declarations.find(elem => elem.id === tabId.replace('-commonTable', '')).var;
@@ -583,14 +668,14 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       var input = table.rows[i].cells[1].textContent;
       console.log(input);
       this.modelService.parseVariableLayout(input, block[i], 'var');
-     // block[i - 2].type.id = input;
-     // block[i - 2].id = table.rows[i].cells[0].textContent;
-     // block[i - 2].layout = 'var ' + block[i - 2].id + ': ' + block[i - 2].type.id + ';';
+      // block[i - 2].type.id = input;
+      // block[i - 2].id = table.rows[i].cells[0].textContent;
+      // block[i - 2].layout = 'var ' + block[i - 2].id + ': ' + block[i - 2].type.id + ';';
       //console.log('ENTER On property pield' + this.nodes[i]);
     }
     this.showTable = 'Var';
     setTimeout(() => {
-      this.showTable = 'not'
+      this.showTable = 'not';
     }, 0);
   }
 
@@ -602,33 +687,33 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       var input = table.rows[i].cells[1].textContent;
       console.log(input);
       this.modelService.parseVariableLayout(input, block[i], 'color');
-     /* let words = input.split(/\s+/)
-      words = words.filter(elem => elem !== '');
-      if (!this.standartDeclaration.includes(table.rows[i].cells[0].textContent)) {
-        if (words.length === 1) {
-          delete block[i - 2].list;
-          delete block[i - 2].product;
-          block[i - 2].alias = {id: words[0]};
-        } else {
-          if (words[0] === 'product') {
-            delete block[i - 2].alias;
-            delete block[i - 2].list;
-            block[i - 2].product = {id: words[2].split(',')};
-          } else if (words[0] === 'list') {
-            delete block[i - 2].alias;
-            delete block[i - 2].product;
-            block[i - 2].list = {id: words[2].split(',')};
-          }
-        }
+      /* let words = input.split(/\s+/)
+       words = words.filter(elem => elem !== '');
+       if (!this.standartDeclaration.includes(table.rows[i].cells[0].textContent)) {
+         if (words.length === 1) {
+           delete block[i - 2].list;
+           delete block[i - 2].product;
+           block[i - 2].alias = {id: words[0]};
+         } else {
+           if (words[0] === 'product') {
+             delete block[i - 2].alias;
+             delete block[i - 2].list;
+             block[i - 2].product = {id: words[2].split(',')};
+           } else if (words[0] === 'list') {
+             delete block[i - 2].alias;
+             delete block[i - 2].product;
+             block[i - 2].list = {id: words[2].split(',')};
+           }
+         }
 
-        // tableDataSource[i - 1].value = input;
-        block[i - 2].name = input;
-        block[i - 2].id = table.rows[i].cells[0].textContent;
-      }*/
+         // tableDataSource[i - 1].value = input;
+         block[i - 2].name = input;
+         block[i - 2].id = table.rows[i].cells[0].textContent;
+       }*/
     }
     this.showTable = 'Color';
     setTimeout(() => {
-      this.showTable = 'not'
+      this.showTable = 'not';
     }, 0);
   }
 
@@ -643,7 +728,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     }
     this.showTable = 'Ml';
     setTimeout(() => {
-      this.showTable = 'not'
+      this.showTable = 'not';
     }, 0);
   }
 
@@ -655,13 +740,13 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       var input = table.rows[i].cells[1].textContent;
       console.log(input);
       this.modelService.parseVariableLayout(input, block[i], 'globref');
-    //  block[i - 2].ml = input;
+      //  block[i - 2].ml = input;
       //block[i - 2].id = table.rows[i].cells[0].textContent;
       // console.log('ENTER On property pield' + this.nodes[i]);
     }
     this.showTable = 'Globref';
     setTimeout(() => {
-      this.showTable = 'not'
+      this.showTable = 'not';
     }, 0);
 
   }
@@ -670,7 +755,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     var table: HTMLTableElement = <HTMLTableElement>document.getElementById(tableId);
     console.log(this.constructor.name, 'hideColapseTable(), table = ', tableId);
     block.visible = !block.visible;
-   // table.hidden = !table.hidden;
+    // table.hidden = !table.hidden;
   }
 
   isDeclarationBlock(tabId): boolean {

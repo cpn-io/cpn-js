@@ -25,9 +25,29 @@ export class MlEditorComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
-    // console.log('MlEditorComponent, ngOnInit(), this.project -> ', this.project);
+    this.eventService.on(Message.CHANGE_EXPLORER_TREE, (data) => {
+      this.explorerTreeChangeHandler(data);
+    });
+  }
 
-    // this.functionsText = this.getFunctions(this.project);
+  explorerTreeChangeHandler(data) {
+    switch (data.action) {
+      case 'add':
+        this.textValue = data.node.data.name;
+        break;
+
+      case 'rename':
+        this.textValue = data.node.data.name;
+        break;
+
+      case 'delete':
+        this.textValue = '';
+        break;
+
+      default:
+
+    }
+
   }
 
   ngAfterViewInit() {
@@ -118,8 +138,7 @@ export class MlEditorComponent implements OnInit, OnDestroy {
             break;
           }
         }
-      }
-      else {
+      } else {
         if (projectData.workspaceElements.cpnet) {
           cpnet = projectData.workspaceElements.cpnet;
         }

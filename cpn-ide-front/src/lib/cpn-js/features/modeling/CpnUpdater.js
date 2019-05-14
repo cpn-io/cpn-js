@@ -19,7 +19,7 @@ inherits(CpnUpdater, CommandInterceptor);
 
 import {
   is, isCpn, isAny,
-  CPN_CONNECTION, CPN_LABEL, CPN_PLACE, CPN_TOKEN_LABEL, CPN_MARKING_LABEL, CPN_TRANSITION
+  CPN_CONNECTION, CPN_LABEL, CPN_PLACE, CPN_TOKEN_LABEL, CPN_MARKING_LABEL, CPN_TRANSITION, modelCase
 } from '../../util/ModelUtil';
 
 CpnUpdater.$inject = [
@@ -68,7 +68,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   // });
 
   eventBus.on('shape.changed', function (e) {
-    updateLabel(e);
+    updateLabels(e);
     updateCpnElement(e);
   });
 
@@ -197,27 +197,36 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     });
   }
 
-  function updateLabel(e) {
+  function updateLabels(e) {
     // console.log('CpnUpdater(), updateLabel(), e = ', e);
     var shape = e.element;
+    for(let label of shape.labels){
+      updateCpnElement(label);
+    }
 
     // if (shape.labelTarget) {
     //   shape.parent = shape.labelTarget;
     // }
   }
 
-  function updateCpnElement(e) {
+  function updateCpnElement(element) {
+    // export  const modelCase = {
+    //   'cpn:Place': { form: 'ellipse', entry: ['initmark', 'type'] },
+    //   'cpn:Transition': { form: 'box', entry: ['time', 'code', 'priority', 'cond'] },
+    //   'cpn:Connection': { entry: ['annot'] }
+    // }
 
-    console.log('CpnUpdater().updateCpnElement(), e = ', e);
+   // console.log('CpnUpdater().updateCpnElement(), e = ', e);
 
-    var shape = e.element;
-
+    var shape = element;
+    let elemCase = modelCase[element.type];
     const cpnElement = shape.cpnElement;
 
     // if element is Place object
     if (cpnElement && cpnElement.posattr && cpnElement.ellipse) {
       cpnElement.posattr._x = shape.x;
       cpnElement.posattr._y = shape.y * -1;
+      cpnElement.posattr._x = shape.x;
       cpnElement.ellipse._w = shape.width;
       cpnElement.ellipse._h = shape.height;
     }

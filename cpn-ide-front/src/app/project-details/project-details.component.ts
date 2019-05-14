@@ -451,54 +451,86 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
 
   }
 
+  saveEditedData(event) {
+    let htmlElement: HTMLElement = <HTMLElement>event.target;
+    if (htmlElement && (htmlElement.nodeName === 'TD' || htmlElement.nodeName === 'TR')) {
+      if (htmlElement.offsetParent) {
+        var table: HTMLTableElement = <HTMLTableElement>document.getElementById(htmlElement.offsetParent.id);
+        let tableDataSource;
+        if (table.id) {
+          let parsId = table.id.split('-');
+          if (parsId[0] === 'declarationPanel') {
+            if (parsId.length > 3) {
+              for (let i = 3; i < parsId.length; ++i) {
+                parsId[2] = parsId[2] + '-' + parsId[i];
+              }
+            }
+            switch (parsId[1]) {
+              case 'var':
+                this.editVarTable(parsId[2], table);
+                break;
+              case 'color':
+                this.editColorTable(parsId[2], table);
+                break;
+              case 'ml':
+                this.editMlTable(parsId[2], table);
+                break;
+              case 'globref':
+                this.editGlobrefTable(parsId[2], table);
+                break;
+              default:
 
+            }
+            // this.updateProperties(this.nodes, table);
+            this.eventService.send(Message.UPDATE_TREE, {project: this.currentPojectModel});
+          }
+        }
+      }
+    }
 
+  }
 
   /**
    *The listener waits for pressing the input button in the panel and determines which property in which table has been changed.
    * @param event
    */
-  @HostListener('window:keydown', ['$event'])
-  keyEvent(event: KeyboardEvent) {
-
-    if (event.keyCode === 13) {
-      console.log('TESTstr ----------------------------------------- PARAMETERS');
-      let htmlElement: HTMLElement = <HTMLElement>event.target;
-      if (htmlElement && (htmlElement.nodeName === 'TD' || htmlElement.nodeName === 'TR')) {
-        if (htmlElement.offsetParent) {
-          var table: HTMLTableElement = <HTMLTableElement>document.getElementById(htmlElement.offsetParent.id);
-          let tableDataSource;
-          if (table.id) {
-            let parsId = table.id.split('-')
-            if (parsId[0] === 'declarationPanel') {
-              if (parsId.length > 3) for (let i = 3; i < parsId.length; ++i) parsId[2] = parsId[2] + '-' + parsId[i];
-              switch (parsId[1]) {
-                case 'var':
-                  this.editVarTable(parsId[2], table);
-                  break;
-                case 'color':
-                  this.editColorTable(parsId[2], table);
-                  break;
-                case 'ml':
-                  this.editMlTable(parsId[2], table);
-                  break;
-                case 'globref':
-                  this.editGlobrefTable(parsId[2], table);
-                  break;
-                default:
-
-              }
-              // this.updateProperties(this.nodes, table);
-              this.eventService.send(Message.UPDATE_TREE, {project: this.currentPojectModel});
-            }
-          }
-        }
-      }
-    }
-  }
-
-
-
+  // @HostListener('window:keydown', ['$event'])
+  // keyEvent(event: KeyboardEvent) {
+  //
+  //   if (event.keyCode === 13) {
+  //     let htmlElement: HTMLElement = <HTMLElement>event.target;
+  //     if (htmlElement && (htmlElement.nodeName === 'TD' || htmlElement.nodeName === 'TR')) {
+  //       if (htmlElement.offsetParent) {
+  //         var table: HTMLTableElement = <HTMLTableElement>document.getElementById(htmlElement.offsetParent.id);
+  //         let tableDataSource;
+  //         if (table.id) {
+  //           let parsId = table.id.split('-')
+  //           if (parsId[0] === 'declarationPanel') {
+  //             if (parsId.length > 3) for (let i = 3; i < parsId.length; ++i) parsId[2] = parsId[2] + '-' + parsId[i];
+  //             switch (parsId[1]) {
+  //               case 'var':
+  //                 this.editVarTable(parsId[2], table);
+  //                 break;
+  //               case 'color':
+  //                 this.editColorTable(parsId[2], table);
+  //                 break;
+  //               case 'ml':
+  //                 this.editMlTable(parsId[2], table);
+  //                 break;
+  //               case 'globref':
+  //                 this.editGlobrefTable(parsId[2], table);
+  //                 break;
+  //               default:
+  //
+  //             }
+  //             // this.updateProperties(this.nodes, table);
+  //             this.eventService.send(Message.UPDATE_TREE, {project: this.currentPojectModel});
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 
 
   /**

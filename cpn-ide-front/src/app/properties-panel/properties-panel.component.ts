@@ -646,6 +646,13 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   //   return labelElem;
   // }
 
+  isHide(type, field) {
+      if(['Id', 'Type'].includes(field)) return true;
+      if(type  === 'cpn:Connection') {
+        if(['Name', 'X', 'Y', 'Width', 'Height'].includes(field)) return true;
+      }
+      return false;
+  }
 
   /**
    * function that fills the data setd for fields in the properties panel
@@ -708,18 +715,18 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     let elementShape;
     if (elementType !== 'cpn:Connection') {
       elementShape = elementType === 'cpn:Transition' ? 'box' : 'ellipse';
-    }
-    nodes.push({ name: 'Id', value: cpnElement._id, hide: true, path: '_id' });
-    nodes.push({ name: 'Name', value: cpnElement.text, path: 'text' });
-    nodes.push({ name: 'Type', value: elementType, hide: true });
-    nodes.push({ name: 'X', value: cpnElement.posattr._x, path: 'posattr._x' });
-    nodes.push({ name: 'Y', value: cpnElement.posattr._y, path: 'posattr._y' });
-    nodes.push({ name: 'Width', value: elementShape ? cpnElement[elementShape]._w : ' - ', path: elementShape ?  elementShape + '._w' : undefined });
-    nodes.push({ name: 'Height', value: elementShape ? cpnElement[elementShape]._h : ' - ', path: elementShape ?  elementShape + '._h' : undefined });
+    } else  nodes.push({ name: 'Orientation', value: cpnElement._orientation, path: '_orientation', hide: this.isHide(elementType, 'Orientation')});
+    nodes.push({ name: 'Id', value: cpnElement._id, hide: this.isHide(elementType, 'Id'), path: '_id' });
+    nodes.push({ name: 'Name', value: cpnElement.text, path: 'text', hide: this.isHide(elementType, 'Name')});
+    nodes.push({ name: 'Type', value: elementType, hide: this.isHide(elementType, 'Type') });
+    nodes.push({ name: 'X', value: cpnElement.posattr._x, path: 'posattr._x', hide: this.isHide(elementType, 'X')});
+    nodes.push({ name: 'Y', value: cpnElement.posattr._y, path: 'posattr._y', hide: this.isHide(elementType, 'Y')});
+    nodes.push({ name: 'Width', value: elementShape ? cpnElement[elementShape]._w : ' - ', path: elementShape ?  elementShape + '._w' : undefined , hide: this.isHide(elementType, 'Width')});
+    nodes.push({ name: 'Height', value: elementShape ? cpnElement[elementShape]._h : ' - ', path: elementShape ?  elementShape + '._h' : undefined , hide: this.isHide(elementType, 'Height')});
     nodes.push({ name: 'Stroke', value: cpnElement.lineattr._colour, path: 'lineattr._colour' });
     nodes.push({ name: 'strokeWidth', value: cpnElement.lineattr._thick, path: 'lineattr._thick' });
-    nodes.push({ name: 'BackGround', value: cpnElement.fillattr._colour, path: 'fillattr._colour' });
-    commonNodes.push({ name: 'Name', value: cpnElement.text, path: 'text' });
+    nodes.push({ name: 'background', value: cpnElement.fillattr._colour, path: 'fillattr._colour' });
+    commonNodes.push({ name: 'Name', value: cpnElement.text, path: 'text', hide: this.isHide(elementType, 'Name')});
 
 
     /*nodes.push({name: 'Id', value: type === 'cpn:Label' ? shapeObject.labelNodeId : shapeObject.id, hide: true});

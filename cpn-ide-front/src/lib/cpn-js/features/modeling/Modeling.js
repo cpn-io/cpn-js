@@ -104,7 +104,6 @@ function isString(v) {
  */
 function updateShapeByCpnElement(element) {
   let form = element.cpnElement.ellipse ? 'ellipse' : 'box';
-
   const changeName = (cpnElement) => {
     if (cpnElement && cpnElement._name) {
       element.text = cpnElement._name;
@@ -143,29 +142,20 @@ function updateShapeByCpnElement(element) {
         x -= w / 2;
         y -= h / 2;
       }
-      delta.w = w;
-      delta.h = h;
-     // element.x =  delta.x;
-    //  element.y =  delta.y;
-      if(dposition) {
-         changingElement.x =  changingElement.x + dposition.x;
-         changingElement.y =  changingElement.y + dposition.y;
-         changingEntry._x = changingElement.x ;
-         changingEntry._y =  changingElement.y;
-      } else {
-        delta.x = x - changingElement.x;
-        delta.y = y - changingElement.y;
-        // let gfx;
-        // for( let label of element.labels) {
-        //   label.x += delta.x;
-        //   label.y += delta.y;
-        //   gfx = this.canvas._elementRegistry.getGraphics(label);
-        //   this._eventBus.fire()
-        //
-        // }
-        changingElement.x = x;
-        changingElement.y = y;
-      }
+      // element.x =  delta.x;
+      //  element.y =  delta.y;
+      delta.x = x - changingElement.x;
+      delta.y = y - changingElement.y;
+      // let gfx;
+      // for( let label of element.labels) {
+      //   label.x += delta.x;
+      //   label.y += delta.y;
+      //   gfx = this.canvas._elementRegistry.getGraphics(label);
+      //   this._eventBus.fire()
+      //
+      // }
+      changingElement.x = x;
+      changingElement.y = y;
     }
     return  delta;
   };
@@ -178,7 +168,7 @@ function updateShapeByCpnElement(element) {
   }
 
   changeName(element.cpnElement);
-  delta = changePosition(element, undefined);
+  let delta = changePosition(element, undefined);
   /*if(delta && element.labels.length > 0) {
     for( let label of element.labels) {
       changePosition(label, delta)

@@ -85,15 +85,21 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   options = {
     allowDrag: true,
     allowDrop: (element, {parent, index}) => {
-      let elemHeaderCatalog = this.getHeaderCatalog(element);
-      let parentHeaderCatalog = this.getHeaderCatalog(parent);
-      //console.log( 'elemHeaderCatalog: ' + elemHeaderCatalog.id + '  parentHeaderCatalog: ' + parentHeaderCatalog.id + ' parent: ' + element.parent.id);
+      const elemHeaderCatalog = this.getHeaderCatalog(element);
+      const parentHeaderCatalog = this.getHeaderCatalog(parent);
       if (this.paramsTypes.includes(element.parent.data.name)) {
         if (element.parent.data.name !== parent.data.name) {
           return false;
         }
       }
-      return elemHeaderCatalog && parentHeaderCatalog ? elemHeaderCatalog.data.name === parentHeaderCatalog.data.name && (this.paramsTypes.includes(element.parent.data.name) || (!this.paramsTypes.includes(parent.data.name) && !this.paramsTypes.includes(parent.parent.data.name))) : false;
+      return elemHeaderCatalog &&
+      parentHeaderCatalog
+        ? (elemHeaderCatalog.data.name === parentHeaderCatalog.data.name &&
+          (this.paramsTypes.includes(element.parent.data.name) ||
+            (!this.paramsTypes.includes(parent.data.name) && !this.paramsTypes.includes(parent.parent.data.name))
+          )
+        )
+        : false;
     },
     actionMapping: {
       mouse: {
@@ -103,23 +109,23 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         drop: (tree, node, $event, {from, to}) => {
           console.log('drag', from, to);
           console.log('onMoveNode', node.name, 'to', to.parent.name, 'at index', to.index);
-          let parentJson = from.parent.data.object;//(this.treeComponent.treeModel.getNodeById(node.id)).parent.data.object;
-          let type = node.data.type === 'page' ? 'page' : this.paramsTypes.includes(from.parent.data.name) ? undefined : from.data.name;
+          const parentJson = from.parent.data.object;
+          const type = node.data.type === 'page' ? 'page' : this.paramsTypes.includes(from.parent.data.name) ? undefined : from.data.name;
           const isEntryExist: boolean = to.parent.data.object[type];
           this.modelService.moveNonModelJsonElement(from.data.object, parentJson, to.parent.data.object, to.index, type);
           if (isEntryExist) {
             to.parent = tree.getNodeById((to.parent.children.find(e => e.data.name === type)).id);
             node = node.children.find(chld => chld.data.name === from.data.name);
-            let onDeleteNodeId = from.id;
-            let fromChildren = from.children;
+            const onDeleteNodeId = from.id;
+            const fromChildren = from.children;
             for (from of fromChildren) {
               if (from) {
                 tree.moveNode(tree.getNodeById(from.id), to);
               } else {
                 break;
-              }//tree.moveNode(from, to);//TREE_ACTIONS.MOVE_NODE(tree, node, $event, {from, to}); else break;
+              }
             }
-            let deleteNode = tree.getNodeById(onDeleteNodeId);
+            const deleteNode = tree.getNodeById(onDeleteNodeId);
             this.deleteNode(this.nodes[0], onDeleteNodeId);
             this.updateTree();
             this.treeComponent.treeModel.setState(tree.getState());
@@ -213,7 +219,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       }
     });
 
-    // подписка на событие
     this.eventService.on(Message.SHAPE_HOVER, (data) => {
       // console.log(' ----- SHAPE_HOVER, data = ' + data);
       this.underlineRelations(data.element);
@@ -223,19 +228,12 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       // console.log(' ----- SHAPE_OUT, data = ' + data);
       this.doUnderlineNodeLabel(false);
     });
-
-    // this.subscribeToProject();
-
-    // this.loadTree();
-
-    // console.log('ProjectExplorerComponent.ngOnInit()');
-    // this.updateTree();
   }
 
   ngOnDestroy() {
-    // console.log("ProjectExplorerComponent.OnDestroy()");
-    // this.subscription.unsubscribe();
   }
+
+  // <editor-fold desc="Подсветка при наведении" >
 
   /**
    * подчеркнуть все, что связано с данным элементом
@@ -328,7 +326,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
   }
 
-
   /**
    * рекурсивный пеербор узлов дерева в поисках имени узла, которое требуется подсветить
    * @param parentNode родительский узел
@@ -345,7 +342,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       }
     } else {
       if (parentNode.object.toString().match('^\\s*(val|fun){1}\\s+' + name + '\\s*[=(]{1}')) {
-        // это проверка на то, что строка является декларацией функции или val (что это за тип?)
+        // это проверка на то, что строка является декларацией функции или val
         this.doUnderlineNodeLabel(true, parentNode.id);
         return true;
 
@@ -396,6 +393,16 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       }
     }
   }
+
+  isHighlightBottom(id: any) {
+    return (this.underlineNodeSet.has(id) && this.collapsedLabel[id] !== false);
+  }
+
+  isHighlightAround(id: any) {
+    return (this.underlineNodeSet.has(id) && this.collapsedLabel[id] === false);
+  }
+
+  // </editor-fold>
 
   /**
    * Subscribe to event emitter for receiveing project event
@@ -588,17 +595,19 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
 
   onNodeArrowClick(event, node) {
+    console.log('ONNODEARROWCLICK');
     if (this.collapsedLabel[node.id] === true || this.collapsedLabel[node.id] === undefined) {
       this.collapsedLabel[node.id] = false;
       this.openNode(event, node);
       this.onEditNode(node);
     } else {
       this.collapsedLabel[node.id] = true;
-      this.closeNodeEditor(event);
+      this.saveEditedData(event);
     }
   }
 
   onNodeLabelClick(event, node) {
+    console.log('ONNODELABELCLICK');
     if (this.needToCollapse(node)) {
       if (this.collapsedLabel[node.id] === true || this.collapsedLabel[node.id] === undefined) {
         this.collapsedLabel[node.id] = false;
@@ -609,9 +618,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   openNode(event, node) {
+    console.log('OPENNODE');
     const currentNode = this.getCurrentBlock(node);
     this.eventService.send(Message.OPEN_DECLARATION_BLOCK, {id: currentNode.id});
     this.sendMlToMlEditor(node.data.name);
+    this.treeComponent.focused = true;
     event.preventDefault();
   }
 
@@ -630,7 +641,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         let result;
         const data = node.data.name.toString();
         try {
-          const array = data.match('^[a-zA-Z0-9_\\s]*([fun|val]\\s){1}[a-zA-Z0-9_]+');
+          const array = data.match('^[a-zA-Z0-9_\\s]*([fun|val]\\s+){1}[a-zA-Z0-9_]+');
           result = array[0];
         } catch (e) {
           try {
@@ -645,14 +656,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       }
     }
     return node.data.name;
-  }
-
-  isHighlightBottom (id: any) {
-    return (this.underlineNodeSet.has(id) && this.collapsedLabel[id] !== false);
-  }
-
-  isHighlightAround (id: any) {
-    return (this.underlineNodeSet.has(id) && this.collapsedLabel[id] === false);
   }
 
   sendMlToMlEditor(value: any) {
@@ -695,25 +698,29 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   keyEvent(event: KeyboardEvent) {
     console.log('project-explorer Keyboard event ', event);
     //  this.diagram.get('eventBus').fire('element.hover', this.curentElement );
-    if (event.keyCode === 13) {
+
+    let code: number | string;
+
+    if (event.code !== undefined) {
+      code = event.code;
+
+    // } else if (event.keyIdentifier !== undefined) {
+    //   // поддержка safari
+    //   code = event.keyIdentifier;
+
+    } else if (event.keyCode !== undefined) {
+      code = event.keyCode;
+    }
+
+    if (this.editableNode) {
+      if (code === 'Tab' || code === '9') {
+        // event.preventDefault();
+      }
+    }
+
+    if (code === 'Enter' || code === 'NumpadEnter' || code === 13) {
       const htmlElement: HTMLInputElement = <HTMLInputElement>event.target;
-      if (htmlElement && (htmlElement.className.search('textinpfield') > -1) ) {
-        this.editableNode.data.name = htmlElement.value;
-        if (this.editableNode.data.object && this.editableNode.data.object.type === 'page') {
-          this.editableNode.data.object.pageattr._name = this.editableNode.data.name;
-          this.eventService.send(Message.CHANGE_NAME_PAGE, {
-            id: this.editableNode.id,
-            name: this.editableNode.data.name,
-            changedElement: 'page',
-            parentPage: this.editableNode.parent.data.name
-          });
-          this.editableNode = null;
-        } else {
-          // this.sendChangingElementToDeclarationPanel(this.editableNode, this.editableNode.parent.data.id, 'rename', this.editableNode.data.id);
-          this.modelService.sendChangingElementToDeclarationPanel(this.editableNode, this.editableNode.parent.data.name, 'rename', this.editableNode.data.id, this.getCurrentBlock(this.editableNode).id, this.treeComponent.treeModel.getState());
-        }
-        //   this.eventService.send(Message.XML_UPDATE, {project: {data: this.currentProjectModel, name: this.modelName}});
-      } else if (htmlElement && htmlElement.nodeName === 'TD') {
+      if (htmlElement && htmlElement.nodeName === 'TD') {
         if (htmlElement.offsetParent) {
           const htmlTableElement: HTMLTableElement = <HTMLTableElement>document.getElementById(htmlElement.offsetParent.id);
 
@@ -741,7 +748,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
 
   /*
-   * Edit node text by double click on node handler or by context menu
+   * Edit node text by click on node handler or by context menu
    * @param node
    */
   onEditNode(node) {
@@ -749,13 +756,10 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     if (this.canEdit(node)) {
       this.editableNode = node;
-      console.log(this.constructor.name, 'editNodeText(), this.editableNode = ', this.editableNode);
       setTimeout(() => { // this will make the execution after the above boolean has changed
-        const inputElem = document.getElementById('textinpfield');
 
-        console.log(this.constructor.name, 'editNodeText(), inputElem = ', inputElem);
-        console.log(this.constructor.name, 'editNodeText(), nodeElem = ', node);
-
+        this.treeComponent.focused = false;
+        const inputElem = document.getElementById('textinpfield_' + node.id);
         if (inputElem) {
           inputElem.focus();
         }
@@ -793,7 +797,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   }
 
-
   focusedNode(node) {
     if (node) {
       const newfocusedBlock = this.getCurrentBlock(node);
@@ -807,8 +810,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   /**
    * delete page node from model
-   * @param node
-   * @param id
    */
   deleteNode(node, id) {
     for (const nd of node.children) {
@@ -840,8 +841,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     return objects;
   }
 
-
   updateModel(updatedData) {
+    console.log('UPDATEMODEL()');
     this.modelService.updateModel(updatedData);
     /* const project = this.currentProjectModel;
      if (project.workspaceElements.cpnet.page.length) {
@@ -939,6 +940,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
 
   buildGlobboxTree(block, projectNode) {
+    console.log('BUILDGLOBBOXTREE()');
     let paramNode;
     paramNode = {
       id: block.id ? block.id : 'globbox',
@@ -1131,6 +1133,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
 
   loadProjectData(project: any) {
+    console.log('LOADPROJECTDATA');
     this.filterText = '';
 
     this.doUnderlineNodeLabel(false);
@@ -1254,6 +1257,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
 
   setPage(page: any, pagesNode: any, cpnet: any, isTransit: boolean) {
+    console.log('SETPAGE()');
     // Page
     if (page.pageattr && (!this.subpages.find(e => e.subpageid === page._id || e.tranid === page._id) || isTransit)) {
       const pageNode = {
@@ -1373,7 +1377,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   updateTree() {
-    // console.log('updateTree()');
+    console.log('UPDATETREE()');
     this.treeComponent.treeModel.update();
   }
 
@@ -1387,25 +1391,12 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   activateNode(event) {
+    console.log('ACTIVATENODE()');
     this.selectedNode = event.node;
-
-    // if (event.node !== this.editableNode) {
-    //    this.editableNode = null;
-    //  }
-    // console.log(event);
     console.log(event.node);
 
     if (event && event.node && event.node.data && event.node.data.type === 'page') {
       const pageObject = event.node.data.object;
-      // console.log('activateNode(), pageObject = ' + JSON.stringify(pageObject));
-
-      // EmitterService.getAppMessageEmitter().emit(
-      //   {
-      //     id: Constants.ACTION_PAGE_OPEN,
-      //     pageObject: pageObject,
-      //     subPages: this.subpages
-      //   });
-
       this.eventService.send(Message.PAGE_OPEN, {pageObject: pageObject, subPages: this.subpages});
     }
   }
@@ -1442,15 +1433,29 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     console.log(this.constructor.name, 'onDocumentClick(), event = ', event);
 
     this.hideContextMenu();
-
-    // if (event.target.id !== 'textinpfield')
-    //   this.editableNode = undefined;
   }
 
-  closeNodeEditor(event) {
-    console.log(this.constructor.name, 'closeNodeEditor(), event = ', event);
+  saveEditedData(event) {
+    console.log('SAVEEDITEDDATA()');
+    const htmlElement: HTMLInputElement = <HTMLInputElement>event.target;
 
-    this.editableNode = undefined;
+    if (htmlElement && (htmlElement.className.search('editablenode') > -1)) {
+      // сохраняем изменения, только если они были
+      if (this.editableNode.data.name.toString() !== htmlElement.innerText) {
+        this.editableNode.data.name = htmlElement.innerText;
+        if (this.editableNode.data.object && this.editableNode.data.object.type === 'page') {
+          this.editableNode.data.object.pageattr._name = this.editableNode.data.name;
+          this.eventService.send(Message.CHANGE_NAME_PAGE, {
+            id: this.editableNode.id,
+            name: this.editableNode.data.name,
+            changedElement: 'page',
+            parentPage: this.editableNode.parent.data.name
+          });
+        } else {
+          this.modelService.sendChangingElementToDeclarationPanel(this.editableNode, this.editableNode.parent.data.name, 'rename', this.editableNode.data.id, this.getCurrentBlock(this.editableNode).id, this.treeComponent.treeModel.getState());
+        }
+      }
+    }
   }
 
 
@@ -1471,17 +1476,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     return (this.isDeclarationBlock(node)
       && !this.modelService.paramsTypes.includes(node.data.name)
       && !this.modelService.paramsTypes.includes(node.parent.data.name));
-  }
-
-  autoWidth(event) {
-    console.log(this.constructor.name, 'autoWidth(), event.srcElement = ', event.srcElement);
-
-    let w = ((event.srcElement.value.length + 1) * 7);
-    if (w < 30) {
-      w = 30;
-    }
-
-    event.srcElement.style.width = w + 'px';
   }
 
   changeFilter(filterText) {

@@ -8,10 +8,6 @@ label.node {
   white-space: pre-wrap;
 }
 
-div.node {
-  white-space: nowrap;
-}
-
 .navbar-sm {
   input {
     width: 80px;
@@ -41,12 +37,17 @@ td.node-highlight-all {
   border: solid transparent 1px;
 }
 
+.editablenode {
+  white-space: pre-wrap;
+}
+
 .btn-more {
   cursor:pointer;
   border: none;
-  padding: 0 2px 0 0;
+  margin: 0 2px 0 0;
   white-space: nowrap;
   vertical-align: top;
+  height: 100%;
 }
 
 .table-textarea {

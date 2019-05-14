@@ -145,7 +145,7 @@ export class ProjectService {
     this.appSettings['cond'] = '[]';
     this.appSettings['time'] = '@++0.0';
     this.appSettings['priority'] = 'P_NORMAL';
-    this.appSettings['annot'] = 'annot';
+    this.appSettings['annot'] = 'expr';
     this.appSettings['page'] = 'newpage';
   }
 

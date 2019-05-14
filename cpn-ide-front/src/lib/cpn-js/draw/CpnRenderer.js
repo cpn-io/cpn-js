@@ -89,6 +89,42 @@ export default function CpnRenderer(
 
   var computeStyle = styles.computeStyle;
 
+
+
+  // ------------------------------------------------------------
+  // shadows
+  // ------------------------------------------------------------
+  function shadow(fill) {
+    var id = 'shadow-' + fill + '-' + rendererId;
+
+    if (!shadows[id]) {
+      createShadow(fill);
+    }
+
+    return 'url(#' + id + ')';
+  }
+
+  function createShadow(id) {
+    var sequenceflowEnd = svgCreate('path');
+    svgAttr(sequenceflowEnd, { d: 'M 1 5 L 11 10 L 1 15 Z' });
+
+    addMarker(id, {
+      element: sequenceflowEnd,
+      ref: { x: 11, y: 10 },
+      scale: 1.0,
+      attrs: {
+        fill: stroke,
+        stroke: stroke
+      }
+    });
+  }
+
+
+
+  // ------------------------------------------------------------
+  // markers
+  // ------------------------------------------------------------
+
   function addMarker(id, options) {
     var attrs = assign({
       fill: 'black',

@@ -66,7 +66,7 @@ var TOKEN_FILL_COLOR = '#6fe117';
 var MARKING_FILL_COLOR = '#bcfd8b';
 
 var ERROR_FILL_COLOR = '#ee0000';
-var PROCESS_FILL_COLOR = '#cccc00';
+var PROCESS_FILL_COLOR = '#bbbb00';
 var READY_FILL_COLOR = '#00cc00';
 
 inherits(CpnRenderer, BaseRenderer);
@@ -476,6 +476,26 @@ export default function CpnRenderer(
   }
 
   /**
+   * Add CPN status shadow to svg element
+   * 
+   * @param {*} element 
+   * @param {*} svgElement 
+   */
+  function setCpnStatus(element, svgElement) {
+    if (element.cpnStatus) {
+      if (element.cpnStatus === 'process') {
+        svgAttr(svgElement, { filter: shadow(PROCESS_FILL_COLOR), });
+      }
+      if (element.cpnStatus === 'error') {
+        svgAttr(svgElement, { filter: shadow(ERROR_FILL_COLOR), });
+      }
+      if (element.cpnStatus === 'ready') {
+        svgAttr(svgElement, { filter: shadow(READY_FILL_COLOR), });
+      }
+    }
+  }
+
+  /**
    * Draw CPN place element
    *
    * @param {*} parentGfx - parent svg graphics element
@@ -493,21 +513,21 @@ export default function CpnRenderer(
     var isError = element.iserror;
     // isError = true;
 
-    if (isError) {
-      var ellipse = svgCreate('ellipse');
-      svgAttr(ellipse, {
-        cx: cx,
-        cy: cy,
-        rx: cx + ERROR_STROKE_THICK / 2 + strokeWidth / 2,
-        ry: cy + ERROR_STROKE_THICK / 2 + strokeWidth / 2
-      });
-      svgAttr(ellipse, {
-        fill: 'transparent',
-        stroke: ERROR_STROKE_COLOR,
-        strokeWidth: ERROR_STROKE_THICK
-      });
-      svgAppend(parentGfx, ellipse);
-    }
+    // if (isError) {
+    //   var ellipse = svgCreate('ellipse');
+    //   svgAttr(ellipse, {
+    //     cx: cx,
+    //     cy: cy,
+    //     rx: cx + ERROR_STROKE_THICK / 2 + strokeWidth / 2,
+    //     ry: cy + ERROR_STROKE_THICK / 2 + strokeWidth / 2
+    //   });
+    //   svgAttr(ellipse, {
+    //     fill: 'transparent',
+    //     stroke: ERROR_STROKE_COLOR,
+    //     strokeWidth: ERROR_STROKE_THICK
+    //   });
+    //   svgAppend(parentGfx, ellipse);
+    // }
 
     // Draw element
     var ellipse = svgCreate('ellipse');
@@ -522,9 +542,10 @@ export default function CpnRenderer(
       stroke: getStrokeColor(element),
       strokeWidth: strokeWidth,
     });
-    svgAttr(ellipse, {
-      filter: shadow(ERROR_FILL_COLOR),
-    });
+
+    // Add CPN status shadow
+    setCpnStatus(element, ellipse);
+
     svgAppend(parentGfx, ellipse);
 
     // Draw subst frame
@@ -564,27 +585,27 @@ export default function CpnRenderer(
     var isError = element.iserror;
     // isError = true;
 
-    if (isError) {
-      var rect = svgCreate('rect');
-      const b = {
-        x: -(ERROR_STROKE_THICK + strokeWidth) / 2,
-        y: -(ERROR_STROKE_THICK + strokeWidth) / 2,
-        width: box.width + (ERROR_STROKE_THICK + strokeWidth),
-        height: box.height + (ERROR_STROKE_THICK + strokeWidth)
-      };
-      console.log('drawTransition(), error, strokeWidth = ', strokeWidth);
-      console.log('drawTransition(), error, ERROR_STROKE_THICK + strokeWidth = ', ERROR_STROKE_THICK + strokeWidth);
-      console.log('drawTransition(), error, box = ', box);
-      console.log('drawTransition(), error, b = ', b);
+    // if (isError) {
+    //   var rect = svgCreate('rect');
+    //   const b = {
+    //     x: -(ERROR_STROKE_THICK + strokeWidth) / 2,
+    //     y: -(ERROR_STROKE_THICK + strokeWidth) / 2,
+    //     width: box.width + (ERROR_STROKE_THICK + strokeWidth),
+    //     height: box.height + (ERROR_STROKE_THICK + strokeWidth)
+    //   };
+    //   console.log('drawTransition(), error, strokeWidth = ', strokeWidth);
+    //   console.log('drawTransition(), error, ERROR_STROKE_THICK + strokeWidth = ', ERROR_STROKE_THICK + strokeWidth);
+    //   console.log('drawTransition(), error, box = ', box);
+    //   console.log('drawTransition(), error, b = ', b);
 
-      svgAttr(rect, b);
-      svgAttr(rect, {
-        fill: 'transparent',
-        stroke: ERROR_STROKE_COLOR,
-        strokeWidth: ERROR_STROKE_THICK
-      });
-      svgAppend(parentGfx, rect);
-    }
+    //   svgAttr(rect, b);
+    //   svgAttr(rect, {
+    //     fill: 'transparent',
+    //     stroke: ERROR_STROKE_COLOR,
+    //     strokeWidth: ERROR_STROKE_THICK
+    //   });
+    //   svgAppend(parentGfx, rect);
+    // }
 
     // Draw element
     var rect = svgCreate('rect');
@@ -599,9 +620,10 @@ export default function CpnRenderer(
       stroke: getStrokeColor(element),
       strokeWidth: strokeWidth,
     });
-    svgAttr(rect, {
-      filter: shadow(READY_FILL_COLOR),
-    });
+
+    // Add CPN status shadow
+    setCpnStatus(element, rect);
+
     svgAppend(parentGfx, rect);
 
     // Draw subst frame

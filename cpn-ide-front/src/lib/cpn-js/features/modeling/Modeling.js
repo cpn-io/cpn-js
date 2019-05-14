@@ -13,6 +13,7 @@ import {
   CPN_PLACE,
   CPN_TRANSITION,
   CPN_CONNECTION,
+  isAny,
 } from '../../util/ModelUtil';
 
 import { getText, getBox } from '../../draw/CpnRenderUtil';
@@ -51,6 +52,32 @@ Modeling.$inject = [
   'textRenderer',
   'canvas'
 ];
+
+/**
+ * Setting CPN element status (one of 'clear', 'process', 'error', 'warning', 'ready')
+ * 
+ * @param {*} event - json object, example: 
+ *    { clear: '*' } or
+ *    { process: '*' } or
+ *    { error: ['ID1412328424'], ready: ['ID1412328496'] }
+ */
+Modeling.prototype.setCpnStatus = function (event) {
+  for (const key of Object.keys(this._elementRegistry._elements)) {
+    const element = this._elementRegistry._elements[key].element;
+
+    if (isAny(element, [CPN_PLACE, CPN_TRANSITION]) && element.cpnElement) {
+      for (var status of ['clear', 'process', 'error', 'warning', 'ready']) {
+        // console.log('Modeling.prototype.setCpnStatus(), status, event = ', status, event);
+        // console.log('Modeling.prototype.setCpnStatus(), event[status] = ', event[status]);
+
+        if (event[status] && (event[status] === '*' || event[status].includes(element.cpnElement._id))) {
+          element.cpnStatus = status;
+        }
+      }
+      this.updateElement(element);
+    }
+  }
+}
 
 
 Modeling.prototype.getHandlers = function () {
@@ -124,20 +151,20 @@ function updateShapeByCpnElement(element, canvas, eventBus) {
   const changePosition = (changingElement) => {
     let delta = [];
     let changingEntry = changingElement.cpnElement.posattr ? changingElement.cpnElement.posattr : changingElement.cpnElement;
-    if ((changingElement.cpnElement[form] )) {
+    if ((changingElement.cpnElement[form])) {
       let w;
       let h;
       try {
         w = changingElement.cpnElement[form] ? changingElement.cpnElement[form]._w : undefined;
-        h = changingElement.cpnElement[form] ? changingElement.cpnElement[form]._h: undefined;
-      } catch( e) {
+        h = changingElement.cpnElement[form] ? changingElement.cpnElement[form]._h : undefined;
+      } catch (e) {
         if (!(w && h)) {
           w = changingElement.width;
           h = changingElement.height;
         }
       }
-      let x =  Math.round(changingEntry._x);
-      let y =  Math.round(changingEntry._y) * -1;
+      let x = Math.round(changingEntry._x);
+      let y = Math.round(changingEntry._y) * -1;
       // if( isString(changingEntry._x) || isString(changingEntry._y)) {
       //   x -= w / 2;
       //   y -= h / 2;
@@ -147,14 +174,14 @@ function updateShapeByCpnElement(element, canvas, eventBus) {
       delta.x = x - changingElement.x;
       delta.y = y - changingElement.y;
       // let gfx;
-       for( let label of element.labels) {
-         label.x += delta.x;
-         label.y += delta.y;
-       }
+      for (let label of element.labels) {
+        label.x += delta.x;
+        label.y += delta.y;
+      }
       changingElement.x = x;
       changingElement.y = y;
       let gfx = canvas._elementRegistry.getGraphics(changingElement);
-      eventBus.fire('shape.changed', {element: changingElement, gfx: gfx , type: "shape.changed"})
+      eventBus.fire('shape.changed', { element: changingElement, gfx: gfx, type: "shape.changed" })
 
     }
   };
@@ -167,13 +194,13 @@ function updateShapeByCpnElement(element, canvas, eventBus) {
   }
 
   changeName(element.cpnElement);
-   changePosition(element, undefined);
+  changePosition(element, undefined);
   /*if(delta && element.labels.length > 0) {
     for( let label of element.labels) {
       changePosition(label, delta)
     }
   }*/
-   resize(element.cpnElement);
+  resize(element.cpnElement);
 
   console.log('Modeling.updateShapeByCpnElement(), element = ', element);
 }
@@ -310,19 +337,23 @@ Modeling.prototype.getMarkingLabelElement = function (element) {
 
 
 Modeling.prototype.clearErrorMarking = function () {
-  const elements = this._canvas._elementRegistry._elements;
-  console.log('Modeling.prototype.clearErrorMarking(), elements = ', elements);
-  for (const key of Object.keys(elements)) {
-    console.log('Modeling.prototype.clearErrorMarking(), key = ', key);
-    console.log('Modeling.prototype.clearErrorMarking(), elements[key] = ', elements[key]);
 
-    const element = elements[key].element;
+  this.setCpnStatus({ clear: '*'});
 
-    if (isCpn(element)) {
-      element.iserror = false;
-      this.updateElement(element);
-    }
-  }
+
+  // const elements = this._canvas._elementRegistry._elements;
+  // console.log('Modeling.prototype.clearErrorMarking(), elements = ', elements);
+  // for (const key of Object.keys(elements)) {
+  //   console.log('Modeling.prototype.clearErrorMarking(), key = ', key);
+  //   console.log('Modeling.prototype.clearErrorMarking(), elements[key] = ', elements[key]);
+
+  //   const element = elements[key].element;
+
+  //   if (isCpn(element)) {
+  //     element.iserror = false;
+  //     this.updateElement(element);
+  //   }
+  // }
 };
 
 
@@ -344,7 +375,7 @@ Modeling.prototype.getPlaceAttrs = function (cpnPlaceElement, type) {
   x -= w / 2;
   y -= h / 2;
   cpnPlaceElement.posattr._x = x;
-  cpnPlaceElement.posattr._y = -1*y;
+  cpnPlaceElement.posattr._y = -1 * y;
   var attrs = {
     type: type,
     id: cpnPlaceElement._id,
@@ -508,7 +539,7 @@ Modeling.prototype.getTransAttrs = function (cpnTransElement, type) {
   x -= w / 2;
   y -= h / 2;
   cpnTransElement.posattr._x = x;
-  cpnTransElement.posattr._y = -1*y;
+  cpnTransElement.posattr._y = -1 * y;
 
   var attrs = {
     type: type,

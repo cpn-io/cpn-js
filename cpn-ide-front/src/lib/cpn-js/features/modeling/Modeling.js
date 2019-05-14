@@ -742,8 +742,8 @@ Modeling.prototype.createElementInModel = function (position, type) {
       };
     }
 
-    relPos['initmark'] = { _x: x + w, _y: y - h / 2 };
-    relPos['type'] = { _x: x + w, _y: y + h / 2 };
+    relPos['initmark'] = { _x: x + w, _y: y + h / 2 };
+    relPos['type'] = { _x: x + w, _y: y - h / 2 };
 
     relPos['time'] = { _x: x + w, _y: y + h / 2 };
     relPos['code'] = { _x: x + w, _y: y - h / 2 };

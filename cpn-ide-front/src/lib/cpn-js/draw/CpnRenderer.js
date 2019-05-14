@@ -65,6 +65,10 @@ var PORT_STROKE_COLOR = '#4c66cc';
 var TOKEN_FILL_COLOR = '#6fe117';
 var MARKING_FILL_COLOR = '#bcfd8b';
 
+var ERROR_FILL_COLOR = '#ee0000';
+var PROCESS_FILL_COLOR = '#cccc00';
+var READY_FILL_COLOR = '#00cc00';
+
 inherits(CpnRenderer, BaseRenderer);
 
 CpnRenderer.$inject = [
@@ -86,10 +90,9 @@ export default function CpnRenderer(
   var rendererId = RENDERER_IDS.next();
 
   var markers = {};
+  var shadows = {};
 
   var computeStyle = styles.computeStyle;
-
-
 
   // ------------------------------------------------------------
   // shadows
@@ -98,28 +101,41 @@ export default function CpnRenderer(
     var id = 'shadow-' + fill + '-' + rendererId;
 
     if (!shadows[id]) {
-      createShadow(fill);
+      shadows[id] = createShadow(id, fill);
     }
 
     return 'url(#' + id + ')';
   }
 
-  function createShadow(id) {
-    var sequenceflowEnd = svgCreate('path');
-    svgAttr(sequenceflowEnd, { d: 'M 1 5 L 11 10 L 1 15 Z' });
-
-    addMarker(id, {
-      element: sequenceflowEnd,
-      ref: { x: 11, y: 10 },
-      scale: 1.0,
-      attrs: {
-        fill: stroke,
-        stroke: stroke
-      }
+  function createShadow(id, fill) {
+    var filter = svgCreate('filter');
+    svgAttr(filter, {
+      id: id,
+      x: -0.3,
+      y: -0.3,
+      width: '200%',
+      height: '200%'
     });
+
+    var feDropShadow = svgCreate('feDropShadow');
+    svgAttr(feDropShadow, {
+      dx: 0,
+      dy: 0,
+      stdDeviation: 5,
+      'flood-color': fill,
+      'flood-opacity': 1
+    });
+    svgAppend(filter, feDropShadow);
+
+    var defs = domQuery('defs', canvas._svg);
+    if (!defs) {
+      defs = svgCreate('defs');
+      svgAppend(canvas._svg, defs);
+    }
+    svgAppend(defs, filter);
+
+    return filter;
   }
-
-
 
   // ------------------------------------------------------------
   // markers
@@ -187,11 +203,13 @@ export default function CpnRenderer(
 
     if (type === 'connection-end') {
       var sequenceflowEnd = svgCreate('path');
-      svgAttr(sequenceflowEnd, { d: 'M 1 5 L 11 10 L 1 15 Z' });
+      // svgAttr(sequenceflowEnd, { d: 'M 1 5 L 11 10 L 1 15 Z' });
+      svgAttr(sequenceflowEnd, { d: 'M 11 5 L 1 9 L 3 5 L 1 1 Z' });
 
       addMarker(id, {
         element: sequenceflowEnd,
-        ref: { x: 11, y: 10 },
+        // ref: { x: 11, y: 10 },
+        ref: { x: 11, y: 5 },
         scale: 1.0,
         attrs: {
           fill: stroke,
@@ -199,6 +217,22 @@ export default function CpnRenderer(
         }
       });
     }
+
+    if (type === 'connection-start') {
+      var sequenceflowEnd = svgCreate('path');
+      svgAttr(sequenceflowEnd, { d: 'M 1 5 L 11 9 L 9 5 L 11 1 Z' });
+
+      addMarker(id, {
+        element: sequenceflowEnd,
+        ref: { x: 0, y: 5 },
+        scale: 1.0,
+        attrs: {
+          fill: stroke,
+          stroke: stroke
+        }
+      });
+    }
+
   }
 
   function drawRect(parentGfx, width, height, r, offset, attrs) {
@@ -254,11 +288,10 @@ export default function CpnRenderer(
   }
 
   function drawPath(parentGfx, d, attrs) {
-
-    attrs = computeStyle(attrs, ['no-fill'], {
-      strokeWidth: 2,
-      stroke: 'black'
-    });
+    // attrs = computeStyle(attrs, ['no-fill'], {
+    //   strokeWidth: 2,
+    //   stroke: 'black'
+    // });
 
     var path = svgCreate('path');
     svgAttr(path, { d: d });
@@ -487,9 +520,11 @@ export default function CpnRenderer(
     svgAttr(ellipse, {
       fill: getFillColor(element),
       stroke: getStrokeColor(element),
-      strokeWidth: strokeWidth
+      strokeWidth: strokeWidth,
     });
-    svgClasses(ellipse).add('cpnjs-shape-error');
+    svgAttr(ellipse, {
+      filter: shadow(ERROR_FILL_COLOR),
+    });
     svgAppend(parentGfx, ellipse);
 
     // Draw subst frame
@@ -563,6 +598,9 @@ export default function CpnRenderer(
       fill: getFillColor(element),
       stroke: getStrokeColor(element),
       strokeWidth: strokeWidth,
+    });
+    svgAttr(rect, {
+      filter: shadow(READY_FILL_COLOR),
     });
     svgAppend(parentGfx, rect);
 
@@ -736,25 +774,26 @@ export default function CpnRenderer(
 
     var attrs = {
       strokeLinejoin: 'round',
+      markerStart: marker('connection-start', fill, strokeColor),
       markerEnd: marker('connection-end', fill, strokeColor),
       stroke: strokeColor,
-      strokeWidth: getStrokeWidth(element)
+      strokeWidth: getStrokeWidth(element),
+      // filter: shadow(ERROR_FILL_COLOR),
     };
 
-    if (element.iserror) {
-      strokeColor = ERROR_STROKE_COLOR;
+    // if (element.iserror) {
+    //   strokeColor = ERROR_STROKE_COLOR;
 
-      var attrsError = {
-        strokeLinejoin: 'round',
-        markerEnd: marker('connection-end', fill, strokeColor),
-        stroke: strokeColor,
-        strokeWidth: 7
-      };
-      var path = drawPath(parentGfx, pathData, attrsError);
-    }
-    var path = drawPath(parentGfx, pathData, attrs);
+    //   var attrsError = {
+    //     strokeLinejoin: 'round',
+    //     markerEnd: marker('connection-end', fill, strokeColor),
+    //     stroke: strokeColor,
+    //     strokeWidth: 7
+    //   };
+    //   var path = drawPath(parentGfx, pathData, attrsError);
+    // }
 
-    return path;
+    return drawPath(parentGfx, pathData, attrs);
   };
 
   // -------------------------------------------------

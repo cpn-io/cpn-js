@@ -149,6 +149,13 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
     tokenElement.label.hidden = !tokenElement.label.hidden;
     modeling.updateElement(tokenElement.label);
+
+    if (!tokenElement.label.hidden) {
+      // eventBus.fire('elements.changed', { elements: [ tokenElement.label ] });
+      // graphicsFactory.update('shape', event.element, event.gfx);
+
+      modeling.moveShape(tokenElement.label, { x: 0, y: 0 }, tokenElement.label.parent, undefined, undefined);
+    }
   }
 
   // crop connection ends during create/update
@@ -200,7 +207,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   function updateLabels(e) {
     // console.log('CpnUpdater(), updateLabel(), e = ', e);
     var shape = e.element;
-    for(let label of shape.labels){
+    for (let label of shape.labels) {
       updateCpnElement(label);
     }
 
@@ -216,7 +223,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     //   'cpn:Connection': { entry: ['annot'] }
     // }
 
-   // console.log('CpnUpdater().updateCpnElement(), e = ', e);
+    // console.log('CpnUpdater().updateCpnElement(), e = ', e);
 
     var shape = element;
     let elemCase = modelCase[element.type];

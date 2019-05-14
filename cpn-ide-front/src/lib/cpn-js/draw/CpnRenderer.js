@@ -451,8 +451,9 @@ export default function CpnRenderer(
     svgAttr(ellipse, {
       fill: getFillColor(element),
       stroke: getStrokeColor(element),
-      strokeWidth: strokeWidth,
+      strokeWidth: strokeWidth
     });
+    svgClasses(ellipse).add('cpnjs-shape-error');
     svgAppend(parentGfx, ellipse);
 
     // Draw subst frame

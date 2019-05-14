@@ -68,8 +68,8 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   // });
 
   eventBus.on('shape.changed', function (e) {
-    updateLabels(e);
-    updateCpnElement(e);
+    updateLabels(e.element);
+    updateCpnElement(e.element);
   });
 
   eventBus.on('element.hover', function (event) {
@@ -197,9 +197,9 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     });
   }
 
-  function updateLabels(e) {
+  function updateLabels(element) {
     // console.log('CpnUpdater(), updateLabel(), e = ', e);
-    var shape = e.element;
+    var shape = element;
     for(let label of shape.labels){
       updateCpnElement(label);
     }
@@ -226,7 +226,6 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     if (cpnElement && cpnElement.posattr && cpnElement.ellipse) {
       cpnElement.posattr._x = shape.x;
       cpnElement.posattr._y = shape.y * -1;
-      cpnElement.posattr._x = shape.x;
       cpnElement.ellipse._w = shape.width;
       cpnElement.ellipse._h = shape.height;
     }
@@ -238,6 +237,12 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
       cpnElement.box._w = shape.width;
       cpnElement.box._h = shape.height;
     }
+
+    if (cpnElement && cpnElement.posattr && cpnElement.type === CPN_LABEL) {
+      cpnElement.posattr._x = shape.x;
+      cpnElement.posattr._y = shape.y * -1;
+    }
+
   }
 }
 

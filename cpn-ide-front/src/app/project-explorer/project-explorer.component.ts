@@ -704,9 +704,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     if (event.code !== undefined) {
       code = event.code;
 
-    } else if (event['keyIdentifier'] !== undefined) {
-      // поддержка safari
-      code = event['keyIdentifier'];
+    // } else if (event.keyIdentifier !== undefined) {
+    //   // поддержка safari
+    //   code = event.keyIdentifier;
 
     } else if (event.keyCode !== undefined) {
       code = event.keyCode;

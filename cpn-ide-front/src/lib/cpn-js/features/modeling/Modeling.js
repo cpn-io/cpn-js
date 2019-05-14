@@ -138,26 +138,25 @@ function updateShapeByCpnElement(element) {
       }
       let x =  Math.round(changingEntry._x);
       let y =  Math.round(changingEntry._y) * -1;
-      if( isString(changingEntry._x) || isString(changingEntry._y)) {
-        x -= w / 2;
-        y -= h / 2;
-      }
+      // if( isString(changingEntry._x) || isString(changingEntry._y)) {
+      //   x -= w / 2;
+      //   y -= h / 2;
+      // }
       // element.x =  delta.x;
       //  element.y =  delta.y;
       delta.x = x - changingElement.x;
       delta.y = y - changingElement.y;
       // let gfx;
-      // for( let label of element.labels) {
-      //   label.x += delta.x;
-      //   label.y += delta.y;
-      //   gfx = this.canvas._elementRegistry.getGraphics(label);
-      //   this._eventBus.fire()
-      //
-      // }
+       for( let label of element.labels) {
+         label.x += delta.x;
+         label.y += delta.y;
+       }
       changingElement.x = x;
       changingElement.y = y;
+    //  let gfx = this.canvas._elementRegistry.getGraphics(label);
+     // this._eventBus.fire('shape.changed', {element: changingElement, gfx: gfx , type: "shape.changed"})
+
     }
-    return  delta;
   };
 
   const resize = (cpnElement) => {
@@ -168,7 +167,7 @@ function updateShapeByCpnElement(element) {
   }
 
   changeName(element.cpnElement);
-  let delta = changePosition(element, undefined);
+   changePosition(element, undefined);
   /*if(delta && element.labels.length > 0) {
     for( let label of element.labels) {
       changePosition(label, delta)
@@ -344,7 +343,8 @@ Modeling.prototype.getPlaceAttrs = function (cpnPlaceElement, type) {
   var h = Math.round(cpnPlaceElement.ellipse._h);
   x -= w / 2;
   y -= h / 2;
-
+  cpnPlaceElement.posattr._x = x;
+  cpnPlaceElement.posattr._y = -1*y;
   var attrs = {
     type: type,
     id: cpnPlaceElement._id,
@@ -507,6 +507,8 @@ Modeling.prototype.getTransAttrs = function (cpnTransElement, type) {
   var h = Math.round(cpnTransElement.box._h);
   x -= w / 2;
   y -= h / 2;
+  cpnTransElement.posattr._x = x;
+  cpnTransElement.posattr._y = -1*y;
 
   var attrs = {
     type: type,

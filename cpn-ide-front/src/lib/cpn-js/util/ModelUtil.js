@@ -9,6 +9,11 @@ export const CPN_TOKEN_LABEL = 'cpn:TokenLabel';
 export const CPN_MARKING_LABEL = 'cpn:MarkingLabel';
 export const CPN_CONNECTION = 'cpn:Connection';
 export const CPN_TEXT_ANNOTATION = 'cpn:TextAnnotation';
+export  const modelCase = {
+  'cpn:Place': { form: 'ellipse', entry: ['initmark', 'type'] },
+  'cpn:Transition': { form: 'box', entry: ['time', 'code', 'priority', 'cond'] },
+  'cpn:Connection': { entry: ['annot'] }
+}
 
 /**
  * @param  element

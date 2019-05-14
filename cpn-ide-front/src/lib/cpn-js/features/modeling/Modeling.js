@@ -81,7 +81,7 @@ Modeling.prototype.updateElement = function (element) {
   // console.log('Modeling().updateElement(), element = ', element);
 
   if (element) {
-    updateShapeByCpnElement(element);
+    updateShapeByCpnElement(element, this._canvas, this._eventBus);
 
     this._eventBus.fire('element.changed', { element: element });
 
@@ -102,7 +102,7 @@ function isString(v) {
  *
  * @param {*} element
  */
-function updateShapeByCpnElement(element) {
+function updateShapeByCpnElement(element, canvas, eventBus) {
   let form = element.cpnElement.ellipse ? 'ellipse' : 'box';
   const changeName = (cpnElement) => {
     if (cpnElement && cpnElement._name) {
@@ -153,8 +153,8 @@ function updateShapeByCpnElement(element) {
        }
       changingElement.x = x;
       changingElement.y = y;
-    //  let gfx = this.canvas._elementRegistry.getGraphics(label);
-     // this._eventBus.fire('shape.changed', {element: changingElement, gfx: gfx , type: "shape.changed"})
+      let gfx = canvas._elementRegistry.getGraphics(changingElement);
+      eventBus.fire('shape.changed', {element: changingElement, gfx: gfx , type: "shape.changed"})
 
     }
   };
@@ -173,7 +173,7 @@ function updateShapeByCpnElement(element) {
       changePosition(label, delta)
     }
   }*/
-  // resize(element.cpnElement);
+   resize(element.cpnElement);
 
   console.log('Modeling.updateShapeByCpnElement(), element = ', element);
 }

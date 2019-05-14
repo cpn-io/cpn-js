@@ -36,7 +36,7 @@ public class PetriNetModel {
         return usersNets.get(userSessionId);
     }
 
-    public void setPetriNet(String userSessionId,PetriNet petriNet) throws Exception  {
+    public void initializePetriNet(String userSessionId,PetriNet petriNet) throws Exception  {
         usersNets.clear();
         usersNets.put(userSessionId, petriNet);
         final Checker checker = new Checker(petriNet, null, sim);
@@ -44,14 +44,21 @@ public class PetriNetModel {
         checker.localCheck();
         checker.checkInitializing();
         checker.checkDeclarations();
-        //  checker.generateSerializers();
+        checker.generateSerializers();
         checker.checkPages();
         checker.generatePlaceInstances();
         checker.checkMonitors();
         checker.generateNonPlaceInstances();
         checker.initialiseSimulationScheduler();
-        // checker.instantiateSMLInterface();
+        checker.instantiateSMLInterface();
+
     }
+
+
+    public void setPetriNet(String userSessionId,PetriNet petriNet) {
+        usersNets.put(userSessionId, petriNet);
+    }
+
 
     public HighLevelSimulator getHighLevelSimulator(){
         return  this.sim;

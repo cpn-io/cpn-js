@@ -94,7 +94,8 @@ public class CpnController {
                 String jsonstr = requestBody.get(0).get("xml").toString();
                 String sessionId = requestBody.get(0).get("sessionId").toString();
                 System.out.println("new SESSION ID ------- " + sessionId );
-                if(! petriNetModel.isContain(sessionId)) petriNetModel.setPetriNet(sessionId, DOMParser.parse(new ByteArrayInputStream(jsonstr.getBytes(StandardCharsets.UTF_8)), "myNet.cpnide"));
+                if(! petriNetModel.isContain(sessionId)) petriNetModel.initializePetriNet(sessionId, DOMParser.parse(new ByteArrayInputStream(jsonstr.getBytes(StandardCharsets.UTF_8)), "myNet.cpnide"));
+                 else petriNetModel.setPetriNet(sessionId, DOMParser.parse(new ByteArrayInputStream(jsonstr.getBytes(StandardCharsets.UTF_8)), "myNet.cpnide"));
                 // petriNetModel.setPetriNet(sessionId ,DOMParser.parse(new URL("file://" + fileName)));
 
                 // final PetriNet petriNet = DOMParser.parse(new URL("file://" + fileName));
@@ -107,14 +108,14 @@ public class CpnController {
                 final Checker checker = new Checker(petriNetModel.getPetriNet(sessionId), null, s);
                 petriNetModel.check(petriNetModel.getPetriNet(sessionId));
                 checker.localCheck();
-                checker.checkInitializing();
+               // checker.checkInitializing();
                 checker.checkDeclarations();
               //  checker.generateSerializers();
                 checker.checkPages();
                // checker.generatePlaceInstances();
                 checker.checkMonitors();
                 //checker.generateNonPlaceInstances();
-                checker.initialiseSimulationScheduler();
+               // checker.initialiseSimulationScheduler();
                // checker.instantiateSMLInterface();
 
 //                checker.checkEntireModel();
@@ -140,7 +141,7 @@ public class CpnController {
             //   message = s.evaluate(switchContent);
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            //System.out.println(e.getMessage());
             message = e.getMessage();
 
 
@@ -246,9 +247,21 @@ public class CpnController {
         //String type = requestBody.get(0).get("type").toString();
         try {
             //String id = requestBody.get(0).get("id").toString();
-            //String sessionId = requestBody.get(0).get("sessionId").toString();
+            String sessionId = requestBody.get(0).get("sessionId").toString();
             final HighLevelSimulator s = petriNetModel.getHighLevelSimulator();
-            // final Checker checker = new Checker(petriNetModel.getPetriNet(sessionId), null, s);
+            final Checker checker = new Checker(petriNetModel.getPetriNet(sessionId), null, s);
+           // checker.localCheck();
+           // checker.checkInitializing();
+           // checker.checkDeclarations();
+            //checker.generateSerializers();
+            //checker.checkPages();
+            //checker.generatePlaceInstances();
+            //checker.checkMonitors();
+            //checker.generateNonPlaceInstances();
+           // checker.initialiseSimulationScheduler();
+           // checker.instantiateSMLInterface();
+            //s.setTarget((org.cpntools.accesscpn.model.impl.PetriNetImpl)petriNetModel.getPetriNet(sessionId));
+           // petriNetModel.checkEntireModel(petriNetModel.getPetriNet(sessionId), s);
             //List<Binding> bindings = new LinkedList<Binding>();
             List<Instance<Transition>> tis = s.getAllTransitionInstances();
             String arr[] = new String[tis.size()];

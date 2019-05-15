@@ -207,7 +207,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   function updateLabels(element) {
     // console.log('CpnUpdater(), updateLabel(), e = ', e);
     var shape = element;
-    for(let label of shape.labels){
+    for (let label of shape.labels) {
       updateCpnElement(label);
     }
 

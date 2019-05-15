@@ -222,7 +222,7 @@ export class ModelService {
 
 
   sendChangingElementToDeclarationPanel(node, elementType, action, id, blockId, state) {
-    if (elementType === 'Declarations' || elementType === 'block') {
+    if (elementType === 'Declarations' || elementType === 'block' || elementType === 'globbox') {
       this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
         node: action === 'rename' ? node : undefined,
         action: action,

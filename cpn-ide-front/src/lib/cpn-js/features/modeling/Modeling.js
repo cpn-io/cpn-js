@@ -83,6 +83,7 @@ Modeling.prototype.updateElement = function (element) {
   if (element) {
     updateShapeByCpnElement(element, this._canvas, this._eventBus);
 
+    this._eventBus.fire('element.changed', { element: element });
 
     if (element.labels) {
       for (const l of element.labels) {
@@ -90,8 +91,6 @@ Modeling.prototype.updateElement = function (element) {
         // this.updateLabel(l, getText(l), getBox(l));
       }
     }
-
-    this._eventBus.fire('element.changed', { element: element });
   }
 };
 
@@ -390,8 +389,6 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
   if (labelType !== 'aux') {
     x -= bounds.width / 2;
     y -= bounds.height / 2;
-    cpnLabelElement.posattr._x = x;
-    cpnLabelElement.posattr._y = -1*y;
   }
 
   var attrs = {

@@ -94,9 +94,6 @@ export class ModelEditorComponent implements OnInit {
     this.modeling.setDefaultValue('box', { h: 50, w: 80 });
 
 
-
-
-
     eventBus.on('import.render.complete', (event) => {
       const pageElement = event.source;
 
@@ -104,10 +101,20 @@ export class ModelEditorComponent implements OnInit {
 
       this.eventService.send(Message.MODEL_UPDATE, { pageObject: pageElement });
 
+      // set status 'clear' for all shapes on diagram
+      this.modeling.setCpnStatus({ clear: '*' });
+
+      // set status 'process' for all shapes on diagram
+      this.modeling.setCpnStatus({ process: '*' });
     });
 
     this.eventService.on(Message.VERIFICATION_DONE, () => {
       console.log('VERIFICATION_DONE (3)');
+
+      // set status 'clear' for all shapes on diagram
+      this.modeling.setCpnStatus({ clear: '*' });
+      // TODO: temporary set error and ready status for test shapes. Should be changed to real id
+      this.modeling.setCpnStatus({ error: ['ID1412328424'], ready: ['ID1412328496'] });
 
       this.emitterService.getMarking(undefined).subscribe(
         (data: any) => {
@@ -514,13 +521,15 @@ export class ModelEditorComponent implements OnInit {
 
           const cpnElementId = id.trim().slice(0, -1);
 
-          const element = this.modeling.getElementByCpnElementId(cpnElementId);
-          console.log('MODEL_ERROR, element = ', element);
+          this.modeling.setCpnStatus({ error: [cpnElementId] });
 
-          if (element) {
-            element.iserror = true;
-            this.modeling.updateElement(element);
-          }
+          // const element = this.modeling.getElementByCpnElementId(cpnElementId);
+          // console.log('MODEL_ERROR, element = ', element);
+
+          // if (element) {
+          //   element.iserror = true;
+          //   this.modeling.updateElement(element);
+          // }
 
           // shape = this.placeShapes[(id.trim()).slice(0, -1)];
           // if (shape && shape.id) {

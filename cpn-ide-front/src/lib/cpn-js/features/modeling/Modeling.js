@@ -109,25 +109,27 @@ Modeling.prototype.updateLabel = function (element, newLabel, newBounds, hints) 
 
 Modeling.prototype.updateElement = function (element) {
   // console.log('Modeling().updateElement(), element = ', element);
-
+  if (element.labels) {
+    for (const lb of element.labels) {
+      this.updateElement(lb);
+    }
+  }
   if (element) {
     updateShapeByCpnElement(element, this._canvas, this._eventBus);
-
-    if (element.labels) {
-      for (const l of element.labels) {
-        this.updateElement(l);
-        // this.updateLabel(l, getText(l), getBox(l));
-        if(l.type !== CPN_TOKEN_LABEL && l.type !== CPN_MARKING_LABEL && (l.text || l.name)) {
-          let newBounds = this._textRenderer.getExternalLabelBounds(l, l.text || l.name);
-          this.updateLabel(l, l.text || l.name, newBounds);
-        }
-      }
-    }
-    this._eventBus.fire('element.changed', { element: element });
-
-
+     this._eventBus.fire('element.changed', { element: element });
   }
 };
+
+Modeling.prototype.updateElementBounds = function(element) {
+  if(element.labels){
+    for (const l of element.labels) {
+      if(l.type !== CPN_TOKEN_LABEL && l.type !== CPN_MARKING_LABEL && (l.text || l.name)) {
+        let newBounds = this._textRenderer.getExternalLabelBounds(l, l.text || l.name);
+        this.updateLabel(l, l.text || l.name, newBounds);
+      }
+    }
+  }
+}
 
 function isString(v) {
   return (typeof v === 'string' || v instanceof String);
@@ -180,7 +182,28 @@ function updateShapeByCpnElement(element, canvas, eventBus) {
        }
       changingElement.x = x;
       changingElement.y = y;
+
       if(delta.x !== 0 || delta.y !== 0) {
+        /*let changedEnd;
+        for (const key of Object.keys(canvas._elementRegistry._elements)) {
+          const el = canvas._elementRegistry._elements[key].element;
+          if(el.type === CPN_CONNECTION) {
+            if(el.cpnPlace === changingElement.id){
+              changedEnd = el.cpnPlace;
+            } else if( el.cpnTransition === changingElement.id){
+              changedEnd = el.cpnTransition
+            }
+            if(changedEnd) {
+              let wayPointIndex;
+              if(changedEnd.type === CPN_PLACE) wayPointIndex = el.cpnElement.orientation === 'PtoT' ? 0 : el.waypoints.length;
+              if(changedEnd.type === CPN_TRANSITION) wayPointIndex = el.cpnElement.orientation === 'TtoP' ? 0 : el.waypoints.length;
+              el.waypoints[wayPointIndex].original.x = changedEnd.x;
+              el.waypoints[wayPointIndex].original.y = changedEnd.y;
+              el.waypoints[wayPointIndex].x += delta.x;
+              el.waypoints[wayPointIndex].x += delta.y;
+            }
+          }
+        }*/
         let gfx = canvas._elementRegistry.getGraphics(changingElement);
         eventBus.fire('shape.changed', {element: changingElement, gfx: gfx, type: "shape.changed"})
       }

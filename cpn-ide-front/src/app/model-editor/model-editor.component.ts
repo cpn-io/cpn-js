@@ -12,6 +12,17 @@ import { ModelService } from '../services/model.service';
 
 import { importCpnPage } from '../../lib/cpn-js/import/Importer';
 import { element } from 'protractor';
+import {
+  CPN_LABEL,
+  CPN_TOKEN_LABEL,
+  CPN_MARKING_LABEL,
+  isCpn,
+  is,
+  CPN_PLACE,
+  CPN_TRANSITION,
+  CPN_CONNECTION,
+  isAny,
+} from '../../lib/cpn-js/util/ModelUtil';
 
 
 @Component({
@@ -576,11 +587,15 @@ export class ModelEditorComponent implements OnInit {
 
 
   openPropPanel(element){
+    if(element.type === CPN_LABEL) {
+      element = element.labelTarget;
+    }
     if (element.labels) {
       let labels = [];
       for (let lab of element.labels) {
         labels[lab.labelType] = lab.cpnElement;
       }
+
 
       this.eventService.send(Message.SHAPE_SELECT, { element: element, labels: labels, cpnElement: element.cpnElement, type: element.type });
     }

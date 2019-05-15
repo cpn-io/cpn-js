@@ -396,15 +396,15 @@ export class ModelEditorComponent implements OnInit {
 
       this.modeling.updateElement(element);
 
-      this.modelUpdate();
-      if (element.labels) {
-        let labels = [];
-        for (let lab of element.labels) {
-          labels[lab.labelType] = lab.cpnElement;
-        }
+      // this.modelUpdate();
+      // if (element.labels) {
+      //   let labels = [];
+      //   for (let lab of element.labels) {
+      //     labels[lab.labelType] = lab.cpnElement;
+      //   }
 
-        this.eventService.send(Message.SHAPE_SELECT, { element: element, labels: labels, cpnElement: element.cpnElement, type: element.type });
-      }
+      //   this.eventService.send(Message.SHAPE_SELECT, { element: element, labels: labels, cpnElement: element.cpnElement, type: element.type });
+      // }
 
       // if (data.pagename === this.modelService.getPageById(this.pageId).pageattr._name) {
       // let testElem;

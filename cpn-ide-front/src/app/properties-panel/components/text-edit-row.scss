@@ -1,0 +1,39 @@
+div.valueRow {
+  display: table;
+  width: 100%;
+  padding-right: 2px;
+  border-bottom: 1px solid lightgrey;
+}
+
+div.valueRow:hover {
+  background: #efefef;
+}
+
+div.valueName {
+  display: table-cell;
+  vertical-align: middle;
+  width: 49%;
+  padding: 5px 10px;
+  border-right: 1px solid lightgrey;
+  font-size: 0.9em;
+  color: #999;
+}
+
+div.value {
+  display: table-cell;
+  vertical-align: middle;
+  width: 50%;
+  padding: 5px 10px;
+}
+
+.typeSelector {
+  border: none;
+  // background: none;
+  width: 100%;
+}
+
+.colorSelector {
+  border: none;
+  // background: none;
+  width: 100%;
+}

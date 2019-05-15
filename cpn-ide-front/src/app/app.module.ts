@@ -37,6 +37,8 @@ import {ModelService} from './services/model.service';
 import {EventService} from './services/event.service';
 import {ReplaceSpacesPipe} from './pipes/replace-spaces.pipe';
 import { SaveprojectButtonComponent } from './actions/saveproject-button/saveproject-button.component';
+import { BlockHeaderComponent } from './common/block-header';
+import { TextEditRowComponent } from './properties-panel/components/text-edit-row';
 
 // -----------------------------------------------------------------------------
 
@@ -61,6 +63,9 @@ import { SaveprojectButtonComponent } from './actions/saveproject-button/savepro
     PropertiesPanelComponent,
     MlEditorComponent,
     SaveprojectButtonComponent,
+
+    BlockHeaderComponent,
+    TextEditRowComponent
   ],
   imports: [
     BrowserModule,

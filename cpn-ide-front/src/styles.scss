@@ -134,6 +134,11 @@ html, body {
 .table .valueName {
   font-size: 0.9em;
   color: #999;
+  width: 50%;
+}
+
+.table tbody+tbody {
+  border: none;
 }
 
 // Blocks

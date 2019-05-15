@@ -419,8 +419,8 @@ export class ModelEditorComponent implements OnInit {
 
       this.modeling.updateElement(element);
      // this.selectedElement = element;
-      this.modelUpdate();
-      this.openPropPanel(element);
+      // this.modelUpdate();
+      // this.openPropPanel(element);
 
       // if (data.pagename === this.modelService.getPageById(this.pageId).pageattr._name) {
       // let testElem;

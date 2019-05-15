@@ -117,8 +117,6 @@ Modeling.prototype.updateElement = function (element) {
     updateShapeByCpnElement(element, this._canvas, this._eventBus);
 
     this._eventBus.fire('element.changed', { element: element });
-
-
   }
 };
 
@@ -132,6 +130,15 @@ function isString(v) {
  */
 function updateShapeByCpnElement(element, canvas, eventBus) {
   let form = element.cpnElement.ellipse ? 'ellipse' : 'box';
+
+  // check for min values
+  // if (element.cpnElement[form]) {
+  //   if (element.cpnElement[form]._w < 20)
+  //     element.cpnElement[form]._w = 20;
+  //   if (element.cpnElement[form]._h < 20)
+  //     element.cpnElement[form]._h = 20;
+  // }
+
   const changeName = (cpnElement) => {
     if (cpnElement && cpnElement._name) {
       element.text = cpnElement._name;
@@ -149,15 +156,15 @@ function updateShapeByCpnElement(element, canvas, eventBus) {
     }
   };
 
-  if(element.type === CPN_LABEL && (element.text || element.name)) {
+  if (element.type === CPN_LABEL && (element.text || element.name)) {
     element.hidden = false;
   }
   const changePosition = (changingElement) => {
     let delta = [];
     let changingEntry = changingElement.cpnElement.posattr ? changingElement.cpnElement.posattr : changingElement.cpnElement;
     if ((changingElement.cpnElement.posattr)) {
-      let x =  Math.round(changingEntry._x);
-      let y =  Math.round(changingEntry._y) * -1;
+      let x = Math.round(changingEntry._x);
+      let y = Math.round(changingEntry._y) * -1;
       // if( isString(changingEntry._x) || isString(changingEntry._y)) {
       //   x -= w / 2;
       //   y -= h / 2;
@@ -167,15 +174,15 @@ function updateShapeByCpnElement(element, canvas, eventBus) {
       delta.x = x - changingElement.x;
       delta.y = y - changingElement.y;
       // let gfx;
-       for( let label of element.labels) {
-         label.x += delta.x;
-         label.y += delta.y;
-       }
+      for (let label of element.labels) {
+        label.x += delta.x;
+        label.y += delta.y;
+      }
       changingElement.x = x;
       changingElement.y = y;
-      if(delta.x !== 0 && delta.y !== 0) {
+      if (delta.x !== 0 && delta.y !== 0) {
         let gfx = canvas._elementRegistry.getGraphics(changingElement);
-        eventBus.fire('shape.changed', {element: changingElement, gfx: gfx, type: "shape.changed"})
+        eventBus.fire('shape.changed', { element: changingElement, gfx: gfx, type: "shape.changed" })
       }
 
     }
@@ -184,10 +191,10 @@ function updateShapeByCpnElement(element, canvas, eventBus) {
   const resize = (cpnElement) => {
     if (cpnElement.ellipse || cpnElement.box) {
       element.width = parseInt(cpnElement[form]._w, 10);
-      element.height =  parseInt(cpnElement[form]._h, 10);
+      element.height = parseInt(cpnElement[form]._h, 10);
     }
   }
-  if(element.type === CPN_CONNECTION) {
+  if (element.type === CPN_CONNECTION) {
     element.orientation = element.cpnElement._orientation;
   }
   changeName(element.cpnElement);
@@ -199,6 +206,7 @@ function updateShapeByCpnElement(element, canvas, eventBus) {
     }
   }*/
 
+  // this.moveShape(element, { x: 0, y: 0 }, element.parent, undefined, undefined);
 
   console.log('Modeling.updateShapeByCpnElement(), element = ', element);
 }
@@ -369,7 +377,7 @@ Modeling.prototype.getPlaceAttrs = function (cpnPlaceElement, type) {
   x -= w / 2;
   y -= h / 2;
   cpnPlaceElement.posattr._x = x;
-  cpnPlaceElement.posattr._y = -1*y;
+  cpnPlaceElement.posattr._y = -1 * y;
   var attrs = {
     type: type,
     id: cpnPlaceElement._id,
@@ -533,7 +541,7 @@ Modeling.prototype.getTransAttrs = function (cpnTransElement, type) {
   x -= w / 2;
   y -= h / 2;
   cpnTransElement.posattr._x = x;
-  cpnTransElement.posattr._y = -1*y;
+  cpnTransElement.posattr._y = -1 * y;
 
   var attrs = {
     type: type,

@@ -12,243 +12,112 @@
 
 <div style="overflow-y: auto; height:100%; padding-bottom: 50px">
 
-  <!-- <table border="1" style="width:100%">
-    <tr>
-      <td nowrap>Test value</td>
-      <td contenteditable="true" [textContent]="cpnElement.text">
-      </td>
-    </tr>
-  </table>
-  <p>
-    {{ cpnElement.text }}
-  </p> -->
+  <div *ngIf="cpnElement">
 
-  <!-- commonNodes -->
-  <div *ngFor="let table of tables">
-    <div *ngIf="table.id === 'commonNodes'">
+    <!----------------->
+    <!-- Common part -->
+    <!----------------->
+    <div style="width:100%">
 
-      <table [id]="table.id" class="table table-bordered table-hover table-small">
-        <tr *ngFor="let item of table.data" [ngStyle]="item.hide && {display: 'none'}">
-          <td width="50%" class="valueName">{{ getFieldName(item.name) }}</td>
-          <td width="50%" ><input  *ngIf="item.name !== 'Stroke' && item.name !== 'background'; else elseBlock" class="inputfield" [type]="getContentType(item.name)" [value]="getFieldValue(table.id, item.name, item.value)" (change)="tableOnChange()"></td>
-          <ng-template #elseBlock> <input type="color"  list="color" (change)="tableOnChange()" [value]="getFieldValue(table.id, item.name, item.value)" />
-            <datalist id="colorCommon">
-              <option>#800000ff</option>
-              <option>#ffff00ff</option>
-              <option>#ffffffff</option>
-              <option>#ff0000ff</option>
-              <option>#c0c0c0ff</option>
-              <option>#008080ff</option>
-              <option>#000080ff</option>
-              <option>#00ffffff</option>
-              <option>#000000ff</option>
-              <option>#808000ff</option>
-              <option>#00ff00ff</option>
-              <option>#808080ff</option>
-              <option>#800080ff</option>
-              <option>#008000ff</option>
-              <option>#0000ffff</option>
-            </datalist>
-          </ng-template>
-        </tr>
-      </table>
+      <!-- Name (if no arc) -->
+      <app-text-edit-row *ngIf="!cpnElement._orientation" name="Name" [object]="cpnElement" field="text"
+        (changed)="updateChanges()">
+      </app-text-edit-row>
 
-    </div>
-  </div>
-
-  <div *ngFor="let table of tables">
-
-    <div *ngIf="table.data.length > 0 && table.id !== 'commonNodes'">
-
-      <div class="blockHeader" (click)="hideColapseTable(table, $event)">
-        <span class="caret"><i [ngClass]="table.visible ? 'fas fa-caret-down' : 'fas fa-caret-right'"></i></span>
-        <span
-          [ngClass]="table.visible ? 'active' : ''">{{table.visible ? table.name + ' Details' : table.name + ' Layout'}}</span>
+      <!-- Shape Labels -->
+      <div *ngFor="let labelKey of ['initmark', 'type', 'port', 'cond', 'time', 'code', 'priority', 'annot']">
+        <app-text-edit-row *ngIf="cpnElement[labelKey]" [name]="names[labelKey] || labelKey"
+          [object]="cpnElement[labelKey].text" field="__text" (changed)="updateChanges()">
+        </app-text-edit-row>
       </div>
 
-      <table [id]="table.id" [hidden]="!table.visible" class="table table-bordered table-hover table-small">
-        <tr *ngFor="let item of table.data" [ngStyle]="item.hide && {display: 'none'}">
-          <td width="50%" class="valueName">{{ getFieldName(item.name)}}</td>
-          <td  width="50%"><input  *ngIf="item.name !== 'Stroke' && item.name !== 'background'; else elseBlock" id="fname" class="inputfield" [type]="getContentType(item.name)" [value]="getFieldValue(table.id, item.name, item.value)" (change)="tableOnChange()">
-            <ng-template #elseBlock> <input type="color"  list="color" (change)="tableOnChange()" [value]="getFieldValue(table.id, item.name, item.value)" />
-            <datalist id="color">
-              <option>#800000ff</option>
-              <option>#ffff00ff</option>
-              <option>#ffffffff</option>
-              <option>#ff0000ff</option>
-              <option>#c0c0c0ff</option>
-              <option>#008080ff</option>
-              <option>#000080ff</option>
-              <option>#00ffffff</option>
-              <option>#000000ff</option>
-              <option>#808000ff</option>
-              <option>#00ff00ff</option>
-              <option>#808080ff</option>
-              <option>#800080ff</option>
-              <option>#008000ff</option>
-              <option>#0000ffff</option>
-            </datalist>
-            </ng-template>
-          </td>
-        </tr>
-      </table>
+      <!-- Port Labels -->
+      <div *ngFor="let labelKey of ['port']">
+        <app-text-edit-row *ngIf="cpnElement[labelKey]" [name]="names[labelKey] || labelKey"
+          [object]="cpnElement[labelKey]" field="text" (changed)="updateChanges()">
+        </app-text-edit-row>
+      </div>
+
+      <!-- Direction (only for acrs) -->
+      <app-text-edit-row *ngIf="cpnElement._orientation" type="select" name="Direction" [object]="cpnElement"
+        field="_orientation" (changed)="updateChanges()" [options]="orientations">
+      </app-text-edit-row>
+
+      <!-- Stroke color -->
+      <app-text-edit-row type="color" name="Stroke color" [object]="cpnElement.lineattr" field="_colour"
+        (changed)="updateChanges()" [colors]="colors">
+      </app-text-edit-row>
+
+    </div>
+
+    <!----------------->
+    <!-- Layout part -->
+    <!----------------->
+    <app-block-header [opened]="layoutPartOpened['common']"
+      (click)="layoutPartOpened['common']=!layoutPartOpened['common']"></app-block-header>
+
+    <div [hidden]="!layoutPartOpened['common']" style="width:100%">
+
+      <!-- Shape Position -->
+      <div *ngIf="cpnElement.posattr && !cpnElement._orientation">
+        <app-text-edit-row type="int" name="X" [object]="cpnElement.posattr" field="_x" (changed)="updateChanges()">
+        </app-text-edit-row>
+        <app-text-edit-row type="int" name="Y" [object]="cpnElement.posattr" field="_y" (changed)="updateChanges()">
+        </app-text-edit-row>
+      </div>
+
+      <!-- Shape Dimention -->
+      <div *ngFor="let form of ['ellipse', 'box']">
+        <app-text-edit-row type="int" name="Width" [object]="cpnElement[form]" field="_w" (changed)="updateChanges()">
+        </app-text-edit-row>
+        <app-text-edit-row type="int" name="Height" [object]="cpnElement[form]" field="_h" (changed)="updateChanges()">
+        </app-text-edit-row>
+      </div>
+
+      <!-- Stroke thick -->
+      <app-text-edit-row type="int" name="Stroke thick" [object]="cpnElement.lineattr" field="_thick"
+        (changed)="updateChanges()">
+      </app-text-edit-row>
+
+      <!-- Fill color -->
+      <app-text-edit-row *ngIf="!cpnElement._orientation" type="color" name="Fill color" [object]="cpnElement.fillattr"
+        field="_colour" (changed)="updateChanges()" [colors]="colors">
+      </app-text-edit-row>
+
+    </div>
+
+
+    <!----------------->
+    <!-- Label part -->
+    <!----------------->
+    <div *ngFor="let labelKey of ['type', 'initmark', 'port', 'cond', 'time', 'code', 'priority', 'annot']">
+
+      <div *ngIf="cpnElement[labelKey]">
+
+        <app-block-header [opened]="layoutPartOpened[labelKey]" [title]="names[labelKey] || labelKey"
+          (click)="layoutPartOpened[labelKey]=!layoutPartOpened[labelKey]"></app-block-header>
+
+        <div [hidden]="!layoutPartOpened[labelKey]" style="width:100%">
+
+          <!-- Label text -->
+          <app-text-edit-row [name]="names[labelKey] || labelKey" [object]="cpnElement[labelKey].text" field="__text"
+            (changed)="updateChanges()">
+          </app-text-edit-row>
+
+          <!-- Label position -->
+          <app-text-edit-row type="int" name="X" [object]="cpnElement[labelKey].posattr" field="_x"
+            (changed)="updateChanges()">
+          </app-text-edit-row>
+          <app-text-edit-row type="int" name="Y" [object]="cpnElement[labelKey].posattr" field="_y"
+            (changed)="updateChanges()">
+          </app-text-edit-row>
+
+        </div>
+
+      </div>
 
     </div>
 
   </div>
-  <!------------------->
-
-
-  <!--<div *ngIf="isPlace || isTrans || isArc">-->
-  <!--<div class="blockHeader" (click)="hideColapseTable('elementTable', $event)">-->
-  <!--&lt;!&ndash;{{title + ' Layout' + (nodes.length > 0 ? ' [' + nodes[0].value + ']' : '')}}&ndash;&gt;-->
-
-  <!--<span class="caret"><i [ngClass]="tables['elementTable'].visible ? 'fas fa-caret-down' : 'fas fa-caret-right'"></i></span>-->
-  <!--<span>{{tables['elementTable'].visible ? title + ' Details' : title + ' Layout'}}</span>-->
-  <!--</div>-->
-
-  <!--<table id="elementTable" hidden='true' class="table table-bordered table-hover table-small">-->
-  <!--<tr>-->
-  <!--<th>Attribute</th>-->
-  <!--<th>Value</th>-->
-  <!--</tr>-->
-  <!--<tr *ngFor="let item of nodes" [ngStyle]="item.hide && {display: 'none'}">-->
-  <!--<td>{{ item.name }}</td>-->
-  <!--<td contenteditable='true'>{{ item.value }}</td>-->
-  <!--&lt;!&ndash;input type="text" name="fname" ng-change="myFunction()" value="{{item.value}}"&ndash;&gt;-->
-  <!--</tr>-->
-  <!--</table>-->
-
-  <!--<div *ngIf="isPlace">-->
-  <!--<div class="blockHeader" (click)="hideColapseTable('typeTable', $event)">-->
-  <!--&lt;!&ndash;{{'Type Layout' + ' [' + type[0].value + ']'}}&ndash;&gt;-->
-  <!--&lt;!&ndash;{{'Type Layout'}}&ndash;&gt;-->
-
-  <!--<span class="caret"><i [ngClass]="tables['typeTable'].visible ? 'fas fa-caret-down' : 'fas fa-caret-right'"></i></span>-->
-  <!--<span>{{tables['typeTable'].visible ? 'Type Details' : 'Type Layout'}}</span>-->
-
-  <!--</div>-->
-  <!--<table id="typeTable" [hidden]="selectedElement === 'type' ? false : true"-->
-  <!--[ngClass]="selectedElement === 'type' ? 'table table-bordered table-hover table-small table-active'  : 'table table-bordered table-hover table-small'">-->
-  <!--<tr>-->
-  <!--<th>Attribute</th>-->
-  <!--<th>Value</th>-->
-  <!--</tr>-->
-  <!--<tr *ngFor="let item of type" [ngStyle]="item.hide && {display: 'none'}">-->
-  <!--<td>{{ item.name }}</td>-->
-  <!--<td contenteditable='true'>{{ item.value }}</td>-->
-  <!--&lt;!&ndash;input type="text" name="fname" ng-change="myFunction()" value="{{item.value}}"&ndash;&gt;-->
-  <!--</tr>-->
-  <!--</table>-->
-
-  <!--<div class="blockHeader" (click)="hideColapseTable('initmarkTable', $event)">-->
-  <!--&lt;!&ndash;{{'Initmark Layout' + ' [' + initmark[0].value + ']'}}&ndash;&gt;-->
-  <!--{{'Initmark Layout'}}-->
-  <!--</div>-->
-  <!--<table id="initmarkTable" [hidden]="selectedElement === 'initmark' ? false : true"-->
-  <!--[ngClass]="selectedElement === 'initmark' ? 'table table-bordered table-hover table-small table-active'  : 'table table-bordered table-hover table-small'">-->
-  <!--<tr>-->
-  <!--<th>Attribute</th>-->
-  <!--<th>Value</th>-->
-  <!--</tr>-->
-  <!--<tr *ngFor="let item of initmark" [ngStyle]="item.hide && {display: 'none'}">-->
-  <!--<td>{{ item.name }}</td>-->
-  <!--<td contenteditable='true'>{{ item.value }}</td>-->
-  <!--&lt;!&ndash;input type="text" name="fname" ng-change="myFunction()" value="{{item.value}}"&ndash;&gt;-->
-  <!--</tr>-->
-  <!--</table>-->
-  <!--</div>-->
-
-  <!--<div *ngIf="isTrans">-->
-  <!--<div class="blockHeader" (click)="hideColapseTable('condTable', $event)">-->
-  <!--&lt;!&ndash;{{'Cond Layout' + ' [' + cond[0].value + ']'}}&ndash;&gt;-->
-  <!--{{'Cond Layout'}}-->
-  <!--</div>-->
-
-  <!--<table id="condTable" [hidden]="selectedElement === 'cond' ? false : true"-->
-  <!--[ngClass]="selectedElement === 'cond' ? 'table table-bordered table-hover table-small table-active'  : 'table table-bordered table-hover table-small'">-->
-  <!--<tr>-->
-  <!--<th>Attribute</th>-->
-  <!--<th>Value</th>-->
-  <!--</tr>-->
-  <!--<tr *ngFor="let item of cond" [ngStyle]="item.hide && {display: 'none'}">-->
-  <!--<td>{{ item.name }}</td>-->
-  <!--<td contenteditable='true'>{{ item.value }}</td>-->
-  <!--&lt;!&ndash;input type="text" name="fname" ng-change="myFunction()" value="{{item.value}}"&ndash;&gt;-->
-  <!--</tr>-->
-  <!--</table>-->
-
-  <!--<div class="blockHeader" (click)="hideColapseTable('timeTable', $event)">-->
-  <!--&lt;!&ndash;{{'Time Layout' + ' [' + time[0].value + ']'}}&ndash;&gt;-->
-  <!--{{'Time Layout'}}-->
-  <!--</div>-->
-  <!--<table id="timeTable" [hidden]="selectedElement === 'time' ? false : true"-->
-  <!--[ngClass]="selectedElement === 'time' ? 'table table-bordered table-hover table-small table-active'  : 'table table-bordered table-hover table-small'">-->
-  <!--<tr>-->
-  <!--<th>Attribute</th>-->
-  <!--<th>Value</th>-->
-  <!--</tr>-->
-  <!--<tr *ngFor="let item of time" [ngStyle]="item.hide && {display: 'none'}">-->
-  <!--<td>{{ item.name }}</td>-->
-  <!--<td contenteditable='true'>{{ item.value }}</td>-->
-  <!--&lt;!&ndash;input type="text" name="fname" ng-change="myFunction()" value="{{item.value}}"&ndash;&gt;-->
-  <!--</tr>-->
-  <!--</table>-->
-
-  <!--<div class="blockHeader" (click)="hideColapseTable('codeTable', $event)">-->
-  <!--&lt;!&ndash;{{'Code Layout' + ' [' + code[0].value + ']'}}&ndash;&gt;-->
-  <!--{{'Code Layout'}}-->
-  <!--</div>-->
-  <!--<table id="codeTable" [hidden]="selectedElement === 'code' ? false : true"-->
-  <!--[ngClass]="selectedElement === 'code' ? 'table table-bordered table-hover table-small table-active'  : 'table table-bordered table-hover table-small'">-->
-  <!--<tr>-->
-  <!--<th>Attribute</th>-->
-  <!--<th>Value</th>-->
-  <!--</tr>-->
-  <!--<tr *ngFor="let item of code" [ngStyle]="item.hide && {display: 'none'}">-->
-  <!--<td>{{ item.name }}</td>-->
-  <!--<td contenteditable='true'>{{ item.value }}</td>-->
-  <!--&lt;!&ndash;input type="text" name="fname" ng-change="myFunction()" value="{{item.value}}"&ndash;&gt;-->
-  <!--</tr>-->
-  <!--</table>-->
-
-  <!--<div class="blockHeader" (click)="hideColapseTable('priorityTable', $event)">-->
-  <!--&lt;!&ndash;{{'Priority Layout' + ' [' + priority[0].value + ']'}}&ndash;&gt;-->
-  <!--{{'Priority Layout'}}-->
-  <!--</div>-->
-  <!--<table id="priorityTable" [hidden]="selectedElement === 'priority' ? false : true"-->
-  <!--[ngClass]="selectedElement === 'priority' ? 'table table-bordered table-hover table-small table-active'  : 'table table-bordered table-hover table-small'">-->
-  <!--<tr>-->
-  <!--<th>Attribute</th>-->
-  <!--<th>Value</th>-->
-  <!--</tr>-->
-  <!--<tr *ngFor="let item of priority" [ngStyle]="item.hide && {display: 'none'}">-->
-  <!--<td>{{ item.name }}</td>-->
-  <!--<td contenteditable='true'>{{ item.value }}</td>-->
-  <!--&lt;!&ndash;input type="text" name="fname" ng-change="myFunction()" value="{{item.value}}"&ndash;&gt;-->
-  <!--</tr>-->
-  <!--</table>-->
-  <!--</div>-->
-
-  <!--<div *ngIf="isArc">-->
-  <!--<div class="blockHeader" (click)="hideColapseTable('annotTable', $event)">-->
-  <!--&lt;!&ndash;{{'Annot Layout' + ' [' + annot[0].value + ']'}}&ndash;&gt;-->
-  <!--{{'Annot Layout'}}-->
-  <!--</div>-->
-
-  <!--<table id="annotTable" [hidden]="selectedElement === 'annot' ? false : true"-->
-  <!--[ngClass]="selectedElement === 'annot' ? 'table table-bordered table-hover table-small table-active'  : 'table table-bordered table-hover table-small'">-->
-  <!--<tr>-->
-  <!--<th>Attribute</th>-->
-  <!--<th>Value</th>-->
-  <!--</tr>-->
-  <!--<tr *ngFor="let item of annot" [ngStyle]="item.hide && {display: 'none'}">-->
-  <!--<td>{{ item.name }}</td>-->
-  <!--<td contenteditable='true'>{{ item.value }}</td>-->
-  <!--&lt;!&ndash;input type="text" name="fname" ng-change="myFunction()" value="{{item.value}}"&ndash;&gt;-->
-  <!--</tr>-->
-  <!--</table>-->
-  <!--</div>-->
-  <!--</div>-->
 
 </div>

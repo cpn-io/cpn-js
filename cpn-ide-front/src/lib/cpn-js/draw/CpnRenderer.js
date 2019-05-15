@@ -796,12 +796,29 @@ export default function CpnRenderer(
 
     var attrs = {
       strokeLinejoin: 'round',
-      markerStart: marker('connection-start', fill, strokeColor),
-      markerEnd: marker('connection-end', fill, strokeColor),
       stroke: strokeColor,
       strokeWidth: getStrokeWidth(element),
       // filter: shadow(ERROR_FILL_COLOR),
     };
+
+    if (element.cpnElement && element.cpnElement._orientation) {
+      if (element.cpnElement._orientation === 'PtoT') {
+        attrs = assign(attrs, {
+          markerStart: marker('connection-start', fill, strokeColor),
+        });
+      }
+      if (element.cpnElement._orientation === 'TtoP') {
+        attrs = assign(attrs, {
+          markerEnd: marker('connection-end', fill, strokeColor),
+        });
+      }
+      if (element.cpnElement._orientation === 'BOTHDIR') {
+        attrs = assign(attrs, {
+          markerStart: marker('connection-start', fill, strokeColor),
+          markerEnd: marker('connection-end', fill, strokeColor),
+        });
+      }
+    }
 
     // if (element.iserror) {
     //   strokeColor = ERROR_STROKE_COLOR;

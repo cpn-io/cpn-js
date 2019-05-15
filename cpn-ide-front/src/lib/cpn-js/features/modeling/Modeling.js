@@ -107,18 +107,18 @@ Modeling.prototype.updateLabel = function (element, newLabel, newBounds, hints) 
 
 Modeling.prototype.updateElement = function (element) {
   // console.log('Modeling().updateElement(), element = ', element);
-
+  if (element.labels) {
+    for (const l of element.labels) {
+      this.updateElement(l);
+      // this.updateLabel(l, getText(l), getBox(l));
+    }
+  }
   if (element) {
     updateShapeByCpnElement(element, this._canvas, this._eventBus);
 
     this._eventBus.fire('element.changed', { element: element });
 
-    if (element.labels) {
-      for (const l of element.labels) {
-        this.updateElement(l);
-        // this.updateLabel(l, getText(l), getBox(l));
-      }
-    }
+
   }
 };
 
@@ -149,6 +149,9 @@ function updateShapeByCpnElement(element, canvas, eventBus) {
     }
   };
 
+  if(element.type === CPN_LABEL && (element.text || element.name)) {
+    element.hidden = false;
+  }
   const changePosition = (changingElement) => {
     let delta = [];
     let changingEntry = changingElement.cpnElement.posattr ? changingElement.cpnElement.posattr : changingElement.cpnElement;

@@ -4,6 +4,8 @@ import BaseModeling from 'diagram-js/lib/features/modeling/Modeling';
 
 import UpdateLabelHandler from '../label-editing/cmd/UpdateLabelHandler';
 
+import LabelEditingProvider from '../label-editing/LabelEditingProvider'
+
 import {
   CPN_LABEL,
   CPN_TOKEN_LABEL,
@@ -107,15 +109,20 @@ Modeling.prototype.updateLabel = function (element, newLabel, newBounds, hints) 
 
 Modeling.prototype.updateElement = function (element) {
   // console.log('Modeling().updateElement(), element = ', element);
-  if (element.labels) {
-    for (const l of element.labels) {
-      this.updateElement(l);
-      // this.updateLabel(l, getText(l), getBox(l));
-    }
-  }
+
   if (element) {
     updateShapeByCpnElement(element, this._canvas, this._eventBus);
 
+    if (element.labels) {
+      for (const l of element.labels) {
+        this.updateElement(l);
+        // this.updateLabel(l, getText(l), getBox(l));
+        if(l.type !== CPN_TOKEN_LABEL && l.type !== CPN_MARKING_LABEL && (l.text || l.name)) {
+          let newBounds = this._textRenderer.getExternalLabelBounds(l, l.text || l.name);
+          this.updateLabel(l, l.text || l.name, newBounds);
+        }
+      }
+    }
     this._eventBus.fire('element.changed', { element: element });
 
 
@@ -173,7 +180,7 @@ function updateShapeByCpnElement(element, canvas, eventBus) {
        }
       changingElement.x = x;
       changingElement.y = y;
-      if(delta.x !== 0 && delta.y !== 0) {
+      if(delta.x !== 0 || delta.y !== 0) {
         let gfx = canvas._elementRegistry.getGraphics(changingElement);
         eventBus.fire('shape.changed', {element: changingElement, gfx: gfx, type: "shape.changed"})
       }

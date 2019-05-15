@@ -17,6 +17,8 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
   private title = '';
 
+  private testStr = 'aaaaaaaaa';
+
   // private commonNodes = [];
   // private nodes = [];
 

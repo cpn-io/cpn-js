@@ -12,6 +12,17 @@
 
 <div style="overflow-y: auto; height:100%; padding-bottom: 50px">
 
+  <!-- <table border="1" style="width:100%">
+    <tr>
+      <td nowrap>Test value</td>
+      <td contenteditable="true" [textContent]="cpnElement.text">
+      </td>
+    </tr>
+  </table>
+  <p>
+    {{ cpnElement.text }}
+  </p> -->
+
   <!-- commonNodes -->
   <div *ngFor="let table of tables">
     <div *ngIf="table.id === 'commonNodes'">

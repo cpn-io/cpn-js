@@ -38,7 +38,7 @@ export class ModelEditorComponent implements OnInit {
   modeling;
   labelEditingProvider;
   textRenderer;
-
+  selectedElement;
   jsonPageObject;
   // subscription: Subscription;
   subpages = [];
@@ -132,6 +132,18 @@ export class ModelEditorComponent implements OnInit {
       if (event.element.type === 'cpn:Transition' || event.element.type === 'cpn:Place') {
         this.eventService.send(Message.SHAPE_OUT, { element: event.element });
       }
+    });
+      let self = this;
+      eventBus.on('directEditing.cancel', function (e) {
+        console.log('model-editor directEditing.cancel - event', e);
+        self.openPropPanel(e.active.element);
+        self.selectedElement =  undefined;
+      });
+
+    eventBus.on('directEditing.complete', function (e) {
+      console.log('model-editor directEditing.complete - event', e);
+      if(e.active && e.active.element)
+        self.openPropPanel(e.active.element);
     });
 
     eventBus.on('element.click', (event) => {
@@ -388,16 +400,9 @@ export class ModelEditorComponent implements OnInit {
       console.log('PROPERTY_UPDATE, element = ', element);
 
       this.modeling.updateElement(element);
-
+     // this.selectedElement = element;
       this.modelUpdate();
-      if (element.labels) {
-        let labels = [];
-        for (let lab of element.labels) {
-          labels[lab.labelType] = lab.cpnElement;
-        }
-
-        this.eventService.send(Message.SHAPE_SELECT, { element: element, labels: labels, cpnElement: element.cpnElement, type: element.type });
-      }
+      this.openPropPanel(element);
 
       // if (data.pagename === this.modelService.getPageById(this.pageId).pageattr._name) {
       // let testElem;
@@ -558,6 +563,18 @@ export class ModelEditorComponent implements OnInit {
         }
       }
     });
+  }
+
+
+  openPropPanel(element){
+    if (element.labels) {
+      let labels = [];
+      for (let lab of element.labels) {
+        labels[lab.labelType] = lab.cpnElement;
+      }
+
+      this.eventService.send(Message.SHAPE_SELECT, { element: element, labels: labels, cpnElement: element.cpnElement, type: element.type });
+    }
   }
 
 
@@ -1715,14 +1732,15 @@ export class ModelEditorComponent implements OnInit {
       //     element: event.element
       //   });
 
-      if (event.element.labels) {
-        let labels = [];
-        for (let lab of event.element.labels) {
-          labels[lab.labelType] = lab.cpnElement;
-        }
-
-        this.eventService.send(Message.SHAPE_SELECT, { element: event.element, labels: labels, cpnElement: event.element.cpnElement, type: event.element.type });
-      }
+      // if (event.element.labels) {
+      //   let labels = [];
+      //   for (let lab of event.element.labels) {
+      //     labels[lab.labelType] = lab.cpnElement;
+      //   }
+      //
+      //   this.eventService.send(Message.SHAPE_SELECT, { element: event.element, labels: labels, cpnElement: event.element.cpnElement, type: event.element.type });
+      // }
+      this.openPropPanel(event.element);
     }
   }
 

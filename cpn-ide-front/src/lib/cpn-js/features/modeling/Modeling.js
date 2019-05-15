@@ -83,7 +83,6 @@ Modeling.prototype.updateElement = function (element) {
   if (element) {
     updateShapeByCpnElement(element, this._canvas, this._eventBus);
 
-    this._eventBus.fire('element.changed', { element: element });
 
     if (element.labels) {
       for (const l of element.labels) {
@@ -91,6 +90,8 @@ Modeling.prototype.updateElement = function (element) {
         // this.updateLabel(l, getText(l), getBox(l));
       }
     }
+
+    this._eventBus.fire('element.changed', { element: element });
   }
 };
 
@@ -124,18 +125,7 @@ function updateShapeByCpnElement(element, canvas, eventBus) {
   const changePosition = (changingElement) => {
     let delta = [];
     let changingEntry = changingElement.cpnElement.posattr ? changingElement.cpnElement.posattr : changingElement.cpnElement;
-    if ((changingElement.cpnElement[form] )) {
-      let w;
-      let h;
-      try {
-        w = changingElement.cpnElement[form] ? changingElement.cpnElement[form]._w : undefined;
-        h = changingElement.cpnElement[form] ? changingElement.cpnElement[form]._h: undefined;
-      } catch( e) {
-        if (!(w && h)) {
-          w = changingElement.width;
-          h = changingElement.height;
-        }
-      }
+    if ((changingElement.cpnElement.posattr)) {
       let x =  Math.round(changingEntry._x);
       let y =  Math.round(changingEntry._y) * -1;
       // if( isString(changingEntry._x) || isString(changingEntry._y)) {
@@ -153,27 +143,32 @@ function updateShapeByCpnElement(element, canvas, eventBus) {
        }
       changingElement.x = x;
       changingElement.y = y;
-      let gfx = canvas._elementRegistry.getGraphics(changingElement);
-      eventBus.fire('shape.changed', {element: changingElement, gfx: gfx , type: "shape.changed"})
+      if(delta.x !== 0 && delta.y !== 0) {
+        let gfx = canvas._elementRegistry.getGraphics(changingElement);
+        eventBus.fire('shape.changed', {element: changingElement, gfx: gfx, type: "shape.changed"})
+      }
 
     }
   };
 
   const resize = (cpnElement) => {
     if (cpnElement.ellipse || cpnElement.box) {
-      element.width = cpnElement[form]._w;
-      element.height = cpnElement[form]._h;
+      element.width = parseInt(cpnElement[form]._w, 10);
+      element.height =  parseInt(cpnElement[form]._h, 10);
     }
   }
-
+  if(element.type === CPN_CONNECTION) {
+    element.orientation = element.cpnElement._orientation;
+  }
   changeName(element.cpnElement);
-   changePosition(element, undefined);
+  resize(element.cpnElement);
+  changePosition(element, undefined);
   /*if(delta && element.labels.length > 0) {
     for( let label of element.labels) {
       changePosition(label, delta)
     }
   }*/
-   resize(element.cpnElement);
+
 
   console.log('Modeling.updateShapeByCpnElement(), element = ', element);
 }
@@ -395,6 +390,8 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
   if (labelType !== 'aux') {
     x -= bounds.width / 2;
     y -= bounds.height / 2;
+    cpnLabelElement.posattr._x = x;
+    cpnLabelElement.posattr._y = -1*y;
   }
 
   var attrs = {

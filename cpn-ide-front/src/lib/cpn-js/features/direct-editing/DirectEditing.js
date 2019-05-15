@@ -84,6 +84,7 @@ DirectEditing.prototype.gotoNext = function () {
 };
 
 DirectEditing.prototype._fire = function (event, context) {
+  console.log('DirectEditing.fire event -', event);
   this._eventBus.fire('directEditing.' + event, context || { active: this._active });
 };
 

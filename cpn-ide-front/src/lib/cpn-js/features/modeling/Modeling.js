@@ -13,6 +13,7 @@ import {
   CPN_PLACE,
   CPN_TRANSITION,
   CPN_CONNECTION,
+  isAny,
 } from '../../util/ModelUtil';
 
 import { getText, getBox } from '../../draw/CpnRenderUtil';
@@ -62,6 +63,33 @@ Modeling.prototype.getHandlers = function () {
 
   return handlers;
 };
+
+
+/**
+ * Setting CPN element status (one of 'clear', 'process', 'error', 'warning', 'ready')
+ *
+ * @param {*} event - json object, example:
+ *    { clear: '*' } or
+ *    { process: '*' } or
+ *    { error: ['ID1412328424'], ready: ['ID1412328496'] }
+ */
+Modeling.prototype.setCpnStatus = function (event) {
+  for (const key of Object.keys(this._elementRegistry._elements)) {
+    const element = this._elementRegistry._elements[key].element;
+
+    if (isAny(element, [CPN_PLACE, CPN_TRANSITION]) && element.cpnElement) {
+      for (var status of ['clear', 'process', 'error', 'warning', 'ready']) {
+        // console.log('Modeling.prototype.setCpnStatus(), status, event = ', status, event);
+        // console.log('Modeling.prototype.setCpnStatus(), event[status] = ', event[status]);
+
+        if (event[status] && (event[status] === '*' || event[status].includes(element.cpnElement._id))) {
+          element.cpnStatus = status;
+        }
+      }
+      this.updateElement(element);
+    }
+  }
+}
 
 
 Modeling.prototype.updateLabel = function (element, newLabel, newBounds, hints) {

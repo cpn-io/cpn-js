@@ -98,17 +98,19 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
       time: 'Time',
       priority: 'Priority',
       annot: 'Annot',
+      background: 'Background',
       invert: {}
 
     };
     this.tableMapNames['invert']['Colorset'] = 'type';
     this.tableMapNames['invert']['Initial marking'] = 'initmark';
-    this.tableMapNames['invert']['troke width'] = 'strokeWidth';
+    this.tableMapNames['invert']['Stroke width'] = 'strokeWidth';
     this.tableMapNames['invert']['Guard'] = 'cond';
     this.tableMapNames['invert']['Action'] = 'code';
     this.tableMapNames['invert']['Time'] = 'time';
     this.tableMapNames['invert']['Priority'] = 'priority';
     this.tableMapNames['invert']['Annot'] = 'annot';
+    this.tableMapNames['invert']['Background'] = 'background';
 
     this.tables = [
       { id: 'commonNodes', name: '', data: [], visible: false },
@@ -762,9 +764,9 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
         // labelElem.push({name: 'Width', value: label.width});
         // labelElem.push({name: 'Height', value: label.height});
         labelElem.push({ name: 'Text', value: labels[label].text.__text ? labels[label].text.__text : this.projectService.appSettings[label], path: 'text.__text' });
-        labelElem.push({ name: 'Stroke', value: labels[label].lineattr._colour, path: 'lineattr._colou' });
-        labelElem.push({ name: 'strokeWidth', value: labels[label].lineattr._thick, path: 'lineattr._thick' });
-        labelElem.push({ name: 'BackGround', value: labels[label].fillattr._colour, path: 'fillattr._colour' });
+        labelElem.push({ name: 'Stroke', value: labels[label].lineattr._colour, path: 'lineattr._colou' , hide: true});
+        labelElem.push({ name: 'strokeWidth', value: labels[label].lineattr._thick, path: 'lineattr._thick', hide: true});
+        labelElem.push({ name: 'background', value: labels[label].fillattr._colour, path: 'fillattr._colour', hide: true });
         commonNodes.push({ name: label, value: labels[label].text.__text ? labels[label].text.__text : this.projectService.appSettings[label], path: 'text.__text' });
       }
     }

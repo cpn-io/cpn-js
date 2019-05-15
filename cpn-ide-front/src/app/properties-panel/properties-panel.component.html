@@ -19,7 +19,7 @@
       <table [id]="table.id" class="table table-bordered table-hover table-small">
         <tr *ngFor="let item of table.data" [ngStyle]="item.hide && {display: 'none'}">
           <td width="50%" class="valueName">{{ getFieldName(item.name) }}</td>
-          <td width="50%" ><input  *ngIf="item.name !== 'Stroke'; else elseBlock" class="inputfield" [type]="getContentType(item.name)" [value]="getFieldValue(table.id, item.name, item.value)" (change)="tableOnChange()"></td>
+          <td width="50%" ><input  *ngIf="item.name !== 'Stroke' && item.name !== 'background'; else elseBlock" class="inputfield" [type]="getContentType(item.name)" [value]="getFieldValue(table.id, item.name, item.value)" (change)="tableOnChange()"></td>
           <ng-template #elseBlock> <input type="color"  list="color" (change)="tableOnChange()" [value]="getFieldValue(table.id, item.name, item.value)" />
             <datalist id="colorCommon">
               <option>#800000ff</option>
@@ -58,7 +58,7 @@
       <table [id]="table.id" [hidden]="!table.visible" class="table table-bordered table-hover table-small">
         <tr *ngFor="let item of table.data" [ngStyle]="item.hide && {display: 'none'}">
           <td width="50%" class="valueName">{{ getFieldName(item.name)}}</td>
-          <td  width="50%"><input  *ngIf="item.name !== 'Stroke'; else elseBlock" id="fname" class="inputfield" [type]="getContentType(item.name)" [value]="getFieldValue(table.id, item.name, item.value)" (change)="tableOnChange()">
+          <td  width="50%"><input  *ngIf="item.name !== 'Stroke' && item.name !== 'background'; else elseBlock" id="fname" class="inputfield" [type]="getContentType(item.name)" [value]="getFieldValue(table.id, item.name, item.value)" (change)="tableOnChange()">
             <ng-template #elseBlock> <input type="color"  list="color" (change)="tableOnChange()" [value]="getFieldValue(table.id, item.name, item.value)" />
             <datalist id="color">
               <option>#800000ff</option>

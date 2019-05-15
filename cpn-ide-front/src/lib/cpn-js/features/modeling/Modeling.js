@@ -116,12 +116,7 @@ Modeling.prototype.updateElement = function (element) {
   }
   if (element) {
     updateShapeByCpnElement(element, this._canvas, this._eventBus);
-<<<<<<< HEAD
-
-    this._eventBus.fire('element.changed', { element: element });
-=======
      this._eventBus.fire('element.changed', { element: element });
->>>>>>> 54cbe55583ee13533f709384eb84a3ad69adab65
   }
 };
 
@@ -196,9 +191,6 @@ function updateShapeByCpnElement(element, canvas, eventBus) {
       }
       changingElement.x = x;
       changingElement.y = y;
-<<<<<<< HEAD
-      if (delta.x !== 0 && delta.y !== 0) {
-=======
 
       if(delta.x !== 0 || delta.y !== 0) {
         /*let changedEnd;
@@ -221,7 +213,6 @@ function updateShapeByCpnElement(element, canvas, eventBus) {
             }
           }
         }*/
->>>>>>> 54cbe55583ee13533f709384eb84a3ad69adab65
         let gfx = canvas._elementRegistry.getGraphics(changingElement);
         eventBus.fire('shape.changed', { element: changingElement, gfx: gfx, type: "shape.changed" })
       }

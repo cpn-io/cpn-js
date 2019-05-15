@@ -11,7 +11,7 @@ import * as X2JS from '../../../lib/x2js/xml2json';
 })
 export class SaveprojectButtonComponent implements OnInit {
 
-  fileNameModel = 'myPetriNet';
+  fileNameModel: string;
 
   xmlPrefix = '<?xml version="1.0" encoding="iso-8859-1"?>\n<!DOCTYPE workspaceElements PUBLIC "-//CPN//DTD CPNXML 1.0//EN" "http://cpntools.org/DTD/6/cpn.dtd">';
 
@@ -23,6 +23,12 @@ export class SaveprojectButtonComponent implements OnInit {
   }
 
   open(modalName) {
+    let idx = this.modelService.modelName.lastIndexOf('.');
+    if (idx > 0) {
+      this.fileNameModel = this.modelService.modelName.substr(0, idx);
+    } else {
+      this.fileNameModel = this.modelService.modelName;
+    }
     this.modal.open(modalName, {ariaLabelledBy: 'modal-basic-title', centered: true}).result.then((result) => {
 
       const x2js = new X2JS();

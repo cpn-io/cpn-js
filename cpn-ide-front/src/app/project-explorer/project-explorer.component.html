@@ -3,7 +3,7 @@
 <!--<div style="width: 100%; height:100%; margin-top:-42px; border: 0px solid blue">-->
 <!--<div style="padding-top:42px; height:100%;; border:0px solid red">-->
 <tabs #tabsComponent class="cpn-tabs">
-  <tab [id]="'Explorer panel'" [tabTitle]="'Explorer panel'" style="overflow-x: scroll">
+  <tab [id]="'Explorer panel'" [tabTitle]="'Explorer panel'" >
     <nav class="navbar navbar-sm navbar-expand shadow-sm">
 
       <ul class="navbar-nav mr-auto">
@@ -72,6 +72,7 @@
                             <span class="toggle-children"></span>
                           </span>
                         </span>
+                        <span *ngIf="node.parent.parent === null" >Project: </span>
                       </td>
                       <td class="node"
                           [ngClass]="{'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id)}">

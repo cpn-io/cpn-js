@@ -679,9 +679,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     if (event.code !== undefined) {
       code = event.code;
 
-    // } else if (event.keyIdentifier !== undefined) {
-    //   // поддержка safari
-    //   code = event.keyIdentifier;
+      // } else if (event.keyIdentifier !== undefined) {
+      //   // поддержка safari
+      //   code = event.keyIdentifier;
 
     } else if (event.keyCode !== undefined) {
       code = event.keyCode;
@@ -993,7 +993,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
 
   loadProjectData(project: any) {
-    console.log('LOADPROJECTDATA');
+    // console.log('LOADPROJECTDATA, project = ', project);
     this.filterText = '';
 
     this.doUnderlineNodeLabel(false);
@@ -1002,15 +1002,14 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     const projectName = project.name;
     this.currentProjectModel = project.data;
 
-    console.log('loadProjectData(project: any), project = ', project);
-
     this.nodes = [];
     this.treeComponent.treeModel.collapseAll();
     this.updateTree();
 
     const projectNode = {
       id: 'project',
-      name: 'Project: ' + project.name,
+      // name: 'Project: ' + project.name,
+      name: project.name,
       classes: ['tree-project'],
       children: []
     };
@@ -1299,7 +1298,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       if (this.editableNode.data.name.toString() !== htmlElement.innerText) {
         this.editableNode.data.name = htmlElement.innerText;
         if (this.editableNode.data.object && this.editableNode.data.object.type === 'page') {
-          console.log ('3');
           this.editableNode.data.object.pageattr._name = this.editableNode.data.name;
           this.eventService.send(Message.CHANGE_NAME_PAGE, {
             id: this.editableNode.id,
@@ -1308,7 +1306,13 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
             parentPage: this.editableNode.parent.data.name
           });
         } else {
-          this.modelService.sendChangingElementToDeclarationPanel(this.editableNode, this.editableNode.parent.data.name, 'rename', this.editableNode.data.id, this.getCurrentBlock(this.editableNode).id, this.treeComponent.treeModel.getState());
+          this.modelService.sendChangingElementToDeclarationPanel(
+            this.editableNode,
+            this.editableNode.parent.parent ? this.editableNode.parent.data.name : 'project',
+            'rename',
+            this.editableNode.data.id,
+            this.getCurrentBlock(this.editableNode).id,
+            this.treeComponent.treeModel.getState());
         }
       }
     }

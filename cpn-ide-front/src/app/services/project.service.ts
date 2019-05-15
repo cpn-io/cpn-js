@@ -140,10 +140,12 @@ export class ProjectService {
     this.appSettings['globref'] = 'newGlobref';
     this.appSettings['block'] = 'newblock';
     this.appSettings['type'] = 'UNIT';
-    this.appSettings['initmark']  = 'empty';
-    this.appSettings['code'] = 'empty';
+    this.appSettings['initmark']  = 'INIT MARK';
+    this.appSettings['code'] = 'input();\n' +
+      'output();\n' +
+      'action();';
     this.appSettings['cond'] = '[]';
-    this.appSettings['time'] = '@++0.0';
+    this.appSettings['time'] = '@+';
     this.appSettings['priority'] = 'P_NORMAL';
     this.appSettings['annot'] = 'expr';
     this.appSettings['page'] = 'newpage';

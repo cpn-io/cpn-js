@@ -116,7 +116,7 @@ public class CpnController {
                 checker.checkMonitors();
                 //checker.generateNonPlaceInstances();
                // checker.initialiseSimulationScheduler();
-               // checker.instantiateSMLInterface();
+                //checker.instantiateSMLInterface();
 
 //                checker.checkEntireModel();
             } else {
@@ -250,27 +250,29 @@ public class CpnController {
             String sessionId = requestBody.get(0).get("sessionId").toString();
             final HighLevelSimulator s = petriNetModel.getHighLevelSimulator();
             final Checker checker = new Checker(petriNetModel.getPetriNet(sessionId), null, s);
-           // checker.localCheck();
-           // checker.checkInitializing();
-           // checker.checkDeclarations();
-            //checker.generateSerializers();
-            //checker.checkPages();
-            //checker.generatePlaceInstances();
-            //checker.checkMonitors();
-            //checker.generateNonPlaceInstances();
-           // checker.initialiseSimulationScheduler();
-           // checker.instantiateSMLInterface();
+//            checker.localCheck();
+//            checker.checkInitializing();
+//            checker.checkDeclarations();
+//            checker.generateSerializers();
+//            checker.checkPages();
+//            checker.generatePlaceInstances();
+//            checker.checkMonitors();
+//            checker.generateNonPlaceInstances();
+//            checker.initialiseSimulationScheduler();
+            //checker.instantiateSMLInterface();
             //s.setTarget((org.cpntools.accesscpn.model.impl.PetriNetImpl)petriNetModel.getPetriNet(sessionId));
            // petriNetModel.checkEntireModel(petriNetModel.getPetriNet(sessionId), s);
             //List<Binding> bindings = new LinkedList<Binding>();
             List<Instance<Transition>> tis = s.getAllTransitionInstances();
-            String arr[] = new String[tis.size()];
-            int i = 0;
+            ArrayList<String> arr = new ArrayList<>();
+
             for (Instance<Transition> ti : tis) {
-                if (s.isEnabled(ti))
-                    //bindings.addAll(s.getBindings(ti));
-                    arr[i] = ti.getNode().getId();
-                i++;
+                try {
+                    if (s.isEnabled(ti))
+                        arr.add(ti.getNode().getId());
+                } catch(Exception e){
+
+                }
             }
             result = new ResponseEntity<>(arr, HttpStatus.OK);
         } catch (Exception e) {

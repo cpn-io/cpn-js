@@ -68,7 +68,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   // });
 
   eventBus.on('shape.changed', function (e) {
-    updateLabels(e.element);
+   // updateLabels(e.element);
     updateCpnElement(e.element);
   });
 
@@ -245,15 +245,21 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
       cpnElement.box._h = shape.height;
     }
 
-    if (cpnElement && cpnElement.posattr && cpnElement.type === CPN_LABEL) {
+    if (shape.x && shape.y && cpnElement && cpnElement.posattr && shape.type === CPN_LABEL) {
       cpnElement.posattr._x = shape.x;
       cpnElement.posattr._y = shape.y * -1;
+    } else if(cpnElement._x && cpnElement._y){
+      cpnElement._x = shape.x;
+      cpnElement._y = shape.y * -1;
     }
+
+
 
      if(cpnElement.text instanceof Object){
      cpnElement.text.__text = shape.text || shape.name;
     } else cpnElement.text = shape.text || shape.name;
 
+    updateLabels(element);
   }
 }
 

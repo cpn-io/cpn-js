@@ -50,7 +50,7 @@ public class PetriNetModel {
         checker.checkMonitors();
         checker.generateNonPlaceInstances();
         checker.initialiseSimulationScheduler();
-        checker.instantiateSMLInterface();
+       // checker.instantiateSMLInterface();
 
     }
 

@@ -55,15 +55,11 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     this.eventService.on(Message.CHANGE_EXPLORER_TREE, (data) => {
       this.explorerTreeChangeHandler(data);
     });
-
-
   }
-
 
   ngOnDestroy() {
     // this.subscription.unsubscribe();
   }
-
 
   explorerTreeChangeHandler(data) {
     switch (data.action) {

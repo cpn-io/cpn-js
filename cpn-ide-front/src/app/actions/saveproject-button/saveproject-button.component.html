@@ -13,10 +13,12 @@
   <div class="modal-body">
     <div class='form-group'>
       <label for='fileName'>File name: <b>{{fileName}}</b></label>
-      <input  #fileNameInput type="text" class="form-control" [(ngModel)]="fileNameModel"
-              autofocus id="fileName" pattern="^[a-zA-Z0-9_-]+$" >
-      <label [hidden]="fileNameInput.checkValidity()" class="small">Only alphanumeric characters, - or _</label>
-      <label [hidden]="!fileNameInput.checkValidity()" class="small"><br/></label>
+      <input #fileNameInput type="text" class="form-control" [(ngModel)]="fileNameModel"
+              autofocus id="fileName" pattern="^[a-zA-Z0-9_-]+$" [autofocus] >
+      <label *ngIf="fileNameInput.checkValidity(); else errorText" class="small"><br/></label>
+      <ng-template #errorText >
+        <label class="small">Only alphanumeric characters, - or _</label>
+      </ng-template>
     </div>
   </div>
   <div class="modal-footer">

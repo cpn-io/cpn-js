@@ -222,6 +222,7 @@ export class ModelService {
 
 
   sendChangingElementToDeclarationPanel(node, elementType, action, id, blockId, state) {
+    console.log('sendChangingElementToDeclarationPanel()', node, elementType, action, id, blockId, state)
     if (elementType === 'Declarations' || elementType === 'block' || elementType === 'globbox') {
       this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
         node: action === 'rename' ? node : undefined,
@@ -259,6 +260,15 @@ export class ModelService {
         state: state // this.treeComponent.treeModel.getState()
       });
     } else if (elementType === 'globref') {
+      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
+        node: action === 'rename' ? node : undefined,
+        action: action,
+        element: elementType,
+        target: blockId, // this.getCurrentBlock(node).id,
+        id: id,
+        state: state // this.treeComponent.treeModel.getState()
+      });
+    } else if (elementType === 'project') {
       this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
         node: action === 'rename' ? node : undefined,
         action: action,

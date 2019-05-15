@@ -3,7 +3,7 @@
 <!--<div style="width: 100%; height:100%; margin-top:-42px; border: 0px solid blue">-->
 <!--<div style="padding-top:42px; height:100%;; border:0px solid red">-->
 <tabs #tabsComponent class="cpn-tabs">
-  <tab [id]="'Explorer panel'" [tabTitle]="'Explorer panel'">
+  <tab [id]="'Explorer panel'" [tabTitle]="'Explorer panel'" >
     <nav class="navbar navbar-sm navbar-expand shadow-sm">
 
       <ul class="navbar-nav mr-auto">
@@ -66,12 +66,13 @@
                   <table class="table-textarea">
                     <tr>
                       <td>
-                        <span *ngIf="canCollapse(node)">
-                          <span *ngIf="collapsedLabel[node.id] === true || collapsedLabel[node.id] === undefined"
-                                class="btn-more" (click)="onNodeArrowClick($event, node)">&#9658;</span>
-                          <span *ngIf="collapsedLabel[node.id] === false" class="btn-more"
-                                (click)="onNodeArrowClick($event, node)">&#9660;</span>
+                        <span *ngIf="canCollapse(node)" class="toggle-children-wrapper" >
+                          <span [class]="collapsedLabel[node.id] === false ? 'toggle-children-wrapper-expanded' : 'toggle-children-wrapper-collapsed'"
+                                (click)="onNodeArrowClick($event, node)">
+                            <span class="toggle-children"></span>
+                          </span>
                         </span>
+                        <span *ngIf="node.parent.parent === null" >Project: </span>
                       </td>
                       <td class="node"
                           [ngClass]="{'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id)}">

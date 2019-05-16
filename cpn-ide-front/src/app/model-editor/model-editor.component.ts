@@ -125,7 +125,7 @@ export class ModelEditorComponent implements OnInit {
       // set status 'clear' for all shapes on diagram
       this.modeling.setCpnStatus({ clear: '*' });
       // TODO: temporary set error and ready status for test shapes. Should be changed to real id
-      this.modeling.setCpnStatus({ error: ['ID1412328424'], ready: ['ID1412328496'] });
+      // this.modeling.setCpnStatus({ error: ['ID1412328424'], ready: ['ID1412328496'] });
 
       this.emitterService.getMarking(undefined).subscribe(
         (data: any) => {
@@ -137,6 +137,8 @@ export class ModelEditorComponent implements OnInit {
       this.emitterService.getEnableTransitions('ID0000001').subscribe(
         (data: any) => {
           console.log('this.emitterService.getEnableTransitions(), data = ', data);
+
+          this.modeling.setCpnStatus({ ready: data });
         });
     });
 
@@ -420,7 +422,7 @@ export class ModelEditorComponent implements OnInit {
       this.modeling.updateElement(element);
       this.modeling.updateElementBounds(element);
      // this.selectedElement = element;
-      // this.modelUpdate();
+      this.modelUpdate();
       // this.openPropPanel(element);
 
       // if (data.pagename === this.modelService.getPageById(this.pageId).pageattr._name) {

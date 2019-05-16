@@ -44,7 +44,7 @@ export class TextEditRowComponent {
     }
 
     name2color(name) {
-        return this.colorNames[name];
+        return this.colorNames[name] || name;
     }
 
     onKeyDown(e) {

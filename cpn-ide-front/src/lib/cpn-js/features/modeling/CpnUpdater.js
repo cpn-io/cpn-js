@@ -67,9 +67,11 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   //   delete e.context.cropped;
   // });
 
-  eventBus.on('shape.changed', function (e) {
+  eventBus.on('shape.changed', function (event) {
    // updateLabels(e.element);
-    updateCpnElement(e.element);
+   console.log('CpnUpdater(), shape.changed, event.element = ', event.element);
+
+   updateCpnElement(event.element);
   });
 
   eventBus.on('element.hover', function (event) {

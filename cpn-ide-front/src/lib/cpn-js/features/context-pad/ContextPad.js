@@ -91,15 +91,15 @@ ContextPad.prototype._init = function() {
     });
   });
 
-  eventBus.on('element.changed', function(event) {
-    var element = event.element,
-        current = self._current;
+  // eventBus.on('element.changed', function(event) {
+  //   var element = event.element,
+  //       current = self._current;
 
-    // force reopen if element for which we are currently opened changed
-    if (current && current.element === element) {
-      self.open(element, true);
-    }
-  });
+  //   // force reopen if element for which we are currently opened changed
+  //   if (current && current.element === element) {
+  //     self.open(element, true);
+  //   }
+  // });
 };
 
 

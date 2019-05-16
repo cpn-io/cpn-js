@@ -97,25 +97,39 @@ export default function CpnRenderer(
   // ------------------------------------------------------------
   // shadows
   // ------------------------------------------------------------
-  function shadow(fill) {
-    var id = 'shadow-' + fill + '-' + rendererId;
+  function shadow(type, fill) {
+    var id = 'shadow-' + type + '-' + fill + '-' + rendererId;
 
     if (!shadows[id]) {
-      shadows[id] = createShadow(id, fill);
+      if (type === 'blur')
+        shadows[id] = createBlur(type, id);
+      else
+        shadows[id] = createShadow(type, id, fill);
     }
 
     return 'url(#' + id + ')';
   }
 
-  function createShadow(id, fill) {
+  function createShadow(type, id, fill) {
     var filter = svgCreate('filter');
-    svgAttr(filter, {
-      id: id,
-      x: -0.3,
-      y: -0.3,
-      width: '200%',
-      height: '200%'
-    });
+
+    if (type === 'connection') {
+      svgAttr(filter, {
+        id: id,
+        x: 0,
+        y: 0,
+        width: '200px',
+        height: '200px'
+      });
+    } else {
+      svgAttr(filter, {
+        id: id,
+        x: -0.3,
+        y: -0.3,
+        width: '200%',
+        height: '200%'
+      });
+    }
 
     var feDropShadow = svgCreate('feDropShadow');
     svgAttr(feDropShadow, {
@@ -136,6 +150,32 @@ export default function CpnRenderer(
 
     return filter;
   }
+
+  function createBlur(type, id) {
+    var filter = svgCreate('filter');
+
+    svgAttr(filter, {
+      id: id,
+      x: -0.3,
+      y: -0.3,
+      width: '200%',
+      height: '200%'
+    });
+
+    var feGaussianBlur = svgCreate('feGaussianBlur');
+    svgAttr(feGaussianBlur, { stdDeviation: 1 });
+    svgAppend(filter, feGaussianBlur);
+
+    var defs = domQuery('defs', canvas._svg);
+    if (!defs) {
+      defs = svgCreate('defs');
+      svgAppend(canvas._svg, defs);
+    }
+    svgAppend(defs, filter);
+
+    return filter;
+  }
+
 
   // ------------------------------------------------------------
   // markers
@@ -484,13 +524,13 @@ export default function CpnRenderer(
   function setCpnStatus(element, svgElement) {
     if (element.cpnStatus) {
       if (element.cpnStatus === 'process') {
-        svgAttr(svgElement, { filter: shadow(PROCESS_FILL_COLOR), });
+        svgAttr(svgElement, { filter: shadow('shape', PROCESS_FILL_COLOR), });
       }
       if (element.cpnStatus === 'error') {
-        svgAttr(svgElement, { filter: shadow(ERROR_FILL_COLOR), });
+        svgAttr(svgElement, { filter: shadow('shape', ERROR_FILL_COLOR), });
       }
       if (element.cpnStatus === 'ready') {
-        svgAttr(svgElement, { filter: shadow(READY_FILL_COLOR), });
+        svgAttr(svgElement, { filter: shadow('shape', READY_FILL_COLOR), });
       }
     }
   }
@@ -797,28 +837,42 @@ export default function CpnRenderer(
     var fill = getFillColor(element), strokeColor = getStrokeColor(element);
 
     var attrs = {
-      strokeLinejoin: 'round',
+      // strokeLinejoin: 'round',
       stroke: strokeColor,
-      strokeWidth: getStrokeWidth(element),
-      // filter: shadow(ERROR_FILL_COLOR),
+      strokeWidth: getStrokeWidth(element)
     };
+
+
+    // cpn status
+    if (element.cpnStatus) {
+      var color;
+
+      if (element.cpnStatus === 'process') {
+        color = PROCESS_FILL_COLOR;
+      }
+      if (element.cpnStatus === 'error') {
+        color = ERROR_FILL_COLOR;
+      }
+      if (element.cpnStatus === 'ready') {
+        color = READY_FILL_COLOR;
+      }
+
+      if (color) {
+        var attrs2 = assign({}, attrs, {
+          stroke: color + '33',
+          strokeWidth: getStrokeWidth(element) + 8,
+          // filter: shadow('blur', ERROR_FILL_COLOR),
+        });
+        drawPath(parentGfx, pathData, attrs2);
+      }
+    }
 
     // connection end markers
     attrs = assign(attrs, getConnectionEndMarkerAttrs(element));
 
-    // if (element.iserror) {
-    //   strokeColor = ERROR_STROKE_COLOR;
+    const path = drawPath(parentGfx, pathData, attrs);
 
-    //   var attrsError = {
-    //     strokeLinejoin: 'round',
-    //     markerEnd: marker('connection-end', fill, strokeColor),
-    //     stroke: strokeColor,
-    //     strokeWidth: 7
-    //   };
-    //   var path = drawPath(parentGfx, pathData, attrsError);
-    // }
-
-    return drawPath(parentGfx, pathData, attrs);
+    return path;
   };
 
   // -------------------------------------------------

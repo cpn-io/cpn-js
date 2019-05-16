@@ -44,14 +44,19 @@ export default function LabelEditingProvider(
   // listen to direct editing event
   // eventBus.on('element.dblclick', function (event) {
   eventBus.on('element.click', function (event) {
-    if (event.element.type === CPN_CONNECTION) {
-      if (event.element.labels > 0) {
-        event.element = event.element.labels[0];
-      } else {
-        return;
+    var element = event.element;
+    // console.log('LabelEditingProvider, element.click, element = ', element);
+
+    if (element) {
+      if (is(element, CPN_CONNECTION)) {
+        if (element.labels.length > 0) {
+          element = event.element.labels[0];
+        } else {
+          return;
+        }
       }
+      activateDirectEdit(element, true);
     }
-    activateDirectEdit(event.element, true);
   });
 
   eventBus.on('element.tab', function (event, context) {
@@ -119,6 +124,7 @@ export default function LabelEditingProvider(
   });
 
   function activateDirectEdit(element, force) {
+    // console.log('LabelEditingProvider, activateDirectEdit(), element = ', element);
     if (force || isCpn(element)) {
       directEditing.activate(element);
     }

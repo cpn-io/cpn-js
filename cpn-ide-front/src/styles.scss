@@ -94,9 +94,10 @@ html, body {
 
 // cpnjs
 
-.cpnjs-shape-error {
-  border: 2px solid red;
+.cpnjs-shadow-error {
+  filter: drop-shadow( 2px 0 5px red );
 }
+
 
 
 // ---------------------------------------------------------------------------------

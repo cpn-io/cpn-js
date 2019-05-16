@@ -18,15 +18,12 @@ export class ModelEditorToolbarComponent implements OnInit {
   }
 
   lassoTool() {
-    this.editorRef.lassoTool();
   }
 
   createPlace() {
-    this.editorRef.createPlace();
   }
 
   createTransition() {
-    this.editorRef.createTransition();
   }
 
 }

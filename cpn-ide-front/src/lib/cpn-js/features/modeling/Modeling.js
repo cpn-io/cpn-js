@@ -81,7 +81,7 @@ Modeling.prototype.setCpnStatus = function (event) {
   for (const key of Object.keys(this._elementRegistry._elements)) {
     const element = this._elementRegistry._elements[key].element;
 
-    if (isAny(element, [CPN_PLACE, CPN_TRANSITION]) && element.cpnElement) {
+    if (isAny(element, [CPN_PLACE, CPN_TRANSITION, CPN_CONNECTION]) && element.cpnElement) {
       for (var status of ['clear', 'process', 'error', 'warning', 'ready']) {
         // console.log('Modeling.prototype.setCpnStatus(), status, event = ', status, event);
         // console.log('Modeling.prototype.setCpnStatus(), event[status] = ', event[status]);
@@ -110,7 +110,8 @@ Modeling.prototype.updateLabel = function (element, newLabel, newBounds, hints) 
 };
 
 Modeling.prototype.updateElement = function (element) {
-  // console.log('Modeling().updateElement(), element = ', element);
+  console.log('Modeling().updateElement(), element = ', element);
+
   if (element) {
     if (element.labels) {
       for (const lb of element.labels) {
@@ -147,19 +148,16 @@ Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus
 
   const self = this;
 
-  // check for min values
-  // if (element.cpnElement[form]) {
-  //   if (element.cpnElement[form]._w < 20)
-  //     element.cpnElement[form]._w = 20;
-  //   if (element.cpnElement[form]._h < 20)
-  //     element.cpnElement[form]._h = 20;
-  // }
-
   if (element.type === CPN_LABEL && (element.text || element.name)) {
     element.hidden = false;
   }
 
-  const changeName = (cpnElement) => {
+  const changeName = (modeling, changingElement) => {
+    if (!changingElement || !changingElement.cpnElement)
+      return;
+
+    const cpnElement = changingElement.cpnElement; 
+
     if (cpnElement && cpnElement._name) {
       element.text = cpnElement._name;
       element.name = cpnElement._name;
@@ -211,7 +209,7 @@ Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus
     if (!isAny(changingElement, [CPN_PLACE, CPN_TRANSITION, CPN_TEXT_ANNOTATION]))
       return;
 
-    console.log('Modeling.updateShapeByCpnElement(), changeSize(), changingElement = ', changingElement);
+    // console.log('Modeling.updateShapeByCpnElement(), changeSize(), changingElement = ', changingElement);
 
     let delta = { dx: 0, dy: 0 };
 
@@ -251,7 +249,7 @@ Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus
     element.orientation = element.cpnElement._orientation;
   }
 
-  changeName(element.cpnElement);
+  changeName(this, element);
 
   changeSize(this, element);
 

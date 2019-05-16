@@ -1,8 +1,8 @@
 <!-- Text input -->
 <div class="valueRow" *ngIf="_object && _type === 'text'">
     <div class="valueName">{{_name}}</div>
-    <div class="value" contenteditable="true" [textContent]="_object[_field]"
-        (input)="_object[_field]=$event.target.textContent; onChange();">
+    <div class="value" contenteditable="true" [textContent]="_object[_field]" (keydown)="onKeyDown($event);"
+        (focusout)="onChange($event);">
     </div>
 </div>
 
@@ -10,7 +10,7 @@
 <div class="valueRow" *ngIf="_object && _type === 'int'">
     <div class="valueName">{{_name}}</div>
     <div class="value" contenteditable="true" [textContent]="parseInt(_object[_field], 0)"
-        (input)="_object[_field]=parseInt($event.target.textContent, 0); onChange();">
+        (keydown)="onKeyDown($event);" (focusout)="onChange($event);">
     </div>
 </div>
 
@@ -18,34 +18,20 @@
 <div class="valueRow" *ngIf="_object && _type === 'color'">
     <div class="valueName">{{_name}}</div>
     <div class="value">
-        <input type="color" list="color" class="colorSelector" [value]="_object[_field]"
-            (input)="_object[_field]=$event.target.value; onChange();" />
+        <input type="color" list="color" class="colorSelector" [value]="name2color(_object[_field])"
+            (input)="onChange($event);" />
         <datalist id="colorCommon">
             <option *ngFor="let color of _colors">{{color}}</option>
         </datalist>
     </div>
 </div>
 
-<!-- Color input -->
+<!-- Select input -->
 <div class="valueRow" *ngIf="_object && _type === 'select'">
     <div class="valueName">{{_name}}</div>
     <div class="value">
-        <!-- <input type="color" list="color" class="colorSelector" [value]="_object[_field]"
-                (input)="_object[_field]=$event.target.value; onChange();" />
-            <datalist id="colorCommon">
-                <option *ngFor="let color of _colors">{{color}}</option>
-            </datalist> -->
-
-        <select class="typeSelector" required [(ngModel)]='_object[_field]'
-            (ngModelChange)='_object[_field]=$event; onChange();'>
+        <select class="typeSelector" required [(ngModel)]='_object[_field]' (ngModelChange)='onChange($event);'>
             <option class='option' *ngFor='let option of _options' [value]="option">{{option}}</option>
         </select>
     </div>
 </div>
-
-
-
-<!-- <select class="typeSelector" required [(ngModel)]='cpnElement._orientation'
-(ngModelChange)='cpnElement._orientation=$event; updateChanges();'>
-<option class='option' *ngFor='let option of orientations' [value]="option">{{option}}</option>
-</select> -->

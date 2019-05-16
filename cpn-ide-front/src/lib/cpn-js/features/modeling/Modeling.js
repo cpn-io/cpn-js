@@ -109,21 +109,22 @@ Modeling.prototype.updateLabel = function (element, newLabel, newBounds, hints) 
 
 Modeling.prototype.updateElement = function (element) {
   // console.log('Modeling().updateElement(), element = ', element);
-  if (element.labels) {
-    for (const lb of element.labels) {
-      this.updateElement(lb);
-    }
-  }
   if (element) {
+    if (element.labels) {
+      for (const lb of element.labels) {
+        this.updateElement(lb);
+      }
+    }
+
     updateShapeByCpnElement(element, this._canvas, this._eventBus);
-     this._eventBus.fire('element.changed', { element: element });
+    this._eventBus.fire('element.changed', { element: element });
   }
 };
 
-Modeling.prototype.updateElementBounds = function(element) {
-  if(element.labels){
+Modeling.prototype.updateElementBounds = function (element) {
+  if (element && element.labels) {
     for (const l of element.labels) {
-      if(l.type !== CPN_TOKEN_LABEL && l.type !== CPN_MARKING_LABEL && (l.text || l.name)) {
+      if (l.type !== CPN_TOKEN_LABEL && l.type !== CPN_MARKING_LABEL && (l.text || l.name)) {
         let newBounds = this._textRenderer.getExternalLabelBounds(l, l.text || l.name);
         this.updateLabel(l, l.text || l.name, newBounds);
       }
@@ -192,7 +193,7 @@ function updateShapeByCpnElement(element, canvas, eventBus) {
       changingElement.x = x;
       changingElement.y = y;
 
-      if(delta.x !== 0 || delta.y !== 0) {
+      if (delta.x !== 0 || delta.y !== 0) {
         /*let changedEnd;
         for (const key of Object.keys(canvas._elementRegistry._elements)) {
           const el = canvas._elementRegistry._elements[key].element;
@@ -231,7 +232,9 @@ function updateShapeByCpnElement(element, canvas, eventBus) {
   }
   changeName(element.cpnElement);
   resize(element.cpnElement);
+  
   changePosition(element, undefined);
+  
   /*if(delta && element.labels.length > 0) {
     for( let label of element.labels) {
       changePosition(label, delta)

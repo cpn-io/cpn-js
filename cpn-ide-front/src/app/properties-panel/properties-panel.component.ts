@@ -84,44 +84,30 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     'BOTHDIR'
   ];
 
+  private portTypes = [
+    'In',
+    'Out',
+    'In/Out'
+  ];
+
   private layoutPartOpened: boolean[] = [];
 
-  /*
-  // Fucia
-  // Maroon  #800000ff
-  // Yellow  #ffff00ff
-  //  White  #ffffffff
-  // Red #ff0000ff
-  Silver #c0c0c0ff
-  Teal #008080ff
-  Navy #000080ff
-  Aqua #00ffffff
-  Black #000000ff
-  Olive #808000ff
-  Lime #00ff00ff
-  Gray #808080ff
-  Purple #800080ff
-  Green #008000ff
-  Blue #0000ffff
-  // */
-
-
-  commonNodesOrder = {
-    place: {
-      Name: 1,
-      type: 2,
-      initmark: 3,
-      Stroke: 4
-    },
-    trans: {
-      Name: 1,
-      cond: 2,
-      time: 3,
-      priority: 4,
-      code: 5,
-      Stroke: 6
-    }
-  };
+  // commonNodesOrder = {
+  //   place: {
+  //     Name: 1,
+  //     type: 2,
+  //     initmark: 3,
+  //     Stroke: 4
+  //   },
+  //   trans: {
+  //     Name: 1,
+  //     cond: 2,
+  //     time: 3,
+  //     priority: 4,
+  //     code: 5,
+  //     Stroke: 6
+  //   }
+  // };
 
   constructor(private eventService: EventService, private projectService: ProjectService, private modelService: ModelService) {
   }
@@ -626,21 +612,28 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
         console.log(this.constructor.name, 'Message.SHAPE_SELECT, data.pageJson = ', data.pageJson);
       }
 
-      const selectedElement = data.element.type === 'cpn:Label' ? data.element.labelType : '';
+      // const isLabel = ['cpn:Label','cpn:TokenLabel'].includes(data.element.type);
+      // const isLabel = data.element.labelTarget ? true : false;
 
-      if (selectedElement !== '' && selectedElement !== this.selectedElement) {
-        this.selectedElement = selectedElement;
+      // const selectedElement = isLabel ? data.element.labelType : '';
 
-        for (const t of this.tables) {
-          t.visible = this.selectedElement === t.id;
-        }
-      }
+      // if (selectedElement !== '' && selectedElement !== this.selectedElement) {
+      //   this.selectedElement = selectedElement;
 
-      const element = data.element.type === 'cpn:Label' ? data.element.parent : data.element;
-      this.cpnElement = data.cpnElement;
-      this.labels = data.labels;
+      //   for (const t of this.tables) {
+      //     t.visible = this.selectedElement === t.id;
+      //   }
+      // }
 
-      this.showShapeAttrs(element, data.cpnElement, data.type, data.labels);
+      var element;
+      if (data.element.labelTarget)
+        element = data.element.labelTarget.labelTarget || data.element.labelTarget;
+      else
+        element = data.element;
+      this.cpnElement = element.cpnElement;
+      this.labels = element.labels;
+
+      this.showShapeAttrs(element, this.cpnElement, element.type, this.labels);
     });
   }
 

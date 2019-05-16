@@ -25,18 +25,21 @@
       </app-text-edit-row>
 
       <!-- Shape Labels -->
-      <div *ngFor="let labelKey of ['initmark', 'type', 'port', 'cond', 'time', 'code', 'priority', 'annot']">
+      <div *ngFor="let labelKey of ['initmark', 'type', 'cond', 'time', 'code', 'priority', 'annot']">
         <app-text-edit-row *ngIf="cpnElement[labelKey]" [name]="names[labelKey] || labelKey"
           [object]="cpnElement[labelKey].text" field="__text" (changed)="updateChanges()">
         </app-text-edit-row>
       </div>
 
       <!-- Port Labels -->
-      <div *ngFor="let labelKey of ['port']">
-        <app-text-edit-row *ngIf="cpnElement[labelKey]" [name]="names[labelKey] || labelKey"
-          [object]="cpnElement[labelKey]" field="text" (changed)="updateChanges()">
-        </app-text-edit-row>
-      </div>
+      <app-text-edit-row *ngIf="cpnElement.port" type="select" name="Port type" [object]="cpnElement.port" 
+        field="text" (changed)="updateChanges()" [options]="portTypes">
+      </app-text-edit-row>
+
+      <!-- Subst Labels -->
+      <app-text-edit-row *ngIf="cpnElement.subst && cpnElement.subst.subpageinfo" name="Suppage"
+        [object]="cpnElement.subst.subpageinfo" field="_name" (changed)="updateChanges()">
+      </app-text-edit-row>
 
       <!-- Direction (only for acrs) -->
       <app-text-edit-row *ngIf="cpnElement._orientation" type="select" name="Direction" [object]="cpnElement"
@@ -113,9 +116,7 @@
           </app-text-edit-row>
 
         </div>
-
       </div>
-
     </div>
 
   </div>

@@ -729,44 +729,46 @@ export default function CpnRenderer(
   }
 
 
-  /**
-   * Trying to draw hyperlink label
-   */
-  function drawBottomTextLink(parentGfx, textRenderer, s, parentRect) {
-    const textDim = textRenderer.getTextUtil().getDimensions(s, {});
-    textDim.width += 5;
-    textDim.height += 1;
+  function getConnectionEndMarkerAttrs(element) {
+    var attrs = {};
 
-    var a = svgCreate('a');
-    svgAttr(a, {
-      // 'xlink:href': "http://www.opera.com/",
-      'href': "http://www.opera.com/",
-      target: "_blank"
-    });
+    var fill = getFillColor(element), strokeColor = getStrokeColor(element);
 
-    var rect = svgCreate('rect');
-    svgAttr(rect, {
-      x: parentRect.width / 2 - textDim.width / 2,
-      y: parentRect.height - textDim.height / 2,
-      width: textDim.width,
-      height: textDim.height
-    });
-    svgAttr(rect, {
-      fill: '#ffc',
-      stroke: '#000',
-      strokeWidth: 1
-    });
-    svgAppend(a, rect);
+    if (element.cpnElement && element.cpnElement._orientation) {
 
-    var text = svgCreate('text');
-    svgAttr(text, {
-      x: parentRect.width / 2 - textDim.width / 2 + 2.5,
-      y: parentRect.height + 4
-    });
-    text.textContent = s;
-    svgAppend(a, text);
+      if (element.cpnElement._orientation === 'PtoT') {
+        if (is(element.source, CPN_PLACE)) {
+          attrs = assign(attrs, {
+            markerEnd: marker('connection-end', fill, strokeColor),
+          });
+        } else {
+          attrs = assign(attrs, {
+            markerStart: marker('connection-start', fill, strokeColor),
+          });
+        }
+      }
 
-    svgAppend(parentGfx, a);
+      if (element.cpnElement._orientation === 'TtoP') {
+        if (is(element.source, CPN_TRANSITION)) {
+          attrs = assign(attrs, {
+            markerEnd: marker('connection-end', fill, strokeColor),
+          });
+        } else {
+          attrs = assign(attrs, {
+            markerStart: marker('connection-start', fill, strokeColor),
+          });
+        }
+      }
+
+      if (element.cpnElement._orientation === 'BOTHDIR') {
+        attrs = assign(attrs, {
+          markerStart: marker('connection-start', fill, strokeColor),
+          markerEnd: marker('connection-end', fill, strokeColor),
+        });
+      }
+    }
+
+    return attrs;
   }
 
   var handlers = this.handlers = [];
@@ -801,24 +803,8 @@ export default function CpnRenderer(
       // filter: shadow(ERROR_FILL_COLOR),
     };
 
-    if (element.cpnElement && element.cpnElement._orientation) {
-      if (element.cpnElement._orientation === 'PtoT') {
-        attrs = assign(attrs, {
-          markerStart: marker('connection-start', fill, strokeColor),
-        });
-      }
-      if (element.cpnElement._orientation === 'TtoP') {
-        attrs = assign(attrs, {
-          markerEnd: marker('connection-end', fill, strokeColor),
-        });
-      }
-      if (element.cpnElement._orientation === 'BOTHDIR') {
-        attrs = assign(attrs, {
-          markerStart: marker('connection-start', fill, strokeColor),
-          markerEnd: marker('connection-end', fill, strokeColor),
-        });
-      }
-    }
+    // connection end markers
+    attrs = assign(attrs, getConnectionEndMarkerAttrs(element));
 
     // if (element.iserror) {
     //   strokeColor = ERROR_STROKE_COLOR;

@@ -144,6 +144,8 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
 
   function showHideMarking(tokenElement) {
+    // console.log('CpnUpdater(), showHideMarking(), tokenElement = ', tokenElement);
+
     if (!tokenElement || !tokenElement.label || !is(tokenElement.label, CPN_MARKING_LABEL))
       return;
 
@@ -151,9 +153,6 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     modeling.updateElement(tokenElement.label);
 
     if (!tokenElement.label.hidden) {
-      // eventBus.fire('elements.changed', { elements: [ tokenElement.label ] });
-      // graphicsFactory.update('shape', event.element, event.gfx);
-
       modeling.moveShape(tokenElement.label, { x: 0, y: 0 }, tokenElement.label.parent, undefined, undefined);
     }
   }
@@ -248,10 +247,11 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     if (shape.x && shape.y && cpnElement && cpnElement.posattr && shape.type === CPN_LABEL) {
       cpnElement.posattr._x = shape.x;
       cpnElement.posattr._y = shape.y * -1;
-    } else if(cpnElement._x && cpnElement._y){
-      cpnElement._x = shape.x;
-      cpnElement._y = shape.y * -1;
-    }
+    } 
+    // else if(cpnElement._x && cpnElement._y){
+    //   cpnElement._x = shape.x;
+    //   cpnElement._y = shape.y * -1;
+    // }
 
 
 

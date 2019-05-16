@@ -32,8 +32,8 @@ export function getStrokeColor(element) {
 
 export function getStrokeWidth(element) {
   if (element.cpnElement && element.cpnElement.lineattr)
-    return parseInt(element.cpnElement.lineattr._thick) || 2;
-  return parseInt(element.strokeWidth) || 2;
+    return parseInt(element.cpnElement.lineattr._thick) || 1;
+  return parseInt(element.strokeWidth) || 1;
 }
 
 export function getBox(element) {

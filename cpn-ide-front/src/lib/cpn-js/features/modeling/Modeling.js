@@ -184,7 +184,7 @@ Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus
 
     if (!changingElement || !changingElement.cpnElement)
       return;
-    if (!isAny(changingElement, [CPN_PLACE, CPN_TRANSITION, CPN_LABEL, CPN_TEXT_ANNOTATION]))
+    if (!isAny(changingElement, [CPN_PLACE, CPN_TRANSITION, CPN_TEXT_ANNOTATION]))
       return;
 
     let delta = { x: 0, y: 0 };
@@ -193,6 +193,17 @@ Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus
     if (changingCpnEntry && changingCpnEntry._x && changingCpnEntry._y) {
       let x = Math.round(changingCpnEntry._x);
       let y = Math.round(changingCpnEntry._y) * -1;
+
+      // if (is(changingElement, CPN_LABEL)) {
+      //   var bounds = { x: x, y: y, width: 200, height: 20 };
+      //   var text = changingElement.text;
+      //   var defaultValue = changingElement.defaultValue;
+      //   bounds = self._textRenderer.getExternalLabelBounds(bounds, defaultValue && text.trim() === '' ? defaultValue : text);
+
+      //   x -= bounds.width / 2;
+      //   y -= bounds.height / 2;
+      // }
+
       delta.x = x - changingElement.x;
       delta.y = y - changingElement.y;
 

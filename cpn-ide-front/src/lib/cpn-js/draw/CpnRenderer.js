@@ -228,29 +228,35 @@ export default function CpnRenderer(
     markers[id] = marker;
   }
 
-  function marker(type, fill, stroke) {
-    var id = type + '-' + fill + '-' + stroke + '-' + rendererId;
+  function marker(type, fill, stroke, strokeWidth) {
+    var id = type + '-' + fill + '-' + stroke + '-' + strokeWidth + '-' + rendererId;
 
     if (!markers[id]) {
-      createMarker(type, fill, stroke);
+      createMarker(id, type, fill, stroke, strokeWidth);
     }
 
     return 'url(#' + id + ')';
   }
 
-  function createMarker(type, fill, stroke) {
-    var id = type + '-' + fill + '-' + stroke + '-' + rendererId;
-
+  function createMarker(id, type, fill, stroke, strokeWidth) {
     if (type === 'connection-end') {
       var sequenceflowEnd = svgCreate('path');
       // svgAttr(sequenceflowEnd, { d: 'M 1 5 L 11 10 L 1 15 Z' });
       svgAttr(sequenceflowEnd, { d: 'M 11 5 L 1 9 L 3 5 L 1 1 Z' });
 
+      var scale = 1.0;
+
+      if (strokeWidth > 2) {
+        scale = scale / strokeWidth * (strokeWidth - 2);
+      } else if (strokeWidth > 1) {
+        scale = scale / strokeWidth;
+      }
+
       addMarker(id, {
         element: sequenceflowEnd,
         // ref: { x: 11, y: 10 },
         ref: { x: 11, y: 5 },
-        scale: 1.0,
+        scale: scale,
         attrs: {
           fill: stroke,
           stroke: stroke
@@ -265,7 +271,7 @@ export default function CpnRenderer(
       addMarker(id, {
         element: sequenceflowEnd,
         ref: { x: 0, y: 5 },
-        scale: 1.0,
+        scale: scale,
         attrs: {
           fill: stroke,
           stroke: stroke
@@ -772,18 +778,20 @@ export default function CpnRenderer(
   function getConnectionEndMarkerAttrs(element) {
     var attrs = {};
 
-    var fill = getFillColor(element), strokeColor = getStrokeColor(element);
+    var fill = getFillColor(element), 
+    strokeColor = getStrokeColor(element),
+    strokeWidth = getStrokeWidth(element);
 
     if (element.cpnElement && element.cpnElement._orientation) {
 
       if (element.cpnElement._orientation === 'PtoT') {
         if (is(element.source, CPN_PLACE)) {
           attrs = assign(attrs, {
-            markerEnd: marker('connection-end', fill, strokeColor),
+            markerEnd: marker('connection-end', fill, strokeColor, strokeWidth),
           });
         } else {
           attrs = assign(attrs, {
-            markerStart: marker('connection-start', fill, strokeColor),
+            markerStart: marker('connection-start', fill, strokeColor, strokeWidth),
           });
         }
       }
@@ -791,19 +799,19 @@ export default function CpnRenderer(
       if (element.cpnElement._orientation === 'TtoP') {
         if (is(element.source, CPN_TRANSITION)) {
           attrs = assign(attrs, {
-            markerEnd: marker('connection-end', fill, strokeColor),
+            markerEnd: marker('connection-end', fill, strokeColor, strokeWidth),
           });
         } else {
           attrs = assign(attrs, {
-            markerStart: marker('connection-start', fill, strokeColor),
+            markerStart: marker('connection-start', fill, strokeColor, strokeWidth),
           });
         }
       }
 
       if (element.cpnElement._orientation === 'BOTHDIR') {
         attrs = assign(attrs, {
-          markerStart: marker('connection-start', fill, strokeColor),
-          markerEnd: marker('connection-end', fill, strokeColor),
+          markerStart: marker('connection-start', fill, strokeColor, strokeWidth),
+          markerEnd: marker('connection-end', fill, strokeColor, strokeWidth),
         });
       }
     }

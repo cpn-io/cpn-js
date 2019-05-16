@@ -81,13 +81,19 @@ Modeling.prototype.setCpnStatus = function (event) {
   for (const key of Object.keys(this._elementRegistry._elements)) {
     const element = this._elementRegistry._elements[key].element;
 
+    if (element.cpnStatus === 'process') {
+      element.cpnStatus = undefined;
+    }
+
     if (isAny(element, [CPN_PLACE, CPN_TRANSITION, CPN_CONNECTION]) && element.cpnElement) {
       for (var status of ['clear', 'process', 'error', 'warning', 'ready']) {
         // console.log('Modeling.prototype.setCpnStatus(), status, event = ', status, event);
         // console.log('Modeling.prototype.setCpnStatus(), event[status] = ', event[status]);
 
-        if (event[status] && (event[status] === '*' || event[status].includes(element.cpnElement._id))) {
-          element.cpnStatus = status;
+        if (event[status]) {
+          if (event[status] === '*' || event[status].includes(element.cpnElement._id)) {
+            element.cpnStatus = status;
+          }
         }
       }
       this.updateElement(element);
@@ -156,7 +162,7 @@ Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus
     if (!changingElement || !changingElement.cpnElement)
       return;
 
-    const cpnElement = changingElement.cpnElement; 
+    const cpnElement = changingElement.cpnElement;
 
     if (cpnElement && cpnElement._name) {
       element.text = cpnElement._name;
@@ -271,19 +277,30 @@ Modeling.prototype.connect = function (source, target, attrs, hints) {
     var placeShape;
     var transShape;
 
-    if (is(source, CPN_PLACE)) placeShape = source;
-    if (is(target, CPN_PLACE)) placeShape = target;
-    if (is(source, CPN_TRANSITION)) transShape = source;
-    if (is(target, CPN_TRANSITION)) transShape = target;
+    // if (is(source, CPN_PLACE)) placeShape = source;
+    // if (is(target, CPN_PLACE)) placeShape = target;
+    // if (is(source, CPN_TRANSITION)) transShape = source;
+    // if (is(target, CPN_TRANSITION)) transShape = target;
+
+    var orientation;
+    if (is(source, CPN_PLACE)) {
+      placeShape = source;
+      transShape = target;
+      orientation = 'PtoT';
+    } else {
+      placeShape = target;
+      transShape = source;
+      orientation = 'TtoP';
+    }
 
     if (placeShape && transShape)
-      return this.createNewConnection(placeShape, transShape);
+      return this.createNewConnection(placeShape, transShape, orientation);
   }
 
   return undefined;
 };
 
-Modeling.prototype.createNewConnection = function (placeShape, transShape) {
+Modeling.prototype.createNewConnection = function (placeShape, transShape, orientation) {
   console.log('Modeling.prototype.createNewConnection(), place = ', placeShape);
   console.log('Modeling.prototype.createNewConnection(), trans = ', transShape);
 
@@ -291,7 +308,7 @@ Modeling.prototype.createNewConnection = function (placeShape, transShape) {
 
   if (placeShape && transShape) {
     var pageObject = undefined;
-    var cpnElement = this.createArcInModel(placeShape.cpnElement, transShape.cpnElement);
+    var cpnElement = this.createArcInModel(placeShape.cpnElement, transShape.cpnElement, orientation);
 
     const data = this.getArcData(pageObject, cpnElement, CPN_CONNECTION, placeShape, transShape);
     if (data) {
@@ -734,7 +751,7 @@ function optimiseEqualsArcsByWayoints(arc, delta) {
 }
 
 
-Modeling.prototype.declareSubPage = function(element, name, pageId) {
+Modeling.prototype.declareSubPage = function (element, name, pageId) {
   let cpnElement = element.cpnElement;
   cpnElement['subst'] = {
     subpageinfo: {
@@ -887,7 +904,7 @@ Modeling.prototype.createElementInModel = function (position, type) {
 }
 
 
-Modeling.prototype.createArcInModel = function (placeCpnElement, transCpnElement) {
+Modeling.prototype.createArcInModel = function (placeCpnElement, transCpnElement, orientation) {
   var cpnArcElement =
   {
     posattr: getDefPosattr(),
@@ -921,7 +938,7 @@ Modeling.prototype.createArcInModel = function (placeCpnElement, transCpnElement
       _id: getNextId() + 'a'
     },
     _id: getNextId(),
-    _orientation: "BOTHDIR",
+    _orientation: orientation || "BOTHDIR",
     _order: 1
   };
 

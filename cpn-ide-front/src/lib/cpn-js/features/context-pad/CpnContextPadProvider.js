@@ -133,7 +133,7 @@ CpnContextPadProvider.prototype._createShape = function (event, type) {
     if (is(currentElement, CPN_TRANSITION)) transShape = currentElement;
 
     if (placeShape && transShape)
-      return modeling.createNewConnection(placeShape, transShape);
+      return modeling.createNewConnection(placeShape, transShape, type === CPN_PLACE ? 'TtoP' : 'PtoT');
   }
 
   return undefined;

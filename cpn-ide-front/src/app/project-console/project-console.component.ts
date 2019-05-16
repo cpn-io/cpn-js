@@ -106,8 +106,10 @@ export class ProjectConsoleComponent implements OnInit, OnDestroy {
     }
   }
 
-
   getVerifyByJson(net: any) {
+    if (this.processing)
+      return;
+
     this.log('Verification process...');
 
     var timeStart = new Date().getTime();
@@ -116,6 +118,7 @@ export class ProjectConsoleComponent implements OnInit, OnDestroy {
     this.emitterService.verifyAllNet(net)
       .subscribe(
         (data: any) => {
+          this.processing = false;
 
           console.log('VERIFICATION_DONE (1)');
 
@@ -126,7 +129,6 @@ export class ProjectConsoleComponent implements OnInit, OnDestroy {
             console.log('DATA FROM WEB VERIFY = ', data);
           } else {
             this.success = true;
-            this.processing = false;
             this.parseErrorText(undefined);
           }
           //  this.done = true;

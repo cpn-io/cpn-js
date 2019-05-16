@@ -17,6 +17,7 @@ import {
   CPN_CONNECTION,
   isAny,
   modelCase,
+  CPN_TEXT_ANNOTATION,
 } from '../../util/ModelUtil';
 
 import { getText, getBox } from '../../draw/CpnRenderUtil';
@@ -117,7 +118,8 @@ Modeling.prototype.updateElement = function (element) {
       }
     }
 
-    updateShapeByCpnElement(element, this._canvas, this._eventBus);
+    this.updateShapeByCpnElement(element, this._canvas, this._eventBus);
+
     this._eventBus.fire('element.changed', { element: element });
   }
 };
@@ -141,8 +143,9 @@ function isString(v) {
  *
  * @param {*} element
  */
-function updateShapeByCpnElement(element, canvas, eventBus) {
-  let form = element.cpnElement.ellipse ? 'ellipse' : 'box';
+Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus) {
+
+  const self = this;
 
   // check for min values
   // if (element.cpnElement[form]) {
@@ -151,6 +154,10 @@ function updateShapeByCpnElement(element, canvas, eventBus) {
   //   if (element.cpnElement[form]._h < 20)
   //     element.cpnElement[form]._h = 20;
   // }
+
+  if (element.type === CPN_LABEL && (element.text || element.name)) {
+    element.hidden = false;
+  }
 
   const changeName = (cpnElement) => {
     if (cpnElement && cpnElement._name) {
@@ -169,82 +176,88 @@ function updateShapeByCpnElement(element, canvas, eventBus) {
     }
   };
 
-  if (element.type === CPN_LABEL && (element.text || element.name)) {
-    element.hidden = false;
-  }
-  const changePosition = (changingElement) => {
-    let delta = [];
-    let changingEntry = changingElement.cpnElement.posattr ? changingElement.cpnElement.posattr : changingElement.cpnElement;
-    if ((changingElement.cpnElement.posattr)) {
-      let x = Math.round(changingEntry._x);
-      let y = Math.round(changingEntry._y) * -1;
-      // if( isString(changingEntry._x) || isString(changingEntry._y)) {
-      //   x -= w / 2;
-      //   y -= h / 2;
-      // }
-      // element.x =  delta.x;
-      //  element.y =  delta.y;
+  const changePosition = (modeling, changingElement) => {
+
+    if (!changingElement || !changingElement.cpnElement)
+      return;
+    if (!isAny(changingElement, [CPN_PLACE, CPN_TRANSITION, CPN_LABEL, CPN_TEXT_ANNOTATION]))
+      return;
+
+    let delta = { x: 0, y: 0 };
+    let changingCpnEntry = changingElement.cpnElement.posattr ? changingElement.cpnElement.posattr : changingElement.cpnElement;
+
+    if (changingCpnEntry && changingCpnEntry._x && changingCpnEntry._y) {
+      let x = Math.round(changingCpnEntry._x);
+      let y = Math.round(changingCpnEntry._y) * -1;
       delta.x = x - changingElement.x;
       delta.y = y - changingElement.y;
-      // let gfx;
-      for (let label of element.labels) {
-        label.x += delta.x;
-        label.y += delta.y;
-      }
-      changingElement.x = x;
-      changingElement.y = y;
 
-      if (delta.x !== 0 || delta.y !== 0) {
-        /*let changedEnd;
-        for (const key of Object.keys(canvas._elementRegistry._elements)) {
-          const el = canvas._elementRegistry._elements[key].element;
-          if(el.type === CPN_CONNECTION) {
-            if(el.cpnPlace === changingElement.id){
-              changedEnd = el.cpnPlace;
-            } else if( el.cpnTransition === changingElement.id){
-              changedEnd = el.cpnTransition
-            }
-            if(changedEnd) {
-              let wayPointIndex;
-              if(changedEnd.type === CPN_PLACE) wayPointIndex = el.cpnElement.orientation === 'PtoT' ? 0 : el.waypoints.length;
-              if(changedEnd.type === CPN_TRANSITION) wayPointIndex = el.cpnElement.orientation === 'TtoP' ? 0 : el.waypoints.length;
-              el.waypoints[wayPointIndex].original.x = changedEnd.x;
-              el.waypoints[wayPointIndex].original.y = changedEnd.y;
-              el.waypoints[wayPointIndex].x += delta.x;
-              el.waypoints[wayPointIndex].x += delta.y;
-            }
-          }
-        }*/
-        let gfx = canvas._elementRegistry.getGraphics(changingElement);
-        eventBus.fire('shape.changed', { element: changingElement, gfx: gfx, type: "shape.changed" })
-      }
+      if (!isNaN(delta.x) && !isNaN(delta.y) && (delta.x !== 0 || delta.y !== 0)) {
+        for (let label of element.labels) {
+          label.x += delta.x;
+          label.y += delta.y;
+        }
 
+        console.log('Modeling.updateShapeByCpnElement(), changePosition(), changingElement = ', changingElement, ', delta = ', delta);
+        modeling.moveShape(changingElement, delta);
+      }
     }
   };
 
-  const resize = (cpnElement) => {
-    if (cpnElement.ellipse || cpnElement.box) {
-      element.width = parseInt(cpnElement[form]._w, 10);
-      element.height = parseInt(cpnElement[form]._h, 10);
+  const changeSize = (modeling, changingElement) => {
+    if (!changingElement || !changingElement.cpnElement)
+      return;
+
+    if (!isAny(changingElement, [CPN_PLACE, CPN_TRANSITION, CPN_TEXT_ANNOTATION]))
+      return;
+
+    console.log('Modeling.updateShapeByCpnElement(), changeSize(), changingElement = ', changingElement);
+
+    let delta = { dx: 0, dy: 0 };
+
+    let changingCpnEntry = changingElement.cpnElement.ellipse ?
+      changingElement.cpnElement.ellipse :
+      changingElement.cpnElement.box;
+
+    if (changingCpnEntry && changingCpnEntry._w && changingCpnEntry._h) {
+
+      let w = Math.round(changingCpnEntry._w);
+      let h = Math.round(changingCpnEntry._h);
+      delta.dx = w - changingElement.width;
+      delta.dy = h - changingElement.height;
+
+      if (!isNaN(delta.dx) && !isNaN(delta.dy) && (delta.dx !== 0 || delta.dy !== 0)) {
+        // for (let label of element.labels) {
+        //   label.x += delta.x;
+        //   label.y += delta.y;
+        // }
+
+        changingElement.width += delta.dx;
+        changingElement.height += delta.dy;
+
+        console.log('Modeling.updateShapeByCpnElement(), changeSize(), changingElement = ', changingElement, ', delta = ', delta);
+        modeling.moveShape(changingElement, { x: -delta.dx / 2, y: -delta.dy / 2 });
+      }
     }
+
+
+    // if (cpnElement.ellipse || cpnElement.box) {
+    //   element.width = parseInt(cpnElement[form]._w, 10);
+    //   element.height = parseInt(cpnElement[form]._h, 10);
+    // }
   }
+
   if (element.type === CPN_CONNECTION) {
     element.orientation = element.cpnElement._orientation;
   }
+
   changeName(element.cpnElement);
-  resize(element.cpnElement);
 
-  changePosition(element, undefined);
+  changeSize(this, element);
 
-  /*if(delta && element.labels.length > 0) {
-    for( let label of element.labels) {
-      changePosition(label, delta)
-    }
-  }*/
+  changePosition(this, element);
 
-  // this.moveShape(element, { x: 0, y: 0 }, element.parent, undefined, undefined);
-
-  console.log('Modeling.updateShapeByCpnElement(), element = ', element);
+  // console.log('Modeling.updateShapeByCpnElement(), element = ', element);
 }
 
 Modeling.prototype.connect = function (source, target, attrs, hints) {

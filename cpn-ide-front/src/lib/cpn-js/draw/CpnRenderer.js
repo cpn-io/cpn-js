@@ -65,9 +65,9 @@ var PORT_STROKE_COLOR = '#4c66cc';
 var TOKEN_FILL_COLOR = '#6fe117';
 var MARKING_FILL_COLOR = '#bcfd8b';
 
-var ERROR_FILL_COLOR = '#ee0000';
-var PROCESS_FILL_COLOR = '#bbbb00';
-var READY_FILL_COLOR = '#00cc00';
+var ERROR_FILL_COLOR = '#cc0000';
+var PROCESS_FILL_COLOR = '#999900';
+var READY_FILL_COLOR = '#009900';
 
 inherits(CpnRenderer, BaseRenderer);
 
@@ -422,7 +422,7 @@ export default function CpnRenderer(
       align: 'left-top',
       // padding: 5,
       style: {
-        fill: getStrokeColor(element)
+        fill: getStrokeColor(element.labelTarget || element)
       },
       external: true,
     });

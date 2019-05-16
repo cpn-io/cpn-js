@@ -16,6 +16,7 @@ import {
   CPN_TRANSITION,
   CPN_CONNECTION,
   isAny,
+  modelCase,
 } from '../../util/ModelUtil';
 
 import { getText, getBox } from '../../draw/CpnRenderUtil';
@@ -232,9 +233,9 @@ function updateShapeByCpnElement(element, canvas, eventBus) {
   }
   changeName(element.cpnElement);
   resize(element.cpnElement);
-  
+
   changePosition(element, undefined);
-  
+
   /*if(delta && element.labels.length > 0) {
     for( let label of element.labels) {
       changePosition(label, delta)
@@ -722,6 +723,22 @@ function optimiseEqualsArcsByWayoints(arc, delta) {
 }
 
 
+Modeling.prototype.declareSubPage = function(name) {
+ /* newTranc['subst'] = {
+    subpageinfo: {
+      fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
+      lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
+      posattr: { _x: newTranc.posattr._x, _y: newTranc.posattr._y },
+      textattr: { _colour: 'Black', _bold: 'false' },
+      _id: newTranc._id + 'e',
+      _name: 'Supplier'
+    },                  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    _portsock: '',     /// <<--------------------------------------------------------------------TO DO FILL THIS FIELD ARCS ID---------------------------------------------------------------------
+    _subpage: subpage.subpageid ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  };*/
+}
+
+
 
 
 /**
@@ -730,10 +747,10 @@ function optimiseEqualsArcsByWayoints(arc, delta) {
  * @param element
  */
 Modeling.prototype.createElementInModel = function (position, type) {
-  let formCase = [];
-  formCase[CPN_PLACE] = { form: 'ellipse', entry: ['initmark', 'type'] };
-  formCase[CPN_TRANSITION] = { form: 'box', entry: ['time', 'code', 'priority', 'cond'] };
-  formCase[CPN_CONNECTION] = { entry: ['annot'] };
+  // let formCase = [];
+  // formCase[CPN_PLACE] = { form: 'ellipse', entry: ['initmark', 'type'] };
+  // formCase[CPN_TRANSITION] = { form: 'box', entry: ['time', 'code', 'priority', 'cond'] };
+  // formCase[CPN_CONNECTION] = { entry: ['annot'] };
 
 
   let names = [];
@@ -797,7 +814,7 @@ Modeling.prototype.createElementInModel = function (position, type) {
 
   let relPos = [];
 
-  let elemType = formCase[type];
+  let elemType = modelCase[type];
   if (elemType) {
     if (elemType.form) {
 

@@ -44,6 +44,7 @@ export class ModelEditorComponent implements OnInit {
 
   diagram: Diagram;
   elementFactory;
+  cpnFactory;
   canvas;
   dragging;
   modeling;
@@ -89,6 +90,7 @@ export class ModelEditorComponent implements OnInit {
     this.modeling = this.diagram.get('modeling');
     this.labelEditingProvider = this.diagram.get('labelEditingProvider');
     this.textRenderer = this.diagram.get('textRenderer');
+    this.cpnFactory = this.diagram.get('cpnFactory')
 
 
     // set defualt values to diagram
@@ -408,6 +410,56 @@ export class ModelEditorComponent implements OnInit {
         // console.log(data.project);
       }
     });*/
+
+    this.eventService.on(Message.SUBPAGE_CREATE, (data) => {
+      // this.eventService.on(Message.SUBPAGE_CREATE, (data) => {
+      //   let attrs;
+      //   let shape;
+      //   if (data.parentid === this.pageId) {
+      //     if (data.object) {
+      //       attrs = this.getTransShapeAttrs(data.object);
+      //       shape = this.elementFactory.createShape(attrs);
+      //       shape.cpnElement = data.object;
+      //       shape = this.canvas.addShape(shape, this.canvas.getRootElement());
+      //       this.subpages.push({ subpageid: data.id, tranid: shape.id, name: data.name });
+      //       this.transShapes[attrs.id] = shape;
+      //     } else {
+      //       /***create trasition***/
+      //       const bounds = this.canvas.viewbox();
+      //       attrs = {
+      //         type: 'cpn:Transition',
+      //         // id: obj["@attributes"].id,
+      //         id: 'ID' + new Date().getTime(),
+      //         x: bounds.x + bounds.width / 2,
+      //         y: bounds.y + bounds.height / 2,
+      //         width: 100,
+      //         height: 80,
+      //         name: data.name,
+      //         stroke: 'Black',
+      //         strokeWidth: 1,
+      //         hierar: 'subPage'
+      //         // businessObject: {
+      //         //   text: obj.text,
+      //         // }
+      //       };
+
+      //       shape = this.elementFactory.createShape(attrs);
+      //       shape = this.canvas.addShape(shape, this.canvas.getRootElement());
+      //       this.subpages.push({ subpageid: data.id, tranid: shape.id, name: data.name });
+      //       this.transShapes[attrs.id] = shape;
+      //       this.createTransitionInModel(shape);
+      //     }
+      //   }
+      // });
+
+      if (data.parentid === this.pageId) {
+        const bounds = this.canvas.viewbox();
+        const x = bounds.x + bounds.width / 2;
+        const y = bounds.y + bounds.height / 2;
+        this.cpnFactory.createShape(undefined, undefined, CPN_TRANSITION, {x: x, y: y}, true);
+
+      }
+    });
 
     // Subscribe on property update event
     this.eventService.on(Message.PROPERTY_UPDATE, (data) => {

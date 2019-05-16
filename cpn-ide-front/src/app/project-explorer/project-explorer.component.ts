@@ -481,6 +481,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         this.eventService.send(Message.SUBPAGE_CREATE, {
           name: pageNode.name,
           id: pageNode.id,
+          parentid: node.id,
           event: event,
           state: this.treeComponent.treeModel.getState()
         });

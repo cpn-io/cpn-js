@@ -736,22 +736,26 @@ function optimiseEqualsArcsByWayoints(arc, delta) {
 }
 
 
-Modeling.prototype.declareSubPage = function(name) {
- /* newTranc['subst'] = {
+Modeling.prototype.declareSubPage = function(element, name, pageId) {
+  let cpnElement = element.cpnElement;
+  cpnElement['subst'] = {
     subpageinfo: {
       fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
       lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
-      posattr: { _x: newTranc.posattr._x, _y: newTranc.posattr._y },
+      posattr: { _x: cpnElement.posattr._x, _y: cpnElement.posattr._y },
       textattr: { _colour: 'Black', _bold: 'false' },
-      _id: newTranc._id + 'e',
-      _name: 'Supplier'
+      _id: cpnElement._id + 'e',
+      _name: name
     },                  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     _portsock: '',     /// <<--------------------------------------------------------------------TO DO FILL THIS FIELD ARCS ID---------------------------------------------------------------------
-    _subpage: subpage.subpageid ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  };*/
+    _subpage: pageId ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  };
+
+  element.name = name;
+  element.text = name;
+
+  this._eventBus.fire('element.changed', { element: element });
 }
-
-
 
 
 /**

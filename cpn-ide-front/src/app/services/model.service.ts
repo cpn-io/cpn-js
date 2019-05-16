@@ -482,34 +482,43 @@ export class ModelService {
       }
     };
     if (type === 'page') {
-      let subPageTrans;
-      if (parent.trans instanceof Array) {
-        for (let i = 0; i < parent.trans.length; i++) {
-          if (parent.trans[i].subst && parent.trans[i].subst._subpage === element._id) {
-            subPageTrans = Object.assign({}, parent.trans[i]);
-            delete parent.trans[i]['subst'];
-            if (target.trans) {
-              if (target.trans instanceof Array) {
-                subPageTrans._id = 'ID' + new Date().getTime();
-                target.trans.push(subPageTrans);
-              } else {
-                target.trans = [subPageTrans, target.trans];
-              }
+      const swapSubPageTrans = (tran, subPageTrans) => {
+        if (tran.subst && tran.subst._subpage === element._id) {
+          subPageTrans = Object.assign({}, tran);
+          delete tran['subst'];
+          if (target.trans) {
+            if (target.trans instanceof Array) {
+              subPageTrans._id = 'ID' + new Date().getTime();
+              target.trans.push(subPageTrans);
             } else {
-              target.trans = [subPageTrans];
+              target.trans = [subPageTrans, target.trans];
             }
-            this.eventService.send(Message.SUBPAGE_CREATE, {
-              name: element.pageattr._name,
-              id: subPageTrans.subst._subpage,
-              parentid: target._id,
-              event: event,
-              state: undefined, //this.treeComponent.treeModel.getState(),
-              object: subPageTrans
-            });
-            break;
+          } else {
+            target.trans = [subPageTrans];
           }
         }
       }
+      let subPageTrans = undefined;
+      if(parent) {
+        if (parent.trans instanceof Array) {
+          for (let i = 0; i < parent.trans.length; i++) {
+            swapSubPageTrans(parent.trans[i], subPageTrans);
+            if (subPageTrans) break;
+          }
+        } else {
+          swapSubPageTrans(parent.trans, subPageTrans);
+        }
+      }
+
+      this.eventService.send(Message.SUBPAGE_CREATE, {
+        name: element.pageattr._name,
+        id: element._id,
+        parentid: target._id,
+        event: event,
+        state: undefined, //this.treeComponent.treeModel.getState(),
+        object: subPageTrans
+      });
+
     } else if (!type) {
       if (target) {
         if (target instanceof Array) {

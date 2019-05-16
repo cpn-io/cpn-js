@@ -36,6 +36,7 @@ CpnUpdater.$inject = [
 import {
   event as domEvent
 } from 'min-dom';
+import Modeling from "./Modeling";
 
 /**
  * A handler responsible for updating
@@ -71,6 +72,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
    // updateLabels(e.element);
     updateCpnElement(e.element);
   });
+
 
   eventBus.on('element.hover', function (event) {
     var element = event.element;
@@ -215,6 +217,8 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     // }
   }
 
+
+
   function updateCpnElement(element) {
     // export  const modelCase = {
     //   'cpn:Place': { form: 'ellipse', entry: ['initmark', 'type'] },
@@ -247,7 +251,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     if (shape.x && shape.y && cpnElement && cpnElement.posattr && shape.type === CPN_LABEL) {
       cpnElement.posattr._x = shape.x;
       cpnElement.posattr._y = shape.y * -1;
-    } 
+    }
     // else if(cpnElement._x && cpnElement._y){
     //   cpnElement._x = shape.x;
     //   cpnElement._y = shape.y * -1;

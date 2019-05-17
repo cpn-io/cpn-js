@@ -184,7 +184,7 @@ Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus
 
     if (!changingElement || !changingElement.cpnElement)
       return;
-    if (!isAny(changingElement, [CPN_PLACE, CPN_TRANSITION, CPN_LABEL, CPN_TEXT_ANNOTATION]))
+    if (!isAny(changingElement, [CPN_PLACE, CPN_TRANSITION, CPN_TEXT_ANNOTATION]))
       return;
 
     let delta = { x: 0, y: 0 };
@@ -193,6 +193,17 @@ Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus
     if (changingCpnEntry && changingCpnEntry._x && changingCpnEntry._y) {
       let x = Math.round(changingCpnEntry._x);
       let y = Math.round(changingCpnEntry._y) * -1;
+
+      // if (is(changingElement, CPN_LABEL)) {
+      //   var bounds = { x: x, y: y, width: 200, height: 20 };
+      //   var text = changingElement.text;
+      //   var defaultValue = changingElement.defaultValue;
+      //   bounds = self._textRenderer.getExternalLabelBounds(bounds, defaultValue && text.trim() === '' ? defaultValue : text);
+
+      //   x -= bounds.width / 2;
+      //   y -= bounds.height / 2;
+      // }
+
       delta.x = x - changingElement.x;
       delta.y = y - changingElement.y;
 
@@ -751,13 +762,12 @@ function optimiseEqualsArcsByWayoints(arc, delta) {
 }
 
 
-Modeling.prototype.declareSubPage = function (element, name, pageId) {
-  let cpnElement = element.cpnElement;
+Modeling.prototype.declareSubPage = function (cpnElement, name, pageId) {
   cpnElement['subst'] = {
     subpageinfo: {
       fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
       lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
-      posattr: { _x: cpnElement.posattr._x, _y: cpnElement.posattr._y },
+      posattr: { _x: cpnElement.posattr._x, _y: cpnElement.posattr._y - cpnElement.box._h/2 },
       textattr: { _colour: 'Black', _bold: 'false' },
       _id: cpnElement._id + 'e',
       _name: name
@@ -872,6 +882,7 @@ Modeling.prototype.createElementInModel = function (position, type) {
     relPos['cond'] = { _x: x - w, _y: y + h / 2 };
     relPos['priority'] = { _x: x - w, _y: y - h / 2 };
 
+    relPos['subst'] = { _x: x, _y: y + h / 2 };
 
     for (let label of elemType.entry) {
       newElement[label] = {

@@ -179,8 +179,11 @@ export class ModelEditorComponent implements OnInit {
         const bounds = this.canvas.viewbox();
         const x = bounds.x + bounds.width / 2;
         const y = bounds.y + bounds.height / 2;
-        let element  = this.cpnFactory.createShape(undefined, undefined, CPN_TRANSITION, {x: x, y: y}, true);
-        this.modeling.declareSubPage( element, data.name, data.id);
+
+        let position = { x: x, y: y };
+        let cpnElement = this.modeling.createElementInModel(position, CPN_TRANSITION);
+        cpnElement = this.modeling.declareSubPage(cpnElement, data.name, data.id);
+        let element = this.cpnFactory.createShape(undefined, cpnElement, CPN_TRANSITION, position, true);
 
       }
 
@@ -219,16 +222,18 @@ export class ModelEditorComponent implements OnInit {
   }
 
   openPropPanel(element) {
-    if (element.type === CPN_LABEL) {
-      element = element.labelTarget;
-    }
-    if (element.labels) {
-      let labels = [];
-      for (let lab of element.labels) {
-        labels[lab.labelType] = lab.cpnElement;
+    if (element) {
+      if (element.type === CPN_LABEL) {
+        element = element.labelTarget || element;
       }
+      if (element.labels) {
+        let labels = [];
+        for (let lab of element.labels) {
+          labels[lab.labelType] = lab.cpnElement;
+        }
 
-      this.eventService.send(Message.SHAPE_SELECT, { element: element, labels: labels, cpnElement: element.cpnElement, type: element.type });
+        this.eventService.send(Message.SHAPE_SELECT, { element: element, labels: labels, cpnElement: element.cpnElement, type: element.type });
+      }
     }
   }
 

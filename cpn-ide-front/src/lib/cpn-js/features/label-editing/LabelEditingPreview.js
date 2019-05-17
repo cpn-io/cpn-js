@@ -134,13 +134,13 @@ export default function LabelEditingPreview(eventBus, canvas, modeling, elementR
 
     var activeProvider = context.active;
 
-    if (activeProvider) {
+    if (activeProvider && element) {
       canvas.removeMarker(activeProvider.element.label || activeProvider.element, MARKER_HIDDEN);
       canvas.removeMarker(element, MARKER_LABEL_HIDDEN);
     }
 
-    element = undefined;
-    absoluteElementBBox = undefined;
+    // element = undefined;
+    // absoluteElementBBox = undefined;
 
     if (gfx) {
       svgRemove(gfx);

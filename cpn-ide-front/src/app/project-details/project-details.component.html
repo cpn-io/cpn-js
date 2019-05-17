@@ -86,9 +86,9 @@
                 <div *ngIf="tab['ml']  && showTable !== 'Ml'">
                   <table [id]="'declarationPanel-ml-'+tab.id" class="table table-bordered table-hover table-small">
                     <tr (click)="selectClick(item, tab.id, 'ml')" *ngFor="let item of tab['ml']" c>
-                      <td style="width: 60px;">{{getFirstCellData(item)}}</td>
-                      <td (click)="sendMlToMlEditor(item)" contenteditable='true'
-                          (focusout)="saveEditedData($event)">{{getSecondCellData(item)}}</td>
+                      <td style="width: 60px;">{{getFirstCellDataFromMLCode(item)}}</td>
+                      <td (click)="sendMlToMlEditor(item)" contenteditable='true' style="white-space: pre;"
+                          (focusout)="saveEditedData($event)">{{item}}</td>
                     </tr>
                   </table>
                 </div>

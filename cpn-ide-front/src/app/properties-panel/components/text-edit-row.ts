@@ -56,7 +56,7 @@ export class TextEditRowComponent {
 
         var keyCode = e.which || e.keyCode,
             target = e.target || e.srcElement;
-    
+
         if (keyCode === 13 && !e.shiftKey) {
             // console.log('keydown. Just enter without shift key');
 
@@ -77,8 +77,21 @@ export class TextEditRowComponent {
             this._object[this._field] = parseInt(event.target.textContent, 0);
         if (this._type === 'color')
             this._object[this._field] = this.color2name(event.target.value);
-        if (this._type === 'select')
-            this._object[this._field] = event;
+        if (this._type === 'select') {
+          console.log('List in prop-panel - OBJ-', this._object);
+          //console.log('List in prop-panel - OBJ[field]-', this._object[this._field]);
+          console.log('List in prop-panel - field-', this._field);
+          if(this._object.state === 'none') {
+            if(event) {
+              this._object.obj['port'] = this.getPortObject(this._object.obj, event);
+              //this._object['port'] = this.getPortObject(this._object, this._field);
+              this._object = this._object.obj['port'];
+            } else {
+              delete this._object.obj['port'];
+            }
+          }
+          this._object[this._field] = event;
+        }
 
         this.changed.emit(this._object[this._field]);
     }
@@ -87,5 +100,19 @@ export class TextEditRowComponent {
         var parsed = parseInt(x, base);
         if (isNaN(parsed)) { return base; }
         return parsed;
+    }
+
+
+    getPortObject(cpnElement, text) {
+     const port = {
+         fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
+         lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
+         posattr: { _x: cpnElement.posattr._x, _y: cpnElement.posattr._y - cpnElement.ellipse._h },
+         _text: text,
+         textattr: { _colour: 'Black', _bold: 'false' },
+         _id: cpnElement._id + 'e',
+         _type: text === 'In/Out' ? 'I/O' : text
+       };
+     return port;
     }
 }

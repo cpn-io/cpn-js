@@ -152,6 +152,15 @@ function isString(v) {
  */
 Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus) {
 
+  if(element.type === CPN_PLACE){
+    if(element.cpnElement.port && element.labels.length === 3){
+      const attrs = this.getLabelAttrs(element, element.cpnElement['port'], 'port');
+       const label = this._elementFactory.createLabel(attrs);
+       this._canvas.addShape(label, this._canvas.getRootElement());
+      //this._eventBus.fire('element.changed', { element: element });
+    }
+  }
+
   const self = this;
 
   if (element.type === CPN_LABEL && (element.text || element.name)) {
@@ -776,16 +785,19 @@ Modeling.prototype.declareSubPage = function (cpnElement, name, pageId) {
     _subpage: pageId ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   };
 
-  element.name = name;
-  element.text = name;
+  // element.name = name;
+  // element.text = name;
+  //
+  // const attrs = this.getLabelAttrs(element, element.cpnElement['subst'].subpageinfo, 'subst');
+  // const label = this._elementFactory.createLabel(attrs);
+  // this._canvas.addShape(label, this._canvas.getRootElement());
 
-  const attrs = this.getLabelAttrs(element, element.cpnElement['subst'].subpageinfo, 'subst');
-  const label = this._elementFactory.createLabel(attrs);
-  this._canvas.addShape(label, this._canvas.getRootElement());
 
-
-  this._eventBus.fire('element.changed', { element: element });
+  //this._eventBus.fire('element.changed', { element: element });
+  return cpnElement;
 }
+
+
 
 
 /**

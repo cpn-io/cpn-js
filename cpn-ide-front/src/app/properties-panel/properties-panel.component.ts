@@ -85,10 +85,16 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   ];
 
   private portTypes = [
+    '',
     'In',
     'Out',
     'In/Out'
   ];
+
+
+  private getPort(portObject, cpnEelement){
+    return portObject ? portObject : {obj: cpnEelement, state: 'none'};
+  }
 
   private layoutPartOpened: boolean[] = [];
 

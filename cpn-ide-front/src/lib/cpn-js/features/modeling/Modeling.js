@@ -762,13 +762,12 @@ function optimiseEqualsArcsByWayoints(arc, delta) {
 }
 
 
-Modeling.prototype.declareSubPage = function (element, name, pageId) {
-  let cpnElement = element.cpnElement;
+Modeling.prototype.declareSubPage = function (cpnElement, name, pageId) {
   cpnElement['subst'] = {
     subpageinfo: {
       fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
       lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
-      posattr: { _x: cpnElement.posattr._x, _y: cpnElement.posattr._y },
+      posattr: { _x: cpnElement.posattr._x, _y: cpnElement.posattr._y - cpnElement.box._h/2 },
       textattr: { _colour: 'Black', _bold: 'false' },
       _id: cpnElement._id + 'e',
       _name: name
@@ -776,11 +775,7 @@ Modeling.prototype.declareSubPage = function (element, name, pageId) {
     _portsock: '',     /// <<--------------------------------------------------------------------TO DO FILL THIS FIELD ARCS ID---------------------------------------------------------------------
     _subpage: pageId ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   };
-
-  element.name = name;
-  element.text = name;
-
-  this._eventBus.fire('element.changed', { element: element });
+  return cpnElement;
 }
 
 
@@ -878,6 +873,7 @@ Modeling.prototype.createElementInModel = function (position, type) {
     relPos['cond'] = { _x: x - w, _y: y + h / 2 };
     relPos['priority'] = { _x: x - w, _y: y - h / 2 };
 
+    relPos['subst'] = { _x: x, _y: y + h / 2 };
 
     for (let label of elemType.entry) {
       newElement[label] = {

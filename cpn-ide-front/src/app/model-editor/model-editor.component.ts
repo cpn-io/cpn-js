@@ -179,8 +179,11 @@ export class ModelEditorComponent implements OnInit {
         const bounds = this.canvas.viewbox();
         const x = bounds.x + bounds.width / 2;
         const y = bounds.y + bounds.height / 2;
-        let element = this.cpnFactory.createShape(undefined, undefined, CPN_TRANSITION, { x: x, y: y }, true);
-        this.modeling.declareSubPage(element, data.name, data.id);
+
+        let position = { x: x, y: y };
+        let cpnElement = this.modeling.createElementInModel(position, CPN_TRANSITION);
+        cpnElement = this.modeling.declareSubPage(cpnElement, data.name, data.id);
+        let element = this.cpnFactory.createShape(undefined, cpnElement, CPN_TRANSITION, position, true);
 
       }
 

@@ -86,6 +86,13 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
     action: function () { self._createShape(event, CPN_TRANSITION) }
   };
 
+  var createSubpageMenuEntry = {
+    id: '_menuItem_createSubpage',
+    label: 'New Subpage',
+    className: 'bpmn-icon-subprocess-collapsed',
+    action: function () { self._createSubpage(event) }
+  };
+
   // var deleteMenuEntry = {
   //   id: '_menuItem_delete',
   //   label: 'Delete',
@@ -109,6 +116,7 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
   if (element.id === '__implicitroot') {
     entries.push(createPlaceMenuEntry);
     entries.push(createTransitionMenuEntry);
+    entries.push(createSubpageMenuEntry);
   }
 
   // if (is(element, CPN_PLACE)) {
@@ -145,6 +153,20 @@ CpnPopupMenuProvider.prototype._createShape = function (event, type) {
   this._popupMenu.close();
   const position = toLocalPoint(this._canvas, this._position);
   this._cpnFactory.createShape(undefined, undefined, type, position, true);
+}
+
+CpnPopupMenuProvider.prototype._createSubpage = function (event) {
+  console.log('CpnPopupMenuProvider.prototype._createSubpage, this.position = ', this._position);
+
+  this._popupMenu.close();
+  const position = toLocalPoint(this._canvas, this._position);
+
+  // alert(JSON.stringify(position));
+  let id = 'ID' + new Date().getTime();
+  let cpnElement = this._modeling.createElementInModel(position, CPN_TRANSITION);
+  cpnElement = this._modeling.declareSubPage(cpnElement, 'Subpage', id);
+  
+  this._cpnFactory.createShape(undefined, cpnElement, CPN_TRANSITION, position, true);
 }
 
 /**

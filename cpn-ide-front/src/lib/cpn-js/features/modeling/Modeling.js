@@ -769,6 +769,11 @@ Modeling.prototype.declareSubPage = function (element, name, pageId) {
   element.name = name;
   element.text = name;
 
+  const attrs = this.getLabelAttrs(element, element.cpnElement['subst'].subpageinfo, 'subst');
+  const label = this._elementFactory.createLabel(attrs);
+  this._canvas.addShape(label, this._canvas.getRootElement());
+
+
   this._eventBus.fire('element.changed', { element: element });
 }
 

@@ -431,8 +431,10 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       name: color.id,
     };
     if (color.layout) {
-      node.name = color.layout.substr(7);
+      node.name = color.layout;//color.layout.substr(7);
+      //console.log('colset --------', node.name);
     } else {
+      node.name = 'colset ' + node.name;
       if (color.alias && color.alias.id) {
         node.name += ' = ' + color.alias.id;
       } else if (color.list && color.list.id) {
@@ -453,7 +455,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
         node.name += ' timed';
       }
     }
-    return node.name;
+    return  node.name;
   }
 
   getVariableStringValue(variable) {

@@ -233,7 +233,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
   }
 
-  // <editor-fold desc="Подсветка при наведении" >
+  // <editor-fold desc="Подсветка в дереве при наведении на фигуру в графическом редакторе" >
 
   /**
    * подчеркнуть все, что связано с данным элементом

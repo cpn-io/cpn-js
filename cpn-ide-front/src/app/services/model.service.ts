@@ -1074,7 +1074,7 @@ export class ModelService {
         elem.__text = layout;
         break;
       case 'color':   // *****отрефакторить*****
-        elem.layout = blockType + ' ' + layout;
+        elem.layout =  layout;
         layout = layout.replace('colset', '');
         splitLayoutArray = layout.split('=');
         splitLayoutArray[1] = splitLayoutArray[1].split(' ').filter(e => e.trim() !== '');

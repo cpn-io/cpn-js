@@ -32,7 +32,7 @@
       </div>
 
       <!-- Port Labels -->
-      <app-text-edit-row *ngIf="cpnElement.port" type="select" name="Port type" [object]="cpnElement.port" 
+      <app-text-edit-row  type="select" name="Port type" [object]="getPort(cpnElement.port, cpnElement)"
         field="text" (changed)="updateChanges()" [options]="portTypes">
       </app-text-edit-row>
 
@@ -85,6 +85,12 @@
       <!-- Fill color -->
       <app-text-edit-row *ngIf="!cpnElement._orientation" type="color" name="Fill color" [object]="cpnElement.fillattr"
         field="_colour" (changed)="updateChanges()" [colors]="colors">
+      </app-text-edit-row>
+
+
+      <!-- PortSock -->
+      <app-text-edit-row *ngIf="cpnElement.subst" name="PortSock" [object]="cpnElement.subst" field="_portsock"
+                         (changed)="updateChanges()">
       </app-text-edit-row>
 
     </div>

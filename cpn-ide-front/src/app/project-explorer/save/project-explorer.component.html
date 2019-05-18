@@ -3,8 +3,7 @@
 <!--<div style="width: 100%; height:100%; margin-top:-42px; border: 0px solid blue">-->
 <!--<div style="padding-top:42px; height:100%;; border:0px solid red">-->
 <tabs #tabsComponent class="cpn-tabs">
-
-  <tab id="Explorer panel" tabTitle="Explorer panel" [isHidden]="false">
+  <tab id="Explorer panel" tabTitle="Explorer panel" >
     <nav class="navbar navbar-sm navbar-expand shadow-sm">
 
       <ul class="navbar-nav mr-auto">
@@ -12,7 +11,7 @@
         <div *ngIf="canCreateDeclaration(selectedNode)">
           <li class="dropdown nav-item">
             <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle nav-link" data-toggle="dropdown"
-              href="#" id="navbarDropdown">
+               href="#" id="navbarDropdown">
               <i class="fas fa-plus"></i>
               <span>New</span>
             </a>
@@ -27,22 +26,22 @@
         </div>
 
         <li class="nav-item"><a (click)="onAddNode(selectedNode)" *ngIf="canCreate(selectedNode)" class="nav-link"
-            href="#">
-            <i class="fas fa-plus"></i>New {{getStringValueForAddingCp(selectedNode)}}</a></li>
+                                href="#">
+          <i class="fas fa-plus"></i>New {{getStringValueForAddingCp(selectedNode)}}</a></li>
 
         <div *ngIf="canCreate(selectedNode) || canCreateDeclaration(selectedNode)" class="divider"></div>
 
         <!--<li class="nav-item"><a (click)="onEditNode(selectedNode)" *ngIf="canEditOnContextMenu(selectedNode)" class="nav-link"-->
-        <!--href="#">-->
-        <!--<i class="fas fa-pen"></i>Edit</a></li>-->
+                                <!--href="#">-->
+          <!--<i class="fas fa-pen"></i>Edit</a></li>-->
         <li class="nav-item"><a (click)="onDeleteNode(selectedNode)" *ngIf="canDelete(selectedNode)" class="nav-link"
-            href="#">
-            <i class="fas fa-minus"></i>Delete</a></li>
+                                href="#">
+          <i class="fas fa-minus"></i>Delete</a></li>
       </ul>
 
       <ul class="navbar-nav ml-auto">
         <li>
-          <input (input)="changeFilter($event.target.value)" [value]="filterText" placeholder="Filter" type="text" />
+          <input (input)="changeFilter($event.target.value)" [value]="filterText" placeholder="Filter" type="text"/>
         </li>
 
         <li class="nav-item">
@@ -59,11 +58,7 @@
         <div class="scroll-y">
           <div class="pane" style="padding:10px">
 
-            <!------------------->
-            <!-- Tree explorer -->
-            <!------------------->
-            <tree-root #tree [nodes]="nodes" [options]="options" (activate)="activateNode($event)"
-              (ngModelChange)="treeModelChanged($event)">
+            <tree-root #tree [nodes]="nodes" [options]="options" (activate)="activateNode($event)">
               <ng-template #treeNodeTemplate let-node let-index="index">
 
                 <div [ngClass]="node.data.classes">
@@ -71,50 +66,33 @@
                   <table class="table-textarea">
                     <tr>
                       <td>
-                        <span *ngIf="canCollapse(node)" class="toggle-children-wrapper">
-                          <span
-                            [class]="openedLabel[node.id] ? 'toggle-children-wrapper-expanded' : 'toggle-children-wrapper-collapsed'"
-                            (click)="onNodeArrowClick($event, node)">
+                        <span *ngIf="canCollapse(node)" class="toggle-children-wrapper" >
+                          <span [class]="collapsedLabel[node.id] === false ? 'toggle-children-wrapper-expanded' : 'toggle-children-wrapper-collapsed'"
+                                (click)="onNodeArrowClick($event, node)">
                             <span class="toggle-children"></span>
                           </span>
                         </span>
-                        <span *ngIf="node.parent.parent === null">Project: </span>
+                        <span *ngIf="node.parent.parent === null" >Project: </span>
                       </td>
-
+                      
                       <td class="node"
-                        [ngClass]="{'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id)}">
-
-                        <!-- {{getLabel(node)}} - {{openedLabel[node.id] ? true : false}} -->
-
-                        <!-- <div innerHtml="{{getLabel(node) | colorDeclarations}}"></div> -->
-                        <!-- <div [innerHTML]="getLabel(node) | colorDeclarations | safeHtml"></div> -->
-
-                        <!-- <div 
-                          *ngIf="!openedLabel[node.id]"
-                          (click)="onNodeLabelClick($event, node)"
-                          [contentEditable]="openedLabel[node.id] || (editableNode === node)"
-                          [innerHTML]="getLabel(node) | colorDeclarations | safeHtml">
-                        </div> -->
-
-                        <div 
-                          [id]="'textinpfield_' + node.id"
-                          class="editablenode" 
-                          (click)="onNodeLabelClick($event, node)"
-                          (focusout)="saveEditedData($event)"
-                          [contentEditable]="openedLabel[node.id] || (editableNode === node)"
-                          [innerHTML]="getLabel(node) | colorDeclarations | safeHtml">
-                        </div>
+                          [ngClass]="{'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id)}">
+                        <div [id]="'textinpfield_'+node.id"
+                        class="editablenode"
+                             (click)="onNodeLabelClick($event, node)" (focusout)="saveEditedData($event)"
+                        [contentEditable]="(collapsedLabel[node.id] === false) || (editableNode === node)" >{{getLabel(node)}}</div>
                       </td>
                     </tr>
                   </table>
 
                   <div *ngIf="canCreate(node) || canDelete(node) || canCreateDeclaration(node)"
-                    class="dropdown-menu dropdown-menu-fixed shadow" id="context-menu-{{node.id  | replaceSpaces}}">
+                       class="dropdown-menu dropdown-menu-fixed shadow"
+                       id="context-menu-{{node.id  | replaceSpaces}}">
 
                     <a (click)="onAddNode(node)" *ngIf="canCreate(node)" class="dropdown-item" href="#">
                       <i class="fas fa-plus"></i>New {{getStringValueForAddingCp(node)}}</a>
                     <!--<a (click)="onEditNode(node)" *ngIf="canEditOnContextMenu(node)" class="dropdown-item" href="#">-->
-                    <!--<i class="fas fa-pen"></i>Edit</a>-->
+                      <!--<i class="fas fa-pen"></i>Edit</a>-->
                     <a (click)="onDeleteNode(node)" *ngIf="canDelete(node)" class="dropdown-item" href="#">
                       <i class="fas fa-minus"></i>Delete</a>
 
@@ -133,7 +111,6 @@
 
               </ng-template>
             </tree-root>
-            <!------------------->
 
           </div>
         </div>
@@ -144,7 +121,7 @@
 
   <tab [id]="'Application settings'" [tabTitle]="'Application settings'">
     <table [id]="'application-settings-table'" class="table table-bordered table-hover table-small"
-      *ngIf="showTable !== 'application-settings-table'">
+           *ngIf="showTable !== 'application-settings-table'">
       <tr *ngFor="let item of appSettingsKeys">
         <td width="50%" class="valueName">{{ item}}</td>
         <td width="50%" contenteditable='true'>{{ appSettings[item] }}</td>

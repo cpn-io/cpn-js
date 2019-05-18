@@ -111,14 +111,15 @@ export class ProjectService {
       .set('Accept', 'application/xml');
 
     // const modelFile = 'baseModel_ID1008016.cpn';
-    //  const modelFile = 'discretemodel_task1.cpn';
+    // const modelFile = 'discretemodel_task1.cpn';
     // const modelFile = 'erdp.cpn';
     // const modelFile = 'hoponhopoff-color.cpn';
     // const modelFile = 'mscProtocol.cpn'
 
     // const modelFile = 'emptynet.cpn';
     // const modelFile = 'test-1.cpn';
-    const modelFile = 'mynet.cpn';
+    const modelFile = 'test-2.cpn';
+    // const modelFile = 'mynet.cpn';
 
     const url = './assets/cpn/' + modelFile;
     this.http.get(url, {headers: headers, responseType: 'text'})

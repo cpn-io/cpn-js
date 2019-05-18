@@ -1,19 +1,17 @@
 import { Component, HostListener, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 // import {NgxXml2jsonService} from 'ngx-xml2json';
-import { EventService } from '../services/event.service';
-import { Message } from '../common/message';
-import { ProjectService } from '../services/project.service';
+import { EventService } from '../../services/event.service';
+import { Message } from '../../common/message';
+import { ProjectService } from '../../services/project.service';
 import { TreeComponent, TREE_ACTIONS } from 'angular-tree-component';
-import { ModelService } from '../services/model.service';
-import { ColorDeclarationsPipe } from '../pipes/color-declarations.pipe';
+import { ModelService } from '../../services/model.service';
 
 // import {TreeComponent} from 'angular-tree-component';
 
 @Component({
   selector: 'app-project-explorer',
   templateUrl: './project-explorer.component.html',
-  styleUrls: ['./project-explorer.component.scss'],
-  providers: [ColorDeclarationsPipe]
+  styleUrls: ['./project-explorer.component.scss']
 })
 /**
  * class ProjectExplorerComponent
@@ -57,7 +55,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   underlineNodeSet = new Set();
 
   // Состояние укороченных названий узлов
-  openedLabel = [];
+  collapsedLabel = [];
 
   // nodes = [
   //   {
@@ -147,8 +145,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   }*/
 
-  colorDeclarationsPipe;
-
   /**
    * Constructor
    * @param {NgxXml2jsonService} xml2jsonService - xml to json service provider
@@ -157,10 +153,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     private eventService: EventService,
     // private xml2jsonService: NgxXml2jsonService,
     private projectService: ProjectService,
-    private modelService: ModelService,
-    private _colorDeclarationsPipe: ColorDeclarationsPipe) {
-
-    this.colorDeclarationsPipe = this._colorDeclarationsPipe;
+    private modelService: ModelService) {
   }
 
   ngOnInit() {
@@ -179,35 +172,36 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     });
 
     this.eventService.on(Message.UPDATE_TREE, (data) => {
-      // const newNodeId = data.newNodeId; // ? data.newNodeId  : data.comonBlock.id;
-      // if (data.state) {
-      //   this.stateTree = data.state;
-      //   // this.treeComponent.treeModel.setState(data.state);
-      // }
-      // this.loadProjectData(data.project);
-      // this.updateTree();
+      const newNodeId = data.newNodeId; // ? data.newNodeId  : data.comonBlock.id;
+      if (data.state) {
+        this.stateTree = data.state;
+        // this.treeComponent.treeModel.setState(data.state);
+      }
+      this.loadProjectData(data.project);
+      this.treeComponent.treeModel.update();
+      this.updateTree();
 
-      // setTimeout(() => {
-      //   this.treeComponent.treeModel.setState(data.state);
-      //   // const node = this.treeComponent.treeModel.getNodeById('project');
+      setTimeout(() => {
+        this.treeComponent.treeModel.setState(data.state);
+        // const node = this.treeComponent.treeModel.getNodeById('project');
 
-      //   if (newNodeId) {
-      //     const nodeForEdit = this.treeComponent.treeModel.getNodeById(newNodeId);
-      //     if (!data.comonBlock) {
-      //       this.eventService.send(Message.OPEN_DECLARATION_BLOCK, { id: this.getCurrentBlock(nodeForEdit).id });
-      //     }
-      //     let expnNode = nodeForEdit;
-      //     while (expnNode.id !== 'project') {
-      //       expnNode.expand();
-      //       expnNode = expnNode.parent;
-      //     }
+        if (newNodeId) {
+          const nodeForEdit = this.treeComponent.treeModel.getNodeById(newNodeId);
+          if (!data.comonBlock) {
+            this.eventService.send(Message.OPEN_DECLARATION_BLOCK, { id: this.getCurrentBlock(nodeForEdit).id });
+          }
+          let expnNode = nodeForEdit;
+          while (expnNode.id !== 'project') {
+            expnNode.expand();
+            expnNode = expnNode.parent;
+          }
 
-      //     this.treeComponent.treeModel.setFocusedNode(nodeForEdit);
-      //     if (data.after !== 'delete' && data.after !== 'edit') {
-      //       this.goToEditNode(nodeForEdit);
-      //     }
-      //   }
-      // }, 100);
+          this.treeComponent.treeModel.setFocusedNode(nodeForEdit);
+          if (data.after !== 'delete' && data.after !== 'edit') {
+            this.goToEditNode(nodeForEdit);
+          }
+        }
+      }, 100);
 
     });
 
@@ -401,11 +395,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   isHighlightBottom(id: any) {
-    return (this.underlineNodeSet.has(id) && !this.openedLabel[id]);
+    return (this.underlineNodeSet.has(id) && this.collapsedLabel[id] !== false);
   }
 
   isHighlightAround(id: any) {
-    return (this.underlineNodeSet.has(id) && this.openedLabel[id]);
+    return (this.underlineNodeSet.has(id) && this.collapsedLabel[id] === false);
   }
 
   // </editor-fold>
@@ -559,28 +553,24 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
 
   onNodeArrowClick(event, node) {
-    this.openedLabel[node.id] = !this.openedLabel[node.id];
-    if (this.openedLabel[node.id]) {
+    if (this.collapsedLabel[node.id] === true || this.collapsedLabel[node.id] === undefined) {
+      this.collapsedLabel[node.id] = false;
       this.openNode(event, node);
       this.goToEditNode(node);
     } else {
+      this.collapsedLabel[node.id] = true;
       this.saveEditedData(event);
     }
   }
 
   onNodeLabelClick(event, node) {
-    if (!this.openedLabel[node.id])
-      this.onNodeArrowClick(event, node);
-    else
-      this.goToEditNode(node);
-      
-    // this.openNode(event, node);
-    // if (this.canCollapse(node)) {
-    //   if (this.openedLabel[node.id]) {
-    //     this.openedLabel[node.id] = false;
-    //   }
-    // }
-    // this.goToEditNode(node);
+    this.openNode(event, node);
+    if (this.canCollapse(node)) {
+      if (this.collapsedLabel[node.id] === true || this.collapsedLabel[node.id] === undefined) {
+        this.collapsedLabel[node.id] = false;
+      }
+    }
+    this.goToEditNode(node);
   }
 
   /*
@@ -623,11 +613,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    */
   getLabel(node: any): string {
     if (this.canCollapse(node)) {
-      if (!this.openedLabel[node.id]) {
+      if (this.collapsedLabel[node.id] === true || this.collapsedLabel[node.id] === undefined) {
         let result;
         const data = node.data.name.toString();
         try {
-          const array = data.match('^((local){1}\\s+)*(globref|colset|var|val|fun|exception){1}\\s+[a-zA-Z0-9_]+');
+          const array = data.match('^((local){1}\\s+)*(fun|val|exception){1}\\s+[a-zA-Z0-9_]+');
           result = array[0];
         } catch (e) {
           try {
@@ -680,7 +670,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * save changed name to model by pressing enter key
    * @param event
    */
-  // @HostListener('document:keydown', ['$event'])
+  @HostListener('document:keydown', ['$event'])
   keyEvent(event: KeyboardEvent) {
     console.log('project-explorer Keyboard event ', event);
     //  this.diagram.get('eventBus').fire('element.hover', this.curentElement );
@@ -1002,362 +992,13 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Clear tree component
-   */
-  clearTree() {
-    this.treeComponent.treeModel.collapseAll();
-    this.nodes = [];
-    this.updateTree();
-  }
 
-  /**
-   * Creating simple tree node
-   * 
-   * @param id - id of tree node
-   * @param name - name of tree node
-   */
-  createTreeNode(id, name = undefined): any {
-    return {
-      id: id || name,
-      name: name || id,
-      children: []
-    };
-  }
-
-  /**
-   * Creating project Root node
-   * 
-   * @param name - name of tree node
-   * @param cpnElement - cpn JSON object
-   * 
-   * @returns - tree node 
-   */
-  createProjectNode(name, cpnElement) {
-    const node = this.createTreeNode('project', name);
-    node.cpnElement = cpnElement;
-    node.classes = ['tree-project'];
-    return node;
-  }
-
-  /**
-   * Creating project Options node
-   * 
-   * @param name - name of tree node
-   * @param cpnElement - cpn JSON object
-   * 
-   * @returns - tree node 
-   */
-  createOptionsNode(name, cpnElement) {
-    const optionsNode = this.createTreeNode(name);
-    optionsNode.cpnElement = cpnElement;
-
-    const perfrepName = 'Performance report statistics';
-    const perfrepNode = this.createTreeNode(perfrepName);
-
-    // Simulation options
-    const simperfrepName = 'Simulation performance report';
-    const simperfrepNode = this.createTreeNode(simperfrepName);
-
-    const simperfrepTimedName = 'Timed';
-    const simperfrepTimedNode = this.createTreeNode(simperfrepTimedName);
-    const simperfrepUntimedName = 'Untimed';
-    const simperfrepUntimedNode = this.createTreeNode(simperfrepUntimedName);
-    simperfrepNode.children.push(simperfrepTimedNode);
-    simperfrepNode.children.push(simperfrepUntimedNode);
-
-    const replperfrepName = 'Replication performance report';
-    const replperfrepNode = this.createTreeNode(replperfrepName);
-
-    perfrepNode.children.push(simperfrepNode);
-    perfrepNode.children.push(replperfrepNode);
-
-    const extName = 'Extentions';
-    const extNode = this.createTreeNode(extName);
-
-    if (cpnElement.option instanceof Array) {
-
-      for (const opt of cpnElement.option) {
-        const optName = opt._name + ' = ' + this.cpnOptionValueToString(opt);
-        const optNode = this.createTreeNode('option_' + opt._name, optName);
-        optNode.cpnElement = opt;
-
-        if (['realtimestamp', 'fair_be', 'global_fairness', 'outputdirectory'].includes(opt._name)) {
-          optionsNode.children.push(optNode);
-        } else if (opt._name.startsWith('extensions')) {
-          extNode.children.push(optNode);
-        } else if (opt._name.startsWith('rep')) {
-          replperfrepNode.children.push(optNode);
-        } else if (opt._name.startsWith('untimed')) {
-          simperfrepUntimedNode.children.push(optNode);
-        } else {
-          simperfrepTimedNode.children.push(optNode);
-        }
-      }
-      optionsNode.children.push(perfrepNode);
-      optionsNode.children.push(extNode);
-    }
-
-    return optionsNode;
-  }
-
-  cpnOptionValueToString(opt) {
-    if (!opt.value)
-      return;
-    const type = Object.keys(opt.value)[0];
-    return opt.value[type];
-  }
-
-  /**
-   * Creating project Declarations node
-   * @param name - name of tree node
-   * @param cpnElement - cpn JSON object
-   * @returns - tree node 
-   */
-  createDeclarationsNode(name, cpnElement) {
-    const declarationsNode = this.createTreeNode(name);
-    declarationsNode.cpnElement = cpnElement;
-
-    // Block nodes
-    if (cpnElement.block instanceof Array) {
-      for (const block of cpnElement.block) {
-        declarationsNode.children.push(this.createBlockNode(block));
-      }
-    }
-
-    return declarationsNode;
-  }
-
-  /**
-   * Creating project Block node
-   * @param cpnElement - cpn JSON object
-   * @returns - tree node 
-   */
-  createBlockNode(cpnElement) {
-    const blockNode = this.createTreeNode(cpnElement._id, cpnElement.id);
-    blockNode.cpnElement = cpnElement;
-
-    for (const key of ['block', 'globref', 'color', 'var', 'ml']) {
-      const cpnItem = cpnElement[key];
-      if (cpnItem) {
-        if (cpnItem instanceof Array) {
-          for (const item of cpnItem) {
-            blockNode.children.push(this.createDeclarationNodeByKey(key, item));
-          }
-        } else {
-          blockNode.children.push(this.createDeclarationNodeByKey(key, cpnItem));
-        }
-      }
-    }
-
-    return blockNode;
-  }
-
-  /**
-   * Get declaration node creator
-   * @param key - key of declaration block
-   * @param cpnElement - cpn JSON object
-   * @returns - tree node for corresponding key
-   */
-  createDeclarationNodeByKey(key, cpnElement) {
-    switch (key) {
-      case 'block': return this.createBlockNode(cpnElement);
-      case 'globref': return this.createGlobrefNode(cpnElement);
-      case 'color': return this.createColorNode(cpnElement);
-      case 'var': return this.createVarNode(cpnElement);
-      case 'ml': return this.createMlNode(cpnElement);
-    };
-  };
-
-
-  /**
-   * Creating project Globref node
-   * @param cpnElement - cpn JSON object
-   * @returns - tree node 
-   */
-  createGlobrefNode(cpnElement) {
-    const code = 'globref ' + cpnElement.id + ' = ' + cpnElement.ml + ';';
-
-    const treeNode = this.createTreeNode(cpnElement._id, code);
-    treeNode.cpnElement = cpnElement;
-    treeNode.children = undefined;
-
-    return treeNode;
-  }
-
-  /**
-   * Creating project Color node
-   * @param cpnElement - cpn JSON object
-   * @returns - tree node 
-   */
-  createColorNode(cpnElement) {
-    var code = 'colset ' + cpnElement.id;
-
-    const color = cpnElement;
-    if (color.layout) {
-      code = color.layout;
-    } else {
-      if (color.alias && color.alias.id) {
-        code += ' = ' + color.alias.id;
-      } else if (color.list && color.list.id) {
-        code += ' = list ' + color.list.id;
-      } else if (color.product && color.product.id) {
-        code += ' = product ';
-        if (color.product.id instanceof Array) {
-          for (let i = 0; i < color.product.id.length; i++) {
-            code += i === 0 ? color.product.id[i] + ' ' : '* ' + color.product.id[i];
-          }
-        } else {
-          code += color.product.id;
-        }
-      } else {
-        code += ' = ' + color.id.toLowerCase();
-      }
-      if ('timed' in color) {
-        code += ' timed';
-      }
-      code += ';';
-    }
-
-    const treeNode = this.createTreeNode(cpnElement._id, code);
-    treeNode.cpnElement = cpnElement;
-    treeNode.children = undefined;
-
-    return treeNode;
-  }
-
-  /**
-     * Creating project Var node
-     * @param cpnElement - cpn JSON object
-     * @returns - tree node 
-     */
-  createVarNode(cpnElement) {
-    var code = 'var ' + cpnElement.id;
-
-    if (cpnElement.layout) {
-      code = cpnElement.layout;
-    } else {
-      code = 'var ' + cpnElement.id + ': ' + cpnElement.type.id + ';';
-    }    
-
-    const treeNode = this.createTreeNode(cpnElement._id, code);
-    treeNode.cpnElement = cpnElement;
-    treeNode.children = undefined;
-
-    return treeNode;
-  }
-
-  /**
-     * Creating project ML node
-     * @param cpnElement - cpn JSON object
-     * @returns - tree node 
-     */
-  createMlNode(cpnElement) {
-    const code = cpnElement.__text;
-
-    const treeNode = this.createTreeNode(cpnElement._id, code);
-    treeNode.cpnElement = cpnElement;
-    treeNode.children = undefined;
-
-    return treeNode;
-  }
-
-
-  /**
-   * Get root cpnet element from CPN project JSON object 
-   * @param projectData - CPN project JSON object
-   * @returns - cpnElement for cpnet element
-   */
-  getCpnetElement(projectData) {
-    var cpnet;
-    if (projectData.workspaceElements) {
-      if (projectData.workspaceElements instanceof Array) {
-        for (const workspaceElement of projectData.workspaceElements) {
-          if (workspaceElement.cpnet) {
-            cpnet = workspaceElement.cpnet;
-            break;
-          }
-        }
-      } else {
-        if (projectData.workspaceElements.cpnet) {
-          cpnet = projectData.workspaceElements.cpnet;
-        }
-      }
-    }
-    return cpnet;
-  }
-
-  loadProjectData(project) {
-    this.filterText = '';
-
-    const projectData = project.data;
-    const projectName = project.name;
-    this.currentProjectModel = project.data;
-
-    this.clearTree();
-
-    // Create project root node
-    const projectNode = this.createProjectNode(projectName, projectData);
-
-    let cpnet = this.getCpnetElement(projectData);
-    if (!cpnet)
-      return;
-
-    // Simulation step nodes
-    const stepNode = this.createTreeNode('simulation-step-node', 'Step: 0');
-    const timeNode = this.createTreeNode('simulation-time-node', 'Time: 0');
-    projectNode.children.push(stepNode);
-    projectNode.children.push(timeNode);
-
-    // Create project options node
-    if (cpnet.options) {
-      const optionsNode = this.createOptionsNode('Options', cpnet.options);
-      projectNode.children.push(optionsNode);
-    }
-
-    const historyNode = this.createTreeNode('History');
-    historyNode.children = [this.createTreeNode('* empty *')];
-
-    const monitorsNode = this.createTreeNode('Monitors');
-    monitorsNode.children = [this.createTreeNode('* empty *')];
-
-    // Create project Declarations node
-    var declarationsNode = this.createTreeNode('Declarations');
-    declarationsNode.children = [this.createTreeNode('* empty *')];
-    if (cpnet.globbox) {
-      declarationsNode = this.createDeclarationsNode('Declarations', cpnet.globbox);
-    }
-
-    projectNode.children.push(historyNode);
-    projectNode.children.push(declarationsNode);
-    projectNode.children.push(monitorsNode);
-
-    projectNode.expanded = true;
-
-    this.nodes.push(projectNode);
-
-    this.expandNode('project');
-  }
-
-  expandNode(nodeId) {
-    setTimeout(() => {
-      const node = this.treeComponent.treeModel.getNodeById(nodeId);
-      if (node) {
-        node.expand();
-      }
-    }, 100);
-  }
-
-  treeModelChanged(event) {
-    console.log('TREE MODEL CHANGES, event = ', event);
-  }
-
-  loadProjectData_OLD(project: any) {
+  loadProjectData(project: any) {
     // console.log('LOADPROJECTDATA, project = ', project);
     this.filterText = '';
 
     this.doUnderlineNodeLabel(false);
-    this.openedLabel = [];
+    this.collapsedLabel = [];
     const projectData = project.data;
     const projectName = project.name;
     this.currentProjectModel = project.data;
@@ -1596,7 +1237,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   updateTree() {
-    // this.treeComponent.treeModel.update();
+    this.treeComponent.treeModel.update();
   }
 
 
@@ -1604,6 +1245,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     this.nodes[0].children.push({
       id: 7, name: 'a new child'
     });
+    // tree.treeModel.update();
     this.updateTree();
   }
 

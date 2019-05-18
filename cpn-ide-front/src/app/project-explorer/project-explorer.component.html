@@ -74,6 +74,7 @@
                         </span>
                         <span *ngIf="node.parent.parent === null" >Project: </span>
                       </td>
+                      
                       <td class="node"
                           [ngClass]="{'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id)}">
                         <div [id]="'textinpfield_'+node.id"
@@ -116,6 +117,8 @@
       </div>
     </div>
   </tab>
+
+
   <tab [id]="'Application settings'" [tabTitle]="'Application settings'">
     <table [id]="'application-settings-table'" class="table table-bordered table-hover table-small"
            *ngIf="showTable !== 'application-settings-table'">

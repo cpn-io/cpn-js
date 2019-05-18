@@ -1,10 +1,10 @@
-import {Component, HostListener, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import { Component, HostListener, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 // import {NgxXml2jsonService} from 'ngx-xml2json';
-import {EventService} from '../services/event.service';
-import {Message} from '../common/message';
-import {ProjectService} from '../services/project.service';
-import {TreeComponent, TREE_ACTIONS} from 'angular-tree-component';
-import {ModelService} from '../services/model.service';
+import { EventService } from '../services/event.service';
+import { Message } from '../common/message';
+import { ProjectService } from '../services/project.service';
+import { TreeComponent, TREE_ACTIONS } from 'angular-tree-component';
+import { ModelService } from '../services/model.service';
 
 // import {TreeComponent} from 'angular-tree-component';
 
@@ -84,7 +84,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   //
   options = {
     allowDrag: true,
-    allowDrop: (element, {parent, index}) => {
+    allowDrop: (element, { parent, index }) => {
       const elemHeaderCatalog = this.getHeaderCatalog(element);
       const parentHeaderCatalog = this.getHeaderCatalog(parent);
       if (this.paramsTypes.includes(element.parent.data.name)) {
@@ -93,7 +93,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         }
       }
       return elemHeaderCatalog &&
-      parentHeaderCatalog
+        parentHeaderCatalog
         ? (elemHeaderCatalog.data.name === parentHeaderCatalog.data.name &&
           (this.paramsTypes.includes(element.parent.data.name) ||
             (!this.paramsTypes.includes(parent.data.name) && !this.paramsTypes.includes(parent.parent.data.name))
@@ -106,7 +106,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         contextMenu: (model: any, node: any, event: any) => {
           this.onTreeNodeContextMenu(event, node);
         },
-        drop: (tree, node, $event, {from, to}) => {
+        drop: (tree, node, $event, { from, to }) => {
           console.log('drag', from, to);
           console.log('onMoveNode', node.name, 'to', to.parent.name, 'at index', to.index);
           const parentJson = from.parent.data.object;
@@ -131,7 +131,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
             this.treeComponent.treeModel.setState(tree.getState());
 
           } else {
-            TREE_ACTIONS.MOVE_NODE(tree, node, $event, {from, to});
+            TREE_ACTIONS.MOVE_NODE(tree, node, $event, { from, to });
           }
         }
       }
@@ -188,7 +188,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         if (newNodeId) {
           const nodeForEdit = this.treeComponent.treeModel.getNodeById(newNodeId);
           if (!data.comonBlock) {
-            this.eventService.send(Message.OPEN_DECLARATION_BLOCK, {id: this.getCurrentBlock(nodeForEdit).id});
+            this.eventService.send(Message.OPEN_DECLARATION_BLOCK, { id: this.getCurrentBlock(nodeForEdit).id });
           }
           let expnNode = nodeForEdit;
           while (expnNode.id !== 'project') {
@@ -594,7 +594,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   openNode(event, node) {
     const currentNode = this.getCurrentBlock(node);
-    this.eventService.send(Message.OPEN_DECLARATION_BLOCK, {id: currentNode.id});
+    this.eventService.send(Message.OPEN_DECLARATION_BLOCK, { id: currentNode.id });
     if (this.canCollapse(node))
       this.sendMlToMlEditor(node.data.name);
     else
@@ -608,7 +608,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Распарсить метку, чотбы выцепить отттуда и вернуть название функции или исключения или название переменной
+   * Распарсить метку, чотбы выцепить оттуда и вернуть название функции или исключения или название переменной
    * @param {string} data - полный текст метки в узле
    */
   getLabel(node: any): string {
@@ -635,7 +635,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   sendMlToMlEditor(value: any) {
-    this.eventService.send(Message.SML_TO_EDITOR, {fn: {data: value}});
+    this.eventService.send(Message.SML_TO_EDITOR, { fn: { data: value } });
   }
 
   getCurrentBlock(currentNode): any {
@@ -739,7 +739,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       parentNod = node.parent;
       // node.parent.data.children = node.parent.data.children.filter(x => x.id !== node.id);
       this.deleteNode(this.nodes[0], node.id);
-      this.eventService.send(Message.DELETE_PAGE, {id: node.id, parent: node.parent.data.name});
+      this.eventService.send(Message.DELETE_PAGE, { id: node.id, parent: node.parent.data.name });
       this.updateTree();
       this.focusedNode(parentNod);
       // this.eventService.send(Message.PAGE_OPEN, {pageObject: undefined, subPages: undefined});
@@ -756,7 +756,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   focusedNode(node) {
     if (node) {
       const newfocusedBlock = this.getCurrentBlock(node);
-      this.eventService.send(Message.OPEN_DECLARATION_BLOCK, {id: newfocusedBlock.id});
+      this.eventService.send(Message.OPEN_DECLARATION_BLOCK, { id: newfocusedBlock.id });
       this.treeComponent.treeModel.setFocusedNode(newfocusedBlock);
       this.treeComponent.treeModel.setActiveNode(newfocusedBlock, true, false);
       this.treeComponent.treeModel.setSelectedNode(newfocusedBlock, true);
@@ -1076,13 +1076,13 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
                 if (page.trans && page.trans.length) {
                   for (const tran of page.trans) {
                     if (tran.subst) {
-                      this.subpages.push({subpageid: tran.subst._subpage, tranid: tran._id});
+                      this.subpages.push({ subpageid: tran.subst._subpage, tranid: tran._id });
                       // this.subpages.push(tran._id);
                     }
                   }
                 } else {
                   if (page.trans && page.trans.subst) {
-                    this.subpages.push({subpageid: page.trans.subst._subpage, tranid: page.trans._id});
+                    this.subpages.push({ subpageid: page.trans.subst._subpage, tranid: page.trans._id });
                     // this.subpages.push(page.trans._id);
                   }
                 }
@@ -1231,7 +1231,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   downloadFile(data: string) {
-    const blob = new Blob([data], {type: 'text/json'});
+    const blob = new Blob([data], { type: 'text/json' });
     const url = window.URL.createObjectURL(blob);
     window.open(url);
   }
@@ -1255,7 +1255,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     if (event && event.node && event.node.data && event.node.data.type === 'page') {
       const pageObject = event.node.data.object;
-      this.eventService.send(Message.PAGE_OPEN, {pageObject: pageObject, subPages: this.subpages});
+      this.eventService.send(Message.PAGE_OPEN, { pageObject: pageObject, subPages: this.subpages });
     }
   }
 

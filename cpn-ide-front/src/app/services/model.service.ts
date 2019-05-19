@@ -1,9 +1,10 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import * as X2JS from '../../lib/x2js/xml2json.js';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {EventService} from './event.service';
-import {Message} from '../common/message';
-import {ProjectService} from '../services/project.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { EventService } from './event.service';
+import { Message } from '../common/message';
+import { ProjectService } from '../services/project.service';
+import { Constants } from '../common/constants.js';
 
 /**
  * Common service for getting access to project data from all application
@@ -80,7 +81,7 @@ export class ModelService {
     this.redoBackupModel = [];
     console.log('Save data....');
     const modelCopy = JSON.parse(JSON.stringify(model)); // Object.assign({}, model);
-    this.backupModel.push({project: modelCopy, page: pageId ? pageId : this.pageId}); // unshift({project: modelCopy, page: pageId});
+    this.backupModel.push({ project: modelCopy, page: pageId ? pageId : this.pageId }); // unshift({project: modelCopy, page: pageId});
   }
 
   cancelModelChanges(command) {
@@ -94,13 +95,13 @@ export class ModelService {
       stackPush = 'redoBackupModel';
     }
     const modelState = this[stackPop].pop();
-    this[stackPush].push({project: JSON.parse(JSON.stringify(this.projectData)), page: this.pageId});
+    this[stackPush].push({ project: JSON.parse(JSON.stringify(this.projectData)), page: this.pageId });
     this.projectData = modelState.project;
-    const sending = {project: {data: this.projectData, name: this.modelName}};
+    const sending = { project: { data: this.projectData, name: this.modelName } };
     this.markOpenedModel();
     this.eventService.send(Message.PROJECT_LOAD, sending);
     if (modelState.page) {
-      this.eventService.send(Message.PAGE_OPEN, {pageObject: this.getPageById(modelState.page), subPages: this.subPages});
+      this.eventService.send(Message.PAGE_OPEN, { pageObject: this.getPageById(modelState.page), subPages: this.subPages });
     }
   }
 
@@ -217,7 +218,7 @@ export class ModelService {
   // send changes
 
   changeSubPageTransitionName(subpage) {
-    this.eventService.send(Message.CHANGE_NAME_PAGE, {id: subpage.subpageid, name: subpage.name, changedElement: 'tran'});
+    this.eventService.send(Message.CHANGE_NAME_PAGE, { id: subpage.subpageid, name: subpage.name, changedElement: 'tran' });
   }
 
 
@@ -322,7 +323,7 @@ export class ModelService {
     this.saveBackup(this.projectData, pageId);
     const page = this.getPageById(pageId);
     const jsonMovingElement = this.getJsonElementOnPage(pageId, event.shape.type === 'cpn:Label' ? event.shape : event.shape.id, event.shape.type);
-    this.moveElementInJson(jsonMovingElement, event.shape.type, {x: event.dx, y: -1 * event.dy}, event.shape);
+    this.moveElementInJson(jsonMovingElement, event.shape.type, { x: event.dx, y: -1 * event.dy }, event.shape);
     if (event.shape.type !== 'cpn:Connection') {
       if (page.arc instanceof Array) {
         for (const arc of page.arc) {
@@ -341,7 +342,7 @@ export class ModelService {
       }
     }
 
-    this.eventService.send(Message.SHAPE_SELECT, {element: event.shape, pageJson: page});
+    this.eventService.send(Message.SHAPE_SELECT, { element: event.shape, pageJson: page });
     /* switch(event.shape.type){
        case 'cpn:Place':
          if(page.place.length) {
@@ -499,7 +500,7 @@ export class ModelService {
         }
       }
       let subPageTrans = undefined;
-      if(parent) {
+      if (parent) {
         if (parent.trans instanceof Array) {
           for (let i = 0; i < parent.trans.length; i++) {
             swapSubPageTrans(parent.trans[i], subPageTrans);
@@ -815,25 +816,25 @@ export class ModelService {
     //     }
 
 
-        // if (arc.bendpoint) {
-        //   if (arc.bendpoint.length) {
-        //     for (let point of arc.bendpoint) {
-        //       for (let updWayPoint of uodatedCon.waypoints) {
-        //         if (point._id === updWayPoint.id) {
-        //           point.posattr._x = updWayPoint.x;
-        //           point.posattr._y = -1 * updWayPoint.y;
-        //         }
-        //       }
-        //     }
-        //   } else {
-        //     for (let updWayPoint of uodatedCon.waypoints) {
-        //       if (arc.bendpoint._id === updWayPoint.id) {
-        //         arc.bendpoint.posattr._x = updWayPoint.x;
-        //         arc.bendpoint.posattr._y = -1 * updWayPoint.y;
-        //       }
-        //     }
-        //   }
-        // }
+    // if (arc.bendpoint) {
+    //   if (arc.bendpoint.length) {
+    //     for (let point of arc.bendpoint) {
+    //       for (let updWayPoint of uodatedCon.waypoints) {
+    //         if (point._id === updWayPoint.id) {
+    //           point.posattr._x = updWayPoint.x;
+    //           point.posattr._y = -1 * updWayPoint.y;
+    //         }
+    //       }
+    //     }
+    //   } else {
+    //     for (let updWayPoint of uodatedCon.waypoints) {
+    //       if (arc.bendpoint._id === updWayPoint.id) {
+    //         arc.bendpoint.posattr._x = updWayPoint.x;
+    //         arc.bendpoint.posattr._y = -1 * updWayPoint.y;
+    //       }
+    //     }
+    //   }
+    // }
 
     //     arc.lineattr._colour = uodatedCon.stroke;
     //     arc.lineattr._thick = uodatedCon.strokeWidth;
@@ -918,7 +919,7 @@ export class ModelService {
           //   project: {data: project, name: this.modelName}
           // });
 
-          this.eventService.send(Message.XML_UPDATE, {project: {data: project, name: this.modelName}});
+          this.eventService.send(Message.XML_UPDATE, { project: { data: project, name: this.modelName } });
         }
       }
     } else {
@@ -931,7 +932,7 @@ export class ModelService {
         //   project: {data: project, name: this.modelName}
         // });
 
-        this.eventService.send(Message.XML_UPDATE, {project: {data: project, name: this.modelName}});
+        this.eventService.send(Message.XML_UPDATE, { project: { data: project, name: this.modelName } });
       }
     }
     //  console.log('Get data fromPAge ----' + JSON.stringify(updatedData.pageObject));
@@ -1017,7 +1018,7 @@ export class ModelService {
       case 'var':
         return {
           id: this.projectService.getAppSettings()[elementType] + (++this.countNewItems),
-          type: {id: this.projectService.getAppSettings()[elementType]},
+          type: { id: this.projectService.getAppSettings()[elementType] },
           _id: 'ID' + new Date().getTime()
         };
         break;
@@ -1050,7 +1051,7 @@ export class ModelService {
 
 
   /**
-   *  Parse variables Layout string and create object this variable
+   * Parse variables Layout string and create object this variable
    * @param layout - declaration string
    * @param elem - changing variable object
    * @param blockType - type variable (color, var, ml, gkobref)
@@ -1074,7 +1075,7 @@ export class ModelService {
         elem.__text = layout;
         break;
       case 'color':   // *****отрефакторить*****
-        elem.layout =  layout;
+        elem.layout = layout;
         layout = layout.replace('colset', '');
         splitLayoutArray = layout.split('=');
         splitLayoutArray[1] = splitLayoutArray[1].split(' ').filter(e => e.trim() !== '');
@@ -1091,11 +1092,11 @@ export class ModelService {
         if (testElem === 'product') {
           const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
           elem.id = splitLayoutArray[0].replace(/\s+/g, '');
-          elem.product = {id: productList};
+          elem.product = { id: productList };
         } else if (testElem === 'list') {
           const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
           elem.id = splitLayoutArray[0].replace(/\s+/g, '');
-          elem.list = {id: productList};
+          elem.list = { id: productList };
         } else {
           testElem = testElem.replace(/\s+/g, '').replace(';', '');
           splitLayoutArray[0] = splitLayoutArray[0].replace(/\s+/g, '').replace(';', '');
@@ -1104,7 +1105,7 @@ export class ModelService {
             elem[testElem.toLowerCase()] = '';
           } else {
             elem.id = splitLayoutArray[0];
-            elem.alias = {id: testElem};
+            elem.alias = { id: testElem };
           }
         }
         break;
@@ -1145,6 +1146,53 @@ export class ModelService {
     }
     return result;
 
+  }
+
+  /**
+   * Getters for new cpnElement
+   */
+
+  /**
+   * Creating empty page cpnElement
+   * @param name - name of new page
+   * @returns - new page cpnElement
+   */
+  createCpnPage(name) {
+    return {
+      pageattr: {
+        _name: name
+      },
+      place: [],
+      trans: [],
+      arc: [],
+      constraints: '',
+      _id: 'ID' + new Date().getTime()
+    };
+  }
+
+  /**
+   * Creating empty block cpnElement
+   * @param name - name of new block
+   * @returns - new block cpnElement
+   */
+  createCpnBlock(name) {
+    return {
+      id: name,
+      _id: 'ID' + new Date().getTime()
+    };
+  }
+
+
+  /**
+   * Creating empty declaration cpnElement
+   * @param layout - value of new declaration
+   * @returns - new declaration cpnElement
+   */
+  createCpnDeclaration(layout) {
+    return {
+      layout: layout,
+      _id: 'ID' + new Date().getTime()
+    };
   }
 
 

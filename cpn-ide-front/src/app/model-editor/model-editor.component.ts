@@ -273,7 +273,10 @@ export class ModelEditorComponent implements OnInit {
     const that = this;
     if (pageObject) {
       // this.diagram.createDiagram(function () {
-      that.loadPageDiagram(pageObject);
+      setTimeout(() => {
+        that.loadPageDiagram(pageObject);
+      },
+        100);
       // });
     } else {
       this.canvas._clear();

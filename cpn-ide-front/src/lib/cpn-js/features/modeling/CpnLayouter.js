@@ -47,8 +47,8 @@ export default function CpnLayouter(eventBus, connectionDocking) {
  */
 CpnLayouter.prototype.layoutConnection = function (connection, hints) {
 
-  console.log('CpnLayouter.prototype.layoutConnection(), connection = ', connection);
-  console.log('CpnLayouter.prototype.layoutConnection(), hints = ', hints);
+  // console.log('CpnLayouter.prototype.layoutConnection(), connection = ', connection);
+  // console.log('CpnLayouter.prototype.layoutConnection(), hints = ', hints);
 
   // if (!hints) {
   //   hints = {
@@ -59,7 +59,7 @@ CpnLayouter.prototype.layoutConnection = function (connection, hints) {
 
   hints = hints || {};
 
-  console.log('CpnLayouter.prototype.layoutConnection(), hints = ', hints);
+  // console.log('CpnLayouter.prototype.layoutConnection(), hints = ', hints);
 
   // var startMid = hints.connectionStart || getMid(connection.source),
   //   endMid = hints.connectionEnd || getMid(connection.target);
@@ -88,7 +88,7 @@ CpnLayouter.prototype.layoutConnection = function (connection, hints) {
     start = hints.connectionStart,
     end = hints.connectionEnd;
 
-  console.log('CpnLayouter.prototype.layoutConnection(), waypoints = ', waypoints);
+  // console.log('CpnLayouter.prototype.layoutConnection(), waypoints = ', waypoints);
 
   var manhattanOptions, updatedWaypoints;
 
@@ -130,15 +130,15 @@ CpnLayouter.prototype.layoutConnection = function (connection, hints) {
 
   this.cropConnection(connection);
 
-  console.log('CpnLayouter.prototype.layoutConnection(), updatedWaypoints = ', updatedWaypoints);
-  console.log('CpnLayouter.prototype.layoutConnection(), [start, end] = ', [start, end]);
+  // console.log('CpnLayouter.prototype.layoutConnection(), updatedWaypoints = ', updatedWaypoints);
+  // console.log('CpnLayouter.prototype.layoutConnection(), [start, end] = ', [start, end]);
 
   return updatedWaypoints || [start, end];
 };
 
 // crop connection ends during create/update
 CpnLayouter.prototype.cropConnection = function (connection) {
-  console.log('CpnLayouter.cropConnection(e), connection = ', connection);
+  // console.log('CpnLayouter.cropConnection(e), connection = ', connection);
 
   if (connection.source && connection.target && connection.waypoints)
     connection.waypoints = this._connectionDocking.getCroppedWaypoints(connection);

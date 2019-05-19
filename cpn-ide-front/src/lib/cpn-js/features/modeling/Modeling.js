@@ -59,7 +59,7 @@ Modeling.$inject = [
 
 
 Modeling.prototype.getHandlers = function () {
-  console.log('Modeling().getHandlers()');
+  // console.log('Modeling().getHandlers()');
 
   var handlers = BaseModeling.prototype.getHandlers.call(this);
 
@@ -103,7 +103,8 @@ Modeling.prototype.setCpnStatus = function (event) {
 
 
 Modeling.prototype.updateLabel = function (element, newLabel, newBounds, hints) {
-  console.log('Modeling().updateLabel(), newBounds = ', newBounds);
+  // console.log('Modeling().updateLabel(), newBounds = ', newBounds);
+
   if (newBounds.width < 10)
     newBounds.width = 10;
 
@@ -116,7 +117,7 @@ Modeling.prototype.updateLabel = function (element, newLabel, newBounds, hints) 
 };
 
 Modeling.prototype.updateElement = function (element) {
-  console.log('Modeling().updateElement(), element = ', element);
+  // console.log('Modeling().updateElement(), element = ', element);
 
   if (element) {
     if (element.labels) {
@@ -222,7 +223,8 @@ Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus
           label.y += delta.y;
         }
 
-        console.log('Modeling.updateShapeByCpnElement(), changePosition(), changingElement = ', changingElement, ', delta = ', delta);
+        // console.log('Modeling.updateShapeByCpnElement(), changePosition(), changingElement = ', changingElement, ', delta = ', delta);
+
         modeling.moveShape(changingElement, delta);
       }
     }
@@ -259,7 +261,8 @@ Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus
         changingElement.width += delta.dx;
         changingElement.height += delta.dy;
 
-        console.log('Modeling.updateShapeByCpnElement(), changeSize(), changingElement = ', changingElement, ', delta = ', delta);
+        // console.log('Modeling.updateShapeByCpnElement(), changeSize(), changingElement = ', changingElement, ', delta = ', delta);
+
         modeling.moveShape(changingElement, { x: -delta.dx / 2, y: -delta.dy / 2 });
       }
     }
@@ -321,8 +324,8 @@ Modeling.prototype.connect = function (source, target, attrs, hints) {
 };
 
 Modeling.prototype.createNewConnection = function (placeShape, transShape, orientation) {
-  console.log('Modeling.prototype.createNewConnection(), place = ', placeShape);
-  console.log('Modeling.prototype.createNewConnection(), trans = ', transShape);
+  // console.log('Modeling.prototype.createNewConnection(), place = ', placeShape);
+  // console.log('Modeling.prototype.createNewConnection(), trans = ', transShape);
 
   var root = this._canvas.getRootElement();
 
@@ -428,10 +431,11 @@ Modeling.prototype.getMarkingLabelElement = function (element) {
 
 Modeling.prototype.clearErrorMarking = function () {
   const elements = this._canvas._elementRegistry._elements;
-  console.log('Modeling.prototype.clearErrorMarking(), elements = ', elements);
+  // console.log('Modeling.prototype.clearErrorMarking(), elements = ', elements);
+
   for (const key of Object.keys(elements)) {
-    console.log('Modeling.prototype.clearErrorMarking(), key = ', key);
-    console.log('Modeling.prototype.clearErrorMarking(), elements[key] = ', elements[key]);
+    // console.log('Modeling.prototype.clearErrorMarking(), key = ', key);
+    // console.log('Modeling.prototype.clearErrorMarking(), elements[key] = ', elements[key]);
 
     const element = elements[key].element;
 
@@ -445,11 +449,11 @@ Modeling.prototype.clearErrorMarking = function () {
 
 Modeling.prototype.setDefaultValue = function (key, value) {
   this._defaultValues[key] = value;
-  console.log('Modeling.prototype.setDefaultValue(), this._defaultValues = ', this._defaultValues);
+  // console.log('Modeling.prototype.setDefaultValue(), this._defaultValues = ', this._defaultValues);
 }
 
 Modeling.prototype.getDefaultValue = function (key) {
-  console.log('Modeling.prototype.getDefaultValue(), this._defaultValues = ', this._defaultValues);
+  // console.log('Modeling.prototype.getDefaultValue(), this._defaultValues = ', this._defaultValues);
   return this._defaultValues[key];
 }
 
@@ -495,12 +499,12 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
   else
     text = cpnLabelElement.text.__text; // for shape external label
 
-  console.log('Modeling.prototype.getLabelAttrs(), text = ', text);
+  // console.log('Modeling.prototype.getLabelAttrs(), text = ', text);
 
   // if label is empty check for default values
   if (labelType) {
     defaultValue = this.getDefaultValue(labelType);
-    console.log('Modeling.prototype.getLabelAttrs(), defualt text = ', defaultValue);
+    // console.log('Modeling.prototype.getLabelAttrs(), defualt text = ', defaultValue);
   }
 
   text = text || '';

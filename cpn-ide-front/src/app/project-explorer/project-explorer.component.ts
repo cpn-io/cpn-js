@@ -6,6 +6,7 @@ import { ProjectService } from '../services/project.service';
 import { TreeComponent, TREE_ACTIONS } from 'angular-tree-component';
 import { ModelService } from '../services/model.service';
 import { ColorDeclarationsPipe } from '../pipes/color-declarations.pipe';
+import { Constants } from '../common/constants';
 
 // import {TreeComponent} from 'angular-tree-component';
 
@@ -20,6 +21,9 @@ import { ColorDeclarationsPipe } from '../pipes/color-declarations.pipe';
  */
 export class ProjectExplorerComponent implements OnInit, OnDestroy {
   @Input() message = 'Not set';
+
+  JSON = JSON;
+
   idNodeCounter = 0;
   private eventHub: any;
   newPageCount = 0;
@@ -34,12 +38,13 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   // topics = ['project', 'Declarations', 'Monitors', 'Options', 'Default', 'Pages', 'Standard priorities', 'Standard declarations'];
 
   reservedWords = ['project', 'Declarations', 'Monitors', 'Options', 'Default', 'Pages', 'globbox'];
-  paramsTypes = ['ml', 'color', 'var', 'globref'];
+  paramsTypes = ['ml', 'colset', 'var', 'globref'];
   appSettingsKeys;
   appSettings;
   /**
    * JSON object, contains full CPN-model
    */
+  currentProject;
   currentProjectModel;
 
   // subscription: Subscription;
@@ -111,10 +116,10 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         drop: (tree, node, $event, { from, to }) => {
           console.log('drag', from, to);
           console.log('onMoveNode', node.name, 'to', to.parent.name, 'at index', to.index);
-          const parentJson = from.parent.data.object;
+          const parentJson = from.parent.data.cpnElement;
           const type = node.data.type === 'page' ? 'page' : this.paramsTypes.includes(from.parent.data.name) ? undefined : from.data.name;
-          const isEntryExist: boolean = to.parent.data.object[type];
-          this.modelService.moveNonModelJsonElement(from.data.object, parentJson, to.parent.data.object, to.index, type);
+          const isEntryExist: boolean = to.parent.data.cpnElement[type];
+          this.modelService.moveNonModelJsonElement(from.data.cpnElement, parentJson, to.parent.data.cpnElement, to.index, type);
           if (isEntryExist) {
             to.parent = tree.getNodeById((to.parent.children.find(e => e.data.name === type)).id);
             node = node.children.find(chld => chld.data.name === from.data.name);
@@ -142,8 +147,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   /*onMoveNode(event) {
     console.log('onMoveNode', event.node.name, 'to', event.to.parent.name, 'at index', event.to.index);
-    let parentJson = (this.treeComponent.treeModel.getNodeById(event.node.id));//.parent.data.object;
-    this.modelService.moveNonModelJsonElement(event.node.object, parentJson, event.to.parent.object, event.to.index);
+    let parentJson = (this.treeComponent.treeModel.getNodeById(event.node.id));//.parent.data.cpnElement;
+    this.modelService.moveNonModelJsonElement(event.node.cpnElement, parentJson, event.to.parent.cpnElement, event.to.index);
 
   }*/
 
@@ -347,29 +352,29 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         }
       }
     } else {
-      if (parentNode.object.toString().match('^((local){1}\\s+)*(fun|val|exception){1}\\s+' + name + '\\s*[=(]{1}')) {
+      if (parentNode.cpnElement.toString().match('^((local){1}\\s+)*(fun|val|exception){1}\\s+' + name + '\\s*[=(]{1}')) {
         // это проверка на то, что строка является декларацией функции или val
         this.doUnderlineNodeLabel(true, parentNode.id);
         return true;
 
-      } else if (parentNode.object.id) {
+      } else if (parentNode.cpnElement.id) {
 
         // здесь подчеркиваем переменные и их типы
-        if (parentNode.object.id instanceof Array) {
-          for (const someId of parentNode.object.id) {
+        if (parentNode.cpnElement.id instanceof Array) {
+          for (const someId of parentNode.cpnElement.id) {
             if (someId === name) {
               this.doUnderlineNodeLabel(true, parentNode.id);
-              if (parentNode.object.type) {
-                this.underlineRelationsRecursively(this.nodes[0], parentNode.object.type.id);
+              if (parentNode.cpnElement.type) {
+                this.underlineRelationsRecursively(this.nodes[0], parentNode.cpnElement.type.id);
               }
               return true;
             }
           }
         } else {
-          if (parentNode.object.id === name) {
+          if (parentNode.cpnElement.id === name) {
             this.doUnderlineNodeLabel(true, parentNode.id);
-            if (parentNode.object.type) {
-              this.underlineRelationsRecursively(this.nodes[0], parentNode.object.type.id);
+            if (parentNode.cpnElement.type) {
+              this.underlineRelationsRecursively(this.nodes[0], parentNode.cpnElement.type.id);
             }
             return true;
           }
@@ -440,11 +445,94 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   }
 
+
+  /**
+   * Adding new node to the tree
+   * 
+   * @param treeNode - tree node object (in terms of tree model)
+   * @param type - type of adding element
+   */
+  onAddNode(treeNode, type) {
+    console.log('onAddNode(), node = ', treeNode, ', addingElement = ', type);
+
+    this.expandNode(treeNode.id);
+
+    var cpnElement, newNode;
+
+    var cpnParentElement = treeNode.data.cpnParentElement;
+
+    const defValue = this.projectService.getAppSettings()[type];
+
+    switch (type) {
+      case 'block':
+        cpnElement = this.modelService.createCpnBlock(defValue);
+        newNode = this.createBlockNode(cpnElement);
+        break;
+
+      case 'declaration':
+        cpnElement = this.modelService.createCpnDeclaration(defValue);
+        newNode = this.createDeclarationNode(cpnElement);
+        break;
+
+      case 'page':
+        cpnElement = this.modelService.createCpnPage(defValue + ' ' + (++this.newPageCount));
+        // console.log('onAddNode(), cpnParentElement = ', cpnParentElement);
+        // console.log('onAddNode(), cpnElement = ', cpnElement);
+        if (cpnParentElement instanceof Array) {
+          cpnParentElement.push(cpnElement);
+          newNode = this.createPageNode(cpnElement, cpnParentElement);
+        } else {
+          cpnParentElement.page = [cpnParentElement.page, cpnElement];
+          treeNode.data.cpnElement = cpnParentElement.page;
+          newNode = this.createPageNode(cpnElement, cpnParentElement.page);
+        }
+        break;
+    }
+
+    // console.log('onAddNode(), currentProjectModel = ', this.currentProjectModel);
+
+    if (newNode) {
+      if (treeNode.data.children) {
+        treeNode.data.children.push(newNode);
+      } else if (treeNode.parent) {
+        treeNode.parent.data.children.push(newNode);
+      }
+
+      this.treeComponent.treeModel.update();
+      setTimeout(() => {
+        this.treeComponent.treeModel.getNodeById(newNode.id).setActiveAndVisible();
+        this.goToEditNode(newNode.id);
+      }, 100);
+    }
+  }
+
+  cloneObject(obj) {
+    return JSON.parse(JSON.stringify(obj));
+  }
+
+  /**
+   * Deleting node from the tree 
+   * 
+   * @param treeNode - tree node object (in terms of tree model)
+   */
+  onDeleteNode(treeNode) {
+    console.log('onDeleteNode(), node = ', treeNode);
+
+    if (treeNode.parent) {
+      var parentChildren = treeNode.parent.data.children;
+      if (parentChildren) {
+        parentChildren.splice(
+          parentChildren.indexOf(treeNode.data), 1);
+        this.treeComponent.treeModel.update();
+      }
+    }
+  }
+
   /**
    * icon Add click handler
    * @param node - current page node in explorer
    */
-  onAddNode(node, addingElement) {
+  onAddNode_OLD(node, addingElement) {
     console.log('onAddNode(), node = ', node);
 
     if (node.data.type === 'page' || node.data.id === 'Pages') {
@@ -465,7 +553,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         id: newPage._id, // page._id,
         name: newPage.pageattr._name, // page.pageattr._name,
         type: 'page',
-        object: newPage, // page,
+        cpnElement: newPage, // page,
         children: []
       };
 
@@ -476,7 +564,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       this.updateTree();
       const editableNode = this.treeComponent.treeModel.getNodeById(pageNode.id);
       this.treeComponent.treeModel.setFocusedNode(editableNode);
-      this.goToEditNode(this.treeComponent.treeModel.getNodeById(pageNode.id));
+      this.goToEditNode(pageNode.id);
       let expnNode = editableNode;
       while (expnNode && expnNode.id !== 'project') {
         expnNode.expand();
@@ -519,7 +607,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         id: id,
         state: this.treeComponent.treeModel.getState()
       });
-    } else if (elementType === 'color') {
+    } else if (elementType === 'colset') {
       this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
         node: action === 'rename' ? node : undefined,
         action: action,
@@ -562,9 +650,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     this.openedLabel[node.id] = !this.openedLabel[node.id];
     if (this.openedLabel[node.id]) {
       this.openNode(event, node);
-      this.goToEditNode(node);
+      this.goToEditNode(node.id);
     } else {
-      this.saveEditedData(event);
+      // this.saveEditedData(event, node);
     }
   }
 
@@ -572,23 +660,25 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     if (!this.openedLabel[node.id])
       this.onNodeArrowClick(event, node);
     else
-      this.goToEditNode(node);
-      
+      this.goToEditNode(node.id);
+
     // this.openNode(event, node);
     // if (this.canCollapse(node)) {
     //   if (this.openedLabel[node.id]) {
     //     this.openedLabel[node.id] = false;
     //   }
     // }
-    // this.goToEditNode(node);
+    // this.goToEditNode(node.id);
   }
 
   /*
    * Edit node text by click on node handler or by context menu
    * @param node
    */
-  goToEditNode(node) {
-    if (this.canEdit(node)) {
+  goToEditNode(nodeId) {
+    const node = this.treeComponent.treeModel.getNodeById(nodeId);
+
+    if (node && this.canEdit(node)) {
       this.editableNode = node;
       setTimeout(() => {
 
@@ -732,12 +822,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
   }
 
-
   /**
    * icon delete click handler
    * @param node - current page node in explorer
    */
-  onDeleteNode(node) {
+  onDeleteNode_OLD(node) {
     let parentNod;
     if (node.data.type === 'page' || node.data.id === 'Pages') {
       // if (this.currentProjectModel.workspaceElements.cpnet.page.length) {
@@ -816,7 +905,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     paramNode = {
       id: block.id ? block.id : 'globbox',
       name: block.id ? block.id : 'globbox',
-      object: block,
+      cpnElement: block,
       children: []
     };
 
@@ -825,7 +914,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       const mlNode = {
         id: 'ml' + this.idNodeCounter++,
         name: 'ml',
-        object: block.ml,
+        cpnElement: block.ml,
         children: []
       };
       paramNode.children.push(mlNode);
@@ -837,7 +926,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
             id: ml._id,
             // id: globref['@attributes'].id,
             name: ml,
-            object: ml
+            cpnElement: ml
           });
         }
       } else {
@@ -845,7 +934,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           id: block.ml._id,
           // id: globref['@attributes'].id,
           name: block.ml,
-          object: block.ml
+          cpnElement: block.ml
         });
       }
     }
@@ -853,7 +942,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       const varNode = {
         id: 'var' + this.idNodeCounter++,
         name: 'var',
-        object: block.var,
+        cpnElement: block.var,
         children: []
       };
       paramNode.children.push(varNode);
@@ -863,7 +952,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
             // id: v['@attributes'].id,
             id: v._id,
             name: v.id,
-            object: v
+            cpnElement: v
           };
           if (v.layout) {
             // node.name += ' : ' + v.layout;
@@ -878,7 +967,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           // id: v['@attributes'].id,
           id: block.var._id,
           name: block.var.id,
-          object: block.var
+          cpnElement: block.var
         };
 
         if (block.var.layout) {
@@ -896,7 +985,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       const globrefNode = {
         id: 'globref' + this.idNodeCounter++,
         name: 'globref',
-        object: block.var,
+        cpnElement: block.var,
         children: []
       };
       paramNode.children.push(globrefNode);
@@ -906,7 +995,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
             // id: globref['@attributes'].id,
             id: globref._id,
             name: globref.layout ? globref.layout.replace('globref ', '') : globref.id + ' = ' + globref.ml + ';',
-            object: globref
+            cpnElement: globref
           });
         }
       } else {
@@ -914,15 +1003,15 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           // id: globref['@attributes'].id,
           id: block.globref._id,
           name: block.globref.layout ? block.globref.layout.replace('globref ', '') : block.globref.id + ' = ' + block.globref.ml + ';',
-          object: block.globref
+          cpnElement: block.globref
         });
       }
     }
     if (block.color) {
       const colorNode = {
-        id: 'color' + this.idNodeCounter++,
-        name: 'color',
-        object: block.color,
+        id: 'colset' + this.idNodeCounter++,
+        name: 'colset',
+        cpnElement: block.color,
         children: []
       };
       paramNode.children.push(colorNode);
@@ -932,7 +1021,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
             // id: color['@attributes'].id,
             id: color._id,
             name: color.id,
-            object: color
+            cpnElement: color
           };
           if (color.layout) {
             node.name = color.layout.replace('colset ', '').replace('color ', '');
@@ -964,7 +1053,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           // id: color['@attributes'].id,
           id: block.color._id,
           name: block.color.id,
-          object: block.color,
+          cpnElement: block.color,
         };
         if (block.color.layout) {
           node.name = block.color.layout.replace('colset ', '').replace('color ', '');
@@ -1051,6 +1140,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   createOptionsNode(name, cpnElement) {
     const optionsNode = this.createTreeNode(name);
     optionsNode.cpnElement = cpnElement;
+    optionsNode.classes = ['tree-project'];
 
     const perfrepName = 'Performance report statistics';
     const perfrepNode = this.createTreeNode(perfrepName);
@@ -1116,7 +1206,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    */
   createDeclarationsNode(name, cpnElement) {
     const declarationsNode = this.createTreeNode(name);
+    declarationsNode.classes = ['tree-project'];
     declarationsNode.cpnElement = cpnElement;
+    declarationsNode.actions = ['block'];
 
     // Block nodes
     if (cpnElement.block instanceof Array) {
@@ -1136,16 +1228,19 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   createBlockNode(cpnElement) {
     const blockNode = this.createTreeNode(cpnElement._id, cpnElement.id);
     blockNode.cpnElement = cpnElement;
+    blockNode.editable = true;
+    blockNode.type = 'block';
+    blockNode.actions = ['block', 'declaration', 'delete'];
 
     for (const key of ['block', 'globref', 'color', 'var', 'ml']) {
       const cpnItem = cpnElement[key];
       if (cpnItem) {
         if (cpnItem instanceof Array) {
           for (const item of cpnItem) {
-            blockNode.children.push(this.createDeclarationNodeByKey(key, item));
+            blockNode.children.push(this.createDeclarationNode(item, key));
           }
         } else {
-          blockNode.children.push(this.createDeclarationNodeByKey(key, cpnItem));
+          blockNode.children.push(this.createDeclarationNode(cpnItem, key));
         }
       }
     }
@@ -1159,14 +1254,27 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * @param cpnElement - cpn JSON object
    * @returns - tree node for corresponding key
    */
-  createDeclarationNodeByKey(key, cpnElement) {
-    switch (key) {
-      case 'block': return this.createBlockNode(cpnElement);
-      case 'globref': return this.createGlobrefNode(cpnElement);
-      case 'color': return this.createColorNode(cpnElement);
-      case 'var': return this.createVarNode(cpnElement);
-      case 'ml': return this.createMlNode(cpnElement);
-    };
+  createDeclarationNode(cpnElement, key = undefined) {
+    var declarationNode = this.createTreeNode('* empty declaration *');
+    if (cpnElement) {
+      declarationNode.id = cpnElement._id;
+      declarationNode.name = cpnElement.layout;
+      declarationNode.cpnElement = cpnElement;
+    }
+    if (cpnElement && key) {
+      switch (key) {
+        case 'block': declarationNode = this.createBlockNode(cpnElement); break;
+        case 'globref': declarationNode = this.createGlobrefNode(cpnElement); break;
+        case 'color': declarationNode = this.createColorNode(cpnElement); break;
+        case 'var': declarationNode = this.createVarNode(cpnElement); break;
+        case 'ml': declarationNode = this.createMlNode(cpnElement); break;
+      };
+    }
+    declarationNode.children = undefined;
+    declarationNode.editable = true;
+    declarationNode.type = 'declaration';
+    declarationNode.actions = ['block', 'declaration', 'delete'];
+    return declarationNode;
   };
 
 
@@ -1232,13 +1340,15 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
      * @returns - tree node 
      */
   createVarNode(cpnElement) {
+    // console.log('createVarNode(), cpnElement = ', cpnElement);
+
     var code = 'var ' + cpnElement.id;
 
     if (cpnElement.layout) {
       code = cpnElement.layout;
     } else {
       code = 'var ' + cpnElement.id + ': ' + cpnElement.type.id + ';';
-    }    
+    }
 
     const treeNode = this.createTreeNode(cpnElement._id, code);
     treeNode.cpnElement = cpnElement;
@@ -1260,6 +1370,88 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     treeNode.children = undefined;
 
     return treeNode;
+  }
+
+
+  /**
+   * Creating project Pages node
+   * @param name - name of tree node
+   * @param cpnElement - cpn JSON object
+   * @returns - tree node 
+   */
+  createPagesNode(name, cpnElement, cpnParentElement) {
+    const pagesNode = this.createTreeNode(name);
+    pagesNode.classes = ['tree-project'];
+    pagesNode.cpnParentElement = cpnParentElement;
+    pagesNode.cpnElement = cpnElement;
+    pagesNode.actions = ['page'];
+
+    var pageNodeList = [];
+
+    // Page nodes, create and save it to pageNodeList
+    if (cpnElement instanceof Array) {
+      for (const page of cpnElement) {
+        const pageNode = this.createPageNode(page, cpnElement);
+        pageNodeList[pageNode.id] = pageNode;
+      }
+    } else {
+      const pageNode = this.createPageNode(cpnElement, cpnParentElement);
+      pageNodeList[pageNode.id] = pageNode;
+    }
+    // console.log('createPagesNode(), pageNodeList = ', pageNodeList);
+
+    // Move subpages to it's parent page
+    var subpages = [];
+    for (const pageId of Object.keys(pageNodeList)) {
+      const pageNode = pageNodeList[pageId];
+      if (pageNode.subpages instanceof Array) {
+        for (const id of pageNode.subpages) {
+          pageNode.children.push(pageNodeList[id]);
+          subpages.push(id);
+        }
+      }
+    }
+
+    // Push all page nodes, which are not subpages to Pages tree node
+    for (const pageId of Object.keys(pageNodeList)) {
+      const pageNode = pageNodeList[pageId];
+      if (!subpages.includes(pageNode.id)) {
+        pagesNode.children.push(pageNode);
+      }
+    }
+
+    return pagesNode;
+  }
+
+  /**
+   * Creating Page node
+   * @param cpnElement - cpn JSON object
+   * @returns - tree node 
+   */
+  createPageNode(cpnElement, cpnParentElement) {
+    const pageNode = this.createTreeNode(cpnElement._id, cpnElement.pageattr._name);
+    pageNode.cpnElement = cpnElement;
+    pageNode.cpnParentElement = cpnParentElement;
+    pageNode.editable = true;
+    pageNode.type = 'page';
+    pageNode.actions = ['page', 'delete'];
+
+    // fill subpages array for this page
+    var subpages = [];
+    if (cpnElement.trans) {
+      if (cpnElement.trans instanceof Array) {
+        for (const tran of cpnElement.trans) {
+          if (tran.subst) {
+            subpages.push(tran.subst._subpage);
+          }
+        }
+      } else if (cpnElement.trans.subst) {
+        subpages.push(cpnElement.trans.subst._subpage);
+      }
+    }
+    pageNode.subpages = subpages;
+
+    return pageNode;
   }
 
 
@@ -1287,21 +1479,30 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     return cpnet;
   }
 
+  onReload() {
+    this.loadProjectData(this.currentProject);
+  }
+
+  /**
+   * Loading project JSON to tree component object
+   * @param project - cpn net JSON object
+   */
   loadProjectData(project) {
     this.filterText = '';
 
     const projectData = project.data;
     const projectName = project.name;
     this.currentProjectModel = project.data;
+    this.currentProject = project;
 
     this.clearTree();
-
-    // Create project root node
-    const projectNode = this.createProjectNode(projectName, projectData);
 
     let cpnet = this.getCpnetElement(projectData);
     if (!cpnet)
       return;
+
+      // Create project root node
+    const projectNode = this.createProjectNode(projectName, cpnet);
 
     // Simulation step nodes
     const stepNode = this.createTreeNode('simulation-step-node', 'Step: 0');
@@ -1316,9 +1517,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
 
     const historyNode = this.createTreeNode('History');
+    historyNode.classes = ['tree-project'];
     historyNode.children = [this.createTreeNode('* empty *')];
 
     const monitorsNode = this.createTreeNode('Monitors');
+    monitorsNode.classes = ['tree-project'];
     monitorsNode.children = [this.createTreeNode('* empty *')];
 
     // Create project Declarations node
@@ -1328,22 +1531,45 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       declarationsNode = this.createDeclarationsNode('Declarations', cpnet.globbox);
     }
 
+    // Create project Pages node
+    var pagesNode = this.createTreeNode('Pages');
+    pagesNode.children = [this.createTreeNode('* empty *')];
+    if (cpnet.page) {
+      pagesNode = this.createPagesNode('Pages', cpnet.page, cpnet);
+    }
+
     projectNode.children.push(historyNode);
     projectNode.children.push(declarationsNode);
+    projectNode.children.push(pagesNode);
     projectNode.children.push(monitorsNode);
-
-    projectNode.expanded = true;
 
     this.nodes.push(projectNode);
 
-    this.expandNode('project');
+    this.expandNode(projectNode.id);
+    this.expandNode(pagesNode.id);
+    if (pagesNode.children.length > 0) {
+      const firstPageId = pagesNode.children[0].id;
+      if (firstPageId) {
+        this.expandNode(firstPageId);
+        this.gotoNode(firstPageId);
+      }
+    }
   }
 
   expandNode(nodeId) {
     setTimeout(() => {
-      const node = this.treeComponent.treeModel.getNodeById(nodeId);
-      if (node) {
-        node.expand();
+      const treeNode = this.treeComponent.treeModel.getNodeById(nodeId);
+      if (treeNode) {
+        treeNode.expand();
+      }
+    }, 100);
+  }
+
+  gotoNode(nodeId) {
+    setTimeout(() => {
+      const treeNode = this.treeComponent.treeModel.getNodeById(nodeId);
+      if (treeNode) {
+        treeNode.setActiveAndVisible();
       }
     }, 100);
   }
@@ -1485,7 +1711,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         id: page._id,
         name: page.pageattr._name,
         type: 'page',
-        object: page,
+        cpnElement: page,
         children: []
       };
 
@@ -1505,7 +1731,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
             // id: place['@attributes'].id,
             id: place._id,
             name: place.text,
-            object: place
+            cpnElement: place
           };
 
           //  placesNode.children.push(node);
@@ -1528,7 +1754,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
               // id: place['@attributes'].id,
               id: trans._id,
               name: trans.text,
-              object: trans
+              cpnElement: trans
             };
             if (trans.subst) {
               for (const subpage of cpnet.page) {
@@ -1552,7 +1778,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
               // id: place['@attributes'].id,
               id: page.trans._id,
               name: page.trans.text,
-              object: page.trans
+              cpnElement: page.trans
             });*/
           }
         }
@@ -1572,7 +1798,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
               // id: place['@attributes'].id,
               id: arc._id,
               name: arc.text ? arc.text : arc.annot.text + '(' + arc._id + ')',
-              object: arc
+              cpnElement: arc
             };
             // arcNode.children.push(node);
           }
@@ -1581,7 +1807,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
             // id: place['@attributes'].id,
             id: page.arc._id,
             name: page.arc.text ? page.arc.text : page.arc.annot.text + '(' + page.arc._id + ')',
-            object: page.arc
+            cpnElement: page.arc
           });*/
         }
       }
@@ -1596,7 +1822,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   updateTree() {
-    // this.treeComponent.treeModel.update();
+    this.treeComponent.treeModel.update();
   }
 
 
@@ -1612,7 +1838,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     console.log(event.node);
 
     if (event && event.node && event.node.data && event.node.data.type === 'page') {
-      const pageObject = event.node.data.object;
+      // const pageObject = event.node.data.cpnElement;
+      const pageObject = event.node.data.cpnElement;
       this.eventService.send(Message.PAGE_OPEN, { pageObject: pageObject, subPages: this.subpages });
     }
   }
@@ -1649,15 +1876,143 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     this.hideContextMenu();
   }
 
-  saveEditedData(event) {
+  saveEditedData(event, node) {
+    console.log('saveEditedData(), event = ', event);
+
+    const htmlElement = event.srcElement || event.target;
+    if (!htmlElement) {
+      console.error('saveEditedData(), Error: fail to get html element, event = ', event);
+      return;
+    }
+
+    const value = htmlElement.textContent;
+    console.log('saveEditedData(), value = ', value);
+
+    switch (node.data.type) {
+      case 'block':
+        break;
+      case 'declaration':
+        this.updateDeclarationNodeText(node, value);
+        break;
+      case 'page':
+        this.updatePageNodeText(node, value);
+        break;
+    }
+
+    this.updateTree();
+  }
+
+  /**
+   * Updating page node
+   * @param node 
+   * @param newValue 
+   */
+  updatePageNodeText(node, newValue) {
+    node.data.name = newValue; // update tree node text
+    node.data.cpnElement.pageattr._name = newValue; // update cpnElement
+  }
+
+  /**
+   * Updating declaration node
+   * @param node 
+   * @param newValue 
+   */
+  updateDeclarationNodeText(node, newValue) {
+    node.data.name = newValue; // update tree node text
+    // node.data.cpnElement.pageattr._name = newValue; // update cpnElement
+
+    this.parseDeclarationLayout(node.data.cpnElement, newValue);
+  }
+
+  parseDeclarationLayout(cpnElement, layout) {
+
+    var parser = layout.match('^\\S+');
+    // console.log('parseDeclarationLayout(), parser = ', parser);
+
+    var type;
+    if (parser)
+      type = parser[0];
+
+    if (!type)
+      return;
+
+    switch (type) {
+      case 'var':
+        let splitLayoutArray;
+        cpnElement.layout = layout;
+        layout = layout.replace('var', '');
+        splitLayoutArray = layout.trim().split(':');
+        for (let i = 0; i < splitLayoutArray.length; i++) {
+          splitLayoutArray[i] = splitLayoutArray[i].replace(/\s+/g, '').split(',');
+        }
+        cpnElement.id = splitLayoutArray[0];
+        if (!cpnElement.type) {
+          cpnElement.type = {};
+        }
+        cpnElement.type.id = splitLayoutArray[1][0];
+        break;
+      case 'ml':
+        cpnElement.layout = layout;
+        cpnElement.__text = layout;
+        break;
+      case 'colset':   // ***** отрефакторить *****
+        cpnElement.layout = layout;
+        layout = layout.replace('colset', '');
+        splitLayoutArray = layout.split('=');
+        splitLayoutArray[1] = splitLayoutArray[1].split(' ').filter(e => e.trim() !== '');
+        let testElem = splitLayoutArray[1][0].replace(/\s+/g, '');
+        for (const key of Object.keys(cpnElement)) {
+          if (key !== '_id' && key !== 'layout') {
+            delete cpnElement[key];
+          }
+        }
+        if (splitLayoutArray[1][splitLayoutArray[1].length - 1].replace(';', '') === 'timed') {
+          cpnElement.timed = '';
+          splitLayoutArray[1].length = splitLayoutArray[1].length - 1;
+        }
+        if (testElem === 'product') {
+          const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
+          cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
+          cpnElement.product = { id: productList };
+        } else if (testElem === 'list') {
+          const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
+          cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
+          cpnElement.list = { id: productList };
+        } else {
+          testElem = testElem.replace(/\s+/g, '').replace(';', '');
+          splitLayoutArray[0] = splitLayoutArray[0].replace(/\s+/g, '').replace(';', '');
+          if (testElem.toLowerCase() === splitLayoutArray[0].toLowerCase()) {
+            cpnElement.id = splitLayoutArray[0];
+            cpnElement[testElem.toLowerCase()] = '';
+          } else {
+            cpnElement.id = splitLayoutArray[0];
+            cpnElement.alias = { id: testElem };
+          }
+        }
+        break;
+      case 'globref':
+        splitLayoutArray = layout.split(' ').filter(e => e.trim() !== '' && e.trim() !== '=');
+        cpnElement.id = splitLayoutArray[1].replace(/\s+/g, '').replace(';', '');
+        cpnElement.ml = splitLayoutArray[2].replace(/\s+/g, '').replace(';', '');
+        cpnElement.layout = layout;
+        break;
+    }
+  }
+
+
+
+
+  saveEditedData_OLD(event) {
+    console.log('saveEditedData(), event = ', event);
+
     const htmlElement: HTMLInputElement = <HTMLInputElement>event.target;
 
     if (htmlElement && (htmlElement.className.search('editablenode') > -1)) {
       // сохраняем изменения, только если они были
       if (this.editableNode.data.name.toString() !== htmlElement.innerText) {
         this.editableNode.data.name = htmlElement.innerText;
-        if (this.editableNode.data.object && this.editableNode.data.object.type === 'page') {
-          this.editableNode.data.object.pageattr._name = this.editableNode.data.name;
+        if (this.editableNode.data.cpnElement && this.editableNode.data.cpnElement.type === 'page') {
+          this.editableNode.data.cpnElement.pageattr._name = this.editableNode.data.name;
           this.eventService.send(Message.CHANGE_NAME_PAGE, {
             id: this.editableNode.id,
             name: this.editableNode.data.name,
@@ -1684,11 +2039,20 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   canEdit(node): boolean {
-    return node && !this.reservedWords.includes(node.data.name) && !this.modelService.paramsTypes.includes(node.data.name);
+    // return node &&
+    //   !this.reservedWords.includes(node.data.name) &&
+    //   !this.modelService.paramsTypes.includes(node.data.name);
+    return node && node.data && node.data.editable ? true : false;
   }
 
   canDelete(node): boolean {
     return node && !this.reservedWords.includes(node.data.name) && !this.modelService.paramsTypes.includes(node.data.name);
+  }
+
+  canCreateBlock(node): boolean {
+    return (this.isDeclarationBlock(node)
+      && !this.modelService.paramsTypes.includes(node.data.name)
+      && !this.modelService.paramsTypes.includes(node.parent.data.name));
   }
 
   canCreateDeclaration(node): boolean {

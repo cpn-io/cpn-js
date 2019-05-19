@@ -107,6 +107,8 @@ export class ProjectConsoleComponent implements OnInit, OnDestroy {
   }
 
   getVerifyByJson(net: any) {
+    return;
+
     if (this.processing)
       return;
 

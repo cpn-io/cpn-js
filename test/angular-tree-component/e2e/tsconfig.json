@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "moduleResolution": "node",
+    "sourceMap": false,
+    "declaration": false,
+    "noImplicitAny": false,
+    "outDir": "dist",
+    "noEmitOnError": true
+  },
+  "include": [
+      "**/*.ts"
+  ]
+}

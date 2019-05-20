@@ -202,9 +202,6 @@ DirectEditing.prototype.activate = function (element) {
     return (context = p.activate(element)) ? p : null;
   });
 
-  // console.log('DirectEditing.prototype.activate, element = ', element);
-  // console.log('DirectEditing.prototype.activate, context = ', context);
-
   // disable editing for token elements
   if (is(element, CPN_TOKEN_LABEL)) {
     return;
@@ -212,9 +209,6 @@ DirectEditing.prototype.activate = function (element) {
 
   // check if activation took place
   if (context) {
-    // if (is(element, CPN_LABEL)) {
-    //   context.bounds.width = 1000;
-    // }
 
     this.$textbox = this._textbox.create(
       context.bounds,
@@ -232,55 +226,6 @@ DirectEditing.prototype.activate = function (element) {
 
     if (context.options && context.options.resizable) {
       this.resizable = true;
-    }
-
-    let editBox = document.getElementById("editLabelId");
-
-    // console.log('DirectEditing.prototype.activate(), editBox = ', editBox);
-
-    let _this = this;
-
-    if (editBox) {
-      // select all text after focus
-      editBox.onfocus = function () {
-        window.setTimeout(function () {
-          var sel, range;
-
-          // console.log('DirectEditing.prototype.activate(), window.getSelection = ', window.getSelection);
-          // console.log('DirectEditing.prototype.activate(), document.createRange = ', document.createRange);
-          // console.log('DirectEditing.prototype.activate(), document.body.createTextRange = ', document.body.createTextRange);
-
-          if (window.getSelection && document.createRange) {
-            range = document.createRange();
-            range.selectNodeContents(editBox);
-            sel = window.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(range);
-          } else if (document.body.createTextRange) {
-            range = document.body.createTextRange();
-            range.moveToElementText(editBox);
-            range.select();
-          }
-        }, 100);
-      };
-
-      // set focus to element
-      setTimeout(() => { // this will make the execution after the above boolean has changed
-        editBox.focus();
-      }, 100);
-
-
-      // set TAB key event handler
-      // editBox.onkeydown = function (e) {
-      //   console.log('DirectEditing.prototype.activate(), editBox.onkeydown, e = ', e);
-      //
-      //   if (e.key === "Tab") {
-      //     e.stopImmediatePropagation();
-      //     e.stopPropagation();
-      //
-      //     _this._eventBus.fire('element.edit.tab', { event: e, element: element });
-      //   }
-      // };
     }
 
     this._fire('activate');

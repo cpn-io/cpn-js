@@ -182,10 +182,12 @@ html, body {
 
   .nav-item {
     margin: 0 1px;
+    white-space: nowrap;    
   }
 
   .nav-link {
     color: black;
+    white-space: nowrap;    
   }
 
   .nav-link img {

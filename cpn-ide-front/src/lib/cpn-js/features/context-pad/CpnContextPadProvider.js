@@ -8,6 +8,7 @@ export default function CpnContextPadProvider(connect, contextPad, modeling, cpn
   this._contextPad = contextPad;
   this._cpnFactory = cpnFactory;
   this._modeling = modeling;
+  this._eventBus = eventBus;
 
   this._currentElement = undefined;
 
@@ -116,7 +117,7 @@ CpnContextPadProvider.prototype._createShape = function (event, type) {
   const modeling = this._modeling;
 
   contextPad.close();
-
+  let arcElement = undefined;
   if (currentElement) {
     const position = {
       x: currentElement.x + currentElement.width + 100,
@@ -132,9 +133,15 @@ CpnContextPadProvider.prototype._createShape = function (event, type) {
     if (is(currentElement, CPN_PLACE)) placeShape = currentElement;
     if (is(currentElement, CPN_TRANSITION)) transShape = currentElement;
 
+
     if (placeShape && transShape)
-      return modeling.createNewConnection(placeShape, transShape, type === CPN_PLACE ? 'TtoP' : 'PtoT');
+      arcElement = modeling.createNewConnection(placeShape, transShape, type === CPN_PLACE ? 'TtoP' : 'PtoT');
+
+    let elemArr = [];
+    elemArr.push(element);
+    if(arcElement) elemArr.push(arcElement);
+    this._eventBus.fire('shape.create.end', {elements: elemArr});
   }
 
-  return undefined;
+  return arcElement;
 }

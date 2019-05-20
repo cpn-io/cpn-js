@@ -58,6 +58,7 @@ export class ModelService {
       this.pageId = data.pageObject._id;
     });
 
+
   }
 
   markNewModel() {
@@ -200,17 +201,17 @@ export class ModelService {
   }
 
 
-  addElementJsonOnPage(element, pageId, type) {
+  addElementJsonOnPage(CpnElement, pageId, type) {
     this.saveBackup(this.projectData, pageId);
     const jsonPageObject = this.getPageById(pageId);
     if (jsonPageObject[this.modelCase[type]] instanceof Array) {
-      jsonPageObject[this.modelCase[type]].push(element);
+      jsonPageObject[this.modelCase[type]].push(CpnElement);
     } else {
       if (jsonPageObject[this.modelCase[type]]) {
         const curentElem = jsonPageObject[this.modelCase[type]];
-        jsonPageObject[this.modelCase[type]] = [curentElem, element];
+        jsonPageObject[this.modelCase[type]] = [curentElem, CpnElement];
       } else {
-        jsonPageObject[this.modelCase[type]] = [element];
+        jsonPageObject[this.modelCase[type]] = [CpnElement];
       }
     }
   }

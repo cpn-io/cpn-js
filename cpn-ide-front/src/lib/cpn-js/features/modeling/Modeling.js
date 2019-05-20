@@ -154,11 +154,16 @@ function isString(v) {
 Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus) {
 
   if(element.type === CPN_PLACE){
-    if(element.cpnElement.port && element.labels.length === 3){
-      const attrs = this.getLabelAttrs(element, element.cpnElement['port'], 'port');
-       const label = this._elementFactory.createLabel(attrs);
-       this._canvas.addShape(label, this._canvas.getRootElement());
-      //this._eventBus.fire('element.changed', { element: element });
+    if(element.cpnElement.port ){
+      if(element.cpnElement.port === 'delete'){
+       delete element.cpnElement.port;
+       element.labels.filter(lab => {lab.type !== 'port'})
+      } else if ( element.labels.length === 3) {
+        const attrs = this.getLabelAttrs(element, element.cpnElement['port'], 'port');
+        const label = this._elementFactory.createLabel(attrs);
+        this._canvas.addShape(label, this._canvas.getRootElement());
+        //this._eventBus.fire('element.changed', { element: element });
+      }
     }
   }
 
@@ -316,8 +321,11 @@ Modeling.prototype.connect = function (source, target, attrs, hints) {
       orientation = 'TtoP';
     }
 
-    if (placeShape && transShape)
-      return this.createNewConnection(placeShape, transShape, orientation);
+    if (placeShape && transShape) {
+      const conElem = this.createNewConnection(placeShape, transShape, orientation);
+      this._eventBus.fire('shape.create.end', {elements: [conElem]});
+      return conElem;
+    }
   }
 
   return undefined;

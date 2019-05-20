@@ -93,7 +93,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
 
   private getPort(portObject, cpnEelement){
-    return portObject ? portObject : {obj: cpnEelement, state: 'none'};
+    return portObject ? {obj: cpnEelement, pobj: portObject} : {obj: cpnEelement, state: 'none'};
   }
 
   private layoutPartOpened: boolean[] = [];

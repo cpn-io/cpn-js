@@ -21,6 +21,7 @@ export class Message {
   static OPEN_DECLARATION_BLOCK = 'open.declaration.block';
   static CHANGE_EXPLORER_TREE = 'change.explorer.tree';
   static VERIFICATION_DONE = 'verification.done';
+  static SELECT_TREE_NODE = 'select.tree.node';
 
   static MODEL_EDITOR_FULLSCREEN = 'model.editor.fullscreen';
 

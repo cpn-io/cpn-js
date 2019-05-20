@@ -6,6 +6,7 @@ import {ProjectService} from '../services/project.service';
 import {TreeComponent, TREE_ACTIONS} from 'angular-tree-component';
 import {ModelService} from '../services/model.service';
 import {ColorDeclarationsPipe} from '../pipes/color-declarations.pipe';
+import {OptionsNamePipePipe} from '../pipes/options-name.pipe';
 import {Constants} from '../common/constants';
 
 // import {TreeComponent} from 'angular-tree-component';
@@ -14,7 +15,7 @@ import {Constants} from '../common/constants';
   selector: 'app-project-explorer',
   templateUrl: './project-explorer.component.html',
   styleUrls: ['./project-explorer.component.scss'],
-  providers: [ColorDeclarationsPipe]
+  providers: [ColorDeclarationsPipe, OptionsNamePipePipe]
 })
 /**
  * class ProjectExplorerComponent

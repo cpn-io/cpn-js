@@ -168,4 +168,8 @@ export class MlEditorComponent implements OnInit, OnDestroy {
     return text;
   }
 
+  saveEditedData(event) {
+    console.log('saveEditedData(), event = ', event);
+  }
+
 }

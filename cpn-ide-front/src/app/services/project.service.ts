@@ -1,8 +1,9 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import * as X2JS from '../../lib/x2js/xml2json.js';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {EventService} from './event.service';
-import {Message} from '../common/message';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { EventService } from './event.service';
+import { Message } from '../common/message';
+import { Constants } from '../common/constants.js';
 
 /**
  * Common service for getting access to project data from all application
@@ -100,7 +101,7 @@ export class ProjectService {
     //   project: {data: json, name: filename}
     // });
 
-    this.projectData = { project: {data: json, name: filename}}
+    this.projectData = { project: { data: json, name: filename } }
 
     this.eventService.send(Message.PROJECT_FILE_OPEN, this.projectData);
   }
@@ -111,17 +112,18 @@ export class ProjectService {
       .set('Accept', 'application/xml');
 
     // const modelFile = 'baseModel_ID1008016.cpn';
-    //  const modelFile = 'discretemodel_task1.cpn';
+    // const modelFile = 'discretemodel_task1.cpn';
     // const modelFile = 'erdp.cpn';
     // const modelFile = 'hoponhopoff-color.cpn';
     // const modelFile = 'mscProtocol.cpn'
 
     // const modelFile = 'emptynet.cpn';
     // const modelFile = 'test-1.cpn';
+    // const modelFile = 'test-2.cpn';
     const modelFile = 'mynet.cpn';
 
     const url = './assets/cpn/' + modelFile;
-    this.http.get(url, {headers: headers, responseType: 'text'})
+    this.http.get(url, { headers: headers, responseType: 'text' })
       .subscribe(
         (response: any) => {
           // console.log('GET ' + url + ', response = ' + JSON.stringify(response));
@@ -140,15 +142,19 @@ export class ProjectService {
     this.appSettings['globref'] = 'newGlobref';
     this.appSettings['block'] = 'newblock';
     this.appSettings['type'] = 'UNIT';
-    this.appSettings['initmark']  = 'INIT MARK';
-    this.appSettings['code'] = 'input();\n' +
+    this.appSettings['initmark'] = 'INIT MARK';
+    this.appSettings['code'] =
+      'input();\n' +
       'output();\n' +
       'action();';
     this.appSettings['cond'] = '[]';
     this.appSettings['time'] = '@+';
     this.appSettings['priority'] = 'P_NORMAL';
     this.appSettings['annot'] = 'expr';
-    this.appSettings['page'] = 'newpage';
+
+    this.appSettings['block'] = 'New block';
+    this.appSettings['declaration'] = '(* Empty declaration *)';
+    this.appSettings['page'] = 'New page';
   }
 
 }

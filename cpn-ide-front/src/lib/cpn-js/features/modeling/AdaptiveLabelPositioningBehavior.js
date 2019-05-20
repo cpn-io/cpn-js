@@ -59,7 +59,7 @@ export default function AdaptiveLabelPositioningBehavior(eventBus, modeling) {
 
   function checkLabelAdjustment(element) {
 
-    console.log('AdaptiveLabelPositioningBehavior.checkLabelAdjustment(), element = ', element, 'hasExternalLabel(element) = ', hasExternalLabel(element));
+    // console.log('AdaptiveLabelPositioningBehavior.checkLabelAdjustment(), element = ', element, 'hasExternalLabel(element) = ', hasExternalLabel(element));
 
     // skip non-existing labels
     if (!hasExternalLabel(element)) {

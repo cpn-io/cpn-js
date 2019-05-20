@@ -70,7 +70,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
   eventBus.on('shape.changed', function (event) {
    // updateLabels(e.element);
-   console.log('CpnUpdater(), shape.changed, event.element = ', event.element);
+   // console.log('CpnUpdater(), shape.changed, event.element = ', event.element);
 
    updateCpnElement(event.element);
   });
@@ -78,7 +78,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
   eventBus.on('element.hover', function (event) {
     var element = event.element;
-    console.log('CpnUpdater(), element.hover, element = ', element);
+    // console.log('CpnUpdater(), element.hover, element = ', element);
 
     // eventBus.fire('element.click', { element: element });
     if (isCpn(element) && !is(element, CPN_LABEL) && !is(element, CPN_CONNECTION)) {
@@ -96,11 +96,11 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   });
 
   eventBus.on('popupMenu.open', function (event) {
-    console.log('CpnUpdater(), popupMenu.open, event = ', event);
+    // console.log('CpnUpdater(), popupMenu.open, event = ', event);
   });
 
   eventBus.on('element.mousedown', function (event) {
-    console.log('CpnUpdater(), element.mousedown, event = ', event);
+    // console.log('CpnUpdater(), element.mousedown, event = ', event);
   });
 
   // domEvent.bind(document, 'mouseup', function (event) {
@@ -108,7 +108,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   // });
 
   domEvent.bind(document, 'mousedown', function (event) {
-    console.log('CpnUpdater(), domEvent, mousedown, event = ', event);
+    // console.log('CpnUpdater(), domEvent, mousedown, event = ', event);
 
     const position = toPoint(event);
     const target = document.elementFromPoint(position.x, position.y);
@@ -129,11 +129,11 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
       popupMenuProvider.close();
 
-      console.log('CpnUpdater(), domEvent, mousedown, popup menu, x,y = ', event.x, event.y);
+      // console.log('CpnUpdater(), domEvent, mousedown, popup menu, x,y = ', event.x, event.y);
 
 
       if (element) {
-        console.log('CpnUpdater(), domEvent, mousedown, popup menu, element = ', element);
+        // console.log('CpnUpdater(), domEvent, mousedown, popup menu, element = ', element);
 
         if (isAny(element, [CPN_PLACE, CPN_TRANSITION, CPN_CONNECTION])) {
           popupMenuProvider.close();
@@ -163,7 +163,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
   // crop connection ends during create/update
   function cropConnection(e) {
-    console.log('CpnUpdater(), cropConnection(e), e = ', e);
+    // console.log('CpnUpdater(), cropConnection(e), e = ', e);
 
     // const context = e.context;
     // if (!context.cropped) {
@@ -179,14 +179,14 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   }
 
   function updateNewConnection(e) {
-    console.log('CpnUpdater(), updateNewConnection(e), e = ', e);
+    // console.log('CpnUpdater(), updateNewConnection(e), e = ', e);
     const context = e.context;
     const connection = context.connection;
     connection.type = CPN_CONNECTION;
   }
 
   function updateNewShape(e) {
-    console.log('CpnUpdater(), updateNewShape(e), e = ', e);
+    // console.log('CpnUpdater(), updateNewShape(e), e = ', e);
     /* const context = e.context;
      const shape = context.shape;
      shape.type = CPN_PLACE;*/

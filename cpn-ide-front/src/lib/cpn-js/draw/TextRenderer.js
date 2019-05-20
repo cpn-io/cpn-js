@@ -44,7 +44,7 @@ export default function TextRenderer(config) {
    */
   this.getExternalLabelBounds = function (bounds, text) {
 
-    console.log('this.getExternalLabelBounds(), bounds, text, externalStyle = ', bounds, text, externalStyle);
+    // console.log('this.getExternalLabelBounds(), bounds, text, externalStyle = ', bounds, text, externalStyle);
 
     var layoutedDimensions = textUtil.getDimensions(text, {
       box: {

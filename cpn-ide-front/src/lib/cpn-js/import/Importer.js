@@ -71,7 +71,7 @@ export function importCpnPage(diagram, cpnPageElement) {
 
   function importContent(page, element, type) {
     if (element && type) {
-      if (element.length && element.length > 0) {
+      if (element instanceof Array) {
         for (const obj of element) {
           importer.add(page, obj, type);
         }
@@ -86,7 +86,7 @@ export function importCpnPage(diagram, cpnPageElement) {
       const element = elementRegistry._elements[key].element;
 
       if (is(element, CPN_CONNECTION)) {
-        console.log('importCpnPage(), layoutConnections(), element = ', element);
+        // console.log('importCpnPage(), layoutConnections(), element = ', element);
         layouter.cropConnection(element);
       }
     }

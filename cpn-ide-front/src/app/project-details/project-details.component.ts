@@ -55,11 +55,15 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     this.eventService.on(Message.CHANGE_EXPLORER_TREE, (data) => {
       this.explorerTreeChangeHandler(data);
     });
+
+
   }
+
 
   ngOnDestroy() {
     // this.subscription.unsubscribe();
   }
+
 
   explorerTreeChangeHandler(data) {
     switch (data.action) {
@@ -431,8 +435,10 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       name: color.id,
     };
     if (color.layout) {
-      node.name = color.layout.substr(7);
+      node.name = color.layout;//color.layout.substr(7);
+      //console.log('colset --------', node.name);
     } else {
+      node.name = 'colset ' + node.name;
       if (color.alias && color.alias.id) {
         node.name += ' = ' + color.alias.id;
       } else if (color.list && color.list.id) {
@@ -453,7 +459,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
         node.name += ' timed';
       }
     }
-    return node.name;
+    return  node.name;
   }
 
   getVariableStringValue(variable) {
@@ -469,56 +475,13 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     return globref.layout ? globref.layout.substr(4) : globref.__text;
   }
 
-  getFirstCellData(globref): string {
-
-    let str;
-    if (globref instanceof Object) {
-      str = globref.layout ? globref.layout : globref.__text;
-    } else { str = globref; }
-
-    let firstCell: string;
-    let array = str.match('^((local){1}\\s+)*(fun|val|exception){1}\\s+');
-    if (array) {
-      firstCell = array[0].trim();
-    } else {
-      array = str.match('^[a-zA-Z0-9_]+\\s*:');
-      if (array) {
-        firstCell = 'var';
-      } else {
-        array = str.match('^[a-zA-Z0-9_]+\\s*=');
-        if (array) {
-          firstCell = 'colset';
-        } else {
-          firstCell = '';
-        }
-      }
-    }
-    return firstCell;
-  }
-
-  getSecondCellData(globref): string {
-    let str;
-    if (globref instanceof Object) {
-      str = globref.layout ? globref.layout : globref.__text;
-    } else { str = globref; }
-
-    let secondCell: string;
-    const array = str.match('^((local){1}\\s+)*(fun|val|exception){1}\\s+');
-    if (array) {
-      secondCell = str.substring(array[0].length);
-    } else {
-      secondCell = str;
-    }
-    return secondCell;
-  }
-
   getBlockElemeStringValue(item, type) {
     switch (type) {
       case 'var':
         return item ? this.getVariableStringValue(item) : 'var';
         break;
       case 'color':
-        return item ? this.getColorStringValue(item) : 'colset';
+        return item ? this.getColorStringValue(item) : 'color';
         break;
       case 'ml':
         return !item.flag ? this.getFunStringValue(item) : (item.item.layout ? item.item.layout.split(' ')[0] : item.item.__text.split(' ')[0]);
@@ -532,12 +495,57 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
 
   }
 
+
+  /**
+   *The listener waits for pressing the input button in the panel and determines which property in which table has been changed.
+   * @param event
+   */
+  // @HostListener('window:keydown', ['$event'])
+  // keyEvent(event: KeyboardEvent) {
+  //
+  //   if (event.keyCode === 13) {
+  //     console.log('TESTstr ----------------------------------------- PARAMETERS');
+  //     let htmlElement: HTMLElement = <HTMLElement>event.target;
+  //     if (htmlElement && (htmlElement.nodeName === 'TD' || htmlElement.nodeName === 'TR')) {
+  //       if (htmlElement.offsetParent) {
+  //         var table: HTMLTableElement = <HTMLTableElement>document.getElementById(htmlElement.offsetParent.id);
+  //         let tableDataSource;
+  //         if (table.id) {
+  //           let parsId = table.id.split('-')
+  //           if (parsId[0] === 'declarationPanel') {
+  //             if (parsId.length > 3) for (let i = 3; i < parsId.length; ++i) parsId[2] = parsId[2] + '-' + parsId[i];
+  //             switch (parsId[1]) {
+  //               case 'var':
+  //                 this.editVarTable(parsId[2], table);
+  //                 break;
+  //               case 'color':
+  //                 this.editColorTable(parsId[2], table);
+  //                 break;
+  //               case 'ml':
+  //                 this.editMlTable(parsId[2], table);
+  //                 break;
+  //               case 'globref':
+  //                 this.editGlobrefTable(parsId[2], table);
+  //                 break;
+  //               default:
+  //
+  //             }
+  //             // this.updateProperties(this.nodes, table);
+  //             this.eventService.send(Message.UPDATE_TREE, {project: this.currentPojectModel});
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+
+
   saveEditedData(event) {
+    console.log(event.target);
     let htmlElement: HTMLElement = <HTMLElement>event.target;
     if (htmlElement && (htmlElement.nodeName === 'TD' || htmlElement.nodeName === 'TR')) {
       if (htmlElement.offsetParent) {
         var table: HTMLTableElement = <HTMLTableElement>document.getElementById(htmlElement.offsetParent.id);
-        let tableDataSource;
         if (table.id) {
           let parsId = table.id.split('-');
           if (parsId[0] === 'declarationPanel') {
@@ -572,46 +580,37 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   *The listener waits for pressing the input button in the panel and determines which property in which table has been changed.
-   * @param event
+   * Функция из кода на ml понимает, что это такое: декларация функции, переменной или исключение
+   * @param globref
    */
-  // @HostListener('window:keydown', ['$event'])
-  // keyEvent(event: KeyboardEvent) {
-  //
-  //   if (event.keyCode === 13) {
-  //     let htmlElement: HTMLElement = <HTMLElement>event.target;
-  //     if (htmlElement && (htmlElement.nodeName === 'TD' || htmlElement.nodeName === 'TR')) {
-  //       if (htmlElement.offsetParent) {
-  //         var table: HTMLTableElement = <HTMLTableElement>document.getElementById(htmlElement.offsetParent.id);
-  //         let tableDataSource;
-  //         if (table.id) {
-  //           let parsId = table.id.split('-')
-  //           if (parsId[0] === 'declarationPanel') {
-  //             if (parsId.length > 3) for (let i = 3; i < parsId.length; ++i) parsId[2] = parsId[2] + '-' + parsId[i];
-  //             switch (parsId[1]) {
-  //               case 'var':
-  //                 this.editVarTable(parsId[2], table);
-  //                 break;
-  //               case 'color':
-  //                 this.editColorTable(parsId[2], table);
-  //                 break;
-  //               case 'ml':
-  //                 this.editMlTable(parsId[2], table);
-  //                 break;
-  //               case 'globref':
-  //                 this.editGlobrefTable(parsId[2], table);
-  //                 break;
-  //               default:
-  //
-  //             }
-  //             // this.updateProperties(this.nodes, table);
-  //             this.eventService.send(Message.UPDATE_TREE, {project: this.currentPojectModel});
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
+  getFirstCellDataFromMLCode(globref): string {
+
+    let str;
+    if (globref instanceof Object) {
+      str = globref.layout ? globref.layout : globref.__text;
+    } else {
+      str = globref;
+    }
+
+    let firstCell: string;
+    let array = str.match('^((local){1}\\s+)*(fun|val|exception){1}\\s+');
+    if (array) {
+      firstCell = array[0].trim();
+    } else {
+      array = str.match('^[a-zA-Z0-9_]+\\s*:');
+      if (array) {
+        firstCell = 'var';
+      } else {
+        array = str.match('^[a-zA-Z0-9_]+\\s*=');
+        if (array) {
+          firstCell = 'colset';
+        } else {
+          firstCell = '';
+        }
+      }
+    }
+    return firstCell;
+  }
 
 
   /**
@@ -677,6 +676,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
 
 
   editColorTable(tabId, table) {
+    console.log ('editColorTable ', tabId, table)
     let block = this.declarations.find(elem => elem.id === tabId.replace('-commonTable', '')).color;
     var rowLength = table.rows.length;
     for (var i = 0; i < rowLength; i += 1) {

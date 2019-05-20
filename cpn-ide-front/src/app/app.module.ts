@@ -39,6 +39,8 @@ import {ReplaceSpacesPipe} from './pipes/replace-spaces.pipe';
 import { SaveprojectButtonComponent } from './actions/saveproject-button/saveproject-button.component';
 import { BlockHeaderComponent } from './common/block-header';
 import { TextEditRowComponent } from './properties-panel/components/text-edit-row';
+import { ColorDeclarationsPipe } from './pipes/color-declarations.pipe';
+import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 
 // -----------------------------------------------------------------------------
 
@@ -48,6 +50,8 @@ import { TextEditRowComponent } from './properties-panel/components/text-edit-ro
 
     // Pipes
     ReplaceSpacesPipe,
+    ColorDeclarationsPipe,
+    SafeHtmlPipe,
 
     // Components
     MainFrameComponent,

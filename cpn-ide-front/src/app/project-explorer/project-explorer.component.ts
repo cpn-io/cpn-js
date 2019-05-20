@@ -1,13 +1,13 @@
 import { Component, HostListener, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 // import {NgxXml2jsonService} from 'ngx-xml2json';
-import {EventService} from '../services/event.service';
-import {Message} from '../common/message';
-import {ProjectService} from '../services/project.service';
-import {TreeComponent, TREE_ACTIONS} from 'angular-tree-component';
-import {ModelService} from '../services/model.service';
-import {ColorDeclarationsPipe} from '../pipes/color-declarations.pipe';
-import {OptionsNamePipePipe} from '../pipes/options-name.pipe';
-import {Constants} from '../common/constants';
+import { EventService } from '../services/event.service';
+import { Message } from '../common/message';
+import { ProjectService } from '../services/project.service';
+import { TreeComponent, TREE_ACTIONS } from 'angular-tree-component';
+import { ModelService } from '../services/model.service';
+import { ColorDeclarationsPipe } from '../pipes/color-declarations.pipe';
+import { OptionsNamePipePipe } from '../pipes/options-name.pipe';
+import { Constants } from '../common/constants';
 
 // import {TreeComponent} from 'angular-tree-component';
 
@@ -185,6 +185,14 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     });
 
     this.eventService.on(Message.UPDATE_TREE, (data) => {
+
+      if (data.cpnElement) {
+        // console.log('UPDATE_TREE, data.cpnElement = ', data.cpnElement);
+        // console.log('UPDATE_TREE, this.treeComponent.treeModel = ', this.treeComponent.treeModel);
+
+        this.updateTreeByCpnElement(data.cpnElement);
+      }
+
       // const newNodeId = data.newNodeId; // ? data.newNodeId  : data.comonBlock.id;
       // if (data.state) {
       //   this.stateTree = data.state;
@@ -243,6 +251,28 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+  }
+
+
+  /**
+   * Find tree node by cpn element and update it's name
+   * @param cpnElement 
+   */
+  updateTreeByCpnElement(cpnElement) {
+    var nodeForUpdate = this.treeComponent.treeModel.getNodeBy((node) => {
+      // console.log('UPDATE_TREE, getNodeBy(), node = ', node);
+      return node.data && node.data.cpnElement === cpnElement;
+    });
+    if (nodeForUpdate 
+      && nodeForUpdate.data
+      && nodeForUpdate.data.declarationType 
+      && !(nodeForUpdate instanceof Array)) {
+      // console.log('UPDATE_TREE, nodeForUpdate = ', nodeForUpdate);
+      nodeForUpdate.data.name = this.modelService.cpnDeclarationElementToString(
+        cpnElement,
+        nodeForUpdate.data.declarationType);
+      this.updateTree();
+    }
   }
 
   // <editor-fold desc="Подсветка в дереве при наведении на фигуру в графическом редакторе" >
@@ -724,7 +754,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         if (inputElem) {
           inputElem.focus();
         }
-      }, 100);
+      }, 1);
     }
   }
 
@@ -743,6 +773,46 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   canCollapse(node: any): boolean {
     return this.canEdit(node) && node.children === undefined;
   }
+
+  isBooleanOption(node) {
+    return node.data 
+      && node.data.type === 'option' 
+      && node.data.cpnElement
+      && node.data.cpnElement.value
+      && node.data.cpnElement.value.boolean;
+  }
+
+  getBooleanOption(node) {
+    return node.data 
+      && node.data.type === 'option' 
+      && node.data.cpnElement
+      && node.data.cpnElement.value
+      && node.data.cpnElement.value.boolean
+      && node.data.cpnElement.value.boolean === 'true';
+  }
+
+  setBooleanOption(event, node) {
+    console.log('setBooleanOption(), event = ', event);
+    if (event.target)
+      node.data.cpnElement.value.boolean = event.target.checked ? 'true' : 'false';
+  }
+
+  isTextOption(node) {
+    return node.data 
+      && node.data.type === 'option' 
+      && node.data.cpnElement
+      && node.data.cpnElement.value
+      && node.data.cpnElement.value.text;
+  }
+
+  getTextOption(node) {
+    return node.data 
+      && node.data.type === 'option' 
+      && node.data.cpnElement
+      && node.data.cpnElement.value
+      && node.data.cpnElement.value.text || '* empty *';
+  }
+
 
   /**
    * Распарсить метку, чотбы выцепить оттуда и вернуть название функции или исключения или название переменной
@@ -1208,6 +1278,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         const optName = opt._name + ' = ' + this.cpnOptionValueToString(opt);
         const optNode = this.createTreeNode('option_' + opt._name, optName);
         optNode.cpnElement = opt;
+        optNode.type = 'option';
 
         if (['realtimestamp', 'fair_be', 'global_fairness', 'outputdirectory'].includes(opt._name)) {
           optionsNode.children.push(optNode);
@@ -1321,7 +1392,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         case 'color':
         case 'var':
         case 'ml':
-          const text = this.modelService.cpnElementToString(cpnElement, key);
+          const text = this.modelService.cpnDeclarationElementToString(cpnElement, key);
           declarationNode = this.createTreeNode(cpnElement._id, text);
           declarationNode.cpnElement = cpnElement;
           declarationNode.type = 'declaration';
@@ -1859,7 +1930,12 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   activateNode(event) {
+    if (this.selectedNode)
+      this.openedLabel[this.selectedNode.id] = false;
+
     this.selectedNode = event.node;
+    this.openedLabel[this.selectedNode.id] = true;
+
     console.log(event.node);
 
     if (event && event.node && event.node.data && event.node.data.type === 'page') {
@@ -1874,7 +1950,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         action: 'select',
         cpnElement: this.selectedNode.data.cpnElement
       });
-    }    
+    }
   }
 
   hideContextMenu() {
@@ -1920,6 +1996,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     const value = htmlElement.textContent;
     console.log('saveEditedData(), value = ', value);
+    console.log('saveEditedData(), node.data.name = ', node.data.name);
+
+    // don't save if value not changed
+    if (value === node.data.name)
+      return;
 
     switch (node.data.type) {
       case 'block':
@@ -1954,86 +2035,10 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     node.data.name = newValue; // update tree node text
     // node.data.cpnElement.pageattr._name = newValue; // update cpnElement
 
-    this.parseDeclarationLayout(node.data.cpnElement, newValue);
+    this.modelService.stringToCpnDeclarationElement(
+      node.data.cpnElement, 
+      newValue);
   }
-
-  parseDeclarationLayout(cpnElement, layout) {
-
-    var parser = layout.match('^\\S+');
-    // console.log('parseDeclarationLayout(), parser = ', parser);
-
-    var type;
-    if (parser) {
-      type = parser[0];
-    }
-
-    if (!type) {
-      return;
-    }
-
-    switch (type) {
-      case 'var':
-        let splitLayoutArray;
-        cpnElement.layout = layout;
-        layout = layout.replace('var', '');
-        splitLayoutArray = layout.trim().split(':');
-        for (let i = 0; i < splitLayoutArray.length; i++) {
-          splitLayoutArray[i] = splitLayoutArray[i].replace(/\s+/g, '').split(',');
-        }
-        cpnElement.id = splitLayoutArray[0];
-        if (!cpnElement.type) {
-          cpnElement.type = {};
-        }
-        cpnElement.type.id = splitLayoutArray[1][0];
-        break;
-      case 'ml':
-        cpnElement.layout = layout;
-        cpnElement.__text = layout;
-        break;
-      case 'colset':   // ***** отрефакторить *****
-        cpnElement.layout = layout;
-        layout = layout.replace('colset', '');
-        splitLayoutArray = layout.split('=');
-        splitLayoutArray[1] = splitLayoutArray[1].split(' ').filter(e => e.trim() !== '');
-        let testElem = splitLayoutArray[1][0].replace(/\s+/g, '');
-        for (const key of Object.keys(cpnElement)) {
-          if (key !== '_id' && key !== 'layout') {
-            delete cpnElement[key];
-          }
-        }
-        if (splitLayoutArray[1][splitLayoutArray[1].length - 1].replace(';', '') === 'timed') {
-          cpnElement.timed = '';
-          splitLayoutArray[1].length = splitLayoutArray[1].length - 1;
-        }
-        if (testElem === 'product') {
-          const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
-          cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
-          cpnElement.product = { id: productList };
-        } else if (testElem === 'list') {
-          const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
-          cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
-          cpnElement.list = { id: productList };
-        } else {
-          testElem = testElem.replace(/\s+/g, '').replace(';', '');
-          splitLayoutArray[0] = splitLayoutArray[0].replace(/\s+/g, '').replace(';', '');
-          if (testElem.toLowerCase() === splitLayoutArray[0].toLowerCase()) {
-            cpnElement.id = splitLayoutArray[0];
-            cpnElement[testElem.toLowerCase()] = '';
-          } else {
-            cpnElement.id = splitLayoutArray[0];
-            cpnElement.alias = { id: testElem };
-          }
-        }
-        break;
-      case 'globref':
-        splitLayoutArray = layout.split(' ').filter(e => e.trim() !== '' && e.trim() !== '=');
-        cpnElement.id = splitLayoutArray[1].replace(/\s+/g, '').replace(';', '');
-        cpnElement.ml = splitLayoutArray[2].replace(/\s+/g, '').replace(';', '');
-        cpnElement.layout = layout;
-        break;
-    }
-  }
-
 
   saveEditedData_OLD(event) {
     console.log('saveEditedData(), event = ', event);

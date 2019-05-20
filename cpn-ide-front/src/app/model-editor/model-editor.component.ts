@@ -61,6 +61,8 @@ export class ModelEditorComponent implements OnInit {
   pageId;
   transCount = 0;
 
+  loading = false;
+
   correctColor = {
     'Fucia': '#f0f'
   };
@@ -108,6 +110,8 @@ export class ModelEditorComponent implements OnInit {
 
 
     eventBus.on('import.render.complete', (event) => {
+      this.loading = false;
+
       const pageElement = event.source;
 
       console.log('import.render.complete, event = ', event);
@@ -277,6 +281,8 @@ export class ModelEditorComponent implements OnInit {
   }
 
   load(pageObject, subPages) {
+    this.loading = true;
+
     this.subpages = subPages;
     this.jsonPageObject = pageObject;
     this.pageId = pageObject._id;

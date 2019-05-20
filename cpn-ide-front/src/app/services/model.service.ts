@@ -1258,13 +1258,106 @@ export class ModelService {
     return str;
   }
 
-  cpnElementToString(cpnElement, type) {
+  /**
+   * Convert cpn declaration element to string
+   * @param cpnElement 
+   * @param type 
+   */
+  cpnDeclarationElementToString(cpnElement, type) {
     switch (type) {
       case 'globref': return this.cpnGlobrefToString(cpnElement); 
       case 'color': return this.cpnColorToString(cpnElement);
       case 'var': return this.cpnVarToString(cpnElement);
       case 'ml': return this.cpnMlToString(cpnElement); 
     }
+  }
+
+  /**
+   * Convert string to cpn declaration element
+   * @param cpnElement 
+   * @param str 
+   */
+  stringToCpnDeclarationElement(cpnElement, str) {
+
+    var parser = str.match('^\\S+');
+    // console.log('stringToCpnDeclarationElement(), parser = ', parser);
+
+    var type;
+    if (parser) {
+      type = parser[0];
+    }
+
+    if (!type) {
+      return;
+    }
+
+    console.log('stringToCpnDeclarationElement(), type = ', type);
+
+    switch (type) {
+      case 'var':
+        let splitLayoutArray;
+        cpnElement.layout = str;
+        str = str.replace('var', '');
+        splitLayoutArray = str.trim().split(':');
+        for (let i = 0; i < splitLayoutArray.length; i++) {
+          splitLayoutArray[i] = splitLayoutArray[i].replace(/\s+/g, '').split(',');
+        }
+        cpnElement.id = splitLayoutArray[0];
+        if (!cpnElement.type) {
+          cpnElement.type = {};
+        }
+        cpnElement.type.id = splitLayoutArray[1][0];
+        break;
+      case 'ml':
+      case 'val':
+      case 'fun':
+      case 'local':
+        cpnElement.layout = str;
+        cpnElement.__text = str;
+        break;
+      case 'colset':   // ***** отрефакторить *****
+        cpnElement.layout = str;
+        str = str.replace('colset', '');
+        splitLayoutArray = str.split('=');
+        splitLayoutArray[1] = splitLayoutArray[1].split(' ').filter(e => e.trim() !== '');
+        let testElem = splitLayoutArray[1][0].replace(/\s+/g, '');
+        for (const key of Object.keys(cpnElement)) {
+          if (key !== '_id' && key !== 'layout') {
+            delete cpnElement[key];
+          }
+        }
+        if (splitLayoutArray[1][splitLayoutArray[1].length - 1].replace(';', '') === 'timed') {
+          cpnElement.timed = '';
+          splitLayoutArray[1].length = splitLayoutArray[1].length - 1;
+        }
+        if (testElem === 'product') {
+          const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
+          cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
+          cpnElement.product = { id: productList };
+        } else if (testElem === 'list') {
+          const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
+          cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
+          cpnElement.list = { id: productList };
+        } else {
+          testElem = testElem.replace(/\s+/g, '').replace(';', '');
+          splitLayoutArray[0] = splitLayoutArray[0].replace(/\s+/g, '').replace(';', '');
+          if (testElem.toLowerCase() === splitLayoutArray[0].toLowerCase()) {
+            cpnElement.id = splitLayoutArray[0];
+            cpnElement[testElem.toLowerCase()] = '';
+          } else {
+            cpnElement.id = splitLayoutArray[0];
+            cpnElement.alias = { id: testElem };
+          }
+        }
+        break;
+      case 'globref':
+        splitLayoutArray = str.split(' ').filter(e => e.trim() !== '' && e.trim() !== '=');
+        cpnElement.id = splitLayoutArray[1].replace(/\s+/g, '').replace(';', '');
+        cpnElement.ml = splitLayoutArray[2].replace(/\s+/g, '').replace(';', '');
+        cpnElement.layout = str;
+        break;
+    }
+    console.log('stringToCpnDeclarationElement(), cpnElement = ', cpnElement);
 
   }
 

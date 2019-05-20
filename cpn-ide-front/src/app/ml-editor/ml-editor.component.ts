@@ -1,7 +1,7 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {EmitterService} from '../services/emitter.service';
-import {Message} from '../common/message';
-import {EventService} from '../services/event.service';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { EmitterService } from '../services/emitter.service';
+import { Message } from '../common/message';
+import { EventService } from '../services/event.service';
 import { ModelService } from '../services/model.service';
 
 @Component({
@@ -12,16 +12,14 @@ import { ModelService } from '../services/model.service';
 export class MlEditorComponent implements OnInit, OnDestroy {
   @Input() project: Object;
 
-  textValue = ' ';
-  cpnElement;
+  textValue = '';
+  cpnElement = {};
+  declarationType;
 
   constructor(
     private eventService: EventService,
     private modelService: ModelService) {
-    // this.subscripeToSmlFromFunnctions();
   }
-
-
 
   ngOnInit() {
     this.eventService.on(Message.CHANGE_EXPLORER_TREE, (data) => {
@@ -49,7 +47,11 @@ export class MlEditorComponent implements OnInit, OnDestroy {
     if (data.action === 'select') {
       if (data.cpnElement && data.declarationType) {
         this.cpnElement = data.cpnElement;
-        this.textValue = this.modelService.cpnElementToString(data.cpnElement, data.declarationType);
+        this.declarationType = data.declarationType;
+
+        this.textValue = this.modelService.cpnDeclarationElementToString(
+          this.cpnElement,
+          this.declarationType);
       }
     }
   }
@@ -61,24 +63,23 @@ export class MlEditorComponent implements OnInit, OnDestroy {
     // this.subscription.unsubscribe();
   }
 
-  subscripeToSmlFromFunnctions() {
-    this.eventService.on(Message.SML_TO_EDITOR, (data) => {
-      if (data.fn) {
-        this.textValue = data.fn.data;
-      }
-    });
+  onKeyUp(event) {
+    console.log('onKeyUp(), event -> ', event);
   }
-
-  textareaKeyUp(event) {
-    console.log('textareaKeyUp(), event -> ', event);
-  }
-
-  saveNotes = function (notes) {
-    console.log(notes);
-  };
 
   saveEditedData(event) {
     console.log('saveEditedData(), event = ', event);
+
+    if (event.target && event.target.textContent) {
+      this.modelService.stringToCpnDeclarationElement(
+        this.cpnElement,
+        event.target.textContent);
+
+      console.log('saveEditedData(), event.target.textContent = ', event.target.textContent);
+      console.log('saveEditedData(), this.cpnElement = ', this.cpnElement);
+
+      this.eventService.send(Message.UPDATE_TREE, { cpnElement: this.cpnElement });
+    }
   }
 
 }

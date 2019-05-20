@@ -11,9 +11,12 @@ export class ColorDeclarationsPipe implements PipeTransform {
     'fun': 'red',
     'local': 'red',
     'exception': 'red',
+    'end': 'red',
     'let': 'brown',
     'in': 'brown',
-    'end': 'red',
+    'if': 'brown',
+    'else': 'brown',
+    'then': 'brown',
   };
 
   transform(value: string): string {

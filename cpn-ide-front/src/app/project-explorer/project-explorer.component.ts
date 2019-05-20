@@ -1,12 +1,13 @@
-import { Component, HostListener, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {Component, HostListener, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 // import {NgxXml2jsonService} from 'ngx-xml2json';
-import { EventService } from '../services/event.service';
-import { Message } from '../common/message';
-import { ProjectService } from '../services/project.service';
-import { TreeComponent, TREE_ACTIONS } from 'angular-tree-component';
-import { ModelService } from '../services/model.service';
-import { ColorDeclarationsPipe } from '../pipes/color-declarations.pipe';
-import { Constants } from '../common/constants';
+import {EventService} from '../services/event.service';
+import {Message} from '../common/message';
+import {ProjectService} from '../services/project.service';
+import {TreeComponent, TREE_ACTIONS} from 'angular-tree-component';
+import {ModelService} from '../services/model.service';
+import {ColorDeclarationsPipe} from '../pipes/color-declarations.pipe';
+import {OptionsNamePipePipe} from '../pipes/options-name.pipe';
+import {Constants} from '../common/constants';
 
 // import {TreeComponent} from 'angular-tree-component';
 
@@ -14,7 +15,7 @@ import { Constants } from '../common/constants';
   selector: 'app-project-explorer',
   templateUrl: './project-explorer.component.html',
   styleUrls: ['./project-explorer.component.scss'],
-  providers: [ColorDeclarationsPipe]
+  providers: [ColorDeclarationsPipe, OptionsNamePipePipe]
 })
 /**
  * class ProjectExplorerComponent
@@ -91,7 +92,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   //
   options = {
     allowDrag: true,
-    allowDrop: (element, { parent, index }) => {
+    allowDrop: (element, {parent, index}) => {
       const elemHeaderCatalog = this.getHeaderCatalog(element);
       const parentHeaderCatalog = this.getHeaderCatalog(parent);
       if (this.paramsTypes.includes(element.parent.data.name)) {
@@ -100,7 +101,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         }
       }
       return elemHeaderCatalog &&
-        parentHeaderCatalog
+      parentHeaderCatalog
         ? (elemHeaderCatalog.data.name === parentHeaderCatalog.data.name &&
           (this.paramsTypes.includes(element.parent.data.name) ||
             (!this.paramsTypes.includes(parent.data.name) && !this.paramsTypes.includes(parent.parent.data.name))
@@ -113,7 +114,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         contextMenu: (model: any, node: any, event: any) => {
           this.onTreeNodeContextMenu(event, node);
         },
-        drop: (tree, node, $event, { from, to }) => {
+        drop: (tree, node, $event, {from, to}) => {
           console.log('drag', from, to);
           console.log('onMoveNode', node.name, 'to', to.parent.name, 'at index', to.index);
           const parentJson = from.parent.data.cpnElement;
@@ -138,7 +139,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
             this.treeComponent.treeModel.setState(tree.getState());
 
           } else {
-            TREE_ACTIONS.MOVE_NODE(tree, node, $event, { from, to });
+            TREE_ACTIONS.MOVE_NODE(tree, node, $event, {from, to});
           }
         }
       }
@@ -308,17 +309,50 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * @param str код на языке моделирования
    */
   processMlCodeRecursively(str: string) {
+    const codeWithoutComments = this.removeCommentsFromCode(str);
     // ищем самые глубоко вложенные скобки, и разбиваем строку на две подстроки:
     // первая - все вокруг этих скобок, вторая - все внутри этих скобок
     // если скобок не нашли, значит имеем строку, не содержащую скобок, из которой нам надо выделить литералы
-    const lastOpenBracket = str.lastIndexOf('(');
+    const lastOpenBracket = codeWithoutComments.lastIndexOf('(');
     if (lastOpenBracket > -1) {
-      const nextCloseBracket = (str.substring(lastOpenBracket)).indexOf(')') + lastOpenBracket;
-      this.processMlCodeRecursively(str.substring(0, lastOpenBracket) + str.substring(nextCloseBracket + 1));
-      this.processMlCodeRecursively(str.substring(lastOpenBracket + 1, nextCloseBracket));
+      const nextCloseBracket = (codeWithoutComments.substring(lastOpenBracket)).indexOf(')') + lastOpenBracket;
+      this.processMlCodeRecursively(codeWithoutComments.substring(0, lastOpenBracket) + codeWithoutComments.substring(nextCloseBracket + 1));
+      this.processMlCodeRecursively(codeWithoutComments.substring(lastOpenBracket + 1, nextCloseBracket));
     } else {
-      this.processLiteralsFromMlString(str);
+      this.processLiteralsFromMlString(codeWithoutComments);
     }
+  }
+
+  /**
+   * Функция удаляет комментарии из кода. Возвращает строку без комментариев
+   * (* комментарии,
+   * могут быть многострочными *)
+   * @param str
+   */
+  removeCommentsFromCode(str: string): string {
+    let result = str;
+    while (true) {
+      const matches = result.match('(\\(\\*){1}(.|\\n|\\r|\\t)*(\\*\\)){1}');
+      if (matches) {
+        const commentStart = result.indexOf(matches[0]);
+        if (commentStart > 0) {
+          if (commentStart + matches[0].length === result.length) {
+            result = result.substring(0, commentStart - 1);
+          } else {
+            result = result.substring(0, commentStart - 1) + result.substring(commentStart + matches[0].length);
+          }
+        } else {
+          if (matches[0].length === result.length) {
+            result = '';
+          } else {
+            result = result.substring(matches[0].length);
+          }
+        }
+      } else {
+        break;
+      }
+    }
+    return result;
   }
 
   /**
@@ -343,7 +377,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * @param name имя типа или функции, которое нужно найти и подчеркнуть в дереве,
    */
   underlineRelationsRecursively(parentNode: any, name: string): boolean {
-    // console.log('underlineRelationsRecursively name = ' + name);
     if (parentNode.children) {
       for (const node of parentNode.children) {
         if (this.underlineRelationsRecursively(node, name)) {
@@ -352,7 +385,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         }
       }
     } else {
-      if (parentNode.cpnElement.toString().match('^((local){1}\\s+)*(fun|val|exception){1}\\s+' + name + '\\s*[=(]{1}')) {
+      const parentCnpWitchoutComments = this.removeCommentsFromCode(parentNode.cpnElement.toString());
+      if (parentCnpWitchoutComments.match('^((local){1}\\s+)*(fun|val|exception){1}\\s+' + name + '\\s*[=(]{1}')) {
         // это проверка на то, что строка является декларацией функции или val
         this.doUnderlineNodeLabel(true, parentNode.id);
         return true;
@@ -448,7 +482,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   /**
    * Adding new node to the tree
-   * 
+   *
    * @param treeNode - tree node object (in terms of tree model)
    * @param type - type of adding element
    */
@@ -511,8 +545,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Deleting node from the tree 
-   * 
+   * Deleting node from the tree
+   *
    * @param treeNode - tree node object (in terms of tree model)
    */
   onDeleteNode(treeNode) {
@@ -657,10 +691,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   onNodeLabelClick(event, node) {
-    if (!this.openedLabel[node.id])
+    if (!this.openedLabel[node.id]) {
       this.onNodeArrowClick(event, node);
-    else
+    } else {
       this.goToEditNode(node.id);
+    }
 
     // this.openNode(event, node);
     // if (this.canCollapse(node)) {
@@ -694,11 +729,12 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   openNode(event, node) {
     const currentNode = this.getCurrentBlock(node);
-    this.eventService.send(Message.OPEN_DECLARATION_BLOCK, { id: currentNode.id });
-    if (this.canCollapse(node))
+    this.eventService.send(Message.OPEN_DECLARATION_BLOCK, {id: currentNode.id});
+    if (this.canCollapse(node)) {
       this.sendMlToMlEditor(node.data.name);
-    else
+    } else {
       this.sendMlToMlEditor('');
+    }
     event.preventDefault();
   }
 
@@ -735,7 +771,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   sendMlToMlEditor(value: any) {
-    this.eventService.send(Message.SML_TO_EDITOR, { fn: { data: value } });
+    this.eventService.send(Message.SML_TO_EDITOR, {fn: {data: value}});
   }
 
   getCurrentBlock(currentNode): any {
@@ -838,7 +874,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       parentNod = node.parent;
       // node.parent.data.children = node.parent.data.children.filter(x => x.id !== node.id);
       this.deleteNode(this.nodes[0], node.id);
-      this.eventService.send(Message.DELETE_PAGE, { id: node.id, parent: node.parent.data.name });
+      this.eventService.send(Message.DELETE_PAGE, {id: node.id, parent: node.parent.data.name});
       this.updateTree();
       this.focusedNode(parentNod);
       // this.eventService.send(Message.PAGE_OPEN, {pageObject: undefined, subPages: undefined});
@@ -855,7 +891,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   focusedNode(node) {
     if (node) {
       const newfocusedBlock = this.getCurrentBlock(node);
-      this.eventService.send(Message.OPEN_DECLARATION_BLOCK, { id: newfocusedBlock.id });
+      this.eventService.send(Message.OPEN_DECLARATION_BLOCK, {id: newfocusedBlock.id});
       this.treeComponent.treeModel.setFocusedNode(newfocusedBlock);
       this.treeComponent.treeModel.setActiveNode(newfocusedBlock, true, false);
       this.treeComponent.treeModel.setSelectedNode(newfocusedBlock, true);
@@ -1102,7 +1138,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   /**
    * Creating simple tree node
-   * 
+   *
    * @param id - id of tree node
    * @param name - name of tree node
    */
@@ -1116,11 +1152,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   /**
    * Creating project Root node
-   * 
+   *
    * @param name - name of tree node
    * @param cpnElement - cpn JSON object
-   * 
-   * @returns - tree node 
+   *
+   * @returns - tree node
    */
   createProjectNode(name, cpnElement) {
     const node = this.createTreeNode('project', name);
@@ -1131,11 +1167,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   /**
    * Creating project Options node
-   * 
+   *
    * @param name - name of tree node
    * @param cpnElement - cpn JSON object
-   * 
-   * @returns - tree node 
+   *
+   * @returns - tree node
    */
   createOptionsNode(name, cpnElement) {
     const optionsNode = this.createTreeNode(name);
@@ -1192,8 +1228,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   cpnOptionValueToString(opt) {
-    if (!opt.value)
+    if (!opt.value) {
       return;
+    }
     const type = Object.keys(opt.value)[0];
     return opt.value[type];
   }
@@ -1202,7 +1239,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * Creating project Declarations node
    * @param name - name of tree node
    * @param cpnElement - cpn JSON object
-   * @returns - tree node 
+   * @returns - tree node
    */
   createDeclarationsNode(name, cpnElement) {
     const declarationsNode = this.createTreeNode(name);
@@ -1223,7 +1260,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   /**
    * Creating project Block node
    * @param cpnElement - cpn JSON object
-   * @returns - tree node 
+   * @returns - tree node
    */
   createBlockNode(cpnElement) {
     const blockNode = this.createTreeNode(cpnElement._id, cpnElement.id);
@@ -1263,12 +1300,23 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
     if (cpnElement && key) {
       switch (key) {
-        case 'block': declarationNode = this.createBlockNode(cpnElement); break;
-        case 'globref': declarationNode = this.createGlobrefNode(cpnElement); break;
-        case 'color': declarationNode = this.createColorNode(cpnElement); break;
-        case 'var': declarationNode = this.createVarNode(cpnElement); break;
-        case 'ml': declarationNode = this.createMlNode(cpnElement); break;
-      };
+        case 'block':
+          declarationNode = this.createBlockNode(cpnElement);
+          break;
+        case 'globref':
+          declarationNode = this.createGlobrefNode(cpnElement);
+          break;
+        case 'color':
+          declarationNode = this.createColorNode(cpnElement);
+          break;
+        case 'var':
+          declarationNode = this.createVarNode(cpnElement);
+          break;
+        case 'ml':
+          declarationNode = this.createMlNode(cpnElement);
+          break;
+      }
+      ;
     }
     declarationNode.children = undefined;
     declarationNode.editable = true;
@@ -1281,7 +1329,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   /**
    * Creating project Globref node
    * @param cpnElement - cpn JSON object
-   * @returns - tree node 
+   * @returns - tree node
    */
   createGlobrefNode(cpnElement) {
     const code = 'globref ' + cpnElement.id + ' = ' + cpnElement.ml + ';';
@@ -1296,7 +1344,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   /**
    * Creating project Color node
    * @param cpnElement - cpn JSON object
-   * @returns - tree node 
+   * @returns - tree node
    */
   createColorNode(cpnElement) {
     var code = 'colset ' + cpnElement.id;
@@ -1335,10 +1383,10 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   /**
-     * Creating project Var node
-     * @param cpnElement - cpn JSON object
-     * @returns - tree node 
-     */
+   * Creating project Var node
+   * @param cpnElement - cpn JSON object
+   * @returns - tree node
+   */
   createVarNode(cpnElement) {
     // console.log('createVarNode(), cpnElement = ', cpnElement);
 
@@ -1358,10 +1406,10 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   /**
-     * Creating project ML node
-     * @param cpnElement - cpn JSON object
-     * @returns - tree node 
-     */
+   * Creating project ML node
+   * @param cpnElement - cpn JSON object
+   * @returns - tree node
+   */
   createMlNode(cpnElement) {
     const code = cpnElement.__text;
 
@@ -1377,7 +1425,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * Creating project Pages node
    * @param name - name of tree node
    * @param cpnElement - cpn JSON object
-   * @returns - tree node 
+   * @returns - tree node
    */
   createPagesNode(name, cpnElement, cpnParentElement) {
     const pagesNode = this.createTreeNode(name);
@@ -1426,7 +1474,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   /**
    * Creating Page node
    * @param cpnElement - cpn JSON object
-   * @returns - tree node 
+   * @returns - tree node
    */
   createPageNode(cpnElement, cpnParentElement) {
     const pageNode = this.createTreeNode(cpnElement._id, cpnElement.pageattr._name);
@@ -1456,7 +1504,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
 
   /**
-   * Get root cpnet element from CPN project JSON object 
+   * Get root cpnet element from CPN project JSON object
    * @param projectData - CPN project JSON object
    * @returns - cpnElement for cpnet element
    */
@@ -1498,10 +1546,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     this.clearTree();
 
     let cpnet = this.getCpnetElement(projectData);
-    if (!cpnet)
+    if (!cpnet) {
       return;
+    }
 
-      // Create project root node
+    // Create project root node
     const projectNode = this.createProjectNode(projectName, cpnet);
 
     // Simulation step nodes
@@ -1661,13 +1710,13 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
                 if (page.trans && page.trans.length) {
                   for (const tran of page.trans) {
                     if (tran.subst) {
-                      this.subpages.push({ subpageid: tran.subst._subpage, tranid: tran._id });
+                      this.subpages.push({subpageid: tran.subst._subpage, tranid: tran._id});
                       // this.subpages.push(tran._id);
                     }
                   }
                 } else {
                   if (page.trans && page.trans.subst) {
-                    this.subpages.push({ subpageid: page.trans.subst._subpage, tranid: page.trans._id });
+                    this.subpages.push({subpageid: page.trans.subst._subpage, tranid: page.trans._id});
                     // this.subpages.push(page.trans._id);
                   }
                 }
@@ -1816,7 +1865,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   downloadFile(data: string) {
-    const blob = new Blob([data], { type: 'text/json' });
+    const blob = new Blob([data], {type: 'text/json'});
     const url = window.URL.createObjectURL(blob);
     window.open(url);
   }
@@ -1840,7 +1889,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     if (event && event.node && event.node.data && event.node.data.type === 'page') {
       // const pageObject = event.node.data.cpnElement;
       const pageObject = event.node.data.cpnElement;
-      this.eventService.send(Message.PAGE_OPEN, { pageObject: pageObject, subPages: this.subpages });
+      this.eventService.send(Message.PAGE_OPEN, {pageObject: pageObject, subPages: this.subpages});
     }
   }
 
@@ -1904,8 +1953,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   /**
    * Updating page node
-   * @param node 
-   * @param newValue 
+   * @param node
+   * @param newValue
    */
   updatePageNodeText(node, newValue) {
     node.data.name = newValue; // update tree node text
@@ -1914,8 +1963,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   /**
    * Updating declaration node
-   * @param node 
-   * @param newValue 
+   * @param node
+   * @param newValue
    */
   updateDeclarationNodeText(node, newValue) {
     node.data.name = newValue; // update tree node text
@@ -1930,11 +1979,13 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     // console.log('parseDeclarationLayout(), parser = ', parser);
 
     var type;
-    if (parser)
+    if (parser) {
       type = parser[0];
+    }
 
-    if (!type)
+    if (!type) {
       return;
+    }
 
     switch (type) {
       case 'var':
@@ -1973,11 +2024,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         if (testElem === 'product') {
           const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
           cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
-          cpnElement.product = { id: productList };
+          cpnElement.product = {id: productList};
         } else if (testElem === 'list') {
           const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
           cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
-          cpnElement.list = { id: productList };
+          cpnElement.list = {id: productList};
         } else {
           testElem = testElem.replace(/\s+/g, '').replace(';', '');
           splitLayoutArray[0] = splitLayoutArray[0].replace(/\s+/g, '').replace(';', '');
@@ -1986,7 +2037,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
             cpnElement[testElem.toLowerCase()] = '';
           } else {
             cpnElement.id = splitLayoutArray[0];
-            cpnElement.alias = { id: testElem };
+            cpnElement.alias = {id: testElem};
           }
         }
         break;
@@ -1998,8 +2049,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         break;
     }
   }
-
-
 
 
   saveEditedData_OLD(event) {

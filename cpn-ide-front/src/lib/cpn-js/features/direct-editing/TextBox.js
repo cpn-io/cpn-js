@@ -477,12 +477,12 @@ TextBox.prototype.getSelection = function () {
 TextBox.prototype.setSelection = function (container, offset) {
   var range = document.createRange();
 
-  if (container === null) {
+  // if (container === null) {
     range.selectNodeContents(this.content);
-  } else {
-    range.setStart(container, offset);
-    range.setEnd(container, offset);
-  }
+  // } else {
+  //   range.setStart(container, offset);
+  //   range.setEnd(container, offset);
+  // }
 
   var selection = window.getSelection();
 

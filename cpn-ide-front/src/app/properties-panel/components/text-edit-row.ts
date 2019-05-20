@@ -81,16 +81,20 @@ export class TextEditRowComponent {
           console.log('List in prop-panel - OBJ-', this._object);
           //console.log('List in prop-panel - OBJ[field]-', this._object[this._field]);
           console.log('List in prop-panel - field-', this._field);
-          if(this._object.state === 'none') {
-            if(event) {
-              this._object.obj['port'] = this.getPortObject(this._object.obj, event);
-              //this._object['port'] = this.getPortObject(this._object, this._field);
-              this._object = this._object.obj['port'];
+          if(event !== '') {
+            if (this._object.state === 'none') {
+            if (event) {
+                this._object.obj['port'] = this.getPortObject(this._object.obj, event);
+                //this._object['port'] = this.getPortObject(this._object, this._field);
+                this._object = this._object.obj['port'];
+              }
             } else {
-              delete this._object.obj['port'];
+              this._object = this._object.pobj;
             }
+            this._object[this._field] = event;
+          } else {
+            this._object.obj['port'] = 'delete';
           }
-          this._object[this._field] = event;
         }
 
         this.changed.emit(this._object[this._field]);

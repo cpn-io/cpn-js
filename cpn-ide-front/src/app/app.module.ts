@@ -41,6 +41,7 @@ import { BlockHeaderComponent } from './common/block-header';
 import { TextEditRowComponent } from './properties-panel/components/text-edit-row';
 import { ColorDeclarationsPipe } from './pipes/color-declarations.pipe';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
+import { OptionsNamePipePipe } from './pipes/options-name.pipe';
 
 // -----------------------------------------------------------------------------
 
@@ -49,8 +50,9 @@ import { SafeHtmlPipe } from './pipes/safe-html.pipe';
     AppComponent,
 
     // Pipes
-    ReplaceSpacesPipe,
     ColorDeclarationsPipe,
+    OptionsNamePipePipe,
+    ReplaceSpacesPipe,
     SafeHtmlPipe,
 
     // Components

@@ -7,7 +7,7 @@ import { is, CPN_PLACE, CPN_TRANSITION } from '../../util/ModelUtil';
 /**
  * This module is an element agnostic replace menu provider for the popup menu.
  */
-export default function CpnPopupMenuProvider(create, cpnFactory, canvas, popupMenu, modeling, connect, rules, translate) {
+export default function CpnPopupMenuProvider(create, cpnFactory, canvas, popupMenu, modeling, connect, rules, translate, eventBus) {
 
   this._create = create;
   this._cpnFactory = cpnFactory;
@@ -17,6 +17,7 @@ export default function CpnPopupMenuProvider(create, cpnFactory, canvas, popupMe
   this._connect = connect;
   this._rules = rules;
   this._translate = translate;
+  this._eventBus = eventBus;
 
   this.register();
 
@@ -32,7 +33,8 @@ CpnPopupMenuProvider.$inject = [
   'modeling',
   'connect',
   'rules',
-  'translate'
+  'translate',
+  'eventBus'
 ];
 
 
@@ -152,7 +154,8 @@ CpnPopupMenuProvider.prototype._createShape = function (event, type) {
 
   this._popupMenu.close();
   const position = toLocalPoint(this._canvas, this._position);
-  this._cpnFactory.createShape(undefined, undefined, type, position, true);
+  let element = this._cpnFactory.createShape(undefined, undefined, type, position, true);
+  this._eventBus.fire('shape.create.end', {elements: [element]});
 }
 
 CpnPopupMenuProvider.prototype._createSubpage = function (event) {
@@ -165,8 +168,9 @@ CpnPopupMenuProvider.prototype._createSubpage = function (event) {
   let id = 'ID' + new Date().getTime();
   let cpnElement = this._modeling.createElementInModel(position, CPN_TRANSITION);
   cpnElement = this._modeling.declareSubPage(cpnElement, 'Subpage', id);
-  
-  this._cpnFactory.createShape(undefined, cpnElement, CPN_TRANSITION, position, true);
+
+  let element = this._cpnFactory.createShape(undefined, cpnElement, CPN_TRANSITION, position, true);
+  this._eventBus.fire('shape.create.end', {elements: [element]});
 }
 
 /**

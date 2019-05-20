@@ -1,5 +1,6 @@
 import { Component, HostListener, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 // import {NgxXml2jsonService} from 'ngx-xml2json';
+<<<<<<< HEAD
 import { EventService } from '../services/event.service';
 import { Message } from '../common/message';
 import { ProjectService } from '../services/project.service';
@@ -7,6 +8,16 @@ import { TreeComponent, TREE_ACTIONS } from 'angular-tree-component';
 import { ModelService } from '../services/model.service';
 import { ColorDeclarationsPipe } from '../pipes/color-declarations.pipe';
 import { Constants } from '../common/constants';
+=======
+import {EventService} from '../services/event.service';
+import {Message} from '../common/message';
+import {ProjectService} from '../services/project.service';
+import {TreeComponent, TREE_ACTIONS} from 'angular-tree-component';
+import {ModelService} from '../services/model.service';
+import {ColorDeclarationsPipe} from '../pipes/color-declarations.pipe';
+import {OptionsNamePipePipe} from '../pipes/options-name.pipe';
+import {Constants} from '../common/constants';
+>>>>>>> 0e5aa90717ff12beabeb1fa96ac8077d0b9122e1
 
 // import {TreeComponent} from 'angular-tree-component';
 
@@ -14,7 +25,7 @@ import { Constants } from '../common/constants';
   selector: 'app-project-explorer',
   templateUrl: './project-explorer.component.html',
   styleUrls: ['./project-explorer.component.scss'],
-  providers: [ColorDeclarationsPipe]
+  providers: [ColorDeclarationsPipe, OptionsNamePipePipe]
 })
 /**
  * class ProjectExplorerComponent

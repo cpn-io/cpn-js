@@ -162,12 +162,22 @@ export class ModelEditorComponent implements OnInit {
 
     eventBus.on('directEditing.complete', function (e) {
       console.log('model-editor directEditing.complete - event', e);
-      if (e.active && e.active.element)
+      if (e.active && e.active.element) {
         self.openPropPanel(e.active.element);
+      }
     });
 
     eventBus.on('element.click', (event) => {
       this.fireSelectionEvent(event);
+    });
+
+    eventBus.on('shape.create.end', (event) => {
+      if (event.elements) {
+        for(let element of event.elements) {
+          if(element.cpnElement)
+            this.modelService.addElementJsonOnPage(element.cpnElement, this.pageId, element.type);
+        }
+      }
     });
   }
 

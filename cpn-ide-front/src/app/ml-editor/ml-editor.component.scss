@@ -1,3 +1,10 @@
 [contenteditable]:focus {
     outline: 0px solid transparent;
 }
+
+[contenteditable] {
+    white-space: pre;
+    overflow-x: visible;
+    font-size: 1.2em;
+    font-family: Menlo, Monaco, 'Courier New', monospace
+}

@@ -1,25 +1,26 @@
-<div class="workspace-container">
+<div class="blockHeader">
+  Functions
+</div>
+
+<div class="workspace-container-with-tab">
   <div class="inner">
     <div class="scroll-y">
-    <div class="pane" style="padding:0">
+      <div class="pane" style="padding:0">
 
-    <div class="blockHeader">
-      Functions
-    </div>
-    <!-- <textarea ref-textarea 
+        <!-- <textarea ref-textarea 
           style="width:100%; height:100%; padding: 10px; border:none; resize:none" 
           [(ngModel)]="textValue | colorDeclarations | safeHtml"
           (keyup)="textareaKeyUp($event)"></textarea> -->
 
-    <div style="width:100%; height:100%; padding: 10px; border:none; resize:none" 
-      (focusout)="saveEditedData($event)"
-      [contentEditable]="true" [innerHTML]="textValue | colorDeclarations | safeHtml">
-    </div>
+        <div style="width:100%; height:100%; padding: 10px; border:none; resize:none"
+          (focusout)="saveEditedData($event)" [contentEditable]="true"
+          [innerHTML]="textValue | colorDeclarations | safeHtml">
+        </div>
 
-    <!-- [(ngModel)]="textValue | colorDeclarations | safeHtml" -->
-    <!-- [innerHTML]="getLabel(node) | colorDeclarations | safeHtml" -->
+        <!-- [(ngModel)]="textValue | colorDeclarations | safeHtml" -->
+        <!-- [innerHTML]="getLabel(node) | colorDeclarations | safeHtml" -->
 
-    </div>
+      </div>
     </div>
   </div>
 </div>

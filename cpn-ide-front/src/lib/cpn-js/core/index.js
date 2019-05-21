@@ -23,6 +23,7 @@ import CpnRulesModule from '../features/rules';
 import CpnResizeModule from '../features/resize';
 
 import CpnPopupMenuProvider from '../features/popup-menu/CpnPopupMenuProvider';
+import CpnPortMenuProvider from '../features/port-menu/CpnPortMenuProvider';
 import CpnOrderingProvider from '../features/ordering/CpnOrderingProvider';
 
 import CpnSnappingModule from '../features/snapping';
@@ -71,11 +72,13 @@ export default {
   ],
   __init__: [
     'popupMenuProvider',
+    'portMenuProvider',
 //    'paletteProvider',
     'cpnOrderingProvider'
   ],
   connectionDocking: ['type', CroppingConnectionDocking],
   popupMenuProvider: ['type', CpnPopupMenuProvider],
+  portMenuProvider: ['type', CpnPortMenuProvider],
 //  paletteProvider: ['type', CpnPaletteProvider],
   cpnOrderingProvider: [ 'type', CpnOrderingProvider ]
 };

@@ -30,7 +30,7 @@ import { getText, getBox } from '../../draw/CpnRenderUtil';
  * @param {CommandStack} commandStack
  * @param {CpnRules} cpnRules
  */
-export default function Modeling(eventBus, elementFactory, elementRegistry, commandStack, cpnRules, textRenderer, canvas) {
+export default function Modeling(eventBus, elementFactory, elementRegistry, commandStack, cpnRules, textRenderer, canvas, portMenuProvider) {
   console.log('Modeling()');
 
   BaseModeling.call(this, eventBus, elementFactory, commandStack);
@@ -41,7 +41,7 @@ export default function Modeling(eventBus, elementFactory, elementRegistry, comm
   this._cpnRules = cpnRules;
   this._textRenderer = textRenderer;
   this._canvas = canvas;
-
+  this._portMenuProvider = portMenuProvider;
   this._defaultValues = [];
 }
 
@@ -54,7 +54,8 @@ Modeling.$inject = [
   'commandStack',
   'cpnRules',
   'textRenderer',
-  'canvas'
+  'canvas',
+  'portMenuProvider'
 ];
 
 
@@ -157,7 +158,12 @@ Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus
     if(element.cpnElement.port ){
       if(element.cpnElement.port === 'delete'){
        delete element.cpnElement.port;
-       element.labels.filter(lab => {lab.type !== 'port'})
+       let port;
+       for(let label of element.labels){
+         if(label.labelType === 'port') port = label;
+       }
+       if(port)
+          this.removeElements([port])
       } else if ( element.labels.length === 3) {
         const attrs = this.getLabelAttrs(element, element.cpnElement['port'], 'port');
         const label = this._elementFactory.createLabel(attrs);
@@ -324,12 +330,23 @@ Modeling.prototype.connect = function (source, target, attrs, hints) {
     if (placeShape && transShape) {
       const conElem = this.createNewConnection(placeShape, transShape, orientation);
       this._eventBus.fire('shape.create.end', {elements: [conElem]});
+      //openPortProvider(this._portMenuProvider, transShape);
+      //this._portMenuProvider.open(transShape, { cursor: { x: 609, y: 575 } });
+      if(transShape.cpnElement.subst)
+        this._eventBus.fire('portMenuProvider.open', {trans: transShape, place: placeShape, portType: orientation === 'PtoT' ? 'In' : 'Out' ,position: { cursor: { x: 609, y: 575 } }})
       return conElem;
     }
   }
 
   return undefined;
 };
+
+
+
+
+function openPortProvider(portMenuProvider, trnsShape){
+  portMenuProvider.open(transShape, { cursor: { x: 609, y: 575 } });
+}
 
 Modeling.prototype.createNewConnection = function (placeShape, transShape, orientation) {
   // console.log('Modeling.prototype.createNewConnection(), place = ', placeShape);

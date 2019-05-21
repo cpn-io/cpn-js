@@ -71,14 +71,16 @@ export class MlEditorComponent implements OnInit, OnDestroy {
     console.log('saveEditedData(), event = ', event);
 
     if (event.target && event.target.textContent) {
-      this.modelService.stringToCpnDeclarationElement(
-        this.cpnElement,
-        event.target.textContent);
+      // this.modelService.stringToCpnDeclarationElement(
+      //   this.cpnElement,
+      //   event.target.textContent);
 
       console.log('saveEditedData(), event.target.textContent = ', event.target.textContent);
       console.log('saveEditedData(), this.cpnElement = ', this.cpnElement);
 
-      this.eventService.send(Message.UPDATE_TREE, { cpnElement: this.cpnElement });
+      this.eventService.send(Message.UPDATE_TREE, { 
+        cpnElement: this.cpnElement, 
+        newTextValue: event.target.textContent });
     }
   }
 

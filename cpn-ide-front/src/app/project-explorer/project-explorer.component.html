@@ -103,7 +103,8 @@
                         [ngClass]="{'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id)}">
 
                         <div *ngIf="!node.id.toString().startsWith('option_')" [id]="'textinpfield_' + node.id"
-                          class="editablenode" (click)="onNodeLabelClick($event, node)"
+                          class="editablenode" 
+                          (click)="onNodeLabelClick($event, node)"
                           (focusout)="saveEditedData($event, node)"
                           [contentEditable]="canEdit(node) && (openedLabel[node.id] || (editableNode === node))"
                           [innerHTML]="getLabel(node) | colorDeclarations | safeHtml">

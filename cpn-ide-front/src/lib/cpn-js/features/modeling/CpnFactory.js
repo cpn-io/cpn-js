@@ -11,7 +11,7 @@ export default function CpnFactory(eventBus, elementFactory, modeling, canvas) {
   this._modeling = modeling;
   this._canvas = canvas;
   this._elementFactory = elementFactory;
-
+  this._eventBus = eventBus
   // this.executed([
   //   'shape.create',
   // ], createShapeHandler);
@@ -73,6 +73,8 @@ CpnFactory.prototype.createShape = function (pageObject, cpnElement, type, posit
           this._canvas.addShape(markingLabel, tokenLabel);
       }
     }
+
+
 
   }
 

@@ -92,17 +92,31 @@
                         <span *ngIf="node.parent.parent === null">Project: </span>
                       </td>
 
+                      <!-- Checkbox for boolean option -->
+                      <td *ngIf="isBooleanOption(node)" style="padding-right: 5px">
+                        <input type="checkbox" [checked]="getBooleanOption(node)"
+                          (change)="setBooleanOption($event, node)">
+                      </td>
+
                       <!-- Tree node label (can be editable) -->
                       <td class="node"
                         [ngClass]="{'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id)}">
 
-                        <div [id]="'textinpfield_' + node.id" class="editablenode"
-                          (click)="onNodeLabelClick($event, node)" 
+                        <div *ngIf="!node.id.toString().startsWith('option_')" [id]="'textinpfield_' + node.id"
+                          class="editablenode" (click)="onNodeLabelClick($event, node)"
                           (focusout)="saveEditedData($event, node)"
                           [contentEditable]="canEdit(node) && (openedLabel[node.id] || (editableNode === node))"
                           [innerHTML]="getLabel(node) | colorDeclarations | safeHtml">
                         </div>
+                        <div *ngIf="node.id.toString().startsWith('option_')" [innerHTML]="node.id | optionName">
+                        </div>
                       </td>
+
+                      <!-- Text input for text option -->
+                      <td *ngIf="isTextOption(node)" style="padding-left: 5px">
+                        <div class="editablenode" contentEditable="true" [innerText]="getTextOption(node)"></div>
+                      </td>
+
                     </tr>
                   </table>
 

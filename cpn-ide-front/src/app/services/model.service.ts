@@ -58,6 +58,7 @@ export class ModelService {
       this.pageId = data.pageObject._id;
     });
 
+
   }
 
   markNewModel() {
@@ -122,34 +123,26 @@ export class ModelService {
     return this.projectData.workspaceElements.cpnet.page.length ? this.projectData.workspaceElements.cpnet.page.find(page => page._id === id) : this.projectData.workspaceElements.cpnet.page;
   }
 
-  /* getJsonElementOnPage(pageId, id, type){
-     try {
-       return this.getPageById(pageId)[this.modelCase[type]].length ? this.getPageById(pageId)[this.modelCase[type]].find(elem => elem._id === id) : this.getPageById(pageId)[this.modelCase[type]];
-     } catch(e) {
-       return undefined;
-     }
-   }*/
 
-
-  getJsonElementOnPage(pageId, element, type) {
-    try {
-      const page = this.getPageById(pageId);
-      let entry;
-      if (type === 'cpn:Label') {
-        if (element.labelTarget && element.labelTarget.parent) {
-          entry = this.modelCase[element.labelTarget.type];
-          return page[entry].length ? page[entry].find(elem => elem._id === element.labelTarget.id)[element.labelType] : page[entry][element.labelType];
-        } else {
-          return page['Aux'].length ? page['Aux'].find(elem => elem._id === element.labelNodeId) : page['Aux'];
-        }
-      } else {
-        entry = this.modelCase[type];
-        return page[entry].length ? page[entry].find(elem => elem._id === element) : page[entry];
-      }
-    } catch (e) {
-      return undefined;
-    }
-  }
+  // getJsonElementOnPage(pageId, element, type) {
+  //   try {
+  //     const page = this.getPageById(pageId);
+  //     let entry;
+  //     if (type === 'cpn:Label') {
+  //       if (element.labelTarget && element.labelTarget.parent) {
+  //         entry = this.modelCase[element.labelTarget.type];
+  //         return page[entry].length ? page[entry].find(elem => elem._id === element.labelTarget.id)[element.labelType] : page[entry][element.labelType];
+  //       } else {
+  //         return page['Aux'].length ? page['Aux'].find(elem => elem._id === element.labelNodeId) : page['Aux'];
+  //       }
+  //     } else {
+  //       entry = this.modelCase[type];
+  //       return page[entry].length ? page[entry].find(elem => elem._id === element) : page[entry];
+  //     }
+  //   } catch (e) {
+  //     return undefined;
+  //   }
+  // }
 
   getcpnet() {
     let cpnet;
@@ -200,17 +193,17 @@ export class ModelService {
   }
 
 
-  addElementJsonOnPage(element, pageId, type) {
+  addElementJsonOnPage(CpnElement, pageId, type) {
     this.saveBackup(this.projectData, pageId);
     const jsonPageObject = this.getPageById(pageId);
     if (jsonPageObject[this.modelCase[type]] instanceof Array) {
-      jsonPageObject[this.modelCase[type]].push(element);
+      jsonPageObject[this.modelCase[type]].push(CpnElement);
     } else {
       if (jsonPageObject[this.modelCase[type]]) {
         const curentElem = jsonPageObject[this.modelCase[type]];
-        jsonPageObject[this.modelCase[type]] = [curentElem, element];
+        jsonPageObject[this.modelCase[type]] = [curentElem, CpnElement];
       } else {
-        jsonPageObject[this.modelCase[type]] = [element];
+        jsonPageObject[this.modelCase[type]] = [CpnElement];
       }
     }
   }
@@ -222,76 +215,76 @@ export class ModelService {
   }
 
 
-  sendChangingElementToDeclarationPanel(node, elementType, action, id, blockId, state) {
-    console.log('sendChangingElementToDeclarationPanel()', node, elementType, action, id, blockId, state)
-    if (elementType === 'Declarations' || elementType === 'block' || elementType === 'globbox') {
-      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-        node: action === 'rename' ? node : undefined,
-        action: action,
-        element: 'tab',
-        target: blockId, // this.getCurrentBlock(node).id,
-        id: id,
-        state: state // this.treeComponent.treeModel.getState()
-      });
-    } else if (elementType === 'ml') {
-      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-        node: action === 'rename' ? node : undefined,
-        action: action,
-        element: elementType,
-        target: blockId, // this.getCurrentBlock(node).id,
-        id: id,
-        state: state// this.treeComponent.treeModel.getState()
-      });
-    } else if (elementType === 'color') {
-      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-        node: action === 'rename' ? node : undefined,
-        action: action,
-        element: elementType,
-        target: blockId, // this.getCurrentBlock(node).id,
-        id: id,
-        state: state// this.treeComponent.treeModel.getState()
-      });
-    } else if (elementType === 'var') {
-      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-        node: action === 'rename' ? node : undefined,
-        action: action,
-        element: elementType,
-        target: blockId, // this.getCurrentBlock(node).id,
-        id: id,
-        state: state // this.treeComponent.treeModel.getState()
-      });
-    } else if (elementType === 'globref') {
-      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-        node: action === 'rename' ? node : undefined,
-        action: action,
-        element: elementType,
-        target: blockId, // this.getCurrentBlock(node).id,
-        id: id,
-        state: state // this.treeComponent.treeModel.getState()
-      });
-    } else if (elementType === 'project') {
-      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-        node: action === 'rename' ? node : undefined,
-        action: action,
-        element: elementType,
-        target: blockId, // this.getCurrentBlock(node).id,
-        id: id,
-        state: state // this.treeComponent.treeModel.getState()
-      });
-    } else if (this.paramsTypes.includes(id)) {
-      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-        node: action === 'rename' ? node : undefined,
-        action: action,
-        target: blockId, // this.getCurrentBlock(node).id,
-        id: id,
-        state: state// this.treeComponent.treeModel.getState()
-      });
-    }
-  }
+  // sendChangingElementToDeclarationPanel(node, elementType, action, id, blockId, state) {
+  //   console.log('sendChangingElementToDeclarationPanel()', node, elementType, action, id, blockId, state)
+  //   if (elementType === 'Declarations' || elementType === 'block' || elementType === 'globbox') {
+  //     this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
+  //       node: action === 'rename' ? node : undefined,
+  //       action: action,
+  //       element: 'tab',
+  //       target: blockId, // this.getCurrentBlock(node).id,
+  //       id: id,
+  //       state: state // this.treeComponent.treeModel.getState()
+  //     });
+  //   } else if (elementType === 'ml') {
+  //     this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
+  //       node: action === 'rename' ? node : undefined,
+  //       action: action,
+  //       element: elementType,
+  //       target: blockId, // this.getCurrentBlock(node).id,
+  //       id: id,
+  //       state: state// this.treeComponent.treeModel.getState()
+  //     });
+  //   } else if (elementType === 'color') {
+  //     this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
+  //       node: action === 'rename' ? node : undefined,
+  //       action: action,
+  //       element: elementType,
+  //       target: blockId, // this.getCurrentBlock(node).id,
+  //       id: id,
+  //       state: state// this.treeComponent.treeModel.getState()
+  //     });
+  //   } else if (elementType === 'var') {
+  //     this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
+  //       node: action === 'rename' ? node : undefined,
+  //       action: action,
+  //       element: elementType,
+  //       target: blockId, // this.getCurrentBlock(node).id,
+  //       id: id,
+  //       state: state // this.treeComponent.treeModel.getState()
+  //     });
+  //   } else if (elementType === 'globref') {
+  //     this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
+  //       node: action === 'rename' ? node : undefined,
+  //       action: action,
+  //       element: elementType,
+  //       target: blockId, // this.getCurrentBlock(node).id,
+  //       id: id,
+  //       state: state // this.treeComponent.treeModel.getState()
+  //     });
+  //   } else if (elementType === 'project') {
+  //     this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
+  //       node: action === 'rename' ? node : undefined,
+  //       action: action,
+  //       element: elementType,
+  //       target: blockId, // this.getCurrentBlock(node).id,
+  //       id: id,
+  //       state: state // this.treeComponent.treeModel.getState()
+  //     });
+  //   } else if (this.paramsTypes.includes(id)) {
+  //     this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
+  //       node: action === 'rename' ? node : undefined,
+  //       action: action,
+  //       target: blockId, // this.getCurrentBlock(node).id,
+  //       id: id,
+  //       state: state// this.treeComponent.treeModel.getState()
+  //     });
+  //   }
+  // }
 
 
   /*for refact*/
-  shapeResizeJsonSaver(event, pageId) {
+  // shapeResizeJsonSaver(event, pageId) {
     // this.saveBackup(this.projectData, pageId);
     // const page = this.getPageById(pageId);
     // const form = event.shape.type === 'cpn:Place' ? 'ellipse' : 'box';
@@ -317,32 +310,32 @@ export class ModelService {
 
 
     // this.eventService.send(Message.SHAPE_SELECT, {element: event.shape, pageJson: page});
-  }
+  // }
 
-  shapeMoveJsonSaver(event, pageId, arcShapes) {
-    this.saveBackup(this.projectData, pageId);
-    const page = this.getPageById(pageId);
-    const jsonMovingElement = this.getJsonElementOnPage(pageId, event.shape.type === 'cpn:Label' ? event.shape : event.shape.id, event.shape.type);
-    this.moveElementInJson(jsonMovingElement, event.shape.type, { x: event.dx, y: -1 * event.dy }, event.shape);
-    if (event.shape.type !== 'cpn:Connection') {
-      if (page.arc instanceof Array) {
-        for (const arc of page.arc) {
-          if (arc.placeend._idref === event.shape.id || arc.transend._idref === event.shape.id) {
-            const placeEnd = this.getJsonElementOnPage(pageId, arc.placeend._idref, 'cpn:Place');
-            const transEnd = this.getJsonElementOnPage(pageId, arc.transend._idref, 'cpn:Transition');
-            const modelElem = arcShapes.find(modelArc => modelArc.id === arc._id);
-            if (placeEnd && transEnd && modelElem) {
-              this.moveElementInJson(arc, 'cpn:Connection', {
-                x: -1 * (parseFloat(arc.annot.posattr._x) - (parseFloat(placeEnd.posattr._x) + parseFloat(transEnd.posattr._x)) / 2) + 6,
-                y: -1 * (parseFloat(arc.annot.posattr._y) - (parseFloat(placeEnd.posattr._y) + parseFloat(transEnd.posattr._y)) / 2)
-              }, modelElem);
-            }
-          }
-        }
-      }
-    }
+  // shapeMoveJsonSaver(event, pageId, arcShapes) {
+  //   this.saveBackup(this.projectData, pageId);
+  //   const page = this.getPageById(pageId);
+  //   const jsonMovingElement = this.getJsonElementOnPage(pageId, event.shape.type === 'cpn:Label' ? event.shape : event.shape.id, event.shape.type);
+  //   this.moveElementInJson(jsonMovingElement, event.shape.type, { x: event.dx, y: -1 * event.dy }, event.shape);
+  //   if (event.shape.type !== 'cpn:Connection') {
+  //     if (page.arc instanceof Array) {
+  //       for (const arc of page.arc) {
+  //         if (arc.placeend._idref === event.shape.id || arc.transend._idref === event.shape.id) {
+  //           const placeEnd = this.getJsonElementOnPage(pageId, arc.placeend._idref, 'cpn:Place');
+  //           const transEnd = this.getJsonElementOnPage(pageId, arc.transend._idref, 'cpn:Transition');
+  //           const modelElem = arcShapes.find(modelArc => modelArc.id === arc._id);
+  //           if (placeEnd && transEnd && modelElem) {
+  //             this.moveElementInJson(arc, 'cpn:Connection', {
+  //               x: -1 * (parseFloat(arc.annot.posattr._x) - (parseFloat(placeEnd.posattr._x) + parseFloat(transEnd.posattr._x)) / 2) + 6,
+  //               y: -1 * (parseFloat(arc.annot.posattr._y) - (parseFloat(placeEnd.posattr._y) + parseFloat(transEnd.posattr._y)) / 2)
+  //             }, modelElem);
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
 
-    this.eventService.send(Message.SHAPE_SELECT, { element: event.shape, pageJson: page });
+    // this.eventService.send(Message.SHAPE_SELECT, { element: event.shape, pageJson: page });
     /* switch(event.shape.type){
        case 'cpn:Place':
          if(page.place.length) {
@@ -411,10 +404,10 @@ export class ModelService {
      // let element = event.shape;
      this.eventService.send(Message.SHAPE_SELECT, {element: event.shape, pageJson: page });
      */
-  }
+  // }
 
 
-  moveElementInJson(jsonElem, elemntType, delta, modelElem) {
+  // moveElementInJson(jsonElem, elemntType, delta, modelElem) {
 
     // console.log('moveElementInJson(), jsonElem = ', jsonElem);
     // console.log('moveElementInJson(), elemntType = ', elemntType);
@@ -460,7 +453,7 @@ export class ModelService {
     //     }
     //   }
     // }
-  }
+  // }
 
   moveNonModelJsonElement(element, parent, target, index, type) {
 
@@ -1195,5 +1188,177 @@ export class ModelService {
     };
   }
 
+  /**
+   * Convert cpn globref element to string
+   * @param cpnElement - color(colset) cpn element
+   */
+  cpnGlobrefToString(cpnElement) {
+    const str = 'globref ' + cpnElement.id + ' = ' + cpnElement.ml + ';';
+    return str;
+  }
+
+  /**
+   * Convert cpn color(colset) element to string
+   * @param cpnElement - color(colset) cpn element
+   */
+  cpnColorToString(cpnElement) {
+    var str = 'colset ' + cpnElement.id;
+
+    const color = cpnElement;
+    if (color.layout) {
+      str = color.layout;
+    } else {
+      if (color.alias && color.alias.id) {
+        str += ' = ' + color.alias.id;
+      } else if (color.list && color.list.id) {
+        str += ' = list ' + color.list.id;
+      } else if (color.product && color.product.id) {
+        str += ' = product ';
+        if (color.product.id instanceof Array) {
+          for (let i = 0; i < color.product.id.length; i++) {
+            str += i === 0 ? color.product.id[i] + ' ' : '* ' + color.product.id[i];
+          }
+        } else {
+          str += color.product.id;
+        }
+      } else {
+        str += ' = ' + color.id.toLowerCase();
+      }
+      if ('timed' in color) {
+        str += ' timed';
+      }
+      str += ';';
+    }
+
+    return str;
+  }
+
+  /**
+   * Convert cpn var element to string
+   * @param cpnElement - var cpn element
+   */
+  cpnVarToString(cpnElement) {
+    var str = 'var ' + cpnElement.id;
+
+    if (cpnElement.layout) {
+      str = cpnElement.layout;
+    } else {
+      str = 'var ' + cpnElement.id + ': ' + cpnElement.type.id + ';';
+    }
+
+    return str;
+  }
+
+  /**
+   * Convert cpn globref element to string
+   * @param cpnElement - color(colset) cpn element
+   */
+  cpnMlToString(cpnElement) {
+    const str = cpnElement.__text;
+    return str;
+  }
+
+  /**
+   * Convert cpn declaration element to string
+   * @param cpnElement 
+   * @param type 
+   */
+  cpnDeclarationElementToString(cpnElement, type) {
+    switch (type) {
+      case 'globref': return this.cpnGlobrefToString(cpnElement); 
+      case 'color': return this.cpnColorToString(cpnElement);
+      case 'var': return this.cpnVarToString(cpnElement);
+      case 'ml': return this.cpnMlToString(cpnElement); 
+    }
+  }
+
+  /**
+   * Convert string to cpn declaration element
+   * @param cpnElement 
+   * @param str 
+   */
+  stringToCpnDeclarationElement(cpnElement, str) {
+
+    var parser = str.match('^\\S+');
+    // console.log('stringToCpnDeclarationElement(), parser = ', parser);
+
+    var type;
+    if (parser) {
+      type = parser[0];
+    }
+
+    if (!type) {
+      return;
+    }
+
+    console.log('stringToCpnDeclarationElement(), type = ', type);
+
+    switch (type) {
+      case 'var':
+        let splitLayoutArray;
+        cpnElement.layout = str;
+        str = str.replace('var', '');
+        splitLayoutArray = str.trim().split(':');
+        for (let i = 0; i < splitLayoutArray.length; i++) {
+          splitLayoutArray[i] = splitLayoutArray[i].replace(/\s+/g, '').split(',');
+        }
+        cpnElement.id = splitLayoutArray[0];
+        if (!cpnElement.type) {
+          cpnElement.type = {};
+        }
+        cpnElement.type.id = splitLayoutArray[1][0];
+        break;
+      case 'ml':
+      case 'val':
+      case 'fun':
+      case 'local':
+        cpnElement.layout = str;
+        cpnElement.__text = str;
+        break;
+      case 'colset':   // ***** отрефакторить *****
+        cpnElement.layout = str;
+        str = str.replace('colset', '');
+        splitLayoutArray = str.split('=');
+        splitLayoutArray[1] = splitLayoutArray[1].split(' ').filter(e => e.trim() !== '');
+        let testElem = splitLayoutArray[1][0].replace(/\s+/g, '');
+        for (const key of Object.keys(cpnElement)) {
+          if (key !== '_id' && key !== 'layout') {
+            delete cpnElement[key];
+          }
+        }
+        if (splitLayoutArray[1][splitLayoutArray[1].length - 1].replace(';', '') === 'timed') {
+          cpnElement.timed = '';
+          splitLayoutArray[1].length = splitLayoutArray[1].length - 1;
+        }
+        if (testElem === 'product') {
+          const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
+          cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
+          cpnElement.product = { id: productList };
+        } else if (testElem === 'list') {
+          const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
+          cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
+          cpnElement.list = { id: productList };
+        } else {
+          testElem = testElem.replace(/\s+/g, '').replace(';', '');
+          splitLayoutArray[0] = splitLayoutArray[0].replace(/\s+/g, '').replace(';', '');
+          if (testElem.toLowerCase() === splitLayoutArray[0].toLowerCase()) {
+            cpnElement.id = splitLayoutArray[0];
+            cpnElement[testElem.toLowerCase()] = '';
+          } else {
+            cpnElement.id = splitLayoutArray[0];
+            cpnElement.alias = { id: testElem };
+          }
+        }
+        break;
+      case 'globref':
+        splitLayoutArray = str.split(' ').filter(e => e.trim() !== '' && e.trim() !== '=');
+        cpnElement.id = splitLayoutArray[1].replace(/\s+/g, '').replace(';', '');
+        cpnElement.ml = splitLayoutArray[2].replace(/\s+/g, '').replace(';', '');
+        cpnElement.layout = str;
+        break;
+    }
+    console.log('stringToCpnDeclarationElement(), cpnElement = ', cpnElement);
+
+  }
 
 }

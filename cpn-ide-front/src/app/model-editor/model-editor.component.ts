@@ -61,6 +61,8 @@ export class ModelEditorComponent implements OnInit {
   pageId;
   transCount = 0;
 
+  loading = false;
+
   correctColor = {
     'Fucia': '#f0f'
   };
@@ -108,6 +110,8 @@ export class ModelEditorComponent implements OnInit {
 
 
     eventBus.on('import.render.complete', (event) => {
+      this.loading = false;
+
       const pageElement = event.source;
 
       console.log('import.render.complete, event = ', event);
@@ -162,12 +166,22 @@ export class ModelEditorComponent implements OnInit {
 
     eventBus.on('directEditing.complete', function (e) {
       console.log('model-editor directEditing.complete - event', e);
-      if (e.active && e.active.element)
+      if (e.active && e.active.element) {
         self.openPropPanel(e.active.element);
+      }
     });
 
     eventBus.on('element.click', (event) => {
       this.fireSelectionEvent(event);
+    });
+
+    eventBus.on('shape.create.end', (event) => {
+      if (event.elements) {
+        for(let element of event.elements) {
+          if(element.cpnElement)
+            this.modelService.addElementJsonOnPage(element.cpnElement, this.pageId, element.type);
+        }
+      }
     });
   }
 
@@ -267,6 +281,8 @@ export class ModelEditorComponent implements OnInit {
   }
 
   load(pageObject, subPages) {
+    this.loading = true;
+
     this.subpages = subPages;
     this.jsonPageObject = pageObject;
     this.pageId = pageObject._id;

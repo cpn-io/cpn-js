@@ -285,31 +285,31 @@ export class ModelService {
 
   /*for refact*/
   // shapeResizeJsonSaver(event, pageId) {
-    // this.saveBackup(this.projectData, pageId);
-    // const page = this.getPageById(pageId);
-    // const form = event.shape.type === 'cpn:Place' ? 'ellipse' : 'box';
-    // const jsonMovingElement = this.getJsonElementOnPage(pageId, event.shape.type === 'cpn:Label' ? event.shape : event.shape.id, event.shape.type);
-    // jsonMovingElement[form]._w = event.shape.width;
-    // jsonMovingElement[form]._h = event.shape.height;
-    // jsonMovingElement.posattr._x = event.shape.x + jsonMovingElement[form]._w / 2;
-    // jsonMovingElement.posattr._y = -1 * event.shape.y - jsonMovingElement[form]._h / 2;
+  // this.saveBackup(this.projectData, pageId);
+  // const page = this.getPageById(pageId);
+  // const form = event.shape.type === 'cpn:Place' ? 'ellipse' : 'box';
+  // const jsonMovingElement = this.getJsonElementOnPage(pageId, event.shape.type === 'cpn:Label' ? event.shape : event.shape.id, event.shape.type);
+  // jsonMovingElement[form]._w = event.shape.width;
+  // jsonMovingElement[form]._h = event.shape.height;
+  // jsonMovingElement.posattr._x = event.shape.x + jsonMovingElement[form]._w / 2;
+  // jsonMovingElement.posattr._y = -1 * event.shape.y - jsonMovingElement[form]._h / 2;
 
-    // for (const labelType of this.labelsEntry[this.modelCase[event.shape.type]]) {
-    //   if (labelType !== 'edit') {
-    //     if (((event.context.direction === 'ne' || event.context.direction === 'nw') && labelType !== 'type' && labelType !== 'code' && labelType !== 'priority')
-    //       || ((event.context.direction === 'se' || event.context.direction === 'sw') && labelType !== 'initmark' && labelType !== 'time' && labelType !== 'cond')) {
+  // for (const labelType of this.labelsEntry[this.modelCase[event.shape.type]]) {
+  //   if (labelType !== 'edit') {
+  //     if (((event.context.direction === 'ne' || event.context.direction === 'nw') && labelType !== 'type' && labelType !== 'code' && labelType !== 'priority')
+  //       || ((event.context.direction === 'se' || event.context.direction === 'sw') && labelType !== 'initmark' && labelType !== 'time' && labelType !== 'cond')) {
 
-    //       jsonMovingElement[labelType].posattr._y = parseFloat(jsonMovingElement[labelType].posattr._y) + event.context.delta.y;
-    //     }
-    //     if (((event.context.direction === 'sw' || event.context.direction === 'nw') && labelType !== 'type' && labelType !== 'initmark' && labelType !== 'time' && labelType !== 'code')
-    //       || ((event.context.direction === 'se' || event.context.direction === 'ne') && labelType !== 'cond' && labelType !== 'priority')) {
-    //       jsonMovingElement[labelType].posattr._x = parseFloat(jsonMovingElement[labelType].posattr._x) + event.context.delta.x;
-    //     }
-    //   }
-    // }
+  //       jsonMovingElement[labelType].posattr._y = parseFloat(jsonMovingElement[labelType].posattr._y) + event.context.delta.y;
+  //     }
+  //     if (((event.context.direction === 'sw' || event.context.direction === 'nw') && labelType !== 'type' && labelType !== 'initmark' && labelType !== 'time' && labelType !== 'code')
+  //       || ((event.context.direction === 'se' || event.context.direction === 'ne') && labelType !== 'cond' && labelType !== 'priority')) {
+  //       jsonMovingElement[labelType].posattr._x = parseFloat(jsonMovingElement[labelType].posattr._x) + event.context.delta.x;
+  //     }
+  //   }
+  // }
 
 
-    // this.eventService.send(Message.SHAPE_SELECT, {element: event.shape, pageJson: page});
+  // this.eventService.send(Message.SHAPE_SELECT, {element: event.shape, pageJson: page});
   // }
 
   // shapeMoveJsonSaver(event, pageId, arcShapes) {
@@ -335,124 +335,124 @@ export class ModelService {
   //     }
   //   }
 
-    // this.eventService.send(Message.SHAPE_SELECT, { element: event.shape, pageJson: page });
-    /* switch(event.shape.type){
-       case 'cpn:Place':
-         if(page.place.length) {
-           page.place.forEach(movingXmlElement => {
-             if (movingXmlElement._id === event.shape.id) {
-               movingXmlElement.posattr._x = parseFloat(movingXmlElement.posattr._x) + (event.dx);
-               movingXmlElement.posattr._y = parseFloat(movingXmlElement.posattr._y) + (-1 * event.dy);
-               movingXmlElement.type.posattr._x = parseFloat(movingXmlElement.type.posattr._x) + (event.dx);
-               movingXmlElement.type.posattr._y = parseFloat(movingXmlElement.type.posattr._y) + (-1 * event.dy);
-               movingXmlElement.initmark.posattr._x = parseFloat(movingXmlElement.initmark.posattr._x) + (event.dx);
-               movingXmlElement.initmark.posattr._y = parseFloat(movingXmlElement.initmark.posattr._y) + (-1 * event.dy);
-             }
-           })
-         } else {
-           page.place.posattr._x = parseFloat(page.place.posattr._x) + (event.dx);
-           page.place.posattr._y = parseFloat(page.place.posattr._y) + (-1 * event.dy);
-           page.place.type.posattr._x = parseFloat(page.place.type.posattr._x) + (event.dx);
-           page.place.type.posattr._y = parseFloat(page.place.type.posattr._y) + (-1 * event.dy);
-           page.place.initmark.posattr._x = parseFloat(page.place.initmark.posattr._x) + (event.dx);
-           page.place.initmark.posattr._y = parseFloat(page.place.initmark.posattr._y) + (-1 * event.dy);
-         }
-         break;
-       case 'cpn:Transition':
-         if(page.trans.length)
-           page.trans.forEach(movingXmlElement => {
-             if (movingXmlElement._id === event.shape.id) {
-               movingXmlElement.posattr._x = parseFloat(movingXmlElement.posattr._x) + (event.dx );
-               movingXmlElement.posattr._y = parseFloat(movingXmlElement.posattr._y) + (-1 * event.dy);
-               movingXmlElement.cond.posattr._x = parseFloat(movingXmlElement.cond.posattr._x) + (event.dx );
-               movingXmlElement.cond.posattr._y = parseFloat(movingXmlElement.cond.posattr._y) + (-1 * event.dy);
-               movingXmlElement.priority.posattr._x = parseFloat(movingXmlElement.priority.posattr._x) + (event.dx );
-               movingXmlElement.priority.posattr._y = parseFloat(movingXmlElement.priority.posattr._y) + (-1 * event.dy );
-               movingXmlElement.time.posattr._x = parseFloat(movingXmlElement.time.posattr._x) + (event.dx );
-               movingXmlElement.time.posattr._y = parseFloat(movingXmlElement.time.posattr._y) + (-1 * event.dy );
-               movingXmlElement.code.posattr._x = parseFloat(movingXmlElement.code.posattr._x) + (event.dx );
-               movingXmlElement.code.posattr._y = parseFloat(movingXmlElement.code.posattr._y) + (-1 * event.dy );
-             }
-           }); else {
-           page.trans.posattr._x = parseFloat(page.trans.posattr._x) + (event.dx );
-           page.trans.posattr._y = parseFloat(page.trans.posattr._y) + (-1 * event.dy);
-           page.trans.cond.posattr._x = parseFloat(page.trans.cond.posattr._x) + (event.dx );
-           page.trans.cond.posattr._y = parseFloat(page.trans.cond.posattr._y) + (-1 * event.dy);
-           page.trans.priority.posattr._x = parseFloat(page.trans.priority.posattr._x) + (event.dx );
-           page.trans.priority.posattr._y = parseFloat(page.trans.priority.posattr._y) + (-1 * event.dy );
-           page.trans.time.posattr._x = parseFloat(page.trans.time.posattr._x) + (event.dx );
-           page.trans.time.posattr._y = parseFloat(page.trans.time.posattr._y) + (-1 * event.dy );
-           page.trans.code.posattr._x = parseFloat(page.trans.code.posattr._x) + (event.dx );
-           page.trans.code.posattr._y = parseFloat(page.trans.code.posattr._y) + (-1 * event.dy );
-         }
-         break;
-       case 'cpn:Connection':
-         if(page.arc.length)
-           page.arc.forEach(movingXmlElement => {
-             if (movingXmlElement._id === event.shape.id) {
-               movingXmlElement.annot.posattr._x = parseFloat(movingXmlElement.annot.posattr._x) + (event.dx );
-               movingXmlElement.annot.posattr._y = parseFloat(movingXmlElement.annot.posattr._y) + (-1 * event.dy);
-             }
-           }); else {
-           page.arc.annot.posattr._x = parseFloat(page.arc.annot.posattr._x) + (event.dx );
-           page.arc.annot.posattr._y = parseFloat(page.arc.annot.posattr._y) + (-1 * event.dy);
-         }
-         break;
-       default:
-     }
-     // this.applyPageChanges();
-     // let element = event.shape;
-     this.eventService.send(Message.SHAPE_SELECT, {element: event.shape, pageJson: page });
-     */
+  // this.eventService.send(Message.SHAPE_SELECT, { element: event.shape, pageJson: page });
+  /* switch(event.shape.type){
+     case 'cpn:Place':
+       if(page.place.length) {
+         page.place.forEach(movingXmlElement => {
+           if (movingXmlElement._id === event.shape.id) {
+             movingXmlElement.posattr._x = parseFloat(movingXmlElement.posattr._x) + (event.dx);
+             movingXmlElement.posattr._y = parseFloat(movingXmlElement.posattr._y) + (-1 * event.dy);
+             movingXmlElement.type.posattr._x = parseFloat(movingXmlElement.type.posattr._x) + (event.dx);
+             movingXmlElement.type.posattr._y = parseFloat(movingXmlElement.type.posattr._y) + (-1 * event.dy);
+             movingXmlElement.initmark.posattr._x = parseFloat(movingXmlElement.initmark.posattr._x) + (event.dx);
+             movingXmlElement.initmark.posattr._y = parseFloat(movingXmlElement.initmark.posattr._y) + (-1 * event.dy);
+           }
+         })
+       } else {
+         page.place.posattr._x = parseFloat(page.place.posattr._x) + (event.dx);
+         page.place.posattr._y = parseFloat(page.place.posattr._y) + (-1 * event.dy);
+         page.place.type.posattr._x = parseFloat(page.place.type.posattr._x) + (event.dx);
+         page.place.type.posattr._y = parseFloat(page.place.type.posattr._y) + (-1 * event.dy);
+         page.place.initmark.posattr._x = parseFloat(page.place.initmark.posattr._x) + (event.dx);
+         page.place.initmark.posattr._y = parseFloat(page.place.initmark.posattr._y) + (-1 * event.dy);
+       }
+       break;
+     case 'cpn:Transition':
+       if(page.trans.length)
+         page.trans.forEach(movingXmlElement => {
+           if (movingXmlElement._id === event.shape.id) {
+             movingXmlElement.posattr._x = parseFloat(movingXmlElement.posattr._x) + (event.dx );
+             movingXmlElement.posattr._y = parseFloat(movingXmlElement.posattr._y) + (-1 * event.dy);
+             movingXmlElement.cond.posattr._x = parseFloat(movingXmlElement.cond.posattr._x) + (event.dx );
+             movingXmlElement.cond.posattr._y = parseFloat(movingXmlElement.cond.posattr._y) + (-1 * event.dy);
+             movingXmlElement.priority.posattr._x = parseFloat(movingXmlElement.priority.posattr._x) + (event.dx );
+             movingXmlElement.priority.posattr._y = parseFloat(movingXmlElement.priority.posattr._y) + (-1 * event.dy );
+             movingXmlElement.time.posattr._x = parseFloat(movingXmlElement.time.posattr._x) + (event.dx );
+             movingXmlElement.time.posattr._y = parseFloat(movingXmlElement.time.posattr._y) + (-1 * event.dy );
+             movingXmlElement.code.posattr._x = parseFloat(movingXmlElement.code.posattr._x) + (event.dx );
+             movingXmlElement.code.posattr._y = parseFloat(movingXmlElement.code.posattr._y) + (-1 * event.dy );
+           }
+         }); else {
+         page.trans.posattr._x = parseFloat(page.trans.posattr._x) + (event.dx );
+         page.trans.posattr._y = parseFloat(page.trans.posattr._y) + (-1 * event.dy);
+         page.trans.cond.posattr._x = parseFloat(page.trans.cond.posattr._x) + (event.dx );
+         page.trans.cond.posattr._y = parseFloat(page.trans.cond.posattr._y) + (-1 * event.dy);
+         page.trans.priority.posattr._x = parseFloat(page.trans.priority.posattr._x) + (event.dx );
+         page.trans.priority.posattr._y = parseFloat(page.trans.priority.posattr._y) + (-1 * event.dy );
+         page.trans.time.posattr._x = parseFloat(page.trans.time.posattr._x) + (event.dx );
+         page.trans.time.posattr._y = parseFloat(page.trans.time.posattr._y) + (-1 * event.dy );
+         page.trans.code.posattr._x = parseFloat(page.trans.code.posattr._x) + (event.dx );
+         page.trans.code.posattr._y = parseFloat(page.trans.code.posattr._y) + (-1 * event.dy );
+       }
+       break;
+     case 'cpn:Connection':
+       if(page.arc.length)
+         page.arc.forEach(movingXmlElement => {
+           if (movingXmlElement._id === event.shape.id) {
+             movingXmlElement.annot.posattr._x = parseFloat(movingXmlElement.annot.posattr._x) + (event.dx );
+             movingXmlElement.annot.posattr._y = parseFloat(movingXmlElement.annot.posattr._y) + (-1 * event.dy);
+           }
+         }); else {
+         page.arc.annot.posattr._x = parseFloat(page.arc.annot.posattr._x) + (event.dx );
+         page.arc.annot.posattr._y = parseFloat(page.arc.annot.posattr._y) + (-1 * event.dy);
+       }
+       break;
+     default:
+   }
+   // this.applyPageChanges();
+   // let element = event.shape;
+   this.eventService.send(Message.SHAPE_SELECT, {element: event.shape, pageJson: page });
+   */
   // }
 
 
   // moveElementInJson(jsonElem, elemntType, delta, modelElem) {
 
-    // console.log('moveElementInJson(), jsonElem = ', jsonElem);
-    // console.log('moveElementInJson(), elemntType = ', elemntType);
-    // console.log('moveElementInJson(), delta = ', delta);
-    // console.log('moveElementInJson(), modelElem = ', modelElem);
+  // console.log('moveElementInJson(), jsonElem = ', jsonElem);
+  // console.log('moveElementInJson(), elemntType = ', elemntType);
+  // console.log('moveElementInJson(), delta = ', delta);
+  // console.log('moveElementInJson(), modelElem = ', modelElem);
 
-    // for (const movingElement of this.labelsEntry[this.modelCase[elemntType]]) {
-    //   if (movingElement !== 'edit') {
-    //     jsonElem[movingElement].posattr._x = parseFloat(jsonElem[movingElement].posattr._x) + delta.x;
-    //     jsonElem[movingElement].posattr._y = parseFloat(jsonElem[movingElement].posattr._y) + delta.y;
-    //   } else {
-    //     jsonElem.posattr._x = parseFloat(jsonElem.posattr._x) + delta.x;
-    //     jsonElem.posattr._y = parseFloat(jsonElem.posattr._y) + delta.y;
-    //   }
-    //   if (elemntType === 'cpn:Connection') {
-    //     jsonElem.bendpoint = [];
-    //     const addToWay = 'push'; // jsonElem._orientation  === 'TtoP' ?  'push' : 'unshift'
-    //     for (const updWayPoint of modelElem.waypoints) {
-    //       if (!updWayPoint.original) {
-    //         jsonElem.bendpoint[addToWay]({
-    //           fillattr: {
-    //             _colour: 'White',
-    //             _pattern: 'Solid',
-    //             _filled: 'false'
-    //           },
-    //           lineattr: {
-    //             _colour: 'Black',
-    //             _thick: '0',
-    //             _type: 'Solid'
-    //           },
-    //           posattr: {
-    //             _x: updWayPoint.x,
-    //             _y: -1 * updWayPoint.y
-    //           },
-    //           textattr: {
-    //             _colour: 'Black',
-    //             _bold: 'false'
-    //           },
-    //           _id: 'ID' + new Date().getTime(),
-    //           _serial: '1'
-    //         });
-    //       }
-    //     }
-    //   }
-    // }
+  // for (const movingElement of this.labelsEntry[this.modelCase[elemntType]]) {
+  //   if (movingElement !== 'edit') {
+  //     jsonElem[movingElement].posattr._x = parseFloat(jsonElem[movingElement].posattr._x) + delta.x;
+  //     jsonElem[movingElement].posattr._y = parseFloat(jsonElem[movingElement].posattr._y) + delta.y;
+  //   } else {
+  //     jsonElem.posattr._x = parseFloat(jsonElem.posattr._x) + delta.x;
+  //     jsonElem.posattr._y = parseFloat(jsonElem.posattr._y) + delta.y;
+  //   }
+  //   if (elemntType === 'cpn:Connection') {
+  //     jsonElem.bendpoint = [];
+  //     const addToWay = 'push'; // jsonElem._orientation  === 'TtoP' ?  'push' : 'unshift'
+  //     for (const updWayPoint of modelElem.waypoints) {
+  //       if (!updWayPoint.original) {
+  //         jsonElem.bendpoint[addToWay]({
+  //           fillattr: {
+  //             _colour: 'White',
+  //             _pattern: 'Solid',
+  //             _filled: 'false'
+  //           },
+  //           lineattr: {
+  //             _colour: 'Black',
+  //             _thick: '0',
+  //             _type: 'Solid'
+  //           },
+  //           posattr: {
+  //             _x: updWayPoint.x,
+  //             _y: -1 * updWayPoint.y
+  //           },
+  //           textattr: {
+  //             _colour: 'Black',
+  //             _bold: 'false'
+  //           },
+  //           _id: 'ID' + new Date().getTime(),
+  //           _serial: '1'
+  //         });
+  //       }
+  //     }
+  //   }
+  // }
   // }
 
   moveNonModelJsonElement(element, parent, target, index, type) {
@@ -1254,7 +1254,7 @@ export class ModelService {
    * @param cpnElement - color(colset) cpn element
    */
   cpnMlToString(cpnElement) {
-    const str = cpnElement.__text;
+    const str = cpnElement.__text || cpnElement.layout;
     return str;
   }
 
@@ -1265,10 +1265,10 @@ export class ModelService {
    */
   cpnDeclarationElementToString(cpnElement, type) {
     switch (type) {
-      case 'globref': return this.cpnGlobrefToString(cpnElement); 
+      case 'globref': return this.cpnGlobrefToString(cpnElement);
       case 'color': return this.cpnColorToString(cpnElement);
       case 'var': return this.cpnVarToString(cpnElement);
-      case 'ml': return this.cpnMlToString(cpnElement); 
+      case 'ml': return this.cpnMlToString(cpnElement);
     }
   }
 
@@ -1279,10 +1279,12 @@ export class ModelService {
    */
   stringToCpnDeclarationElement(cpnElement, str) {
 
+    cpnElement = { _id: cpnElement._id };
+
     var parser = str.match('^\\S+');
     // console.log('stringToCpnDeclarationElement(), parser = ', parser);
 
-    var type;
+    var type, cpnType;
     if (parser) {
       type = parser[0];
     }
@@ -1295,6 +1297,7 @@ export class ModelService {
 
     switch (type) {
       case 'var':
+        cpnType = 'var';
         let splitLayoutArray;
         cpnElement.layout = str;
         str = str.replace('var', '');
@@ -1306,51 +1309,58 @@ export class ModelService {
         if (!cpnElement.type) {
           cpnElement.type = {};
         }
-        cpnElement.type.id = splitLayoutArray[1][0];
+        if (splitLayoutArray[1])
+          cpnElement.type.id = splitLayoutArray[1][0];
         break;
       case 'ml':
       case 'val':
       case 'fun':
       case 'local':
+        cpnType = 'ml';
         cpnElement.layout = str;
         cpnElement.__text = str;
         break;
       case 'colset':   // ***** отрефакторить *****
+        cpnType = 'color';
         cpnElement.layout = str;
         str = str.replace('colset', '');
         splitLayoutArray = str.split('=');
-        splitLayoutArray[1] = splitLayoutArray[1].split(' ').filter(e => e.trim() !== '');
-        let testElem = splitLayoutArray[1][0].replace(/\s+/g, '');
-        for (const key of Object.keys(cpnElement)) {
-          if (key !== '_id' && key !== 'layout') {
-            delete cpnElement[key];
+
+        if (splitLayoutArray[1]) {
+          splitLayoutArray[1] = splitLayoutArray[1].split(' ').filter(e => e.trim() !== '');
+          let testElem = splitLayoutArray[1][0].replace(/\s+/g, '');
+          for (const key of Object.keys(cpnElement)) {
+            if (key !== '_id' && key !== 'layout') {
+              delete cpnElement[key];
+            }
           }
-        }
-        if (splitLayoutArray[1][splitLayoutArray[1].length - 1].replace(';', '') === 'timed') {
-          cpnElement.timed = '';
-          splitLayoutArray[1].length = splitLayoutArray[1].length - 1;
-        }
-        if (testElem === 'product') {
-          const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
-          cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
-          cpnElement.product = { id: productList };
-        } else if (testElem === 'list') {
-          const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
-          cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
-          cpnElement.list = { id: productList };
-        } else {
-          testElem = testElem.replace(/\s+/g, '').replace(';', '');
-          splitLayoutArray[0] = splitLayoutArray[0].replace(/\s+/g, '').replace(';', '');
-          if (testElem.toLowerCase() === splitLayoutArray[0].toLowerCase()) {
-            cpnElement.id = splitLayoutArray[0];
-            cpnElement[testElem.toLowerCase()] = '';
+          if (splitLayoutArray[1][splitLayoutArray[1].length - 1].replace(';', '') === 'timed') {
+            cpnElement.timed = '';
+            splitLayoutArray[1].length = splitLayoutArray[1].length - 1;
+          }
+          if (testElem === 'product') {
+            const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
+            cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
+            cpnElement.product = { id: productList };
+          } else if (testElem === 'list') {
+            const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
+            cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
+            cpnElement.list = { id: productList };
           } else {
-            cpnElement.id = splitLayoutArray[0];
-            cpnElement.alias = { id: testElem };
+            testElem = testElem.replace(/\s+/g, '').replace(';', '');
+            splitLayoutArray[0] = splitLayoutArray[0].replace(/\s+/g, '').replace(';', '');
+            if (testElem.toLowerCase() === splitLayoutArray[0].toLowerCase()) {
+              cpnElement.id = splitLayoutArray[0];
+              cpnElement[testElem.toLowerCase()] = '';
+            } else {
+              cpnElement.id = splitLayoutArray[0];
+              cpnElement.alias = { id: testElem };
+            }
           }
         }
         break;
       case 'globref':
+        cpnType = 'globref';
         splitLayoutArray = str.split(' ').filter(e => e.trim() !== '' && e.trim() !== '=');
         cpnElement.id = splitLayoutArray[1].replace(/\s+/g, '').replace(';', '');
         cpnElement.ml = splitLayoutArray[2].replace(/\s+/g, '').replace(';', '');
@@ -1359,6 +1369,7 @@ export class ModelService {
     }
     console.log('stringToCpnDeclarationElement(), cpnElement = ', cpnElement);
 
+    return { cpnType: cpnType, cpnElement: cpnElement };
   }
 
 }

@@ -32,13 +32,13 @@
       </div>
 
       <!-- Port Labels -->
-      <app-text-edit-row  type="select" name="Port type" [object]="getPort(cpnElement.port, cpnElement)"
+      <app-text-edit-row  type="select" name="Port type" [object]="(getPort(cpnElement.port, cpnElement))"
         field="text" (changed)="updateChanges()" [options]="portTypes">
       </app-text-edit-row>
 
       <!-- Subst Labels -->
-      <app-text-edit-row *ngIf="cpnElement.subst && cpnElement.subst.subpageinfo" name="Suppage"
-        [object]="cpnElement.subst.subpageinfo" field="_name" (changed)="updateChanges()">
+      <app-text-edit-row  type="select" name="Suppage"
+        [object]="getSubst(cpnElement.subst, cpnElement)" field="_name" (changed)="updateChanges()" [options]="pages">
       </app-text-edit-row>
 
       <!-- Direction (only for acrs) -->

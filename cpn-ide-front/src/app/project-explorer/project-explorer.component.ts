@@ -256,7 +256,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   /**
    * Find tree node by cpn element and update it's name
-   * @param cpnElement 
+   * @param cpnElement
    */
   updateTreeByCpnElement(cpnElement, newTextValue) {
     var nodeForUpdate = this.treeComponent.treeModel.getNodeBy((node) => {
@@ -571,6 +571,15 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         treeNode.data.children.push(newNode);
       } else if (treeNode.parent) {
         treeNode.parent.data.children.push(newNode);
+        if (treeNode.data.type === 'page' && treeNode.data.id !== 'Pages') {
+          this.eventService.send(Message.SUBPAGE_CREATE, {
+            name: newNode.name,
+            id: newNode.id,
+            parentid: treeNode.id,
+            event: event,
+            state: this.treeComponent.treeModel.getState()
+          });
+        }
       }
 
       this.treeComponent.treeModel.update();
@@ -2077,8 +2086,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   /**
    * Remove cpn element from it's parent
-   * @param cpnParentElement 
-   * @param cpnElement 
+   * @param cpnParentElement
+   * @param cpnElement
    * @param cpnType - old cpn type from where cpn element should be removed
    */
   removeCpnElement(cpnParentElement, cpnElement, cpnType) {
@@ -2109,8 +2118,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   /**
    * Add cpn element to parent
-   * @param cpnParentElement 
-   * @param cpnElement 
+   * @param cpnParentElement
+   * @param cpnElement
    * @param cpnType - new cpn type where cpn element should be placed
    */
   addCpnElement(cpnParentElement, cpnElement, cpnType) {

@@ -1151,7 +1151,7 @@ export class ModelService {
    * @returns - new page cpnElement
    */
   createCpnPage(name) {
-    return {
+    const newPage =  {
       pageattr: {
         _name: name
       },
@@ -1161,6 +1161,16 @@ export class ModelService {
       constraints: '',
       _id: 'ID' + new Date().getTime()
     };
+    // if(this.getcpnet().page) {
+    //   if (!(this.getcpnet().page instanceof Array)) {
+    //     this.getcpnet().page = [this.getcpnet().page];
+    //   }
+    // } else{
+    //   this.getcpnet().page = [];
+    // }
+    // this.getcpnet().page.push(newPage);
+
+    return newPage;
   }
 
   /**
@@ -1260,8 +1270,8 @@ export class ModelService {
 
   /**
    * Convert cpn declaration element to string
-   * @param cpnElement 
-   * @param type 
+   * @param cpnElement
+   * @param type
    */
   cpnDeclarationElementToString(cpnElement, type) {
     switch (type) {
@@ -1274,8 +1284,8 @@ export class ModelService {
 
   /**
    * Convert string to cpn declaration element
-   * @param cpnElement 
-   * @param str 
+   * @param cpnElement
+   * @param str
    */
   stringToCpnDeclarationElement(cpnElement, str) {
 
@@ -1370,6 +1380,16 @@ export class ModelService {
     console.log('stringToCpnDeclarationElement(), cpnElement = ', cpnElement);
 
     return { cpnType: cpnType, cpnElement: cpnElement };
+  }
+
+
+
+
+  getAllPages(){
+    if(this.getcpnet().page instanceof Array)
+      return this.getcpnet().page;
+    else
+      return [this.getcpnet().page._id];
   }
 
 }

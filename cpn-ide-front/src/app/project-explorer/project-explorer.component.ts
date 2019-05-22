@@ -1566,7 +1566,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     pageNode.actions = ['page', 'delete'];
 
     // fill subpages array for this page
-    var subpages = [];
+    let subpages = [];
     if (cpnElement.trans) {
       if (cpnElement.trans instanceof Array) {
         for (const tran of cpnElement.trans) {
@@ -1590,22 +1590,22 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * @param cpnElement - cpn JSON object
    * @returns - tree node
    */
-  createMonitorsNode(name, cpnElement): any {
+  createMonitorsRootNode(name, cpnElement): any {
     const monitorsNode = this.createTreeNode(name);
     monitorsNode.classes = ['tree-project'];
     monitorsNode.cpnElement = cpnElement;
     // monitorsNode.actions = ['page'];
 
-    var monitorsNodeList = [];
+    let monitorsNodeList = [];
 
-    // Page nodes, create and save it to pageNodeList
+    // Monitor nodes, create and save it to monitorsNodeList
     if (cpnElement.monitor instanceof Array) {
       for (const monitor of cpnElement.monitor) {
         const monitorNode = this.createMonitorNode(monitor);
         monitorsNodeList[monitorNode.id] = monitorNode;
       }
     }
-    // Move subpages to it's parent page
+    // Move monitors to it's parent page
     for (const monitorId of Object.keys(monitorsNodeList)) {
       const monitorNode = monitorsNodeList[monitorId];
       monitorsNode.children.push(monitorNode);
@@ -1620,39 +1620,68 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * @returns - tree node
    */
   createMonitorNode(cpnElement) {
-    // console.log('--------------createMonitorNode');
-    // console.log(cpnElement);
-    const node = this.createTreeNode(cpnElement._id, cpnElement._name);
-    node.cpnElement = cpnElement;
-    node.editable = true;
-    node.type = 'monitor';
+    const monitorsNode = this.createTreeNode(cpnElement._id, cpnElement._name);
+    monitorsNode.cpnElement = cpnElement;
+    monitorsNode.editable = true;
+    monitorsNode.type = 'monitor';
+    if (cpnElement._disabled === 'true') {
+      monitorsNode.options = { nodeClass: 'disabledNode'};
+    }
     // node.actions = ['page', 'delete'];
 
     // typedescription
-    var subnodes = [];
+    let subnodes11 = [];
     const monTypeNode = this.createTreeNode('monitor_type_' + cpnElement._id, cpnElement._typedescription);
     monTypeNode.cpnElement = cpnElement;
     monTypeNode.editable = true;
     monTypeNode.type = 'monitor_type';
 
     // options
-    var options = [];
+    let subnodes12 = [];
     if (cpnElement.option instanceof Array) {
       for (const option of cpnElement.option) {
         const opt = this.createMonitorOptionNode(cpnElement, option);
-        options.push(opt);
+        subnodes12.push(opt);
       }
-    } else {
+    } else if (cpnElement.option) {
       const opt = this.createMonitorOptionNode(cpnElement, cpnElement.option);
-      options.push(opt);
+      subnodes12.push(opt);
     }
-    monTypeNode.children = options;
-    subnodes.push(monTypeNode);
+    monTypeNode.children = subnodes12;
+    subnodes11.push(monTypeNode);
 
-    node.children = subnodes;
+    // nodes
+    let nobp = this.createTreeNode('nobp_' + cpnElement._id, 'Nodes ordered by pages');
+    let subnodes21 = [];
+    let pageinstanceidref = new Map<string, Array<string>>();
+    if (cpnElement.node instanceof Array) {
+      for (const node of cpnElement.node) {
+        if (pageinstanceidref.has(node._pageinstanceidref)) {
+          pageinstanceidref.get(node._pageinstanceidref).push(node._idref);
+        } else {
+          pageinstanceidref.set(node._pageinstanceidref, [node._idref]);
+        }
+      }
+    } else if (cpnElement.node) {
+      pageinstanceidref.set(cpnElement.node._pageinstanceidref, [cpnElement.node._idref]);
+    }
+    for (let k of pageinstanceidref.keys()) {
+      let instRef = this.createTreeNode(k + '_' + cpnElement._id, k);
+      let subnodes211 = [];
+      for (let id of pageinstanceidref.get(k)) {
+        let idref = this.createTreeNode(id + '_' + cpnElement._id, id);
+        subnodes211.push(idref);
+      }
+      instRef.children = subnodes211;
+      subnodes21.push(instRef);
+    }
+    nobp.children = subnodes21;
+    subnodes11.push(nobp);
 
-    // console.log(node);
-    return node;
+    monitorsNode.children = subnodes11;
+
+    console.log(monitorsNode);
+    return monitorsNode;
   }
 
   createMonitorOptionNode(cpnElement, option) {
@@ -1758,19 +1787,19 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     historyNode.classes = ['tree-project'];
     historyNode.children = [this.createTreeNode('* empty *')];
 
+    // let monitorsNode = this.createTreeNode('Monitors');
+    // monitorsNode.classes = ['tree-project'];
+    // monitorsNode.children = [this.createTreeNode('* empty *')];
+    if (cpnet.monitorblock) {
+      const monitorsNode = this.createMonitorsRootNode('Monitors', cpnet.monitorblock);
+      projectNode.children.push(monitorsNode);
+    }
+
     // Create project Declarations node
     let declarationsNode = this.createTreeNode('Declarations');
     declarationsNode.children = [this.createTreeNode('* empty *')];
     if (cpnet.globbox) {
       declarationsNode = this.createDeclarationsNode('Declarations', cpnet.globbox);
-    }
-
-    // Create project Monitors node
-    let monitorsNode = this.createTreeNode('Monitors');
-    monitorsNode.classes = ['tree-project'];
-    monitorsNode.children = [this.createTreeNode('* empty *')];
-    if (cpnet.monitorblock) {
-      monitorsNode = this.createMonitorsNode('Monitors', cpnet.monitorblock);
     }
 
     // Create project Pages node
@@ -1782,7 +1811,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     projectNode.children.push(historyNode);
     projectNode.children.push(declarationsNode);
-    projectNode.children.push(monitorsNode);
     projectNode.children.push(pagesNode);
 
     this.nodes.push(projectNode);

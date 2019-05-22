@@ -186,24 +186,24 @@ export class ProjectConsoleComponent implements OnInit, OnDestroy {
       }
     }
 
-    if (cpnet) {
-      if (cpnet.globbox) {
-        if (cpnet.globbox.block) {
+    // if (cpnet) {
+    //   if (cpnet.globbox) {
+    //     if (cpnet.globbox.block) {
 
-          // GlobBox
-          // --------------------------------------
-          for (let block of cpnet.globbox.block) {
+    //       // GlobBox
+    //       // --------------------------------------
+    //       for (let block of cpnet.globbox.block) {
 
-            // Parameters
-            // -------------------------------
-            if (block.id === 'Variables') {
-              this.nodes = block.var;
-            }
-            // -------------------------------
-          }
-        }
-      }
-    }
+    //         // Parameters
+    //         // -------------------------------
+    //         if (block.id === 'Variables') {
+    //           this.nodes = block.var;
+    //         }
+    //         // -------------------------------
+    //       }
+    //     }
+    //   }
+    // }
 
   }
 

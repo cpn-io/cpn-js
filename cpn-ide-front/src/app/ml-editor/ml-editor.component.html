@@ -1,5 +1,5 @@
 <div class="blockHeader">
-  Functions
+  Code
 </div>
 
 <div class="workspace-container-with-tab">
@@ -7,8 +7,8 @@
     <div class="scroll-y">
       <div class="pane" style="padding:0">
 
-        <!-- <textarea ref-textarea 
-          style="width:100%; height:100%; padding: 10px; border:none; resize:none" 
+        <!-- <textarea ref-textarea
+          style="width:100%; height:100%; padding: 10px; border:none; resize:none"
           [(ngModel)]="textValue | colorDeclarations | safeHtml"
           (keyup)="textareaKeyUp($event)"></textarea> -->
 
@@ -17,9 +17,6 @@
           [innerHTML]="textValue | colorDeclarations | safeHtml"
           (keyup)="onKeyUp($event)">
         </div>
-
-        <!-- [(ngModel)]="textValue | colorDeclarations | safeHtml" -->
-        <!-- [innerHTML]="getLabel(node) | colorDeclarations | safeHtml" -->
 
       </div>
     </div>

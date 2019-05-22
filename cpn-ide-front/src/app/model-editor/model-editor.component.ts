@@ -193,10 +193,17 @@ export class ModelEditorComponent implements OnInit {
         for (let place of pageObj.place) {
           if (place.port && (place.port._type === 'I/O' || place.port._type === event.portType )) list.push({id: place._id, name: place.text, type: place.port._type});
         }
-        this.portMenuProvider.open({trans: event.trans, place: event.place, list: list}, event.position);
+        this.portMenuProvider.open({trans: event.trans, place: event.place, arc: event.arc, list: list}, event.position);
       }
     });
-  //  this._eventBus.fire('portMenuProvider.open', {trans: transShape, position: { cursor: { x: 609, y: 575 } }})
+    eventBus.on('bind.port.cancel', (event) => {
+      if(event.connection){
+        this.modeling.removeElements([event.connection]);
+      }
+    });
+
+   // this._eventBus.fire('bind.port.cancel', {connection: this._createdArc});
+
   }
 
   subscripeToAppMessage() {

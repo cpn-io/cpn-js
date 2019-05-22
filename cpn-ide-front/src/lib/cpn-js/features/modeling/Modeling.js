@@ -333,7 +333,8 @@ Modeling.prototype.connect = function (source, target, attrs, hints) {
       //openPortProvider(this._portMenuProvider, transShape);
       //this._portMenuProvider.open(transShape, { cursor: { x: 609, y: 575 } });
       if(transShape.cpnElement.subst)
-        this._eventBus.fire('portMenuProvider.open', {trans: transShape, place: placeShape, portType: orientation === 'PtoT' ? 'In' : 'Out' ,position: { cursor: { x: 609, y: 575 } }})
+        //this._eventBus.fire('portMenuProvider.open', {trans: transShape, place: placeShape, portType: orientation === 'PtoT' ? 'In' : 'Out' ,position: { cursor: { x: 609, y: 575 } }})
+        this._eventBus.fire('portMenuProvider.open', {trans: transShape, place: placeShape, arc: conElem, portType: orientation === 'PtoT' ? 'In' : 'Out' ,position: { cursor: orientation === 'PtoT'? { x: transShape.x, y: transShape.y } : { x: placeShape.x, y: placeShape.y } }});
       return conElem;
     }
   }

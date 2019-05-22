@@ -3,15 +3,17 @@ import {
   filter
 } from 'min-dash';
 import { is, CPN_PLACE, CPN_TRANSITION } from '../../util/ModelUtil';
+import {Message} from "../../../../app/common/message";
 
 /**
  * This module is an element agnostic replace menu provider for the popup menu.
  */
-export default function CpnPortMenuProvider( popupMenu, canvas) {
+export default function CpnPortMenuProvider( popupMenu, canvas, eventBus) {
 
 
   this._popupMenu = popupMenu;
-  this._canvas = canvas
+  this._canvas = canvas;
+  this._eventBus = eventBus;
   this.register();
 
   this._element = undefined;
@@ -19,12 +21,15 @@ export default function CpnPortMenuProvider( popupMenu, canvas) {
   this._portList = undefined;
   this._transEnd =  undefined;
   this._placeEnd = undefined;
+  this._createdArc  = undefined;
+  this.changes =  undefined;
 }
 
 CpnPortMenuProvider.$inject = [
 
   'popupMenu',
-  'canvas'
+  'canvas',
+  'eventBus'
 
 ];
 
@@ -34,15 +39,28 @@ CpnPortMenuProvider.$inject = [
  */
 CpnPortMenuProvider.prototype.register = function () {
   this._popupMenu.registerProvider('cpnPortMenu', this);
+
+  this._eventBus.on('popupMenu.close', (event) => {
+    console.log('popupMenu.close', this._popupMenu, event);
+    if(this._popupMenu._current.className === 'cpnPortMenu'){
+      if(this.changes){
+        this.changes =  undefined;
+      } else {
+        if(this._createdArc)
+          this._eventBus.fire('bind.port.cancel', {connection: this._createdArc});
+      }
+    }
+  });
 };
 
 CpnPortMenuProvider.prototype.open = function (target, position) {
   this._portList = target.list;
   this._transEnd =  target.trans;
   this._placeEnd =  target.place;
+  this._createdArc =  target.arc;
   this._element = this._canvas.getRootElement();
-  this._position = position.cursor;
-  this._popupMenu.open( this._element , 'cpnPortMenu', position);
+  this._position = toGlobalPoint(this._canvas, position.cursor);
+  this._popupMenu.open( this._element , 'cpnPortMenu', {cursor: this._position});
 };
 
 CpnPortMenuProvider.prototype.close = function () {
@@ -78,64 +96,7 @@ CpnPortMenuProvider.prototype.getEntries = function (element) {
     entries.push(createPortMenuEntry);
   }
 
-  // var createPlaceMenuEntry = {
-  //   id: '_menuItem_createPlace',
-  //   label: 'New Place',
-  //   className: 'bpmn-icon-start-event-none',
-  //   action: function () { }
-  // };
-  //
-  // var createTransitionMenuEntry = {
-  //   id: '_menuItem_createTransition',
-  //   label: 'New Transition',
-  //   className: 'bpmn-icon-start-event-none\'',
-  //   action: function () { }
-  // };
-  //
-  // var createSubpageMenuEntry = {
-  //   id: '_menuItem_createSubpage',
-  //   label: 'New Subpage',
-  //   className: 'bpmn-icon-start-event-none',
-  //   action: function () {  }
-  // };
 
-  // var deleteMenuEntry = {
-  //   id: '_menuItem_delete',
-  //   label: 'Delete',
-  //   className: 'popup-menu-icon-delete',
-  //   action: function () {
-  //     self._popupMenu.close();
-  //     self._modeling.removeElements([element]);
-  //   }
-  // };
-
-  // var connectMenuEntry = {
-  //   id: '_menuItem_connect',
-  //   label: 'Connect',
-  //   className: 'popup-menu-icon-connect',
-  //   action: function () {
-  //     self._popupMenu.close();
-  //     self._connect.start(event, element);
-  //   }
-  // };
-
-
-    // entries.push(createPlaceMenuEntry);
-    // entries.push(createTransitionMenuEntry);
-    // entries.push(createSubpageMenuEntry);
-
-
-  // if (is(element, CPN_PLACE)) {
-  //   entries.push(createTransitionMenuEntry);
-  //   entries.push(connectMenuEntry);
-  //   entries.push(deleteMenuEntry);
-  // }
-
-  // if (is(element, CPN_TRANSITION)) {
-  //   entries.push(createPlaceMenuEntry);
-  //   entries.push(connectMenuEntry);
-  //   entries.push(deleteMenuEntry);
-  // }
 
   return entries;
 };
@@ -155,6 +116,7 @@ CpnPortMenuProvider.prototype.getHeaderEntries = function (element) {
 
 CpnPortMenuProvider.prototype._changePortSock = function(port, transEnd, placeEnd) {
   transEnd.cpnElement.subst._portsock =  transEnd.cpnElement.subst._portsock + '(' + port.id + ', '+ placeEnd.id +')';
+  this.changes =  transEnd.cpnElement.subst._portsock;
   console.log('CpnPortMenuProvider._changePortSock -  ', transEnd);
 }
 
@@ -169,6 +131,15 @@ function toLocalPoint(canvas, globalPosition) {
   return {
     x: viewbox.x + (globalPosition.x - clientRect.left) / viewbox.scale,
     y: viewbox.y + (globalPosition.y - clientRect.top) / viewbox.scale
+  };
+}
+
+function toGlobalPoint(canvas, localPosition ){
+  var viewbox = canvas.viewbox();
+  var clientRect = canvas._container.getBoundingClientRect();
+  return {
+    x:  viewbox.scale * ( localPosition.x - viewbox.x) + clientRect.left,
+    y:  viewbox.scale * ( localPosition.y - viewbox.y) + clientRect.top,
   };
 }
 

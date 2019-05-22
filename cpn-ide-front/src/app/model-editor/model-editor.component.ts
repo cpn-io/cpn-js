@@ -52,6 +52,7 @@ export class ModelEditorComponent implements OnInit {
   textRenderer;
   selectedElement;
   jsonPageObject;
+  portMenuProvider
   // subscription: Subscription;
   subpages = [];
   placeShapes = [];
@@ -93,6 +94,7 @@ export class ModelEditorComponent implements OnInit {
     this.labelEditingProvider = this.diagram.get('labelEditingProvider');
     this.textRenderer = this.diagram.get('textRenderer');
     this.cpnFactory = this.diagram.get('cpnFactory')
+    this.portMenuProvider = this.diagram.get('portMenuProvider')
 
 
     // set defualt values to diagram
@@ -183,6 +185,25 @@ export class ModelEditorComponent implements OnInit {
         }
       }
     });
+
+    eventBus.on('portMenuProvider.open', (event) => {
+      if(event.trans && event.trans.cpnElement && event.trans.cpnElement.subst) {
+        let pageObj = this.modelService.getPageById(event.trans.cpnElement.subst._subpage);
+        let list = [];
+        for (let place of pageObj.place) {
+          if (place.port && (place.port._type === 'I/O' || place.port._type === event.portType )) list.push({id: place._id, name: place.text, type: place.port._type});
+        }
+        this.portMenuProvider.open({trans: event.trans, place: event.place, arc: event.arc, list: list}, event.position);
+      }
+    });
+    eventBus.on('bind.port.cancel', (event) => {
+      if(event.connection){
+        this.modeling.removeElements([event.connection]);
+      }
+    });
+
+   // this._eventBus.fire('bind.port.cancel', {connection: this._createdArc});
+
   }
 
   subscripeToAppMessage() {

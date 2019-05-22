@@ -118,6 +118,7 @@ CpnPortMenuProvider.prototype._changePortSock = function(port, transEnd, placeEn
   transEnd.cpnElement.subst._portsock =  transEnd.cpnElement.subst._portsock + '(' + port.id + ', '+ placeEnd.id +')';
   this.changes =  transEnd.cpnElement.subst._portsock;
   console.log('CpnPortMenuProvider._changePortSock -  ', transEnd);
+  this.close();
 }
 
 /**

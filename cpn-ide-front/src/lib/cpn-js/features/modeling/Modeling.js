@@ -332,9 +332,7 @@ Modeling.prototype.connect = function (source, target, attrs, hints) {
       this._eventBus.fire('shape.create.end', {elements: [conElem]});
       //openPortProvider(this._portMenuProvider, transShape);
       //this._portMenuProvider.open(transShape, { cursor: { x: 609, y: 575 } });
-      if(transShape.cpnElement.subst)
-        //this._eventBus.fire('portMenuProvider.open', {trans: transShape, place: placeShape, portType: orientation === 'PtoT' ? 'In' : 'Out' ,position: { cursor: { x: 609, y: 575 } }})
-        this._eventBus.fire('portMenuProvider.open', {trans: transShape, place: placeShape, arc: conElem, portType: orientation === 'PtoT' ? 'In' : 'Out' ,position: { cursor: orientation === 'PtoT'? { x: transShape.x, y: transShape.y } : { x: placeShape.x, y: placeShape.y } }});
+     // openPortMenu(this._eventBus, transShape, placeShape, conElem, orientation);
       return conElem;
     }
   }
@@ -343,6 +341,10 @@ Modeling.prototype.connect = function (source, target, attrs, hints) {
 };
 
 
+function openPortMenu(eventBus, transShape, placeShape, conElem, orientation){
+  if(transShape.cpnElement.subst)
+    eventBus.fire('portMenuProvider.open', {trans: transShape, place: placeShape, arc: conElem, portType: orientation === 'PtoT' ? 'In' : 'Out' ,position: { cursor: orientation === 'PtoT'? { x: transShape.x, y: transShape.y } : { x: placeShape.x, y: placeShape.y } }});
+}
 
 
 function openPortProvider(portMenuProvider, trnsShape){
@@ -370,6 +372,7 @@ Modeling.prototype.createNewConnection = function (placeShape, transShape, orien
           this._canvas.addShape(label, root);
         }
       }
+      openPortMenu(this._eventBus, transShape, placeShape, connection, connection.orientation);
 
       return connection;
     }

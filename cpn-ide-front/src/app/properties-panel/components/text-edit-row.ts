@@ -79,23 +79,24 @@ export class TextEditRowComponent {
     if (this._type === 'color')
       this._object[this._field] = this.color2name(event.target.value);
     if (this._type === 'select') {
-      console.log('List in prop-panel - OBJ-', this._object);
-      //console.log('List in prop-panel - OBJ[field]-', this._object[this._field]);
-      console.log('List in prop-panel - field-', this._field);
-      if (event !== '') {
-        if (this._object.state === 'none') {
-          if (event) {
-            this._object.obj['port'] = this.getPortObject(this._object.obj, event);
-            //this._object['port'] = this.getPortObject(this._object, this._field);
-            this._object = this._object.obj['port'];
-          }
-        } else {
-          this._object = this._object.pobj;
-        }
-        this._object[this._field] = event;
-      } else {
-        this._object.obj['port'] = 'delete';
-      }
+      // console.log('List in prop-panel - OBJ-', this._object);
+      // //console.log('List in prop-panel - OBJ[field]-', this._object[this._field]);
+      // console.log('List in prop-panel - field-', this._field);
+      // if (event !== '') {
+      //   if (this._object.state === 'none') {
+      //     if (event) {
+      //       this._object.obj['port'] = this.getPortObject(this._object.obj, event);
+      //       //this._object['port'] = this.getPortObject(this._object, this._field);
+      //       this._object = this._object.obj['port'];
+      //     }
+      //   } else {
+      //     this._object = this._object.pobj;
+      //   }
+      //   this._object[this._field] = event;
+      // } else {
+      //   this._object.obj['port'] = 'delete';
+      // }
+      this._object[this._field] = event;
     }
     this.changed.emit(this._object[this._field]);
   }
@@ -107,37 +108,34 @@ export class TextEditRowComponent {
   }
 
 
-  getPortObject(cpnElement, text) {
-    const port = {
-      fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
-      lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
-      posattr: { _x: cpnElement.posattr._x, _y: cpnElement.posattr._y - cpnElement.ellipse._h },
-      _text: text,
-      textattr: { _colour: 'Black', _bold: 'false' },
-      _id: cpnElement._id + 'e',
-      _type: text === 'In/Out' ? 'I/O' : text
-    };
-    return port;
-  }
+  // getPortObject(cpnElement, text) {
+  //   const port = {
+  //     fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
+  //     lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
+  //     posattr: { _x: cpnElement.posattr._x, _y: cpnElement.posattr._y - cpnElement.ellipse._h },
+  //     _text: text,
+  //     textattr: { _colour: 'Black', _bold: 'false' },
+  //     _id: cpnElement._id + 'e',
+  //     _type: text === 'In/Out' ? 'I/O' : text
+  //   };
+  //   return port;
+  // }
 
+  // getSubPage(cpnElement, name, pageId) {
+  //   cpnElement['subst'] = {
+  //     subpageinfo: {
+  //       fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
+  //       lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
+  //       posattr: { _x: cpnElement.posattr._x, _y: cpnElement.posattr._y - cpnElement.box._h / 2 },
+  //       textattr: { _colour: 'Black', _bold: 'false' },
+  //       _id: cpnElement._id + 'e',
+  //       _name: name
+  //     },
+  //     _portsock: '',
+  //     _subpage: pageId
+  //   };
 
-
-
-  getSubPage(cpnElement, name, pageId) {
-    cpnElement['subst'] = {
-      subpageinfo: {
-        fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
-        lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
-        posattr: { _x: cpnElement.posattr._x, _y: cpnElement.posattr._y - cpnElement.box._h / 2 },
-        textattr: { _colour: 'Black', _bold: 'false' },
-        _id: cpnElement._id + 'e',
-        _name: name
-      },
-      _portsock: '',
-      _subpage: pageId
-    };
-
-    return cpnElement;
-  }
+  //   return cpnElement;
+  // }
 
 }

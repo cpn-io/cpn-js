@@ -15,9 +15,6 @@ import { element } from 'protractor';
 })
 export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
-  constructor(private eventService: EventService, private projectService: ProjectService, private modelService: ModelService) {
-  }
-
   console = console;
   title = '';
 
@@ -73,12 +70,9 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
   private layoutPartOpened: boolean[] = [];
 
-  private getPort(portObject, cpnElement) {
-    return portObject ? { obj: cpnElement, pobj: portObject, val: portObject._type } : { obj: cpnElement, state: 'none', val: 'none' };
-  }
-
-  private getSubst(substObject, cpnElement) {
-    return substObject ? { obj: cpnElement, subsobj: substObject } : { obj: cpnElement, state: 'none' };
+  constructor(private eventService: EventService,
+    private projectService: ProjectService,
+    private modelService: ModelService) {
   }
 
   ngOnInit() {
@@ -170,12 +164,47 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     this.title = type;
   }
 
-  updatePortType() {
+
+  getAllPages() {
+    const pages = this.modelService.getAllPages();
+    const pageNames = [''];
+    for (const page of pages) {
+      pageNames.push(page.pageattr._name);
+    }
+    return pageNames;
+  }
+
+
+  getPort(cpnElement) {
+    return cpnElement.port
+      ? { value: cpnElement.port._type }
+      : { value: '' };
+  }
+
+  getSubst(cpnElement) {
+    return cpnElement.subst && cpnElement.subst.subpageinfo
+      ? { value: cpnElement.subst.subpageinfo._name }
+      : { value: '' };
+  }
+
+  updatePortType(event) {
+    console.log(this.constructor.name, 'updatePortType(), event = ', event);
+
+    const portType = event;
+
+    if (!this.cpnElement)
+      return;
+    if (!this.cpnElement.port)
+      this.cpnElement.port = this.modelService.createPortObject(this.cpnElement, portType);
+    this.cpnElement.port._type = portType === 'In/Out' ? 'I/O' : portType;
+
+    console.log(this.constructor.name, 'updatePortType(), this.cpnElement = ', this.cpnElement);
 
     this.updateChanges();
   }
 
-  updateSubst() {
+  updateSubst(event) {
+    console.log(this.constructor.name, 'updateSubst(), event = ', event);
 
     this.updateChanges();
   }

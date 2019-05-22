@@ -1383,13 +1383,52 @@ export class ModelService {
   }
 
 
-
-
+  /**
+   * Get all pages list
+   */
   getAllPages(){
     if(this.getcpnet().page instanceof Array)
       return this.getcpnet().page;
     else
-      return [this.getcpnet().page._id];
+      return [this.getcpnet().page];
   }
+
+  /**
+   * Create port object for place
+   * @param cpnElement 
+   * @param portType 
+   */
+  createPortObject(cpnElement, portType) {
+    return {
+      fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
+      lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
+      posattr: { _x: cpnElement.posattr._x, _y: cpnElement.posattr._y - cpnElement.ellipse._h },
+      textattr: { _colour: 'Black', _bold: 'false' },
+      _id: cpnElement._id + 'e',
+      _type: portType === 'In/Out' ? 'I/O' : portType
+    };
+  }
+
+  /**
+   * Create subst object for transition
+   * @param cpnElement 
+   * @param name 
+   * @param pageId 
+   */
+  createSubstObject(cpnElement, name, pageId) {
+    return {
+      subpageinfo: {
+        fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
+        lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
+        posattr: { _x: cpnElement.posattr._x, _y: cpnElement.posattr._y - cpnElement.box._h / 2 },
+        textattr: { _colour: 'Black', _bold: 'false' },
+        _id: cpnElement._id + 'e',
+        _name: name
+      },
+      _portsock: '',
+      _subpage: pageId
+    };
+  }
+
 
 }

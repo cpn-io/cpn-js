@@ -37,13 +37,13 @@
 
       <!-- Port Labels -->
       <app-text-edit-row *ngIf="cpnElement.ellipse" type="select" name="Port type"
-        [object]="getPort(cpnElement)" field="val" (changed)="updatePortType()"
+        [object]="getPort(cpnElement)" field="value" (changed)="updatePortType($event)"
         [options]="portTypes">
       </app-text-edit-row>
 
       <!-- Subst Labels -->
-      <app-text-edit-row *ngIf="cpnElement.box && cpnElement.subst" type="select" name="Suppage"
-        [object]="getSubst(cpnElement)" field="_name" (changed)="updateSubst()" [options]="pages">
+      <app-text-edit-row *ngIf="cpnElement.box" type="select" name="Suppage"
+        [object]="getSubst(cpnElement)" field="value" (changed)="updateSubst($event)" [options]="getAllPages()">
       </app-text-edit-row>
 
       <!-- PortSock -->

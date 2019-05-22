@@ -5,6 +5,8 @@ import { EventService } from './event.service';
 import { Message } from '../common/message';
 import { Constants } from '../common/constants.js';
 
+import { xml2json } from '../../lib/xml2json//xml2json.js';
+
 /**
  * Common service for getting access to project data from all application
  */
@@ -45,7 +47,7 @@ export class ProjectService {
   }
 
   setCurrentElement(element) {
-    console.log('Selected element - ' + element.name)
+    console.log('Selected element - ' + element.name);
     this.currentSelectedElement = element;
   }
 
@@ -71,6 +73,18 @@ export class ProjectService {
     };
   }
 
+
+  parseXml(xml) {
+    let dom = null;
+    try {
+      dom = (new DOMParser()).parseFromString(xml, 'text/xml');
+    } catch (e) {
+      dom = null;
+    }
+
+    return dom;
+  }
+
   /**
    * Loading project data from XML string, parse XML and converting to project JSON object for all application
    *
@@ -78,13 +92,20 @@ export class ProjectService {
    * @param {string} projectXml
    */
   loadProjectXml(filename: string, projectXml: string) {
-    const parser = new DOMParser();
     this.modelName = filename;
-    const xml = parser.parseFromString(projectXml, 'text/xml');
+
+    // const parser = new DOMParser();
+    // const xml = parser.parseFromString(projectXml, 'text/xml');
+
+    const xml = this.parseXml(projectXml);
 
     if (!xml) {
       return;
     }
+
+    // localStorage.setItem('testProjectJson', '');
+    // const testProjectJson = xml2json(xml, '  ');
+    // localStorage.setItem('testProjectJson', testProjectJson);
 
     const x2js = new X2JS();
     const json = x2js.xml_str2json(projectXml);
@@ -101,7 +122,7 @@ export class ProjectService {
     //   project: {data: json, name: filename}
     // });
 
-    this.projectData = { project: { data: json, name: filename } }
+    this.projectData = { project: { data: json, name: filename } };
 
     this.eventService.send(Message.PROJECT_FILE_OPEN, this.projectData);
   }

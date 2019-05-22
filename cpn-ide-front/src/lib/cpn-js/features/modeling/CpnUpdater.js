@@ -69,10 +69,10 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   // });
 
   eventBus.on('shape.changed', function (event) {
-   // updateLabels(e.element);
-   // console.log('CpnUpdater(), shape.changed, event.element = ', event.element);
+    // updateLabels(e.element);
+    // console.log('CpnUpdater(), shape.changed, event.element = ', event.element);
 
-   updateCpnElement(event.element);
+    updateCpnElement(event.element);
   });
 
 
@@ -261,8 +261,8 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
 
 
-     if(cpnElement.text instanceof Object){
-     cpnElement.text.__text = shape.text || shape.name;
+    if (cpnElement.text instanceof Object) {
+      cpnElement.text.__text = shape.text || shape.name;
     } else cpnElement.text = shape.text || shape.name;
 
     updateLabels(element);

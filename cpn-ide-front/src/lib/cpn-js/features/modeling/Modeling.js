@@ -154,24 +154,65 @@ function isString(v) {
  */
 Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus) {
 
-  if(element.type === CPN_PLACE){
-    if(element.cpnElement.port ){
-      if(element.cpnElement.port === 'delete'){
-       delete element.cpnElement.port;
-       let port;
-       for(let label of element.labels){
-         if(label.labelType === 'port') port = label;
-       }
-       if(port)
-          this.removeElements([port])
-      } else if ( element.labels.length === 3) {
+  // console.log('Modeling().updateShapeByCpnElement(), element = ', element);
+
+  // Update port for Place
+  if (is(element, CPN_PLACE)) {
+    let portLabel;
+
+    // try to find port label for Place
+    for (let l of element.labels) {
+      if (l.labelType === 'port') {
+        portLabel = l;
+        break;
+      }
+    }
+
+    // console.log('updateShapeByCpnElement(CPN_PLACE), element = ', element);
+
+    if (portLabel && !element.cpnElement.port) {
+      // delete port label from element children
+      this.removeElements([portLabel]);
+    } else
+      if (!portLabel && element.cpnElement.port) {
+        // create port label for element
         const attrs = this.getLabelAttrs(element, element.cpnElement['port'], 'port');
         const label = this._elementFactory.createLabel(attrs);
         this._canvas.addShape(label, this._canvas.getRootElement());
-        //this._eventBus.fire('element.changed', { element: element });
+      }
+
+    // try to find port label for Place
+    // for (let l of element.labels) {
+    //   this.updateShapeByCpnElement(l, canvas, eventBus);
+    // }
+
+  }
+
+  // Update subst for Transition
+  if (is(element, CPN_TRANSITION)) {
+    let substLabel;
+
+    // try to find subst label for transition
+    for (let l of element.labels) {
+      if (l.labelType === 'subst') {
+        substLabel = l;
+        break;
       }
     }
+
+    if (substLabel && !element.cpnElement.subst) {
+      // delete port label from element children
+      this.removeElements([substLabel]);
+    } else
+      if (!substLabel && element.cpnElement.subst) {
+        // create subst label for element
+        const attrs = this.getLabelAttrs(element, element.cpnElement['subst'].subpageinfo, 'subst');
+        const label = this._elementFactory.createLabel(attrs);
+        this._canvas.addShape(label, this._canvas.getRootElement());
+      }
   }
+
+
 
   const self = this;
 
@@ -329,10 +370,10 @@ Modeling.prototype.connect = function (source, target, attrs, hints) {
 
     if (placeShape && transShape) {
       const conElem = this.createNewConnection(placeShape, transShape, orientation);
-      this._eventBus.fire('shape.create.end', {elements: [conElem]});
+      this._eventBus.fire('shape.create.end', { elements: [conElem] });
       //openPortProvider(this._portMenuProvider, transShape);
       //this._portMenuProvider.open(transShape, { cursor: { x: 609, y: 575 } });
-     // openPortMenu(this._eventBus, transShape, placeShape, conElem, orientation);
+      // openPortMenu(this._eventBus, transShape, placeShape, conElem, orientation);
       return conElem;
     }
   }
@@ -341,13 +382,23 @@ Modeling.prototype.connect = function (source, target, attrs, hints) {
 };
 
 
-function openPortMenu(eventBus, transShape, placeShape, conElem, orientation){
-  if(transShape.cpnElement.subst)
-    eventBus.fire('portMenuProvider.open', {trans: transShape, place: placeShape, arc: conElem, portType: orientation === 'PtoT' ? 'In' : 'Out' ,position: { cursor: orientation === 'PtoT'? { x: transShape.x, y: transShape.y } : { x: placeShape.x, y: placeShape.y } }});
+function openPortMenu(eventBus, transShape, placeShape, conElem, orientation) {
+  if (transShape.cpnElement.subst)
+    eventBus.fire('portMenuProvider.open', {
+      trans: transShape,
+      place: placeShape,
+      arc: conElem,
+      portType: orientation === 'PtoT' ? 'In' : 'Out',
+      position: {
+        cursor: orientation === 'PtoT'
+          ? { x: transShape.x, y: transShape.y }
+          : { x: placeShape.x, y: placeShape.y }
+      }
+    });
 }
 
 
-function openPortProvider(portMenuProvider, trnsShape){
+function openPortProvider(portMenuProvider, trnsShape) {
   portMenuProvider.open(transShape, { cursor: { x: 609, y: 575 } });
 }
 
@@ -515,12 +566,8 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
 
   var text, defaultValue;
 
-  if (labelType === 'port') {
-    text = cpnLabelElement._type; // for port label
-    if (text === 'I/O') {
-      text = 'In/Out';
-    }
-  }
+  if (labelType === 'port')
+    text = (cpnLabelElement._type === 'I/O') ? 'In/Out' : cpnLabelElement._type;
   else if (labelType === 'subst')
     text = cpnLabelElement._name; // for subst label
   else if (labelType === 'aux')
@@ -568,6 +615,9 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
 
   if (text.trim() === '' || text === defaultValue)
     attrs.hidden = true;
+
+  if (labelType === 'port')
+    console.log('Modeling.prototype.getLabelAttrs(), text = ', text);
 
   return attrs;
 }
@@ -809,7 +859,7 @@ Modeling.prototype.declareSubPage = function (cpnElement, name, pageId) {
     subpageinfo: {
       fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
       lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
-      posattr: { _x: cpnElement.posattr._x, _y: cpnElement.posattr._y - cpnElement.box._h/2 },
+      posattr: { _x: cpnElement.posattr._x, _y: cpnElement.posattr._y - cpnElement.box._h / 2 },
       textattr: { _colour: 'Black', _bold: 'false' },
       _id: cpnElement._id + 'e',
       _name: name
@@ -927,7 +977,7 @@ Modeling.prototype.createElementInModel = function (position, type) {
     relPos['cond'] = { _x: x - w, _y: y + h / 2 };
     relPos['priority'] = { _x: x - w, _y: y - h / 2 };
 
-    relPos['subst'] = { _x: x, _y: y + h / 2 };
+    relPos['subst'] = { _x: x + w / 2, _y: y + h };
 
     for (let label of elemType.entry) {
       newElement[label] = {

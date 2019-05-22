@@ -144,7 +144,7 @@ export class ModelService {
   //   }
   // }
 
-  getcpnet() {
+  getCpn() {
     let cpnet;
 
     if (this.projectData.workspaceElements) {
@@ -947,7 +947,7 @@ export class ModelService {
         targetBlock.block.push(block);
       }
     } else {
-      this.getcpnet().globbox.block.push(block);
+      this.getCpn().globbox.block.push(block);
     }
   }
 
@@ -976,7 +976,7 @@ export class ModelService {
 
   deleteBlock(id) {
     this.saveBackup(this.projectData, undefined);
-    const cpnet = this.getcpnet();
+    const cpnet = this.getCpn();
     cpnet.globbox.block = cpnet.globbox.block.filter(e => e.id !== id);
   }
 
@@ -1151,7 +1151,7 @@ export class ModelService {
    * @returns - new page cpnElement
    */
   createCpnPage(name) {
-    const newPage =  {
+    const newPage = {
       pageattr: {
         _name: name
       },
@@ -1161,14 +1161,6 @@ export class ModelService {
       constraints: '',
       _id: 'ID' + new Date().getTime()
     };
-    // if(this.getcpnet().page) {
-    //   if (!(this.getcpnet().page instanceof Array)) {
-    //     this.getcpnet().page = [this.getcpnet().page];
-    //   }
-    // } else{
-    //   this.getcpnet().page = [];
-    // }
-    // this.getcpnet().page.push(newPage);
 
     return newPage;
   }
@@ -1386,11 +1378,26 @@ export class ModelService {
   /**
    * Get all pages list
    */
-  getAllPages(){
-    if(this.getcpnet().page instanceof Array)
-      return this.getcpnet().page;
-    else
-      return [this.getcpnet().page];
+  getAllPages() {
+    return this.getCpn().page instanceof Array
+      ? this.getCpn().page
+      : [this.getCpn().page];
+  }
+
+  /**
+   * Get page id by name
+   * @param pageName 
+   */
+  getPageId(pageName) {
+    let pageList = this.getCpn().page instanceof Array
+      ? this.getCpn().page
+      : [this.getCpn().page];
+    for (let p of pageList) {
+      if (p.pageattr._name === pageName) {
+        return p._id;
+      }
+    }
+    return undefined;
   }
 
   /**
@@ -1404,6 +1411,7 @@ export class ModelService {
       lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
       posattr: { _x: cpnElement.posattr._x, _y: cpnElement.posattr._y - cpnElement.ellipse._h },
       textattr: { _colour: 'Black', _bold: 'false' },
+      text: portType,
       _id: cpnElement._id + 'e',
       _type: portType === 'In/Out' ? 'I/O' : portType
     };
@@ -1420,7 +1428,7 @@ export class ModelService {
       subpageinfo: {
         fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
         lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
-        posattr: { _x: cpnElement.posattr._x, _y: cpnElement.posattr._y - cpnElement.box._h / 2 },
+        posattr: { _x: cpnElement.posattr._x + cpnElement.box._w / 2, _y: cpnElement.posattr._y - cpnElement.box._h },
         textattr: { _colour: 'Black', _bold: 'false' },
         _id: cpnElement._id + 'e',
         _name: name

@@ -87,7 +87,6 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       case 'delete':
         if (data.element === 'tab') {
           this.tabsComponent.deleteTabById(data.id);
-          //let cpnet = this.modelService.getcpnet();
           this.declarations = this.declarations.filter(e => e.id !== data.id);
           //cpnet.globbox.block = cpnet.globbox.block.filter(e => e.id !== data.id);
           this.modelService.deleteBlock(data.id);
@@ -129,19 +128,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       id: this.projectService.getAppSettings()['block'] + (++this.countNewItems)
     };
     this.declarations.push(newTabBlock);
-    let targetBlock = this.findblockById(id, this.modelService.getcpnet().globbox.block);
-    // if(targetBlock) {
-    //   if(targetBlock.block && targetBlock.block instanceof Array) {
-    //     targetBlock.block.push(newTabBlock);
-    //   } else {
-    //     if(targetBlock.block)
-    //       targetBlock.block = [targetBlock.block];
-    //     else targetBlock.block = []
-    //     targetBlock.block.push(newTabBlock);
-    //   }
-    // } else {
-    //   this.modelService.getcpnet().globbox.block.push(newTabBlock);
-    // }
+    let targetBlock = this.findblockById(id, this.modelService.getCpn().globbox.block);
     this.modelService.createNewBlock(newTabBlock, targetBlock);
     console.log('add new tab');
     this.eventService.send(Message.UPDATE_TREE, {project: this.currentPojectModel, state: state, newNodeId: newTabBlock.id});
@@ -168,7 +155,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       comBlocks = true;
     }
     console.log('add variable click');
-    const cpnet = this.modelService.getcpnet();
+    const cpnet = this.modelService.getCpn();
     let newNode;
     if (this.declarations) {
       let block = this.declarations.find(elem => elem.id === blockId);
@@ -218,24 +205,6 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   // }
 
 
-  /**
-   * delete Parameters button click handler
-   */
-  // deleteItemClick(tabsComp) {
-  //   console.log('DELETE type click');
-  //   let afterDelDec;
-  //   if (this.selectedElemement) {
-  //     afterDelDec = this.declarations.find(e => e.id === this.selectedElemement.tabid);
-  //     afterDelDec[this.selectedElemement.type] = afterDelDec[this.selectedElemement.type].filter(elem => elem._id !== this.selectedElemement.id);
-  //     this.selectedElemement = undefined;
-  //   } else {
-  //     let cpnet = this.getcpnet(this.currentProjectModel.data);
-  //     tabsComp.deleteTabById(tabsComp.selectedTab.id);
-  //     this.declarations = this.declarations.filter(e => e.id !== tabsComp.selectedTab.id);
-  //     cpnet.globbox.block = cpnet.globbox.block.filter(e => e.id !== tabsComp.selectedTab.id);
-  //   }
-  // }
-
   deleteRow(tabsComp, state) {
     console.log('DELETE ROW click');
     let afterDelDec;
@@ -258,7 +227,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   deleteTab(tabsComp, state) {
     console.log('DELETE TAB click, tabsComp = ' + JSON.stringify(tabsComp));
     if (tabsComp) {
-      let cpnet = this.modelService.getcpnet();
+      let cpnet = this.modelService.getCpn();
       tabsComp.deleteTabById(tabsComp.selectedTab.id);
       this.declarations = this.declarations.filter(e => e.id !== tabsComp.selectedTab.id);
       cpnet.globbox.block = cpnet.globbox.block.filter(e => e.id !== tabsComp.selectedTab.id);
@@ -284,7 +253,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     const projectData = project.data;
     const projectName = project.name;
     this.tabsComponent.clear();
-    const cpnet = this.modelService.getcpnet();
+    const cpnet = this.modelService.getCpn();
 
     console.log('ProjectDetailsComponent ----- LoadData');
 
@@ -757,46 +726,5 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   isDeclarationBlock(tabId): boolean {
     return !this.paramsTypes.includes(tabId);
   }
-
-
-  /**
-   * The function collects data from the modified table and aply it to model
-   * @param tableDataSource
-   * @param table
-   */
-  /*updateProperties(tableDataSource, table) {
-    var rowLength = table.rows.length;
-    for (var i = 1; i < rowLength; i += 1) {
-      var input = table.rows[i].cells[1].textContent;
-      console.log(input);
-      tableDataSource[i - 1].ml = input;
-      tableDataSource[i - 1].id = table.rows[i].cells[0].textContent;
-      console.log('ENTER On property pield' + this.nodes[i]);
-    }
-    const cpnet = this.getcpnet(this.currentProjectModel.data);
-    if (cpnet) {
-      if (cpnet.globbox) {
-        if (cpnet.globbox.block) {
-
-          // GlobBox
-          // --------------------------------------
-          for (var block of cpnet.globbox.block) {
-
-            // Parameters
-            // -------------------------------
-            if (block.id === 'Parameters') {
-              block.var = this.nodes;
-              this.showTable = false;
-              setTimeout(()=>{ this.showTable = true}, 0);
-              // this.eventService.send(Message.UPDATE_GLOBBOX, {project: this.currentProjectModel});
-
-            }
-            // -------------------------------
-          }
-        }
-      }
-    }
-  }*/
-
 
 }

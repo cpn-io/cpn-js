@@ -239,7 +239,7 @@ export class ModelEditorComponent implements OnInit {
       console.log('PROPERTY_UPDATE, element = ', element);
 
       this.modeling.updateElement(element);
-      this.modeling.updateElementBounds(element);
+      // this.modeling.updateElementBounds(element);
       // this.selectedElement = element;
 
       this.modelUpdate();

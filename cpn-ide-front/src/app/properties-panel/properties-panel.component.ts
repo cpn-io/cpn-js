@@ -165,7 +165,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   }
 
 
-  getAllPages() {
+  getSubstPages() {
     const pages = this.modelService.getAllPages();
     const pageNames = [''];
     for (const page of pages) {
@@ -177,7 +177,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
   getPort(cpnElement) {
     return cpnElement.port
-      ? { value: cpnElement.port._type }
+      ? { value: cpnElement.port._type === 'I/O' ? 'In/Out' : cpnElement.port._type }
       : { value: '' };
   }
 
@@ -190,13 +190,22 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   updatePortType(event) {
     console.log(this.constructor.name, 'updatePortType(), event = ', event);
 
-    const portType = event;
+    const portType = event.trim();
 
     if (!this.cpnElement)
       return;
+
+    if (portType === '') {
+      delete this.cpnElement.port;
+      this.updateChanges();
+      return;
+    }
+
     if (!this.cpnElement.port)
       this.cpnElement.port = this.modelService.createPortObject(this.cpnElement, portType);
-    this.cpnElement.port._type = portType === 'In/Out' ? 'I/O' : portType;
+
+    this.cpnElement.port.text = portType;
+    this.cpnElement.port._type = (portType === 'In/Out') ? 'I/O' : portType;
 
     console.log(this.constructor.name, 'updatePortType(), this.cpnElement = ', this.cpnElement);
 
@@ -205,6 +214,28 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
   updateSubst(event) {
     console.log(this.constructor.name, 'updateSubst(), event = ', event);
+
+    const pageName = event.trim();
+
+    if (!this.cpnElement)
+      return;
+
+    if (pageName === '') {
+      delete this.cpnElement.subst;
+      this.updateChanges();
+      return;
+    }
+
+    let pageId = this.modelService.getPageId(pageName);
+
+    if (!this.cpnElement.subst)
+      this.cpnElement.subst = this.modelService.createSubstObject(this.cpnElement, pageName, pageId);
+
+    this.cpnElement.subst.subpageinfo.text = pageName;
+    this.cpnElement.subst.subpageinfo._name = pageName;
+    this.cpnElement.subst._subpage = pageId;
+
+    console.log(this.constructor.name, 'updateSubst(), this.cpnElement = ', this.cpnElement);
 
     this.updateChanges();
   }

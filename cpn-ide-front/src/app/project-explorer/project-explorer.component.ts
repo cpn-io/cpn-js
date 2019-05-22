@@ -309,13 +309,13 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     } else if (element.type === 'cpn:Transition') {
       elementId = element.cpnElement._id;
-      if (this.modelService.getcpnet()) {
-        if (this.modelService.getcpnet().page instanceof Array) {
-          for (const page of this.modelService.getcpnet().page) {
+      if (this.modelService.getCpn()) {
+        if (this.modelService.getCpn().page instanceof Array) {
+          for (const page of this.modelService.getCpn().page) {
             this.processPage(page, elementId);
           }
         } else {
-          this.processPage(this.modelService.getcpnet().page, elementId);
+          this.processPage(this.modelService.getCpn().page, elementId);
         }
       }
     }
@@ -1514,6 +1514,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     pagesNode.actions = ['page'];
 
     var pageNodeList = [];
+
+
+    console.log('createPagesNode(), cpnElement.page = ', cpnElement.page);
 
     // Page nodes, create and save it to pageNodeList
     if (cpnElement.page instanceof Array) {

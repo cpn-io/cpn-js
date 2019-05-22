@@ -36,19 +36,18 @@
       </div>
 
       <!-- Port Labels -->
-      <app-text-edit-row *ngIf="cpnElement.ellipse" type="select" name="Port type"
-        [object]="getPort(cpnElement)" field="value" (changed)="updatePortType($event)"
-        [options]="portTypes">
+      <app-text-edit-row *ngIf="cpnElement.ellipse" type="select" name="Port type" [object]="getPort(cpnElement)"
+        field="value" (changed)="updatePortType($event)" [options]="portTypes">
       </app-text-edit-row>
 
       <!-- Subst Labels -->
-      <app-text-edit-row *ngIf="cpnElement.box" type="select" name="Suppage"
-        [object]="getSubst(cpnElement)" field="value" (changed)="updateSubst($event)" [options]="getAllPages()">
+      <app-text-edit-row *ngIf="cpnElement.box" type="select" name="Suppage" [object]="getSubst(cpnElement)"
+        field="value" (changed)="updateSubst($event)" [options]="getSubstPages()">
       </app-text-edit-row>
 
       <!-- PortSock -->
       <app-text-edit-row *ngIf="cpnElement.subst" name="PortSock" [object]="cpnElement.subst" field="_portsock"
-        (changed)="updateChanges()">
+        readonly="true">
       </app-text-edit-row>
 
       <!-- Direction (only for acrs) -->
@@ -68,17 +67,21 @@
 
       <!-- Shape Position -->
       <div *ngIf="cpnElement.posattr && !cpnElement._orientation">
-        <app-text-edit-row type="int" name="X" readonly="true" [object]="cpnElement.posattr" field="_x" (changed)="updateChanges()">
+        <app-text-edit-row type="int" name="X" readonly="true" [object]="cpnElement.posattr" field="_x"
+          (changed)="updateChanges()">
         </app-text-edit-row>
-        <app-text-edit-row type="int" name="Y" readonly="true" [object]="cpnElement.posattr" field="_y" (changed)="updateChanges()">
+        <app-text-edit-row type="int" name="Y" readonly="true" [object]="cpnElement.posattr" field="_y"
+          (changed)="updateChanges()">
         </app-text-edit-row>
       </div>
 
       <!-- Shape Dimention -->
       <div *ngFor="let form of ['ellipse', 'box']">
-        <app-text-edit-row type="int" name="Width" readonly="true" [object]="cpnElement[form]" field="_w" (changed)="updateChanges()">
+        <app-text-edit-row type="int" name="Width" readonly="true" [object]="cpnElement[form]" field="_w"
+          (changed)="updateChanges()">
         </app-text-edit-row>
-        <app-text-edit-row type="int" name="Height" readonly="true" [object]="cpnElement[form]" field="_h" (changed)="updateChanges()">
+        <app-text-edit-row type="int" name="Height" readonly="true" [object]="cpnElement[form]" field="_h"
+          (changed)="updateChanges()">
         </app-text-edit-row>
       </div>
 

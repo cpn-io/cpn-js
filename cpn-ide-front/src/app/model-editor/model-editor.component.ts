@@ -189,11 +189,17 @@ export class ModelEditorComponent implements OnInit {
     eventBus.on('portMenuProvider.open', (event) => {
       if(event.trans && event.trans.cpnElement && event.trans.cpnElement.subst) {
         let pageObj = this.modelService.getPageById(event.trans.cpnElement.subst._subpage);
-        let list = [];
-        for (let place of pageObj.place) {
-          if (place.port && (place.port._type === 'I/O' || place.port._type === event.portType )) list.push({id: place._id, name: place.text, type: place.port._type});
+        if(pageObj) {
+          let list = [];
+          for (let place of pageObj.place) {
+            if (place.port && (place.port._type === 'I/O' || place.port._type === event.portType)) list.push({
+              id: place._id,
+              name: place.text,
+              type: place.port._type
+            });
+          }
+          this.portMenuProvider.open({trans: event.trans, place: event.place, arc: event.arc, list: list}, event.position);
         }
-        this.portMenuProvider.open({trans: event.trans, place: event.place, arc: event.arc, list: list}, event.position);
       }
     });
     eventBus.on('bind.port.cancel', (event) => {
@@ -219,7 +225,7 @@ export class ModelEditorComponent implements OnInit {
         let cpnElement = this.modeling.createElementInModel(position, CPN_TRANSITION);
         cpnElement = this.modeling.declareSubPage(cpnElement, data.name, data.id);
         let element = this.cpnFactory.createShape(undefined, cpnElement, CPN_TRANSITION, position, true);
-
+        this.modelService.addElementJsonOnPage(cpnElement, this.pageId, CPN_TRANSITION);
       }
 
     });

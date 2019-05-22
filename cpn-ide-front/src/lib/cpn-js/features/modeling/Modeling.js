@@ -372,7 +372,7 @@ Modeling.prototype.createNewConnection = function (placeShape, transShape, orien
           this._canvas.addShape(label, root);
         }
       }
-      openPortMenu(this._eventBus, transShape, placeShape, connection, connection.orientation);
+      openPortMenu(this._eventBus, transShape, placeShape, connection, connection.cpnElement._orientation);
 
       return connection;
     }

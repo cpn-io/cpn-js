@@ -91,9 +91,14 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     'In/Out'
   ];
 
+ private pages = [];
 
   private getPort(portObject, cpnEelement){
-    return portObject ? {obj: cpnEelement, pobj: portObject} : {obj: cpnEelement, state: 'none'};
+    return portObject ? {obj: cpnEelement, pobj: portObject, val: portObject._type} : {obj: cpnEelement, state: 'none', val: 'none'};
+  }
+
+  private getSubst(substObject, cpnEelement){
+    return substObject ? {obj: cpnEelement, subsobj: substObject} : {obj: cpnEelement, state: 'none'};
   }
 
   private layoutPartOpened: boolean[] = [];
@@ -591,6 +596,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     this.eventService.on(Message.PROJECT_FILE_OPEN, (data) => {
       this.clearData();
       this.currentProjectModel = data.project;
+      this.pages =  this.modelService.getAllPages()
     });
 
     this.eventService.on(Message.PROJECT_LOAD, (data) => {

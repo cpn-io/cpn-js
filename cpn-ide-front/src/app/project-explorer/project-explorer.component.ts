@@ -571,6 +571,15 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         treeNode.data.children.push(newNode);
       } else if (treeNode.parent) {
         treeNode.parent.data.children.push(newNode);
+        if (treeNode.data.type === 'page' && treeNode.data.id !== 'Pages') {
+          this.eventService.send(Message.SUBPAGE_CREATE, {
+            name: newNode.name,
+            id: newNode.id,
+            parentid: treeNode.id,
+            event: event,
+            state: this.treeComponent.treeModel.getState()
+          });
+        }
       }
 
       this.treeComponent.treeModel.update();
@@ -786,21 +795,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   // Функция вычисляет, будет ли схлопываться/разворачиваться содержимое метки узла.
   canCollapse(node: any): boolean {
     return this.canEdit(node) && node.children === undefined;
-  }
-
-  isMonitor(node) {
-    return node.data
-      && node.data.type.startWith('monitor');
-  }
-
-  isMonitorType(node) {
-    return node.data
-      && node.data.type === 'monitor_type';
-  }
-
-  isMonitorOption(node) {
-    return node.data
-      && node.data.type === 'monitor_option';
   }
 
   isOption(node) {
@@ -1580,7 +1574,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * @param cpnElement - cpn JSON object
    * @returns - tree node
    */
-  createMonitorsNode(name, cpnElement) {
+  createMonitorsNode(name, cpnElement): any {
     const monitorsNode = this.createTreeNode(name);
     monitorsNode.classes = ['tree-project'];
     monitorsNode.cpnElement = cpnElement;
@@ -1610,8 +1604,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * @returns - tree node
    */
   createMonitorNode(cpnElement) {
-    console.log('--------------createMonitorNode');
-    console.log(cpnElement);
+    // console.log('--------------createMonitorNode');
+    // console.log(cpnElement);
     const node = this.createTreeNode(cpnElement._id, cpnElement._name);
     node.cpnElement = cpnElement;
     node.editable = true;
@@ -1620,13 +1614,13 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     // typedescription
     var subnodes = [];
-    const monTypeNode = this.createTreeNode('montype_' + cpnElement._id, cpnElement._typedescription);
+    const monTypeNode = this.createTreeNode('monitor_type_' + cpnElement._id, cpnElement._typedescription);
     monTypeNode.cpnElement = cpnElement;
     monTypeNode.editable = true;
     monTypeNode.type = 'monitor_type';
 
-    var options = [];
     // options
+    var options = [];
     if (cpnElement.option instanceof Array) {
       for (const option of cpnElement.option) {
         const opt = this.createMonitorOptionNode(cpnElement, option);
@@ -1641,26 +1635,46 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     node.children = subnodes;
 
-    console.log(node);
+    // console.log(node);
     return node;
   }
 
-  createMonitorOptionNode (cpnElement, option) {
-    const monOptNode = this.createTreeNode('monoption_' + cpnElement._id, option._name);
+  createMonitorOptionNode(cpnElement, option) {
+    const monOptNode = this.createTreeNode('monitor_option_' + cpnElement._id, option._name);
     monOptNode.cpnElement = option;
     monOptNode.editable = false;
     monOptNode.type = 'monitor_option';
-  return monOptNode;
+    return monOptNode;
   }
 
-  getMonitorOption() {
-
+  isMonitor(node) {
+    return node.data
+      && node.data.type.startWith('monitor');
   }
 
-  setMonitorOption() {
-
+  isMonitorType(node) {
+    return node.data
+      && node.data.type === 'monitor_type';
   }
 
+  isMonitorOption(node) {
+    return node.data
+      && node.data.type === 'monitor_option';
+  }
+
+  getMonitorOption(node): boolean {
+    return node.data &&
+      node.data.cpnElement &&
+      node.data.cpnElement &&
+      node.data.cpnElement._value === 'true';
+  }
+
+  setMonitorOption(event, node) {
+    console.log('setMonitorOption(), event = ', event);
+    if (event.target) {
+      node.data.cpnElement._value = event.target.checked ? 'true' : 'false';
+    }
+  }
 
   /**
    * Get root cpnet element from CPN project JSON object

@@ -13,22 +13,22 @@
 
         <!-- Action buttons -->
         <div *ngIf="selectedNode && selectedNode.data && selectedNode.data.actions ? true : false"
-          style="display: contents">
+             style="display: contents">
 
           <!-- New action with dropdown menu -->
           <li class="dropdown nav-item">
             <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle nav-link" data-toggle="dropdown"
-              href="#" id="navbarDropdown">
+               href="#" id="navbarDropdown">
               <i class="fas fa-plus"></i>
               <span>New</span>
             </a>
             <div aria-labelledby="navbarDropdown" class="dropdown-menu shadow">
               <a *ngIf="selectedNode.data.actions.includes('block')" (click)="onAddNode(selectedNode, 'block')"
-                class="dropdown-item" href="#">New block</a>
+                 class="dropdown-item" href="#">New block</a>
               <a *ngIf="selectedNode.data.actions.includes('declaration')"
-                (click)="onAddNode(selectedNode, 'declaration')" class="dropdown-item" href="#">New declaration</a>
+                 (click)="onAddNode(selectedNode, 'declaration')" class="dropdown-item" href="#">New declaration</a>
               <a *ngIf="selectedNode.data.actions.includes('page')" (click)="onAddNode(selectedNode, 'page')"
-                class="dropdown-item" href="#">New page</a>
+                 class="dropdown-item" href="#">New page</a>
             </div>
           </li>
 
@@ -52,7 +52,7 @@
       <!-- Project tree filter -->
       <ul class="navbar-nav ml-auto">
         <li>
-          <input (input)="changeFilter($event.target.value)" [value]="filterText" placeholder="Filter" type="text" />
+          <input (input)="changeFilter($event.target.value)" [value]="filterText" placeholder="Filter" type="text"/>
         </li>
 
         <li class="nav-item">
@@ -72,7 +72,7 @@
           <div class="pane" style="padding:10px">
 
             <tree-root #tree [nodes]="nodes" [options]="options" (activate)="activateNode($event)"
-              (ngModelChange)="treeModelChanged($event)">
+                       (ngModelChange)="treeModelChanged($event)">
               <ng-template #treeNodeTemplate let-node let-index="index">
 
                 <div [ngClass]="node.data.classes">
@@ -90,27 +90,31 @@
                           </span>
                         </span>
                         <span *ngIf="node.parent.parent === null">Project: </span>
-                      </td>
-
-                      <!-- Checkbox for boolean option -->
-                      <td *ngIf="isBooleanOption(node)" style="padding-right: 5px">
-                        <input type="checkbox" [checked]="getBooleanOption(node)"
-                          (change)="setBooleanOption($event, node)">
+                        <span *ngIf="isMonitorType(node)">Type: </span>
                       </td>
 
                       <!-- Tree node label (can be editable) -->
                       <td class="node"
-                        [ngClass]="{'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id)}">
+                          [ngClass]="{'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id)}">
 
-                        <div *ngIf="!node.id.toString().startsWith('option_')" [id]="'textinpfield_' + node.id"
-                          class="editablenode" 
-                          (click)="onNodeLabelClick($event, node)"
-                          (focusout)="saveEditedData($event, node)"
-                          [contentEditable]="canEdit(node) && (openedLabel[node.id] || (editableNode === node))"
-                          [innerHTML]="getLabel(node) | colorDeclarations | safeHtml">
+                        <div *ngIf="!isOption(node)" [id]="'textinpfield_' + node.id"
+                             class="editablenode"
+                             (click)="onNodeLabelClick($event, node)"
+                             (focusout)="saveEditedData($event, node)"
+                             [contentEditable]="canEdit(node) && (openedLabel[node.id] || (editableNode === node))"
+                             [innerHTML]="getLabel(node) | colorDeclarations | safeHtml">
                         </div>
-                        <div *ngIf="node.id.toString().startsWith('option_')" [innerHTML]="node.id | optionName">
-                        </div>
+                      </td>
+
+                      <!-- Checkbox for boolean option -->
+                      <td *ngIf="isBooleanOption(node)" style="padding-right: 5px;">
+                        <input type="checkbox" [checked]="getBooleanOption(node)" style="margin-top: 3px"
+                               (change)="setBooleanOption($event, node)">
+                      </td>
+
+                      <!-- Name of the option-->
+                      <td *ngIf="isOption(node)">
+                        <div [innerHTML]="node.id | optionName"></div>
                       </td>
 
                       <!-- Text input for text option -->
@@ -119,23 +123,24 @@
                       </td>
 
                     </tr>
+
                   </table>
 
                   <!-- Tree node context menu -->
                   <div *ngIf="node.data.actions ? true : false" class="dropdown-menu dropdown-menu-fixed shadow"
-                    id="context-menu-{{node.id | replaceSpaces}}">
+                       id="context-menu-{{node.id | replaceSpaces}}">
 
                     <a *ngIf="node.data.actions.includes('block')" (click)="onAddNode(node, 'block')"
-                      class="dropdown-item" href="#">New block</a>
+                       class="dropdown-item" href="#">New block</a>
                     <a *ngIf="node.data.actions.includes('declaration')" (click)="onAddNode(node, 'declaration')"
-                      class="dropdown-item" href="#">New declaration</a>
+                       class="dropdown-item" href="#">New declaration</a>
                     <a *ngIf="node.data.actions.includes('page')" (click)="onAddNode(node, 'page')"
-                      class="dropdown-item" href="#">New page</a>
+                       class="dropdown-item" href="#">New page</a>
 
                     <div *ngIf="node.data.actions.length > 1" class="dropdown-divider" href="#"></div>
 
                     <a *ngIf="node.data.actions.includes('delete')" (click)="onDeleteNode(node)" class="dropdown-item"
-                      href="#">Delete</a>
+                       href="#">Delete</a>
                   </div>
 
                 </div>
@@ -156,7 +161,7 @@
   <!------------------------------>
   <tab [id]="'Application settings'" [tabTitle]="'Application settings'">
     <table [id]="'application-settings-table'" class="table table-bordered table-hover table-small"
-      *ngIf="showTable !== 'application-settings-table'">
+           *ngIf="showTable !== 'application-settings-table'">
       <tr *ngFor="let item of appSettingsKeys">
         <td width="50%" class="valueName">{{ item}}</td>
         <td width="50%" contenteditable='true'>{{ appSettings[item] }}</td>

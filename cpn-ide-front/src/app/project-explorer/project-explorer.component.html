@@ -93,6 +93,11 @@
                         <span *ngIf="isMonitorType(node)">Type: </span>
                       </td>
 
+                      <td *ngIf="isMonitorOption(node)" style="padding-right: 5px;">
+                        <input type="checkbox" [checked]="getMonitorOption(node)" style="margin-top: 3px"
+                               (change)="setMonitorOption($event, node)">
+                      </td>
+
                       <!-- Tree node label (can be editable) -->
                       <td class="node"
                           [ngClass]="{'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id)}">

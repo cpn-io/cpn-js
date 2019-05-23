@@ -332,12 +332,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       // разбираем инитмарк и находим в нем литералы
       this.processMlCodeRecursively(element.cpnElement.initmark.text.toString());
 
-      // find monitors
-      // this.processMonitors(element.name, 'place');
-
     } else if (element.type === 'cpn:Transition') {
-      // console.log(this.nodes[0]);
-      // this.processMonitors(element.name, 'transition');
       elementId = element.cpnElement._id;
       if (this.modelService.getCpn()) {
         if (this.modelService.getCpn().page instanceof Array) {
@@ -349,20 +344,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         }
       }
     }
-
-  }
-
-  processMonitors(elementName, elementType) {
-    // console.log(this.nodes[0].cpnElement.monitorblock);
-    if (this.nodes[0].cpnElement.monitorblock && this.nodes[0].cpnElement.monitorblock.monitor) {
-      if (this.nodes[0].cpnElement.monitorblock.monitor instanceof Array) {
-        for (const m of this.nodes[0].cpnElement.monitorblock.monitor) {
-          this.underlineRelationsRecursively(m, elementName + ' )' + elementType + ')');
-        }
-      } else {
-        this.underlineRelationsRecursively(this.nodes[0].cpnElement.monitorblock.monitor, elementName + ' )' + elementType + ')');
-      }
-    }
+    this.underlineInMonitors(element.id);
   }
 
   /**
@@ -456,6 +438,52 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         for (const lit of goodLiterals) {
           this.underlineRelationsRecursively(this.nodes[0], lit);
         }
+      }
+    }
+  }
+
+  underlineInMonitors(id) {
+    let result = false;
+    let found = false;
+    for (const monitors of this.nodes[0].children) {
+      if (monitors.id === 'Monitors') {
+        if (monitors.children) {
+          for (const monitor of monitors.children) {
+            if (monitor.children) {
+              for (const nodesOrdered of monitor.children) {
+                if (nodesOrdered.name === 'Nodes ordered by pages' && nodesOrdered.children) {
+                  for (const page of nodesOrdered.children) {
+                    if (page.children) {
+                      for (const idref of page.children) {
+                        const refs = idref.id.split('_');
+                        if (refs.indexOf(id) > -1) {
+                          found = true;
+                          this.doUnderlineNodeLabel(true, idref.id);
+                          break;
+                        }
+                      }
+                      if (found) {
+                        this.doUnderlineNodeLabel(true, page.id);
+                        break;
+                      }
+                    }
+                  }
+                  if (found) {
+                    this.doUnderlineNodeLabel(true, nodesOrdered.id);
+                    break;
+                  }
+                }
+              }
+              if (found) {
+                this.doUnderlineNodeLabel(true, monitor.id);
+                this.doUnderlineNodeLabel(true, monitors.id);
+                found = false;
+                continue;
+              }
+            }
+          }
+        }
+        break;
       }
     }
   }

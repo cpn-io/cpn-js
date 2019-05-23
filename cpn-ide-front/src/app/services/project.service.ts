@@ -142,9 +142,9 @@ export class ProjectService {
     // const modelFile = 'test-1.cpn';
     // const modelFile = 'test-2.cpn';
 
-    const modelFile = 'mynet.cpn';
+    // const modelFile = 'mynet.cpn';
 
-    // const modelFile = 'fuelstation.cpn';
+    const modelFile = 'fuelstation.cpn';
 
     const url = './assets/cpn/' + modelFile;
     this.http.get(url, { headers: headers, responseType: 'text' })

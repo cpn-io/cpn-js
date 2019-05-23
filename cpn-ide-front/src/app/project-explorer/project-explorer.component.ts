@@ -891,7 +891,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         let result;
         const data = node.data.name.toString();
         try {
-          const array = data.match('^((local){1}\\s+)*(globref|colset|var|val|fun|exception){1}\\s+[a-zA-Z0-9_]+');
+          const array = data.match('^((local){1}\\s+)*(globref|colset|var|val|fun|exception){1}\\s+[a-zA-Z0-9_\\s,]+');
           result = array[0];
         } catch (e) {
           try {

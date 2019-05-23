@@ -100,6 +100,7 @@ import { SettingsService } from './services/settings.service';
 export class AppModule {
   constructor(
     private projectService: ProjectService,
-    private modelService: ModelService) {
+    private modelService: ModelService
+    ) {
   }
 }

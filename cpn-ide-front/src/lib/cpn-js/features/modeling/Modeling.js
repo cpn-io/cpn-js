@@ -106,15 +106,17 @@ Modeling.prototype.setCpnStatus = function (event) {
 Modeling.prototype.updateLabel = function (element, newLabel, newBounds, hints) {
   // console.log('Modeling().updateLabel(), newBounds = ', newBounds);
 
-  if (newBounds.width < 10)
-    newBounds.width = 10;
+  if (newBounds) {
+    if (newBounds.width < 10)
+      newBounds.width = 10;
 
-  this._commandStack.execute('element.updateLabel', {
-    element: element,
-    newLabel: newLabel,
-    newBounds: newBounds,
-    hints: hints || {}
-  });
+    this._commandStack.execute('element.updateLabel', {
+      element: element,
+      newLabel: newLabel,
+      newBounds: newBounds,
+      hints: hints || {}
+    });
+  }
 };
 
 Modeling.prototype.updateElement = function (element) {

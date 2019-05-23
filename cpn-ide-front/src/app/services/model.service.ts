@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { EventService } from './event.service';
 import { Message } from '../common/message';
-import { AccessCpnService } from './access-cpn.service.js';
+import { AccessCpnService } from './access-cpn.service';
 import { SettingsService } from '../services/settings.service';
 
 
@@ -34,7 +34,7 @@ export class ModelService {
   constructor(private eventService: EventService,
     private accessCpnService: AccessCpnService,
     private settings: SettingsService
-    ) {
+  ) {
     console.log('ModelService instance CREATED!');
 
     this.eventService.on(Message.PROJECT_LOAD, (data) => {
@@ -196,17 +196,22 @@ export class ModelService {
   }
 
 
-  addElementJsonOnPage(CpnElement, pageId, type) {
+  addElementJsonOnPage(cpnElement, pageId, type) {
+    console.log('addElementJsonOnPage()', cpnElement, pageId, type);
+
     this.saveBackup(this.projectData, pageId);
+
     const jsonPageObject = this.getPageById(pageId);
+    console.log('addElementJsonOnPage(), jsonPageObject = ', jsonPageObject);
+
     if (jsonPageObject[this.modelCase[type]] instanceof Array) {
-      jsonPageObject[this.modelCase[type]].push(CpnElement);
+      jsonPageObject[this.modelCase[type]].push(cpnElement);
     } else {
       if (jsonPageObject[this.modelCase[type]]) {
-        const curentElem = jsonPageObject[this.modelCase[type]];
-        jsonPageObject[this.modelCase[type]] = [curentElem, CpnElement];
+        const currentElem = jsonPageObject[this.modelCase[type]];
+        jsonPageObject[this.modelCase[type]] = [currentElem, cpnElement];
       } else {
-        jsonPageObject[this.modelCase[type]] = [CpnElement];
+        jsonPageObject[this.modelCase[type]] = [cpnElement];
       }
     }
   }
@@ -1451,15 +1456,26 @@ export class ModelService {
 
 
 
+  /**
+   * Getting all port places for transition 
+   * @param cpnElement 
+   * @param transEnd 
+   */
   getAllPorts(cpnElement, transEnd) {
-
     let ports = [];
-    if (transEnd.subst) {
+    console.log('getAllPorts(), transEnd = ', transEnd);
 
+    if (transEnd.subst) {
       let page = this.getPageById(transEnd.subst._subpage);
       if (page) {
+        console.log('getAllPorts(), page = ', page);
+
         for (let place of page.place) {
-          if (place.port && (place.port._type === 'I/O' || place.port._type === (cpnElement._orientation === 'TtoP' ? 'Out' : 'In'))) {
+          console.log('getAllPorts(), place = ', place);
+          console.log('getAllPorts(), place.port = ', place.port);
+          if (place.port
+            && (place.port._type === 'I/O'
+              || place.port._type === (cpnElement._orientation === 'TtoP' ? 'Out' : 'In'))) {
             ports.push(place);
           }
         }

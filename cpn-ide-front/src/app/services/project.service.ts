@@ -6,7 +6,7 @@ import { Message } from '../common/message';
 import { Constants } from '../common/constants.js';
 
 import { xml2json } from '../../lib/xml2json//xml2json.js';
-import { ModelService } from './model.service.js';
+import { ModelService } from './model.service';
 
 /**
  * Common service for getting access to project data from all application
@@ -21,7 +21,7 @@ export class ProjectService {
 
   constructor(private eventService: EventService,
     private http: HttpClient,
-    // private modelService: ModelService
+    private modelService: ModelService
     ) {
 
     console.log('ProjectService instance CREATED!');
@@ -103,7 +103,7 @@ export class ProjectService {
     localStorage.setItem('projectJson', JSON.stringify(json));
 
     this.project = { data: json, name: filename };
-    // this.modelService.loadProject(this.project);
+    this.modelService.loadProject(this.project, true);
     this.eventService.send(Message.PROJECT_LOAD, this.project);
   }
 

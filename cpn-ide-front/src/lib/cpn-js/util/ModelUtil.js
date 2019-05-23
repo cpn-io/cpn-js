@@ -47,5 +47,9 @@ export function isAny(element, types) {
  * @return {ModdleElement}
  */
 export function getBusinessObject(element) {
-  return (element && element.businessObject) || element;
+  return element && element.cpnElement;
+}
+
+export function getText(element) {
+  return element.name || element.text || '';
 }

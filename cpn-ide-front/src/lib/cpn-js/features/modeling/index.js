@@ -13,6 +13,7 @@ import CpnFactory from "./CpnFactory";
 import AdaptiveLabelPositioningBehavior from './AdaptiveLabelPositioningBehavior';
 import StateProvider from './StateProvider';
 import ChangeSupporter from './ChangeSupporter';
+import LabelBehavior from './LabelBehavior';
 
 export default {
   __depends__: [
@@ -27,15 +28,19 @@ export default {
     'layouter',
     'cpnUpdater',
     'cpnFactory',
-    'adaptiveLabelPositioningBehavior',
     'stateProvider',
     'changeSupporter',
+
+    'adaptiveLabelPositioningBehavior',
+    'labelBehavior',
   ],
   modeling: [ 'type', Modeling ],
   layouter: [ 'type', CpnLayouter ],
   cpnUpdater: [ 'type', CpnUpdater ],
   cpnFactory : [ 'type', CpnFactory],
-  adaptiveLabelPositioningBehavior: [ 'type', AdaptiveLabelPositioningBehavior ],
   stateProvider: [ 'type', StateProvider ],
   changeSupporter: [ 'type', ChangeSupporter ],
+
+  adaptiveLabelPositioningBehavior: [ 'type', AdaptiveLabelPositioningBehavior ],
+  labelBehavior: [ 'type', LabelBehavior ],
 };

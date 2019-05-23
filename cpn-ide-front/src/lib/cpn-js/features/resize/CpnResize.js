@@ -19,28 +19,28 @@ CpnResize.$inject = [
 
 inherits(CpnResize, Resize);
 
-CpnResize.prototype.computeMinResizeBox = function(context) {
-  console.log('CpnResize.prototype.computeMinResizeBox(), context = ', context);
+// CpnResize.prototype.computeMinResizeBox = function(context) {
+//   console.log('CpnResize.prototype.computeMinResizeBox(), context = ', context);
 
-  var shape = context.shape,
-    direction = context.direction,
-    minDimensions,
-    childrenBounds;
+//   var shape = context.shape,
+//     direction = context.direction,
+//     minDimensions,
+//     childrenBounds;
 
-  // minDimensions = context.minDimensions || {
-  //   width: 10,
-  //   height: 10
-  // };
-  //
-  // return minDimensions;
+//   // minDimensions = context.minDimensions || {
+//   //   width: 10,
+//   //   height: 10
+//   // };
+//   //
+//   // return minDimensions;
 
-  var box = {
-    x: shape.x,
-    y: shape.y,
-    width: 10,
-    height: 10
-  };
+//   var box = {
+//     x: shape.x,
+//     y: shape.y,
+//     width: 10,
+//     height: 10
+//   };
 
-  return box;
+//   return box;
 
-};
+// };

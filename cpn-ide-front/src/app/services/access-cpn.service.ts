@@ -14,11 +14,21 @@ export class AccessCpnService {
 
   simInitialized = false;
 
+  userSessionId;
+
   constructor(private http: HttpClient,
-    private projectService: ProjectService,
     private eventService: EventService) {
   }
 
+  generateUserSession() {
+    this.userSessionId = 'ID' + new Date().getTime();
+    console.log('generateUserSession - new id -', this.userSessionId);
+    return this.userSessionId;
+  }
+
+  getUserSessionId() {
+    return this.userSessionId;
+  }
 
   public postData(net: string, jsonnet: any) {
     // let temp;
@@ -50,27 +60,27 @@ export class AccessCpnService {
     //   const gr = this.getXMlDescription(netJson);
     const xml = (x2js.json2xml_str(JSON.parse(JSON.stringify(netJson)))); /// netJson
     // console.log('NET xml--' + xml);
-    let userId = this.projectService.getUserSessionId();
+    let userId = this.getUserSessionId();
     console.log('verifyAllNet generate sessionID --', userId)
-    return this.http.post('api/cpn/verifi', [{ 'xml': xml, 'sessionId': userId ? userId : this.projectService.generateUserSession() }]);
+    return this.http.post('api/cpn/verifi', [{ 'xml': xml, 'sessionId': userId ? userId : this.generateUserSession() }]);
     // return this.http.post('api/cpn/verifi', [{'xml': JSON.stringify(netJson)}]);
   }
 
   getMarking(id: String) {
     console.log('getMarking for place ' + id);
-    let userId = this.projectService.getUserSessionId();
+    let userId = this.getUserSessionId();
     return this.http.post('api/cpn/marking', [{ 'id': id ? id : '', 'sessionId': userId }]);
   }
 
   makeStep(id: String) {
     console.log('makeStep for trans ' + id);
-    let userId = this.projectService.getUserSessionId();
+    let userId = this.getUserSessionId();
     return this.http.post('api/cpn/step', [{ 'id': id, 'sessionId': userId }]);
   }
 
   getEnableTransitions(id: String) {
     console.log('getMarking for place ' + id);
-    let userId = this.projectService.getUserSessionId();
+    let userId = this.getUserSessionId();
     return this.http.post('api/cpn/enable', [{ 'id': id, 'sessionId': userId }]);
   }
 
@@ -174,6 +184,8 @@ export class AccessCpnService {
       this.sessionId = 'CPN-IDE-SESSION-' + new Date().getTime();
     }
 
+    // this.verifyAllNet(cpnJson);
+
     const x2js = new X2JS();
     const cpnXml = x2js.json2xml_str(JSON.parse(JSON.stringify(cpnJson)));
 
@@ -227,6 +239,7 @@ export class AccessCpnService {
 
   resetSim() {
     this.simInitialized = false;
+    this.generateUserSession();
   }
 
   initSim() {
@@ -258,6 +271,8 @@ export class AccessCpnService {
 
 
   getTokenMarks() {
+    console.log('AccessCpnService, getTokenMarks(), this.sessionId = ', this.sessionId);
+
     if (!this.sessionId) {
       return;
     }
@@ -266,7 +281,6 @@ export class AccessCpnService {
       (data: any) => {
         console.log('AccessCpnService, getTokenMarks(), SUCCESS, data = ', data);
         this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: data });
-        this.simInitialized = true;
       },
       (error) => {
         console.error('AccessCpnService, getTokenMarks(), ERROR, data = ', error);
@@ -274,5 +288,21 @@ export class AccessCpnService {
     );
   }
 
+
+  getTransitions() {
+    if (!this.sessionId) {
+      return;
+    }
+
+    this.http.get('/api/v2/cpn/sim/transitions/enabled', { headers: { 'X-SessionId': this.sessionId } }).subscribe(
+      (data: any) => {
+        console.log('AccessCpnService, getTransitions(), SUCCESS, data = ', data);
+        this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: data });
+      },
+      (error) => {
+        console.error('AccessCpnService, getTransitions(), ERROR, data = ', error);
+      }
+    );
+  }
 
 }

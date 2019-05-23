@@ -35,12 +35,9 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.eventService.on(Message.PROJECT_FILE_OPEN, (data) => {
-      this.loadProjectData(data);
-    });
     // Subscribe on project load event
     this.eventService.on(Message.PROJECT_LOAD, (data) => {
-      this.loadProjectData(data);
+      this.loadProject(data);
     });
 
     this.eventService.on(Message.PAGE_OPEN, (data) => {
@@ -60,12 +57,12 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
   }
 
-  loadProjectData(data) {
+  loadProject(data) {
     this.modelTabArray = [];
     this.mlTabArray = [];
     this.tabsComponent.clear();
 
-    this.openMlEditor(data.project);
+    this.openMlEditor(data);
   }
 
   currentTabChange(event) {

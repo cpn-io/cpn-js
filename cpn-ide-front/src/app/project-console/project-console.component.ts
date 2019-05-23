@@ -23,8 +23,10 @@ export class ProjectConsoleComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.eventService.on(Message.PROJECT_LOAD, (data) => {
+    this.eventService.on(Message.PROJECT_LOAD, () => {
       this.logHtml = [];
+      this.nodes = [];
+      this.log('PROJECT_LOAD');
     });
 
 
@@ -58,6 +60,7 @@ export class ProjectConsoleComponent implements OnInit {
         this.logSuccess('SIM_INIT_DONE: ' + JSON.stringify(data));
       }
       this.accessCpnService.getTokenMarks();
+      this.accessCpnService.getTransitions();
     });
 
     this.eventService.on(Message.SERVER_INIT_SIM_ERROR, (data) => {
@@ -71,6 +74,14 @@ export class ProjectConsoleComponent implements OnInit {
     this.eventService.on(Message.SERVER_GET_TOKEN_MARKS, (data) => {
       if (data) {
         this.logSuccess('SERVER_GET_TOKEN_MARKS: ' + JSON.stringify(data));
+      }
+    });
+
+    // TRANSITIONS
+
+    this.eventService.on(Message.SERVER_GET_TRANSITIONS, (data) => {
+      if (data) {
+        this.logSuccess('SERVER_GET_TRANSITIONS: ' + JSON.stringify(data));
       }
     });
 
@@ -182,48 +193,5 @@ export class ProjectConsoleComponent implements OnInit {
   //     this.eventService.send(Message.MODEL_ERROR, { id: [] });
   // }
 
-  // loadProjectData(project: any) {
-  //   this.nodes = [];
-
-  //   let projectData = project.data;
-  //   this.getVerify(project.data);
-
-  //   let cpnet;
-
-  //   if (projectData.workspaceElements) {
-  //     if (projectData.workspaceElements instanceof Array) {
-  //       for (let workspaceElement of projectData.workspaceElements) {
-  //         if (workspaceElement.cpnet) {
-  //           cpnet = workspaceElement.cpnet;
-  //           break;
-  //         }
-  //       }
-  //     } else {
-  //       if (projectData.workspaceElements.cpnet) {
-  //         cpnet = projectData.workspaceElements.cpnet;
-  //       }
-  //     }
-  //   }
-
-  //   // if (cpnet) {
-  //   //   if (cpnet.globbox) {
-  //   //     if (cpnet.globbox.block) {
-
-  //   //       // GlobBox
-  //   //       // --------------------------------------
-  //   //       for (let block of cpnet.globbox.block) {
-
-  //   //         // Parameters
-  //   //         // -------------------------------
-  //   //         if (block.id === 'Variables') {
-  //   //           this.nodes = block.var;
-  //   //         }
-  //   //         // -------------------------------
-  //   //       }
-  //   //     }
-  //   //   }
-  //   // }
-
-  // }
 
 }

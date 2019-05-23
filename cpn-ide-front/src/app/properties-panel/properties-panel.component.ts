@@ -4,7 +4,6 @@ import TextRenderer from '../../lib/cpn-js/draw/TextRenderer';
 
 import { Message } from '../common/message';
 import { EventService } from '../services/event.service';
-import { ProjectService } from '../services/project.service';
 import { ModelService } from '../services/model.service';
 import { element } from 'protractor';
 
@@ -72,7 +71,6 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   private layoutPartOpened: boolean[] = [];
 
   constructor(private eventService: EventService,
-    private projectService: ProjectService,
     private modelService: ModelService) {
   }
 
@@ -87,7 +85,6 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     console.log('updateChanges(), this = ', this);
 
     const emiterData = {
-      id: Constants.ACTION_PROPERTY_UPDATE,
       labels: [],
       elementid: this.cpnElement._id,
       cpnElement: this.cpnElement,

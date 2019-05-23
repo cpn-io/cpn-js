@@ -1,17 +1,15 @@
-import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 
-import { assign } from 'min-dash';
 import Diagram from 'diagram-js';
 import CpnDiagramModule from '../../lib/cpn-js/core';
 
-import { AccessCpnService } from '../services/access-cpn.service';
-import { HttpClient } from '@angular/common/http';
 import { Message } from '../common/message';
 import { EventService } from '../services/event.service';
 import { ModelService } from '../services/model.service';
+import { SettingsService } from '../services/settings.service';
 
 import { importCpnPage } from '../../lib/cpn-js/import/Importer';
-import { element } from 'protractor';
+
 import {
   CPN_LABEL,
   CPN_TOKEN_LABEL,
@@ -23,7 +21,6 @@ import {
   CPN_CONNECTION,
   isAny,
 } from '../../lib/cpn-js/util/ModelUtil';
-import { ProjectService } from '../services/project.service';
 
 
 @Component({
@@ -34,9 +31,7 @@ import { ProjectService } from '../services/project.service';
 export class ModelEditorComponent implements OnInit {
 
   constructor(private eventService: EventService,
-    private accessCpnService: AccessCpnService,
-    private projectService: ProjectService,
-    private http: HttpClient,
+    private settings: SettingsService,
     private modelService: ModelService) {
   }
 
@@ -101,7 +96,7 @@ export class ModelEditorComponent implements OnInit {
     // set defualt values to diagram
     // -----------------------------------------------------
     for (const key of ['type', 'initmark', 'cond', 'time', 'code', 'priority', 'annot', 'ellipse', 'box']) {
-      this.modeling.setDefaultValue(key, this.projectService.getAppSettings()[key]);
+      this.modeling.setDefaultValue(key, this.settings.getAppSettings()[key]);
     }
 
     eventBus.on('import.render.complete', (event) => {
@@ -126,19 +121,19 @@ export class ModelEditorComponent implements OnInit {
       // TODO: temporary set error and ready status for test shapes. Should be changed to real id
       // this.modeling.setCpnStatus({ error: ['ID1412328424','ID1412328605'], ready: ['ID1412328496'] });
 
-      this.accessCpnService.getMarking(undefined).subscribe(
-        (data: any) => {
-          console.log('getMarking(), data = ', data);
+      // this.accessCpnService.getMarking('ID0000001').subscribe(
+      //   (data: any) => {
+      //     console.log('getMarking(), data = ', data);
 
-          eventBus.fire('model.update.tokens', { data: data });
-        });
+      //     eventBus.fire('model.update.tokens', { data: data });
+      //   });
 
-      this.accessCpnService.getEnableTransitions('ID0000001').subscribe(
-        (data: any) => {
-          console.log('getEnableTransitions(), data = ', data);
+      // this.accessCpnService.getEnableTransitions('ID0000001').subscribe(
+      //   (data: any) => {
+      //     console.log('getEnableTransitions(), data = ', data);
 
-          this.modeling.setCpnStatus({ ready: data });
-        });
+      //     this.modeling.setCpnStatus({ ready: data });
+      //   });
     });
 
 

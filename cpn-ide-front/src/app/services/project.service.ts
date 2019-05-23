@@ -6,6 +6,7 @@ import { Message } from '../common/message';
 import { Constants } from '../common/constants.js';
 
 import { xml2json } from '../../lib/xml2json//xml2json.js';
+import { ModelService } from './model.service.js';
 
 /**
  * Common service for getting access to project data from all application
@@ -14,36 +15,22 @@ import { xml2json } from '../../lib/xml2json//xml2json.js';
 export class ProjectService {
 
   public modelName = '';
-  public projectData = undefined;
-  public appSettings = [];
+  public project = undefined;
   private currentSelectedElement;
   currentPageId;
-  userSessionId;
 
-  constructor(private eventService: EventService, private http: HttpClient) {
+  constructor(private eventService: EventService,
+    private http: HttpClient,
+    // private modelService: ModelService
+    ) {
+
     console.log('ProjectService instance CREATED!');
 
     this.loadEmptyProject();
-    this.setDefaultAppSettings();
   }
 
-  public generateUserSession() {
-    this.userSessionId = 'ID' + new Date().getTime();
-    console.log('generateUserSession - new id -', this.userSessionId);
-    return this.userSessionId;
-  }
-
-  getUserSessionId() {
-    return this.userSessionId;
-  }
-
-
-  public getProjectData() {
-    return this.projectData;
-  }
-
-  public getAppSettings() {
-    return this.appSettings;
+  public getProject() {
+    return this.project;
   }
 
   setCurrentElement(element) {
@@ -62,7 +49,6 @@ export class ProjectService {
    * @param {File} file
    */
   loadProjectFile(file: File) {
-    this.generateUserSession();
     const reader: FileReader = new FileReader();
     reader.readAsText(file);
     reader.onload = e => {
@@ -72,7 +58,6 @@ export class ProjectService {
       this.loadProjectXml(file.name, text);
     };
   }
-
 
   parseXml(xml) {
     let dom = null;
@@ -117,9 +102,9 @@ export class ProjectService {
 
     localStorage.setItem('projectJson', JSON.stringify(json));
 
-    this.projectData = { project: { data: json, name: filename } };
-
-    this.eventService.send(Message.PROJECT_FILE_OPEN, this.projectData);
+    this.project = { data: json, name: filename };
+    // this.modelService.loadProject(this.project);
+    this.eventService.send(Message.PROJECT_LOAD, this.project);
   }
 
   loadEmptyProject() {
@@ -153,27 +138,4 @@ export class ProjectService {
         }
       );
   }
-
-  setDefaultAppSettings() {
-    this.appSettings['color'] = 'newColor';
-    this.appSettings['var'] = 'newVar';
-    this.appSettings['ml'] = 'newMl';
-    this.appSettings['globref'] = 'newGlobref';
-    this.appSettings['block'] = 'newblock';
-    this.appSettings['type'] = 'UNIT';
-    this.appSettings['initmark'] = 'INIT MARK';
-    this.appSettings['code'] = 'input();\noutput();\naction();';
-    this.appSettings['cond'] = '[]';
-    this.appSettings['time'] = '@+';
-    this.appSettings['priority'] = 'P_NORMAL';
-    this.appSettings['annot'] = 'empty';
-
-    this.appSettings['block'] = 'New block';
-    this.appSettings['declaration'] = '(* Empty declaration *)';
-    this.appSettings['page'] = 'New page';
-
-    this.appSettings['ellipse'] = { h: 40, w: 70 };
-    this.appSettings['box'] = { h: 40, w: 70 };
-  }
-
 }

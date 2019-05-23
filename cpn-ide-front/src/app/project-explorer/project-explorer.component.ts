@@ -9,6 +9,7 @@ import {ColorDeclarationsPipe} from '../pipes/color-declarations.pipe';
 import {OptionsNamePipePipe} from '../pipes/options-name.pipe';
 import {Constants} from '../common/constants';
 import { AccessCpnService } from '../services/access-cpn.service';
+import { SettingsService } from '../services/settings.service';
 
 // import {TreeComponent} from 'angular-tree-component';
 
@@ -173,8 +174,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    */
   constructor(
     private eventService: EventService,
-    // private xml2jsonService: NgxXml2jsonService,
-    private projectService: ProjectService,
+    private settings: SettingsService,
     private modelService: ModelService,
     private _colorDeclarationsPipe: ColorDeclarationsPipe,
     private accessCpnService: AccessCpnService) {
@@ -183,15 +183,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.appSettings = this.projectService.getAppSettings();
+    this.appSettings = this.settings.getAppSettings();
     this.appSettingsKeys = Object.keys(this.appSettings);
-    // Subscribe on project load event
-    this.eventService.on(Message.PROJECT_FILE_OPEN, (data) => {
-      this.accessCpnService.resetSim();
-      this.loadProjectData(data.project);
-    });
+
     this.eventService.on(Message.PROJECT_LOAD, (data) => {
-      this.loadProjectData(data.project);
+      this.loadProject(data);
     });
 
     this.eventService.on(Message.MODEL_UPDATE, (data) => {
@@ -601,7 +597,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       cpnParentElement = treeNode.parent.data.cpnElement;
     }
 
-    const defValue = this.projectService.getAppSettings()[type];
+    const defValue = this.settings.getAppSettings()[type];
 
     var cpnType;
 
@@ -689,7 +685,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       console.log('content' + node.id + 'IsSelected ---');
       const newPage = {
         pageattr: {
-          _name: this.projectService.getAppSettings()['page'] + (this.newPageCount++)
+          _name: this.settings.getAppSettings()['page'] + (this.newPageCount++)
         },
         place: [],
         trans: [],
@@ -1889,15 +1885,14 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   onReload() {
-    this.loadProjectData(this.currentProject);
+    this.loadProject(this.currentProject);
   }
 
   /**
    * Loading project JSON to tree component object
    * @param project - cpn net JSON object
    */
-  loadProjectData(project) {
-
+  loadProject(project) {
     // Init Access/CPN
     this.accessCpnService.initNet(project.data);
 
@@ -1994,129 +1989,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   treeModelChanged(event) {
     console.log('TREE MODEL CHANGES, event = ', event);
   }
-
-  loadProjectData_OLD(project: any) {
-    // console.log('LOADPROJECTDATA, project = ', project);
-    this.filterText = '';
-
-    this.doUnderlineNodeLabel(false);
-    this.openedLabel = [];
-    const projectData = project.data;
-    const projectName = project.name;
-    this.currentProjectModel = project.data;
-
-    this.nodes = [];
-    this.treeComponent.treeModel.collapseAll();
-    this.updateTree();
-
-    const projectNode = {
-      id: 'project',
-      // name: 'Project: ' + project.name,
-      name: project.name,
-      classes: ['tree-project'],
-      children: []
-    };
-    this.nodes.push(projectNode);
-    const OptionsNode = {
-      id: 'Options',
-      name: 'Options',
-      children: []
-    };
-    projectNode.children.push(OptionsNode);
-    let cpnet;
-
-    if (projectData.workspaceElements) {
-      if (projectData.workspaceElements instanceof Array) {
-        for (const workspaceElement of projectData.workspaceElements) {
-          if (workspaceElement.cpnet) {
-            cpnet = workspaceElement.cpnet;
-            break;
-          }
-        }
-      } else {
-        if (projectData.workspaceElements.cpnet) {
-          cpnet = projectData.workspaceElements.cpnet;
-        }
-      }
-    }
-
-    if (cpnet) {
-      if (cpnet.globbox) {
-        if (cpnet.globbox) {
-          const DeclarationsNode = {
-            id: 'Declarations',
-            name: 'Declarations',
-            children: []
-          };
-          projectNode.children.push(DeclarationsNode);
-          // GlobBox
-          // --------------------------------------
-          /* for (const block of cpnet.globbox.block) {
-             this.buildGlobboxTree(block, DeclarationsNode);
-           }
-           if (cpnet.globbox.block.id) {
-             this.buildGlobboxTree(cpnet.globbox.block, DeclarationsNode);
-           }*/
-          this.buildGlobboxTree(cpnet.globbox, DeclarationsNode);
-
-          // this.buildGlobboxTree(cpnet.globbox, DeclarationsNode);
-          // this.buildGlobboxTree(cpnet.globbox.block, projectNode);
-          // Pages
-          // --------------------------------------
-          if (cpnet.page) {
-            const pagesNode = {
-              id: 'Pages',
-              name: 'Pages',
-              children: []
-            };
-            projectNode.children.push(pagesNode);
-            console.log('cpnet page count: ' + cpnet.page.length);
-            if (!cpnet.page.length) {
-              this.setPage(cpnet.page, pagesNode, cpnet, false);
-            } else {
-              for (const page of cpnet.page) {
-                if (page.trans && page.trans.length) {
-                  for (const tran of page.trans) {
-                    if (tran.subst) {
-                      this.subpages.push({subpageid: tran.subst._subpage, tranid: tran._id});
-                      // this.subpages.push(tran._id);
-                    }
-                  }
-                } else {
-                  if (page.trans && page.trans.subst) {
-                    this.subpages.push({subpageid: page.trans.subst._subpage, tranid: page.trans._id});
-                    // this.subpages.push(page.trans._id);
-                  }
-                }
-              }
-              for (const page of cpnet.page) {
-                this.setPage(page, pagesNode, cpnet, false);
-              }
-            }
-          }
-          // -------------------------------
-          const MonitorNode = {
-            id: 'Monitors',
-            name: 'Monitors',
-            children: []
-          };
-          projectNode.children.push(MonitorNode);
-        }
-      }
-    }
-
-    if (!this.stateTree) {
-      this.updateTree();
-      setTimeout(() => {
-        const node = this.treeComponent.treeModel.getNodeById('project');
-        if (node) {
-          node.expand();
-        }
-      }, 100);
-    }
-
-  }
-
 
   setPage(page: any, pagesNode: any, cpnet: any, isTransit: boolean) {
     console.log('SETPAGE()');

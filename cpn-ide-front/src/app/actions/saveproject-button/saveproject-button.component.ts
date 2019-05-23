@@ -23,16 +23,16 @@ export class SaveprojectButtonComponent implements OnInit {
   }
 
   open(modalName) {
-    let idx = this.modelService.modelName.lastIndexOf('.');
+    let idx = this.modelService.projectName.lastIndexOf('.');
     if (idx > 0) {
-      this.fileNameModel = this.modelService.modelName.substr(0, idx);
+      this.fileNameModel = this.modelService.projectName.substr(0, idx);
     } else {
-      this.fileNameModel = this.modelService.modelName;
+      this.fileNameModel = this.modelService.projectName;
     }
     this.modal.open(modalName, {ariaLabelledBy: 'modal-basic-title', centered: true}).result.then((result) => {
 
       const x2js = new X2JS();
-      let xml = (x2js.json2xml_str(JSON.parse(JSON.stringify(this.modelService.getProjectData())))); /// netJson
+      let xml = (x2js.json2xml_str(JSON.parse(JSON.stringify(this.modelService.getProject())))); /// netJson
       xml = `${this.xmlPrefix}\n${xml}`;
       this.saveAsText(xml, this.fileName);
 

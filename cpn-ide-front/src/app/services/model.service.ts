@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
-import * as X2JS from '../../lib/x2js/xml2json.js';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EventService } from './event.service';
 import { Message } from '../common/message';
-import { ProjectService } from '../services/project.service';
-import { Constants } from '../common/constants.js';
+import { AccessCpnService } from './access-cpn.service.js';
+import { SettingsService } from '../services/settings.service';
 
 
 /**
@@ -17,7 +15,7 @@ import { Constants } from '../common/constants.js';
 export class ModelService {
 
   private isLoaded = false;
-  public modelName = '';
+  public projectName = '';
   public projectData = undefined;
   private backupModel = [];
   private redoBackupModel;
@@ -33,32 +31,20 @@ export class ModelService {
   };
   paramsTypes = ['ml', 'color', 'var', 'globref'];
 
-  constructor(private eventService: EventService, private http: HttpClient, private projectService: ProjectService) {
+  constructor(private eventService: EventService,
+    private accessCpnService: AccessCpnService,
+    private settings: SettingsService
+    ) {
     console.log('ModelService instance CREATED!');
 
-    this.eventService.on(Message.PROJECT_FILE_OPEN, (data) => {
-      this.markNewModel();
-      this.loadProjectData(data.project);
-      this.modelCase['cpn:Place'] = 'place';
-      this.modelCase['cpn:Transition'] = 'trans';
-      this.modelCase['cpn:Connection'] = 'arc';
-      this.modelCase['cpn:Label'] = 'label';
-      this.modelCase['bpmn:Process'] = 'trans';
-      this.modelCase['place'] = 'place';
-      this.modelCase['trans'] = 'trans';
-      this.modelCase['arc'] = 'arc';
-      this.modelCase['label'] = 'label';
-    });
-
     this.eventService.on(Message.PROJECT_LOAD, (data) => {
-      this.loadProjectData(data.project);
+      this.loadProject(data);
     });
 
     this.eventService.on(Message.PAGE_OPEN, (data) => {
       this.subPages = data.subPages;
       this.pageId = data.pageObject._id;
     });
-
 
   }
 
@@ -70,13 +56,26 @@ export class ModelService {
     this.isLoaded = true;
   }
 
-  isLooadModel() {
+  isModelLoaded() {
     return this.isLoaded;
   }
 
-  loadProjectData(project: any) {
+  loadProject(project, resetModel = false) {
+    if (resetModel) {
+      this.accessCpnService.resetSim();
+      this.markNewModel();
+      this.modelCase['cpn:Place'] = 'place';
+      this.modelCase['cpn:Transition'] = 'trans';
+      this.modelCase['cpn:Connection'] = 'arc';
+      this.modelCase['cpn:Label'] = 'label';
+      this.modelCase['bpmn:Process'] = 'trans';
+      this.modelCase['place'] = 'place';
+      this.modelCase['trans'] = 'trans';
+      this.modelCase['arc'] = 'arc';
+      this.modelCase['label'] = 'label';
+    }
     this.projectData = project.data;
-    this.modelName = project.name;
+    this.projectName = project.name;
   }
 
   saveBackup(model, pageId) {
@@ -99,9 +98,12 @@ export class ModelService {
     const modelState = this[stackPop].pop();
     this[stackPush].push({ project: JSON.parse(JSON.stringify(this.projectData)), page: this.pageId });
     this.projectData = modelState.project;
-    const sending = { project: { data: this.projectData, name: this.modelName } };
+
     this.markOpenedModel();
-    this.eventService.send(Message.PROJECT_LOAD, sending);
+
+    const project = { data: this.projectData, name: this.projectName };
+    this.eventService.send(Message.PROJECT_LOAD, project);
+
     if (modelState.page) {
       this.eventService.send(Message.PAGE_OPEN, { pageObject: this.getPageById(modelState.page), subPages: this.subPages });
     }
@@ -116,7 +118,7 @@ export class ModelService {
     return this.modelCase[labelType];
   }
 
-  public getProjectData() {
+  public getProject() {
     return this.projectData;
   }
 
@@ -901,7 +903,7 @@ export class ModelService {
         if (page.pageattr._name === updatedData.pageObject.pageattr._name) {
           page = updatedData.pageObject;
 
-          this.eventService.send(Message.XML_UPDATE, { project: { data: project, name: this.modelName } });
+          this.eventService.send(Message.XML_UPDATE, { project: { data: project, name: this.projectName } });
         }
       }
     } else {
@@ -909,7 +911,7 @@ export class ModelService {
       if (page.pageattr._name === updatedData.pageObject.pageattr._name) {
         page = updatedData.pageObject;
 
-        this.eventService.send(Message.XML_UPDATE, { project: { data: project, name: this.modelName } });
+        this.eventService.send(Message.XML_UPDATE, { project: { data: project, name: this.projectName } });
       }
     }
   }
@@ -940,14 +942,21 @@ export class ModelService {
       if (page[entry] instanceof Array) {
         for (const jsonElem of page[entry]) {
           for (const labelType of this.labelsEntry[entry]) {
-            if (jsonElem[labelType] && jsonElem[labelType].text && jsonElem[labelType].text.__text && Object.values(this.projectService.appSettings).includes(jsonElem[labelType].text.__text)) {
+            if (jsonElem[labelType]
+              && jsonElem[labelType].text
+              && jsonElem[labelType].text.__text
+              && Object.values(this.settings.getAppSettings()).includes(jsonElem[labelType].text.__text)) {
               jsonElem[labelType].text.__text = null;
             }
           }
         }
       } else {
         for (const labelType of this.labelsEntry[entry]) {
-          if (page[entry] && page[entry][labelType] && page[entry][labelType].text && page[entry][labelType].text.__text && Object.values(this.projectService.appSettings).includes(page[entry][labelType].text.__text)) {
+          if (page[entry]
+            && page[entry][labelType]
+            && page[entry][labelType].text
+            && page[entry][labelType].text.__text
+            && Object.values(this.settings.getAppSettings()).includes(page[entry][labelType].text.__text)) {
             page[entry][labelType].text.__text = null;
           }
         }
@@ -992,30 +1001,30 @@ export class ModelService {
     switch (elementType) {
       case 'var':
         return {
-          id: this.projectService.getAppSettings()[elementType] + (++this.countNewItems),
-          type: { id: this.projectService.getAppSettings()[elementType] },
+          id: this.settings.getAppSettings()[elementType] + (++this.countNewItems),
+          type: { id: this.settings.getAppSettings()[elementType] },
           _id: 'ID' + new Date().getTime()
         };
         break;
       case 'color':
         return {
-          id: this.projectService.getAppSettings()[elementType] + (++this.countNewItems),
+          id: this.settings.getAppSettings()[elementType] + (++this.countNewItems),
           timed: '',
-          name: this.projectService.getAppSettings()[elementType],
+          name: this.settings.getAppSettings()[elementType],
           _id: 'ID' + new Date().getTime()
         };
         break;
       case 'ml':
         return {
-          _id: 'ID' + new Date().getTime(), __text: this.projectService.getAppSettings()[elementType], toString() {
+          _id: 'ID' + new Date().getTime(), __text: this.settings.getAppSettings()[elementType], toString() {
             return (this.__text != null ? this.__text : '');
           }
         };
         break;
       case 'globref':
         return {
-          id: this.projectService.getAppSettings()[elementType] + (++this.countNewItems),
-          ml: this.projectService.getAppSettings()[elementType],
+          id: this.settings.getAppSettings()[elementType] + (++this.countNewItems),
+          ml: this.settings.getAppSettings()[elementType],
           _id: 'ID' + new Date().getTime()
         };
         break;
@@ -1112,7 +1121,7 @@ export class ModelService {
     let result = [];
     switch (elem) {
       case 'Place': {
-        this.getProjectData()
+        this.getProject();
         break;
       }
       case 'Transition': {
@@ -1420,14 +1429,14 @@ export class ModelService {
     };
   }
 
-  getArcEnds(cpnElement){
+  getArcEnds(cpnElement) {
     let page = this.getAllPages().find(p => {
-       return  p.arc.find(pl => {
-         return pl._id === cpnElement._id;
-     })
+      return p.arc.find(pl => {
+        return pl._id === cpnElement._id;
+      })
     });
-    for(let entry of ['place', 'trans'])
-      if(!(page[entry] instanceof Array)) {
+    for (let entry of ['place', 'trans'])
+      if (!(page[entry] instanceof Array)) {
         page[entry] = [page[entry]];
       }
     let placeEnd
@@ -1435,25 +1444,25 @@ export class ModelService {
       return el._id === cpnElement.placeend._idref;
     });
     let transEnd
-    transEnd = page.trans.find((tr) => { return cpnElement.transend._idref === tr._id});
-    return {place: placeEnd, trans: transEnd, orient: cpnElement._orientation };
+    transEnd = page.trans.find((tr) => { return cpnElement.transend._idref === tr._id });
+    return { place: placeEnd, trans: transEnd, orient: cpnElement._orientation };
   }
 
 
 
 
-  getAllPorts(cpnElement, transEnd){
+  getAllPorts(cpnElement, transEnd) {
 
     let ports = [];
-    if(transEnd.subst) {
+    if (transEnd.subst) {
 
       let page = this.getPageById(transEnd.subst._subpage);
       if (page) {
-       for(let place of page.place) {
-         if(place.port && (place.port._type === 'I/O' || place.port._type === (cpnElement._orientation === 'TtoP' ? 'Out' : 'In'))) {
-           ports.push(place);
-         }
-       }
+        for (let place of page.place) {
+          if (place.port && (place.port._type === 'I/O' || place.port._type === (cpnElement._orientation === 'TtoP' ? 'Out' : 'In'))) {
+            ports.push(place);
+          }
+        }
       }
     }
     return ports;
@@ -1462,8 +1471,8 @@ export class ModelService {
 
   getPortNameById(pageId, id) {
     let page = this.getPageById(pageId);
-    if(page){
-      let port = page.place.find( e => { return e._id === id });
+    if (page) {
+      let port = page.place.find(e => { return e._id === id });
       return port.text;
     }
   }
@@ -1471,8 +1480,8 @@ export class ModelService {
 
   getPortIdByName(pageId, text, orient) {
     let page = this.getPageById(pageId);
-    if(page && text !== ''){
-      let port = page.place.find( e => { return e.text === text && (e.port._type === 'I/O' || e.port._type === (orient === 'TtoP' ? 'Out' : 'In'))});
+    if (page && text !== '') {
+      let port = page.place.find(e => { return e.text === text && (e.port._type === 'I/O' || e.port._type === (orient === 'TtoP' ? 'Out' : 'In')) });
       return port._id;
     } else return undefined;
   }

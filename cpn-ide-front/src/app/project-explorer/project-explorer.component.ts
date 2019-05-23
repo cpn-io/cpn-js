@@ -8,8 +8,8 @@ import {ModelService} from '../services/model.service';
 import {ColorDeclarationsPipe} from '../pipes/color-declarations.pipe';
 import {OptionsNamePipePipe} from '../pipes/options-name.pipe';
 import {Constants} from '../common/constants';
-import { AccessCpnService } from '../services/access-cpn.service';
-import { SettingsService } from '../services/settings.service';
+import {AccessCpnService} from '../services/access-cpn.service';
+import {SettingsService} from '../services/settings.service';
 
 // import {TreeComponent} from 'angular-tree-component';
 
@@ -443,43 +443,40 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   underlineInMonitors(id) {
-    let result = false;
     let found = false;
     for (const monitors of this.nodes[0].children) {
-      if (monitors.id === 'Monitors') {
-        if (monitors.children) {
-          for (const monitor of monitors.children) {
-            if (monitor.children) {
-              for (const nodesOrdered of monitor.children) {
-                if (nodesOrdered.name === 'Nodes ordered by pages' && nodesOrdered.children) {
-                  for (const page of nodesOrdered.children) {
-                    if (page.children) {
-                      for (const idref of page.children) {
-                        const refs = idref.id.split('_');
-                        if (refs.indexOf(id) > -1) {
-                          found = true;
-                          this.doUnderlineNodeLabel(true, idref.id);
-                          break;
-                        }
-                      }
-                      if (found) {
-                        this.doUnderlineNodeLabel(true, page.id);
+      if (monitors.id === 'Monitors' && monitors.children) {
+        for (const monitor of monitors.children) {
+          if (monitor.children) {
+            for (const nodesOrdered of monitor.children) {
+              if (nodesOrdered.name === 'Nodes ordered by pages' && nodesOrdered.children) {
+                for (const page of nodesOrdered.children) {
+                  if (page.children) {
+                    for (const idref of page.children) {
+                      const refs = idref.id.split('_');
+                      if (refs.indexOf(id) > -1) {
+                        found = true;
+                        this.doUnderlineNodeLabel(true, idref.id);
                         break;
                       }
                     }
-                  }
-                  if (found) {
-                    this.doUnderlineNodeLabel(true, nodesOrdered.id);
-                    break;
+                    if (found) {
+                      this.doUnderlineNodeLabel(true, page.id);
+                      break;
+                    }
                   }
                 }
+                if (found) {
+                  this.doUnderlineNodeLabel(true, nodesOrdered.id);
+                  break;
+                }
               }
-              if (found) {
-                this.doUnderlineNodeLabel(true, monitor.id);
-                this.doUnderlineNodeLabel(true, monitors.id);
-                found = false;
-                continue;
-              }
+            }
+            if (found) {
+              this.doUnderlineNodeLabel(true, monitor.id);
+              this.doUnderlineNodeLabel(true, monitors.id);
+              found = false;
+              continue;
             }
           }
         }
@@ -494,41 +491,32 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * @param name имя типа или функции, которое нужно найти и подчеркнуть в дереве,
    */
   underlineRelationsRecursively(parentNode: any, name: string): boolean {
-      if (parentNode.children) {
-        if (parentNode.type === 'monitor_ref') {
-          if (parentNode.name === name) {
-            this.doUnderlineNodeLabel(true, parentNode.id);
-            return true;
-          }
-        }
-        for (const node of parentNode.children) {
-          if (this.underlineRelationsRecursively(node, name)) {
-            this.doUnderlineNodeLabel(true, node.id);
-            return true;
-          }
-        }
-      } else {
-        const parentCnpWitchoutComments = this.removeCommentsFromCode(parentNode.cpnElement.toString());
-        if (parentCnpWitchoutComments.match('^((local){1}\\s+)*(fun|val|exception){1}\\s+' + name + '\\s*[=(]{1}')) {
-          // это проверка на то, что строка является декларацией функции или val
+    if (parentNode.children) {
+      if (parentNode.type === 'monitor_ref') {
+        if (parentNode.name === name) {
           this.doUnderlineNodeLabel(true, parentNode.id);
           return true;
+        }
+      }
+      for (const node of parentNode.children) {
+        if (this.underlineRelationsRecursively(node, name)) {
+          this.doUnderlineNodeLabel(true, node.id);
+          return true;
+        }
+      }
+    } else {
+      const parentCnpWitchoutComments = this.removeCommentsFromCode(parentNode.cpnElement.toString());
+      if (parentCnpWitchoutComments.match('^((local){1}\\s+)*(fun|val|exception){1}\\s+' + name + '\\s*[=(]{1}')) {
+        // это проверка на то, что строка является декларацией функции или val
+        this.doUnderlineNodeLabel(true, parentNode.id);
+        return true;
 
-        } else if (parentNode.cpnElement.id) {
+      } else if (parentNode.cpnElement.id) {
 
-          // здесь подчеркиваем переменные и их типы
-          if (parentNode.cpnElement.id instanceof Array) {
-            for (const someId of parentNode.cpnElement.id) {
-              if (someId === name) {
-                this.doUnderlineNodeLabel(true, parentNode.id);
-                if (parentNode.cpnElement.type) {
-                  this.underlineRelationsRecursively(this.nodes[0], parentNode.cpnElement.type.id);
-                }
-                return true;
-              }
-            }
-          } else {
-            if (parentNode.cpnElement.id === name) {
+        // здесь подчеркиваем переменные и их типы
+        if (parentNode.cpnElement.id instanceof Array) {
+          for (const someId of parentNode.cpnElement.id) {
+            if (someId === name) {
               this.doUnderlineNodeLabel(true, parentNode.id);
               if (parentNode.cpnElement.type) {
                 this.underlineRelationsRecursively(this.nodes[0], parentNode.cpnElement.type.id);
@@ -536,8 +524,17 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
               return true;
             }
           }
+        } else {
+          if (parentNode.cpnElement.id === name) {
+            this.doUnderlineNodeLabel(true, parentNode.id);
+            if (parentNode.cpnElement.type) {
+              this.underlineRelationsRecursively(this.nodes[0], parentNode.cpnElement.type.id);
+            }
+            return true;
+          }
         }
       }
+    }
     return false;
   }
 
@@ -2260,7 +2257,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   updatePageNodeText(node, newValue) {
     node.data.name = newValue; // update tree node text
     node.data.cpnElement.pageattr._name = newValue; // update cpnElement
-    this.eventService.send(Message.CHANGE_NAME_PAGE, { id: node.data.cpnElement._id, name: newValue});
+    this.eventService.send(Message.CHANGE_NAME_PAGE, {id: node.data.cpnElement._id, name: newValue});
   }
 
   /**

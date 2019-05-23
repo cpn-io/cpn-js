@@ -240,19 +240,19 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       this.updatePagesNode(data.currentPageId);
     });
 
-    this.eventService.on(Message.CHANGE_NAME_PAGE, (data) => {
-      if (data.changedElement === 'tran') {
-        const node = this.getObjects(this.nodes, 'id', data.id);
-        if (node) {
-          node[0].name = data.name;
-          this.modelService.changePageName(data.id, data.name);
-          /*const changedPage = this.currentProjectModel.workspaceElements.cpnet.page.find(page => page._id === data.id);
-          if (changedPage) {
-            changedPage.pageattr._name = data.name;
-          }*/
-        }
-      }
-    });
+    // this.eventService.on(Message.CHANGE_NAME_PAGE, (data) => {
+    //   if (data.changedElement === 'tran') {
+    //     const node = this.getObjects(this.nodes, 'id', data.id);
+    //     if (node) {
+    //       node[0].name = data.name;
+    //       this.modelService.changePageName(data.id, data.name);
+    //       /*const changedPage = this.currentProjectModel.workspaceElements.cpnet.page.find(page => page._id === data.id);
+    //       if (changedPage) {
+    //         changedPage.pageattr._name = data.name;
+    //       }*/
+    //     }
+    //   }
+    // });
 
     this.eventService.on(Message.SHAPE_HOVER, (data) => {
       // console.log(' ----- SHAPE_HOVER, data = ' + data);
@@ -2328,6 +2328,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   updatePageNodeText(node, newValue) {
     node.data.name = newValue; // update tree node text
     node.data.cpnElement.pageattr._name = newValue; // update cpnElement
+    this.eventService.send(Message.CHANGE_NAME_PAGE, { id: node.data.cpnElement._id, name: newValue});
   }
 
   /**

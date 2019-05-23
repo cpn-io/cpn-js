@@ -6,6 +6,7 @@ import { Message } from '../common/message';
 import { ProjectService } from '../services/project.service';
 import { Constants } from '../common/constants.js';
 
+
 /**
  * Common service for getting access to project data from all application
  */
@@ -1386,7 +1387,7 @@ export class ModelService {
 
   /**
    * Get page id by name
-   * @param pageName 
+   * @param pageName
    */
   getPageId(pageName) {
     let pageList = this.getCpn().page instanceof Array
@@ -1402,8 +1403,8 @@ export class ModelService {
 
   /**
    * Create port object for place
-   * @param cpnElement 
-   * @param portType 
+   * @param cpnElement
+   * @param portType
    */
   createPortObject(cpnElement, portType) {
     return {
@@ -1419,9 +1420,9 @@ export class ModelService {
 
   /**
    * Create subst object for transition
-   * @param cpnElement 
-   * @param name 
-   * @param pageId 
+   * @param cpnElement
+   * @param name
+   * @param pageId
    */
   createSubstObject(cpnElement, name, pageId) {
     return {
@@ -1438,5 +1439,55 @@ export class ModelService {
     };
   }
 
+  getArcEnds(cpnElement){
+    let page = this.getAllPages().find(p => {
+       return  p.arc.find(pl => {
+         return pl._id === cpnElement._id;
+     })
+    });
+    let placeEnd = page.place.find(el => {
+      return el._id === cpnElement.placeend._idref;
+    });
+    let transEnd = page.trans.find((tr) => { return cpnElement.transend._idref === tr._id});
+    return {place: placeEnd, trans: transEnd};
+  }
+
+
+
+
+  getAllPorts(cpnElement, transEnd){
+
+    let ports = [];
+    if(transEnd.subst) {
+
+      let page = this.getPageById(transEnd.subst._subpage);
+      if (page) {
+       for(let place of page.place) {
+         if(place.port && (place.port._type === 'I/O' || place.port._type === (cpnElement._orientation === 'TtoP' ? 'Out' : 'In'))) {
+           ports.push(place);
+         }
+       }
+      }
+    }
+    return ports;
+  }
+
+
+  getPortNameById(pageId, id) {
+    let page = this.getPageById(pageId);
+    if(page){
+      let port = page.place.find( e => { return e._id === id });
+      return port.text;
+    }
+  }
+
+
+  getPortIdByName(pageId, text) {
+    let page = this.getPageById(pageId);
+    if(page && text !== ''){
+      let port = page.place.find( e => { return e.text === text});
+      return port._id;
+    } else return undefined;
+  }
 
 }

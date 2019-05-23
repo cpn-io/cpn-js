@@ -8,6 +8,7 @@ import { ProjectService } from '../services/project.service';
 import { ModelService } from '../services/model.service';
 import { element } from 'protractor';
 
+
 @Component({
   selector: 'app-properties-panel',
   templateUrl: './properties-panel.component.html',
@@ -197,11 +198,87 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     return pageNames;
   }
 
+  getBindTransElementSubst(cpnElement){
+      let bindObj =   this.modelService.getArcEnds(cpnElement);
+      if(bindObj.trans) return bindObj.trans.subst;
+      else return false;
+  }
+
+  getSubPagesPorts(cpnElement, transEnd) {
+    let bindObj =   this.modelService.getArcEnds(cpnElement);
+    const ports = this.modelService.getAllPorts(cpnElement, bindObj.trans);
+    const portNames = [''];
+    for (const port of ports) {
+      portNames.push(port.text);
+    }
+    return portNames;
+  }
+
 
   getPort(cpnElement) {
     return cpnElement.port
       ? { value: cpnElement.port._type === 'I/O' ? 'In/Out' : cpnElement.port._type }
       : { value: '' };
+  }
+
+  getPortBind(cpnElement) {
+    const bindObj = this.modelService.getArcEnds(cpnElement);
+    if (bindObj.trans.subst && bindObj.trans.subst._portsock) {
+      const ids = this.parsePortSock(bindObj.trans.subst._portsock);
+      for (let pair of ids) {
+        if (pair.includes(cpnElement.placeend._idref)) {
+          for (let id of pair) {
+            if (id !== cpnElement.placeend._idref) return {value: this.modelService.getPortNameById(bindObj.trans.subst._subpage, id)};
+          }
+        }
+      }
+    }
+    return {value: ''};
+  }
+
+
+  parsePortSock(portsock){
+    let str =  portsock.trim().replace(new RegExp(/[),(]/, 'g'), '-');
+    str = str.substr(1, str.length - 2);
+    //let ids = str.split(new RegExp(/-+/, 'g'))
+    let ids = [];
+    for(let el of  str.split('--')) {
+      ids.push( el.split('-'));
+    }
+    return ids;
+  }
+
+  updatePortBind(event) {
+    console.log('updatePortBind    ', event);
+    const bindObj = this.modelService.getArcEnds(this.cpnElement);
+    const id = this.modelService.getPortIdByName(bindObj.trans.subst._subpage, event);
+    let ids = undefined;
+    if(bindObj.trans.subst._portsock !== '') {
+      ids = this.parsePortSock(bindObj.trans.subst._portsock);
+      let pair = ids.find(p => {
+        return p.includes(bindObj.place._id)
+      });
+
+      if (pair) {
+        if(id) {
+          pair[0] = id.trim();
+          pair[1] = bindObj.place._id.trim();
+        } else {
+          ids = ids.filter(e => e[0] !== pair[0] &&  e[1] !== pair[1]);
+        }
+      } else {
+        ids.push([id, bindObj.place._id]);
+      }
+    } else {
+      ids = [[id.trim(), bindObj.place._id.trim()]];
+    }
+
+    let portsock = '';
+    for(let bind of ids) {
+      portsock += '(' + bind[0] + ',' + bind[1] + ')';
+    }
+    bindObj.trans.subst._portsock = portsock;
+    this.updateChanges();
   }
 
   getSubst(cpnElement) {

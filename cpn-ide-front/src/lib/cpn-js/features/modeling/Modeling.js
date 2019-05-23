@@ -896,6 +896,7 @@ Modeling.prototype.createElementInModel = function (position, type) {
 
   var newElement;
 
+  // For Place and Transition
   if ([CPN_PLACE, CPN_TRANSITION].includes(type)) {
 
     let names = [];
@@ -911,24 +912,10 @@ Modeling.prototype.createElementInModel = function (position, type) {
 
     bounds = this._textRenderer.getExternalLabelBounds(bounds, 'Default');
     newElement = {
-      posattr: {
-        _x: position.x, // -294.000000
-        _y: -1 * position.y  // 156.000000
-      },
-      fillattr: {
-        _colour: 'White',
-        _pattern: '',
-        _filled: false
-      },
-      lineattr: {
-        _colour: 'Black',
-        _thick: 1,
-        _type: 'Solid'
-      },
-      textattr: {
-        _colour: 'Black',
-        _bold: false
-      },
+      posattr: getDefPosattr(position),
+      fillattr: getDefFillattr(),
+      lineattr: getDefLineattr(),
+      textattr: getDefTextattr(),
       text: names[type],
       token: {
         _x: 0,
@@ -974,7 +961,6 @@ Modeling.prototype.createElementInModel = function (position, type) {
 
       relPos['initmark'] = { _x: x + w, _y: y + h / 2 };
       relPos['type'] = { _x: x + w, _y: y - h / 2 };
-
       relPos['time'] = { _x: x + w, _y: y + h / 2 };
       relPos['code'] = { _x: x + w, _y: y - h / 2 };
       relPos['cond'] = { _x: x - w, _y: y + h / 2 };
@@ -985,24 +971,9 @@ Modeling.prototype.createElementInModel = function (position, type) {
       for (let label of elemType.entry) {
         newElement[label] = {
           posattr: relPos[label] || defPos,
-          // posattr: {
-          //   _x: position.x + Math.round(bounds.width) / 2 + 100,//+ element.width, /// 55.500000,
-          //   _y: -1 * position.y - Math.round(bounds.height) / 2 + 80 / 4 ///+ element.height / 4 // 102.000000
-          // },
-          fillattr: {
-            _colour: 'White',
-            _pattern: 'Solid',
-            _filled: false
-          },
-          lineattr: {
-            _colour: 'Black',
-            _thick: 0,
-            _type: 'Solid'
-          },
-          textattr: {
-            _colour: 'Black',
-            _bold: false
-          },
+          fillattr: getDefFillattr(),
+          lineattr: getDefLineattr(),
+          textattr: getDefTextattr(),
           text: {
             _tool: 'CPN Tools',
             _version: '4.0.1'
@@ -1014,6 +985,24 @@ Modeling.prototype.createElementInModel = function (position, type) {
 
     // this.modelUpdate();
   }
+
+  // For Aux
+  if ([CPN_TEXT_ANNOTATION].includes(type)) {
+
+    const text = '* empty *';
+
+    newElement = {
+      posattr: getDefPosattr(position),
+      fillattr: getDefFillattr(),
+      lineattr: getDefLineattr(),
+      textattr: getDefTextattr(),
+      label: text,
+      text: text,
+      _id: getNextId()
+    };
+
+  }
+
 
   return newElement;
 }
@@ -1060,11 +1049,16 @@ Modeling.prototype.createArcInModel = function (placeCpnElement, transCpnElement
   return cpnArcElement;
 }
 
-function getDefPosattr() {
-  return {
-    _x: 0,
-    _y: 0
-  };
+function getDefPosattr(position = undefined) {
+  return position
+    ? {
+      _x: position.x,
+      _y: -1 * position.y
+    }
+    : {
+      _x: 0,
+      _y: 0
+    };
 }
 
 function getDefFillattr() {

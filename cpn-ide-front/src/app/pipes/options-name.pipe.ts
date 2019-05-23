@@ -23,21 +23,6 @@ export class OptionsNamePipePipe implements PipeTransform {
       case 'outputdirectory':
         transformed = 'Output directory';
         break;
-      case 'extensions.10006.enable':
-        transformed = 'Extensions-10006';
-        break;
-      case 'extensions.10001.enable':
-        transformed = 'Extensions-10001';
-        break;
-      case 'extensions.10003.enable':
-        transformed = 'Extensions-10003';
-        break;
-      case 'extensions.10005.enable':
-        transformed = 'Extensions-10005';
-        break;
-      case 'extensions.10002.enable':
-        transformed = 'Extensions-10002';
-        break;
       case 'repavg':
         transformed = 'Average';
         break;

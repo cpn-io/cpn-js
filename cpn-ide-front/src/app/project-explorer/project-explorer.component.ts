@@ -236,6 +236,10 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     });
 
+    this.eventService.on(Message.UPDATE_TREE_PAGES, (data) => {
+      this.updatePagesNode(data.currentPageId);
+    });
+
     this.eventService.on(Message.CHANGE_NAME_PAGE, (data) => {
       if (data.changedElement === 'tran') {
         const node = this.getObjects(this.nodes, 'id', data.id);
@@ -262,6 +266,28 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+  }
+
+  updatePagesNode(currentPageId) {
+    let cpnet = this.getCpnetElement(this.currentProjectModel);
+    if (!cpnet) {
+      return;
+    }
+
+    let projectNode = this.nodes[0];
+
+    let pagesNode = this.createPagesNode('Pages', cpnet);
+
+    console.log('updatePagesNode(), pagesNode = ', pagesNode);
+
+    projectNode.children[projectNode.children.length - 1] = pagesNode;
+
+    this.updateTree();
+
+    if (currentPageId) {
+      this.expandNode(currentPageId);
+      this.gotoNode(currentPageId);
+    }
   }
 
 
@@ -582,15 +608,16 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         treeNode.data.children.push(newNode);
       } else if (treeNode.parent) {
         treeNode.parent.data.children.push(newNode);
-        if (treeNode.data.type === 'page' && treeNode.data.id !== 'Pages') {
-          this.eventService.send(Message.SUBPAGE_CREATE, {
-            name: newNode.name,
-            id: newNode.id,
-            parentid: treeNode.id,
-            event: event,
-            state: this.treeComponent.treeModel.getState()
-          });
-        }
+
+        // if (treeNode.data.type === 'page' && treeNode.data.id !== 'Pages') {
+        //   this.eventService.send(Message.SUBPAGE_CREATE, {
+        //     name: newNode.name,
+        //     id: newNode.id,
+        //     parentid: treeNode.id,
+        //     event: event,
+        //     state: this.treeComponent.treeModel.getState()
+        //   });
+        // }
       }
 
       this.treeComponent.treeModel.update();
@@ -1512,6 +1539,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     pagesNode.classes = ['tree-project'];
     pagesNode.cpnElement = cpnElement;
     pagesNode.actions = ['page'];
+    pagesNode.type = 'pages';
 
     var pageNodeList = [];
 
@@ -1625,7 +1653,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     monitorsNode.editable = true;
     monitorsNode.type = 'monitor';
     if (cpnElement._disabled === 'true') {
-      monitorsNode.options = { nodeClass: 'disabledNode'};
+      monitorsNode.options = { nodeClass: 'disabledNode' };
     }
     // node.actions = ['page', 'delete'];
 

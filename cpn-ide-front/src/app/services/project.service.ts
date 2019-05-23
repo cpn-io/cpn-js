@@ -117,11 +117,6 @@ export class ProjectService {
 
     localStorage.setItem('projectJson', JSON.stringify(json));
 
-    // EmitterService.getAppMessageEmitter().emit({
-    //   id: Constants.ACTION_PROJECT_LOAD_DATA,
-    //   project: {data: json, name: filename}
-    // });
-
     this.projectData = { project: { data: json, name: filename } };
 
     this.eventService.send(Message.PROJECT_FILE_OPEN, this.projectData);
@@ -142,9 +137,9 @@ export class ProjectService {
     // const modelFile = 'test-1.cpn';
     // const modelFile = 'test-2.cpn';
 
-    // const modelFile = 'mynet.cpn';
+    const modelFile = 'mynet.cpn';
 
-    const modelFile = 'fuelstation.cpn';
+    // const modelFile = 'fuelstation.cpn';
 
     const url = './assets/cpn/' + modelFile;
     this.http.get(url, { headers: headers, responseType: 'text' })

@@ -68,38 +68,9 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
     this.openMlEditor(data.project);
   }
 
-  // subscribeToProject() {
-  //   this.subscription = EmitterService.getAppMessageEmitter().subscribe((data: any) => {
-  //     // console.log(data);
-  //     if (data && data.id) {
-  //
-  //       // Load new project
-  //       if (data.id === Constants.ACTION_PROJECT_LOAD_DATA) {
-  //         console.log('TESTTTEMIT');
-  //         this.modelTabArray = [];
-  //         this.mlTabArray = [];
-  //         this.tabsComponent.clear();
-  //
-  //         this.openMlEditor(data.project);
-  //       }
-  //
-  //       // Open page
-  //       if (data.id === Constants.ACTION_PAGE_OPEN) {
-  //         this.openModelEditor(data.pageObject, data.subPages);
-  //       }
-  //     }
-  //   });
-  // }
-
-  // @HostListener('window:resize', ['$event'])
-  // onResize(event) {
-  //   this.layout.updateSize();
-  // }
-
   currentTabChange(event) {
     console.log('currentTabChange(), event = ', event);
   }
-
 
   deleteTab(id) {
     this.tabsComponent.deleteTabById(id);

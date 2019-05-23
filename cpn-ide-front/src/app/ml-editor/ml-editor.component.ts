@@ -1,5 +1,4 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { EmitterService } from '../services/emitter.service';
 import { Message } from '../common/message';
 import { EventService } from '../services/event.service';
 import { ModelService } from '../services/model.service';
@@ -78,8 +77,8 @@ export class MlEditorComponent implements OnInit, OnDestroy {
       console.log('saveEditedData(), event.target.textContent = ', event.target.textContent);
       console.log('saveEditedData(), this.cpnElement = ', this.cpnElement);
 
-      this.eventService.send(Message.UPDATE_TREE, { 
-        cpnElement: this.cpnElement, 
+      this.eventService.send(Message.UPDATE_TREE, {
+        cpnElement: this.cpnElement,
         newTextValue: event.target.textContent });
     }
   }

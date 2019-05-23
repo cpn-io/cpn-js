@@ -43,10 +43,5 @@ export class MainToolbarComponent implements OnInit {
   }
 
   openProject() {
-    // EmitterService.getAppMessageEmitter().emit(
-    //   {
-    //     id: Constants.ACTION_PROJECT_OPEN_FILE,
-    //     text:"MainToolbarComponent. Open project event!"
-    //   });
   }
 }

@@ -136,11 +136,6 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
 
 
   sendMlToMlEditor(value: any) {
-    // console.log("DOUBLECLICK");
-    // EmitterService.getAppMessageEmitter().emit({
-    //   id: Constants.ACTION_SML_TO_EDITOR,
-    //   fn: { data: value }
-    // });
     this.eventService.send(Message.SML_TO_EDITOR, {fn: {data: value}});
   }
 

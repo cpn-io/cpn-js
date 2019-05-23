@@ -8,6 +8,7 @@ import {ModelService} from '../services/model.service';
 import {ColorDeclarationsPipe} from '../pipes/color-declarations.pipe';
 import {OptionsNamePipePipe} from '../pipes/options-name.pipe';
 import {Constants} from '../common/constants';
+import { AccessCpnService } from '../services/access-cpn.service';
 
 // import {TreeComponent} from 'angular-tree-component';
 
@@ -175,7 +176,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     // private xml2jsonService: NgxXml2jsonService,
     private projectService: ProjectService,
     private modelService: ModelService,
-    private _colorDeclarationsPipe: ColorDeclarationsPipe) {
+    private _colorDeclarationsPipe: ColorDeclarationsPipe,
+    private accessCpnService: AccessCpnService) {
 
     this.colorDeclarationsPipe = this._colorDeclarationsPipe;
   }
@@ -185,6 +187,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     this.appSettingsKeys = Object.keys(this.appSettings);
     // Subscribe on project load event
     this.eventService.on(Message.PROJECT_FILE_OPEN, (data) => {
+      this.accessCpnService.resetSim();
       this.loadProjectData(data.project);
     });
     this.eventService.on(Message.PROJECT_LOAD, (data) => {
@@ -1869,6 +1872,10 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * @param project - cpn net JSON object
    */
   loadProjectData(project) {
+
+    // Init Access/CPN
+    this.accessCpnService.initNet(project.data);
+
     this.filterText = '';
 
     const projectData = project.data;

@@ -854,13 +854,6 @@ export class ModelService {
     // }
 
     // this.eventService.send(Message.MODEL_UPDATE, {pageObject: page});
-
-    // this.eventService.send(Message.MODEL_UPDATE, {pageObject:  page});
-    // EmitterService.getAppMessageEmitter().emit(
-    //  {
-    //    id: Constants.ACTION_MODEL_UPDATE,
-    //    pageObject: page
-    //  });
     return page;
   }
 
@@ -908,11 +901,6 @@ export class ModelService {
         if (page.pageattr._name === updatedData.pageObject.pageattr._name) {
           page = updatedData.pageObject;
 
-          // EmitterService.getAppMessageEmitter().emit({
-          //   id: Constants.ACTION_XML_UPDATE, // id: Constants.ACTION_PROJECT_LOAD_DATA,
-          //   project: {data: project, name: this.modelName}
-          // });
-
           this.eventService.send(Message.XML_UPDATE, { project: { data: project, name: this.modelName } });
         }
       }
@@ -921,16 +909,9 @@ export class ModelService {
       if (page.pageattr._name === updatedData.pageObject.pageattr._name) {
         page = updatedData.pageObject;
 
-        // EmitterService.getAppMessageEmitter().emit({
-        //   id: Constants.ACTION_XML_UPDATE, // id: Constants.ACTION_PROJECT_LOAD_DATA,
-        //   project: {data: project, name: this.modelName}
-        // });
-
         this.eventService.send(Message.XML_UPDATE, { project: { data: project, name: this.modelName } });
       }
     }
-    //  console.log('Get data fromPAge ----' + JSON.stringify(updatedData.pageObject));
-    // console.log('actual data -------' + JSON.stringify(proj.workspaceElements.cpnet.page));
   }
 
 

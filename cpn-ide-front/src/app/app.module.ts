@@ -16,7 +16,7 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 
 import {MainFrameComponent} from './main-frame/main-frame.component';
-import {EmitterService} from './services/emitter.service';
+import {AccessCpnService} from './services/access-cpn.service';
 import {ProjectExplorerToolbarComponent} from './project-explorer/project-explorer-toolbar/project-explorer-toolbar.component';
 import {MainToolbarComponent} from './main-toolbar/main-toolbar.component';
 import {OpenprojectButtonComponent} from './actions/openproject-button/openproject-button.component';
@@ -92,7 +92,7 @@ import { OptionsNamePipePipe } from './pipes/options-name.pipe';
     NgbModule,
   ],
   entryComponents: [],
-  providers: [EmitterService, ProjectService, EventService, ModelService],
+  providers: [AccessCpnService, ProjectService, EventService, ModelService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

@@ -4,7 +4,7 @@ import { assign } from 'min-dash';
 import Diagram from 'diagram-js';
 import CpnDiagramModule from '../../lib/cpn-js/core';
 
-import { EmitterService } from '../services/emitter.service';
+import { AccessCpnService } from '../services/access-cpn.service';
 import { HttpClient } from '@angular/common/http';
 import { Message } from '../common/message';
 import { EventService } from '../services/event.service';
@@ -34,7 +34,7 @@ import { ProjectService } from '../services/project.service';
 export class ModelEditorComponent implements OnInit {
 
   constructor(private eventService: EventService,
-    private emitterService: EmitterService,
+    private accessCpnService: AccessCpnService,
     private projectService: ProjectService,
     private http: HttpClient,
     private modelService: ModelService) {
@@ -120,22 +120,22 @@ export class ModelEditorComponent implements OnInit {
       this.modeling.setCpnStatus({ process: '*' });
     });
 
-    this.eventService.on(Message.VERIFICATION_DONE, () => {
+    this.eventService.on(Message.SERVER_INIT_NET_DONE, () => {
       // set status 'clear' for all shapes on diagram
       this.modeling.setCpnStatus({ clear: '*' });
       // TODO: temporary set error and ready status for test shapes. Should be changed to real id
       // this.modeling.setCpnStatus({ error: ['ID1412328424','ID1412328605'], ready: ['ID1412328496'] });
 
-      this.emitterService.getMarking(undefined).subscribe(
+      this.accessCpnService.getMarking(undefined).subscribe(
         (data: any) => {
-          console.log('this.emitterService.getMarking(), data = ', data);
+          console.log('getMarking(), data = ', data);
 
           eventBus.fire('model.update.tokens', { data: data });
         });
 
-      this.emitterService.getEnableTransitions('ID0000001').subscribe(
+      this.accessCpnService.getEnableTransitions('ID0000001').subscribe(
         (data: any) => {
-          console.log('this.emitterService.getEnableTransitions(), data = ', data);
+          console.log('getEnableTransitions(), data = ', data);
 
           this.modeling.setCpnStatus({ ready: data });
         });
@@ -186,11 +186,12 @@ export class ModelEditorComponent implements OnInit {
         if (pageObj) {
           const list = [];
           for (const place of pageObj.place) {
-            if (place.port && (place.port._type === 'I/O' || place.port._type === event.portType)) { list.push({
-              id: place._id,
-              name: place.text,
-              type: place.port._type
-            });
+            if (place.port && (place.port._type === 'I/O' || place.port._type === event.portType)) {
+              list.push({
+                id: place._id,
+                name: place.text,
+                type: place.port._type
+              });
             }
           }
           this.portMenuProvider.open({ trans: event.trans, place: event.place, arc: event.arc, list: list }, event.position);
@@ -210,7 +211,6 @@ export class ModelEditorComponent implements OnInit {
   subscripeToAppMessage() {
 
     this.eventService.on(Message.SUBPAGE_CREATE, (data) => {
-
       if (data.parentid === this.pageId) {
         const bounds = this.canvas.viewbox();
         const x = bounds.x + bounds.width / 2;
@@ -222,7 +222,6 @@ export class ModelEditorComponent implements OnInit {
         const element = this.cpnFactory.createShape(undefined, cpnElement, CPN_TRANSITION, position, true);
         this.modelService.addElementJsonOnPage(cpnElement, this.pageId, CPN_TRANSITION);
       }
-
     });
 
     // Subscribe on property update event

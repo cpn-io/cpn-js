@@ -2,7 +2,7 @@ import {
   forEach,
   filter
 } from 'min-dash';
-import { is, CPN_PLACE, CPN_TRANSITION } from '../../util/ModelUtil';
+import { is, CPN_PLACE, CPN_TRANSITION, CPN_TEXT_ANNOTATION } from '../../util/ModelUtil';
 
 /**
  * This module is an element agnostic replace menu provider for the popup menu.
@@ -95,6 +95,14 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
     action: function () { self._createSubpage(event) }
   };
 
+  var createAuxMenuEntry = {
+    id: '_menuItem_createAux',
+    label: 'New Aux',
+    className: 'bpmn-icon-script',
+    action: function () { self._createShape(event, CPN_TEXT_ANNOTATION) }
+  };
+
+
   // var deleteMenuEntry = {
   //   id: '_menuItem_delete',
   //   label: 'Delete',
@@ -119,6 +127,7 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
     entries.push(createPlaceMenuEntry);
     entries.push(createTransitionMenuEntry);
     entries.push(createSubpageMenuEntry);
+    entries.push(createAuxMenuEntry);
   }
 
   // if (is(element, CPN_PLACE)) {
@@ -154,6 +163,8 @@ CpnPopupMenuProvider.prototype._createShape = function (event, type) {
 
   this._popupMenu.close();
   const position = toLocalPoint(this._canvas, this._position);
+
+
   let element = this._cpnFactory.createShape(undefined, undefined, type, position, true);
   this._eventBus.fire('shape.create.end', {elements: [element]});
 }

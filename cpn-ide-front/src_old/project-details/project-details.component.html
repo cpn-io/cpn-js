@@ -1,0 +1,190 @@
+<tabs #tabsComponent class="cpn-tabs">
+  <ng-template ngFor let-tab [ngForOf]="declarations">
+    <tab [id]="tab.id" [isHidden]="paramsTypes.includes(tab.id) ? false : true" [tabTitle]="tab.id">
+
+      <nav class="navbar navbar-sm navbar-expand shadow-sm">
+        <ul class="navbar-nav mr-auto">
+
+          <div *ngIf="isDeclarationBlock(tab.id)" class="nav-item">
+            <li class="nav-item dropdown">
+              <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle nav-link mb-0" data-toggle="dropdown"
+                 href="#" id="navbarDropdown" role="button">
+                <i class="fas fa-plus"></i>
+                <span>New</span>
+              </a>
+
+              <div aria-labelledby="navbarDropdown" class="dropdown-menu shadow">
+                <a (click)="addItemClick(tab.id, 'color', undefined)" class="dropdown-item" href="#">New Color</a>
+                <a (click)="addItemClick(tab.id, 'var', undefined)" class="dropdown-item" href="#">New Var</a>
+                <a (click)="addItemClick(tab.id, 'ml', undefined)" class="dropdown-item" href="#">New ML</a>
+                <a (click)="addItemClick(tab.id, 'globref', undefined)" class="dropdown-item" href="#">New GlobRef</a>
+                <!--<a class="dropdown-item" href="#">New Block</a>-->
+              </div>
+            </li>
+          </div>
+
+          <div *ngIf="!isDeclarationBlock(tab.id)" class="nav-item">
+            <a (click)="addItemClick(tab.id, tab.id, undefined)" class="nav-link mb-0" href="#">
+              <i class="fas fa-plus"></i>
+              <span>New {{tab.id}}</span>
+            </a>
+          </div>
+
+          <div class="divider"></div>
+
+          <!--<li class="nav-item"><a class="nav-link disabled" href="#">Delete:</a></li>-->
+          <li class="nav-item">
+            <a (click)="deleteRow(tabsComponent)" class="nav-link" href="#">
+              <i class="fas fa-minus"></i>Delete
+            </a>
+          </li>
+
+        </ul>
+      </nav>
+
+      <!--tab  *ngFor="let tab of declarations" [tabTitle]="tab.id"-->
+      <!--<div style="overflow-y: auto; overflow-x:hidden; height:100%; padding-bottom: 50px; padding-top: 0px">-->
+
+      <div class="workspace-container-with-tab">
+        <div class="inner">
+          <div class="scroll-y">
+            <div class="pane">
+
+              <div style="margin:-1px">
+
+                <div *ngIf="tab.globref && showTable !== 'Globref'">
+                  <table [id]="'declarationPanel-globref-'+tab.id" class="table table-bordered table-hover table-small">
+                    <tr (click)="selectClick(item, tab.id, 'globref')" *ngFor="let item of tab['globref']"
+                    >
+                      <td style="width: 60px;">globref</td>
+                      <td contenteditable='true'
+                          (focusout)="saveEditedData($event)">{{getGlobrefStringValue(item) }}</td>
+                    </tr>
+                  </table>
+                </div>
+
+                <div *ngIf="tab['var']  && showTable !== 'Var'">
+                  <table [id]="'declarationPanel-var-'+tab.id" class="table table-bordered table-hover table-small">
+                    <tr (click)="selectClick(item, tab.id, 'var')" *ngFor="let item of tab['var']">
+                      <td style="width: 60px;">var</td>
+                      <td contenteditable='true'
+                          (focusout)="saveEditedData($event)">{{getVariableStringValue(item)}}</td>
+                    </tr>
+                  </table>
+                </div>
+
+                <div *ngIf="tab['color']  && showTable !== 'Color'">
+                  <table [id]="'declarationPanel-color-'+tab.id" class="table table-bordered table-hover table-small">
+                    <tr (click)="selectClick(item, tab.id, 'color')" *ngFor="let item of tab['color']">
+                      <td style="width: 60px;">colset</td>
+                      <td contenteditable='true' (focusout)="saveEditedData($event)">{{ getColorStringValue(item)}}</td>
+                    </tr>
+                  </table>
+                </div>
+
+                <!-- ML Code -->
+                <div *ngIf="tab['ml']  && showTable !== 'Ml'">
+                  <table [id]="'declarationPanel-ml-'+tab.id" class="table table-bordered table-hover table-small">
+                    <tr (click)="selectClick(item, tab.id, 'ml')" *ngFor="let item of tab['ml']" c>
+                      <td style="width: 60px;">{{getFirstCellDataFromMLCode(item)}}</td>
+                      <td (click)="sendMlToMlEditor(item)" contenteditable='true' style="white-space: pre;"
+                          (focusout)="saveEditedData($event)">{{item}}</td>
+                    </tr>
+                  </table>
+                </div>
+
+                <!--div *ngIf="paramsTypes.includes(tab.id) && tab.id ==='color'  && showTable !== 'Color'" -->
+                <div *ngIf="paramsTypes.includes(tab.id)  && showTable.toLowerCase() !== tab.id">
+                  <div *ngFor="let block of tab['block']">
+
+                    <div (click)="hideColapseTable('declarationPanel-'+ tab.id +'-' + block.id + '-commonTable', block)"
+                         class="blockHeader">
+                    <span class="caret"><i
+                      [ngClass]="block.visible ? 'fas fa-caret-down' : 'fas fa-caret-right'"></i></span>
+                      <span
+                        [ngClass]="block.visible ? 'active' : ''">{{block.id}}</span>
+                    </div>
+                    <table [hidden]="!block.visible"
+                           [id]="'declarationPanel-'+ tab.id +'-' + block.id + '-commonTable' "
+                           class="table table-bordered table-hover table-small">
+                      <tr
+                        (click)="selectClick(item, 'declarationPanel-'+ tab.id +'-' + block.id + '-commonTable', undefined)"
+                        *ngFor="let item of block.rows">
+                        <td style="width: 60px;">{{getBlockElemeStringValue(tab.id === 'ml' ? {
+                          item: item,
+                          flag: 'ml'
+                        } : undefined, tab.id)}}</td>
+                        <td contenteditable='true'
+                            (focusout)="saveEditedData($event)">{{ getBlockElemeStringValue(item, tab.id)}}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+
+
+                <!-- Globref -->
+                <!--div *ngIf="tab.globref && showTable !== 'Globref'" >
+                  <div class="blockHeader">Globref</div>
+                  <table  [id]="'declarationPanel-globref-'+tab.id"  class="table table-bordered table-hover table-small">
+                    <tr>
+                      <th>Name</th>
+                      <th>Value</th>
+                    </tr>
+                    <tr (click)="selectClick(item, tab.id, 'globref')" *ngFor="let item of tab['globref']"
+                        contenteditable='true'>
+                      <td>{{ item.id }}</td>
+                      <td>{{ item.ml }}</td>
+                    </tr>
+                  </table>
+                </div-->
+
+                <!-- Var -->
+                <!--div *ngIf="tab['var']  && showTable !== 'Var'">
+                  <div class="blockHeader">Var</div>
+                  <table  [id]="'declarationPanel-var-'+tab.id" class="table table-bordered table-hover table-small">
+                    <tr>
+                      <th>Name</th>
+                      <th>Value</th>
+                    </tr>
+                    <tr (click)="selectClick(item, tab.id, 'var')" *ngFor="let item of tab['var']" contenteditable='true'>
+                      <td>{{ item.id }}</td>
+                      <td>{{ item.type.id}}</td>
+                    </tr>
+                  </table>
+                </div-->
+
+                <!-- Color -->
+                <!--div *ngIf="tab['color']  && showTable !== 'Color'" >
+                  <div class="blockHeader">Color</div>
+                  <table [id]="'declarationPanel-color-'+tab.id"  class="table table-bordered table-hover table-small">
+                    <tr>
+                      <th>Name</th>
+                      <th>Value</th>
+                    </tr>
+                    <tr (click)="selectClick(item, tab.id, 'color')" *ngFor="let item of tab['color']" contenteditable='true'>
+                      <td>{{ item.id }}</td>
+                      <td>{{ getColorStringValue(item)}}</td>
+                    </tr>
+                  </table>
+                </div-->
+
+                <!-- ML Code -->
+                <!--div *ngIf="tab['ml']  && showTable !== 'Ml'">
+                  <div class="blockHeader">ML code</div>
+                  <table [id]="'declarationPanel-ml-'+tab.id" class="table table-bordered table-hover table-small">
+                    <tr (click)="selectClick(item, tab.id, 'ml')" *ngFor="let item of tab['ml']" contenteditable='true'>
+                      <td (click)="sendMlToMlEditor(item)">{{ item}}</td>
+                    </tr>
+                  </table>
+                </div-->
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </tab>
+  </ng-template>
+</tabs>

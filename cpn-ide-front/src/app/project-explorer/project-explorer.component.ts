@@ -1527,6 +1527,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     return treeNode;
   }
 
+  // <editor-fold desc="Creating nodes for pages">
 
   /**
    * Creating project Pages node
@@ -1611,6 +1612,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     return pageNode;
   }
 
+  // </editor-fold>
+
+  // <editor-fold desc="Creating nodes for monitors">
 
   /**
    * Creating monitors node
@@ -1678,32 +1682,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     monTypeNode.children = subnodes12;
     subnodes11.push(monTypeNode);
 
-    // nodes
-    let nobp = this.createTreeNode('nobp_' + cpnElement._id, 'Nodes ordered by pages');
-    let subnodes21 = [];
-    let pageinstanceidref = new Map<string, Array<string>>();
-    if (cpnElement.node instanceof Array) {
-      for (const node of cpnElement.node) {
-        if (pageinstanceidref.has(node._pageinstanceidref)) {
-          pageinstanceidref.get(node._pageinstanceidref).push(node._idref);
-        } else {
-          pageinstanceidref.set(node._pageinstanceidref, [node._idref]);
-        }
-      }
-    } else if (cpnElement.node) {
-      pageinstanceidref.set(cpnElement.node._pageinstanceidref, [cpnElement.node._idref]);
-    }
-    for (let k of pageinstanceidref.keys()) {
-      let instRef = this.createTreeNode(k + '_' + cpnElement._id, k);
-      let subnodes211 = [];
-      for (let id of pageinstanceidref.get(k)) {
-        let idref = this.createTreeNode(id + '_' + cpnElement._id, id);
-        subnodes211.push(idref);
-      }
-      instRef.children = subnodes211;
-      subnodes21.push(instRef);
-    }
-    nobp.children = subnodes21;
+    // nodes ordered by page
+    let nobp = this.createMonitorNodesOrderedByPage(cpnElement);
     subnodes11.push(nobp);
 
     monitorsNode.children = subnodes11;
@@ -1718,6 +1698,96 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     monOptNode.editable = false;
     monOptNode.type = 'monitor_option';
     return monOptNode;
+  }
+
+  createMonitorNodesOrderedByPage(cpnElement): any  {
+    let nobp = this.createTreeNode('nobp_' + cpnElement._id, 'Nodes ordered by pages');
+    let subnodes = [];
+    let pageinstanceidref = new Map<string, Array<string>>();
+    if (cpnElement.node instanceof Array) {
+      for (const node of cpnElement.node) {
+        if (pageinstanceidref.has(node._pageinstanceidref)) {
+          pageinstanceidref.get(node._pageinstanceidref).push(node._idref);
+        } else {
+          pageinstanceidref.set(node._pageinstanceidref, [node._idref]);
+        }
+      }
+    } else if (cpnElement.node) {
+      pageinstanceidref.set(cpnElement.node._pageinstanceidref, [cpnElement.node._idref]);
+    }
+    for (let k of pageinstanceidref.keys()) {
+      let instRefNode = this.createTreeNode(k + '_' + cpnElement._id, k);
+      let subnodes1 = [];
+      for (let id of pageinstanceidref.get(k)) {
+        let idrefNode = this.createTreeNode(id + '_' + cpnElement._id, id);
+        subnodes1.push(idrefNode);
+
+        let name = null;
+        if (this.modelService.getCpn()) {
+          if (this.modelService.getCpn().page instanceof Array) {
+            for (const page of this.modelService.getCpn().page) {
+              name = this.findElementOnPageByID(page, id);
+              if (name !== null) {
+                instRefNode.name = page.pageattr._name;
+                idrefNode.name = name;
+                break;
+              }
+            }
+          } else {
+            name = this.findElementOnPageByID(this.modelService.getCpn().page, id);
+            if (name !== null) {
+              instRefNode.name = this.modelService.getCpn().page.pageattr._name;
+              idrefNode.name = name;
+            }
+          }
+        }
+      }
+      instRefNode.children = subnodes1;
+      subnodes.push(instRefNode);
+    }
+    nobp.children = subnodes;
+    return nobp;
+  }
+
+  findElementOnPageByID(page, idref): any {
+    let name = null;
+    if (page.trans) {
+      if (page.trans instanceof Array) {
+        for (const trans of page.trans) {
+          if (this.findElem(trans, idref)) {
+            name = trans.text + ' (transition)';
+            break;
+          }
+        }
+      } else {
+        if (this.findElem(page.trans, idref)) {
+          name = page.trans.text + ' (transition)';
+        }
+      }
+    }
+
+    if (name === null) {
+      if (page.place) {
+        if (page.place instanceof Array) {
+          for (const place of page.place) {
+            if (this.findElem(place, idref)) {
+              name = place.text + ' (place)';
+              break;
+            }
+          }
+        } else {
+          if (this.findElem(page.place, idref)) {
+            name = page.place.text + ' (place)';
+          }
+        }
+      }
+    }
+    return name;
+  }
+
+  findElem(elem, idref): boolean {
+    return elem._id === idref;
+
   }
 
   isMonitor(node) {
@@ -1748,6 +1818,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       node.data.cpnElement._value = event.target.checked ? 'true' : 'false';
     }
   }
+
+  // </editor-fold>
 
   /**
    * Get root cpnet element from CPN project JSON object

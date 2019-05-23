@@ -1445,11 +1445,17 @@ export class ModelService {
          return pl._id === cpnElement._id;
      })
     });
-    let placeEnd = page.place.find(el => {
+    for(let entry of ['place', 'trans'])
+      if(!(page[entry] instanceof Array)) {
+        page[entry] = [page[entry]];
+      }
+    let placeEnd
+    placeEnd = page.place.find(el => {
       return el._id === cpnElement.placeend._idref;
     });
-    let transEnd = page.trans.find((tr) => { return cpnElement.transend._idref === tr._id});
-    return {place: placeEnd, trans: transEnd};
+    let transEnd
+    transEnd = page.trans.find((tr) => { return cpnElement.transend._idref === tr._id});
+    return {place: placeEnd, trans: transEnd, orient: cpnElement._orientation };
   }
 
 
@@ -1482,10 +1488,10 @@ export class ModelService {
   }
 
 
-  getPortIdByName(pageId, text) {
+  getPortIdByName(pageId, text, orient) {
     let page = this.getPageById(pageId);
     if(page && text !== ''){
-      let port = page.place.find( e => { return e.text === text});
+      let port = page.place.find( e => { return e.text === text && (e.port._type === 'I/O' || e.port._type === (orient === 'TtoP' ? 'Out' : 'In'))});
       return port._id;
     } else return undefined;
   }

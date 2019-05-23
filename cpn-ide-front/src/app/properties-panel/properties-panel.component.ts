@@ -251,7 +251,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   updatePortBind(event) {
     console.log('updatePortBind    ', event);
     const bindObj = this.modelService.getArcEnds(this.cpnElement);
-    const id = this.modelService.getPortIdByName(bindObj.trans.subst._subpage, event);
+    const id = this.modelService.getPortIdByName(bindObj.trans.subst._subpage, event, bindObj.orient);
     let ids = undefined;
     if(bindObj.trans.subst._portsock !== '') {
       ids = this.parsePortSock(bindObj.trans.subst._portsock);
@@ -264,7 +264,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
           pair[0] = id.trim();
           pair[1] = bindObj.place._id.trim();
         } else {
-          ids = ids.filter(e => e[0] !== pair[0] &&  e[1] !== pair[1]);
+          ids = ids.filter(e => e[0] !== pair[0] ||  e[1] !== pair[1]);
         }
       } else {
         ids.push([id, bindObj.place._id]);

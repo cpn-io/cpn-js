@@ -243,19 +243,19 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       this.updatePagesNode(data.currentPageId);
     });
 
-    this.eventService.on(Message.CHANGE_NAME_PAGE, (data) => {
-      if (data.changedElement === 'tran') {
-        const node = this.getObjects(this.nodes, 'id', data.id);
-        if (node) {
-          node[0].name = data.name;
-          this.modelService.changePageName(data.id, data.name);
-          /*const changedPage = this.currentProjectModel.workspaceElements.cpnet.page.find(page => page._id === data.id);
-          if (changedPage) {
-            changedPage.pageattr._name = data.name;
-          }*/
-        }
-      }
-    });
+    // this.eventService.on(Message.CHANGE_NAME_PAGE, (data) => {
+    //   if (data.changedElement === 'tran') {
+    //     const node = this.getObjects(this.nodes, 'id', data.id);
+    //     if (node) {
+    //       node[0].name = data.name;
+    //       this.modelService.changePageName(data.id, data.name);
+    //       /*const changedPage = this.currentProjectModel.workspaceElements.cpnet.page.find(page => page._id === data.id);
+    //       if (changedPage) {
+    //         changedPage.pageattr._name = data.name;
+    //       }*/
+    //     }
+    //   }
+    // });
 
     this.eventService.on(Message.SHAPE_HOVER, (data) => {
       // console.log(' ----- SHAPE_HOVER, data = ' + data);
@@ -336,7 +336,12 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       // разбираем инитмарк и находим в нем литералы
       this.processMlCodeRecursively(element.cpnElement.initmark.text.toString());
 
+      // find monitors
+      // this.processMonitors(element.name, 'place');
+
     } else if (element.type === 'cpn:Transition') {
+      // console.log(this.nodes[0]);
+      // this.processMonitors(element.name, 'transition');
       elementId = element.cpnElement._id;
       if (this.modelService.getCpn()) {
         if (this.modelService.getCpn().page instanceof Array) {
@@ -346,6 +351,20 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         } else {
           this.processPage(this.modelService.getCpn().page, elementId);
         }
+      }
+    }
+
+  }
+
+  processMonitors(elementName, elementType) {
+    // console.log(this.nodes[0].cpnElement.monitorblock);
+    if (this.nodes[0].cpnElement.monitorblock && this.nodes[0].cpnElement.monitorblock.monitor) {
+      if (this.nodes[0].cpnElement.monitorblock.monitor instanceof Array) {
+        for (const m of this.nodes[0].cpnElement.monitorblock.monitor) {
+          this.underlineRelationsRecursively(m, elementName + ' )' + elementType + ')');
+        }
+      } else {
+        this.underlineRelationsRecursively(this.nodes[0].cpnElement.monitorblock.monitor, elementName + ' )' + elementType + ')');
       }
     }
   }
@@ -451,26 +470,41 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * @param name имя типа или функции, которое нужно найти и подчеркнуть в дереве,
    */
   underlineRelationsRecursively(parentNode: any, name: string): boolean {
-    if (parentNode.children) {
-      for (const node of parentNode.children) {
-        if (this.underlineRelationsRecursively(node, name)) {
-          this.doUnderlineNodeLabel(true, node.id);
-          return true;
+      if (parentNode.children) {
+        if (parentNode.type === 'monitor_ref') {
+          if (parentNode.name === name) {
+            this.doUnderlineNodeLabel(true, parentNode.id);
+            return true;
+          }
         }
-      }
-    } else {
-      const parentCnpWitchoutComments = this.removeCommentsFromCode(parentNode.cpnElement.toString());
-      if (parentCnpWitchoutComments.match('^((local){1}\\s+)*(fun|val|exception){1}\\s+' + name + '\\s*[=(]{1}')) {
-        // это проверка на то, что строка является декларацией функции или val
-        this.doUnderlineNodeLabel(true, parentNode.id);
-        return true;
+        for (const node of parentNode.children) {
+          if (this.underlineRelationsRecursively(node, name)) {
+            this.doUnderlineNodeLabel(true, node.id);
+            return true;
+          }
+        }
+      } else {
+        const parentCnpWitchoutComments = this.removeCommentsFromCode(parentNode.cpnElement.toString());
+        if (parentCnpWitchoutComments.match('^((local){1}\\s+)*(fun|val|exception){1}\\s+' + name + '\\s*[=(]{1}')) {
+          // это проверка на то, что строка является декларацией функции или val
+          this.doUnderlineNodeLabel(true, parentNode.id);
+          return true;
 
-      } else if (parentNode.cpnElement.id) {
+        } else if (parentNode.cpnElement.id) {
 
-        // здесь подчеркиваем переменные и их типы
-        if (parentNode.cpnElement.id instanceof Array) {
-          for (const someId of parentNode.cpnElement.id) {
-            if (someId === name) {
+          // здесь подчеркиваем переменные и их типы
+          if (parentNode.cpnElement.id instanceof Array) {
+            for (const someId of parentNode.cpnElement.id) {
+              if (someId === name) {
+                this.doUnderlineNodeLabel(true, parentNode.id);
+                if (parentNode.cpnElement.type) {
+                  this.underlineRelationsRecursively(this.nodes[0], parentNode.cpnElement.type.id);
+                }
+                return true;
+              }
+            }
+          } else {
+            if (parentNode.cpnElement.id === name) {
               this.doUnderlineNodeLabel(true, parentNode.id);
               if (parentNode.cpnElement.type) {
                 this.underlineRelationsRecursively(this.nodes[0], parentNode.cpnElement.type.id);
@@ -478,17 +512,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
               return true;
             }
           }
-        } else {
-          if (parentNode.cpnElement.id === name) {
-            this.doUnderlineNodeLabel(true, parentNode.id);
-            if (parentNode.cpnElement.type) {
-              this.underlineRelationsRecursively(this.nodes[0], parentNode.cpnElement.type.id);
-            }
-            return true;
-          }
         }
       }
-    }
     return false;
   }
 
@@ -1799,7 +1824,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   createMonitorDeclaration(decl, cpnElement): any {
     let d = this.createTreeNode('monitor_' + decl._name.split(' ')[0] + '_' + cpnElement._id, decl._name);
 
-    let d1 =  this.createTreeNode(decl.ml._id, decl.ml.__text);
+    let d1 = this.createTreeNode(decl.ml._id, decl.ml.__text);
     d1.editable = true;
     d1.type = 'monitor_' + decl._name.split(' ')[0];
 
@@ -2335,6 +2360,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   updatePageNodeText(node, newValue) {
     node.data.name = newValue; // update tree node text
     node.data.cpnElement.pageattr._name = newValue; // update cpnElement
+    this.eventService.send(Message.CHANGE_NAME_PAGE, { id: node.data.cpnElement._id, name: newValue});
   }
 
   /**

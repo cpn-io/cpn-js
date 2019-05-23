@@ -13,11 +13,6 @@ const TRANSLATE_COLOR = {
   'Fucia': '#f0f'
 };
 
-export function getText(element) {
-  // console.log('getText(), element = ', element);
-  return element.name || element.text || '';
-}
-
 export function getFillColor(element) {
   if (element.cpnElement && element.cpnElement.fillattr)
     return TRANSLATE_COLOR[element.cpnElement.fillattr._colour] || element.cpnElement.fillattr._colour || 'white';

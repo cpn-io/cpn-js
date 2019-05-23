@@ -15,6 +15,7 @@ import BendpointsModule from 'diagram-js/lib/features/bendpoints';
 import AttachSupportModule from 'diagram-js/lib/features/attach-support';
 import GlobalConnectModule from 'diagram-js/lib/features/global-connect';
 import LabelSupportModule from 'diagram-js/lib/features/label-support';
+// import ResizeModule from 'diagram-js/lib/features/resize/Resize';
 
 import CroppingConnectionDocking from 'diagram-js/lib/layout/CroppingConnectionDocking';
 
@@ -56,6 +57,7 @@ export default {
     LabelSupportModule,
 
     CroppingConnectionDocking,
+    // ResizeModule,
 
     // Cpn
     CpnModelingModule,
@@ -71,11 +73,14 @@ export default {
     LabelEditingModule,
   ],
   __init__: [
+    // 'resize',
+
     'popupMenuProvider',
     'portMenuProvider',
 //    'paletteProvider',
     'cpnOrderingProvider'
   ],
+
   connectionDocking: ['type', CroppingConnectionDocking],
   popupMenuProvider: ['type', CpnPopupMenuProvider],
   portMenuProvider: ['type', CpnPortMenuProvider],

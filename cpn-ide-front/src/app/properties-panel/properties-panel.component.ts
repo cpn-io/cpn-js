@@ -166,11 +166,34 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   }
 
 
+  /**
+   * Get list of names for pages wich is not current or not subpage
+   */
   getSubstPages() {
-    const pages = this.modelService.getAllPages();
-    const pageNames = [''];
-    for (const page of pages) {
-      pageNames.push(page.pageattr._name);
+    const pageList = this.modelService.getAllPages();
+
+    const subPageIdList = [];
+    const parentPageIdList = [];
+
+    for (let page of pageList) {
+      var transList = page.trans instanceof Array ? page.trans : [page.trans];
+      for (let trans of transList) {
+        if (trans.subst && trans.subst._subpage) {
+          if (page._id !== this.pageId)
+            subPageIdList.push(trans.subst._subpage);
+
+          if (trans.subst._subpage === this.pageId || parentPageIdList.includes(trans.subst._subpage))
+            parentPageIdList.push(page._id);
+        }
+      }
+    }
+
+    // console.log('getSubstPages(), supPageIdList = ', subPageIdList);
+
+    const pageNames = ['-- empty --'];
+    for (let page of pageList) {
+      if (page._id !== this.pageId && !subPageIdList.includes(page._id) && !parentPageIdList.includes(page._id))
+        pageNames.push(page.pageattr._name);
     }
     return pageNames;
   }
@@ -265,7 +288,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   }
 
   updatePortType(event) {
-    console.log(this.constructor.name, 'updatePortType(), event = ', event);
+    // console.log(this.constructor.name, 'updatePortType(), event = ', event);
 
     const portType = event.trim();
 
@@ -284,37 +307,38 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     this.cpnElement.port.text = portType;
     this.cpnElement.port._type = (portType === 'In/Out') ? 'I/O' : portType;
 
-    console.log(this.constructor.name, 'updatePortType(), this.cpnElement = ', this.cpnElement);
+    // console.log(this.constructor.name, 'updatePortType(), this.cpnElement = ', this.cpnElement);
 
     this.updateChanges();
   }
 
   updateSubst(event) {
-    console.log(this.constructor.name, 'updateSubst(), event = ', event);
+    // console.log(this.constructor.name, 'updateSubst(), event = ', event);
 
     const pageName = event.trim();
 
     if (!this.cpnElement)
       return;
 
-    if (pageName === '') {
+    if (pageName === '' || pageName === '-- empty --') {
       delete this.cpnElement.subst;
-      this.updateChanges();
-      return;
+    } else {
+      let pageId = this.modelService.getPageId(pageName);
+
+      if (!this.cpnElement.subst)
+        this.cpnElement.subst = this.modelService.createSubstObject(this.cpnElement, pageName, pageId);
+
+      this.cpnElement.subst.subpageinfo.text = pageName;
+      this.cpnElement.subst.subpageinfo._name = pageName;
+      this.cpnElement.subst._subpage = pageId;
+
+      // console.log(this.constructor.name, 'updateSubst(), this.cpnElement = ', this.cpnElement);
     }
 
-    let pageId = this.modelService.getPageId(pageName);
-
-    if (!this.cpnElement.subst)
-      this.cpnElement.subst = this.modelService.createSubstObject(this.cpnElement, pageName, pageId);
-
-    this.cpnElement.subst.subpageinfo.text = pageName;
-    this.cpnElement.subst.subpageinfo._name = pageName;
-    this.cpnElement.subst._subpage = pageId;
-
-    console.log(this.constructor.name, 'updateSubst(), this.cpnElement = ', this.cpnElement);
-
     this.updateChanges();
+    this.eventService.send(Message.UPDATE_TREE_PAGES, {
+      currentPageId: this.pageId
+    });
   }
 
 }

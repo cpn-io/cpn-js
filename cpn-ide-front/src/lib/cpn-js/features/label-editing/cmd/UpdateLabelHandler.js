@@ -15,9 +15,9 @@ import {
   CPN_TEXT_ANNOTATION,
   getBusinessObject,
   is,
-  CPN_MARKING_LABEL
+  CPN_MARKING_LABEL,
+  getText
 } from '../../../util/ModelUtil';
-import { getText } from '../../../draw/CpnRenderUtil';
 
 var NULL_DIMENSIONS = {
   width: 0,

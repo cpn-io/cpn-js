@@ -17,6 +17,7 @@ export class Message {
   static UPDATE_GLOBBOX = 'update.globbox';
   static MODEL_ERROR = 'model.error';
   static UPDATE_TREE = 'update.tree';
+  static UPDATE_TREE_PAGES = 'update.tree.pages';
   static SUBPAGE_CREATE = 'subpage.create';
   static OPEN_DECLARATION_BLOCK = 'open.declaration.block';
   static CHANGE_EXPLORER_TREE = 'change.explorer.tree';

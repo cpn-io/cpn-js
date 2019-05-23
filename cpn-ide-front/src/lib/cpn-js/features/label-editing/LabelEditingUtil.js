@@ -1,4 +1,4 @@
-import { getText } from "../../draw/CpnRenderUtil";
+import { getText } from "../../util/ModelUtil";
 
 export function getLabel(element) {
    return getText(element);

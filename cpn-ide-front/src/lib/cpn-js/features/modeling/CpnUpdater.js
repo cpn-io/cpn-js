@@ -37,6 +37,7 @@ import {
   event as domEvent
 } from 'min-dom';
 import Modeling from "./Modeling";
+import { assign } from 'min-dash';
 
 /**
  * A handler responsible for updating
@@ -71,6 +72,8 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   eventBus.on('shape.changed', function (event) {
     // updateLabels(e.element);
     // console.log('CpnUpdater(), shape.changed, event.element = ', event.element);
+
+    updateBounds({ context: { shape: event.element } });
 
     updateCpnElement(event.element);
   });
@@ -197,7 +200,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     var shape = e.context.shape;
 
     var target = shape;
-    var bounds = target.bounds;
+    var bounds = target.bounds || {};
 
     assign(bounds, {
       x: shape.x,

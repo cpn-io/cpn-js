@@ -102,12 +102,19 @@
                       <td class="node"
                           [ngClass]="{'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id)}">
 
-                        <div *ngIf="!isOption(node)" [id]="'textinpfield_' + node.id"
+                        <div *ngIf="!isOption(node) && !isMonitorRef(node)" [id]="'textinpfield_' + node.id"
                              class="editablenode"
                              (click)="onNodeLabelClick($event, node)"
                              (focusout)="saveEditedData($event, node)"
                              [contentEditable]="canEdit(node) && (openedLabel[node.id] || (editableNode === node))"
                              [innerHTML]="getLabel(node) | colorDeclarations | safeHtml">
+                        </div>
+                      </td>
+
+                      <!-- Monitor - idref -->
+                      <td *ngIf="isMonitorRef(node)" class="node"
+                          [ngClass]="{'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id)}">
+                        <div [id]="'textinpfield_' + node.id" style="white-space: normal">{{node.data.name}}
                         </div>
                       </td>
 

@@ -24,15 +24,7 @@ export class OpenprojectButtonComponent implements OnInit {
       }
 
       const file: File = files[0];
-      // load project file to ProjectService instance for getting access from all application
       this.projectService.loadProjectFile(file);
-
-      // EmitterService.getAppMessageEmitter().emit(
-      //   {
-      //     id: Constants.ACTION_PROJECT_OPEN_FILE,
-      //     text: 'OpenprojectButtonComponent. Open project event!',
-      //     file: file
-      //   });
     }
   }
 

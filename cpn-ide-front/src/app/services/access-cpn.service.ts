@@ -17,6 +17,14 @@ export class AccessCpnService {
 
   constructor(private http: HttpClient,
     private eventService: EventService) {
+
+    this.eventService.on(Message.SERVER_INIT_NET, (data) => {
+      console.log('AccessCpnService(), SERVER_INIT_NET, data = ', data);
+      if (data) {
+        this.initNet(data.projectData);
+      }
+    });
+
   }
 
   generateUserSession() {
@@ -219,8 +227,14 @@ export class AccessCpnService {
           // Init simulator
           // if (data.success && !this.simInitialized) {
           if (!this.simInitialized) {
-              this.initSim();
+            this.initSim();
           }
+
+          // Get token marks and transition
+          // if (data.success && this.simInitialized) {
+          //   this.getTokenMarks();
+          //   this.getTransitions();
+          // }
         },
         (error) => {
           this.initNetProcessing = false;
@@ -257,12 +271,18 @@ export class AccessCpnService {
       (data: any) => {
         this.initSimProcessing = false;
         console.log('AccessCpnService, initSim(), SUCCESS, data = ', data);
-        this.eventService.send(Message.SERVER_INIT_SIM_DONE, { data: data });
         this.simInitialized = true;
+
+        this.eventService.send(Message.SERVER_INIT_SIM_DONE, { data: data });
+
+        // Get token marks and transition
+        this.getTokenMarks();
+        this.getTransitions();
       },
       (error) => {
         this.initSimProcessing = false;
         console.error('AccessCpnService, initSim(), ERROR, data = ', error);
+
         this.eventService.send(Message.SERVER_INIT_SIM_ERROR, { data: error });
       }
     );
@@ -270,7 +290,10 @@ export class AccessCpnService {
 
 
   getTokenMarks() {
-    console.log('AccessCpnService, getTokenMarks(), this.sessionId = ', this.sessionId);
+    // console.log('AccessCpnService, getTokenMarks(), this.sessionId = ', this.sessionId);
+
+    if (!this.simInitialized)
+      return;
 
     if (!this.sessionId) {
       return;
@@ -289,6 +312,9 @@ export class AccessCpnService {
 
 
   getTransitions() {
+    if (!this.simInitialized)
+      return;
+
     if (!this.sessionId) {
       return;
     }

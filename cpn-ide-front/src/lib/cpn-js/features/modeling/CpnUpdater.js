@@ -262,8 +262,6 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     //   cpnElement._y = shape.y * -1;
     // }
 
-
-
     if (cpnElement.text instanceof Object) {
       cpnElement.text.__text = shape.text || shape.name;
     } else cpnElement.text = shape.text || shape.name;

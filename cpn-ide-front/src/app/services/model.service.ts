@@ -37,6 +37,16 @@ export class ModelService {
   ) {
     console.log('ModelService instance CREATED!');
 
+    this.modelCase['cpn:Place'] = 'place';
+    this.modelCase['cpn:Transition'] = 'trans';
+    this.modelCase['cpn:Connection'] = 'arc';
+    this.modelCase['cpn:Label'] = 'label';
+    this.modelCase['bpmn:Process'] = 'trans';
+    this.modelCase['place'] = 'place';
+    this.modelCase['trans'] = 'trans';
+    this.modelCase['arc'] = 'arc';
+    this.modelCase['label'] = 'label';
+
     this.eventService.on(Message.PROJECT_LOAD, (data) => {
       this.loadProject(data);
     });
@@ -46,6 +56,9 @@ export class ModelService {
       this.pageId = data.pageObject._id;
     });
 
+    this.eventService.on(Message.MODEL_UPDATE, (data) => {
+      this.updateModel(data);
+    });
   }
 
   markNewModel() {
@@ -60,22 +73,16 @@ export class ModelService {
     return this.isLoaded;
   }
 
-  loadProject(project, resetModel = false) {
-    if (resetModel) {
-      this.accessCpnService.resetSim();
-      this.markNewModel();
-      this.modelCase['cpn:Place'] = 'place';
-      this.modelCase['cpn:Transition'] = 'trans';
-      this.modelCase['cpn:Connection'] = 'arc';
-      this.modelCase['cpn:Label'] = 'label';
-      this.modelCase['bpmn:Process'] = 'trans';
-      this.modelCase['place'] = 'place';
-      this.modelCase['trans'] = 'trans';
-      this.modelCase['arc'] = 'arc';
-      this.modelCase['label'] = 'label';
-    }
+  public loadProject(project) {
+    console.log('ModelService.loadProject(), project = ', project);
+
     this.projectData = project.data;
     this.projectName = project.name;
+
+    // this.accessCpnService.initNet(this.projectData);
+
+    // // verify loaded project
+    // this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.projectData });
   }
 
   saveBackup(model, pageId) {
@@ -118,7 +125,7 @@ export class ModelService {
     return this.modelCase[labelType];
   }
 
-  public getProject() {
+  public getProjectData() {
     return this.projectData;
   }
 
@@ -1126,7 +1133,7 @@ export class ModelService {
     let result = [];
     switch (elem) {
       case 'Place': {
-        this.getProject();
+        this.getProjectData();
         break;
       }
       case 'Transition': {

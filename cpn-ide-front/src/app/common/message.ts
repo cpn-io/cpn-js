@@ -14,7 +14,6 @@ export class Message {
   static DELETE_PAGE = 'delete.page;';
   static CHANGE_NAME_PAGE = 'change.name';
   static UPDATE_GLOBBOX = 'update.globbox';
-  static MODEL_ERROR = 'model.error';
   static UPDATE_TREE = 'update.tree';
   static UPDATE_TREE_PAGES = 'update.tree.pages';
   static SUBPAGE_CREATE = 'subpage.create';
@@ -24,10 +23,12 @@ export class Message {
 
   static MODEL_EDITOR_FULLSCREEN = 'model.editor.fullscreen';
 
+  static SERVER_INIT_NET = 'server.init.net';
   static SERVER_INIT_NET_START = 'server.init.net.start';
   static SERVER_INIT_NET_DONE = 'server.init.net.done';
   static SERVER_INIT_NET_ERROR = 'server.init.net.error';
 
+  static SERVER_INIT_SIM = 'server.init.sim';
   static SERVER_INIT_SIM_START = 'server.init.sim.start';
   static SERVER_INIT_SIM_DONE = 'server.init.sim.done';
   static SERVER_INIT_SIM_ERROR = 'server.init.sim.error';

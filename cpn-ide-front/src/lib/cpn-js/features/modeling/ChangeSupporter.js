@@ -17,6 +17,9 @@ export default function ChangeSupporter(eventBus, modeling, textRenderer) {
 
 
   function updateTokens(data) {
+    // {"data":[{"id":"ID1412328424","tokens":8,"marking":"1`1++\n3`2++\n4`3"},
+    //          {"id":"ID1412328454","tokens":0,"marking":"empty"}]}
+
     if (data && data.length > 0) {
       for (var item of data) {
         console.log('ChangeSupporter(), updateTokens(), item = ', item);

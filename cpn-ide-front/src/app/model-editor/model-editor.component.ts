@@ -65,6 +65,9 @@ export class ModelEditorComponent implements OnInit {
     'Fucia': '#f0f'
   };
 
+  tokenData;
+  readyData;
+
   ngOnInit() {
     this.subscripeToAppMessage();
 
@@ -113,11 +116,17 @@ export class ModelEditorComponent implements OnInit {
 
       // set status 'process' for all shapes on diagram
       this.modeling.setCpnStatus({ process: '*' });
+
+      // verify loaded project
+      this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData() });
     });
 
-    this.eventService.on(Message.SERVER_INIT_NET_DONE, () => {
+    this.eventService.on(Message.SERVER_INIT_NET_DONE, (event) => {
       // set status 'clear' for all shapes on diagram
       this.modeling.setCpnStatus({ clear: '*' });
+
+      console.log('ModelEditor, SERVER_INIT_NET_DONE, event = ', event);
+
       // TODO: temporary set error and ready status for test shapes. Should be changed to real id
       // this.modeling.setCpnStatus({ error: ['ID1412328424','ID1412328605'], ready: ['ID1412328496'] });
 
@@ -134,6 +143,55 @@ export class ModelEditorComponent implements OnInit {
 
       //     this.modeling.setCpnStatus({ ready: data });
       //   });
+
+      eventBus.fire('model.update.tokens', { data: this.tokenData });
+
+      this.modeling.setCpnStatus({ ready: this.readyData });
+
+      // set errors info
+      // {"data":
+      //    {"issues":
+      //      {"ID1412328454":[{"id":"ID1412328454","type":"page","description":"Error in color-set!"}],
+      //       "ID1412328496":[{"id":"ID1412328496","type":"page","description":"Transition not checked because a neighbour place has an error."}],
+      //       "ID6":[{"id":"ID6","type":"page","description":" ID6"}]
+      //      },
+      //      "success":false}}
+
+      console.log('SET ERRORS, event = ', event);
+
+      if (!event.data.success) {
+        let errorIds = [];
+        for (let id of Object.keys(event.data.issues))
+          errorIds.push(id);
+
+        console.log('SET ERRORS, errorIds = ', errorIds);
+
+        this.modeling.setCpnStatus({ error: errorIds });
+      }
+
+    });
+
+    // TOKENS
+    this.eventService.on(Message.SERVER_GET_TOKEN_MARKS, (event) => {
+      if (event && event.data) {
+        // {"data":[{"id":"ID1412328424","tokens":8,"marking":"1`1++\n3`2++\n4`3"},
+        //          {"id":"ID1412328454","tokens":0,"marking":"empty"}]}
+
+        this.tokenData = event.data;
+
+        eventBus.fire('model.update.tokens', { data: this.tokenData });
+      }
+    });
+
+    // TRANSITIONS
+    this.eventService.on(Message.SERVER_GET_TRANSITIONS, (data) => {
+      if (data && data.data) {
+        // {"data":["ID1412328496"]}
+
+        this.readyData = data.data;
+
+        this.modeling.setCpnStatus({ ready: this.readyData });
+      }
     });
 
 
@@ -228,26 +286,11 @@ export class ModelEditorComponent implements OnInit {
       console.log('PROPERTY_UPDATE, element = ', element);
 
       this.modeling.updateElement(element);
-      // this.modeling.updateElementBounds(element);
+      this.modeling.updateElementBounds(element);
       // this.selectedElement = element;
 
       this.modelUpdate();
       // this.openPropPanel(element);
-    });
-
-    this.eventService.on(Message.MODEL_ERROR, (data) => {
-      if (data) {
-        this.modeling.clearErrorMarking();
-
-        for (const id of data.id) {
-          const cpnElementId = id.trim().slice(0, -1);
-
-          // set status 'clear' for all shapes on diagram
-          // this.modeling.setCpnStatus({ clear: '*' });
-
-          this.modeling.setCpnStatus({ error: [cpnElementId] });
-        }
-      }
     });
   }
 
@@ -274,6 +317,9 @@ export class ModelEditorComponent implements OnInit {
     this.modeling.setCpnStatus({ process: '*' });
 
     this.eventService.send(Message.MODEL_UPDATE, { pageObject: page });
+
+    // verify loaded project
+    // this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData() });
   }
 
   changeSubPageName(subpage) {

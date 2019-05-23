@@ -3,9 +3,8 @@ import * as X2JS from '../../lib/x2js/xml2json.js';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EventService } from './event.service';
 import { Message } from '../common/message';
-import { Constants } from '../common/constants.js';
 
-import { xml2json } from '../../lib/xml2json//xml2json.js';
+import { AccessCpnService } from './access-cpn.service';
 import { ModelService } from './model.service';
 
 /**
@@ -21,7 +20,8 @@ export class ProjectService {
 
   constructor(private eventService: EventService,
     private http: HttpClient,
-    private modelService: ModelService
+    private modelService: ModelService,
+    private accessCpnService: AccessCpnService
     ) {
 
     console.log('ProjectService instance CREATED!');
@@ -103,7 +103,14 @@ export class ProjectService {
     localStorage.setItem('projectJson', JSON.stringify(json));
 
     this.project = { data: json, name: filename };
-    this.modelService.loadProject(this.project, true);
+
+    // reset simulator for new project file
+    this.accessCpnService.resetSim();
+
+    // reset model service
+    this.modelService.markNewModel();
+
+    // load new project
     this.eventService.send(Message.PROJECT_LOAD, this.project);
   }
 

@@ -32,7 +32,7 @@ export class SaveprojectButtonComponent implements OnInit {
     this.modal.open(modalName, {ariaLabelledBy: 'modal-basic-title', centered: true}).result.then((result) => {
 
       const x2js = new X2JS();
-      let xml = (x2js.json2xml_str(JSON.parse(JSON.stringify(this.modelService.getProject())))); /// netJson
+      let xml = (x2js.json2xml_str(JSON.parse(JSON.stringify(this.modelService.getProjectData())))); /// netJson
       xml = `${this.xmlPrefix}\n${xml}`;
       this.saveAsText(xml, this.fileName);
 

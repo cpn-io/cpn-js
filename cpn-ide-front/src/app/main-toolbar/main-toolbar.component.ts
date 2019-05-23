@@ -41,4 +41,9 @@ export class MainToolbarComponent implements OnInit {
 
   openProject() {
   }
+
+  verify() {
+    // verify loaded project
+    this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData() });
+  }
 }

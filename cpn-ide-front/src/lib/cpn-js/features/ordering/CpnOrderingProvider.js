@@ -38,9 +38,9 @@ export default function CpnOrderingProvider(eventBus, canvas, translate) {
   ];
 
   function computeOrder(element) {
-    // if (element.labelTarget) {
-    //   return { level: 10 };
-    // }
+    if (element.labelTarget) {
+      return { level: 100 };
+    }
 
     var entry = find(orders, function (o) {
       return isAny(element, [o.type]);

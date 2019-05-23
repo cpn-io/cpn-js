@@ -23,28 +23,37 @@ export class ProjectConsoleComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.eventService.on(Message.PROJECT_LOAD, () => {
+    this.eventService.on(Message.PROJECT_LOAD, (event) => {
       this.logHtml = [];
       this.nodes = [];
-      this.log('PROJECT_LOAD');
+      this.logSuccess('Project ' + event.name + ' loaded.');
     });
-
 
     // VERIFICATION
 
     this.eventService.on(Message.SERVER_INIT_NET_START, () => {
-      this.log('VERIFICATION_START');
+      this.log('Verification process...');
     });
 
-    this.eventService.on(Message.SERVER_INIT_NET_DONE, (data) => {
-      if (data) {
-        this.logSuccess('VERIFICATION_DONE: ' + JSON.stringify(data));
+    this.eventService.on(Message.SERVER_INIT_NET_DONE, (event) => {
+      if (event && event.data) {
+        if (event.data.success)
+          this.logSuccess('Model is correct.');
+        else {
+          // this.logError('Error: ' + JSON.stringify(event));
+          for (let id of Object.keys(event.data.issues)) {
+            let issue = event.data.issues[id][0];
+            this.logError('Error: ' + issue.id + ': ' + issue.description);
+          }
+        }
       }
+      // this.accessCpnService.getTokenMarks();
+      // this.accessCpnService.getTransitions();
     });
 
-    this.eventService.on(Message.SERVER_INIT_NET_ERROR, (data) => {
-      if (data) {
-        this.logError('VERIFICATION_ERROR: ' + JSON.stringify(data));
+    this.eventService.on(Message.SERVER_INIT_NET_ERROR, (event) => {
+      if (event) {
+        this.logError('Verification server error: ' + JSON.stringify(event.data));
       }
     });
 
@@ -52,36 +61,30 @@ export class ProjectConsoleComponent implements OnInit {
     // SIMULATION
 
     this.eventService.on(Message.SERVER_INIT_SIM_START, () => {
-      this.log('SIM_INIT_START');
+      this.log('Simulator initializing...');
     });
 
-    this.eventService.on(Message.SERVER_INIT_SIM_DONE, (data) => {
-      if (data) {
-        this.logSuccess('SIM_INIT_DONE: ' + JSON.stringify(data));
-      }
-      this.accessCpnService.getTokenMarks();
-      this.accessCpnService.getTransitions();
+    this.eventService.on(Message.SERVER_INIT_SIM_DONE, () => {
+      this.logSuccess('Simulator initialized.');
     });
 
-    this.eventService.on(Message.SERVER_INIT_SIM_ERROR, (data) => {
-      if (data) {
-        this.logError('SIM_INIT_ERROR: ' + JSON.stringify(data));
+    this.eventService.on(Message.SERVER_INIT_SIM_ERROR, (event) => {
+      if (event) {
+        this.logError('Simulator initializing error: ' + JSON.stringify(event.data));
       }
     });
 
     // TOKENS
-
-    this.eventService.on(Message.SERVER_GET_TOKEN_MARKS, (data) => {
-      if (data) {
-        this.logSuccess('SERVER_GET_TOKEN_MARKS: ' + JSON.stringify(data));
+    this.eventService.on(Message.SERVER_GET_TOKEN_MARKS, (event) => {
+      if (event) {
+        this.logSuccess('Tokens: ' + JSON.stringify(event.data));
       }
     });
 
     // TRANSITIONS
-
-    this.eventService.on(Message.SERVER_GET_TRANSITIONS, (data) => {
-      if (data) {
-        this.logSuccess('SERVER_GET_TRANSITIONS: ' + JSON.stringify(data));
+    this.eventService.on(Message.SERVER_GET_TRANSITIONS, (event) => {
+      if (event) {
+        this.logSuccess('Ready transitions: ' + JSON.stringify(event.data));
       }
     });
 

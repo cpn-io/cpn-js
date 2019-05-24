@@ -22,6 +22,15 @@ import {
 
 import { getText, getBox } from '../../draw/CpnRenderUtil';
 
+import {
+  getDefPosattr,
+  getDefFillattr,
+  getDefLineattr,
+  getDefTextattr,
+  getDefText,
+  getNextId
+} from './util/AttrsUtil';
+
 /**
  * CPN modeling features activator
  *
@@ -1052,48 +1061,3 @@ Modeling.prototype.createArcInModel = function (placeCpnElement, transCpnElement
   return cpnArcElement;
 }
 
-Modeling.prototype.getDefPosattr = function(position = undefined) {
-  return position
-    ? {
-      _x: position.x,
-      _y: -1 * position.y
-    }
-    : {
-      _x: 0,
-      _y: 0
-    };
-}
-
-Modeling.prototype.getDefFillattr = function() {
-  return {
-    _colour: "White",
-    _pattern: "Solid",
-    _filled: "false"
-  };
-}
-
-Modeling.prototype.getDefLineattr = function() {
-  return {
-    _colour: "Black",
-    _thick: "1",
-    _type: "Solid"
-  };
-}
-
-Modeling.prototype.getDefTextattr = function() {
-  return {
-    _colour: "Black",
-    _bold: "false"
-  };
-}
-
-Modeling.prototype.getDefText = function() {
-  return {
-    _tool: "CPN Tools",
-    _version: "4.0.1"
-  };
-}
-
-Modeling.prototype.getNextId = function() {
-  return 'ID' + new Date().getTime();
-}

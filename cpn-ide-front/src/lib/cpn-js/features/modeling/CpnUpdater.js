@@ -39,6 +39,17 @@ import {
 import Modeling from "./Modeling";
 import { assign } from 'min-dash';
 
+
+import {
+  getDefPosattr,
+  getDefFillattr,
+  getDefLineattr,
+  getDefTextattr,
+  getDefText,
+  getNextId
+} from './util/AttrsUtil';
+
+
 /**
  * A handler responsible for updating
  * once changes on the diagram happen
@@ -76,6 +87,12 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     // console.log('CpnUpdater(), shape.changed, event.element = ', event.element);
 
     // updateBounds({ context: { shape: event.element } });
+
+    updateCpnElement(event.element);
+  });
+
+  eventBus.on('connection.changed', function(event) {
+    // console.log('CpnUpdater(), connection.changed, event = ', event);
 
     updateCpnElement(event.element);
   });
@@ -181,8 +198,6 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
     //   context.cropped = true;
     // }
-
-    updateCpnElement(connection);
   }
 
   function updateNewConnection(e) {
@@ -263,30 +278,30 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
       }
 
       // update connections
-      if (shape.waypoints instanceof Array) {
+      if (shape.waypoints instanceof Array && shape.waypoints.length > 2) {
         console.log('CpnUpdater().updateCpnElement(), connection, element = ', element);
 
-        let bendpoint = [];
-        for (const wp of shape.waypoints) {
+        let bendpoints = [];
+        // for (let i = 1; i < shape.waypoints.length - 1; i++) {
+        for (let i = 1; i < 2; i++) {
+          const wp = shape.waypoints[i];
           const position = {
             x: wp.x,
-            y: wp.y * -1,
+            y: wp.y,
           };
-          bendpoint.push({
-            posattr: this.modeling.getDefPosattr(position),
-            fillattr: this.modeling.getDefFillattr(),
-            lineattr: this.modeling.getDefLineattr(),
-            textattr: this.modeling.getDefTextattr(),
-            _id: this.modeling.getNextId(),
+          bendpoints.unshift({
+            posattr: getDefPosattr(position),
+            fillattr: getDefFillattr(),
+            lineattr: getDefLineattr(),
+            textattr: getDefTextattr(),
+            _id: getNextId(),
             _serial: 1
           });
         }
-        waypoints.push({
-          x: source.x + Math.abs(source.width / 2),
-          y: source.y + Math.abs(source.height / 2),
-          id: source.id
-        });
-      
+        console.log('CpnUpdater().updateCpnElement(), connection, bendpoint = ', bendpoints);
+
+        if (bendpoints.length > 0)
+          cpnElement.bendpoint = bendpoints;
       }
 
       if (cpnElement.text instanceof Object) {

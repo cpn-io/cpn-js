@@ -1,0 +1,1 @@
+fun equal a b = a=b;

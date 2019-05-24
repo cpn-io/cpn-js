@@ -1,0 +1,620 @@
+<!--
+   COPYRIGHT (C) 2001 by the CPN group, University of Aarhus, Denmark.
+  
+   Contact: designCPN-support@daimi.au.dk
+   WWW URL: http://www.daimi.au.dk/designCPN/
+
+   File: cpnet.dtd
+   DTD for XML format for Design/CPN ver. 4.0.5
+-->   
+
+
+<!-- Boolean values -->
+<!ENTITY % boolean      "(true | false)">
+
+<!-- Numbers -->
+<!ENTITY % number       "CDATA">
+
+<!-- Possible shapes for objects: rbox is a rounded box -->
+<!ENTITY % shape        "(box | ellipse | poly | line | label | wedge |
+                          rbox | seg-conn | picture)">
+
+<!-- Legal attributes for objects -->
+<!ENTITY % atts         "(%shape; | posattr | fillattr | lineattr |
+                          textattr | flags | layering)*?">
+
+<!-- Line types: -->
+
+<!ENTITY % lintyps      "(solid | dashed | dotdashed | longdashed | 
+                          groupindicate | flashindicate | none | null |
+			  dotted)">
+
+<!-- Colours. These colours corresponds to the standard colours of
+     HTML:
+     Name and RGB value:
+         black  = #000000    green  = #008000
+         silver = #c0c0c0    lime   = #00ff00
+         gray   = #808080    olive  = #808000
+         white  = #ffffff    yellow = #ffff00
+         maroon = #800000    navy   = #000080
+         red    = #ff0000    blue   = #0000ff
+         purple = #800080    teal   = #008080
+         fuchsia= #ff00ff    aqua   = #00ffff
+-->
+<!ENTITY % cols "(black | maroon | gray | olive | purple | silver |
+                  red | teal | navy | fucia | blue | aqua | green |
+		  lime |  yellow | white)">
+
+<!-- The possible orientations of an arc: 
+       bothdir = Bidirectional arc: O<->[] 
+       nodir = Arc without arrows: O-[] 
+       ptot = Arc from Place to Transition: 0->[] 
+       ttop = Arc from Transition to Place: []->O
+-->
+<!ENTITY % arcors "(bothdir | nodir | ptot | ttop)">
+
+<!-- Possible types of fusion sets:
+       global = Global fusion set.
+       page = Page Fusion set.
+       instance = Instance Fusion Set 
+-->
+<!ENTITY % fustyps "(global | page | instance)">
+
+<!-- Possible orientations of an auxiliary connector:
+       bothdir = Bidirectional connector.
+       nodir = Nondirectional connector.
+       1to2 = Connector from object1 to object2
+       2to1 = Connector from object2 to object1 
+-->
+<!ENTITY % orients "(bothdir | nodir | 1to2 | 2to1)">
+
+<!-- Possible fill patterns for objects -->
+<!ENTITY % pats "(none | solid | almostsolid | inverseheavydotted |
+                  chessboard | inverseordereddotted |
+                  narrowvertical | filleddiagonals |
+                  widevertical | speckled | randomdotted |
+                  narrowgrid | bricks | sparselydotted |
+                  shortdiagonals | lightbubbles | pietop |
+                  buttercups | waffles | waves |
+                  lightdotted | mediumdotted | heavydotted | 
+		  lightgray | ordereddotted | narrowhorizontal |
+                  narrowdiagonal | widehorizontal | widediagonal |
+                  dottedboxes | widegrid | diagonalbricks |
+                  holiday | carrots | diagonalscales |
+                  roundscales | mountains | heavybubbles |
+                  diamonds)">
+
+<!-- Possible font names. -->
+<!ENTITY % fonts "(chicago | courier | geneva | helvetica | monaco |
+                   times | symbol)">
+
+<!-- The justification of text (left aligned, centered or right
+     aligned. -->
+<!ENTITY % justs "(left | centered | right)">
+
+<!-- Possible porttypes:
+       in = Input Port.
+       out = Output Port.
+       inout = Input/Output Port
+       general = General Port -->
+<!ENTITY % prttyps "(in | out | inout | general)">
+
+<!-- Possible layering of object: -->
+<!ENTITY % laytyps     "(copy | ior | xor | inv)">
+
+<!-- Possible attributes of objects:
+       posattr = Position attributes
+       fillattr = Fill Attributes
+       lineattr = Line Attributes
+       textattr = Text Attributes
+       flags = Various flags (see definition of flags)
+       layering = Layering logic of object
+-->
+<!ENTITY % objatts "posattr | fillattr | lineattr | textattr | flags |
+                    layering">
+
+<!-- Objects legal within a page:
+       place = Place
+       trans = Transition
+       tempdecl = Temporary Declaration Node
+       globdecl = Global Declaration Node
+       locdecl = Local Declaration Node
+       aux = Auxiliary Object
+       aux-conn = Auxiliary Connector -->
+<!ENTITY % pageobs "place | trans | tempdecl | globdecl | locdecl |
+                    arc | aux | aux-conn">
+
+<!-- Blocks legal within a place block:
+       name = Name block.
+       type = Type declaration block.
+       initmark = Initial marking block.
+       aux-endp = Auxiliary endpoint block
+       aux-std = Auxiliary region block
+       fus-key = Fusion key region block
+       portkreg = Port key region block
+       mark-key = Marking key region block
+-->
+<!ENTITY % placeob "name | type | initmark | aux-endp | aux-std |
+                    fus-key | portkreg | mark-key">
+
+<!-- Blocks legal within a place block:
+       name = Name block
+       cond = Condition block
+       code-key = Code key region block
+       log-key = Log key region block
+       time = Time block
+       aux-endp = Auxiliary endpoint region block
+       hier-key = Hierarchy key region block.
+       aux-enab = Enabling region.
+-->
+<!ENTITY % transob "name | cond | code-key | log-key | time | aux-endp | 
+                    hier-key | aux-enab">
+
+
+<!ELEMENT workspaceElements (cpnet)>
+
+
+<!-- Outermost element of a cpn-net:
+       Information about generator tool.
+       One or more ordinary pages.
+       Zero or one hierarchy page
+-->
+<!ELEMENT cpnet (generator? , (page)* , hierpage?)*>
+
+
+<!-- Text blocks are recognised to contain Character Data -->
+<!ELEMENT text         (#PCDATA)>
+
+<!-- Elements and attributes recognised within a page -->
+<!ELEMENT page         (text | %pageobs; | %shape; | pageattr |
+                        fillattr | lineattr | posattr | winattr |
+			modeattr | mult)*>
+<!ATTLIST page         id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within a place -->
+<!ELEMENT place        (text | %placeob; | %shape; | %objatts; |
+                        port)*>
+<!ATTLIST place        id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within a name block -->
+<!ELEMENT name         (text | aux-std | %shape; | %objatts; |
+                        regattr)*>
+<!ATTLIST name         id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within a type block -->
+<!ELEMENT type         (text | aux-std | %shape; | %objatts; |
+                        regattr)*>
+<!ATTLIST type         id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within an initial marking
+     block -->
+<!ELEMENT initmark     (text | aux-std | %shape; | %objatts; |
+                        regattr)*>
+<!ATTLIST initmark     id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within a transition block -->
+<!ELEMENT trans        (text | %transob; | %shape; | %objatts; |
+                        modeattr | subst)*>
+<!ATTLIST trans        id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within a condition block -->
+<!ELEMENT cond         (text | aux-std | %shape; | %objatts; |
+                        regattr)*>
+<!ATTLIST cond         id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within a code key region block -->
+
+<!ELEMENT code-key     (text | aux-std | code | %shape; | %objatts; |
+                        regattr)*>
+<!ATTLIST code-key     id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within a code region block -->
+<!ELEMENT code         (text | aux-std | %shape; | %objatts; |
+                        regattr)*>
+<!ATTLIST code         id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within a log key region block -->
+<!ELEMENT log-key      (text | aux-std | log | %shape; | %objatts; |
+                        regattr)*>
+<!ATTLIST log-key      id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within a log region block -->
+<!ELEMENT log          (text | aux-std | %shape; | %objatts; |
+                        regattr)*>
+<!ATTLIST log          id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within a time block -->
+<!ELEMENT time         (text | aux-std | %shape; | %objatts; |
+                        regattr)*>
+<!ATTLIST time         id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within a hierarchy key region
+     block -->
+<!ELEMENT hier-key     (text | aux-std | hierarch | %shape; |
+                        %objatts; | regattr)*>
+<!ATTLIST hier-key     id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within a hierarchy region
+     block -->
+<!ELEMENT hierarch     (text | aux-std | %shape; | %objatts; |
+                        regattr)*>
+<!ATTLIST hierarch      id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within a fusion key region
+     block -->
+<!ELEMENT fus-key      (text | aux-std | fusion | %shape; | %objatts; |
+                        regattr)*>
+<!ATTLIST fus-key      id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within a fusion region block -->
+<!ELEMENT fusion       (text | aux-std | %shape; | %objatts; |
+                        regattr)*>
+<!ATTLIST fusion       id             ID             #IMPLIED
+                       type           %fustyps;      #IMPLIED>
+
+<!-- Elements and attributes recognised within an arc block -->
+<!ELEMENT arc          (text | annot | aux-std | %shape; | lineattr |
+                        placeend | transend | textattr | flags |
+			connattr | fillattr | layering | posattr)*>
+<!ATTLIST arc          id             ID             #IMPLIED
+                       orientation    %arcors;       #IMPLIED>
+
+<!-- Elements and attributes recognised within an arc annotation block -->
+<!ELEMENT annot        (text | aux-std | %shape; | %objatts; |
+                        regattr)*>
+<!ATTLIST annot        id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within an local declaration block -->
+<!ELEMENT locdecl      (text | aux-endp | aux-std | %shape; |
+                        %objatts;)*>
+<!ATTLIST locdecl      id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within a temporary declaration
+     block -->
+<!ELEMENT tempdecl     (text | aux-endp | aux-std | %shape; |
+                        %objatts;)*>
+<!ATTLIST tempdecl     id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within a global declaration
+     block -->
+<!ELEMENT globdecl     (text | aux-endp | aux-std | %shape; |
+                        %objatts;)*>
+<!ATTLIST globdecl     id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within an auxiliary object
+     block -->
+<!ELEMENT aux          (text | aux-endp | aux-std | %shape; |
+                        %objatts;)*>
+<!ATTLIST aux          id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within an auxiliary connector
+     block -->
+<!ELEMENT aux-conn     (text | aux-std | %shape; | lineattr | node1 |
+                        node2 | textattr | flags | connattr | fillattr |
+			layering)*> 
+<!ATTLIST aux-conn     id             ID             #IMPLIED
+                       orientation    %orients;      #IMPLIED>
+
+<!-- Elements and attributes recognised within an auxiliary standard
+     region block -->
+<!ELEMENT aux-std      (text | aux-std | %shape; | %objatts; |
+                        regattr)*>
+<!ATTLIST aux-std      id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within an auxiliary endpoint
+     region block -->
+<!ELEMENT aux-endp     (text | aux-std | %shape; | %objatts; |
+                        regattr)*>
+<!ATTLIST aux-endp     id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within a port key region block -->
+<!ELEMENT portkreg     (text | aux-std | portreg | %shape; | %objatts; | 
+                        regattr)*>
+<!ATTLIST portkreg     id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within a port region block -->
+<!ELEMENT portreg      (text | aux-std | %shape; | %objatts; |
+                        regattr)*>
+<!ATTLIST portreg      id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within a marking key region
+     block -->
+<!ELEMENT mark-key     (text | aux-std | mark | %shape; | %objatts; |
+                        regattr)*>
+<!ATTLIST mark-key     id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within a marking region block -->
+<!ELEMENT mark         (text | aux-std | %shape; | %objatts; |
+                        regattr)*>
+<!ATTLIST mark         id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within an auxiliary enabling
+     region  block -->
+<!ELEMENT aux-enab     (text | %shape; | %objatts; | regattr)*>
+<!ATTLIST aux-enab     id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within a hierarchy page
+     block. -->
+<!ELEMENT hierpage     (text | aux | aux-conn | pagenode | substcon |
+                        %shape; | pageattr | fillattr | lineattr |
+			posattr | winattr)*>
+<!ATTLIST hierpage     id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within an hierarchy page node
+     block. -->
+<!ELEMENT pagenode     (text | aux-std | pgmodkey | %shape; |
+                        %objatts;)*>
+<!ATTLIST pagenode     id             ID             #IMPLIED
+                       pageref        IDREF          #IMPLIED>
+
+<!-- Elements and attributes recognised within a page mode key region
+     block -->
+<!ELEMENT pgmodkey     (text | pagemode | aux-std | %shape; |
+                        %objatts; | regattr)*>
+<!ATTLIST pgmodkey     id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within a page mode region
+     block -->
+<!ELEMENT pagemode     (text | aux-std | %shape; | %objatts; |
+                        regattr)*>
+<!ATTLIST pagemode     id             ID             #IMPLIED>
+
+<!-- Elements and attributes recognised within a substitution
+     connector block -->
+<!ELEMENT substcon     (text | aux-std | substtag | %shape; | lineattr |
+                        sup-page | sub-page | textattr | flags |
+			connattr | fillattr | layering)*>
+<!ATTLIST substcon     id             ID             #IMPLIED
+                       orientation    %orients;      #IMPLIED>
+
+<!-- Elements and attributes recognised within a substitution tag block -->
+<!ELEMENT substtag     (text | aux-std | %shape; | %objatts; | regattr)*>
+<!ATTLIST substtag     id             ID             #IMPLIED
+                       transref       IDREF          #IMPLIED>
+
+<!-- Name and version of tool which generated file -->
+<!ELEMENT generator    EMPTY>
+<!ATTLIST generator    tool           CDATA          #IMPLIED
+                       version        CDATA          #IMPLIED>
+
+
+<!-- Position attributes: -->
+<!-- x : x coordinate in mm
+     y:  x coordinate in mm
+
+The coordinate system looks like this:
+      ^
+      | y
+      |
+      |
+      |      x
+______________\
+      |       /
+      |
+      |
+      |
+-->
+
+<!ELEMENT posattr      EMPTY>
+<!ATTLIST posattr      x              %number;       #IMPLIED
+                       y              %number;       #IMPLIED>
+
+
+<!-- Definition of various shapes.
+
+The attributes:
+     h = height (in mm)
+     w = width (in mm)
+
+Decimal seperator is '.'.
+
+     curv = curvature (0-360)
+     stangle = start angle (0-360)
+     endangle = end angle (0-360)
+     points = sequence of points "(x1,y1)(x2,y2)...(xn,yn)"
+-->
+
+
+<!ELEMENT box          EMPTY>
+<!ATTLIST box          h              %number;       #IMPLIED
+                       w              %number;       #IMPLIED>
+
+<!ELEMENT ellipse      EMPTY>
+<!ATTLIST ellipse      h              %number;       #IMPLIED
+                       w              %number;       #IMPLIED>
+
+<!ELEMENT poly         EMPTY>
+<!ATTLIST poly         points         CDATA          #IMPLIED>
+
+<!ELEMENT line         EMPTY>
+<!ATTLIST line         points         CDATA          #IMPLIED>
+
+<!ELEMENT label        EMPTY>
+
+<!ELEMENT wedge        EMPTY>
+<!ATTLIST wedge        h              %number;       #IMPLIED
+                       w              %number;       #IMPLIED
+                       startangle     %number;       #IMPLIED
+                       endangle       %number;       #IMPLIED>
+
+<!ELEMENT rbox         EMPTY>
+<!ATTLIST rbox         h              %number;       #IMPLIED
+                       w              %number;       #IMPLIED
+                       curv           %number;       #IMPLIED>
+
+<!ELEMENT seg-conn     EMPTY>
+<!ATTLIST seg-conn     curv           %number;       #IMPLIED
+                       points         CDATA          #IMPLIED>
+
+
+<!-- Different attributes related to objects: -->
+<!ELEMENT fillattr     EMPTY>
+<!ATTLIST fillattr     pattern        %pats;         #IMPLIED
+                       colour         %cols;         #IMPLIED>
+
+<!-- Line attributes (type, thichness and colour).
+     Thickness is measured in points -->
+<!ELEMENT lineattr     EMPTY>
+<!ATTLIST lineattr     type           %lintyps;      #IMPLIED
+                       thick          %number;       #IMPLIED
+                       colour         %cols;         #IMPLIED>
+
+<!-- Text attributes: -->
+<!ELEMENT textattr     EMPTY>
+<!ATTLIST textattr     font           %fonts;        #IMPLIED
+                       just           %justs;        #IMPLIED
+                       colour         %cols;         #IMPLIED
+                       bold           %boolean;      #IMPLIED
+                       italic         %boolean;      #IMPLIED
+                       underlin       %boolean;      #IMPLIED
+                       outline        %boolean;      #IMPLIED
+                       shadow         %boolean;      #IMPLIED
+                       condense       %boolean;      #IMPLIED
+                       extend         %boolean;      #IMPLIED
+                       scbar          %boolean;      #IMPLIED
+                       size           %number;       #IMPLIED>
+
+<!-- object flags -->
+<!-- All flags attributes might assume values TRUE or FALSE.
+     mask - object pickable or not.
+     omit - object showable or not
+     nobound - object boundary visible or not
+     visible - visible or not -->
+
+<!ELEMENT flags        EMPTY>
+<!ATTLIST flags        mask           %boolean;      #IMPLIED
+                       omit           %boolean;      #IMPLIED
+                       nobound        %boolean;      #IMPLIED
+                       nosizing       %boolean;      #IMPLIED
+                       visible        %boolean;      #IMPLIED>
+
+<!-- Place end of an arc.
+     idref is a reference to the id of the place to connect to.
+     endpoint is a reference to the object that the arc physically
+     connects to.
+-->
+<!ELEMENT placeend     EMPTY>
+<!ATTLIST placeend     idref          IDREF          #IMPLIED
+                       endpoint       IDREF          #IMPLIED>
+
+<!-- Transition end of an arc. Same reasoning as for the placeend -->
+<!ELEMENT transend     EMPTY>
+<!ATTLIST transend     idref          IDREF          #IMPLIED
+                       endpoint       IDREF          #IMPLIED>
+
+<!-- First object connected by a connector -->
+<!ELEMENT node1        EMPTY>
+<!ATTLIST node1        idref          IDREF          #IMPLIED>
+
+<!-- Second object connected by a connector -->
+<!ELEMENT node2        EMPTY>
+<!ATTLIST node2        idref          IDREF          #IMPLIED>
+
+<!-- Attributes for a page -->
+<!-- name - name of page.
+     number - the number of the page (this is NOT the id of the page)
+     visbor - borders visible (TRUE/FALSE)
+-->
+<!ELEMENT pageattr     EMPTY>
+<!ATTLIST pageattr     name           CDATA          #IMPLIED
+                       number         %number;       #IMPLIED
+                       visbor         %boolean;      #IMPLIED
+                       palette        %boolean;      #IMPLIED>
+
+<!-- Region attributes: -->
+<!-- colorap - Colour as parent
+     sizewp - resize with parent
+     hoffset - horisontal offset (in mm)
+     voffset - vertical offset (in mm)
+-->
+
+<!ELEMENT regattr      EMPTY>
+<!ATTLIST regattr      colorap        %boolean;      #IMPLIED
+                       sizewp         %boolean;      #IMPLIED
+                       hoffset        %number;       #IMPLIED
+                       voffset        %number;       #IMPLIED>
+
+<!-- Connector attributes -->
+<!-- hdwidth - Arrow head width (in points)
+     hdheight - Arrow head height (in points)
+     txtwidth - Text width (in points)
+     txtheight - Text height (in points)
+-->
+<!ELEMENT connattr     EMPTY>
+<!ATTLIST connattr     hdwidth        %number;       #IMPLIED
+                       hdheight       %number;       #IMPLIED
+                       txtwidth       %number;       #IMPLIED
+                       txtheight      %number;       #IMPLIED>
+
+<!-- Window attributes -->
+<!-- open - open on load (TRUE/FALSE)
+     width - Width (in pixels).
+     height - Height (in pixels) -->
+<!ELEMENT winattr      EMPTY>
+<!ATTLIST winattr      open           %boolean;      #IMPLIED
+                       width          %number;       #IMPLIED
+                       height         %number;       #IMPLIED
+                       xpos           %number;       #IMPLIED
+                       ypos           %number;       #IMPLIED>
+
+<!-- Mode attributes -->
+<!-- Determines some simulation code options. -->
+<!ELEMENT modeattr     EMPTY>
+<!ATTLIST modeattr     siminc         %boolean;      #IMPLIED
+                       observe        %boolean;      #IMPLIED
+                       propocc        %boolean;      #IMPLIED
+                       interact       %boolean;      #IMPLIED
+                       execcode       %boolean;      #IMPLIED>
+
+<!-- For substitution transitions -->
+<!-- subpage - The ID of the corresponding subpage
+     portsock - List of port/socket assingments on the form:
+       "(port1ID, socket1ID)(port2ID, socket2ID)...(portNID,
+       socketID)" -->
+<!ELEMENT subst        EMPTY>
+<!ATTLIST subst        subpage        IDREF          #IMPLIED
+                       portsock       CDATA          #IMPLIED>
+
+<!-- Port type -->
+<!ELEMENT port         EMPTY>
+<!ATTLIST port         type           %prttyps;      #IMPLIED>
+
+<!-- Superpage end of substitution connectors -->
+<!ELEMENT sup-page     EMPTY>
+<!ATTLIST sup-page     idref          IDREF          #IMPLIED>
+
+<!-- Subpage end of substitution connectors -->
+<!ELEMENT sub-page     EMPTY>
+<!ATTLIST sub-page     idref          IDREF          #IMPLIED>
+
+<!-- Multiplicity of page
+     insts - number of instances -->
+<!ELEMENT mult         EMPTY>
+<!ATTLIST mult         insts          %number;       #IMPLIED>
+
+<!ELEMENT layering     EMPTY>
+<!ATTLIST layering     type           %laytyps;      #IMPLIED>
+
+<!-- Pictures:
+     Filename is the path relative to the location of the diagram.
+     The following convention is followed:
+     - The iamge files are placed in a subdirectory:
+       If a diagram is located in <path>/diagram.xml, the related
+       image files are placed in <path>/diagram.int_image/image<n>
+     - Image files are stored without extension. This is to ease
+       image conversion: Assume tha you have two tools: Tool1, which
+       only supports GIF, and Tool2, which only supports JPEG.
+       When moving from Tool1 to Tool2 it will be enough to convert
+       the files without changing the .xml files.
+       [datpete]: An alternative could be to specify the filename
+       without extension, but to store files *with* extension.
+       The different versions of the tool should then themselves
+       add the relevant extension to the filename found in the
+       filename attribute.
+       [datpete]: In the new version we will probably use PNG files
+       on all platforms.
+ -->
+<!ELEMENT picture      EMPTY>
+<!ATTLIST picture      h              %number;       #IMPLIED
+                       w              %number;       #IMPLIED
+                       filename       CDATA          #IMPLIED>

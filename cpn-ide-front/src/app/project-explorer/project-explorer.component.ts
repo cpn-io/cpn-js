@@ -54,6 +54,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   modelName;
   subpages = [];
   editableNode;
+
+  // error identificators
+  // errorIds = ['ID4'];
+  errorIds = [];
+
   /**
    * treeComponent - component for displaying project tree
    */
@@ -561,6 +566,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   isHighlightAround(id: any) {
     return (this.underlineNodeSet.has(id) && this.openedLabel[id]);
+  }
+
+  isError(id: any) {
+    // console.log('isError(), errorIds, id = ', this.errorIds, id);
+    return this.errorIds.includes(id);
   }
 
   // </editor-fold>

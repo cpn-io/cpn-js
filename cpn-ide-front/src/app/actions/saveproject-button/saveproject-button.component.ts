@@ -23,11 +23,11 @@ export class SaveprojectButtonComponent implements OnInit {
   }
 
   open(modalName) {
-    let idx = this.modelService.modelName.lastIndexOf('.');
+    let idx = this.modelService.projectName.lastIndexOf('.');
     if (idx > 0) {
-      this.fileNameModel = this.modelService.modelName.substr(0, idx);
+      this.fileNameModel = this.modelService.projectName.substr(0, idx);
     } else {
-      this.fileNameModel = this.modelService.modelName;
+      this.fileNameModel = this.modelService.projectName;
     }
     this.modal.open(modalName, {ariaLabelledBy: 'modal-basic-title', centered: true}).result.then((result) => {
 

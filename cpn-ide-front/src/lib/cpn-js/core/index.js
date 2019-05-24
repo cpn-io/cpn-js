@@ -15,6 +15,7 @@ import BendpointsModule from 'diagram-js/lib/features/bendpoints';
 import AttachSupportModule from 'diagram-js/lib/features/attach-support';
 import GlobalConnectModule from 'diagram-js/lib/features/global-connect';
 import LabelSupportModule from 'diagram-js/lib/features/label-support';
+// import ResizeModule from 'diagram-js/lib/features/resize/Resize';
 
 import CroppingConnectionDocking from 'diagram-js/lib/layout/CroppingConnectionDocking';
 
@@ -23,6 +24,7 @@ import CpnRulesModule from '../features/rules';
 import CpnResizeModule from '../features/resize';
 
 import CpnPopupMenuProvider from '../features/popup-menu/CpnPopupMenuProvider';
+import CpnPortMenuProvider from '../features/port-menu/CpnPortMenuProvider';
 import CpnOrderingProvider from '../features/ordering/CpnOrderingProvider';
 
 import CpnSnappingModule from '../features/snapping';
@@ -55,6 +57,7 @@ export default {
     LabelSupportModule,
 
     CroppingConnectionDocking,
+    // ResizeModule,
 
     // Cpn
     CpnModelingModule,
@@ -70,12 +73,17 @@ export default {
     LabelEditingModule,
   ],
   __init__: [
+    // 'resize',
+
     'popupMenuProvider',
+    'portMenuProvider',
 //    'paletteProvider',
     'cpnOrderingProvider'
   ],
+
   connectionDocking: ['type', CroppingConnectionDocking],
   popupMenuProvider: ['type', CpnPopupMenuProvider],
+  portMenuProvider: ['type', CpnPortMenuProvider],
 //  paletteProvider: ['type', CpnPaletteProvider],
   cpnOrderingProvider: [ 'type', CpnOrderingProvider ]
 };

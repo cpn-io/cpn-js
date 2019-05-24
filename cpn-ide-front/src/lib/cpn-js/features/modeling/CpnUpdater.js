@@ -37,6 +37,18 @@ import {
   event as domEvent
 } from 'min-dom';
 import Modeling from "./Modeling";
+import { assign } from 'min-dash';
+
+
+import {
+  getDefPosattr,
+  getDefFillattr,
+  getDefLineattr,
+  getDefTextattr,
+  getDefText,
+  getNextId
+} from './util/AttrsUtil';
+
 
 /**
  * A handler responsible for updating
@@ -44,6 +56,8 @@ import Modeling from "./Modeling";
  */
 export default function CpnUpdater(eventBus, modeling, elementRegistry,
   connectionDocking, selection, popupMenuProvider, contextPad, canvas) {
+
+  this.modeling = modeling;
 
   console.log('CpnUpdater()');
 
@@ -69,10 +83,18 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   // });
 
   eventBus.on('shape.changed', function (event) {
-   // updateLabels(e.element);
-   // console.log('CpnUpdater(), shape.changed, event.element = ', event.element);
+    // updateLabels(e.element);
+    // console.log('CpnUpdater(), shape.changed, event.element = ', event.element);
 
-   updateCpnElement(event.element);
+    // updateBounds({ context: { shape: event.element } });
+
+    updateCpnElement(event.element);
+  });
+
+  eventBus.on('connection.changed', function(event) {
+    // console.log('CpnUpdater(), connection.changed, event = ', event);
+
+    updateCpnElement(event.element);
   });
 
 
@@ -197,7 +219,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     var shape = e.context.shape;
 
     var target = shape;
-    var bounds = target.bounds;
+    var bounds = target.bounds || {};
 
     assign(bounds, {
       x: shape.x,
@@ -228,42 +250,66 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     //   'cpn:Connection': { entry: ['annot'] }
     // }
 
-    // console.log('CpnUpdater().updateCpnElement(), e = ', e);
+    // console.log('CpnUpdater().updateCpnElement(), element = ', element);
 
     var shape = element;
     let elemCase = modelCase[element.type];
     const cpnElement = shape.cpnElement;
 
-    // if element is Place object
-    if (cpnElement && cpnElement.posattr && cpnElement.ellipse) {
-      cpnElement.posattr._x = shape.x;
-      cpnElement.posattr._y = shape.y * -1;
-      cpnElement.ellipse._w = shape.width;
-      cpnElement.ellipse._h = shape.height;
+    if (cpnElement) {
+
+      // update shapes
+      if (shape.x && shape.y && shape.width && shape.height) {
+        // if element is any shape object
+        if (cpnElement.posattr) {
+          cpnElement.posattr._x = shape.x + shape.width / 2;
+          cpnElement.posattr._y = (shape.y + shape.height / 2) * -1;
+        }
+        // if element is Place object
+        if (cpnElement.ellipse) {
+          cpnElement.ellipse._w = shape.width;
+          cpnElement.ellipse._h = shape.height;
+        }
+        // if element is Transition object
+        if (cpnElement.box) {
+          cpnElement.box._w = shape.width;
+          cpnElement.box._h = shape.height;
+        }
+      }
+
+      // update connections
+      if (shape.waypoints instanceof Array && shape.waypoints.length > 2) {
+        console.log('CpnUpdater().updateCpnElement(), connection, element = ', element);
+
+        let bendpoints = [];
+        // for (let i = 1; i < shape.waypoints.length - 1; i++) {
+        for (let i = 1; i < 2; i++) {
+          const wp = shape.waypoints[i];
+          const position = {
+            x: wp.x,
+            y: wp.y,
+          };
+          bendpoints.unshift({
+            posattr: getDefPosattr(position),
+            fillattr: getDefFillattr(),
+            lineattr: getDefLineattr(),
+            textattr: getDefTextattr(),
+            _id: getNextId(),
+            _serial: 1
+          });
+        }
+        console.log('CpnUpdater().updateCpnElement(), connection, bendpoint = ', bendpoints);
+
+        if (bendpoints.length > 0)
+          cpnElement.bendpoint = bendpoints;
+      }
+
+      if (cpnElement.text instanceof Object) {
+        cpnElement.text.__text = shape.text || shape.name;
+      } else cpnElement.text = shape.text || shape.name;
+
     }
 
-    // if element is Transition object
-    if (cpnElement && cpnElement.posattr && cpnElement.box) {
-      cpnElement.posattr._x = shape.x;
-      cpnElement.posattr._y = shape.y * -1;
-      cpnElement.box._w = shape.width;
-      cpnElement.box._h = shape.height;
-    }
-
-    if (shape.x && shape.y && cpnElement && cpnElement.posattr && shape.type === CPN_LABEL) {
-      cpnElement.posattr._x = shape.x;
-      cpnElement.posattr._y = shape.y * -1;
-    }
-    // else if(cpnElement._x && cpnElement._y){
-    //   cpnElement._x = shape.x;
-    //   cpnElement._y = shape.y * -1;
-    // }
-
-
-
-     if(cpnElement.text instanceof Object){
-     cpnElement.text.__text = shape.text || shape.name;
-    } else cpnElement.text = shape.text || shape.name;
 
     updateLabels(element);
   }

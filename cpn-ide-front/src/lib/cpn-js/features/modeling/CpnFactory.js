@@ -11,7 +11,7 @@ export default function CpnFactory(eventBus, elementFactory, modeling, canvas) {
   this._modeling = modeling;
   this._canvas = canvas;
   this._elementFactory = elementFactory;
-
+  this._eventBus = eventBus
   // this.executed([
   //   'shape.create',
   // ], createShapeHandler);
@@ -45,6 +45,9 @@ CpnFactory.prototype.createShape = function (pageObject, cpnElement, type, posit
   // Place object
   if (type === CPN_PLACE) {
     attrs = this._modeling.getPlaceAttrs(cpnElement, type);
+
+    console.log('createShape(), CPN_PLACE, attrs.cpnElement = ', JSON.stringify(attrs.cpnElement));
+
     element = this._elementFactory.createShape(attrs);
     if (addToCanvas)
       this._canvas.addShape(element, root);
@@ -73,6 +76,8 @@ CpnFactory.prototype.createShape = function (pageObject, cpnElement, type, posit
           this._canvas.addShape(markingLabel, tokenLabel);
       }
     }
+
+
 
   }
 

@@ -13,10 +13,6 @@ export class ProjectExplorerToolbarComponent implements OnInit {
   ngOnInit() {
   }
 
-  // openProject() {
-  //   EmitterService.getAppMessageEmitter().emit({ id: Constants.ACTION_PROJECT_OPEN_FILE, text: "ProjectExplorerToolbarComponent. Open project event!" });
-  // }
-
   uploadFile(event) {
     console.log('uploadFile(), event = ', JSON.stringify(event));
   }

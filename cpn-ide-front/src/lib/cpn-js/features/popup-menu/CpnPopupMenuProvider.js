@@ -2,12 +2,12 @@ import {
   forEach,
   filter
 } from 'min-dash';
-import { is, CPN_PLACE, CPN_TRANSITION } from '../../util/ModelUtil';
+import { is, CPN_PLACE, CPN_TRANSITION, CPN_TEXT_ANNOTATION } from '../../util/ModelUtil';
 
 /**
  * This module is an element agnostic replace menu provider for the popup menu.
  */
-export default function CpnPopupMenuProvider(create, cpnFactory, canvas, popupMenu, modeling, connect, rules, translate) {
+export default function CpnPopupMenuProvider(create, cpnFactory, canvas, popupMenu, modeling, connect, rules, translate, eventBus) {
 
   this._create = create;
   this._cpnFactory = cpnFactory;
@@ -17,6 +17,7 @@ export default function CpnPopupMenuProvider(create, cpnFactory, canvas, popupMe
   this._connect = connect;
   this._rules = rules;
   this._translate = translate;
+  this._eventBus = eventBus;
 
   this.register();
 
@@ -32,7 +33,8 @@ CpnPopupMenuProvider.$inject = [
   'modeling',
   'connect',
   'rules',
-  'translate'
+  'translate',
+  'eventBus'
 ];
 
 
@@ -93,6 +95,14 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
     action: function () { self._createSubpage(event) }
   };
 
+  var createAuxMenuEntry = {
+    id: '_menuItem_createAux',
+    label: 'New Aux',
+    className: 'bpmn-icon-script',
+    action: function () { self._createShape(event, CPN_TEXT_ANNOTATION) }
+  };
+
+
   // var deleteMenuEntry = {
   //   id: '_menuItem_delete',
   //   label: 'Delete',
@@ -117,6 +127,7 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
     entries.push(createPlaceMenuEntry);
     entries.push(createTransitionMenuEntry);
     entries.push(createSubpageMenuEntry);
+    entries.push(createAuxMenuEntry);
   }
 
   // if (is(element, CPN_PLACE)) {
@@ -152,7 +163,10 @@ CpnPopupMenuProvider.prototype._createShape = function (event, type) {
 
   this._popupMenu.close();
   const position = toLocalPoint(this._canvas, this._position);
-  this._cpnFactory.createShape(undefined, undefined, type, position, true);
+
+
+  let element = this._cpnFactory.createShape(undefined, undefined, type, position, true);
+  this._eventBus.fire('shape.create.end', {elements: [element]});
 }
 
 CpnPopupMenuProvider.prototype._createSubpage = function (event) {
@@ -165,8 +179,9 @@ CpnPopupMenuProvider.prototype._createSubpage = function (event) {
   let id = 'ID' + new Date().getTime();
   let cpnElement = this._modeling.createElementInModel(position, CPN_TRANSITION);
   cpnElement = this._modeling.declareSubPage(cpnElement, 'Subpage', id);
-  
-  this._cpnFactory.createShape(undefined, cpnElement, CPN_TRANSITION, position, true);
+
+  let element = this._cpnFactory.createShape(undefined, cpnElement, CPN_TRANSITION, position, true);
+  this._eventBus.fire('shape.create.end', {elements: [element]});
 }
 
 /**

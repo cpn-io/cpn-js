@@ -19,6 +19,10 @@
     <!----------------->
     <div style="width:100%">
 
+      <!-- ID -->
+      <app-text-edit-row name="Id" [object]="cpnElement" field="_id" readonly="true">
+      </app-text-edit-row>
+
       <!-- Name (if no arc) -->
       <app-text-edit-row *ngIf="!cpnElement._orientation" name="Name" [object]="cpnElement" field="text"
         (changed)="updateChanges()">
@@ -32,13 +36,18 @@
       </div>
 
       <!-- Port Labels -->
-      <app-text-edit-row  type="select" name="Port type" [object]="getPort(cpnElement.port, cpnElement)"
-        field="text" (changed)="updateChanges()" [options]="portTypes">
+      <app-text-edit-row *ngIf="cpnElement.ellipse" type="select" name="Port type" [object]="getPort(cpnElement)"
+        field="value" (changed)="updatePortType($event)" [options]="portTypes">
       </app-text-edit-row>
 
       <!-- Subst Labels -->
-      <app-text-edit-row *ngIf="cpnElement.subst && cpnElement.subst.subpageinfo" name="Suppage"
-        [object]="cpnElement.subst.subpageinfo" field="_name" (changed)="updateChanges()">
+      <app-text-edit-row *ngIf="cpnElement.box" type="select" name="Suppage" [object]="getSubst(cpnElement)"
+        field="value" (changed)="updateSubst($event)" [options]="getSubstPages()">
+      </app-text-edit-row>
+
+      <!-- PortSock -->
+      <app-text-edit-row *ngIf="cpnElement.subst" name="PortSock" [object]="cpnElement.subst" field="_portsock"
+        readonly="true">
       </app-text-edit-row>
 
       <!-- Direction (only for acrs) -->
@@ -46,9 +55,10 @@
         field="_orientation" (changed)="updateChanges()" [options]="orientations">
       </app-text-edit-row>
 
-      <!-- Stroke color -->
-      <app-text-edit-row type="color" name="Stroke color" [object]="cpnElement.lineattr" field="_colour"
-        (changed)="updateChanges()" [colors]="colors">
+
+      <!-- Port binds -->
+      <app-text-edit-row *ngIf="cpnElement._orientation && getBindTransElementSubst(cpnElement)" type="select" name="Port bind" [object]="getPortBind(cpnElement)"
+                         field="value" (changed)="updatePortBind($event)" [options]="getSubPagesPorts(cpnElement)">
       </app-text-edit-row>
 
     </div>
@@ -63,17 +73,21 @@
 
       <!-- Shape Position -->
       <div *ngIf="cpnElement.posattr && !cpnElement._orientation">
-        <app-text-edit-row type="int" name="X" [object]="cpnElement.posattr" field="_x" (changed)="updateChanges()">
+        <app-text-edit-row type="int" name="X" readonly="true" [object]="cpnElement.posattr" field="_x"
+          (changed)="updateChanges()">
         </app-text-edit-row>
-        <app-text-edit-row type="int" name="Y" [object]="cpnElement.posattr" field="_y" (changed)="updateChanges()">
+        <app-text-edit-row type="int" name="Y" readonly="true" [object]="cpnElement.posattr" field="_y"
+          (changed)="updateChanges()">
         </app-text-edit-row>
       </div>
 
       <!-- Shape Dimention -->
       <div *ngFor="let form of ['ellipse', 'box']">
-        <app-text-edit-row type="int" name="Width" [object]="cpnElement[form]" field="_w" (changed)="updateChanges()">
+        <app-text-edit-row type="int" name="Width" readonly="true" [object]="cpnElement[form]" field="_w"
+          (changed)="updateChanges()">
         </app-text-edit-row>
-        <app-text-edit-row type="int" name="Height" [object]="cpnElement[form]" field="_h" (changed)="updateChanges()">
+        <app-text-edit-row type="int" name="Height" readonly="true" [object]="cpnElement[form]" field="_h"
+          (changed)="updateChanges()">
         </app-text-edit-row>
       </div>
 
@@ -82,15 +96,14 @@
         (changed)="updateChanges()">
       </app-text-edit-row>
 
+      <!-- Stroke color -->
+      <app-text-edit-row type="color" name="Stroke color" [object]="cpnElement.lineattr" field="_colour"
+        (changed)="updateChanges()" [colors]="colors">
+      </app-text-edit-row>
+
       <!-- Fill color -->
       <app-text-edit-row *ngIf="!cpnElement._orientation" type="color" name="Fill color" [object]="cpnElement.fillattr"
         field="_colour" (changed)="updateChanges()" [colors]="colors">
-      </app-text-edit-row>
-
-
-      <!-- PortSock -->
-      <app-text-edit-row *ngIf="cpnElement.subst" name="PortSock" [object]="cpnElement.subst" field="_portsock"
-                         (changed)="updateChanges()">
       </app-text-edit-row>
 
     </div>
@@ -99,7 +112,7 @@
     <!----------------->
     <!-- Label part -->
     <!----------------->
-    <div *ngFor="let labelKey of ['type', 'initmark', 'port', 'cond', 'time', 'code', 'priority', 'annot']">
+    <!-- <div *ngFor="let labelKey of ['type', 'initmark', 'port', 'cond', 'time', 'code', 'priority', 'annot']">
 
       <div *ngIf="cpnElement[labelKey]">
 
@@ -108,12 +121,10 @@
 
         <div [hidden]="!layoutPartOpened[labelKey]" style="width:100%">
 
-          <!-- Label text -->
           <app-text-edit-row [name]="names[labelKey] || labelKey" [object]="cpnElement[labelKey].text" field="__text"
             (changed)="updateChanges()">
           </app-text-edit-row>
 
-          <!-- Label position -->
           <app-text-edit-row type="int" name="X" [object]="cpnElement[labelKey].posattr" field="_x"
             (changed)="updateChanges()">
           </app-text-edit-row>
@@ -123,7 +134,7 @@
 
         </div>
       </div>
-    </div>
+    </div> -->
 
   </div>
 

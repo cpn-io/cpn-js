@@ -47,12 +47,12 @@ CpnRules.prototype.init = function () {
   });
 
   this.addRule('connection.start', function (context) {
-    console.log('RULE connection.start, context = ', context);
+    // console.log('RULE connection.start, context = ', context);
     return self.canStartConnect(context.source);
   });
 
   this.addRule('connection.create', function (context) {
-    console.log('RULE connection.create, context = ', context);
+    // console.log('RULE connection.create, context = ', context);
     return self.canConnect(context.source, context.target);
   });
 

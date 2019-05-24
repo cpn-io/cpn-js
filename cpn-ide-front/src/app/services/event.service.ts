@@ -26,7 +26,7 @@ export class EventService {
     this.handlers.push({id, func});
   }
 
-  public send(id, data) {
+  public send(id, data = undefined) {
     for (const handler of this.handlers) {
       if (handler && handler.id && handler.id === id) {
         handler.func(data);

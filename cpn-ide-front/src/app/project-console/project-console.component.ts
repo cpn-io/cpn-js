@@ -1,8 +1,8 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {EmitterService} from '../services/emitter.service';
-import {Message} from '../common/message';
-import {EventService} from '../services/event.service';
-import {DatePipe} from "@angular/common";
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AccessCpnService } from '../services/access-cpn.service';
+import { Message } from '../common/message';
+import { EventService } from '../services/event.service';
+import { DatePipe } from "@angular/common";
 
 @Component({
   selector: 'app-project-console',
@@ -10,7 +10,7 @@ import {DatePipe} from "@angular/common";
   styleUrls: ['./project-console.component.scss'],
   providers: [DatePipe]
 })
-export class ProjectConsoleComponent implements OnInit, OnDestroy {
+export class ProjectConsoleComponent implements OnInit {
 
   success = false;
 
@@ -19,49 +19,76 @@ export class ProjectConsoleComponent implements OnInit, OnDestroy {
   processing = false;
 
   constructor(private eventService: EventService,
-              private emitterService: EmitterService) {
-    this.subscribeToSmlVerify();
+    private accessCpnService: AccessCpnService) {
   }
 
   ngOnInit() {
-    this.subscribeToAppMessage();
-  }
-
-  ngOnDestroy() {
-  }
-
-  subscribeToAppMessage() {
-    this.eventService.on(Message.PROJECT_FILE_OPEN, (data) => {
-      // this.loadProjectData(data.project);
+    this.eventService.on(Message.PROJECT_LOAD, (event) => {
       this.logHtml = [];
+      this.nodes = [];
+      this.logSuccess('Project ' + event.name + ' loaded.');
     });
 
-    // Subscribe on project load event
-    this.eventService.on(Message.PROJECT_LOAD, (data) => {
-      // this.loadProjectData(data.project);
-      this.logHtml = [];
+    // VERIFICATION
+
+    this.eventService.on(Message.SERVER_INIT_NET_START, () => {
+      this.log('Verification process...');
     });
 
-    // Subscribe on project xml update event
-    this.eventService.on(Message.XML_UPDATE, (data) => {
-      this.loadProjectData(data.project);
+    this.eventService.on(Message.SERVER_INIT_NET_DONE, (event) => {
+      if (event && event.data) {
+        if (event.data.success)
+          this.logSuccess('Model is correct.');
+        else {
+          // this.logError('Error: ' + JSON.stringify(event));
+          for (let id of Object.keys(event.data.issues)) {
+            let issue = event.data.issues[id][0];
+            this.logError('Error: ' + issue.id + ': ' + issue.description);
+          }
+        }
+      }
+      // this.accessCpnService.getTokenMarks();
+      // this.accessCpnService.getTransitions();
     });
-  }
 
-  subscribeToSmlVerify() {
-    this.eventService.on(Message.SML_VERIFY, (data) => {
-      if (data.sml) {
-        this.log(data.sml.data.error.text);
+    this.eventService.on(Message.SERVER_INIT_NET_ERROR, (event) => {
+      if (event) {
+        this.logError('Verification server error: ' + JSON.stringify(event.data));
       }
     });
-  }
 
 
-  getVerify(net: any) {
-    this.getVerifyByJson(net);
+    // SIMULATION
 
-    // const modelFile = 'discretemodel_task1.cpn';
-    // this.getVerifyByXMl(modelFile);
+    this.eventService.on(Message.SERVER_INIT_SIM_START, () => {
+      this.log('Simulator initializing...');
+    });
+
+    this.eventService.on(Message.SERVER_INIT_SIM_DONE, () => {
+      this.logSuccess('Simulator initialized.');
+    });
+
+    this.eventService.on(Message.SERVER_INIT_SIM_ERROR, (event) => {
+      if (event) {
+        this.logError('Simulator initializing error: ' + JSON.stringify(event.data));
+      }
+    });
+
+    // TOKENS
+    this.eventService.on(Message.SERVER_GET_TOKEN_MARKS, (event) => {
+      if (event) {
+        this.logSuccess('Tokens: ' + JSON.stringify(event.data));
+      }
+    });
+
+    // TRANSITIONS
+    this.eventService.on(Message.SERVER_GET_TRANSITIONS, (event) => {
+      if (event) {
+        this.logSuccess('Ready transitions: ' + JSON.stringify(event.data));
+      }
+    });
+
+
   }
 
   logColor(text, className) {
@@ -106,105 +133,68 @@ export class ProjectConsoleComponent implements OnInit, OnDestroy {
     }
   }
 
-  getVerifyByJson(net: any) {
-    return;
+  // getVerify(net: any) {
+  //   this.getVerifyByJson(net);
+  // }
 
-    if (this.processing)
-      return;
+  // getVerifyByJson(net: any) {
+  //   // return;
 
-    this.log('Verification process...');
+  //   if (this.processing)
+  //     return;
 
-    var timeStart = new Date().getTime();
+  //   this.log('Verification process...');
 
-    this.processing = true;
-    this.emitterService.verifyAllNet(net)
-      .subscribe(
-        (data: any) => {
-          this.processing = false;
+  //   var timeStart = new Date().getTime();
 
-          console.log('VERIFICATION_DONE (1)');
+  //   this.processing = true;
 
-          const elapsed = new Date().getTime() - timeStart;
-          this.logSuccess(data ? data : 'Complete in ' + this.timeConversion(elapsed) + '. Model is correct.');
+  //   // this.accessCpnService.verifyAllNet(net);
+  //   this.accessCpnService.initNet(net);
+  //   //   .subscribe(
+  //   //     (data: any) => {
+  //   //       this.processing = false;
 
-          if (data != null) {
-            console.log('DATA FROM WEB VERIFY = ', data);
-          } else {
-            this.success = true;
-            this.parseErrorText(undefined);
-          }
-          //  this.done = true;
+  //   //       console.log('VERIFICATION_DONE (1), data = ', data);
 
-          console.log('VERIFICATION_DONE (2)');
+  //   //       const elapsed = new Date().getTime() - timeStart;
+  //   //       this.logSuccess(data ? data : 'Complete in ' + this.timeConversion(elapsed) + '. Model is correct.');
 
-          this.eventService.send(Message.VERIFICATION_DONE, { data: undefined });
+  //   //       if (data != null) {
+  //   //         console.log('DATA FROM WEB VERIFY = ', data);
+  //   //       } else {
+  //   //         this.success = true;
+  //   //         this.parseErrorText(undefined);
+  //   //       }
+  //   //       //  this.done = true;
 
-        },
-        error => {
-          this.success = false;
-          this.processing = false;
-          console.log(error);
+  //   //       console.log('VERIFICATION_DONE (2)');
 
-          const elapsed = new Date().getTime() - timeStart;
-          this.logError('Complete in ' + this.timeConversion(elapsed) + '. Error: ' + error.error.text);
+  //   //       this.eventService.send(Message.VERIFICATION_DONE, { data: undefined });
 
-          this.parseErrorText(error.error.text);
-        }
-      );
-  }
+  //   //     },
+  //   //     error => {
+  //   //       this.success = false;
+  //   //       this.processing = false;
+  //   //       console.log(error);
 
-  parseErrorText(errorText) {
-    if (errorText) {
-      let errorWords = errorText.split(new RegExp('[.;\n ]', 'g'));
-      errorWords = errorWords.filter(e => e.charAt(e.length - 1) === ':');
-      // errorWords.map ( function(e) { return  e.slice(0, -1); });
-      this.eventService.send(Message.MODEL_ERROR, {id: errorWords});
-    } else
-      this.eventService.send(Message.MODEL_ERROR, {id: []});
-  }
+  //   //       const elapsed = new Date().getTime() - timeStart;
+  //   //       this.logError('Complete in ' + this.timeConversion(elapsed) + '. Error: ' + error.error.text);
 
-  loadProjectData(project: any) {
-    this.nodes = [];
+  //   //       this.parseErrorText(error.error.text);
+  //   //     }
+  //   //   );
+  // }
 
-    let projectData = project.data;
-    this.getVerify(project.data);
+  // parseErrorText(errorText) {
+  //   if (errorText) {
+  //     let errorWords = errorText.split(new RegExp('[.;\n ]', 'g'));
+  //     errorWords = errorWords.filter(e => e.charAt(e.length - 1) === ':');
+  //     // errorWords.map ( function(e) { return  e.slice(0, -1); });
+  //     this.eventService.send(Message.MODEL_ERROR, { id: errorWords });
+  //   } else
+  //     this.eventService.send(Message.MODEL_ERROR, { id: [] });
+  // }
 
-    let cpnet;
-
-    if (projectData.workspaceElements) {
-      if (projectData.workspaceElements instanceof Array) {
-        for (let workspaceElement of projectData.workspaceElements) {
-          if (workspaceElement.cpnet) {
-            cpnet = workspaceElement.cpnet;
-            break;
-          }
-        }
-      } else {
-        if (projectData.workspaceElements.cpnet) {
-          cpnet = projectData.workspaceElements.cpnet;
-        }
-      }
-    }
-
-    if (cpnet) {
-      if (cpnet.globbox) {
-        if (cpnet.globbox.block) {
-
-          // GlobBox
-          // --------------------------------------
-          for (let block of cpnet.globbox.block) {
-
-            // Parameters
-            // -------------------------------
-            if (block.id === 'Variables') {
-              this.nodes = block.var;
-            }
-            // -------------------------------
-          }
-        }
-      }
-    }
-
-  }
 
 }

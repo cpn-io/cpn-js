@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ProjectService } from '../services/project.service';
-import { AppVersion } from "../app.version";
+import { AppVersion } from '../app.version';
 import { ModelService } from '../services/model.service';
 import { EventService } from '../services/event.service';
 import { Message } from '../common/message';
@@ -24,11 +24,8 @@ export class MainToolbarComponent implements OnInit {
   }
 
   newCPNet() {
-    this.projectService.generateUserSession();
     this.projectService.loadEmptyProject();
-
   }
-
 
   undoChanges() {
     this.modelService.cancelModelChanges('undo');
@@ -43,10 +40,10 @@ export class MainToolbarComponent implements OnInit {
   }
 
   openProject() {
-    // EmitterService.getAppMessageEmitter().emit(
-    //   {
-    //     id: Constants.ACTION_PROJECT_OPEN_FILE,
-    //     text:"MainToolbarComponent. Open project event!"
-    //   });
+  }
+
+  verify() {
+    // verify loaded project
+    this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData() });
   }
 }

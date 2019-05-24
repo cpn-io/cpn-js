@@ -17,15 +17,8 @@ export default function ChangeSupporter(eventBus, modeling, textRenderer) {
 
 
   function updateTokens(data) {
-    // 0:
-    // id: "ID1412328424"
-    // marking: "1`1++↵3`2++↵4`3"
-    // tokens: "8"
-    // __proto__: Object
-    // 1:
-    // id: "ID1412328454"
-    // marking: "empty"
-    // tokens: "0"
+    // {"data":[{"id":"ID1412328424","tokens":8,"marking":"1`1++\n3`2++\n4`3"},
+    //          {"id":"ID1412328454","tokens":0,"marking":"empty"}]}
 
     if (data && data.length > 0) {
       for (var item of data) {
@@ -77,11 +70,13 @@ export default function ChangeSupporter(eventBus, modeling, textRenderer) {
   }
 
   function updateElementSize(element) {
-    console.log('ChangeSupporter(), updateTokens(), updateElementSize(), element = ', element);
+    // console.log('ChangeSupporter(), updateTokens(), updateElementSize(), element = ', element);
+
     var newBounds = textRenderer.getExternalLabelBounds(element, element.text);
     if (newBounds.width < 10)
       newBounds.width = 10;
-    console.log('ChangeSupporter(), updateTokens(), updateElementSize(), newBounds = ', newBounds);
+
+    // console.log('ChangeSupporter(), updateTokens(), updateElementSize(), newBounds = ', newBounds);
     modeling.resizeShape(element, newBounds);
   }
 

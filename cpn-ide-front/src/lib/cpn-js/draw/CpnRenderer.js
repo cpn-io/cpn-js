@@ -21,7 +21,8 @@ import {
   CPN_TEXT_ANNOTATION,
   is,
   isCpn,
-  isCpnPortOrSubst
+  isCpnPortOrSubst,
+  getText
 } from '../util/ModelUtil';
 
 import {
@@ -48,7 +49,7 @@ import {
   getRectPath,
   getFillColor,
   getStrokeColor,
-  getStrokeWidth, getBox, getText
+  getStrokeWidth, getBox
 } from './CpnRenderUtil';
 
 
@@ -523,9 +524,9 @@ export default function CpnRenderer(
 
   /**
    * Add CPN status shadow to svg element
-   * 
-   * @param {*} element 
-   * @param {*} svgElement 
+   *
+   * @param {*} element
+   * @param {*} svgElement
    */
   function setCpnStatus(element, svgElement) {
     if (element.cpnStatus) {
@@ -778,7 +779,7 @@ export default function CpnRenderer(
   function getConnectionEndMarkerAttrs(element) {
     var attrs = {};
 
-    var fill = getFillColor(element), 
+    var fill = getFillColor(element),
     strokeColor = getStrokeColor(element),
     strokeWidth = getStrokeWidth(element);
 

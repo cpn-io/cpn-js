@@ -33,13 +33,21 @@ td.node-highlight-all {
   border: solid #007bff 1px;
 }
 
+td.node-highlight-error {
+  border-bottom: solid red 2px;
+}
+
 .node {
   border: solid transparent 1px;
 }
 
+.disabledNode {
+  color: #7f7f7f;
+}
+
 .editablenode {
   white-space: pre;
-  overflows-x: visible;
+  overflow-x: visible;
 }
 
 .table-textarea {

@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import * as X2JS from '../../lib/x2js/xml2json.js';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EventService } from './event.service';
 import { Message } from '../common/message';
-import { ProjectService } from '../services/project.service';
-import { Constants } from '../common/constants.js';
+import { AccessCpnService } from './access-cpn.service';
+import { SettingsService } from '../services/settings.service';
+
 
 /**
  * Common service for getting access to project data from all application
@@ -16,7 +15,7 @@ import { Constants } from '../common/constants.js';
 export class ModelService {
 
   private isLoaded = false;
-  public modelName = '';
+  public projectName = '';
   public projectData = undefined;
   private backupModel = [];
   private redoBackupModel;
@@ -32,25 +31,24 @@ export class ModelService {
   };
   paramsTypes = ['ml', 'color', 'var', 'globref'];
 
-  constructor(private eventService: EventService, private http: HttpClient, private projectService: ProjectService) {
+  constructor(private eventService: EventService,
+    private accessCpnService: AccessCpnService,
+    private settings: SettingsService
+  ) {
     console.log('ModelService instance CREATED!');
 
-    this.eventService.on(Message.PROJECT_FILE_OPEN, (data) => {
-      this.markNewModel();
-      this.loadProjectData(data.project);
-      this.modelCase['cpn:Place'] = 'place';
-      this.modelCase['cpn:Transition'] = 'trans';
-      this.modelCase['cpn:Connection'] = 'arc';
-      this.modelCase['cpn:Label'] = 'label';
-      this.modelCase['bpmn:Process'] = 'trans';
-      this.modelCase['place'] = 'place';
-      this.modelCase['trans'] = 'trans';
-      this.modelCase['arc'] = 'arc';
-      this.modelCase['label'] = 'label';
-    });
+    this.modelCase['cpn:Place'] = 'place';
+    this.modelCase['cpn:Transition'] = 'trans';
+    this.modelCase['cpn:Connection'] = 'arc';
+    this.modelCase['cpn:Label'] = 'label';
+    this.modelCase['bpmn:Process'] = 'trans';
+    this.modelCase['place'] = 'place';
+    this.modelCase['trans'] = 'trans';
+    this.modelCase['arc'] = 'arc';
+    this.modelCase['label'] = 'label';
 
     this.eventService.on(Message.PROJECT_LOAD, (data) => {
-      this.loadProjectData(data.project);
+      this.loadProject(data);
     });
 
     this.eventService.on(Message.PAGE_OPEN, (data) => {
@@ -58,6 +56,9 @@ export class ModelService {
       this.pageId = data.pageObject._id;
     });
 
+    this.eventService.on(Message.MODEL_UPDATE, (data) => {
+      this.updateModel(data);
+    });
   }
 
   markNewModel() {
@@ -68,13 +69,20 @@ export class ModelService {
     this.isLoaded = true;
   }
 
-  isLooadModel() {
+  isModelLoaded() {
     return this.isLoaded;
   }
 
-  loadProjectData(project: any) {
+  public loadProject(project) {
+    console.log('ModelService.loadProject(), project = ', project);
+
     this.projectData = project.data;
-    this.modelName = project.name;
+    this.projectName = project.name;
+
+    // this.accessCpnService.initNet(this.projectData);
+
+    // // verify loaded project
+    // this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.projectData });
   }
 
   saveBackup(model, pageId) {
@@ -97,9 +105,12 @@ export class ModelService {
     const modelState = this[stackPop].pop();
     this[stackPush].push({ project: JSON.parse(JSON.stringify(this.projectData)), page: this.pageId });
     this.projectData = modelState.project;
-    const sending = { project: { data: this.projectData, name: this.modelName } };
+
     this.markOpenedModel();
-    this.eventService.send(Message.PROJECT_LOAD, sending);
+
+    const project = { data: this.projectData, name: this.projectName };
+    this.eventService.send(Message.PROJECT_LOAD, project);
+
     if (modelState.page) {
       this.eventService.send(Message.PAGE_OPEN, { pageObject: this.getPageById(modelState.page), subPages: this.subPages });
     }
@@ -122,36 +133,28 @@ export class ModelService {
     return this.projectData.workspaceElements.cpnet.page.length ? this.projectData.workspaceElements.cpnet.page.find(page => page._id === id) : this.projectData.workspaceElements.cpnet.page;
   }
 
-  /* getJsonElementOnPage(pageId, id, type){
-     try {
-       return this.getPageById(pageId)[this.modelCase[type]].length ? this.getPageById(pageId)[this.modelCase[type]].find(elem => elem._id === id) : this.getPageById(pageId)[this.modelCase[type]];
-     } catch(e) {
-       return undefined;
-     }
-   }*/
 
+  // getJsonElementOnPage(pageId, element, type) {
+  //   try {
+  //     const page = this.getPageById(pageId);
+  //     let entry;
+  //     if (type === 'cpn:Label') {
+  //       if (element.labelTarget && element.labelTarget.parent) {
+  //         entry = this.modelCase[element.labelTarget.type];
+  //         return page[entry].length ? page[entry].find(elem => elem._id === element.labelTarget.id)[element.labelType] : page[entry][element.labelType];
+  //       } else {
+  //         return page['Aux'].length ? page['Aux'].find(elem => elem._id === element.labelNodeId) : page['Aux'];
+  //       }
+  //     } else {
+  //       entry = this.modelCase[type];
+  //       return page[entry].length ? page[entry].find(elem => elem._id === element) : page[entry];
+  //     }
+  //   } catch (e) {
+  //     return undefined;
+  //   }
+  // }
 
-  getJsonElementOnPage(pageId, element, type) {
-    try {
-      const page = this.getPageById(pageId);
-      let entry;
-      if (type === 'cpn:Label') {
-        if (element.labelTarget && element.labelTarget.parent) {
-          entry = this.modelCase[element.labelTarget.type];
-          return page[entry].length ? page[entry].find(elem => elem._id === element.labelTarget.id)[element.labelType] : page[entry][element.labelType];
-        } else {
-          return page['Aux'].length ? page['Aux'].find(elem => elem._id === element.labelNodeId) : page['Aux'];
-        }
-      } else {
-        entry = this.modelCase[type];
-        return page[entry].length ? page[entry].find(elem => elem._id === element) : page[entry];
-      }
-    } catch (e) {
-      return undefined;
-    }
-  }
-
-  getcpnet() {
+  getCpn() {
     let cpnet;
 
     if (this.projectData.workspaceElements) {
@@ -200,17 +203,22 @@ export class ModelService {
   }
 
 
-  addElementJsonOnPage(element, pageId, type) {
+  addElementJsonOnPage(cpnElement, pageId, type) {
+    console.log('addElementJsonOnPage()', cpnElement, pageId, type);
+
     this.saveBackup(this.projectData, pageId);
+
     const jsonPageObject = this.getPageById(pageId);
+    console.log('addElementJsonOnPage(), jsonPageObject = ', jsonPageObject);
+
     if (jsonPageObject[this.modelCase[type]] instanceof Array) {
-      jsonPageObject[this.modelCase[type]].push(element);
+      jsonPageObject[this.modelCase[type]].push(cpnElement);
     } else {
       if (jsonPageObject[this.modelCase[type]]) {
-        const curentElem = jsonPageObject[this.modelCase[type]];
-        jsonPageObject[this.modelCase[type]] = [curentElem, element];
+        const currentElem = jsonPageObject[this.modelCase[type]];
+        jsonPageObject[this.modelCase[type]] = [currentElem, cpnElement];
       } else {
-        jsonPageObject[this.modelCase[type]] = [element];
+        jsonPageObject[this.modelCase[type]] = [cpnElement];
       }
     }
   }
@@ -222,245 +230,245 @@ export class ModelService {
   }
 
 
-  sendChangingElementToDeclarationPanel(node, elementType, action, id, blockId, state) {
-    console.log('sendChangingElementToDeclarationPanel()', node, elementType, action, id, blockId, state)
-    if (elementType === 'Declarations' || elementType === 'block' || elementType === 'globbox') {
-      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-        node: action === 'rename' ? node : undefined,
-        action: action,
-        element: 'tab',
-        target: blockId, // this.getCurrentBlock(node).id,
-        id: id,
-        state: state // this.treeComponent.treeModel.getState()
-      });
-    } else if (elementType === 'ml') {
-      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-        node: action === 'rename' ? node : undefined,
-        action: action,
-        element: elementType,
-        target: blockId, // this.getCurrentBlock(node).id,
-        id: id,
-        state: state// this.treeComponent.treeModel.getState()
-      });
-    } else if (elementType === 'color') {
-      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-        node: action === 'rename' ? node : undefined,
-        action: action,
-        element: elementType,
-        target: blockId, // this.getCurrentBlock(node).id,
-        id: id,
-        state: state// this.treeComponent.treeModel.getState()
-      });
-    } else if (elementType === 'var') {
-      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-        node: action === 'rename' ? node : undefined,
-        action: action,
-        element: elementType,
-        target: blockId, // this.getCurrentBlock(node).id,
-        id: id,
-        state: state // this.treeComponent.treeModel.getState()
-      });
-    } else if (elementType === 'globref') {
-      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-        node: action === 'rename' ? node : undefined,
-        action: action,
-        element: elementType,
-        target: blockId, // this.getCurrentBlock(node).id,
-        id: id,
-        state: state // this.treeComponent.treeModel.getState()
-      });
-    } else if (elementType === 'project') {
-      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-        node: action === 'rename' ? node : undefined,
-        action: action,
-        element: elementType,
-        target: blockId, // this.getCurrentBlock(node).id,
-        id: id,
-        state: state // this.treeComponent.treeModel.getState()
-      });
-    } else if (this.paramsTypes.includes(id)) {
-      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-        node: action === 'rename' ? node : undefined,
-        action: action,
-        target: blockId, // this.getCurrentBlock(node).id,
-        id: id,
-        state: state// this.treeComponent.treeModel.getState()
-      });
-    }
-  }
+  // sendChangingElementToDeclarationPanel(node, elementType, action, id, blockId, state) {
+  //   console.log('sendChangingElementToDeclarationPanel()', node, elementType, action, id, blockId, state)
+  //   if (elementType === 'Declarations' || elementType === 'block' || elementType === 'globbox') {
+  //     this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
+  //       node: action === 'rename' ? node : undefined,
+  //       action: action,
+  //       element: 'tab',
+  //       target: blockId, // this.getCurrentBlock(node).id,
+  //       id: id,
+  //       state: state // this.treeComponent.treeModel.getState()
+  //     });
+  //   } else if (elementType === 'ml') {
+  //     this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
+  //       node: action === 'rename' ? node : undefined,
+  //       action: action,
+  //       element: elementType,
+  //       target: blockId, // this.getCurrentBlock(node).id,
+  //       id: id,
+  //       state: state// this.treeComponent.treeModel.getState()
+  //     });
+  //   } else if (elementType === 'color') {
+  //     this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
+  //       node: action === 'rename' ? node : undefined,
+  //       action: action,
+  //       element: elementType,
+  //       target: blockId, // this.getCurrentBlock(node).id,
+  //       id: id,
+  //       state: state// this.treeComponent.treeModel.getState()
+  //     });
+  //   } else if (elementType === 'var') {
+  //     this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
+  //       node: action === 'rename' ? node : undefined,
+  //       action: action,
+  //       element: elementType,
+  //       target: blockId, // this.getCurrentBlock(node).id,
+  //       id: id,
+  //       state: state // this.treeComponent.treeModel.getState()
+  //     });
+  //   } else if (elementType === 'globref') {
+  //     this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
+  //       node: action === 'rename' ? node : undefined,
+  //       action: action,
+  //       element: elementType,
+  //       target: blockId, // this.getCurrentBlock(node).id,
+  //       id: id,
+  //       state: state // this.treeComponent.treeModel.getState()
+  //     });
+  //   } else if (elementType === 'project') {
+  //     this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
+  //       node: action === 'rename' ? node : undefined,
+  //       action: action,
+  //       element: elementType,
+  //       target: blockId, // this.getCurrentBlock(node).id,
+  //       id: id,
+  //       state: state // this.treeComponent.treeModel.getState()
+  //     });
+  //   } else if (this.paramsTypes.includes(id)) {
+  //     this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
+  //       node: action === 'rename' ? node : undefined,
+  //       action: action,
+  //       target: blockId, // this.getCurrentBlock(node).id,
+  //       id: id,
+  //       state: state// this.treeComponent.treeModel.getState()
+  //     });
+  //   }
+  // }
 
 
   /*for refact*/
-  shapeResizeJsonSaver(event, pageId) {
-    // this.saveBackup(this.projectData, pageId);
-    // const page = this.getPageById(pageId);
-    // const form = event.shape.type === 'cpn:Place' ? 'ellipse' : 'box';
-    // const jsonMovingElement = this.getJsonElementOnPage(pageId, event.shape.type === 'cpn:Label' ? event.shape : event.shape.id, event.shape.type);
-    // jsonMovingElement[form]._w = event.shape.width;
-    // jsonMovingElement[form]._h = event.shape.height;
-    // jsonMovingElement.posattr._x = event.shape.x + jsonMovingElement[form]._w / 2;
-    // jsonMovingElement.posattr._y = -1 * event.shape.y - jsonMovingElement[form]._h / 2;
+  // shapeResizeJsonSaver(event, pageId) {
+  // this.saveBackup(this.projectData, pageId);
+  // const page = this.getPageById(pageId);
+  // const form = event.shape.type === 'cpn:Place' ? 'ellipse' : 'box';
+  // const jsonMovingElement = this.getJsonElementOnPage(pageId, event.shape.type === 'cpn:Label' ? event.shape : event.shape.id, event.shape.type);
+  // jsonMovingElement[form]._w = event.shape.width;
+  // jsonMovingElement[form]._h = event.shape.height;
+  // jsonMovingElement.posattr._x = event.shape.x + jsonMovingElement[form]._w / 2;
+  // jsonMovingElement.posattr._y = -1 * event.shape.y - jsonMovingElement[form]._h / 2;
 
-    // for (const labelType of this.labelsEntry[this.modelCase[event.shape.type]]) {
-    //   if (labelType !== 'edit') {
-    //     if (((event.context.direction === 'ne' || event.context.direction === 'nw') && labelType !== 'type' && labelType !== 'code' && labelType !== 'priority')
-    //       || ((event.context.direction === 'se' || event.context.direction === 'sw') && labelType !== 'initmark' && labelType !== 'time' && labelType !== 'cond')) {
+  // for (const labelType of this.labelsEntry[this.modelCase[event.shape.type]]) {
+  //   if (labelType !== 'edit') {
+  //     if (((event.context.direction === 'ne' || event.context.direction === 'nw') && labelType !== 'type' && labelType !== 'code' && labelType !== 'priority')
+  //       || ((event.context.direction === 'se' || event.context.direction === 'sw') && labelType !== 'initmark' && labelType !== 'time' && labelType !== 'cond')) {
 
-    //       jsonMovingElement[labelType].posattr._y = parseFloat(jsonMovingElement[labelType].posattr._y) + event.context.delta.y;
-    //     }
-    //     if (((event.context.direction === 'sw' || event.context.direction === 'nw') && labelType !== 'type' && labelType !== 'initmark' && labelType !== 'time' && labelType !== 'code')
-    //       || ((event.context.direction === 'se' || event.context.direction === 'ne') && labelType !== 'cond' && labelType !== 'priority')) {
-    //       jsonMovingElement[labelType].posattr._x = parseFloat(jsonMovingElement[labelType].posattr._x) + event.context.delta.x;
-    //     }
-    //   }
-    // }
-
-
-    // this.eventService.send(Message.SHAPE_SELECT, {element: event.shape, pageJson: page});
-  }
-
-  shapeMoveJsonSaver(event, pageId, arcShapes) {
-    this.saveBackup(this.projectData, pageId);
-    const page = this.getPageById(pageId);
-    const jsonMovingElement = this.getJsonElementOnPage(pageId, event.shape.type === 'cpn:Label' ? event.shape : event.shape.id, event.shape.type);
-    this.moveElementInJson(jsonMovingElement, event.shape.type, { x: event.dx, y: -1 * event.dy }, event.shape);
-    if (event.shape.type !== 'cpn:Connection') {
-      if (page.arc instanceof Array) {
-        for (const arc of page.arc) {
-          if (arc.placeend._idref === event.shape.id || arc.transend._idref === event.shape.id) {
-            const placeEnd = this.getJsonElementOnPage(pageId, arc.placeend._idref, 'cpn:Place');
-            const transEnd = this.getJsonElementOnPage(pageId, arc.transend._idref, 'cpn:Transition');
-            const modelElem = arcShapes.find(modelArc => modelArc.id === arc._id);
-            if (placeEnd && transEnd && modelElem) {
-              this.moveElementInJson(arc, 'cpn:Connection', {
-                x: -1 * (parseFloat(arc.annot.posattr._x) - (parseFloat(placeEnd.posattr._x) + parseFloat(transEnd.posattr._x)) / 2) + 6,
-                y: -1 * (parseFloat(arc.annot.posattr._y) - (parseFloat(placeEnd.posattr._y) + parseFloat(transEnd.posattr._y)) / 2)
-              }, modelElem);
-            }
-          }
-        }
-      }
-    }
-
-    this.eventService.send(Message.SHAPE_SELECT, { element: event.shape, pageJson: page });
-    /* switch(event.shape.type){
-       case 'cpn:Place':
-         if(page.place.length) {
-           page.place.forEach(movingXmlElement => {
-             if (movingXmlElement._id === event.shape.id) {
-               movingXmlElement.posattr._x = parseFloat(movingXmlElement.posattr._x) + (event.dx);
-               movingXmlElement.posattr._y = parseFloat(movingXmlElement.posattr._y) + (-1 * event.dy);
-               movingXmlElement.type.posattr._x = parseFloat(movingXmlElement.type.posattr._x) + (event.dx);
-               movingXmlElement.type.posattr._y = parseFloat(movingXmlElement.type.posattr._y) + (-1 * event.dy);
-               movingXmlElement.initmark.posattr._x = parseFloat(movingXmlElement.initmark.posattr._x) + (event.dx);
-               movingXmlElement.initmark.posattr._y = parseFloat(movingXmlElement.initmark.posattr._y) + (-1 * event.dy);
-             }
-           })
-         } else {
-           page.place.posattr._x = parseFloat(page.place.posattr._x) + (event.dx);
-           page.place.posattr._y = parseFloat(page.place.posattr._y) + (-1 * event.dy);
-           page.place.type.posattr._x = parseFloat(page.place.type.posattr._x) + (event.dx);
-           page.place.type.posattr._y = parseFloat(page.place.type.posattr._y) + (-1 * event.dy);
-           page.place.initmark.posattr._x = parseFloat(page.place.initmark.posattr._x) + (event.dx);
-           page.place.initmark.posattr._y = parseFloat(page.place.initmark.posattr._y) + (-1 * event.dy);
-         }
-         break;
-       case 'cpn:Transition':
-         if(page.trans.length)
-           page.trans.forEach(movingXmlElement => {
-             if (movingXmlElement._id === event.shape.id) {
-               movingXmlElement.posattr._x = parseFloat(movingXmlElement.posattr._x) + (event.dx );
-               movingXmlElement.posattr._y = parseFloat(movingXmlElement.posattr._y) + (-1 * event.dy);
-               movingXmlElement.cond.posattr._x = parseFloat(movingXmlElement.cond.posattr._x) + (event.dx );
-               movingXmlElement.cond.posattr._y = parseFloat(movingXmlElement.cond.posattr._y) + (-1 * event.dy);
-               movingXmlElement.priority.posattr._x = parseFloat(movingXmlElement.priority.posattr._x) + (event.dx );
-               movingXmlElement.priority.posattr._y = parseFloat(movingXmlElement.priority.posattr._y) + (-1 * event.dy );
-               movingXmlElement.time.posattr._x = parseFloat(movingXmlElement.time.posattr._x) + (event.dx );
-               movingXmlElement.time.posattr._y = parseFloat(movingXmlElement.time.posattr._y) + (-1 * event.dy );
-               movingXmlElement.code.posattr._x = parseFloat(movingXmlElement.code.posattr._x) + (event.dx );
-               movingXmlElement.code.posattr._y = parseFloat(movingXmlElement.code.posattr._y) + (-1 * event.dy );
-             }
-           }); else {
-           page.trans.posattr._x = parseFloat(page.trans.posattr._x) + (event.dx );
-           page.trans.posattr._y = parseFloat(page.trans.posattr._y) + (-1 * event.dy);
-           page.trans.cond.posattr._x = parseFloat(page.trans.cond.posattr._x) + (event.dx );
-           page.trans.cond.posattr._y = parseFloat(page.trans.cond.posattr._y) + (-1 * event.dy);
-           page.trans.priority.posattr._x = parseFloat(page.trans.priority.posattr._x) + (event.dx );
-           page.trans.priority.posattr._y = parseFloat(page.trans.priority.posattr._y) + (-1 * event.dy );
-           page.trans.time.posattr._x = parseFloat(page.trans.time.posattr._x) + (event.dx );
-           page.trans.time.posattr._y = parseFloat(page.trans.time.posattr._y) + (-1 * event.dy );
-           page.trans.code.posattr._x = parseFloat(page.trans.code.posattr._x) + (event.dx );
-           page.trans.code.posattr._y = parseFloat(page.trans.code.posattr._y) + (-1 * event.dy );
-         }
-         break;
-       case 'cpn:Connection':
-         if(page.arc.length)
-           page.arc.forEach(movingXmlElement => {
-             if (movingXmlElement._id === event.shape.id) {
-               movingXmlElement.annot.posattr._x = parseFloat(movingXmlElement.annot.posattr._x) + (event.dx );
-               movingXmlElement.annot.posattr._y = parseFloat(movingXmlElement.annot.posattr._y) + (-1 * event.dy);
-             }
-           }); else {
-           page.arc.annot.posattr._x = parseFloat(page.arc.annot.posattr._x) + (event.dx );
-           page.arc.annot.posattr._y = parseFloat(page.arc.annot.posattr._y) + (-1 * event.dy);
-         }
-         break;
-       default:
-     }
-     // this.applyPageChanges();
-     // let element = event.shape;
-     this.eventService.send(Message.SHAPE_SELECT, {element: event.shape, pageJson: page });
-     */
-  }
+  //       jsonMovingElement[labelType].posattr._y = parseFloat(jsonMovingElement[labelType].posattr._y) + event.context.delta.y;
+  //     }
+  //     if (((event.context.direction === 'sw' || event.context.direction === 'nw') && labelType !== 'type' && labelType !== 'initmark' && labelType !== 'time' && labelType !== 'code')
+  //       || ((event.context.direction === 'se' || event.context.direction === 'ne') && labelType !== 'cond' && labelType !== 'priority')) {
+  //       jsonMovingElement[labelType].posattr._x = parseFloat(jsonMovingElement[labelType].posattr._x) + event.context.delta.x;
+  //     }
+  //   }
+  // }
 
 
-  moveElementInJson(jsonElem, elemntType, delta, modelElem) {
+  // this.eventService.send(Message.SHAPE_SELECT, {element: event.shape, pageJson: page});
+  // }
 
-    // console.log('moveElementInJson(), jsonElem = ', jsonElem);
-    // console.log('moveElementInJson(), elemntType = ', elemntType);
-    // console.log('moveElementInJson(), delta = ', delta);
-    // console.log('moveElementInJson(), modelElem = ', modelElem);
+  // shapeMoveJsonSaver(event, pageId, arcShapes) {
+  //   this.saveBackup(this.projectData, pageId);
+  //   const page = this.getPageById(pageId);
+  //   const jsonMovingElement = this.getJsonElementOnPage(pageId, event.shape.type === 'cpn:Label' ? event.shape : event.shape.id, event.shape.type);
+  //   this.moveElementInJson(jsonMovingElement, event.shape.type, { x: event.dx, y: -1 * event.dy }, event.shape);
+  //   if (event.shape.type !== 'cpn:Connection') {
+  //     if (page.arc instanceof Array) {
+  //       for (const arc of page.arc) {
+  //         if (arc.placeend._idref === event.shape.id || arc.transend._idref === event.shape.id) {
+  //           const placeEnd = this.getJsonElementOnPage(pageId, arc.placeend._idref, 'cpn:Place');
+  //           const transEnd = this.getJsonElementOnPage(pageId, arc.transend._idref, 'cpn:Transition');
+  //           const modelElem = arcShapes.find(modelArc => modelArc.id === arc._id);
+  //           if (placeEnd && transEnd && modelElem) {
+  //             this.moveElementInJson(arc, 'cpn:Connection', {
+  //               x: -1 * (parseFloat(arc.annot.posattr._x) - (parseFloat(placeEnd.posattr._x) + parseFloat(transEnd.posattr._x)) / 2) + 6,
+  //               y: -1 * (parseFloat(arc.annot.posattr._y) - (parseFloat(placeEnd.posattr._y) + parseFloat(transEnd.posattr._y)) / 2)
+  //             }, modelElem);
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
 
-    // for (const movingElement of this.labelsEntry[this.modelCase[elemntType]]) {
-    //   if (movingElement !== 'edit') {
-    //     jsonElem[movingElement].posattr._x = parseFloat(jsonElem[movingElement].posattr._x) + delta.x;
-    //     jsonElem[movingElement].posattr._y = parseFloat(jsonElem[movingElement].posattr._y) + delta.y;
-    //   } else {
-    //     jsonElem.posattr._x = parseFloat(jsonElem.posattr._x) + delta.x;
-    //     jsonElem.posattr._y = parseFloat(jsonElem.posattr._y) + delta.y;
-    //   }
-    //   if (elemntType === 'cpn:Connection') {
-    //     jsonElem.bendpoint = [];
-    //     const addToWay = 'push'; // jsonElem._orientation  === 'TtoP' ?  'push' : 'unshift'
-    //     for (const updWayPoint of modelElem.waypoints) {
-    //       if (!updWayPoint.original) {
-    //         jsonElem.bendpoint[addToWay]({
-    //           fillattr: {
-    //             _colour: 'White',
-    //             _pattern: 'Solid',
-    //             _filled: 'false'
-    //           },
-    //           lineattr: {
-    //             _colour: 'Black',
-    //             _thick: '0',
-    //             _type: 'Solid'
-    //           },
-    //           posattr: {
-    //             _x: updWayPoint.x,
-    //             _y: -1 * updWayPoint.y
-    //           },
-    //           textattr: {
-    //             _colour: 'Black',
-    //             _bold: 'false'
-    //           },
-    //           _id: 'ID' + new Date().getTime(),
-    //           _serial: '1'
-    //         });
-    //       }
-    //     }
-    //   }
-    // }
-  }
+  // this.eventService.send(Message.SHAPE_SELECT, { element: event.shape, pageJson: page });
+  /* switch(event.shape.type){
+     case 'cpn:Place':
+       if(page.place.length) {
+         page.place.forEach(movingXmlElement => {
+           if (movingXmlElement._id === event.shape.id) {
+             movingXmlElement.posattr._x = parseFloat(movingXmlElement.posattr._x) + (event.dx);
+             movingXmlElement.posattr._y = parseFloat(movingXmlElement.posattr._y) + (-1 * event.dy);
+             movingXmlElement.type.posattr._x = parseFloat(movingXmlElement.type.posattr._x) + (event.dx);
+             movingXmlElement.type.posattr._y = parseFloat(movingXmlElement.type.posattr._y) + (-1 * event.dy);
+             movingXmlElement.initmark.posattr._x = parseFloat(movingXmlElement.initmark.posattr._x) + (event.dx);
+             movingXmlElement.initmark.posattr._y = parseFloat(movingXmlElement.initmark.posattr._y) + (-1 * event.dy);
+           }
+         })
+       } else {
+         page.place.posattr._x = parseFloat(page.place.posattr._x) + (event.dx);
+         page.place.posattr._y = parseFloat(page.place.posattr._y) + (-1 * event.dy);
+         page.place.type.posattr._x = parseFloat(page.place.type.posattr._x) + (event.dx);
+         page.place.type.posattr._y = parseFloat(page.place.type.posattr._y) + (-1 * event.dy);
+         page.place.initmark.posattr._x = parseFloat(page.place.initmark.posattr._x) + (event.dx);
+         page.place.initmark.posattr._y = parseFloat(page.place.initmark.posattr._y) + (-1 * event.dy);
+       }
+       break;
+     case 'cpn:Transition':
+       if(page.trans.length)
+         page.trans.forEach(movingXmlElement => {
+           if (movingXmlElement._id === event.shape.id) {
+             movingXmlElement.posattr._x = parseFloat(movingXmlElement.posattr._x) + (event.dx );
+             movingXmlElement.posattr._y = parseFloat(movingXmlElement.posattr._y) + (-1 * event.dy);
+             movingXmlElement.cond.posattr._x = parseFloat(movingXmlElement.cond.posattr._x) + (event.dx );
+             movingXmlElement.cond.posattr._y = parseFloat(movingXmlElement.cond.posattr._y) + (-1 * event.dy);
+             movingXmlElement.priority.posattr._x = parseFloat(movingXmlElement.priority.posattr._x) + (event.dx );
+             movingXmlElement.priority.posattr._y = parseFloat(movingXmlElement.priority.posattr._y) + (-1 * event.dy );
+             movingXmlElement.time.posattr._x = parseFloat(movingXmlElement.time.posattr._x) + (event.dx );
+             movingXmlElement.time.posattr._y = parseFloat(movingXmlElement.time.posattr._y) + (-1 * event.dy );
+             movingXmlElement.code.posattr._x = parseFloat(movingXmlElement.code.posattr._x) + (event.dx );
+             movingXmlElement.code.posattr._y = parseFloat(movingXmlElement.code.posattr._y) + (-1 * event.dy );
+           }
+         }); else {
+         page.trans.posattr._x = parseFloat(page.trans.posattr._x) + (event.dx );
+         page.trans.posattr._y = parseFloat(page.trans.posattr._y) + (-1 * event.dy);
+         page.trans.cond.posattr._x = parseFloat(page.trans.cond.posattr._x) + (event.dx );
+         page.trans.cond.posattr._y = parseFloat(page.trans.cond.posattr._y) + (-1 * event.dy);
+         page.trans.priority.posattr._x = parseFloat(page.trans.priority.posattr._x) + (event.dx );
+         page.trans.priority.posattr._y = parseFloat(page.trans.priority.posattr._y) + (-1 * event.dy );
+         page.trans.time.posattr._x = parseFloat(page.trans.time.posattr._x) + (event.dx );
+         page.trans.time.posattr._y = parseFloat(page.trans.time.posattr._y) + (-1 * event.dy );
+         page.trans.code.posattr._x = parseFloat(page.trans.code.posattr._x) + (event.dx );
+         page.trans.code.posattr._y = parseFloat(page.trans.code.posattr._y) + (-1 * event.dy );
+       }
+       break;
+     case 'cpn:Connection':
+       if(page.arc.length)
+         page.arc.forEach(movingXmlElement => {
+           if (movingXmlElement._id === event.shape.id) {
+             movingXmlElement.annot.posattr._x = parseFloat(movingXmlElement.annot.posattr._x) + (event.dx );
+             movingXmlElement.annot.posattr._y = parseFloat(movingXmlElement.annot.posattr._y) + (-1 * event.dy);
+           }
+         }); else {
+         page.arc.annot.posattr._x = parseFloat(page.arc.annot.posattr._x) + (event.dx );
+         page.arc.annot.posattr._y = parseFloat(page.arc.annot.posattr._y) + (-1 * event.dy);
+       }
+       break;
+     default:
+   }
+   // this.applyPageChanges();
+   // let element = event.shape;
+   this.eventService.send(Message.SHAPE_SELECT, {element: event.shape, pageJson: page });
+   */
+  // }
+
+
+  // moveElementInJson(jsonElem, elemntType, delta, modelElem) {
+
+  // console.log('moveElementInJson(), jsonElem = ', jsonElem);
+  // console.log('moveElementInJson(), elemntType = ', elemntType);
+  // console.log('moveElementInJson(), delta = ', delta);
+  // console.log('moveElementInJson(), modelElem = ', modelElem);
+
+  // for (const movingElement of this.labelsEntry[this.modelCase[elemntType]]) {
+  //   if (movingElement !== 'edit') {
+  //     jsonElem[movingElement].posattr._x = parseFloat(jsonElem[movingElement].posattr._x) + delta.x;
+  //     jsonElem[movingElement].posattr._y = parseFloat(jsonElem[movingElement].posattr._y) + delta.y;
+  //   } else {
+  //     jsonElem.posattr._x = parseFloat(jsonElem.posattr._x) + delta.x;
+  //     jsonElem.posattr._y = parseFloat(jsonElem.posattr._y) + delta.y;
+  //   }
+  //   if (elemntType === 'cpn:Connection') {
+  //     jsonElem.bendpoint = [];
+  //     const addToWay = 'push'; // jsonElem._orientation  === 'TtoP' ?  'push' : 'unshift'
+  //     for (const updWayPoint of modelElem.waypoints) {
+  //       if (!updWayPoint.original) {
+  //         jsonElem.bendpoint[addToWay]({
+  //           fillattr: {
+  //             _colour: 'White',
+  //             _pattern: 'Solid',
+  //             _filled: 'false'
+  //           },
+  //           lineattr: {
+  //             _colour: 'Black',
+  //             _thick: '0',
+  //             _type: 'Solid'
+  //           },
+  //           posattr: {
+  //             _x: updWayPoint.x,
+  //             _y: -1 * updWayPoint.y
+  //           },
+  //           textattr: {
+  //             _colour: 'Black',
+  //             _bold: 'false'
+  //           },
+  //           _id: 'ID' + new Date().getTime(),
+  //           _serial: '1'
+  //         });
+  //       }
+  //     }
+  //   }
+  // }
+  // }
 
   moveNonModelJsonElement(element, parent, target, index, type) {
 
@@ -860,13 +868,6 @@ export class ModelService {
     // }
 
     // this.eventService.send(Message.MODEL_UPDATE, {pageObject: page});
-
-    // this.eventService.send(Message.MODEL_UPDATE, {pageObject:  page});
-    // EmitterService.getAppMessageEmitter().emit(
-    //  {
-    //    id: Constants.ACTION_MODEL_UPDATE,
-    //    pageObject: page
-    //  });
     return page;
   }
 
@@ -914,12 +915,7 @@ export class ModelService {
         if (page.pageattr._name === updatedData.pageObject.pageattr._name) {
           page = updatedData.pageObject;
 
-          // EmitterService.getAppMessageEmitter().emit({
-          //   id: Constants.ACTION_XML_UPDATE, // id: Constants.ACTION_PROJECT_LOAD_DATA,
-          //   project: {data: project, name: this.modelName}
-          // });
-
-          this.eventService.send(Message.XML_UPDATE, { project: { data: project, name: this.modelName } });
+          this.eventService.send(Message.XML_UPDATE, { project: { data: project, name: this.projectName } });
         }
       }
     } else {
@@ -927,16 +923,9 @@ export class ModelService {
       if (page.pageattr._name === updatedData.pageObject.pageattr._name) {
         page = updatedData.pageObject;
 
-        // EmitterService.getAppMessageEmitter().emit({
-        //   id: Constants.ACTION_XML_UPDATE, // id: Constants.ACTION_PROJECT_LOAD_DATA,
-        //   project: {data: project, name: this.modelName}
-        // });
-
-        this.eventService.send(Message.XML_UPDATE, { project: { data: project, name: this.modelName } });
+        this.eventService.send(Message.XML_UPDATE, { project: { data: project, name: this.projectName } });
       }
     }
-    //  console.log('Get data fromPAge ----' + JSON.stringify(updatedData.pageObject));
-    // console.log('actual data -------' + JSON.stringify(proj.workspaceElements.cpnet.page));
   }
 
 
@@ -954,7 +943,7 @@ export class ModelService {
         targetBlock.block.push(block);
       }
     } else {
-      this.getcpnet().globbox.block.push(block);
+      this.getCpn().globbox.block.push(block);
     }
   }
 
@@ -965,14 +954,21 @@ export class ModelService {
       if (page[entry] instanceof Array) {
         for (const jsonElem of page[entry]) {
           for (const labelType of this.labelsEntry[entry]) {
-            if (jsonElem[labelType] && jsonElem[labelType].text && jsonElem[labelType].text.__text && Object.values(this.projectService.appSettings).includes(jsonElem[labelType].text.__text)) {
+            if (jsonElem[labelType]
+              && jsonElem[labelType].text
+              && jsonElem[labelType].text.__text
+              && Object.values(this.settings.getAppSettings()).includes(jsonElem[labelType].text.__text)) {
               jsonElem[labelType].text.__text = null;
             }
           }
         }
       } else {
         for (const labelType of this.labelsEntry[entry]) {
-          if (page[entry] && page[entry][labelType] && page[entry][labelType].text && page[entry][labelType].text.__text && Object.values(this.projectService.appSettings).includes(page[entry][labelType].text.__text)) {
+          if (page[entry]
+            && page[entry][labelType]
+            && page[entry][labelType].text
+            && page[entry][labelType].text.__text
+            && Object.values(this.settings.getAppSettings()).includes(page[entry][labelType].text.__text)) {
             page[entry][labelType].text.__text = null;
           }
         }
@@ -983,7 +979,7 @@ export class ModelService {
 
   deleteBlock(id) {
     this.saveBackup(this.projectData, undefined);
-    const cpnet = this.getcpnet();
+    const cpnet = this.getCpn();
     cpnet.globbox.block = cpnet.globbox.block.filter(e => e.id !== id);
   }
 
@@ -1017,30 +1013,30 @@ export class ModelService {
     switch (elementType) {
       case 'var':
         return {
-          id: this.projectService.getAppSettings()[elementType] + (++this.countNewItems),
-          type: { id: this.projectService.getAppSettings()[elementType] },
+          id: this.settings.getAppSettings()[elementType] + (++this.countNewItems),
+          type: { id: this.settings.getAppSettings()[elementType] },
           _id: 'ID' + new Date().getTime()
         };
         break;
       case 'color':
         return {
-          id: this.projectService.getAppSettings()[elementType] + (++this.countNewItems),
+          id: this.settings.getAppSettings()[elementType] + (++this.countNewItems),
           timed: '',
-          name: this.projectService.getAppSettings()[elementType],
+          name: this.settings.getAppSettings()[elementType],
           _id: 'ID' + new Date().getTime()
         };
         break;
       case 'ml':
         return {
-          _id: 'ID' + new Date().getTime(), __text: this.projectService.getAppSettings()[elementType], toString() {
+          _id: 'ID' + new Date().getTime(), __text: this.settings.getAppSettings()[elementType], toString() {
             return (this.__text != null ? this.__text : '');
           }
         };
         break;
       case 'globref':
         return {
-          id: this.projectService.getAppSettings()[elementType] + (++this.countNewItems),
-          ml: this.projectService.getAppSettings()[elementType],
+          id: this.settings.getAppSettings()[elementType] + (++this.countNewItems),
+          ml: this.settings.getAppSettings()[elementType],
           _id: 'ID' + new Date().getTime()
         };
         break;
@@ -1137,7 +1133,7 @@ export class ModelService {
     let result = [];
     switch (elem) {
       case 'Place': {
-        this.getProjectData()
+        this.getProjectData();
         break;
       }
       case 'Transition': {
@@ -1158,7 +1154,7 @@ export class ModelService {
    * @returns - new page cpnElement
    */
   createCpnPage(name) {
-    return {
+    const newPage = {
       pageattr: {
         _name: name
       },
@@ -1168,6 +1164,8 @@ export class ModelService {
       constraints: '',
       _id: 'ID' + new Date().getTime()
     };
+
+    return newPage;
   }
 
   /**
@@ -1195,5 +1193,320 @@ export class ModelService {
     };
   }
 
+  /**
+   * Convert cpn globref element to string
+   * @param cpnElement - color(colset) cpn element
+   */
+  cpnGlobrefToString(cpnElement) {
+    const str = 'globref ' + cpnElement.id + ' = ' + cpnElement.ml + ';';
+    return str;
+  }
+
+  /**
+   * Convert cpn color(colset) element to string
+   * @param cpnElement - color(colset) cpn element
+   */
+  cpnColorToString(cpnElement) {
+    var str = 'colset ' + cpnElement.id;
+
+    const color = cpnElement;
+    if (color.layout) {
+      str = color.layout;
+    } else {
+      if (color.alias && color.alias.id) {
+        str += ' = ' + color.alias.id;
+      } else if (color.list && color.list.id) {
+        str += ' = list ' + color.list.id;
+      } else if (color.product && color.product.id) {
+        str += ' = product ';
+        if (color.product.id instanceof Array) {
+          for (let i = 0; i < color.product.id.length; i++) {
+            str += i === 0 ? color.product.id[i] + ' ' : '* ' + color.product.id[i];
+          }
+        } else {
+          str += color.product.id;
+        }
+      } else {
+        str += ' = ' + color.id.toLowerCase();
+      }
+      if ('timed' in color) {
+        str += ' timed';
+      }
+      str += ';';
+    }
+
+    return str;
+  }
+
+  /**
+   * Convert cpn var element to string
+   * @param cpnElement - var cpn element
+   */
+  cpnVarToString(cpnElement) {
+    var str = 'var ' + cpnElement.id;
+
+    if (cpnElement.layout) {
+      str = cpnElement.layout;
+    } else {
+      str = 'var ' + cpnElement.id + ': ' + cpnElement.type.id + ';';
+    }
+
+    return str;
+  }
+
+  /**
+   * Convert cpn globref element to string
+   * @param cpnElement - color(colset) cpn element
+   */
+  cpnMlToString(cpnElement) {
+    const str = cpnElement.__text || cpnElement.layout;
+    return str;
+  }
+
+  /**
+   * Convert cpn declaration element to string
+   * @param cpnElement
+   * @param type
+   */
+  cpnDeclarationElementToString(cpnElement, type) {
+    switch (type) {
+      case 'globref': return this.cpnGlobrefToString(cpnElement);
+      case 'color': return this.cpnColorToString(cpnElement);
+      case 'var': return this.cpnVarToString(cpnElement);
+      case 'ml': return this.cpnMlToString(cpnElement);
+    }
+  }
+
+  /**
+   * Convert string to cpn declaration element
+   * @param cpnElement
+   * @param str
+   */
+  stringToCpnDeclarationElement(cpnElement, str) {
+
+    cpnElement = { _id: cpnElement._id };
+
+    var parser = str.match('^\\S+');
+    // console.log('stringToCpnDeclarationElement(), parser = ', parser);
+
+    var type, cpnType;
+    if (parser) {
+      type = parser[0];
+    }
+
+    if (!type) {
+      return;
+    }
+
+    console.log('stringToCpnDeclarationElement(), type = ', type);
+
+    switch (type) {
+      case 'var':
+        cpnType = 'var';
+        let splitLayoutArray;
+        cpnElement.layout = str;
+        str = str.replace('var', '');
+        splitLayoutArray = str.trim().split(':');
+        for (let i = 0; i < splitLayoutArray.length; i++) {
+          splitLayoutArray[i] = splitLayoutArray[i].replace(/\s+/g, '').split(',');
+        }
+        cpnElement.id = splitLayoutArray[0];
+        if (!cpnElement.type) {
+          cpnElement.type = {};
+        }
+        if (splitLayoutArray[1])
+          cpnElement.type.id = splitLayoutArray[1][0];
+        break;
+      case 'ml':
+      case 'val':
+      case 'fun':
+      case 'local':
+        cpnType = 'ml';
+        cpnElement.layout = str;
+        cpnElement.__text = str;
+        break;
+      case 'colset':   // ***** отрефакторить *****
+        cpnType = 'color';
+        cpnElement.layout = str;
+        str = str.replace('colset', '');
+        splitLayoutArray = str.split('=');
+
+        if (splitLayoutArray[1]) {
+          splitLayoutArray[1] = splitLayoutArray[1].split(' ').filter(e => e.trim() !== '');
+          let testElem = splitLayoutArray[1][0].replace(/\s+/g, '');
+          for (const key of Object.keys(cpnElement)) {
+            if (key !== '_id' && key !== 'layout') {
+              delete cpnElement[key];
+            }
+          }
+          if (splitLayoutArray[1][splitLayoutArray[1].length - 1].replace(';', '') === 'timed') {
+            cpnElement.timed = '';
+            splitLayoutArray[1].length = splitLayoutArray[1].length - 1;
+          }
+          if (testElem === 'product') {
+            const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
+            cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
+            cpnElement.product = { id: productList };
+          } else if (testElem === 'list') {
+            const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
+            cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
+            cpnElement.list = { id: productList };
+          } else {
+            testElem = testElem.replace(/\s+/g, '').replace(';', '');
+            splitLayoutArray[0] = splitLayoutArray[0].replace(/\s+/g, '').replace(';', '');
+            if (testElem.toLowerCase() === splitLayoutArray[0].toLowerCase()) {
+              cpnElement.id = splitLayoutArray[0];
+              cpnElement[testElem.toLowerCase()] = '';
+            } else {
+              cpnElement.id = splitLayoutArray[0];
+              cpnElement.alias = { id: testElem };
+            }
+          }
+        }
+        break;
+      case 'globref':
+        cpnType = 'globref';
+        splitLayoutArray = str.split(' ').filter(e => e.trim() !== '' && e.trim() !== '=');
+        cpnElement.id = splitLayoutArray[1].replace(/\s+/g, '').replace(';', '');
+        cpnElement.ml = splitLayoutArray[2].replace(/\s+/g, '').replace(';', '');
+        cpnElement.layout = str;
+        break;
+    }
+    console.log('stringToCpnDeclarationElement(), cpnElement = ', cpnElement);
+
+    return { cpnType: cpnType, cpnElement: cpnElement };
+  }
+
+
+  /**
+   * Get all pages list
+   */
+  getAllPages() {
+    return this.getCpn().page instanceof Array
+      ? this.getCpn().page
+      : [this.getCpn().page];
+  }
+
+  /**
+   * Get page id by name
+   * @param pageName
+   */
+  getPageId(pageName) {
+    let pageList = this.getCpn().page instanceof Array
+      ? this.getCpn().page
+      : [this.getCpn().page];
+    for (let p of pageList) {
+      if (p.pageattr._name === pageName) {
+        return p._id;
+      }
+    }
+    return undefined;
+  }
+
+  /**
+   * Create port object for place
+   * @param cpnElement
+   * @param portType
+   */
+  createPortObject(cpnElement, portType) {
+    return {
+      fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
+      lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
+      posattr: { _x: cpnElement.posattr._x, _y: cpnElement.posattr._y - cpnElement.ellipse._h },
+      textattr: { _colour: 'Black', _bold: 'false' },
+      text: portType,
+      _id: cpnElement._id + 'e',
+      _type: portType === 'In/Out' ? 'I/O' : portType
+    };
+  }
+
+  /**
+   * Create subst object for transition
+   * @param cpnElement
+   * @param name
+   * @param pageId
+   */
+  createSubstObject(cpnElement, name, pageId) {
+    return {
+      subpageinfo: {
+        fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
+        lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
+        posattr: { _x: cpnElement.posattr._x + cpnElement.box._w / 2, _y: cpnElement.posattr._y - cpnElement.box._h },
+        textattr: { _colour: 'Black', _bold: 'false' },
+        _id: cpnElement._id + 'e',
+        _name: name
+      },
+      _portsock: '',
+      _subpage: pageId
+    };
+  }
+
+  getArcEnds(cpnElement) {
+    let page = this.getAllPages().find(p => {
+      return p.arc.find(pl => {
+        return pl._id === cpnElement._id;
+      })
+    });
+    for (let entry of ['place', 'trans'])
+      if (!(page[entry] instanceof Array)) {
+        page[entry] = [page[entry]];
+      }
+    let placeEnd
+    placeEnd = page.place.find(el => {
+      return el._id === cpnElement.placeend._idref;
+    });
+    let transEnd
+    transEnd = page.trans.find((tr) => { return cpnElement.transend._idref === tr._id });
+    return { place: placeEnd, trans: transEnd, orient: cpnElement._orientation };
+  }
+
+
+
+
+  /**
+   * Getting all port places for transition 
+   * @param cpnElement 
+   * @param transEnd 
+   */
+  getAllPorts(cpnElement, transEnd) {
+    let ports = [];
+    console.log('getAllPorts(), transEnd = ', transEnd);
+
+    if (transEnd.subst) {
+      let page = this.getPageById(transEnd.subst._subpage);
+      if (page) {
+        console.log('getAllPorts(), page = ', page);
+
+        for (let place of page.place) {
+          console.log('getAllPorts(), place = ', place);
+          console.log('getAllPorts(), place.port = ', place.port);
+          if (place.port
+            && (place.port._type === 'I/O'
+              || place.port._type === (cpnElement._orientation === 'TtoP' ? 'Out' : 'In'))) {
+            ports.push(place);
+          }
+        }
+      }
+    }
+    return ports;
+  }
+
+
+  getPortNameById(pageId, id) {
+    let page = this.getPageById(pageId);
+    if (page) {
+      let port = page.place.find(e => { return e._id === id });
+      return port.text;
+    }
+  }
+
+
+  getPortIdByName(pageId, text, orient) {
+    let page = this.getPageById(pageId);
+    if (page && text !== '') {
+      let port = page.place.find(e => { return e.text === text && (e.port._type === 'I/O' || e.port._type === (orient === 'TtoP' ? 'Out' : 'In')) });
+      return port._id;
+    } else return undefined;
+  }
 
 }

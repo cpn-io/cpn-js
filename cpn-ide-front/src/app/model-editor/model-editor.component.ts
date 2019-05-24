@@ -1,17 +1,15 @@
-import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 
-import { assign } from 'min-dash';
 import Diagram from 'diagram-js';
 import CpnDiagramModule from '../../lib/cpn-js/core';
 
-import { EmitterService } from '../services/emitter.service';
-import { HttpClient } from '@angular/common/http';
 import { Message } from '../common/message';
 import { EventService } from '../services/event.service';
 import { ModelService } from '../services/model.service';
+import { SettingsService } from '../services/settings.service';
 
 import { importCpnPage } from '../../lib/cpn-js/import/Importer';
-import { element } from 'protractor';
+
 import {
   CPN_LABEL,
   CPN_TOKEN_LABEL,
@@ -33,8 +31,7 @@ import {
 export class ModelEditorComponent implements OnInit {
 
   constructor(private eventService: EventService,
-    private emitterService: EmitterService,
-    private http: HttpClient,
+    private settings: SettingsService,
     private modelService: ModelService) {
   }
 
@@ -52,6 +49,7 @@ export class ModelEditorComponent implements OnInit {
   textRenderer;
   selectedElement;
   jsonPageObject;
+  portMenuProvider;
   // subscription: Subscription;
   subpages = [];
   placeShapes = [];
@@ -61,9 +59,14 @@ export class ModelEditorComponent implements OnInit {
   pageId;
   transCount = 0;
 
+  loading = false;
+
   correctColor = {
     'Fucia': '#f0f'
   };
+
+  tokenData;
+  readyData;
 
   ngOnInit() {
     this.subscripeToAppMessage();
@@ -90,24 +93,18 @@ export class ModelEditorComponent implements OnInit {
     this.modeling = this.diagram.get('modeling');
     this.labelEditingProvider = this.diagram.get('labelEditingProvider');
     this.textRenderer = this.diagram.get('textRenderer');
-    this.cpnFactory = this.diagram.get('cpnFactory')
-
+    this.cpnFactory = this.diagram.get('cpnFactory');
+    this.portMenuProvider = this.diagram.get('portMenuProvider');
 
     // set defualt values to diagram
     // -----------------------------------------------------
-    this.modeling.setDefaultValue('type', 'UINT');
-    this.modeling.setDefaultValue('initmark', 'INIT MARK');
-
-    this.modeling.setDefaultValue('cond', '[]');
-    this.modeling.setDefaultValue('time', '@+');
-    this.modeling.setDefaultValue('code', 'input();\noutput();\naction();\n');
-    this.modeling.setDefaultValue('priority', 'P_NORMAL');
-    this.modeling.setDefaultValue('annot', 'expr');
-    this.modeling.setDefaultValue('ellipse', { h: 40, w: 70 });
-    this.modeling.setDefaultValue('box', { h: 40, w: 70 });
-
+    for (const key of ['type', 'initmark', 'cond', 'time', 'code', 'priority', 'annot', 'ellipse', 'box']) {
+      this.modeling.setDefaultValue(key, this.settings.getAppSettings()[key]);
+    }
 
     eventBus.on('import.render.complete', (event) => {
+      this.loading = false;
+
       const pageElement = event.source;
 
       console.log('import.render.complete, event = ', event);
@@ -119,27 +116,82 @@ export class ModelEditorComponent implements OnInit {
 
       // set status 'process' for all shapes on diagram
       this.modeling.setCpnStatus({ process: '*' });
+
+      // verify loaded project
+      this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData() });
     });
 
-    this.eventService.on(Message.VERIFICATION_DONE, () => {
+    this.eventService.on(Message.SERVER_INIT_NET_DONE, (event) => {
       // set status 'clear' for all shapes on diagram
       this.modeling.setCpnStatus({ clear: '*' });
+
+      console.log('ModelEditor, SERVER_INIT_NET_DONE, event = ', event);
+
       // TODO: temporary set error and ready status for test shapes. Should be changed to real id
       // this.modeling.setCpnStatus({ error: ['ID1412328424','ID1412328605'], ready: ['ID1412328496'] });
 
-      this.emitterService.getMarking(undefined).subscribe(
-        (data: any) => {
-          console.log('this.emitterService.getMarking(), data = ', data);
+      // this.accessCpnService.getMarking('ID0000001').subscribe(
+      //   (data: any) => {
+      //     console.log('getMarking(), data = ', data);
 
-          eventBus.fire('model.update.tokens', { data: data });
-        });
+      //     eventBus.fire('model.update.tokens', { data: data });
+      //   });
 
-      this.emitterService.getEnableTransitions('ID0000001').subscribe(
-        (data: any) => {
-          console.log('this.emitterService.getEnableTransitions(), data = ', data);
+      // this.accessCpnService.getEnableTransitions('ID0000001').subscribe(
+      //   (data: any) => {
+      //     console.log('getEnableTransitions(), data = ', data);
 
-          this.modeling.setCpnStatus({ ready: data });
-        });
+      //     this.modeling.setCpnStatus({ ready: data });
+      //   });
+
+      eventBus.fire('model.update.tokens', { data: this.tokenData });
+
+      this.modeling.setCpnStatus({ ready: this.readyData });
+
+      // set errors info
+      // {"data":
+      //    {"issues":
+      //      {"ID1412328454":[{"id":"ID1412328454","type":"page","description":"Error in color-set!"}],
+      //       "ID1412328496":[{"id":"ID1412328496","type":"page","description":"Transition not checked because a neighbour place has an error."}],
+      //       "ID6":[{"id":"ID6","type":"page","description":" ID6"}]
+      //      },
+      //      "success":false}}
+
+      console.log('SET ERRORS, event = ', event);
+
+      if (!event.data.success) {
+        let errorIds = [];
+        for (let id of Object.keys(event.data.issues))
+          errorIds.push(id);
+
+        console.log('SET ERRORS, errorIds = ', errorIds);
+
+        this.modeling.setCpnStatus({ error: errorIds });
+      }
+
+    });
+
+    // TOKENS
+    this.eventService.on(Message.SERVER_GET_TOKEN_MARKS, (event) => {
+      if (event && event.data) {
+        // {"data":[{"id":"ID1412328424","tokens":8,"marking":"1`1++\n3`2++\n4`3"},
+        //          {"id":"ID1412328454","tokens":0,"marking":"empty"}]}
+
+        this.tokenData = event.data;
+
+        eventBus.fire('model.update.tokens', { data: this.tokenData });
+      }
+    });
+
+    // TRANSITIONS
+    this.eventService.on(Message.SERVER_GET_TRANSITIONS, (data) => {
+      if (data && data.data) {
+        // {"data":["ID1412328496"]}
+
+        this.readyData = data.data;
+
+        this.modeling.setCpnStatus({ ready: this.readyData });
+      }
     });
 
 
@@ -153,7 +205,7 @@ export class ModelEditorComponent implements OnInit {
         this.eventService.send(Message.SHAPE_OUT, { element: event.element });
       }
     });
-    let self = this;
+    const self = this;
     eventBus.on('directEditing.cancel', function (e) {
       console.log('model-editor directEditing.cancel - event', e);
       self.openPropPanel(e.active.element);
@@ -162,31 +214,67 @@ export class ModelEditorComponent implements OnInit {
 
     eventBus.on('directEditing.complete', function (e) {
       console.log('model-editor directEditing.complete - event', e);
-      if (e.active && e.active.element)
+      if (e.active && e.active.element) {
         self.openPropPanel(e.active.element);
+      }
     });
 
     eventBus.on('element.click', (event) => {
       this.fireSelectionEvent(event);
     });
+
+    eventBus.on('shape.create.end', (event) => {
+      if (event.elements) {
+        for (const element of event.elements) {
+          if (element.cpnElement) {
+            this.modelService.addElementJsonOnPage(element.cpnElement, this.pageId, element.type);
+          }
+        }
+      }
+    });
+
+    eventBus.on('portMenuProvider.open', (event) => {
+      if (event.trans && event.trans.cpnElement && event.trans.cpnElement.subst) {
+        const pageObj = this.modelService.getPageById(event.trans.cpnElement.subst._subpage);
+        if (pageObj) {
+          const list = [];
+          for (const place of pageObj.place) {
+            if (place.port && (place.port._type === 'I/O' || place.port._type === event.portType)) {
+              list.push({
+                id: place._id,
+                name: place.text,
+                type: place.port._type
+              });
+            }
+          }
+          this.portMenuProvider.open({ trans: event.trans, place: event.place, arc: event.arc, list: list }, event.position);
+        }
+      }
+    });
+    eventBus.on('bind.port.cancel', (event) => {
+      if (event.connection) {
+        this.modeling.removeElements([event.connection]);
+      }
+    });
+
+    // this._eventBus.fire('bind.port.cancel', {connection: this._createdArc});
+
   }
 
   subscripeToAppMessage() {
 
     this.eventService.on(Message.SUBPAGE_CREATE, (data) => {
-
       if (data.parentid === this.pageId) {
         const bounds = this.canvas.viewbox();
         const x = bounds.x + bounds.width / 2;
         const y = bounds.y + bounds.height / 2;
 
-        let position = { x: x, y: y };
+        const position = { x: x, y: y };
         let cpnElement = this.modeling.createElementInModel(position, CPN_TRANSITION);
         cpnElement = this.modeling.declareSubPage(cpnElement, data.name, data.id);
-        let element = this.cpnFactory.createShape(undefined, cpnElement, CPN_TRANSITION, position, true);
-
+        const element = this.cpnFactory.createShape(undefined, cpnElement, CPN_TRANSITION, position, true);
+        this.modelService.addElementJsonOnPage(cpnElement, this.pageId, CPN_TRANSITION);
       }
-
     });
 
     // Subscribe on property update event
@@ -204,21 +292,6 @@ export class ModelEditorComponent implements OnInit {
       this.modelUpdate();
       // this.openPropPanel(element);
     });
-
-    this.eventService.on(Message.MODEL_ERROR, (data) => {
-      if (data) {
-        this.modeling.clearErrorMarking();
-
-        for (const id of data.id) {
-          const cpnElementId = id.trim().slice(0, -1);
-
-          // set status 'clear' for all shapes on diagram
-          // this.modeling.setCpnStatus({ clear: '*' });
-
-          this.modeling.setCpnStatus({ error: [cpnElementId] });
-        }
-      }
-    });
   }
 
   openPropPanel(element) {
@@ -227,8 +300,8 @@ export class ModelEditorComponent implements OnInit {
         element = element.labelTarget || element;
       }
       if (element.labels) {
-        let labels = [];
-        for (let lab of element.labels) {
+        const labels = [];
+        for (const lab of element.labels) {
           labels[lab.labelType] = lab.cpnElement;
         }
 
@@ -244,6 +317,9 @@ export class ModelEditorComponent implements OnInit {
     this.modeling.setCpnStatus({ process: '*' });
 
     this.eventService.send(Message.MODEL_UPDATE, { pageObject: page });
+
+    // verify loaded project
+    // this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData() });
   }
 
   changeSubPageName(subpage) {
@@ -267,6 +343,8 @@ export class ModelEditorComponent implements OnInit {
   }
 
   load(pageObject, subPages) {
+    this.loading = true;
+
     this.subpages = subPages;
     this.jsonPageObject = pageObject;
     this.pageId = pageObject._id;

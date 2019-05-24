@@ -22,6 +22,15 @@ import {
 
 import { getText, getBox } from '../../draw/CpnRenderUtil';
 
+import {
+  getDefPosattr,
+  getDefFillattr,
+  getDefLineattr,
+  getDefTextattr,
+  getDefText,
+  getNextId
+} from './util/AttrsUtil';
+
 /**
  * CPN modeling features activator
  *
@@ -30,7 +39,7 @@ import { getText, getBox } from '../../draw/CpnRenderUtil';
  * @param {CommandStack} commandStack
  * @param {CpnRules} cpnRules
  */
-export default function Modeling(eventBus, elementFactory, elementRegistry, commandStack, cpnRules, textRenderer, canvas) {
+export default function Modeling(eventBus, elementFactory, elementRegistry, commandStack, cpnRules, textRenderer, canvas, portMenuProvider) {
   console.log('Modeling()');
 
   BaseModeling.call(this, eventBus, elementFactory, commandStack);
@@ -41,7 +50,7 @@ export default function Modeling(eventBus, elementFactory, elementRegistry, comm
   this._cpnRules = cpnRules;
   this._textRenderer = textRenderer;
   this._canvas = canvas;
-
+  this._portMenuProvider = portMenuProvider;
   this._defaultValues = [];
 }
 
@@ -54,7 +63,8 @@ Modeling.$inject = [
   'commandStack',
   'cpnRules',
   'textRenderer',
-  'canvas'
+  'canvas',
+  'portMenuProvider'
 ];
 
 
@@ -105,15 +115,17 @@ Modeling.prototype.setCpnStatus = function (event) {
 Modeling.prototype.updateLabel = function (element, newLabel, newBounds, hints) {
   // console.log('Modeling().updateLabel(), newBounds = ', newBounds);
 
-  if (newBounds.width < 10)
-    newBounds.width = 10;
+  if (newBounds) {
+    if (newBounds.width < 10)
+      newBounds.width = 10;
 
-  this._commandStack.execute('element.updateLabel', {
-    element: element,
-    newLabel: newLabel,
-    newBounds: newBounds,
-    hints: hints || {}
-  });
+    this._commandStack.execute('element.updateLabel', {
+      element: element,
+      newLabel: newLabel,
+      newBounds: newBounds,
+      hints: hints || {}
+    });
+  }
 };
 
 Modeling.prototype.updateElement = function (element) {
@@ -153,14 +165,65 @@ function isString(v) {
  */
 Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus) {
 
-  if(element.type === CPN_PLACE){
-    if(element.cpnElement.port && element.labels.length === 3){
-      const attrs = this.getLabelAttrs(element, element.cpnElement['port'], 'port');
-       const label = this._elementFactory.createLabel(attrs);
-       this._canvas.addShape(label, this._canvas.getRootElement());
-      //this._eventBus.fire('element.changed', { element: element });
+  // console.log('Modeling().updateShapeByCpnElement(), element = ', element);
+
+  // Update port for Place
+  if (is(element, CPN_PLACE)) {
+    let portLabel;
+
+    // try to find port label for Place
+    for (let l of element.labels) {
+      if (l.labelType === 'port') {
+        portLabel = l;
+        break;
+      }
     }
+
+    // console.log('updateShapeByCpnElement(CPN_PLACE), element = ', element);
+
+    if (portLabel && !element.cpnElement.port) {
+      // delete port label from element children
+      this.removeElements([portLabel]);
+    } else
+      if (!portLabel && element.cpnElement.port) {
+        // create port label for element
+        const attrs = this.getLabelAttrs(element, element.cpnElement['port'], 'port');
+        const label = this._elementFactory.createLabel(attrs);
+        this._canvas.addShape(label, this._canvas.getRootElement());
+      }
+
+    // try to find port label for Place
+    // for (let l of element.labels) {
+    //   this.updateShapeByCpnElement(l, canvas, eventBus);
+    // }
+
   }
+
+  // Update subst for Transition
+  if (is(element, CPN_TRANSITION)) {
+    let substLabel;
+
+    // try to find subst label for transition
+    for (let l of element.labels) {
+      if (l.labelType === 'subst') {
+        substLabel = l;
+        break;
+      }
+    }
+
+    if (substLabel && !element.cpnElement.subst) {
+      // delete port label from element children
+      this.removeElements([substLabel]);
+    } else
+      if (!substLabel && element.cpnElement.subst) {
+        // create subst label for element
+        const attrs = this.getLabelAttrs(element, element.cpnElement['subst'].subpageinfo, 'subst');
+        const label = this._elementFactory.createLabel(attrs);
+        this._canvas.addShape(label, this._canvas.getRootElement());
+      }
+  }
+
+
 
   const self = this;
 
@@ -280,9 +343,9 @@ Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus
 
   changeName(this, element);
 
-  changeSize(this, element);
+  // changeSize(this, element);
 
-  changePosition(this, element);
+  // changePosition(this, element);
 
   // console.log('Modeling.updateShapeByCpnElement(), element = ', element);
 }
@@ -316,12 +379,39 @@ Modeling.prototype.connect = function (source, target, attrs, hints) {
       orientation = 'TtoP';
     }
 
-    if (placeShape && transShape)
-      return this.createNewConnection(placeShape, transShape, orientation);
+    if (placeShape && transShape) {
+      const conElem = this.createNewConnection(placeShape, transShape, orientation);
+      this._eventBus.fire('shape.create.end', { elements: [conElem] });
+      //openPortProvider(this._portMenuProvider, transShape);
+      //this._portMenuProvider.open(transShape, { cursor: { x: 609, y: 575 } });
+      // openPortMenu(this._eventBus, transShape, placeShape, conElem, orientation);
+      return conElem;
+    }
   }
 
   return undefined;
 };
+
+
+function openPortMenu(eventBus, transShape, placeShape, conElem, orientation) {
+  if (transShape.cpnElement.subst)
+    eventBus.fire('portMenuProvider.open', {
+      trans: transShape,
+      place: placeShape,
+      arc: conElem,
+      portType: orientation === 'PtoT' ? 'In' : 'Out',
+      position: {
+        cursor: orientation === 'PtoT'
+          ? { x: transShape.x, y: transShape.y }
+          : { x: placeShape.x, y: placeShape.y }
+      }
+    });
+}
+
+
+function openPortProvider(portMenuProvider, trnsShape) {
+  portMenuProvider.open(transShape, { cursor: { x: 609, y: 575 } });
+}
 
 Modeling.prototype.createNewConnection = function (placeShape, transShape, orientation) {
   // console.log('Modeling.prototype.createNewConnection(), place = ', placeShape);
@@ -344,6 +434,7 @@ Modeling.prototype.createNewConnection = function (placeShape, transShape, orien
           this._canvas.addShape(label, root);
         }
       }
+      openPortMenu(this._eventBus, transShape, placeShape, connection, connection.cpnElement._orientation);
 
       return connection;
     }
@@ -464,8 +555,8 @@ Modeling.prototype.getPlaceAttrs = function (cpnPlaceElement, type) {
   var h = Math.round(cpnPlaceElement.ellipse._h);
   x -= w / 2;
   y -= h / 2;
-  cpnPlaceElement.posattr._x = x;
-  cpnPlaceElement.posattr._y = -1 * y;
+  // cpnPlaceElement.posattr._x = x;
+  // cpnPlaceElement.posattr._y = -1 * y;
   var attrs = {
     type: type,
     id: cpnPlaceElement._id,
@@ -486,12 +577,8 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
 
   var text, defaultValue;
 
-  if (labelType === 'port') {
-    text = cpnLabelElement._type; // for port label
-    if (text === 'I/O') {
-      text = 'In/Out';
-    }
-  }
+  if (labelType === 'port')
+    text = (cpnLabelElement._type === 'I/O') ? 'In/Out' : cpnLabelElement._type;
   else if (labelType === 'subst')
     text = cpnLabelElement._name; // for subst label
   else if (labelType === 'aux')
@@ -539,6 +626,9 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
 
   if (text.trim() === '' || text === defaultValue)
     attrs.hidden = true;
+
+  if (labelType === 'port')
+    console.log('Modeling.prototype.getLabelAttrs(), text = ', text);
 
   return attrs;
 }
@@ -628,8 +718,9 @@ Modeling.prototype.getTransAttrs = function (cpnTransElement, type) {
   var h = Math.round(cpnTransElement.box._h);
   x -= w / 2;
   y -= h / 2;
-  cpnTransElement.posattr._x = x;
-  cpnTransElement.posattr._y = -1 * y;
+
+  // cpnTransElement.posattr._x = x;
+  // cpnTransElement.posattr._y = -1 * y;
 
   var attrs = {
     type: type,
@@ -780,7 +871,7 @@ Modeling.prototype.declareSubPage = function (cpnElement, name, pageId) {
     subpageinfo: {
       fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
       lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
-      posattr: { _x: cpnElement.posattr._x, _y: cpnElement.posattr._y - cpnElement.box._h/2 },
+      posattr: { _x: cpnElement.posattr._x, _y: cpnElement.posattr._y - cpnElement.box._h / 2 },
       textattr: { _colour: 'Black', _bold: 'false' },
       _id: cpnElement._id + 'e',
       _name: name
@@ -815,122 +906,115 @@ Modeling.prototype.createElementInModel = function (position, type) {
   // formCase[CPN_TRANSITION] = { form: 'box', entry: ['time', 'code', 'priority', 'cond'] };
   // formCase[CPN_CONNECTION] = { entry: ['annot'] };
 
+  var newElement;
 
-  let names = [];
-  names[CPN_PLACE] = 'P';
-  names[CPN_TRANSITION] = 'T';
+  // For Place and Transition
+  if ([CPN_PLACE, CPN_TRANSITION].includes(type)) {
 
-  let bounds = {
-    x: position.x,
-    y: position.y,
-    width: 80, // 90,
-    height: 30,
-  };
+    let names = [];
+    names[CPN_PLACE] = 'P';
+    names[CPN_TRANSITION] = 'T';
 
-  bounds = this._textRenderer.getExternalLabelBounds(bounds, 'Default');
-  const newElement = {
-    posattr: {
-      _x: position.x, // -294.000000
-      _y: -1 * position.y  // 156.000000
-    },
-    fillattr: {
-      _colour: 'White',
-      _pattern: '',
-      _filled: false
-    },
-    lineattr: {
-      _colour: 'Black',
-      _thick: 1,
-      _type: 'Solid'
-    },
-    textattr: {
-      _colour: 'Black',
-      _bold: false
-    },
-    text: names[type],
-    token: {
-      _x: 0,
-      _y: 0
-    },
-    marking: {
-      snap: {
-        _snap_id: 9,
-        '_anchor.horizontal': 1,
-        '_anchor.vertical': 3
+    let bounds = {
+      x: position.x,
+      y: position.y,
+      width: 80, // 90,
+      height: 30,
+    };
+
+    bounds = this._textRenderer.getExternalLabelBounds(bounds, 'Default');
+    newElement = {
+      posattr: getDefPosattr(position),
+      fillattr: getDefFillattr(),
+      lineattr: getDefLineattr(),
+      textattr: getDefTextattr(),
+      text: names[type],
+      token: {
+        _x: 0,
+        _y: 0
       },
-      _x: 0,
-      _y: 0,
-      _hidden: true
-    },
-    _id: getNextId()
-  };
-
-  var x = newElement.posattr._x;
-  var y = newElement.posattr._y;
-  var w = bounds.width;
-  var h = bounds.height;
-
-  const defPos = {
-    _x: x,
-    _y: y
-  };
-
-  let relPos = [];
-
-  let elemType = modelCase[type];
-  if (elemType) {
-    if (elemType.form) {
-
-      w = this.getDefaultValue(elemType.form).w;
-      h = this.getDefaultValue(elemType.form).h;
-
-      newElement[elemType.form] = {
-        _w: w,
-        _h: h
-      };
-    }
-
-    relPos['initmark'] = { _x: x + w, _y: y + h / 2 };
-    relPos['type'] = { _x: x + w, _y: y - h / 2 };
-
-    relPos['time'] = { _x: x + w, _y: y + h / 2 };
-    relPos['code'] = { _x: x + w, _y: y - h / 2 };
-    relPos['cond'] = { _x: x - w, _y: y + h / 2 };
-    relPos['priority'] = { _x: x - w, _y: y - h / 2 };
-
-    relPos['subst'] = { _x: x, _y: y + h / 2 };
-
-    for (let label of elemType.entry) {
-      newElement[label] = {
-        posattr: relPos[label] || defPos,
-        // posattr: {
-        //   _x: position.x + Math.round(bounds.width) / 2 + 100,//+ element.width, /// 55.500000,
-        //   _y: -1 * position.y - Math.round(bounds.height) / 2 + 80 / 4 ///+ element.height / 4 // 102.000000
-        // },
-        fillattr: {
-          _colour: 'White',
-          _pattern: 'Solid',
-          _filled: false
+      marking: {
+        snap: {
+          _snap_id: 9,
+          '_anchor.horizontal': 1,
+          '_anchor.vertical': 3
         },
-        lineattr: {
-          _colour: 'Black',
-          _thick: 0,
-          _type: 'Solid'
-        },
-        textattr: {
-          _colour: 'Black',
-          _bold: false
-        },
-        text: {
-          _tool: 'CPN Tools',
-          _version: '4.0.1'
-        },
-        _id: newElement._id + '' + label
+        _x: 0,
+        _y: 0,
+        _hidden: true
+      },
+      _id: getNextId()
+    };
+
+    var x = newElement.posattr._x;
+    var y = newElement.posattr._y;
+    var w = bounds.width;
+    var h = bounds.height;
+
+    const defPos = {
+      _x: x,
+      _y: y
+    };
+
+    let relPos = [];
+
+    let elemType = modelCase[type];
+    if (elemType) {
+      if (elemType.form) {
+
+        w = this.getDefaultValue(elemType.form).w;
+        h = this.getDefaultValue(elemType.form).h;
+
+        newElement[elemType.form] = {
+          _w: w,
+          _h: h
+        };
+      }
+
+      relPos['initmark'] = { _x: x + w, _y: y + h / 2 };
+      relPos['type'] = { _x: x + w, _y: y - h / 2 };
+      relPos['time'] = { _x: x + w, _y: y + h / 2 };
+      relPos['code'] = { _x: x + w, _y: y - h / 2 };
+      relPos['cond'] = { _x: x - w, _y: y + h / 2 };
+      relPos['priority'] = { _x: x - w, _y: y - h / 2 };
+
+      relPos['subst'] = { _x: x + w / 2, _y: y + h };
+
+      for (let label of elemType.entry) {
+        newElement[label] = {
+          posattr: relPos[label] || defPos,
+          fillattr: getDefFillattr(),
+          lineattr: getDefLineattr(),
+          textattr: getDefTextattr(),
+          text: {
+            _tool: 'CPN Tools',
+            _version: '4.0.1'
+          },
+          _id: newElement._id + '' + label
+        }
       }
     }
+
+    // this.modelUpdate();
   }
 
-  // this.modelUpdate();
+  // For Aux
+  if ([CPN_TEXT_ANNOTATION].includes(type)) {
+
+    const text = '* empty *';
+
+    newElement = {
+      posattr: getDefPosattr(position),
+      fillattr: getDefFillattr(),
+      lineattr: getDefLineattr(),
+      textattr: getDefTextattr(),
+      label: text,
+      text: text,
+      _id: getNextId()
+    };
+
+  }
+
 
   return newElement;
 }
@@ -977,43 +1061,3 @@ Modeling.prototype.createArcInModel = function (placeCpnElement, transCpnElement
   return cpnArcElement;
 }
 
-function getDefPosattr() {
-  return {
-    _x: 0,
-    _y: 0
-  };
-}
-
-function getDefFillattr() {
-  return {
-    _colour: "White",
-    _pattern: "Solid",
-    _filled: "false"
-  };
-}
-
-function getDefLineattr() {
-  return {
-    _colour: "Black",
-    _thick: "1",
-    _type: "Solid"
-  };
-}
-
-function getDefTextattr() {
-  return {
-    _colour: "Black",
-    _bold: "false"
-  };
-}
-
-function getDefText() {
-  return {
-    _tool: "CPN Tools",
-    _version: "4.0.1"
-  };
-}
-
-function getNextId() {
-  return 'ID' + new Date().getTime();
-}

@@ -3,7 +3,9 @@ import * as X2JS from '../../lib/x2js/xml2json.js';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EventService } from './event.service';
 import { Message } from '../common/message';
-import { Constants } from '../common/constants.js';
+
+import { AccessCpnService } from './access-cpn.service';
+import { ModelService } from './model.service';
 
 /**
  * Common service for getting access to project data from all application
@@ -12,40 +14,27 @@ import { Constants } from '../common/constants.js';
 export class ProjectService {
 
   public modelName = '';
-  public projectData = undefined;
-  public appSettings = [];
+  public project = undefined;
   private currentSelectedElement;
   currentPageId;
-  userSessionId;
 
-  constructor(private eventService: EventService, private http: HttpClient) {
+  constructor(private eventService: EventService,
+    private http: HttpClient,
+    private modelService: ModelService,
+    private accessCpnService: AccessCpnService
+    ) {
+
     console.log('ProjectService instance CREATED!');
 
     this.loadEmptyProject();
-    this.setDefaultAppSettings();
   }
 
-  public generateUserSession() {
-    this.userSessionId = 'ID' + new Date().getTime();
-    console.log('generateUserSession - new id -', this.userSessionId);
-    return this.userSessionId;
-  }
-
-  getUserSessionId() {
-    return this.userSessionId;
-  }
-
-
-  public getProjectData() {
-    return this.projectData;
-  }
-
-  public getAppSettings() {
-    return this.appSettings;
+  public getProject() {
+    return this.project;
   }
 
   setCurrentElement(element) {
-    console.log('Selected element - ' + element.name)
+    console.log('Selected element - ' + element.name);
     this.currentSelectedElement = element;
   }
 
@@ -60,7 +49,6 @@ export class ProjectService {
    * @param {File} file
    */
   loadProjectFile(file: File) {
-    this.generateUserSession();
     const reader: FileReader = new FileReader();
     reader.readAsText(file);
     reader.onload = e => {
@@ -71,6 +59,17 @@ export class ProjectService {
     };
   }
 
+  parseXml(xml) {
+    let dom = null;
+    try {
+      dom = (new DOMParser()).parseFromString(xml, 'text/xml');
+    } catch (e) {
+      dom = null;
+    }
+
+    return dom;
+  }
+
   /**
    * Loading project data from XML string, parse XML and converting to project JSON object for all application
    *
@@ -78,13 +77,20 @@ export class ProjectService {
    * @param {string} projectXml
    */
   loadProjectXml(filename: string, projectXml: string) {
-    const parser = new DOMParser();
     this.modelName = filename;
-    const xml = parser.parseFromString(projectXml, 'text/xml');
+
+    // const parser = new DOMParser();
+    // const xml = parser.parseFromString(projectXml, 'text/xml');
+
+    const xml = this.parseXml(projectXml);
 
     if (!xml) {
       return;
     }
+
+    // localStorage.setItem('testProjectJson', '');
+    // const testProjectJson = xml2json(xml, '  ');
+    // localStorage.setItem('testProjectJson', testProjectJson);
 
     const x2js = new X2JS();
     const json = x2js.xml_str2json(projectXml);
@@ -96,14 +102,16 @@ export class ProjectService {
 
     localStorage.setItem('projectJson', JSON.stringify(json));
 
-    // EmitterService.getAppMessageEmitter().emit({
-    //   id: Constants.ACTION_PROJECT_LOAD_DATA,
-    //   project: {data: json, name: filename}
-    // });
+    this.project = { data: json, name: filename };
 
-    this.projectData = { project: { data: json, name: filename } }
+    // reset simulator for new project file
+    this.accessCpnService.resetSim();
 
-    this.eventService.send(Message.PROJECT_FILE_OPEN, this.projectData);
+    // reset model service
+    this.modelService.markNewModel();
+
+    // load new project
+    this.eventService.send(Message.PROJECT_LOAD, this.project);
   }
 
   loadEmptyProject() {
@@ -120,7 +128,10 @@ export class ProjectService {
     // const modelFile = 'emptynet.cpn';
     // const modelFile = 'test-1.cpn';
     // const modelFile = 'test-2.cpn';
+
     const modelFile = 'mynet.cpn';
+
+    // const modelFile = 'fuelstation.cpn';
 
     const url = './assets/cpn/' + modelFile;
     this.http.get(url, { headers: headers, responseType: 'text' })
@@ -134,27 +145,4 @@ export class ProjectService {
         }
       );
   }
-
-  setDefaultAppSettings() {
-    this.appSettings['color'] = 'newColor';
-    this.appSettings['var'] = 'newVar';
-    this.appSettings['ml'] = 'newMl';
-    this.appSettings['globref'] = 'newGlobref';
-    this.appSettings['block'] = 'newblock';
-    this.appSettings['type'] = 'UNIT';
-    this.appSettings['initmark'] = 'INIT MARK';
-    this.appSettings['code'] =
-      'input();\n' +
-      'output();\n' +
-      'action();';
-    this.appSettings['cond'] = '[]';
-    this.appSettings['time'] = '@+';
-    this.appSettings['priority'] = 'P_NORMAL';
-    this.appSettings['annot'] = 'expr';
-
-    this.appSettings['block'] = 'New block';
-    this.appSettings['declaration'] = '(* Empty declaration *)';
-    this.appSettings['page'] = 'New page';
-  }
-
 }

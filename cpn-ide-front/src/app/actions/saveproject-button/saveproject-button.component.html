@@ -17,7 +17,7 @@
               autofocus id="fileName" pattern="^[a-zA-Z0-9_-]+$" [autofocus] >
       <label *ngIf="fileNameInput.checkValidity(); else errorText" class="small"><br/></label>
       <ng-template #errorText >
-        <label class="small">Only alphanumeric characters, - or _</label>
+        <label class="small">Only alphanumeric characters, - and _</label>
       </ng-template>
     </div>
   </div>

@@ -5,7 +5,7 @@ import { Component, Input } from "@angular/core";
     template: `<div class="blockHeader">
     <span class="caret"><i [ngClass]="opened ? 'fas fa-caret-down' : 'fas fa-caret-right'"></i></span>
     <span [ngClass]="opened ? 'active' : ''">
-      {{opened ? title + ' Details' : title + ' Layout'}}
+      {{opened ? title + ' Layout details' : title + ' Layout'}}
     </span>
     </div>`
 })

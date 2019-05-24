@@ -59,7 +59,11 @@ public class NetController {
                     @ApiResponse(code = 500, message = "Internal error. Object with description", response = ErrorDescription.class)
             })
     public ResponseEntity intNetwork(@RequestHeader(value = "X-SessionId") String sessionId) {
-        return RequestBaseLogic.HandleRequest(sessionId, () -> ResponseEntity.status(HttpStatus.OK).body(InitNetBody.builder().xml(_netConatiner.exportNetToXml(sessionId)).build()));
+        return RequestBaseLogic.HandleRequest(sessionId, () -> {
+            InitNetBody body = new InitNetBody();
+            body.setXml(_netConatiner.exportNetToXml(sessionId));
+            return RequestBaseLogic.HandleRequest(sessionId, () -> ResponseEntity.status(HttpStatus.OK).body(body));
+        });
     }
 
 

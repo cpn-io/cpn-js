@@ -1,0 +1,12 @@
+rootProject.name="backend"
+enableFeaturePreview('IMPROVED_POM_SUPPORT')
+include ':cpn-ide-back',
+        ':org.cpntools.accesscpn.engine',
+        ':org.cpntools.accesscpn.engine.proxy',
+        ':org.cpntools.accesscpn.cosimulation',
+        ':org.cpntools.accesscpn.engine.highlevel',
+        ':org.cpntools.accesscpn.engine.protocol',
+        ':org.cpntools.accesscpn.model',
+        ':org.cpntools.accesscpn.model.exporter',
+        ':org.cpntools.accesscpn.model.importer'
+

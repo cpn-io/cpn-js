@@ -1,0 +1,352 @@
+<!--
+   COPYRIGHT (C) 2005 by the CPN group, University of Aarhus, Denmark.
+
+   Contact: cpntools-support@daimi.au.dk
+   WWW URL: http://www.daimi.au.dk/CPNtools/
+
+   File: cpn.dtd
+   DTD for XML format for CPN Tools ver. 2.0
+     20051201: 
+-->
+
+<!-- The possible orientations of an arc: 
+       bothdir = Bidirectional arc: O<->[] 
+       nodir = Arc without arrows: O-[] 
+       ptot = Arc from Place to Transition: 0->[] 
+       ttop = Arc from Transition to Place: []->O -->
+<!ENTITY % arcors "CDATA">
+
+<!-- Boolean values -->
+<!ENTITY % boolean "(true | false)">
+
+<!-- Colours. These colours corresponds to the standard colours of
+     HTML:
+     Name and RGB value:
+         black  = #000000    green  = #008000
+         silver = #c0c0c0    lime   = #00ff00
+         gray   = #808080    olive  = #808000
+         white  = #ffffff    yellow = #ffff00
+         maroon = #800000    navy   = #000080
+         red    = #ff0000    blue   = #0000ff
+         purple = #800080    teal   = #008080
+         fuchsia= #ff00ff    aqua   = #00ffff -->
+<!ENTITY % cols "CDATA">
+
+<!-- Types of declarations -->
+<!ENTITY % decls "block | color | var | ml | globref | use">
+
+<!-- Line types: -->
+<!ENTITY % lintyps "CDATA">
+
+<!-- Numbers -->
+<!ENTITY % number "CDATA">
+
+<!-- Possible attributes of objects:
+       posattr = Position attributes
+       fillattr = Fill Attributes
+       lineattr = Line Attributes
+       textattr = Text Attributes -->
+<!ENTITY % objatts "posattr, fillattr, lineattr, textattr">
+
+<!-- Possible fill patterns for objects -->
+<!ENTITY % pats "CDATA">
+
+<!-- Possible porttypes:
+       in = Input Port.
+       out = Output Port.
+       inout = Input/Output Port
+       general = General Port -->
+<!ENTITY % prttyps "CDATA">
+
+<!ELEMENT alias     (id)?>
+
+<!ELEMENT and       (ml)+>
+
+<!ELEMENT annot	    (%objatts;, text)>
+<!ATTLIST annot     id          ID          #IMPLIED>
+
+<!ELEMENT arc       (%objatts;, arrowattr, transend, placeend, bendpoint*, annot?)>
+<!ATTLIST arc       id          ID          #IMPLIED
+                    orientation %arcors;    #IMPLIED
+                    order       %number;    #IMPLIED>
+
+<!ELEMENT arrowattr EMPTY>
+<!ATTLIST arrowattr headsize    %number;    #IMPLIED
+                    currentcyckle %number;  #IMPLIED>
+
+<!ELEMENT Aux       (%objatts;, label, text)>
+<!ATTLIST Aux       id          ID          #IMPLIED>
+
+<!ELEMENT bendpoint (%objatts;, text?)>
+<!ATTLIST bendpoint id          ID          #IMPLIED
+                    serial      %number;    #IMPLIED>
+
+<!ELEMENT binders   (cpnbinder)*>
+
+<!ELEMENT binding   EMPTY>
+<!ATTLIST binding   x           %number;    #IMPLIED
+                    y           %number;    #IMPLIED>
+
+<!ELEMENT block     (id, (%decls;)*)>
+<!ATTLIST block     id          ID          #IMPLIED>
+
+<!ELEMENT bool      (with)?>
+
+<!ELEMENT box       EMPTY>
+<!ATTLIST box       w           %number;    #IMPLIED
+                    h           %number;    #IMPLIED>
+
+<!ELEMENT by        (ml)>
+
+<!ELEMENT color     (id, declare?, timed?, (unit | bool | int | real | string | 
+                                            enum | index | product | record | list |
+                                            union | alias | subset)*, layout?)>
+<!ATTLIST color     id          ID          #IMPLIED>
+
+<!ELEMENT channel      (%objatts;, text)>
+<!ATTLIST channel      id          ID          #IMPLIED>
+
+<!ELEMENT channel-key  (%objatts;, text)>
+<!ATTLIST channel-key  id          ID          #IMPLIED>
+
+<!ELEMENT code      (%objatts;, text)>
+<!ATTLIST code      id          ID          #IMPLIED>
+
+<!ELEMENT code-key  (%objatts;, text)>
+<!ATTLIST code-key  id          ID          #IMPLIED>
+
+<!ELEMENT cond      (%objatts;, text)>
+<!ATTLIST cond      id          ID          #IMPLIED>
+
+<!ELEMENT cpnbinder (sheets,zorder?)>
+<!ATTLIST cpnbinder id          ID          #IMPLIED
+                    x           %number;    #IMPLIED
+                    y           %number;    #IMPLIED
+                    width       %number;    #IMPLIED
+                    height      %number;    #IMPLIED>
+
+<!ELEMENT cpnet     (globbox,page*,fusion*,instances,options,binders,monitorblock,IndexNode)>
+
+<!ELEMENT cpnsheet  (zorder?)>
+<!ATTLIST cpnsheet  id          ID          #IMPLIED
+                    panx        %number;    #IMPLIED
+                    pany        %number;    #IMPLIED
+                    zoom        %number;    #IMPLIED
+                    instance    IDREF       #REQUIRED>
+
+<!ELEMENT declaration (ml)>
+<!ATTLIST declaration name      CDATA       #REQUIRED>
+
+<!ELEMENT declare   (id)+>
+
+<!ELEMENT ellipse   EMPTY>
+<!ATTLIST ellipse   w           %number;    #IMPLIED
+                    h           %number;    #IMPLIED>
+
+<!ELEMENT enum      (id)+>
+
+<!ELEMENT fillattr  EMPTY>
+<!ATTLIST fillattr  colour      %cols;      #IMPLIED
+                    pattern     %pats;      #IMPLIED
+                    filled      %boolean;   #IMPLIED>
+
+<!ELEMENT fusion    (fusion_elm*)>
+<!ATTLIST fusion    id          ID          #IMPLIED
+                    name        CDATA       #IMPLIED>
+
+<!ELEMENT fusion_elm EMPTY>
+<!ATTLIST fusion_elm idref      IDREF       #IMPLIED>
+
+<!ELEMENT fusioninfo (%objatts;)>
+<!ATTLIST fusioninfo id         ID          #IMPLIED
+                     name       CDATA       #IMPLIED>
+
+<!ELEMENT generator EMPTY>
+<!ATTLIST generator tool        CDATA       #IMPLIED
+                    version     CDATA       #IMPLIED
+                    format      CDATA       #IMPLIED>
+
+<!ELEMENT globbox   (%decls;)*>
+
+<!ELEMENT globref   (id?, ml?, layout?)>
+<!ATTLIST globref   id     ID          #IMPLIED>
+
+<!ELEMENT group_elm EMPTY>
+<!ATTLIST group_elm idref  IDREF       #IMPLIED>
+
+<!ELEMENT group (group_elm)*>
+<!ATTLIST group id         ID          #IMPLIED
+                name       CDATA       #IMPLIED>
+
+<!ELEMENT guideline_elm EMPTY>
+<!ATTLIST guideline_elm idref   IDREF       #IMPLIED>
+
+<!ELEMENT hguideline (guideline_elm)*>
+<!ATTLIST hguideline id         ID          #IMPLIED
+                     y          %number;    #IMPLIED>
+
+<!ELEMENT id        (#PCDATA)>
+
+<!ELEMENT index     (ml, ml, id)>
+
+<!ELEMENT IndexNode (IndexNode)*>
+<!ATTLIST IndexNode expanded    %boolean;   #REQUIRED>
+
+<!ELEMENT initmark  (%objatts;, text)>
+<!ATTLIST initmark  id          ID          #IMPLIED>
+
+<!ELEMENT int       (with)?>
+<!ELEMENT instance  (instance)*>
+<!ATTLIST instance  id          ID          #IMPLIED
+                    page        IDREF       #IMPLIED
+		    trans       IDREF	    #IMPLIED>
+<!ELEMENT instances (instance)*>
+
+<!ELEMENT label     EMPTY>
+<!ATTLIST label     w           %number;    #IMPLIED
+                    h           %number;    #IMPLIED>
+
+<!ELEMENT layout    (#PCDATA)>
+
+<!ELEMENT lineattr  EMPTY>
+<!ATTLIST lineattr  colour      %cols;      #IMPLIED
+                    thick       %number;    #IMPLIED
+                    type        %lintyps;   #IMPLIED>
+
+<!ELEMENT list      ((with)?, id)>
+
+<!ELEMENT marking   EMPTY>
+<!ATTLIST marking   x           %number;    #IMPLIED
+                    y           %number;    #IMPLIED
+                    hidden	%boolean;   #IMPLIED>
+
+<!ELEMENT ml        (#PCDATA | layout)*>
+<!ATTLIST ml        id          ID          #IMPLIED>
+
+<!ELEMENT monitor   ((node*), (declaration*), (option*))>
+<!ATTLIST monitor   id          ID          #REQUIRED
+                    name        CDATA       #REQUIRED
+		    type        %number;    #REQUIRED
+		    typedescription CDATA   #REQUIRED
+		    disabled    %boolean;   #REQUIRED>
+
+<!ELEMENT monitorblock (monitor)*>
+<!ATTLIST monitorblock name     CDATA       #REQUIRED>
+
+<!-- idref and pageinstanceidref is references to existing nodes.
+     Some restriction on the type of node may apply depending on
+     the type of monitor. -->
+<!ELEMENT node      EMPTY>
+<!ATTLIST node      idref       CDATA       #REQUIRED
+                    pageinstanceidref CDATA #REQUIRED>
+
+<!-- Options have their value as an element unless they are options
+     on a monitor. In that case is the value an attribute. -->
+<!ELEMENT option    (value?)>
+<!ATTLIST option    name        CDATA       #REQUIRED
+                    value       %boolean;   #IMPLIED>
+
+<!ELEMENT options   (option)*>
+
+<!ELEMENT page      (pageattr, (trans | place | arc | Aux | vguideline | hguideline | group)*)>
+<!ATTLIST page      id          ID          #IMPLIED>
+
+<!ELEMENT pageattr  EMPTY>
+<!ATTLIST pageattr  name        CDATA       #IMPLIED>
+
+<!ELEMENT place     (%objatts;, text, ellipse, (token | marking | fusioninfo | port | type | initmark)*)>
+<!ATTLIST place     id          ID          #IMPLIED>
+
+<!ELEMENT placeend  EMPTY>
+<!ATTLIST placeend  idref       IDREF       #IMPLIED>
+
+<!ELEMENT port      (%objatts;)>
+<!ATTLIST port      id          ID          #IMPLIED
+                    type        %prttyps;   #IMPLIED>
+
+<!ELEMENT posattr   EMPTY>
+<!ATTLIST posattr   x           %number;    #IMPLIED
+                    y           %number;    #IMPLIED>
+
+<!ELEMENT position  EMPTY>
+<!ATTLIST position  value       %number;    #REQUIRED>
+
+<!ELEMENT product   (id)+>
+
+<!ELEMENT real      (with)?>
+
+<!ELEMENT record    (recordfield)+>
+
+<!ELEMENT recordfield (id,id)>
+
+<!ELEMENT sheets    (cpnsheet | textsheet)*>
+
+<!ELEMENT string    (with)?>
+
+<!ELEMENT subpageinfo (%objatts;)>
+<!ATTLIST subpageinfo id         ID          #IMPLIED
+                      name       CDATA       #IMPLIED>
+
+<!ELEMENT subset    (id?, (with | by))>
+
+<!ELEMENT subst     (subpageinfo?)>
+<!ATTLIST subst     subpage     IDREF       #IMPLIED 
+                    portsock    CDATA       #IMPLIED>
+
+<!ELEMENT text      (#PCDATA)>
+<!ATTLIST text      tool CDATA "CPN Tools"
+                    version CDATA #IMPLIED>
+
+<!ELEMENT textattr  EMPTY>
+<!ATTLIST textattr  colour      %cols;      #IMPLIED
+                    bold        %boolean;   #IMPLIED>
+
+<!ELEMENT textsheet (zorder?)>
+<!ATTLIST textsheet id          ID          #IMPLIED
+                    panx        %number;    #IMPLIED
+                    pany        %number;    #IMPLIED
+                    zoom        %number;    #IMPLIED
+                    decl        IDREF       #REQUIRED>
+
+<!ELEMENT time      (%objatts;, text)>
+<!ATTLIST time      id          ID          #IMPLIED>
+
+<!ELEMENT timed     EMPTY>
+
+<!ELEMENT token     EMPTY>
+<!ATTLIST token     x           %number;    #IMPLIED
+                    y           %number;    #IMPLIED>
+
+<!ELEMENT trans     (%objatts;, text, box, subst?,binding?, (time | cond | code-key | code | channel)*)>
+<!ATTLIST trans     id          ID          #IMPLIED
+                    explicit    %boolean;   #IMPLIED>
+
+<!ELEMENT transend  EMPTY>
+<!ATTLIST transend  idref       IDREF       #IMPLIED>
+
+<!ELEMENT type      (id | (%objatts;, text))>
+<!ATTLIST type      id          ID          #IMPLIED>
+
+<!ELEMENT union     (unionfield)+>
+
+<!ELEMENT unionfield (id, (type)?)>
+
+<!ELEMENT unit      (with)?>
+
+<!ELEMENT use	    (ml, layout)>
+<!ATTLIST use	    id          ID          #IMPLIED>                    
+
+<!ELEMENT value     (text)>
+
+<!ELEMENT var       (type, id+, layout?)>
+<!ATTLIST var       id          ID          #IMPLIED>
+
+<!ELEMENT vguideline (guideline_elm)*>
+<!ATTLIST vguideline id          ID          #IMPLIED
+                     x           %number;    #IMPLIED>
+
+<!ELEMENT with      ((ml, (ml?|and))|(id,(id)?))>
+
+<!ELEMENT workspaceElements (generator, cpnet)>
+
+<!ELEMENT zorder    (position)*>

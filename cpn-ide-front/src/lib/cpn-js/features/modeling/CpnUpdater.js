@@ -46,6 +46,8 @@ import { assign } from 'min-dash';
 export default function CpnUpdater(eventBus, modeling, elementRegistry,
   connectionDocking, selection, popupMenuProvider, contextPad, canvas) {
 
+  this.modeling = modeling;
+
   console.log('CpnUpdater()');
 
   CommandInterceptor.call(this, eventBus);
@@ -73,7 +75,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     // updateLabels(e.element);
     // console.log('CpnUpdater(), shape.changed, event.element = ', event.element);
 
-    updateBounds({ context: { shape: event.element } });
+    // updateBounds({ context: { shape: event.element } });
 
     updateCpnElement(event.element);
   });
@@ -179,6 +181,8 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
     //   context.cropped = true;
     // }
+
+    updateCpnElement(connection);
   }
 
   function updateNewConnection(e) {
@@ -231,40 +235,66 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     //   'cpn:Connection': { entry: ['annot'] }
     // }
 
-    console.log('CpnUpdater().updateCpnElement(), element = ', element);
+    // console.log('CpnUpdater().updateCpnElement(), element = ', element);
 
     var shape = element;
     let elemCase = modelCase[element.type];
     const cpnElement = shape.cpnElement;
 
-    // if element is Place object
-    if (cpnElement && cpnElement.posattr && cpnElement.ellipse) {
-      cpnElement.posattr._x = shape.x;
-      cpnElement.posattr._y = shape.y * -1;
-      cpnElement.ellipse._w = shape.width;
-      cpnElement.ellipse._h = shape.height;
+    if (cpnElement) {
+
+      // update shapes
+      if (shape.x && shape.y && shape.width && shape.height) {
+        // if element is any shape object
+        if (cpnElement.posattr) {
+          cpnElement.posattr._x = shape.x + shape.width / 2;
+          cpnElement.posattr._y = (shape.y + shape.height / 2) * -1;
+        }
+        // if element is Place object
+        if (cpnElement.ellipse) {
+          cpnElement.ellipse._w = shape.width;
+          cpnElement.ellipse._h = shape.height;
+        }
+        // if element is Transition object
+        if (cpnElement.box) {
+          cpnElement.box._w = shape.width;
+          cpnElement.box._h = shape.height;
+        }
+      }
+
+      // update connections
+      if (shape.waypoints instanceof Array) {
+        console.log('CpnUpdater().updateCpnElement(), connection, element = ', element);
+
+        let bendpoint = [];
+        for (const wp of shape.waypoints) {
+          const position = {
+            x: wp.x,
+            y: wp.y * -1,
+          };
+          bendpoint.push({
+            posattr: this.modeling.getDefPosattr(position),
+            fillattr: this.modeling.getDefFillattr(),
+            lineattr: this.modeling.getDefLineattr(),
+            textattr: this.modeling.getDefTextattr(),
+            _id: this.modeling.getNextId(),
+            _serial: 1
+          });
+        }
+        waypoints.push({
+          x: source.x + Math.abs(source.width / 2),
+          y: source.y + Math.abs(source.height / 2),
+          id: source.id
+        });
+      
+      }
+
+      if (cpnElement.text instanceof Object) {
+        cpnElement.text.__text = shape.text || shape.name;
+      } else cpnElement.text = shape.text || shape.name;
+
     }
 
-    // if element is Transition object
-    if (cpnElement && cpnElement.posattr && cpnElement.box) {
-      cpnElement.posattr._x = shape.x;
-      cpnElement.posattr._y = shape.y * -1;
-      cpnElement.box._w = shape.width;
-      cpnElement.box._h = shape.height;
-    }
-
-    if (shape.x && shape.y && cpnElement && cpnElement.posattr && shape.type === CPN_LABEL) {
-      cpnElement.posattr._x = shape.x;
-      cpnElement.posattr._y = shape.y * -1;
-    }
-    // else if(cpnElement._x && cpnElement._y){
-    //   cpnElement._x = shape.x;
-    //   cpnElement._y = shape.y * -1;
-    // }
-
-    if (cpnElement.text instanceof Object) {
-      cpnElement.text.__text = shape.text || shape.name;
-    } else cpnElement.text = shape.text || shape.name;
 
     updateLabels(element);
   }

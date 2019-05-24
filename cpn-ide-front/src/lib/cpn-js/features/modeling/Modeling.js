@@ -546,8 +546,8 @@ Modeling.prototype.getPlaceAttrs = function (cpnPlaceElement, type) {
   var h = Math.round(cpnPlaceElement.ellipse._h);
   x -= w / 2;
   y -= h / 2;
-  cpnPlaceElement.posattr._x = x;
-  cpnPlaceElement.posattr._y = -1 * y;
+  // cpnPlaceElement.posattr._x = x;
+  // cpnPlaceElement.posattr._y = -1 * y;
   var attrs = {
     type: type,
     id: cpnPlaceElement._id,
@@ -709,8 +709,9 @@ Modeling.prototype.getTransAttrs = function (cpnTransElement, type) {
   var h = Math.round(cpnTransElement.box._h);
   x -= w / 2;
   y -= h / 2;
-  cpnTransElement.posattr._x = x;
-  cpnTransElement.posattr._y = -1 * y;
+
+  // cpnTransElement.posattr._x = x;
+  // cpnTransElement.posattr._y = -1 * y;
 
   var attrs = {
     type: type,
@@ -1051,7 +1052,7 @@ Modeling.prototype.createArcInModel = function (placeCpnElement, transCpnElement
   return cpnArcElement;
 }
 
-function getDefPosattr(position = undefined) {
+Modeling.prototype.getDefPosattr = function(position = undefined) {
   return position
     ? {
       _x: position.x,
@@ -1063,7 +1064,7 @@ function getDefPosattr(position = undefined) {
     };
 }
 
-function getDefFillattr() {
+Modeling.prototype.getDefFillattr = function() {
   return {
     _colour: "White",
     _pattern: "Solid",
@@ -1071,7 +1072,7 @@ function getDefFillattr() {
   };
 }
 
-function getDefLineattr() {
+Modeling.prototype.getDefLineattr = function() {
   return {
     _colour: "Black",
     _thick: "1",
@@ -1079,20 +1080,20 @@ function getDefLineattr() {
   };
 }
 
-function getDefTextattr() {
+Modeling.prototype.getDefTextattr = function() {
   return {
     _colour: "Black",
     _bold: "false"
   };
 }
 
-function getDefText() {
+Modeling.prototype.getDefText = function() {
   return {
     _tool: "CPN Tools",
     _version: "4.0.1"
   };
 }
 
-function getNextId() {
+Modeling.prototype.getNextId = function() {
   return 'ID' + new Date().getTime();
 }

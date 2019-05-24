@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AccessCpnService } from '../services/access-cpn.service';
 import { Message } from '../common/message';
 import { EventService } from '../services/event.service';
-import { DatePipe } from "@angular/common";
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-project-console',
@@ -18,6 +18,8 @@ export class ProjectConsoleComponent implements OnInit {
   logHtml = [];
   processing = false;
 
+  timeStart;
+
   constructor(private eventService: EventService,
     private accessCpnService: AccessCpnService) {
   }
@@ -29,21 +31,29 @@ export class ProjectConsoleComponent implements OnInit {
       this.logSuccess('Project ' + event.name + ' loaded.');
     });
 
-    // VERIFICATION
+    // VALIDATION
 
     this.eventService.on(Message.SERVER_INIT_NET_START, () => {
-      this.log('Verification process...');
+      this.log('Validation process...');
+      this.timeStart = new Date().getTime();
     });
 
     this.eventService.on(Message.SERVER_INIT_NET_DONE, (event) => {
       if (event && event.data) {
-        if (event.data.success)
-          this.logSuccess('Model is correct.');
-        else {
+        const elapsed = new Date().getTime() - this.timeStart;
+        //   //       this.logSuccess(data ? data : 'Complete in ' + this.timeConversion(elapsed) + '. Model is correct.');
+
+        if (event.data.success) {
+          this.logSuccess('Complete in ' + this.timeConversion(elapsed) + '.Model is correct.');
+        } else {
+
           // this.logError('Error: ' + JSON.stringify(event));
-          for (let id of Object.keys(event.data.issues)) {
-            let issue = event.data.issues[id][0];
-            this.logError('Error: ' + issue.id + ': ' + issue.description);
+          for (const id of Object.keys(event.data.issues)) {
+            const issue = event.data.issues[id][0];
+            if (issue.description.includes(issue.id))
+              this.logError('Error: ' + issue.description);
+            else
+              this.logError('Error: ' + issue.id + ': ' + issue.description);
           }
         }
       }
@@ -53,7 +63,7 @@ export class ProjectConsoleComponent implements OnInit {
 
     this.eventService.on(Message.SERVER_INIT_NET_ERROR, (event) => {
       if (event) {
-        this.logError('Verification server error: ' + JSON.stringify(event.data));
+        this.logError('Validation server error: ' + JSON.stringify(event.data));
       }
     });
 
@@ -61,8 +71,9 @@ export class ProjectConsoleComponent implements OnInit {
     // SIMULATION
 
     this.eventService.on(Message.SERVER_INIT_SIM_START, () => {
-      this.log('Simulator initializing...');
+      // this.log('Simulator initializing...');
     });
+
 
     this.eventService.on(Message.SERVER_INIT_SIM_DONE, () => {
       this.logSuccess('Simulator initialized.');
@@ -88,7 +99,6 @@ export class ProjectConsoleComponent implements OnInit {
       }
     });
 
-
   }
 
   logColor(text, className) {
@@ -99,7 +109,7 @@ export class ProjectConsoleComponent implements OnInit {
     });
 
     setTimeout(() => {
-      const logScrollPane = document.getElementById("logScrollPane");
+      const logScrollPane = document.getElementById('logScrollPane');
       logScrollPane.scrollTop = logScrollPane.scrollHeight;
     }, 100);
   }
@@ -123,78 +133,14 @@ export class ProjectConsoleComponent implements OnInit {
     const days = (millisec / (1000 * 60 * 60 * 24));
 
     if (seconds < 60) {
-      return seconds + " sec";
+      return seconds + ' sec';
     } else if (minutes < 60) {
-      return minutes + " min";
+      return minutes + ' min';
     } else if (hours < 24) {
-      return hours + " hrs";
+      return hours + ' hrs';
     } else {
-      return days + " days"
+      return days + ' days';
     }
   }
-
-  // getVerify(net: any) {
-  //   this.getVerifyByJson(net);
-  // }
-
-  // getVerifyByJson(net: any) {
-  //   // return;
-
-  //   if (this.processing)
-  //     return;
-
-  //   this.log('Verification process...');
-
-  //   var timeStart = new Date().getTime();
-
-  //   this.processing = true;
-
-  //   // this.accessCpnService.verifyAllNet(net);
-  //   this.accessCpnService.initNet(net);
-  //   //   .subscribe(
-  //   //     (data: any) => {
-  //   //       this.processing = false;
-
-  //   //       console.log('VERIFICATION_DONE (1), data = ', data);
-
-  //   //       const elapsed = new Date().getTime() - timeStart;
-  //   //       this.logSuccess(data ? data : 'Complete in ' + this.timeConversion(elapsed) + '. Model is correct.');
-
-  //   //       if (data != null) {
-  //   //         console.log('DATA FROM WEB VERIFY = ', data);
-  //   //       } else {
-  //   //         this.success = true;
-  //   //         this.parseErrorText(undefined);
-  //   //       }
-  //   //       //  this.done = true;
-
-  //   //       console.log('VERIFICATION_DONE (2)');
-
-  //   //       this.eventService.send(Message.VERIFICATION_DONE, { data: undefined });
-
-  //   //     },
-  //   //     error => {
-  //   //       this.success = false;
-  //   //       this.processing = false;
-  //   //       console.log(error);
-
-  //   //       const elapsed = new Date().getTime() - timeStart;
-  //   //       this.logError('Complete in ' + this.timeConversion(elapsed) + '. Error: ' + error.error.text);
-
-  //   //       this.parseErrorText(error.error.text);
-  //   //     }
-  //   //   );
-  // }
-
-  // parseErrorText(errorText) {
-  //   if (errorText) {
-  //     let errorWords = errorText.split(new RegExp('[.;\n ]', 'g'));
-  //     errorWords = errorWords.filter(e => e.charAt(e.length - 1) === ':');
-  //     // errorWords.map ( function(e) { return  e.slice(0, -1); });
-  //     this.eventService.send(Message.MODEL_ERROR, { id: errorWords });
-  //   } else
-  //     this.eventService.send(Message.MODEL_ERROR, { id: [] });
-  // }
-
 
 }

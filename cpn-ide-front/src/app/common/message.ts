@@ -6,7 +6,6 @@ export class Message {
   static SHAPE_HOVER = 'shape.hover';
   static SHAPE_OUT = 'shape.out';
 
-  static SML_VERIFY = 'sml.verify';
   static SML_TO_EDITOR = 'sml.to.editor';
   static MODEL_UPDATE = 'model.update';
   static XML_UPDATE = 'xml.update';

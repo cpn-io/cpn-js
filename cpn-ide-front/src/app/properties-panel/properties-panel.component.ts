@@ -81,6 +81,14 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
   }
 
+  // getCpnElement() {
+  //   return JSON.stringify(this.cpnElement);
+  // }
+
+  // onChange() {
+  //   console.log('onChange(), this.cpnElement = ', this.cpnElement);
+  // }
+
   updateChanges() {
     console.log('updateChanges(), this = ', this);
 

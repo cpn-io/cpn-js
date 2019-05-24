@@ -263,6 +263,19 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       // console.log(' ----- SHAPE_OUT, data = ' + data);
       this.doUnderlineNodeLabel(false);
     });
+
+    // Get error identificators
+    this.eventService.on(Message.SERVER_INIT_NET_DONE, (event) => {
+      this.errorIds = [];
+      if (event && event.data) {
+        if (!event.data.success) {
+          for (const id of Object.keys(event.data.issues)) {
+            this.errorIds.push(id);
+          }
+        }
+      }
+    });
+
   }
 
   ngOnDestroy() {

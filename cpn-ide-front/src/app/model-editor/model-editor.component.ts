@@ -7,6 +7,7 @@ import { Message } from '../common/message';
 import { EventService } from '../services/event.service';
 import { ModelService } from '../services/model.service';
 import { SettingsService } from '../services/settings.service';
+import { ValidationService } from '../services/validation.service';
 
 import { importCpnPage } from '../../lib/cpn-js/import/Importer';
 
@@ -32,7 +33,8 @@ export class ModelEditorComponent implements OnInit {
 
   constructor(private eventService: EventService,
     private settings: SettingsService,
-    private modelService: ModelService) {
+    private modelService: ModelService,
+    private validationService: ValidationService) {
   }
 
   @ViewChild('container') containerElementRef: ElementRef;
@@ -109,17 +111,19 @@ export class ModelEditorComponent implements OnInit {
 
       console.log('import.render.complete, event = ', event);
 
-      this.eventService.send(Message.MODEL_UPDATE, { pageObject: pageElement });
+      // this.eventService.send(Message.MODEL_UPDATE, { pageObject: pageElement });
 
       // set status 'clear' for all shapes on diagram
-      this.modeling.setCpnStatus({ clear: '*' });
+      // this.modeling.setCpnStatus({ clear: '*' });
 
       // set status 'process' for all shapes on diagram
-      this.modeling.setCpnStatus({ process: '*' });
-
-      // verify loaded project
-      this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData() });
+      // this.modeling.setCpnStatus({ process: '*' });
     });
+
+    // eventBus.on('element.changed', (event) => {
+    //   console.log('ModelEditor, element.changed, event = ', event);
+    //   this.validationService.validate();
+    // });
 
     this.eventService.on(Message.SERVER_INIT_NET_DONE, (event) => {
       // set status 'clear' for all shapes on diagram
@@ -318,8 +322,7 @@ export class ModelEditorComponent implements OnInit {
 
     this.eventService.send(Message.MODEL_UPDATE, { pageObject: page });
 
-    // verify loaded project
-    // this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData() });
+    this.validationService.validate();
   }
 
   changeSubPageName(subpage) {

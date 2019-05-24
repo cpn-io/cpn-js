@@ -4,6 +4,7 @@ import { AppVersion } from '../app.version';
 import { ModelService } from '../services/model.service';
 import { EventService } from '../services/event.service';
 import { Message } from '../common/message';
+import { ValidationService } from '../services/validation.service';
 
 @Component({
   selector: 'app-main-toolbar',
@@ -17,7 +18,9 @@ export class MainToolbarComponent implements OnInit {
   constructor(
     private projectService: ProjectService,
     private modelService: ModelService,
-    private eventService: EventService) {
+    private eventService: EventService,
+    private validationService: ValidationService
+    ) {
   }
 
   ngOnInit() {
@@ -42,8 +45,7 @@ export class MainToolbarComponent implements OnInit {
   openProject() {
   }
 
-  verify() {
-    // verify loaded project
-    this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData() });
+  validate() {
+    this.validationService.validate();
   }
 }

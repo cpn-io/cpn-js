@@ -334,9 +334,9 @@ Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus
 
   changeName(this, element);
 
-  changeSize(this, element);
+  // changeSize(this, element);
 
-  changePosition(this, element);
+  // changePosition(this, element);
 
   // console.log('Modeling.updateShapeByCpnElement(), element = ', element);
 }

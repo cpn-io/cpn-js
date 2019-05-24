@@ -231,7 +231,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     //   'cpn:Connection': { entry: ['annot'] }
     // }
 
-    // console.log('CpnUpdater().updateCpnElement(), e = ', e);
+    console.log('CpnUpdater().updateCpnElement(), element = ', element);
 
     var shape = element;
     let elemCase = modelCase[element.type];

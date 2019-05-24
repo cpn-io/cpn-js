@@ -22,6 +22,10 @@ sourceSets {
         sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+bootJar{
+    exclude ("src/main/resources/application.properties")
+    exclude ("src/main/resources/logback.xml")
+}
 
 
 dependencies {

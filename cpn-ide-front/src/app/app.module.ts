@@ -44,6 +44,7 @@ import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { OptionsNamePipePipe } from './pipes/options-name.pipe';
 
 import { SettingsService } from './services/settings.service';
+import { ValidationService } from './services/validation.service';
 
 // -----------------------------------------------------------------------------
 
@@ -94,13 +95,10 @@ import { SettingsService } from './services/settings.service';
     NgbModule,
   ],
   entryComponents: [],
-  providers: [AccessCpnService, ProjectService, EventService, ModelService, SettingsService],
+  providers: [AccessCpnService, ProjectService, EventService, ModelService, SettingsService, ValidationService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
-  constructor(
-    private projectService: ProjectService,
-    private modelService: ModelService
-    ) {
+  constructor() {
   }
 }

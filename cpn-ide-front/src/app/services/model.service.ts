@@ -3,6 +3,7 @@ import { EventService } from './event.service';
 import { Message } from '../common/message';
 import { AccessCpnService } from './access-cpn.service';
 import { SettingsService } from '../services/settings.service';
+import { ValidationService } from './validation.service';
 
 
 /**
@@ -33,7 +34,7 @@ export class ModelService {
 
   constructor(private eventService: EventService,
     private accessCpnService: AccessCpnService,
-    private settings: SettingsService
+    private settings: SettingsService,
   ) {
     console.log('ModelService instance CREATED!');
 
@@ -78,11 +79,6 @@ export class ModelService {
 
     this.projectData = project.data;
     this.projectName = project.name;
-
-    // this.accessCpnService.initNet(this.projectData);
-
-    // // verify loaded project
-    // this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.projectData });
   }
 
   saveBackup(model, pageId) {
@@ -1464,9 +1460,9 @@ export class ModelService {
 
 
   /**
-   * Getting all port places for transition 
-   * @param cpnElement 
-   * @param transEnd 
+   * Getting all port places for transition
+   * @param cpnElement
+   * @param transEnd
    */
   getAllPorts(cpnElement, transEnd) {
     let ports = [];

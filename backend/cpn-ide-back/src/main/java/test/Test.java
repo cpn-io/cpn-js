@@ -1,20 +1,22 @@
 package test;
 
-import org.cpntools.accesscpn.engine.Simulator;
-import org.cpntools.accesscpn.engine.SimulatorService;
-import org.cpntools.accesscpn.engine.highlevel.HighLevelSimulator;
-import org.cpntools.accesscpn.engine.highlevel.checker.Checker;
-import org.cpntools.accesscpn.engine.highlevel.instance.Instance;
-import org.cpntools.accesscpn.model.*;
-import org.cpntools.accesscpn.model.importer.DOMParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.*;
+import org.springframework.web.client.RestTemplate;
 
-import java.io.ByteArrayInputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Iterator;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import static org.junit.Assert.assertEquals;
+
 
 public class Test {
+    /*@org.junit.Test
     public static void main(String[] args) throws Exception {
         System.out.println("Access/CPN test started!");
 
@@ -113,5 +115,86 @@ public class Test {
 //            simulator.destroy();
 //            simulator.release();
         }
+    }
+*/
+
+
+    @org.junit.Test
+   public void testConections() throws IOException, InterruptedException {
+        String initCpn  = "http://localhost:8080/api/v2/cpn/init";
+        String initSim = "http://localhost:8080/api/v2/cpn/sim/init";
+        String sessionId = "232323";
+        assertEquals(200, sendInitCpn(sessionId, initCpn ).getStatusCodeValue());
+        TimeUnit.SECONDS.sleep(1);
+        assertEquals(200, sendInitSimulator(sessionId, initSim ).getStatusCodeValue());
+        while(true){
+            assertEquals(200, sendInitCpn(sessionId, initCpn ).getStatusCodeValue());
+            TimeUnit.SECONDS.sleep(1);
+        }
+
+    }
+
+
+    public static ResponseEntity<Object> sendInitCpn(String sessionId, String initCpn) throws IOException {
+        RestTemplate template = new RestTemplate();
+        Map<String, String> bodyParamMap = new HashMap<String, String>();
+        final String fileName = "/home/awahtel/avahtel/repo/cpn-ide/cpn-ide-front/src/assets/cpn/mynet.cpn";
+        //Set your request body params
+        String cpnFile = readFromFile(fileName);
+        bodyParamMap.put("xml", cpnFile);
+
+
+        HttpHeaders header = new HttpHeaders();
+        header.setAccept(Arrays.asList(MediaType.ALL));
+        header.setContentType(MediaType.APPLICATION_JSON);
+        header.set("X-SessionId", sessionId);
+
+        String reqBodyData = new ObjectMapper().writeValueAsString(bodyParamMap);
+
+        HttpEntity<String> requestEnty = new HttpEntity<>(reqBodyData, header);
+
+        ResponseEntity<Object> result = template.postForEntity(initCpn, requestEnty, Object.class);
+        return result;
+    }
+
+
+public static ResponseEntity<Object> sendInitSimulator(String sessionId, String initSim){
+    RestTemplate template = new RestTemplate();
+    Map<String, String> bodyParamMap = new HashMap<String, String>();
+    //final String fileName = "/home/awahtel/avahtel/repo/cpn-ide/cpn-ide-front/src/assets/cpn/mynet.cpn";
+    //Set your request body params
+    //String cpnFile = readFromFile(fileName);
+   // bodyParamMap.put("xml", cpnFile);
+
+
+    HttpHeaders header = new HttpHeaders();
+    header.setAccept(Arrays.asList(MediaType.ALL));
+    header.setContentType(MediaType.APPLICATION_JSON);
+    header.set("X-SessionId", sessionId);
+    HttpEntity entity = new HttpEntity(header);
+
+
+    // String reqBodyData = new ObjectMapper().writeValueAsString(bodyParamMap);
+
+    HttpEntity<String> requestEnty = new HttpEntity<>("{}", header);
+
+    ResponseEntity<Object> result = template.exchange(initSim, HttpMethod.GET, requestEnty, Object.class);
+    return result;
+}
+
+    public static String readFromFile(String fileName) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(fileName));
+        StringBuilder stringBuilder = new StringBuilder();
+        String line = null;
+        String ls = System.getProperty("line.separator");
+        while ((line = reader.readLine()) != null) {
+            stringBuilder.append(line);
+            stringBuilder.append(ls);
+        }
+        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+        reader.close();
+
+        String content = stringBuilder.toString();
+        return content;
     }
 }

@@ -1,6 +1,5 @@
 package com.indevstudio.cpnide.server.net;
 
-import com.indevstudio.cpnide.server.controllers.CpnController;
 import com.indevstudio.cpnide.server.model.IssueDescription;
 import com.indevstudio.cpnide.server.model.PlaceMark;
 import javassist.NotFoundException;
@@ -17,6 +16,7 @@ import org.cpntools.accesscpn.model.monitors.Monitor;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 
+import javax.annotation.PostConstruct;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -41,12 +41,15 @@ public class PetriNetContainer {
     private ConcurrentHashMap<String, HighLevelSimulator> usersSimulator = new ConcurrentHashMap<>();
     HighLevelSimulator sim;// = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
 
+    @PostConstruct
+    void InitI() throws Exception
+    {
+        sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
+    }
     public void CreateNewNet(String sessionId, String xml) throws Exception {
         PetriNet net = DOMParser.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)), sessionId);
         usersNets.put(sessionId, net);
 
-        //HighLevelSimulator
-                sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
         Checker checker = new Checker(net, null, sim);
 
         usersCheckers.put(sessionId, checker);
@@ -138,8 +141,9 @@ public class PetriNetContainer {
     public Map<String, List<IssueDescription>> PerfomEntireChecking(String sessionId) throws Exception {
 
         Checker checker = usersCheckers.get(sessionId);
+        HighLevelSimulator ss = usersSimulator.get(sessionId);
         PetriNet net = usersNets.get(sessionId);
-        if (net == null || checker == null)
+        if (net == null || checker == null || ss == null)
             throw new NotFoundException("Session object not found");
 
 
@@ -153,7 +157,7 @@ public class PetriNetContainer {
             CheckPage(checker, page, ps.isPrime(page), issues);
 
         for (final Monitor m : net.getMonitors())
-            CheckMonitor(checker, m, issues);
+            CheckMonitor(ss, m, issues);
 
         return issues;
 
@@ -231,25 +235,25 @@ public class PetriNetContainer {
 
     public Map<String, List<IssueDescription>> CheckMonitorByID(String sessionId, String id) throws Exception {
 
-        Checker checker = usersCheckers.get(sessionId);
+        HighLevelSimulator ss = usersSimulator.get(sessionId);
         PetriNet net = usersNets.get(sessionId);
-        if (net == null || checker == null)
+        if (net == null || ss == null)
             throw new NotFoundException("Session object not found");
 
         Map<String, List<IssueDescription>> issues = new HashMap<>();
 
         for (final Monitor m : net.getMonitors()) {
             if (m.getId().equals(id)) {
-                CheckMonitor(checker, m, issues);
+                CheckMonitor(ss, m, issues);
                 return issues;
             }
         }
         return issues;
     }
 
-    private void CheckMonitor(Checker checker, Monitor m, Map<String, List<IssueDescription>> issues) throws IOException {
+    private void CheckMonitor(HighLevelSimulator s, Monitor m, Map<String, List<IssueDescription>> issues) throws IOException {
         try {
-            checker.checkMonitor(m);
+            s.checkMonitor(m);
         } catch (SyntaxCheckerException ex) {
             List<IssueDescription> issList = getOrCreateIssueList(m.getId(), issues);
             issList.add(IssueDescription.builder().type(IssueTypes.MONITOR.getType()).id(ex.getId()).description(ex.getMessage()).build());

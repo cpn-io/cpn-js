@@ -16,6 +16,7 @@ export class Message {
   static UPDATE_TREE = 'update.tree';
   static UPDATE_TREE_PAGES = 'update.tree.pages';
   static SUBPAGE_CREATE = 'subpage.create';
+  static SUBPAGE_TRANS_CREATE = 'subpage.trans.create';
   static OPEN_DECLARATION_BLOCK = 'open.declaration.block';
   static CHANGE_EXPLORER_TREE = 'change.explorer.tree';
   static SELECT_TREE_NODE = 'select.tree.node';

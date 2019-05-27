@@ -141,9 +141,9 @@ public class PetriNetContainer {
     public Map<String, List<IssueDescription>> PerfomEntireChecking(String sessionId) throws Exception {
 
         Checker checker = usersCheckers.get(sessionId);
-        HighLevelSimulator ss = usersSimulator.get(sessionId);
+        //HighLevelSimulator ss = usersSimulator.get(sessionId);
         PetriNet net = usersNets.get(sessionId);
-        if (net == null || checker == null || ss == null)
+        if (net == null || checker == null )
             throw new NotFoundException("Session object not found");
 
 
@@ -157,7 +157,7 @@ public class PetriNetContainer {
             CheckPage(checker, page, ps.isPrime(page), issues);
 
         for (final Monitor m : net.getMonitors())
-            CheckMonitor(ss, m, issues);
+            CheckMonitor(checker, m, issues);
 
         return issues;
 
@@ -234,26 +234,26 @@ public class PetriNetContainer {
     }
 
     public Map<String, List<IssueDescription>> CheckMonitorByID(String sessionId, String id) throws Exception {
-
-        HighLevelSimulator ss = usersSimulator.get(sessionId);
+        Checker checker = usersCheckers.get(sessionId);
+       // HighLevelSimulator ss = usersSimulator.get(sessionId);
         PetriNet net = usersNets.get(sessionId);
-        if (net == null || ss == null)
+        if (net == null || checker == null)
             throw new NotFoundException("Session object not found");
 
         Map<String, List<IssueDescription>> issues = new HashMap<>();
 
         for (final Monitor m : net.getMonitors()) {
             if (m.getId().equals(id)) {
-                CheckMonitor(ss, m, issues);
+                CheckMonitor(checker, m, issues);
                 return issues;
             }
         }
         return issues;
     }
 
-    private void CheckMonitor(HighLevelSimulator s, Monitor m, Map<String, List<IssueDescription>> issues) throws IOException {
+    private void CheckMonitor(Checker checker, Monitor m, Map<String, List<IssueDescription>> issues) throws IOException {
         try {
-            s.checkMonitor(m);
+            checker.checkMonitor(m);
         } catch (SyntaxCheckerException ex) {
             List<IssueDescription> issList = getOrCreateIssueList(m.getId(), issues);
             issList.add(IssueDescription.builder().type(IssueTypes.MONITOR.getType()).id(ex.getId()).description(ex.getMessage()).build());

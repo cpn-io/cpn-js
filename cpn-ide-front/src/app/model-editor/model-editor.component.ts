@@ -232,6 +232,14 @@ export class ModelEditorComponent implements OnInit {
         for (const element of event.elements) {
           if (element.cpnElement) {
             this.modelService.addElementJsonOnPage(element.cpnElement, this.pageId, element.type);
+            if (element.type === CPN_TRANSITION && element.cpnElement.subst) {
+              element.cpnElement.subst._subpage = 'id' + new Date().getTime();
+              this.eventService.send(Message.SUBPAGE_TRANS_CREATE, {
+                currentPageId: this.pageId,
+                id: element.cpnElement.subst._subpage,
+                cpnElement: element.cpnElement
+              });
+            }
           }
         }
       }
@@ -255,11 +263,7 @@ export class ModelEditorComponent implements OnInit {
         }
       }
     });
-    eventBus.on('bind.port.cancel', (event) => {
-      if (event.connection) {
-        this.modeling.removeElements([event.connection]);
-      }
-    });
+
 
     // this._eventBus.fire('bind.port.cancel', {connection: this._createdArc});
 

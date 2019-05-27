@@ -1149,7 +1149,7 @@ export class ModelService {
    * @param name - name of new page
    * @returns - new page cpnElement
    */
-  createCpnPage(name) {
+  createCpnPage(name, id) {
     const newPage = {
       pageattr: {
         _name: name
@@ -1158,11 +1158,13 @@ export class ModelService {
       trans: [],
       arc: [],
       constraints: '',
-      _id: 'ID' + new Date().getTime()
+      _id: id ? id :  'ID' + new Date().getTime()
     };
 
     return newPage;
   }
+
+
 
   /**
    * Creating empty block cpnElement

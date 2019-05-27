@@ -44,6 +44,12 @@ export default function Modeling(eventBus, elementFactory, elementRegistry, comm
 
   BaseModeling.call(this, eventBus, elementFactory, commandStack);
 
+  eventBus.on('bind.port.cancel', (event) => {
+    if (event.connection) {
+        this.removeElements([event.connection]);
+    }
+  });
+
   this._eventBus = eventBus;
   this._elementFactory = elementFactory;
   this._elementRegistry = elementRegistry;

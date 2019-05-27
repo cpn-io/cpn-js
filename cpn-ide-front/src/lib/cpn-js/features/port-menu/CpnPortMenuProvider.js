@@ -41,7 +41,7 @@ CpnPortMenuProvider.prototype.register = function () {
   this._popupMenu.registerProvider('cpnPortMenu', this);
 
   this._eventBus.on('popupMenu.close', (event) => {
-    console.log('popupMenu.close', this._popupMenu, event);
+    console.log('CpnPortMenuProvider.popupMenu.close', this._popupMenu, event);
     if(this._popupMenu._current.className === 'cpnPortMenu'){
       if(this.changes){
         this.changes =  undefined;

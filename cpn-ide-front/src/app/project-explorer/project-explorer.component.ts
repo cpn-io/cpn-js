@@ -240,6 +240,27 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       this.updatePagesNode(data.currentPageId);
     });
 
+    this.eventService.on(Message.SUBPAGE_TRANS_CREATE, (data) => {
+      //this.createPageNode()
+     const defValue = this.settings.getAppSettings()['page'];
+     const cpnElement = this.modelService.createCpnPage(defValue + ' ' + (++this.newPageCount), data.id);
+     const newNode = this.createPageNode(cpnElement);
+      data.cpnElement.subst.subpageinfo._name = newNode.cpnElement.pageattr._name;
+     const treeNode = this.treeComponent.treeModel.getNodeById(data.currentPageId);
+     const cpnParentElement = treeNode.parent.data.cpnElement;
+     this.addCreatedNode(treeNode, newNode, cpnElement, 'page', cpnParentElement);
+     this.updatePagesNode(data.currentPageId);
+      const emiterData = {
+        labels: [],
+        elementid: data.cpnElement._id,
+        cpnElement: data.cpnElement,
+        type: 'cpn:Transition',
+        pagename: this.modelService.getPageById(data.currentPageId).pageattr._name
+      };
+      this.eventService.send(Message.PROPERTY_UPDATE, emiterData);
+    });
+
+
     // this.eventService.on(Message.CHANGE_NAME_PAGE, (data) => {
     //   if (data.changedElement === 'tran') {
     //     const node = this.getObjects(this.nodes, 'id', data.id);
@@ -659,12 +680,17 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         break;
 
       case 'page':
-        cpnElement = this.modelService.createCpnPage(defValue + ' ' + (++this.newPageCount));
+        cpnElement = this.modelService.createCpnPage(defValue + ' ' + (++this.newPageCount), undefined);
         newNode = this.createPageNode(cpnElement);
         cpnType = 'page';
         break;
     }
 
+    this.addCreatedNode(treeNode, newNode, cpnElement, cpnType, cpnParentElement);
+  }
+
+
+  addCreatedNode(treeNode, newNode, cpnElement, cpnType, cpnParentElement) {
     console.log('onAddNode(), cpnType = ', cpnType);
     console.log('onAddNode(), cpnParentElement = ', cpnParentElement);
     console.log('onAddNode(), cpnElement = ', cpnElement);

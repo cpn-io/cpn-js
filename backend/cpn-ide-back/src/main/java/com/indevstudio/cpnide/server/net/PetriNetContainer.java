@@ -1,5 +1,4 @@
 package com.indevstudio.cpnide.server.net;
-
 import com.indevstudio.cpnide.server.model.IssueDescription;
 import com.indevstudio.cpnide.server.model.PlaceMark;
 import javassist.NotFoundException;
@@ -21,10 +20,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,17 +35,26 @@ public class PetriNetContainer {
     private ConcurrentHashMap<String, PetriNet> usersNets = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, Checker> usersCheckers = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, HighLevelSimulator> usersSimulator = new ConcurrentHashMap<>();
-    HighLevelSimulator sim;// = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
+
+    public PetriNetContainer() throws Exception {
+    }
 
     @PostConstruct
     void InitI() throws Exception
     {
-        sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
     }
+
     public void CreateNewNet(String sessionId, String xml) throws Exception {
-        PetriNet net = DOMParser.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)), sessionId);
+
+       PetriNet net = DOMParser.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)), sessionId);
         usersNets.put(sessionId, net);
 
+        HighLevelSimulator sim = usersSimulator.get(sessionId);
+
+        if(sim != null)
+            sim.destroy();
+
+        sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
         Checker checker = new Checker(net, null, sim);
 
         usersCheckers.put(sessionId, checker);
@@ -66,6 +71,37 @@ public class PetriNetContainer {
         }
 
         return issList;
+    }
+
+
+    private String streamToStr(FileInputStream inputStream) throws UnsupportedEncodingException {
+        ByteArrayOutputStream buf = null;
+        try {
+            BufferedInputStream bis = new BufferedInputStream(inputStream);
+             buf = new ByteArrayOutputStream();
+            int result = bis.read();
+            while (result != -1) {
+                buf.write((byte) result);
+                result = bis.read();
+            }
+        } catch (Exception e){
+
+        }
+// StandardCharsets.UTF_8.name() > JDK 7
+        return buf.toString("UTF-8");
+    }
+
+
+    private void StrToFile(String str){
+        try {
+            File file = new File("/home/awahtel/avahtel/repo/cpn-ide/cpn-ide-front/src/assets/cpn/strtofile.cpn");
+            FileWriter fileWriter = new FileWriter(file);
+            fileWriter.write(str);
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public String exportNetToXml(String sessionId) throws Exception
@@ -88,7 +124,8 @@ public class PetriNetContainer {
 
     public void InitSimulator(String sessionId) throws Exception {
         PetriNet net = usersNets.get(sessionId);
-        if (net == null)
+        HighLevelSimulator sim = usersSimulator.get(sessionId);
+        if (net == null || sim == null)
             throw new NotFoundException("Session object not found");
 
       //  HighLevelSimulator sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
@@ -98,13 +135,13 @@ public class PetriNetContainer {
         usersCheckers.put(sessionId, checker);
         usersSimulator.put(sessionId, sim);
 
-        checker.checkInitializing("", "");
+       // checker.checkInitializing("", "");
 
         checker.generatePlaceInstances();
         checker.generateNonPlaceInstances();
-       // checker.generateSerializers();
+        checker.generateSerializers();
         checker.initialiseSimulationScheduler();
-        //checker.instantiateSMLInterface();
+     //   checker.instantiateSMLInterface();
     }
 
 

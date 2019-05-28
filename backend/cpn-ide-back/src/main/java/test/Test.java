@@ -121,16 +121,16 @@ public class Test {
 
     @org.junit.Test
    public void testConections() throws IOException, InterruptedException {
-//        String initCpn  = "http://localhost:8080/api/v2/cpn/init";
-//        String initSim = "http://localhost:8080/api/v2/cpn/sim/init";
-//        String sessionId = "232323";
-//        assertEquals(200, sendInitCpn(sessionId, initCpn ).getStatusCodeValue());
-//        TimeUnit.SECONDS.sleep(1);
-//        assertEquals(200, sendInitSimulator(sessionId, initSim ).getStatusCodeValue());
-//        while(true){
-//            assertEquals(200, sendInitCpn(sessionId, initCpn ).getStatusCodeValue());
-//            TimeUnit.SECONDS.sleep(1);
-//        }
+        String initCpn  = "http://localhost:8080/api/v2/cpn/init";
+        String initSim = "http://localhost:8080/api/v2/cpn/sim/init";
+        String sessionId = "232323";
+        assertEquals(200, sendInitCpn(sessionId, initCpn ).getStatusCodeValue());
+        TimeUnit.SECONDS.sleep(1);
+        assertEquals(200, sendInitSimulator(sessionId, initSim ).getStatusCodeValue());
+        while(true){
+            assertEquals(200, sendInitCpn(sessionId, initCpn ).getStatusCodeValue());
+            TimeUnit.SECONDS.sleep(1);
+        }
 
     }
 

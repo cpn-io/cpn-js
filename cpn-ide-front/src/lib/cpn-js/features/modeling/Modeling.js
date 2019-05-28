@@ -815,17 +815,33 @@ Modeling.prototype.getArcData = function (pageObject, cpnArcElement, type, place
     }
 
   }
+  else if (this._elementRegistry) {
 
-  else if (pageObject) {
-
-    for (const arc of pageObject.arc) {
-      if (cpnArcElement._id !== arc._id &&
-        ((cpnArcElement.placeend._idref === arc.transend._idref && cpnArcElement.transend._idref === arc.placeend._idref) ||
-          (cpnArcElement.placeend._idref === arc.placeend._idref && cpnArcElement.transend._idref === arc.transend._idref))) {
-        waypoints = optimiseEqualsArcsByWayoints(waypoints, source.width / 8);
+    for (const key of Object.keys(this._elementRegistry._elements)) {
+      const element = this._elementRegistry._elements[key].element;
+      if (element.type === CPN_CONNECTION && element.cpnElement) {
+        const arc = element.cpnElement;
+        if ( cpnArcElement._id !== arc._id &&
+          ((cpnArcElement.placeend._idref === arc.transend._idref && cpnArcElement.transend._idref === arc.placeend._idref) ||
+            (cpnArcElement.placeend._idref === arc.placeend._idref && cpnArcElement.transend._idref === arc.transend._idref))) {
+          waypoints = optimiseEqualsArcsByWayoints(waypoints, source.width / 8);
+        }
       }
     }
 
+  }
+
+
+  //разделение совпадающих стрелок
+  for (const key of Object.keys(this._elementRegistry._elements)) {
+    const element = this._elementRegistry._elements[key].element;
+    if(element.type  === CPN_CONNECTION) {
+      if(isEqualsWaypoints(element.waypoints, waypoints)){
+        for(let point of waypoints){
+          point.x = point.y + 15;
+        }
+      }
+    }
   }
 
   if (source && target) {
@@ -846,6 +862,14 @@ Modeling.prototype.getArcData = function (pageObject, cpnArcElement, type, place
   return undefined;
 }
 
+
+
+function isEqualsWaypoints(exArcWapoints, newArcWaypoints){
+  const lenghtExArc = exArcWapoints.length - 1;
+  const lenghtNewArc = newArcWaypoints.length - 1;
+  return exArcWapoints[0].x === newArcWaypoints[0].x && exArcWapoints[0].y === newArcWaypoints[0].y &&  exArcWapoints[lenghtExArc].x === newArcWaypoints[lenghtNewArc].x &&  exArcWapoints[lenghtExArc].y === newArcWaypoints[lenghtNewArc].y ||
+    exArcWapoints[0].x === newArcWaypoints[lenghtNewArc].x &&  exArcWapoints[0].y === newArcWaypoints[lenghtNewArc].y && exArcWapoints[lenghtExArc].x === newArcWaypoints[0].x &&  exArcWapoints[lenghtExArc].y === newArcWaypoints[0].y
+}
 // Helpers
 // ------------------------------------------------------------
 
@@ -1067,3 +1091,30 @@ Modeling.prototype.createArcInModel = function (placeCpnElement, transCpnElement
   return cpnArcElement;
 }
 
+Modeling.prototype.reconnectEnd = function(connection, newTarget, dockingOrPoints) {
+  console.log('Modeling.prototype.reconnectEnd ---')
+  var context = {
+    connection: connection,
+    newTarget: newTarget,
+    dockingOrPoints: dockingOrPoints
+  };
+  this.excuteReconectionCommand('connection.reconnectEnd', context)
+};
+
+
+Modeling.prototype.reconnectStart = function(connection, newSource, dockingOrPoints) {
+  var context = {
+    connection: connection,
+    newTarget: newSource,
+    dockingOrPoints: dockingOrPoints
+  };
+
+  this.excuteReconectionCommand('connection.reconnectStart', context);
+};
+
+
+Modeling.prototype.excuteReconectionCommand = function(command, context) {
+  if(context.connection.cpnElement && context.newTarget.type === (context.connection.cpnElement._orientation === 'TtoP' ?  CPN_PLACE : CPN_TRANSITION))
+    this._commandStack.execute('connection.reconnectEnd', context);
+  else this.updateElement(context.connection);
+}

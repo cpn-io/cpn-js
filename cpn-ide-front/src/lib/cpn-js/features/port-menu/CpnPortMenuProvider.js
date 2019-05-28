@@ -65,7 +65,8 @@ CpnPortMenuProvider.prototype.open = function (target, position) {
 
 CpnPortMenuProvider.prototype.close = function () {
   console.log('CpnPortMenuProvider.prototype.close');
-  this._popupMenu.close();
+  if( this._popupMenu._current && this._popupMenu._current.className  === 'cpnPortMenu' && this._popupMenu.isOpen())
+    this._popupMenu.close();
 };
 
 

@@ -30,7 +30,8 @@ CpnUpdater.$inject = [
   'selection',
   'popupMenuProvider',
   'contextPad',
-  'canvas'
+  'canvas',
+  'portMenuProvider'
 ];
 
 import {
@@ -55,7 +56,7 @@ import {
  * once changes on the diagram happen
  */
 export default function CpnUpdater(eventBus, modeling, elementRegistry,
-  connectionDocking, selection, popupMenuProvider, contextPad, canvas) {
+  connectionDocking, selection, popupMenuProvider, contextPad, canvas, portMenuProvider) {
 
   this.modeling = modeling;
 
@@ -143,6 +144,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     if (element === canvas.getRootElement()) {
       popupMenuProvider.close();
       contextPad.close();
+      portMenuProvider.close();
     }
 
     if (event.button === 2) {
@@ -150,6 +152,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
       event.preventDefault();
 
       popupMenuProvider.close();
+      portMenuProvider.close();
 
       // console.log('CpnUpdater(), domEvent, mousedown, popup menu, x,y = ', event.x, event.y);
 

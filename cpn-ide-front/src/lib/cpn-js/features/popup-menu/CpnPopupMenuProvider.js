@@ -53,7 +53,8 @@ CpnPopupMenuProvider.prototype.open = function (element, position) {
 };
 
 CpnPopupMenuProvider.prototype.close = function () {
-  this._popupMenu.close();
+  if( this._popupMenu._current && this._popupMenu._current.className  === 'cpnPopupMenu')
+    this._popupMenu.close();
 };
 
 

@@ -175,7 +175,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
    * Get list of names for pages wich is not current or not subpage
    */
   getSubstPages() {
-    console.log('getSubstPages()');
+   // console.log('getSubstPages()');
 
     const pageList = this.modelService.getAllPages();
 

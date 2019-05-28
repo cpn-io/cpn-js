@@ -259,7 +259,7 @@ export class ModelEditorComponent implements OnInit {
               });
             }
           }
-          this.portMenuProvider.open({ trans: event.trans, place: event.place, arc: event.arc, list: list }, event.position);
+          this.portMenuProvider.open({ trans: event.trans, place: event.place, arc: event.arc, list: list }, event.position, this.modeling);
         }
       }
     });

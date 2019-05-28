@@ -1966,8 +1966,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   onReload() {
     // this.loadProject(this.currentProject);
-    if (this.currentProject)
+    if (this.currentProject) {
       this.eventService.send(Message.PROJECT_LOAD, this.currentProject);
+    }
   }
 
   /**

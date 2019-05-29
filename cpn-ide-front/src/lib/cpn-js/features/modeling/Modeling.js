@@ -94,6 +94,9 @@ Modeling.prototype.getHandlers = function () {
  *    { error: ['ID1412328424'], ready: ['ID1412328496'] }
  */
 Modeling.prototype.setCpnStatus = function (event) {
+
+  const startTime = new Date().getTime();
+
   for (const key of Object.keys(this._elementRegistry._elements)) {
     const element = this._elementRegistry._elements[key].element;
 
@@ -112,9 +115,13 @@ Modeling.prototype.setCpnStatus = function (event) {
           }
         }
       }
+
       this.updateElement(element);
     }
   }
+
+  const t = new Date().getTime() - startTime;
+  console.log('END setCpnStatus(), time = ', t);
 }
 
 
@@ -270,8 +277,8 @@ Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus
     let changingCpnEntry = changingElement.cpnElement.posattr ? changingElement.cpnElement.posattr : changingElement.cpnElement;
 
     if (changingCpnEntry && changingCpnEntry._x && changingCpnEntry._y) {
-      let x = Math.round(changingCpnEntry._x);
-      let y = Math.round(changingCpnEntry._y) * -1;
+      let x = 1 * (changingCpnEntry._x);
+      let y = -1 * (changingCpnEntry._y);
 
       // if (is(changingElement, CPN_LABEL)) {
       //   var bounds = { x: x, y: y, width: 200, height: 20 };
@@ -316,8 +323,8 @@ Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus
 
     if (changingCpnEntry && changingCpnEntry._w && changingCpnEntry._h) {
 
-      let w = Math.round(changingCpnEntry._w);
-      let h = Math.round(changingCpnEntry._h);
+      let w = 1 * (changingCpnEntry._w);
+      let h = 1 * (changingCpnEntry._h);
       delta.dx = w - changingElement.width;
       delta.dy = h - changingElement.height;
 
@@ -555,14 +562,13 @@ Modeling.prototype.getDefaultValue = function (key) {
 }
 
 Modeling.prototype.getPlaceAttrs = function (cpnPlaceElement, type) {
-  var x = Math.round(cpnPlaceElement.posattr._x);
-  var y = Math.round(cpnPlaceElement.posattr._y) * -1;
-  var w = Math.round(cpnPlaceElement.ellipse._w);
-  var h = Math.round(cpnPlaceElement.ellipse._h);
+  var x = 1 * (cpnPlaceElement.posattr._x);
+  var y = -1 * (cpnPlaceElement.posattr._y);
+  var w = 1 * (cpnPlaceElement.ellipse._w);
+  var h = 1 * (cpnPlaceElement.ellipse._h);
   x -= w / 2;
   y -= h / 2;
-  // cpnPlaceElement.posattr._x = x;
-  // cpnPlaceElement.posattr._y = -1 * y;
+
   var attrs = {
     type: type,
     id: cpnPlaceElement._id,
@@ -578,8 +584,8 @@ Modeling.prototype.getPlaceAttrs = function (cpnPlaceElement, type) {
 }
 
 Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, labelType) {
-  var x = Math.round(cpnLabelElement.posattr._x);
-  var y = Math.round(cpnLabelElement.posattr._y) * -1;
+  var x = 1 * (cpnLabelElement.posattr._x);
+  var y = -1 * (cpnLabelElement.posattr._y);
 
   var text, defaultValue;
 
@@ -640,8 +646,8 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
 }
 
 Modeling.prototype.getTokenLabelAttrs = function (labelTarget, cpnTokenLabelElement, labelType) {
-  var x = Math.round(cpnTokenLabelElement._x);
-  var y = Math.round(cpnTokenLabelElement._y) * -1;
+  var x = 1 * (cpnTokenLabelElement._x);
+  var y = -1 * (cpnTokenLabelElement._y);
 
   // var text = '8';
   var text = '';
@@ -656,8 +662,8 @@ Modeling.prototype.getTokenLabelAttrs = function (labelTarget, cpnTokenLabelElem
     y -= bounds.height / 2;
   }
 
-  x += Math.round(labelTarget.x + labelTarget.width);
-  y += Math.round(labelTarget.y + labelTarget.height / 2);
+  x += 1 * (labelTarget.x + labelTarget.width);
+  y += 1 * (labelTarget.y + labelTarget.height / 2);
 
   var attrs = {
     type: CPN_TOKEN_LABEL,
@@ -680,8 +686,8 @@ Modeling.prototype.getTokenLabelAttrs = function (labelTarget, cpnTokenLabelElem
 }
 
 Modeling.prototype.getMarkingLabelAttrs = function (labelTarget, cpnMarkingLabelElement, labelType) {
-  var x = Math.round(cpnMarkingLabelElement._x);
-  var y = Math.round(cpnMarkingLabelElement._y) * -1;
+  var x = 1 * (cpnMarkingLabelElement._x);
+  var y = -1 * (cpnMarkingLabelElement._y);
 
   // var text = '2`0@0,0\n2`0@0,0\n2`0@0,0\n2`0@0,0';
   var text = '';
@@ -691,8 +697,8 @@ Modeling.prototype.getMarkingLabelAttrs = function (labelTarget, cpnMarkingLabel
 
   y -= bounds.height / 2;
 
-  x += Math.round(labelTarget.x + labelTarget.width * 3);
-  y += Math.round(labelTarget.y + labelTarget.height / 2);
+  x += 1 * (labelTarget.x + labelTarget.width * 3);
+  y += 1 * (labelTarget.y + labelTarget.height / 2);
 
   var hidden = text === '' || !(cpnMarkingLabelElement._hidden === 'false');
 
@@ -718,15 +724,12 @@ Modeling.prototype.getMarkingLabelAttrs = function (labelTarget, cpnMarkingLabel
 }
 
 Modeling.prototype.getTransAttrs = function (cpnTransElement, type) {
-  var x = Math.round(cpnTransElement.posattr._x);
-  var y = Math.round(cpnTransElement.posattr._y) * -1;
-  var w = Math.round(cpnTransElement.box._w);
-  var h = Math.round(cpnTransElement.box._h);
+  var x = 1 * (cpnTransElement.posattr._x);
+  var y = -1 * (cpnTransElement.posattr._y);
+  var w = 1 * (cpnTransElement.box._w);
+  var h = 1 * (cpnTransElement.box._h);
   x -= w / 2;
   y -= h / 2;
-
-  // cpnTransElement.posattr._x = x;
-  // cpnTransElement.posattr._y = -1 * y;
 
   var attrs = {
     type: type,
@@ -768,8 +771,8 @@ Modeling.prototype.getArcData = function (pageObject, cpnArcElement, type, place
     if (cpnArcElement.bendpoint.posattr) {
       // @ts-ignore
       waypoints.push({
-        x: 1 * cpnArcElement.bendpoint.posattr._x,
-        y: -1 * cpnArcElement.bendpoint.posattr._y,
+        x: 1 * (cpnArcElement.bendpoint.posattr._x),
+        y: -1 * (cpnArcElement.bendpoint.posattr._y),
         id: cpnArcElement.bendpoint._id
       });
     }
@@ -780,8 +783,8 @@ Modeling.prototype.getArcData = function (pageObject, cpnArcElement, type, place
       }
       arr.forEach(p => {
         waypoints.push({
-          x: 1 * p.posattr._x,
-          y: -1 * p.posattr._y,
+          x: 1 * (p.posattr._x),
+          y: -1 * (p.posattr._y),
           id: p._id
         });
       });
@@ -821,7 +824,7 @@ Modeling.prototype.getArcData = function (pageObject, cpnArcElement, type, place
       const element = this._elementRegistry._elements[key].element;
       if (element.type === CPN_CONNECTION && element.cpnElement) {
         const arc = element.cpnElement;
-        if ( cpnArcElement._id !== arc._id &&
+        if (cpnArcElement._id !== arc._id &&
           ((cpnArcElement.placeend._idref === arc.transend._idref && cpnArcElement.transend._idref === arc.placeend._idref) ||
             (cpnArcElement.placeend._idref === arc.placeend._idref && cpnArcElement.transend._idref === arc.transend._idref))) {
           waypoints = optimiseEqualsArcsByWayoints(waypoints, source.width / 8);
@@ -835,9 +838,9 @@ Modeling.prototype.getArcData = function (pageObject, cpnArcElement, type, place
   //разделение совпадающих стрелок
   for (const key of Object.keys(this._elementRegistry._elements)) {
     const element = this._elementRegistry._elements[key].element;
-    if(element.type  === CPN_CONNECTION) {
-      if(isEqualsWaypoints(element.waypoints, waypoints)){
-        for(let point of waypoints){
+    if (element.type === CPN_CONNECTION) {
+      if (isEqualsWaypoints(element.waypoints, waypoints)) {
+        for (let point of waypoints) {
           point.x = point.y + 15;
         }
       }
@@ -864,11 +867,11 @@ Modeling.prototype.getArcData = function (pageObject, cpnArcElement, type, place
 
 
 
-function isEqualsWaypoints(exArcWapoints, newArcWaypoints){
+function isEqualsWaypoints(exArcWapoints, newArcWaypoints) {
   const lenghtExArc = exArcWapoints.length - 1;
   const lenghtNewArc = newArcWaypoints.length - 1;
-  return exArcWapoints[0].x === newArcWaypoints[0].x && exArcWapoints[0].y === newArcWaypoints[0].y &&  exArcWapoints[lenghtExArc].x === newArcWaypoints[lenghtNewArc].x &&  exArcWapoints[lenghtExArc].y === newArcWaypoints[lenghtNewArc].y ||
-    exArcWapoints[0].x === newArcWaypoints[lenghtNewArc].x &&  exArcWapoints[0].y === newArcWaypoints[lenghtNewArc].y && exArcWapoints[lenghtExArc].x === newArcWaypoints[0].x &&  exArcWapoints[lenghtExArc].y === newArcWaypoints[0].y
+  return exArcWapoints[0].x === newArcWaypoints[0].x && exArcWapoints[0].y === newArcWaypoints[0].y && exArcWapoints[lenghtExArc].x === newArcWaypoints[lenghtNewArc].x && exArcWapoints[lenghtExArc].y === newArcWaypoints[lenghtNewArc].y ||
+    exArcWapoints[0].x === newArcWaypoints[lenghtNewArc].x && exArcWapoints[0].y === newArcWaypoints[lenghtNewArc].y && exArcWapoints[lenghtExArc].x === newArcWaypoints[0].x && exArcWapoints[lenghtExArc].y === newArcWaypoints[0].y
 }
 // Helpers
 // ------------------------------------------------------------
@@ -1091,7 +1094,7 @@ Modeling.prototype.createArcInModel = function (placeCpnElement, transCpnElement
   return cpnArcElement;
 }
 
-Modeling.prototype.reconnectEnd = function(connection, newTarget, dockingOrPoints) {
+Modeling.prototype.reconnectEnd = function (connection, newTarget, dockingOrPoints) {
   console.log('Modeling.prototype.reconnectEnd ---')
   var context = {
     connection: connection,
@@ -1102,7 +1105,7 @@ Modeling.prototype.reconnectEnd = function(connection, newTarget, dockingOrPoint
 };
 
 
-Modeling.prototype.reconnectStart = function(connection, newSource, dockingOrPoints) {
+Modeling.prototype.reconnectStart = function (connection, newSource, dockingOrPoints) {
   var context = {
     connection: connection,
     newTarget: newSource,
@@ -1113,8 +1116,8 @@ Modeling.prototype.reconnectStart = function(connection, newSource, dockingOrPoi
 };
 
 
-Modeling.prototype.excuteReconectionCommand = function(command, context) {
-  if(context.connection.cpnElement && context.newTarget.type === (context.connection.cpnElement._orientation === 'TtoP' ?  CPN_PLACE : CPN_TRANSITION))
+Modeling.prototype.excuteReconectionCommand = function (command, context) {
+  if (context.connection.cpnElement && context.newTarget.type === (context.connection.cpnElement._orientation === 'TtoP' ? CPN_PLACE : CPN_TRANSITION))
     this._commandStack.execute('connection.reconnectEnd', context);
   else this.updateElement(context.connection);
 }

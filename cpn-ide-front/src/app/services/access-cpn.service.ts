@@ -44,6 +44,10 @@ export class AccessCpnService {
    * Access/CPN API
    */
   initNet(cpnJson) {
+    if (this.initNetProcessing) {
+      return;
+    }
+
     if (!this.sessionId) {
       this.sessionId = 'CPN-IDE-SESSION-' + new Date().getTime();
     }
@@ -90,6 +94,10 @@ export class AccessCpnService {
    * Initialize access/cpn simulator
    */
   initSim() {
+    if (this.initNetProcessing) {
+      return;
+    }
+
     this.simInitialized = false;
 
     if (!this.sessionId) {

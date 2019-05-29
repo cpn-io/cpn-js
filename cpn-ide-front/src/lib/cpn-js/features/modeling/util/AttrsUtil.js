@@ -1,12 +1,12 @@
 export function getDefPosattr(position = undefined) {
   return position
     ? {
-      _x: position.x,
-      _y: -1 * position.y
+      _x: (position.x).toString(),
+      _y: (-1 * position.y).toString()
     }
     : {
-      _x: 0,
-      _y: 0
+      _x: (0).toString(),
+      _y: (0).toString()
     };
 }
 
@@ -41,5 +41,5 @@ export function getDefText() {
 }
 
 export function getNextId() {
-  return 'ID' + new Date().getTime();
+  return "ID" + new Date().getTime();
 }

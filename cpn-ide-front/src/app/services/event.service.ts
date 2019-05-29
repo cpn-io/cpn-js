@@ -29,7 +29,9 @@ export class EventService {
   public send(id, data = undefined) {
     for (const handler of this.handlers) {
       if (handler && handler.id && handler.id === id) {
-        handler.func(data);
+        setTimeout(() => {
+          handler.func(data);
+        }, 1);
       }
     }
   }

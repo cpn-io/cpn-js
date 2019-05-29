@@ -92,7 +92,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     updateCpnElement(event.element);
   });
 
-  eventBus.on('connection.changed', function(event) {
+  eventBus.on('connection.changed', function (event) {
     // console.log('CpnUpdater(), connection.changed, event = ', event);
 
     updateCpnElement(event.element);
@@ -265,18 +265,18 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
       if (shape.x && shape.y && shape.width && shape.height) {
         // if element is any shape object
         if (cpnElement.posattr) {
-          cpnElement.posattr._x = shape.x + shape.width / 2;
-          cpnElement.posattr._y = (shape.y + shape.height / 2) * -1;
+          cpnElement.posattr._x = (shape.x + shape.width / 2).toString();
+          cpnElement.posattr._y = ((shape.y + shape.height / 2) * -1).toString();
         }
         // if element is Place object
         if (cpnElement.ellipse) {
-          cpnElement.ellipse._w = shape.width;
-          cpnElement.ellipse._h = shape.height;
+          cpnElement.ellipse._w = (shape.width).toString();
+          cpnElement.ellipse._h = (shape.height).toString();
         }
         // if element is Transition object
         if (cpnElement.box) {
-          cpnElement.box._w = shape.width;
-          cpnElement.box._h = shape.height;
+          cpnElement.box._w = (shape.width).toString();
+          cpnElement.box._h = (shape.height).toString();
         }
       }
 
@@ -284,22 +284,28 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
       if (shape.waypoints instanceof Array && shape.waypoints.length > 2) {
         console.log('CpnUpdater().updateCpnElement(), connection, element = ', element);
 
-        let bendpoints = [];
-        // for (let i = 1; i < shape.waypoints.length - 1; i++) {
-        for (let i = 1; i < 2; i++) {
+        console.log('CpnUpdater().updateCpnElement(), connection, shape.waypoints = ', shape.waypoints);
+        console.log('CpnUpdater().updateCpnElement(), connection, cpnElement.bendpoint = ', cpnElement.bendpoint);
+
+        let bendpoints = cpnElement.bendpoint || [];
+        for (let i = 1; i < shape.waypoints.length - 1; i++) {
           const wp = shape.waypoints[i];
-          const position = {
-            x: wp.x,
-            y: wp.y,
-          };
-          bendpoints.unshift({
-            posattr: getDefPosattr(position),
-            fillattr: getDefFillattr(),
-            lineattr: getDefLineattr(),
-            textattr: getDefTextattr(),
-            _id: getNextId(),
-            _serial: 1
-          });
+
+          if (!updateBendpoints(cpnElement, wp)) {
+            // create new bendpoint item for cpnElement
+            const position = {
+              x: (wp.x).toString(),
+              y: (wp.y).toString(),
+            };
+            // bendpoints.push({
+            //   posattr: getDefPosattr(position),
+            //   fillattr: getDefFillattr(),
+            //   lineattr: getDefLineattr(),
+            //   textattr: getDefTextattr(),
+            //   _id: getNextId(),
+            //   _serial: (1).toString()
+            // });
+          }
         }
         console.log('CpnUpdater().updateCpnElement(), connection, bendpoint = ', bendpoints);
 
@@ -313,8 +319,25 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
     }
 
-
     updateLabels(element);
+  }
+
+  function updateBendpoints(cpnElement, shapeWaypoint) {
+    let updated = false;
+    if (cpnElement && cpnElement.bendpoints instanceof Array) {
+      for (const bp of cpnElement.bendpoints) {
+        if (bp._id === shapeWaypoint.id) {
+          const position = {
+            x: (shapeWaypoint.x).toString(),
+            y: (shapeWaypoint.y).toString(),
+          };
+          bp.posattr = getDefPosattr(position);
+          updated = true;
+          break;
+        }
+      }
+    }
+    return updated;
   }
 }
 

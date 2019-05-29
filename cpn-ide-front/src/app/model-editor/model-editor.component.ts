@@ -125,47 +125,24 @@ export class ModelEditorComponent implements OnInit {
     // });
 
     this.eventService.on(Message.SERVER_INIT_NET_DONE, (event) => {
+
+
       // set status 'clear' for all shapes on diagram
       this.modeling.setCpnStatus({ clear: '*' });
 
       console.log('ModelEditor, SERVER_INIT_NET_DONE, event = ', event);
 
-      // TODO: temporary set error and ready status for test shapes. Should be changed to real id
-      // this.modeling.setCpnStatus({ error: ['ID1412328424','ID1412328605'], ready: ['ID1412328496'] });
-
-      // this.accessCpnService.getMarking('ID0000001').subscribe(
-      //   (data: any) => {
-      //     console.log('getMarking(), data = ', data);
-
-      //     eventBus.fire('model.update.tokens', { data: data });
-      //   });
-
-      // this.accessCpnService.getEnableTransitions('ID0000001').subscribe(
-      //   (data: any) => {
-      //     console.log('getEnableTransitions(), data = ', data);
-
-      //     this.modeling.setCpnStatus({ ready: data });
-      //   });
-
       eventBus.fire('model.update.tokens', { data: this.tokenData });
 
       this.modeling.setCpnStatus({ ready: this.readyData });
 
-      // set errors info
-      // {"data":
-      //    {"issues":
-      //      {"ID1412328454":[{"id":"ID1412328454","type":"page","description":"Error in color-set!"}],
-      //       "ID1412328496":[{"id":"ID1412328496","type":"page","description":"Transition not checked because a neighbour place has an error."}],
-      //       "ID6":[{"id":"ID6","type":"page","description":" ID6"}]
-      //      },
-      //      "success":false}}
-
       console.log('SET ERRORS, event = ', event);
 
       if (!event.data.success) {
-        let errorIds = [];
-        for (let id of Object.keys(event.data.issues))
+        const errorIds = [];
+        for (let id of Object.keys(event.data.issues)) {
           errorIds.push(id);
+        }
 
         console.log('SET ERRORS, errorIds = ', errorIds);
 

@@ -1,4 +1,5 @@
 package com.indevstudio.cpnide.server.net;
+
 import com.indevstudio.cpnide.server.model.IssueDescription;
 import com.indevstudio.cpnide.server.model.PlaceMark;
 import javassist.NotFoundException;
@@ -39,18 +40,16 @@ public class PetriNetContainer {
 
     public void CreateNewNet(String sessionId, String xml) throws Exception {
 
-       PetriNet net = DOMParser.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)), sessionId);
+        PetriNet net = DOMParser.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)), sessionId);
         usersNets.put(sessionId, net);
 
-
         HighLevelSimulator sim = usersSimulator.get(sessionId);
-        if(sim == null)
+        if (sim == null)
             sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
-        Checker checker = new Checker(net, null, sim);
 
+        Checker checker = new Checker(net, null, sim);
         usersCheckers.put(sessionId, checker);
         usersSimulator.put(sessionId, sim);
-
         checker.checkInitializing("", "");
     }
 
@@ -65,17 +64,16 @@ public class PetriNetContainer {
     }
 
 
-    public String exportNetToXml(String sessionId) throws Exception
-    {
+    public String exportNetToXml(String sessionId) throws Exception {
         PetriNet net = usersNets.get(sessionId);
         if (net == null)
             throw new NotFoundException("Session object not found");
 
-        Document xmlDoc  = DOMGenerator.export(net);
+        Document xmlDoc = DOMGenerator.export(net);
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer = tf.newTransformer();
 
-        try(StringWriter writer = new StringWriter()) {
+        try (StringWriter writer = new StringWriter()) {
             StreamResult result = new StreamResult(writer);
             transformer.transform(new DOMSource(xmlDoc), result);
             return writer.toString();
@@ -90,7 +88,7 @@ public class PetriNetContainer {
 
 
         HighLevelSimulator sim = usersSimulator.get(sessionId);
-        if(sim != null)
+        if (sim != null)
             sim.destroy();
         sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
         usersSimulator.put(sessionId, sim);
@@ -101,13 +99,13 @@ public class PetriNetContainer {
         usersCheckers.put(sessionId, checker);
         usersSimulator.put(sessionId, sim);
 
-       // checker.checkInitializing("", "");
+        // checker.checkInitializing("", "");
 
         checker.generatePlaceInstances();
         checker.generateNonPlaceInstances();
         checker.generateSerializers();
         checker.initialiseSimulationScheduler();
-     //   checker.instantiateSMLInterface();
+        //   checker.instantiateSMLInterface();
     }
 
 
@@ -134,9 +132,9 @@ public class PetriNetContainer {
 
         List<PlaceMark> result = new ArrayList<>();
         for (Instance<PlaceNode> p : s.getAllPlaceInstances()) {
-                int tokens = s.getTokens(p);
-                String marking = s.getMarking(p);
-                result.add(PlaceMark.builder().id(p.getNode().getId()).marking(marking).tokens(tokens).build());
+            int tokens = s.getTokens(p);
+            String marking = s.getMarking(p);
+            result.add(PlaceMark.builder().id(p.getNode().getId()).marking(marking).tokens(tokens).build());
         }
         return result;
     }
@@ -146,7 +144,7 @@ public class PetriNetContainer {
         Checker checker = usersCheckers.get(sessionId);
         //HighLevelSimulator ss = usersSimulator.get(sessionId);
         PetriNet net = usersNets.get(sessionId);
-        if (net == null || checker == null )
+        if (net == null || checker == null)
             throw new NotFoundException("Session object not found");
 
 
@@ -238,7 +236,7 @@ public class PetriNetContainer {
 
     public Map<String, List<IssueDescription>> CheckMonitorByID(String sessionId, String id) throws Exception {
         Checker checker = usersCheckers.get(sessionId);
-       // HighLevelSimulator ss = usersSimulator.get(sessionId);
+        // HighLevelSimulator ss = usersSimulator.get(sessionId);
         PetriNet net = usersNets.get(sessionId);
         if (net == null || checker == null)
             throw new NotFoundException("Session object not found");

@@ -122,7 +122,6 @@ export class ModelEditorComponent implements OnInit {
 
     // eventBus.on('element.changed', (event) => {
     //   console.log('ModelEditor, element.changed, event = ', event);
-    //   this.validationService.validate();
     // });
 
     this.eventService.on(Message.SERVER_INIT_NET_DONE, (event) => {
@@ -325,8 +324,6 @@ export class ModelEditorComponent implements OnInit {
     this.modeling.setCpnStatus({ process: '*' });
 
     this.eventService.send(Message.MODEL_UPDATE, { pageObject: page });
-
-    this.validationService.validate();
   }
 
   changeSubPageName(subpage) {

@@ -1,25 +1,14 @@
-import {
-  Component,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
-import { ProjectExplorerComponent } from '../project-explorer/project-explorer.component';
-import { EditorPanelComponent } from '../editor-panel/editor-panel.component';
-import { ProjectDetailsComponent } from '../project-details/project-details.component';
-import { ProjectConsoleComponent } from '../project-console/project-console.component';
-import { PropertiesPanelComponent } from '../properties-panel/properties-panel.component';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Message } from '../common/message';
 import { EventService } from '../services/event.service';
-
 
 @Component({
   selector: 'app-main-frame',
   // changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './main-frame.component.html',
-  styleUrls: ['./main-frame.component.scss']
+  styleUrls: ['./main-frame.component.scss'],
 })
 export class MainFrameComponent implements OnInit, OnDestroy {
-
   localStorageName = 'angular-split-ws';
 
   explorerWidth = 25;

@@ -44,8 +44,4 @@ export class MainToolbarComponent implements OnInit {
 
   openProject() {
   }
-
-  validate() {
-    this.validationService.validate();
-  }
 }

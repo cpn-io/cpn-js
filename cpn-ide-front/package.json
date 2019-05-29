@@ -92,6 +92,7 @@
     "popper.js": "^1.14.3",
     "rxjs": "^6.3.3",
     "rxjs-compat": "^6.3.3",
+    "rxjs-observe": "^2.1.4",
     "ts-helpers": "^1.1.2",
     "xml-js": "^1.6.8",
     "xmldom": "^0.1.27",

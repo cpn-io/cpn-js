@@ -12,6 +12,7 @@ import {
 
 function getGfx(target) {
   var node = domClosest(target, 'svg, .djs-element', true);
+  // var node = domClosest(target, 'rect, .djs-hit', true);
   return node;
 }
 
@@ -131,7 +132,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   // });
 
   domEvent.bind(document, 'mousedown', function (event) {
-    // console.log('CpnUpdater(), domEvent, mousedown, event = ', event);
+    console.log('CpnUpdater(), domEvent, mousedown, event = ', event);
 
     const position = toPoint(event);
     const target = document.elementFromPoint(position.x, position.y);
@@ -140,6 +141,9 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     if (gfx) {
       element = elementRegistry.get(gfx);
     }
+
+    console.log('CpnUpdater(), domEvent, mousedown, target = ', target);
+    console.log('CpnUpdater(), domEvent, mousedown, gfx = ', gfx);
 
     if (element === canvas.getRootElement()) {
       popupMenuProvider.close();
@@ -154,11 +158,10 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
       popupMenuProvider.close();
       portMenuProvider.close();
 
-      // console.log('CpnUpdater(), domEvent, mousedown, popup menu, x,y = ', event.x, event.y);
-
+      console.log('CpnUpdater(), domEvent, mousedown, popup menu, x,y = ', event.x, event.y);
 
       if (element) {
-        // console.log('CpnUpdater(), domEvent, mousedown, popup menu, element = ', element);
+        console.log('CpnUpdater(), domEvent, mousedown, popup menu, element = ', element);
 
         if (isAny(element, [CPN_PLACE, CPN_TRANSITION, CPN_CONNECTION])) {
           popupMenuProvider.close();
@@ -179,7 +182,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
       return;
 
     tokenElement.label.hidden = !tokenElement.label.hidden;
-    modeling.updateElement(tokenElement.label);
+    modeling.updateElement(tokenElement.label, true);
 
     if (!tokenElement.label.hidden) {
       modeling.moveShape(tokenElement.label, { x: 0, y: 0 }, tokenElement.label.parent, undefined, undefined);
@@ -297,6 +300,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
               x: (wp.x).toString(),
               y: (wp.y).toString(),
             };
+
             // bendpoints.push({
             //   posattr: getDefPosattr(position),
             //   fillattr: getDefFillattr(),

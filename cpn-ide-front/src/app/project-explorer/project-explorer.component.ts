@@ -10,6 +10,7 @@ import { OptionsNamePipePipe } from '../pipes/options-name.pipe';
 import { Constants } from '../common/constants';
 import { AccessCpnService } from '../services/access-cpn.service';
 import { SettingsService } from '../services/settings.service';
+import { ValidationService } from '../services/validation.service';
 
 // import {TreeComponent} from 'angular-tree-component';
 
@@ -182,7 +183,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     private settings: SettingsService,
     private modelService: ModelService,
     private _colorDeclarationsPipe: ColorDeclarationsPipe,
-    private accessCpnService: AccessCpnService) {
+    private accessCpnService: AccessCpnService,
+    private validationService: ValidationService) {
 
     this.colorDeclarationsPipe = this._colorDeclarationsPipe;
   }
@@ -1968,6 +1970,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     // this.loadProject(this.currentProject);
     if (this.currentProject) {
       this.eventService.send(Message.PROJECT_LOAD, this.currentProject);
+      this.validationService.validate();
     }
   }
 

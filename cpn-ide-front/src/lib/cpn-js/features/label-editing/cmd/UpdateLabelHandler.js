@@ -153,8 +153,9 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
       element.hidden = true;
     }
 
-    if (hidden !== element.hidden)
-      modeling.updateElement(element);
+    if (hidden !== element.hidden) {
+      modeling.updateElement(element, true);
+    }
   }
 
   // API

@@ -177,7 +177,7 @@ TextBox.prototype.create = function (bounds, style, value, options) {
   content.innerText = value;
 
   domEvent.bind(content, 'keydown', this.keyHandler);
-  domEvent.bind(content, 'mousedown', stopPropagation);
+  // domEvent.bind(content, 'mousedown', stopPropagation);
   domEvent.bind(content, 'paste', self.handlePaste);
 
   console.log('TextBox.prototype.create(), options = ', options);

@@ -52,6 +52,13 @@ export class ValidationService {
 
       for (const key of Object.keys(obj1)) {
 
+        if (['aux', 'token', 'marking', 'posattr', 'box', 'ellipse', 'bendpoint'].includes(key.toLowerCase())) {
+          continue;
+        }
+        // if (!['text', 'ml'].includes(key)) {
+        //   continue;
+        // }
+
         if (obj1.hasOwnProperty(key) && obj2.hasOwnProperty(key)) {
           if (this.detectChanges(obj1[key], obj2[key])) {
             return true;

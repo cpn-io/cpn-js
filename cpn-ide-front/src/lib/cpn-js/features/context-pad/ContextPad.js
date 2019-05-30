@@ -64,27 +64,27 @@ ContextPad.$inject = [
 /**
  * Registers events needed for interaction with other components
  */
-ContextPad.prototype._init = function() {
+ContextPad.prototype._init = function () {
 
   var eventBus = this._eventBus;
 
   var self = this;
 
-  eventBus.on('selection.changed', function(e) {
+  eventBus.on('selection.changed', function (e) {
 
     var selection = e.newSelection;
 
     // if (selection.length === 1) {
     //   self.open(selection[0]);
     // } else {
-      // self.close();
+    // self.close();
     // }
   });
 
-  eventBus.on('elements.delete', function(event) {
+  eventBus.on('elements.delete', function (event) {
     var elements = event.elements;
 
-    forEach(elements, function(e) {
+    forEach(elements, function (e) {
       if (self.isOpen(e)) {
         self.close();
       }
@@ -100,6 +100,17 @@ ContextPad.prototype._init = function() {
   //     self.open(element, true);
   //   }
   // });
+
+  eventBus.on('shape.contextpad.activate', 500, function (event) {
+    console.log('shape.contextpad.activate, event = ', event);
+
+    var element = event.shape;
+
+    if (element) {
+      self.open(element);
+    }
+  });
+
 };
 
 
@@ -108,7 +119,7 @@ ContextPad.prototype._init = function() {
  *
  * @param  {ContextPadProvider} provider
  */
-ContextPad.prototype.registerProvider = function(provider) {
+ContextPad.prototype.registerProvider = function (provider) {
   this._providers.push(provider);
 };
 
@@ -120,15 +131,15 @@ ContextPad.prototype.registerProvider = function(provider) {
  *
  * @return {Array<ContextPadEntryDescriptor>} list of entries
  */
-ContextPad.prototype.getEntries = function(element) {
+ContextPad.prototype.getEntries = function (element) {
   var entries = {};
 
   // loop through all providers and their entries.
   // group entries by id so that overriding an entry is possible
-  forEach(this._providers, function(provider) {
+  forEach(this._providers, function (provider) {
     var e = provider.getContextPadEntries(element);
 
-    forEach(e, function(entry, id) {
+    forEach(e, function (entry, id) {
       entries[id] = entry;
     });
   });
@@ -144,14 +155,14 @@ ContextPad.prototype.getEntries = function(element) {
  * @param  {Event} event
  * @param  {Boolean} [autoActivate=false]
  */
-ContextPad.prototype.trigger = function(action, event, autoActivate) {
+ContextPad.prototype.trigger = function (action, event, autoActivate) {
 
   var element = this._current.element,
-      entries = this._current.entries,
-      entry,
-      handler,
-      originalEvent,
-      button = event.delegateTarget || event.target;
+    entries = this._current.entries,
+    entry,
+    handler,
+    originalEvent,
+    button = event.delegateTarget || event.target;
 
   if (!button) {
     return event.preventDefault();
@@ -184,7 +195,7 @@ ContextPad.prototype.trigger = function(action, event, autoActivate) {
  * @param {djs.model.Base} element
  * @param {Boolean} force if true, force reopening the context pad
  */
-ContextPad.prototype.open = function(element, force) {
+ContextPad.prototype.open = function (element, force) {
   if (!force && this.isOpen(element)) {
     return;
   }
@@ -194,16 +205,16 @@ ContextPad.prototype.open = function(element, force) {
 };
 
 
-ContextPad.prototype._updateAndOpen = function(element) {
+ContextPad.prototype._updateAndOpen = function (element) {
 
   var entries = this.getEntries(element),
-      pad = this.getPad(element),
-      html = pad.html;
+    pad = this.getPad(element),
+    html = pad.html;
 
-  forEach(entries, function(entry, id) {
+  forEach(entries, function (entry, id) {
     var grouping = entry.group || 'default',
-        control = domify(entry.html || '<div class="entry" draggable="true"></div>'),
-        container;
+      control = domify(entry.html || '<div class="entry" draggable="true"></div>'),
+      container;
 
     domAttr(control, 'data-action', id);
 
@@ -240,7 +251,7 @@ ContextPad.prototype._updateAndOpen = function(element) {
 };
 
 
-ContextPad.prototype.getPad = function(element) {
+ContextPad.prototype.getPad = function (element) {
   if (this.isOpen()) {
     return this._current.pad;
   }
@@ -255,16 +266,16 @@ ContextPad.prototype.getPad = function(element) {
     html: html
   }, this._overlaysConfig);
 
-  domDelegate.bind(html, entrySelector, 'click', function(event) {
+  domDelegate.bind(html, entrySelector, 'click', function (event) {
     self.trigger('click', event);
   });
 
-  domDelegate.bind(html, entrySelector, 'dragstart', function(event) {
+  domDelegate.bind(html, entrySelector, 'dragstart', function (event) {
     self.trigger('dragstart', event);
   });
 
   // stop propagation of mouse events
-  domEvent.bind(html, 'mousedown', function(event) {
+  domEvent.bind(html, 'mousedown', function (event) {
     event.stopPropagation();
   });
 
@@ -281,7 +292,7 @@ ContextPad.prototype.getPad = function(element) {
 /**
  * Close the context pad
  */
-ContextPad.prototype.close = function() {
+ContextPad.prototype.close = function () {
   if (!this.isOpen()) {
     return;
   }
@@ -302,7 +313,7 @@ ContextPad.prototype.close = function() {
  * @param {Element} element
  * @return {Boolean}
  */
-ContextPad.prototype.isOpen = function(element) {
+ContextPad.prototype.isOpen = function (element) {
   return !!this._current && (!element ? true : this._current.element === element);
 };
 
@@ -316,7 +327,7 @@ function addClasses(element, classNames) {
   var classes = domClasses(element);
 
   var actualClassNames = isArray(classNames) ? classNames : classNames.split(/\s+/g);
-  actualClassNames.forEach(function(cls) {
+  actualClassNames.forEach(function (cls) {
     classes.add(cls);
   });
 }

@@ -7,7 +7,8 @@ import { is, CPN_PLACE, CPN_TRANSITION, CPN_TEXT_ANNOTATION } from '../../util/M
 /**
  * This module is an element agnostic replace menu provider for the popup menu.
  */
-export default function CpnPopupMenuProvider(create, cpnFactory, canvas, popupMenu, modeling, connect, rules, translate, eventBus) {
+export default function CpnPopupMenuProvider(create, cpnFactory, canvas, popupMenu,
+  modeling, connect, rules, translate, eventBus) {
 
   this._create = create;
   this._cpnFactory = cpnFactory;
@@ -165,9 +166,10 @@ CpnPopupMenuProvider.prototype._createShape = function (event, type) {
   this._popupMenu.close();
   const position = toLocalPoint(this._canvas, this._position);
 
-
   let element = this._cpnFactory.createShape(undefined, undefined, type, position, true);
   this._eventBus.fire('shape.create.end', {elements: [element]});
+  this._eventBus.fire('shape.editing.activate', {shape: element});
+  this._eventBus.fire('shape.contextpad.activate', {shape: element});
 }
 
 CpnPopupMenuProvider.prototype._createSubpage = function (event) {
@@ -183,6 +185,8 @@ CpnPopupMenuProvider.prototype._createSubpage = function (event) {
 
   let element = this._cpnFactory.createShape(undefined, cpnElement, CPN_TRANSITION, position, true);
   this._eventBus.fire('shape.create.end', {elements: [element]});
+  this._eventBus.fire('shape.editing.activate', {shape: element});
+  this._eventBus.fire('shape.contextpad.activate', {shape: element});
 }
 
 /**

@@ -18,7 +18,8 @@ export class ProjectConsoleComponent implements OnInit {
   logHtml = [];
   processing = false;
 
-  timeStart;
+  timeInitStart;
+  timeSimStart;
 
   constructor(private eventService: EventService,
     private accessCpnService: AccessCpnService) {
@@ -35,13 +36,12 @@ export class ProjectConsoleComponent implements OnInit {
 
     this.eventService.on(Message.SERVER_INIT_NET_START, () => {
       this.log('Validation process...');
-      this.timeStart = new Date().getTime();
+      this.timeInitStart = new Date().getTime();
     });
 
     this.eventService.on(Message.SERVER_INIT_NET_DONE, (event) => {
       if (event && event.data) {
-        const elapsed = new Date().getTime() - this.timeStart;
-        //   //       this.logSuccess(data ? data : 'Complete in ' + this.timeConversion(elapsed) + '. Model is correct.');
+        const elapsed = new Date().getTime() - this.timeInitStart;
 
         if (event.data.success) {
           this.logSuccess('Complete in ' + this.timeConversion(elapsed) + '.Model is correct.');
@@ -50,10 +50,11 @@ export class ProjectConsoleComponent implements OnInit {
           // this.logError('Error: ' + JSON.stringify(event));
           for (const id of Object.keys(event.data.issues)) {
             const issue = event.data.issues[id][0];
-            if (issue.description.includes(issue.id))
+            if (issue.description.includes(issue.id)) {
               this.logError('Error: ' + issue.description);
-            else
+            } else {
               this.logError('Error: ' + issue.id + ': ' + issue.description);
+            }
           }
         }
       }
@@ -71,12 +72,14 @@ export class ProjectConsoleComponent implements OnInit {
     // SIMULATION
 
     this.eventService.on(Message.SERVER_INIT_SIM_START, () => {
-      // this.log('Simulator initializing...');
+      this.log('Simulator initializing...');
+      this.timeSimStart = new Date().getTime();
     });
 
 
     this.eventService.on(Message.SERVER_INIT_SIM_DONE, () => {
-      this.logSuccess('Simulator initialized.');
+      const elapsed = new Date().getTime() - this.timeSimStart;
+      this.logSuccess('Simulator initialized in ' + this.timeConversion(elapsed) + '.');
     });
 
     this.eventService.on(Message.SERVER_INIT_SIM_ERROR, (event) => {

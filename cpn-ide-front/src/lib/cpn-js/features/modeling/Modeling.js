@@ -93,12 +93,15 @@ Modeling.prototype.getHandlers = function () {
  *    { process: '*' } or
  *    { error: ['ID1412328424'], ready: ['ID1412328496'] }
  */
-Modeling.prototype.setCpnStatus = function (event) {
+Modeling.prototype.setCpnStatus = function (data) {
+  console.log('START setCpnStatus(), data = ', data);
 
   const startTime = new Date().getTime();
 
   for (const key of Object.keys(this._elementRegistry._elements)) {
     const element = this._elementRegistry._elements[key].element;
+
+    const oldStatus = element.cpnStatus;
 
     if (element.cpnStatus === 'process') {
       element.cpnStatus = undefined;
@@ -106,17 +109,17 @@ Modeling.prototype.setCpnStatus = function (event) {
 
     if (isAny(element, [CPN_PLACE, CPN_TRANSITION, CPN_CONNECTION]) && element.cpnElement) {
       for (var status of ['clear', 'process', 'error', 'warning', 'ready']) {
-        // console.log('Modeling.prototype.setCpnStatus(), status, event = ', status, event);
-        // console.log('Modeling.prototype.setCpnStatus(), event[status] = ', event[status]);
-
-        if (event[status]) {
-          if (event[status] === '*' || event[status].includes(element.cpnElement._id)) {
+        if (data[status]) {
+          if (data[status] === '*' || data[status].includes(element.cpnElement._id)) {
             element.cpnStatus = status;
           }
         }
       }
+    }
 
-      this.updateElement(element);
+    // repaint element if status is changed
+    if (oldStatus !== element.cpnStatus) {
+      this.repaintElement(element);
     }
   }
 
@@ -141,21 +144,28 @@ Modeling.prototype.updateLabel = function (element, newLabel, newBounds, hints) 
   }
 };
 
-Modeling.prototype.updateElement = function (element) {
+Modeling.prototype.updateElement = function (element, repaint = false) {
   // console.log('Modeling().updateElement(), element = ', element);
 
   if (element) {
     if (element.labels) {
       for (const lb of element.labels) {
-        this.updateElement(lb);
+        this.updateElement(lb, repaint);
       }
     }
 
     this.updateShapeByCpnElement(element, this._canvas, this._eventBus);
 
-    this._eventBus.fire('element.changed', { element: element });
+    if (repaint) {
+      this.updateElementBounds(element);
+      this.repaintElement(element);
+    }
   }
 };
+
+Modeling.prototype.repaintElement = function (element) {
+  this._eventBus.fire('element.changed', { element: element });
+}
 
 Modeling.prototype.updateElementBounds = function (element) {
   if (element && element.labels) {
@@ -394,7 +404,11 @@ Modeling.prototype.connect = function (source, target, attrs, hints) {
 
     if (placeShape && transShape) {
       const conElem = this.createNewConnection(placeShape, transShape, orientation);
+
       this._eventBus.fire('shape.create.end', { elements: [conElem] });
+      // this._eventBus.fire('shape.editing.activate', {shape: conElem});
+      // this._eventBus.fire('shape.contextpad.activate', {shape: conElem});
+
       //openPortProvider(this._portMenuProvider, transShape);
       //this._portMenuProvider.open(transShape, { cursor: { x: 609, y: 575 } });
       // openPortMenu(this._eventBus, transShape, placeShape, conElem, orientation);
@@ -488,15 +502,14 @@ Modeling.prototype.getElementByCpnElement = function (cpnElement) {
   return result;
 };
 
-Modeling.prototype.getElementByCpnElementId = function (cpnElementId) {
-  var result;
+Modeling.prototype.getElementsByCpnElementIds = function (cpnElementIdList) {
+  const result = [];
 
   for (const key of Object.keys(this._elementRegistry._elements)) {
     const element = this._elementRegistry._elements[key].element;
 
-    if (element && element.cpnElement && element.cpnElement._id === cpnElementId) {
-      result = element;
-      break;
+    if (element && element.cpnElement && cpnElementIdList.includes(element.cpnElement._id)) {
+      result[element.cpnElement._id] = element;
     }
   }
 
@@ -922,6 +935,7 @@ Modeling.prototype.declareSubPage = function (cpnElement, name, pageId) {
 
 
   //this._eventBus.fire('element.changed', { element: element });
+
   return cpnElement;
 }
 
@@ -1119,5 +1133,5 @@ Modeling.prototype.reconnectStart = function (connection, newSource, dockingOrPo
 Modeling.prototype.excuteReconectionCommand = function (command, context) {
   if (context.connection.cpnElement && context.newTarget.type === (context.connection.cpnElement._orientation === 'TtoP' ? CPN_PLACE : CPN_TRANSITION))
     this._commandStack.execute('connection.reconnectEnd', context);
-  else this.updateElement(context.connection);
+  else this.updateElement(context.connection, true);
 }

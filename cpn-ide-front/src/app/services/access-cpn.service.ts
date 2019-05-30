@@ -13,6 +13,10 @@ export class AccessCpnService {
   initSimProcessing;
   simInitialized = false;
 
+  errorData = [];
+  tokenData = [];
+  readyData = [];
+
   constructor(private http: HttpClient,
     private eventService: EventService) {
 
@@ -22,6 +26,16 @@ export class AccessCpnService {
         this.initNet(data.projectData);
       }
     });
+  }
+
+  getErrorData() {
+    return this.errorData;
+  }
+  getTokenData() {
+    return this.tokenData;
+  }
+  getReadyData() {
+    return this.readyData;
   }
 
   /**
@@ -62,12 +76,18 @@ export class AccessCpnService {
 
     localStorage.setItem('cpnXml', JSON.stringify(cpnXml));
 
+    this.errorData = [];
+
     this.http.post('/api/v2/cpn/init', { 'xml': cpnXml }, { headers: { 'X-SessionId': this.sessionId } })
       .subscribe(
         (data: any) => {
           console.log('AccessCpnService, initNet(), SUCCESS, data = ', data);
           this.initNetProcessing = false;
           this.eventService.send(Message.SERVER_INIT_NET_DONE, { data: data });
+
+          if (!data.success) {
+            this.errorData = data.issues;
+          }
 
           // Init simulator
           if (!this.simInitialized) {
@@ -94,7 +114,7 @@ export class AccessCpnService {
    * Initialize access/cpn simulator
    */
   initSim() {
-    if (this.initNetProcessing) {
+    if (this.initSimProcessing) {
       return;
     }
 
@@ -141,9 +161,14 @@ export class AccessCpnService {
       return;
     }
 
+    this.tokenData = [];
+
     this.http.get('/api/v2/cpn/sim/marks', { headers: { 'X-SessionId': this.sessionId } }).subscribe(
       (data: any) => {
         console.log('AccessCpnService, getTokenMarks(), SUCCESS, data = ', data);
+
+        this.tokenData = data;
+
         this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: data });
       },
       (error) => {
@@ -162,9 +187,14 @@ export class AccessCpnService {
       return;
     }
 
+    this.readyData = [];
+
     this.http.get('/api/v2/cpn/sim/transitions/enabled', { headers: { 'X-SessionId': this.sessionId } }).subscribe(
       (data: any) => {
         console.log('AccessCpnService, getTransitions(), SUCCESS, data = ', data);
+
+        this.readyData = data;
+
         this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: data });
       },
       (error) => {

@@ -89,11 +89,11 @@ CpnPaletteProvider.prototype.getPaletteEntries = function () {
 };
 
 CpnPaletteProvider.prototype._createPlace = function (event) {
-  const shape = this._cpnFactory.createShape(undefined, undefined, CPN_PLACE, { x: 0, y: 0 }, false);
+  const shape = this._cpnFactory.createShape(undefined, undefined, CPN_PLACE, undefined, false);
   this._create.start(event, shape);
 }
 
 CpnPaletteProvider.prototype._createTransition = function (event) {
-  const shape = this._cpnFactory.createShape(undefined, undefined, CPN_TRANSITION, { x: 0, y: 0 }, false);
+  const shape = this._cpnFactory.createShape(undefined, undefined, CPN_TRANSITION, undefined, false);
   this._create.start(event, shape);
 }

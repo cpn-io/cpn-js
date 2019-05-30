@@ -85,7 +85,7 @@ export default function LabelEditingProvider(
   // cancel on command stack changes
   eventBus.on(['commandStack.changed'], function (e) {
     if (directEditing.isActive()) {
-      directEditing.cancel();
+      // directEditing.cancel();
     }
   });
 
@@ -95,6 +95,7 @@ export default function LabelEditingProvider(
   });
 
   eventBus.on('create.end', 500, function (event) {
+    console.log('create.end, event = ', event);
 
     var element = event.shape,
       canExecute = event.context.canExecute,
@@ -108,6 +109,7 @@ export default function LabelEditingProvider(
     // TODO(nre): we should temporarily focus the edited element
     // here and release the focused viewport after the direct edit
     // operation is finished
+
     if (isTouch) {
       return;
     }
@@ -119,9 +121,20 @@ export default function LabelEditingProvider(
     activateDirectEdit(element);
   });
 
+  eventBus.on('shape.editing.activate', 500, function (event) {
+    console.log('shape.editing.activate, event = ', event);
+
+    var element = event.shape;
+
+    if (element) {
+      activateDirectEdit(element);
+    }
+  });
+
   eventBus.on('autoPlace.end', 500, function (event) {
     activateDirectEdit(event.shape);
   });
+
 
   function activateDirectEdit(element, force) {
     // console.log('LabelEditingProvider, activateDirectEdit(), element = ', element);
@@ -284,16 +297,10 @@ LabelEditingProvider.prototype.update = function (element, newLabel, activeConte
     bbox;
 
   element.name = element.text = newLabel;
+
   this._eventBus.fire('element.changed', { element: element });
 
   if (is(element, CPN_LABEL) || is(element, CPN_MARKING_LABEL)) {
-    // newBounds = {
-    //   x: element.x,
-    //   y: element.y,
-    //   width: 500,
-    //   height: 50
-    // };
-
     newBounds = this._textRenderer.getExternalLabelBounds(element, newLabel);
 
     console.log('LabelEditingProvider.prototype.update(), newBounds = ', newBounds);
@@ -359,8 +366,9 @@ LabelEditingProvider.prototype.gotoNext = function (element) {
 
   console.log('LabelEditingProvider.prototype.gotoNext(), nextElement = ', nextElement);
 
-  if (nextElement)
+  if (nextElement) {
     this._directEditing.activate(nextElement);
+  }
 }
 
 // helpers //////////////////////

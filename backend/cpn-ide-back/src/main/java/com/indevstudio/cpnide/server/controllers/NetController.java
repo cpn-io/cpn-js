@@ -44,9 +44,10 @@ public class NetController {
 
             _netConatiner.CreateNewNet(sessionId, body.getXml());
 
-            Map<String, List<IssueDescription>> issues = _netConatiner.PerfomEntireChecking(sessionId);
+      //      Map<String, List<IssueDescription>> issues = _netConatiner.PerfomEntireChecking(sessionId);
 
-            return ResponseEntity.status(HttpStatus.OK).body(VerifyResp.builder().isSuccess(issues.size() == 0).issues(issues).build());
+           // return ResponseEntity.status(HttpStatus.OK).body(VerifyResp.builder().isSuccess(issues.size() == 0).issues(issues).build());
+            return ResponseEntity.status(HttpStatus.OK).body(VerifyResp.builder().isSuccess(0 == 0).issues(null).build());
         });
     }
 

@@ -22,6 +22,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
+import java.lang.Object;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,20 +38,21 @@ public class PetriNetContainer {
     private ConcurrentHashMap<String, Checker> usersCheckers = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, HighLevelSimulator> usersSimulator = new ConcurrentHashMap<>();
 
+    private final static Object lock = new Object();
+      public void CreateNewNet(String sessionId, String xml) throws Exception {
+        synchronized (lock)        {
+            PetriNet net = DOMParser.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)), sessionId);
+            usersNets.put(sessionId, net);
+//
+            HighLevelSimulator sim = usersSimulator.get(sessionId);
+            if (sim == null)
+                sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
 
-    public void CreateNewNet(String sessionId, String xml) throws Exception {
-
-        PetriNet net = DOMParser.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)), sessionId);
-        usersNets.put(sessionId, net);
-
-        HighLevelSimulator sim = usersSimulator.get(sessionId);
-        if (sim == null)
-            sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
-
-        Checker checker = new Checker(net, null, sim);
-        usersCheckers.put(sessionId, checker);
-        usersSimulator.put(sessionId, sim);
-        checker.checkInitializing("", "");
+            Checker checker = new Checker(net, null, sim);
+            usersCheckers.put(sessionId, checker);
+            usersSimulator.put(sessionId, sim);
+            //checker.checkInitializing("", "");
+        }
     }
 
     List<IssueDescription> getOrCreateIssueList(String id, Map<String, List<IssueDescription>> issues) {
@@ -65,224 +67,256 @@ public class PetriNetContainer {
 
 
     public String exportNetToXml(String sessionId) throws Exception {
-        PetriNet net = usersNets.get(sessionId);
-        if (net == null)
-            throw new NotFoundException("Session object not found");
+        synchronized (lock)        {
+            PetriNet net = usersNets.get(sessionId);
+            if (net == null)
+                throw new NotFoundException("Session object not found");
 
-        Document xmlDoc = DOMGenerator.export(net);
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer transformer = tf.newTransformer();
+            Document xmlDoc = DOMGenerator.export(net);
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer transformer = tf.newTransformer();
 
-        try (StringWriter writer = new StringWriter()) {
-            StreamResult result = new StreamResult(writer);
-            transformer.transform(new DOMSource(xmlDoc), result);
-            return writer.toString();
-        }
-    }
-
-
-    public void InitSimulator(String sessionId) throws Exception {
-        PetriNet net = usersNets.get(sessionId);
-        if (net == null)
-            throw new NotFoundException("Session object not found");
-
-
-        HighLevelSimulator sim = usersSimulator.get(sessionId);
-        if (sim != null)
-            sim.destroy();
-        sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
-        usersSimulator.put(sessionId, sim);
-
-        Checker checker = new Checker(net, new File("C:\\tmp\\cpn.file"), sim);
-        sim.setTarget((org.cpntools.accesscpn.model.impl.PetriNetImpl) net);
-
-        usersCheckers.put(sessionId, checker);
-        usersSimulator.put(sessionId, sim);
-
-        // checker.checkInitializing("", "");
-
-        checker.generatePlaceInstances();
-        checker.generateNonPlaceInstances();
-        checker.generateSerializers();
-        checker.initialiseSimulationScheduler();
-        //   checker.instantiateSMLInterface();
-    }
-
-
-    public List<String> getEnableTransitions(String sessionId) throws Exception {
-        HighLevelSimulator s = usersSimulator.get(sessionId);
-        if (s == null)
-            throw new NotFoundException("Session object not found");
-
-        List<Instance<Transition>> tis = s.getAllTransitionInstances();
-        List<String> arr = new ArrayList<>();
-
-        for (Instance<Transition> ti : tis) {
-            if (s.isEnabled(ti))
-                arr.add(ti.getNode().getId());
-        }
-        return arr;
-    }
-
-    public List<PlaceMark> getTokensAndMarking(String sessionId) throws Exception {
-        HighLevelSimulator s = usersSimulator.get(sessionId);
-        if (s == null)
-            throw new NotFoundException("Session object not found");
-
-
-        List<PlaceMark> result = new ArrayList<>();
-        for (Instance<PlaceNode> p : s.getAllPlaceInstances()) {
-            int tokens = s.getTokens(p);
-            String marking = s.getMarking(p);
-            result.add(PlaceMark.builder().id(p.getNode().getId()).marking(marking).tokens(tokens).build());
-        }
-        return result;
-    }
-
-    public Map<String, List<IssueDescription>> PerfomEntireChecking(String sessionId) throws Exception {
-
-        Checker checker = usersCheckers.get(sessionId);
-        //HighLevelSimulator ss = usersSimulator.get(sessionId);
-        PetriNet net = usersNets.get(sessionId);
-        if (net == null || checker == null)
-            throw new NotFoundException("Session object not found");
-
-
-        Map<String, List<IssueDescription>> issues = new HashMap<>();
-
-        for (final HLDeclaration decl : net.declaration())
-            CheckDelaration(checker, decl, issues);
-
-        final PageSorter ps = new PageSorter(net.getPage());
-        for (final Page page : ps)
-            CheckPage(checker, page, ps.isPrime(page), issues);
-
-        for (final Monitor m : net.getMonitors())
-            CheckMonitor(checker, m, issues);
-
-        return issues;
-
-        //checker.generateSerializers();
-        //checker.checkPages();
-        //checker.generatePlaceInstances();
-        // checker.checkMonitors();
-        //checker.generateNonPlaceInstances();
-        //checker.initialiseSimulationScheduler();
-        // checker.instantiateSMLInterface();
-    }
-
-    public void AddDeclaration(String sessionId, HLDeclaration declaration) throws Exception {
-        PetriNet net = usersNets.get(sessionId);
-        if (net == null)
-            throw new NotFoundException("Session object not found");
-        declaration.setParent(net);
-    }
-
-    public void DeleteDeclaration(String sessionId, String id) throws Exception {
-        PetriNet net = usersNets.get(sessionId);
-        if (net == null)
-            throw new NotFoundException("Session object not found");
-
-        HLDeclaration decltToDelete = null;
-        for (final HLDeclaration decl : net.declaration()) {
-            if (decl.getId().equals(id)) {
-                decltToDelete = decl;
-                break;
+            try (StringWriter writer = new StringWriter()) {
+                StreamResult result = new StreamResult(writer);
+                transformer.transform(new DOMSource(xmlDoc), result);
+                return writer.toString();
             }
         }
 
-        if (decltToDelete == null)
-            throw new NotFoundException("Declaration with id: " + id + ", not found");
+    }
 
-        decltToDelete.setParent(null);
+
+      public void InitSimulator(String sessionId) throws Exception {
+        synchronized (lock)  {
+            PetriNet net = usersNets.get(sessionId);
+            if (net == null)
+                throw new NotFoundException("Session object not found");
+
+
+            HighLevelSimulator sim = usersSimulator.get(sessionId);
+            if (sim != null)
+                sim.destroy();
+            sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
+            usersSimulator.put(sessionId, sim);
+
+            Checker checker = new Checker(net, new File("C:\\tmp\\cpn.file"), sim);
+            sim.setTarget((org.cpntools.accesscpn.model.impl.PetriNetImpl) net);
+
+            usersCheckers.put(sessionId, checker);
+
+
+            //checker.localCheck();
+            checker.checkInitializing();
+            checker.checkDeclarations();
+           // checker.generateSerializers();
+            checker.checkPages();
+            checker.generatePlaceInstances();
+           // checker.checkMonitors();
+            checker.generateNonPlaceInstances();
+            checker.initialiseSimulationScheduler();
+           // checker.instantiateSMLInterface();
+
+            usersSimulator.put(sessionId, sim);
+
+        }
+
+    }
+
+
+      public List<String> getEnableTransitions(String sessionId) throws Exception {
+      synchronized (lock) {
+          HighLevelSimulator s = usersSimulator.get(sessionId);
+          if (s == null)
+              throw new NotFoundException("Session object not found");
+          //Checker checker = new Checker(net, new File("C:\\tmp\\cpn.file"), sim);
+          List<Instance<Transition>> tis = s.getAllTransitionInstances();
+          List<String> arr = new ArrayList<>();
+
+          for (Instance<Transition> ti : tis) {
+
+              if (s.isEnabled(ti))
+                  arr.add(ti.getNode().getId());
+          }
+          return arr;
+      }
+    }
+
+       public List<PlaceMark> getTokensAndMarking(String sessionId) throws Exception {
+       synchronized (lock) {
+           HighLevelSimulator s = usersSimulator.get(sessionId);
+           if (s == null)
+               throw new NotFoundException("Session object not found");
+
+
+           List<PlaceMark> result = new ArrayList<>();
+           for (Instance<PlaceNode> p : s.getAllPlaceInstances()) {
+               int tokens = s.getTokens(p);
+               String marking = s.getMarking(p);
+               result.add(PlaceMark.builder().id(p.getNode().getId()).marking(marking).tokens(tokens).build());
+           }
+           return result;
+       }
+    }
+
+    public Map<String, List<IssueDescription>> PerfomEntireChecking(String sessionId) throws Exception {
+        synchronized (lock) {
+            Checker checker = usersCheckers.get(sessionId);
+            //HighLevelSimulator ss = usersSimulator.get(sessionId);
+            PetriNet net = usersNets.get(sessionId);
+            if (net == null || checker == null)
+                throw new NotFoundException("Session object not found");
+
+
+            Map<String, List<IssueDescription>> issues = new HashMap<>();
+
+            for (final HLDeclaration decl : net.declaration())
+                CheckDelaration(checker, decl, issues);
+
+            final PageSorter ps = new PageSorter(net.getPage());
+            for (final Page page : ps)
+                CheckPage(checker, page, ps.isPrime(page), issues);
+
+            for (final Monitor m : net.getMonitors())
+                CheckMonitor(checker, m, issues);
+
+            return issues;
+
+            //checker.generateSerializers();
+            //checker.checkPages();
+            //checker.generatePlaceInstances();
+            // checker.checkMonitors();
+            //checker.generateNonPlaceInstances();
+            //checker.initialiseSimulationScheduler();
+            // checker.instantiateSMLInterface();
+        }
+    }
+
+    public void AddDeclaration(String sessionId, HLDeclaration declaration) throws Exception {
+        synchronized (lock) {
+            PetriNet net = usersNets.get(sessionId);
+            if (net == null)
+                throw new NotFoundException("Session object not found");
+            declaration.setParent(net);
+        }
+    }
+
+    public void DeleteDeclaration(String sessionId, String id) throws Exception {
+        synchronized (lock) {
+            PetriNet net = usersNets.get(sessionId);
+            if (net == null)
+                throw new NotFoundException("Session object not found");
+
+            HLDeclaration decltToDelete = null;
+            for (final HLDeclaration decl : net.declaration()) {
+                if (decl.getId().equals(id)) {
+                    decltToDelete = decl;
+                    break;
+                }
+            }
+
+            if (decltToDelete == null)
+                throw new NotFoundException("Declaration with id: " + id + ", not found");
+
+            decltToDelete.setParent(null);
+        }
     }
 
 
     public Map<String, List<IssueDescription>> CheckPageByID(String sessionId, String id) throws Exception {
+        synchronized (lock) {
+            Checker checker = usersCheckers.get(sessionId);
+            PetriNet net = usersNets.get(sessionId);
+            if (net == null || checker == null)
+                throw new NotFoundException("Session object not found");
 
-        Checker checker = usersCheckers.get(sessionId);
-        PetriNet net = usersNets.get(sessionId);
-        if (net == null || checker == null)
-            throw new NotFoundException("Session object not found");
-
-        Map<String, List<IssueDescription>> issues = new HashMap<>();
-        final PageSorter ps = new PageSorter(net.getPage());
-        for (final Page page : ps) {
-            if (page.getId().equals(id)) {
-                CheckPage(checker, page, ps.isPrime(page), issues);
-                return issues;
+            Map<String, List<IssueDescription>> issues = new HashMap<>();
+            final PageSorter ps = new PageSorter(net.getPage());
+            for (final Page page : ps) {
+                if (page.getId().equals(id)) {
+                    CheckPage(checker, page, ps.isPrime(page), issues);
+                    return issues;
+                }
             }
+            return issues;
         }
-        return issues;
     }
 
     public Map<String, List<IssueDescription>> CheckDeclarationByID(String sessionId, String id) throws Exception {
+        synchronized (lock) {
+            Checker checker = usersCheckers.get(sessionId);
+            PetriNet net = usersNets.get(sessionId);
+            if (net == null || checker == null)
+                throw new NotFoundException("Session object not found");
 
-        Checker checker = usersCheckers.get(sessionId);
-        PetriNet net = usersNets.get(sessionId);
-        if (net == null || checker == null)
-            throw new NotFoundException("Session object not found");
+            Map<String, List<IssueDescription>> issues = new HashMap<>();
 
-        Map<String, List<IssueDescription>> issues = new HashMap<>();
-
-        for (final HLDeclaration decl : net.declaration()) {
-            if (decl.getId().equals(id)) {
-                CheckDelaration(checker, decl, issues);
-                return issues;
+            for (final HLDeclaration decl : net.declaration()) {
+                if (decl.getId().equals(id)) {
+                    CheckDelaration(checker, decl, issues);
+                    return issues;
+                }
             }
+            return issues;
         }
-        return issues;
     }
 
     public Map<String, List<IssueDescription>> CheckMonitorByID(String sessionId, String id) throws Exception {
-        Checker checker = usersCheckers.get(sessionId);
-        // HighLevelSimulator ss = usersSimulator.get(sessionId);
-        PetriNet net = usersNets.get(sessionId);
-        if (net == null || checker == null)
-            throw new NotFoundException("Session object not found");
+        synchronized (lock) {
+            Checker checker = usersCheckers.get(sessionId);
+            // HighLevelSimulator ss = usersSimulator.get(sessionId);
+            PetriNet net = usersNets.get(sessionId);
+            if (net == null || checker == null)
+                throw new NotFoundException("Session object not found");
 
-        Map<String, List<IssueDescription>> issues = new HashMap<>();
+            Map<String, List<IssueDescription>> issues = new HashMap<>();
 
-        for (final Monitor m : net.getMonitors()) {
-            if (m.getId().equals(id)) {
-                CheckMonitor(checker, m, issues);
-                return issues;
+            for (final Monitor m : net.getMonitors()) {
+                if (m.getId().equals(id)) {
+                    CheckMonitor(checker, m, issues);
+                    return issues;
+                }
             }
+            return issues;
         }
-        return issues;
     }
 
     private void CheckMonitor(Checker checker, Monitor m, Map<String, List<IssueDescription>> issues) throws IOException {
-        try {
-            checker.checkMonitor(m);
-        } catch (SyntaxCheckerException ex) {
-            List<IssueDescription> issList = getOrCreateIssueList(m.getId(), issues);
-            issList.add(IssueDescription.builder().type(IssueTypes.MONITOR.getType()).id(ex.getId()).description(ex.getMessage()).build());
+        synchronized (lock) {
+            try {
+                checker.checkMonitor(m);
+            } catch (SyntaxCheckerException ex) {
+                List<IssueDescription> issList = getOrCreateIssueList(m.getId(), issues);
+                issList.add(IssueDescription.builder().type(IssueTypes.MONITOR.getType()).id(ex.getId()).description(ex.getMessage()).build());
+            }
         }
     }
 
     private void CheckDelaration(Checker checker, HLDeclaration decl, Map<String, List<IssueDescription>> issues) throws IOException {
-        try {
-            checker.checkDeclaration(decl);
-        } catch (DeclarationCheckerException ex) {
-            List<IssueDescription> issList = getOrCreateIssueList(decl.getId(), issues);
-            issList.add(IssueDescription.builder().id(ex.getId()).type(IssueTypes.DECLARATION.getType()).description(ex.getMessage()).build());
+        synchronized (lock) {
+            try {
+                checker.checkDeclaration(decl);
+            } catch (DeclarationCheckerException ex) {
+                List<IssueDescription> issList = getOrCreateIssueList(decl.getId(), issues);
+                issList.add(IssueDescription.builder().id(ex.getId()).type(IssueTypes.DECLARATION.getType()).description(ex.getMessage()).build());
+            }
         }
     }
 
     private void CheckPage(Checker checker, Page page, boolean prime, Map<String, List<IssueDescription>> issues) throws IOException {
-        try {
-            checker.checkPage(page, prime);
-        } catch (CheckerException ex) {
-            String[] lines = ex.getMessage().split("\\n");
-            for (String ll : lines) {
-                String[] pair = ll.split(":");
-                if (pair.length == 2) {
-                    List<IssueDescription> issList = getOrCreateIssueList(pair[0], issues);
-                    issList.add(IssueDescription.builder().type(IssueTypes.PAGE.getType()).id(pair[0]).description(pair[1]).build());
-                } else {
-                    List<IssueDescription> issList = getOrCreateIssueList(page.getId(), issues);
-                    issList.add(IssueDescription.builder().type(IssueTypes.PAGE.getType()).id(ex.getId()).description(ll).build());
+        synchronized (lock) {
+            try {
+                checker.checkPage(page, prime);
+            } catch (CheckerException ex) {
+                String[] lines = ex.getMessage().split("\\n");
+                for (String ll : lines) {
+                    String[] pair = ll.split(":");
+                    if (pair.length == 2) {
+                        List<IssueDescription> issList = getOrCreateIssueList(pair[0], issues);
+                        issList.add(IssueDescription.builder().type(IssueTypes.PAGE.getType()).id(pair[0]).description(pair[1]).build());
+                    } else {
+                        List<IssueDescription> issList = getOrCreateIssueList(page.getId(), issues);
+                        issList.add(IssueDescription.builder().type(IssueTypes.PAGE.getType()).id(ex.getId()).description(ll).build());
+                    }
                 }
             }
         }

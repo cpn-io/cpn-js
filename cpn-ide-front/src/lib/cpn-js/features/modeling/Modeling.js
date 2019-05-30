@@ -1135,3 +1135,13 @@ Modeling.prototype.excuteReconectionCommand = function (command, context) {
     this._commandStack.execute('connection.reconnectEnd', context);
   else this.updateElement(context.connection, true);
 }
+
+
+Modeling.prototype.removeElements = function(elements) {
+  var context = {
+    elements: elements
+  };
+
+  this._eventBus .fire('shape.delete', {elements: elements});
+  this._commandStack.execute('elements.delete', context);
+};

@@ -174,7 +174,7 @@ export class ModelService {
   //// ChangeModelActions
 
 
-  deleteElementFromPageJson(pageId, id, type) {
+   deleteElementFromPageJson(pageId, id, type) {
     this.saveBackup(this.projectData, pageId);
     const jsonPageObject = this.getPageById(pageId);
     if (!jsonPageObject[this.modelCase[type]].length || jsonPageObject[this.modelCase[type]].length === 1) {

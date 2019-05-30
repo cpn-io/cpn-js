@@ -221,6 +221,14 @@ export class ModelEditorComponent implements OnInit {
       }
     });
 
+    eventBus.on('shape.delete', (event) => {
+      if (event.elements) {
+        for (const elem of event.elements) {
+          this.modelService.deleteElementFromPageJson(this.pageId, elem.id, elem.type);
+        }
+      }
+    });
+
     eventBus.on('portMenuProvider.open', (event) => {
       if (event.trans && event.trans.cpnElement && event.trans.cpnElement.subst) {
         const pageObj = this.modelService.getPageById(event.trans.cpnElement.subst._subpage);

@@ -43,9 +43,9 @@ export default function ChangeSupporter(eventBus, modeling, textRenderer) {
       // Get list of id for elements with tokens
       const idList = [];
       for (var item of data) {
-        if (item.tokens > 0) {
+        //if (item.tokens > 0) {
           idList.push(item.id);
-        }
+        //}
       }
       console.log('ChangeSupporter(), updateTokens(), idList = ', idList);
 

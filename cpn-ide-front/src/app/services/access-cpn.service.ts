@@ -12,7 +12,7 @@ export class AccessCpnService {
   initNetProcessing;
   initSimProcessing;
   simInitialized = false;
-
+  isSimulation = false;
   errorData = [];
   tokenData = [];
   readyData = [];
@@ -136,10 +136,17 @@ export class AccessCpnService {
         this.simInitialized = true;
 
         this.eventService.send(Message.SERVER_INIT_SIM_DONE, { data: data });
-
         // Get token marks and transition
-        this.getTokenMarks();
-        this.getTransitions();
+        if (data) {
+          this.tokenData =  data.tokensAndMark;
+          this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data:  this.tokenData });
+          this.readyData = data.enableTrans;
+          this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
+
+        }
+
+        //this.getTokenMarks();
+        //this.getTransitions();
       },
       (error) => {
         this.initSimProcessing = false;
@@ -202,5 +209,34 @@ export class AccessCpnService {
       }
     );
   }
+
+
+  doStep(){
+    if (!this.simInitialized || !this.sessionId) {
+      return;
+    }
+
+
+    this.http.get('/api/v2/cpn/sim/step', { headers: { 'X-SessionId': this.sessionId } }).subscribe(
+      (data: any) => {
+        console.log('AccessCpnService, getTransitions(), SUCCESS, data = ', data);
+        if (data) {
+          this.tokenData =  data.tokensAndMark;
+          this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data:  this.tokenData });
+          this.readyData = data.enableTrans;
+          this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
+        }
+      },
+      (error) => {
+        console.error('AccessCpnService, getTransitions(), ERROR, data = ', error);
+      }
+    );
+  }
+
+  setIsSimulation(state) {
+    this.isSimulation = state;
+  }
+
+
 
 }

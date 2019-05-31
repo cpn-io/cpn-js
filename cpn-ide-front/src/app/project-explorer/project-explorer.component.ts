@@ -1974,6 +1974,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
   }
 
+
   /**
    * Loading project JSON to tree component object
    * @param project - cpn net JSON object

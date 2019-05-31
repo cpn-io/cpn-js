@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { EventService } from './event.service';
 import { ModelService } from './model.service';
 import { Message } from '../common/message';
-
+import { AccessCpnService } from '../services/access-cpn.service';
 @Injectable()
 export class ValidationService {
 
@@ -14,7 +14,8 @@ export class ValidationService {
 
   constructor(
     private eventService: EventService,
-    private modelService: ModelService) {
+    private modelService: ModelService,
+    private accessCpnService: AccessCpnService) {
 
     this.checkValidation();
   }
@@ -23,7 +24,8 @@ export class ValidationService {
    * public method for setting validation flag
    */
   public validate() {
-    this.needValidation = true;
+    if (!this.accessCpnService.isSimulation)
+      this.needValidation = true;
   }
 
   getDiff = (string, diffBy) => string.split(diffBy).join('');

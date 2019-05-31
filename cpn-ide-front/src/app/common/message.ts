@@ -35,7 +35,7 @@ export class Message {
 
   static SERVER_GET_TOKEN_MARKS = 'server.get.token.mark';
   static SERVER_GET_TRANSITIONS = 'server.get.transitions';
-
+  static MODEL_STEP = 'model.step';
   id: string;
   data: object;
 }

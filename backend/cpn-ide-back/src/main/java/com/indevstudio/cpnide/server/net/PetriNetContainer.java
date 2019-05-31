@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.cpntools.accesscpn.engine.SimulatorService;
 import org.cpntools.accesscpn.engine.highlevel.*;
 import org.cpntools.accesscpn.engine.highlevel.checker.Checker;
+import org.cpntools.accesscpn.engine.highlevel.instance.Binding;
 import org.cpntools.accesscpn.engine.highlevel.instance.Instance;
 import org.cpntools.accesscpn.model.*;
 import org.cpntools.accesscpn.model.exporter.DOMGenerator;
@@ -24,20 +25,42 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.lang.Object;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 
 @Component
 @Slf4j
 public class PetriNetContainer {
+    public static  class NetInfo {
+        List<String> enableTrans;
+        List<PlaceMark> tokensAndMark;
+
+        public List<String> getEnableTrans() {
+            return enableTrans;
+        }
+
+        public void setEnableTrans(List<String> enableTrans) {
+            this.enableTrans = enableTrans;
+        }
+
+        public List<PlaceMark> getTokensAndMark() {
+            return tokensAndMark;
+        }
+
+        public void setTokensAndMark(List<PlaceMark> tokensAndMark) {
+            this.tokensAndMark = tokensAndMark;
+        }
+
+        public NetInfo(List<String> enableTrans, List<PlaceMark> tokensAndMark) {
+            this.enableTrans = enableTrans;
+            this.tokensAndMark = tokensAndMark;
+        }
+    }
     private ConcurrentHashMap<String, PetriNet> usersNets = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, Checker> usersCheckers = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, HighLevelSimulator> usersSimulator = new ConcurrentHashMap<>();
-
+    private ConcurrentHashMap<String, NetInfo> netInf = new ConcurrentHashMap<>();
     private final static Object lock = new Object();
       public void CreateNewNet(String sessionId, String xml) throws Exception {
         synchronized (lock)        {
@@ -51,7 +74,7 @@ public class PetriNetContainer {
             Checker checker = new Checker(net, null, sim);
             usersCheckers.put(sessionId, checker);
             usersSimulator.put(sessionId, sim);
-            //checker.checkInitializing("", "");
+            checker.checkInitializing();
         }
     }
 
@@ -102,7 +125,6 @@ public class PetriNetContainer {
             Checker checker = new Checker(net, new File("C:\\tmp\\cpn.file"), sim);
             sim.setTarget((org.cpntools.accesscpn.model.impl.PetriNetImpl) net);
 
-            usersCheckers.put(sessionId, checker);
 
 
             //checker.localCheck();
@@ -110,12 +132,13 @@ public class PetriNetContainer {
             checker.checkDeclarations();
            // checker.generateSerializers();
             checker.checkPages();
+          //  PerfomEntireChecking(sessionId);
             checker.generatePlaceInstances();
            // checker.checkMonitors();
             checker.generateNonPlaceInstances();
             checker.initialiseSimulationScheduler();
            // checker.instantiateSMLInterface();
-
+          //  netInf.put(sessionId, new NetInfo(getEnableTransitions(sessionId), getTokensAndMarking(sessionId)));
             usersSimulator.put(sessionId, sim);
 
         }
@@ -141,7 +164,22 @@ public class PetriNetContainer {
       }
     }
 
-       public List<PlaceMark> getTokensAndMarking(String sessionId) throws Exception {
+    public List<String> returnEnableTrans(String sessionId) throws Exception {
+        NetInfo netInf = this.netInf.get(sessionId);
+          if(netInf != null)
+            return this.netInf.get(sessionId).getEnableTrans();
+          else return  getEnableTransitions(sessionId);
+    }
+
+    public List<PlaceMark> returnTokensAndMarking(String sessionId) throws Exception {
+        NetInfo netInf = this.netInf.get(sessionId);
+        if(netInf != null)
+            return this.netInf.get(sessionId).getTokensAndMark();
+        else return  getTokensAndMarking(sessionId);
+    }
+
+
+    public List<PlaceMark> getTokensAndMarking(String sessionId) throws Exception {
        synchronized (lock) {
            HighLevelSimulator s = usersSimulator.get(sessionId);
            if (s == null)
@@ -178,7 +216,8 @@ public class PetriNetContainer {
 
             for (final Monitor m : net.getMonitors())
                 CheckMonitor(checker, m, issues);
-
+            //checker.generatePlaceInstances();
+            //checker.generateNonPlaceInstances();
             return issues;
 
             //checker.generateSerializers();
@@ -320,6 +359,27 @@ public class PetriNetContainer {
                 }
             }
         }
+    }
+
+
+
+    public void makeStep(String sessionId){
+        //String type = requestBody.get(0).get("type").toString();
+        try {
+            HighLevelSimulator s = usersSimulator.get(sessionId);
+            List<List<Binding>> bindings = new LinkedList<>();
+            List<Instance<Transition>> tis = s.getAllTransitionInstances();
+            for (Instance<Transition> ti : tis) {
+                if ( s.isEnabled(ti))
+                    bindings.add(s.getBindings(ti));
+            }
+             for(List<Binding> bind : bindings){
+                 s.execute(bind.get(0));
+             }
+        } catch (Exception e) {
+
+        }
+
     }
 
 

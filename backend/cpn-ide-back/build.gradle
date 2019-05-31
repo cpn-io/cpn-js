@@ -8,7 +8,7 @@ plugins {
 println "java.home = " + System.getProperty("java.home")
 
 group 'com.indev.cpn.rest'
-version '1.3-SNAPSHOT'
+version '1.5-SNAPSHOT'
 
 sourceSets {
 
@@ -74,5 +74,5 @@ dependencies {
 
 jar {
     baseName = 'cpn-ide-server'
-    version =  '0.3.0'
+    version =  '0.5.0'
 }

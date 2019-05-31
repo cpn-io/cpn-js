@@ -285,10 +285,10 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
       // update connections
       if (shape.waypoints instanceof Array && shape.waypoints.length > 2) {
-        console.log('CpnUpdater().updateCpnElement(), connection, element = ', element);
+        // console.log('CpnUpdater().updateCpnElement(), connection, element = ', element);
 
-        console.log('CpnUpdater().updateCpnElement(), connection, shape.waypoints = ', shape.waypoints);
-        console.log('CpnUpdater().updateCpnElement(), connection, cpnElement.bendpoint = ', cpnElement.bendpoint);
+        // console.log('CpnUpdater().updateCpnElement(), connection, shape.waypoints = ', shape.waypoints);
+        // console.log('CpnUpdater().updateCpnElement(), connection, cpnElement.bendpoint = ', cpnElement.bendpoint);
 
         let bendpoints = cpnElement.bendpoint || [];
         for (let i = 1; i < shape.waypoints.length - 1; i++) {
@@ -311,7 +311,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
             // });
           }
         }
-        console.log('CpnUpdater().updateCpnElement(), connection, bendpoint = ', bendpoints);
+        // console.log('CpnUpdater().updateCpnElement(), connection, bendpoint = ', bendpoints);
 
         if (bendpoints.length > 0)
           cpnElement.bendpoint = bendpoints;

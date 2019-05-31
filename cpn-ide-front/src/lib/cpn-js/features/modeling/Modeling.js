@@ -40,7 +40,7 @@ import {
  * @param {CpnRules} cpnRules
  */
 export default function Modeling(eventBus, elementFactory, elementRegistry, commandStack, cpnRules, textRenderer, canvas, portMenuProvider) {
-  console.log('Modeling()');
+  // console.log('Modeling()');
 
   BaseModeling.call(this, eventBus, elementFactory, commandStack);
 
@@ -94,7 +94,7 @@ Modeling.prototype.getHandlers = function () {
  *    { error: ['ID1412328424'], ready: ['ID1412328496'] }
  */
 Modeling.prototype.setCpnStatus = function (data) {
-  console.log('START setCpnStatus(), data = ', data);
+  // console.log('START setCpnStatus(), data = ', data);
 
   const startTime = new Date().getTime();
 
@@ -124,7 +124,9 @@ Modeling.prototype.setCpnStatus = function (data) {
   }
 
   const t = new Date().getTime() - startTime;
-  console.log('END setCpnStatus(), time = ', t);
+  if (t > 10) {
+    console.log('END setCpnStatus(), time = ', t);
+  }
 }
 
 
@@ -1137,11 +1139,11 @@ Modeling.prototype.excuteReconectionCommand = function (command, context) {
 }
 
 
-Modeling.prototype.removeElements = function(elements) {
+Modeling.prototype.removeElements = function (elements) {
   var context = {
     elements: elements
   };
 
-  this._eventBus .fire('shape.delete', {elements: elements});
+  this._eventBus.fire('shape.delete', { elements: elements });
   this._commandStack.execute('elements.delete', context);
 };

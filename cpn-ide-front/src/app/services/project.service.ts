@@ -24,7 +24,7 @@ export class ProjectService {
     private accessCpnService: AccessCpnService
     ) {
 
-    console.log('ProjectService instance CREATED!');
+    // console.log('ProjectService instance CREATED!');
 
     this.loadEmptyProject();
   }

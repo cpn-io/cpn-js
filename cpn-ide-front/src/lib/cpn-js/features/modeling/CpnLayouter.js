@@ -29,7 +29,7 @@ CpnLayouter.$inject = [
  * mid(source) + mid(target).
  */
 export default function CpnLayouter(eventBus, connectionDocking) {
-  console.log('CpnLayouter()');
+  // console.log('CpnLayouter()');
 
   this._eventBus = eventBus;
   this._connectionDocking = connectionDocking;

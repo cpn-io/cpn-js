@@ -161,7 +161,7 @@ CpnPopupMenuProvider.prototype.getHeaderEntries = function (element) {
 };
 
 CpnPopupMenuProvider.prototype._createShape = function (event, type) {
-  console.log('CpnPopupMenuProvider.prototype._createPlace, this.position = ', this._position);
+  // console.log('CpnPopupMenuProvider.prototype._createPlace, this.position = ', this._position);
 
   this._popupMenu.close();
   const position = toLocalPoint(this._canvas, this._position);
@@ -173,7 +173,7 @@ CpnPopupMenuProvider.prototype._createShape = function (event, type) {
 }
 
 CpnPopupMenuProvider.prototype._createSubpage = function (event) {
-  console.log('CpnPopupMenuProvider.prototype._createSubpage, this.position = ', this._position);
+  // console.log('CpnPopupMenuProvider.prototype._createSubpage, this.position = ', this._position);
 
   this._popupMenu.close();
   const position = toLocalPoint(this._canvas, this._position);

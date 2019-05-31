@@ -35,6 +35,8 @@ export class ProjectConsoleComponent implements OnInit {
     // VALIDATION
 
     this.eventService.on(Message.SERVER_INIT_NET_START, () => {
+      this.logHtml = [];
+      this.nodes = [];
       this.log('Validation process...');
       this.timeInitStart = new Date().getTime();
     });
@@ -72,6 +74,8 @@ export class ProjectConsoleComponent implements OnInit {
     // SIMULATION
 
     this.eventService.on(Message.SERVER_INIT_SIM_START, () => {
+      this.logHtml = [];
+      this.nodes = [];
       this.log('Simulator initializing...');
       this.timeSimStart = new Date().getTime();
     });

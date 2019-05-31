@@ -37,8 +37,9 @@ export class MainToolbarComponent implements OnInit {
     this.isStart = true;
     this.accessCpnService.initSim();
     this.eventService.on(Message.SERVER_INIT_SIM_DONE, (data) => {
-      if (this.isStart)
+      if (this.isStart) {
         this.accessCpnService.setIsSimulation(true);
+      }
       this.isStart = false;
     });
   }

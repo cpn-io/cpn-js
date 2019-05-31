@@ -84,7 +84,7 @@ DirectEditing.prototype.gotoNext = function () {
 };
 
 DirectEditing.prototype._fire = function (event, context) {
-  console.log('DirectEditing.fire event -', event);
+  // console.log('DirectEditing.fire event -', event);
   this._eventBus.fire('directEditing.' + event, context || { active: this._active });
 };
 
@@ -159,7 +159,7 @@ DirectEditing.prototype._handleKey = function (e) {
 
 
 DirectEditing.prototype._handleResize = function (event) {
-  console.log('_handleResize(), event = ', event);
+  // console.log('_handleResize(), event = ', event);
   // console.log('_handleResize(), event = ', event);
 
   // var bounds = textUtil.getDimensions(content.innerText, {
@@ -172,11 +172,12 @@ DirectEditing.prototype._handleResize = function (event) {
   var provider = this._active.provider;
   var element = this._active.element;
 
-  console.log('_handleResize(), element = ', element);
+  // console.log('_handleResize(), element = ', element);
 
   var newLabel = event.newLabel;
   var newBounds = provider.getTextBounds(element, newLabel);
-  console.log('_handleResize(), newBounds = ', newBounds);
+
+  // console.log('_handleResize(), newBounds = ', newBounds);
 
   this._fire('resize', { newBounds: newBounds });
 

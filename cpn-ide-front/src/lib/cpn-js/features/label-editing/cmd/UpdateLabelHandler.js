@@ -91,7 +91,7 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
   }
 
   function execute(ctx) {
-    console.log('UpdateLabelHandler.execute(), ctx = ', ctx);
+    // console.log('UpdateLabelHandler.execute(), ctx = ', ctx);
     ctx.oldLabel = getLabel(ctx.element);
     return setText(ctx.element, ctx.newLabel);
   }
@@ -101,7 +101,7 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
   }
 
   function postExecute(ctx) {
-    console.log('UpdateLabelHandler.postExecute(), ctx = ', ctx);
+    // console.log('UpdateLabelHandler.postExecute(), ctx = ', ctx);
 
     var element = ctx.element,
       label = element.label || element,
@@ -139,7 +139,7 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
     // setting newBounds to false or _null_ will
     // disable the postExecute resize operation
     if (newBounds) {
-      console.log('UpdateLabelHandler.postExecute(), resizeShape, newBounds = ', newBounds);
+      // console.log('UpdateLabelHandler.postExecute(), resizeShape, newBounds = ', newBounds);
 
       modeling.resizeShape(label, newBounds, NULL_DIMENSIONS);
     }

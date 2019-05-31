@@ -3,7 +3,7 @@
 
 <workspaceElements>
   <generator tool="CPN Tools"
-             version="3.5.7"
+             version="4.0.1"
              format="6"/>
   <cpnet>
     <globbox>
@@ -132,7 +132,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">Car</text>
+                version="4.0.1">Car</text>
         </type>
         <initmark id="ID3167">
           <posattr x="9.000000"
@@ -146,7 +146,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </initmark>
       </place>
       <place id="ID3290">
@@ -184,7 +184,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">Car</text>
+                version="4.0.1">Car</text>
         </type>
         <initmark id="ID3292">
           <posattr x="12.000000"
@@ -198,7 +198,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </initmark>
       </place>
       <place id="ID3496">
@@ -236,7 +236,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">Car</text>
+                version="4.0.1">Car</text>
         </type>
         <initmark id="ID3498">
           <posattr x="11.000000"
@@ -250,7 +250,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </initmark>
       </place>
       <trans id="ID4786"
@@ -298,7 +298,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </cond>
         <time id="ID4788">
           <posattr x="-125.500002"
@@ -312,7 +312,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </time>
         <code id="ID4789">
           <posattr x="-105.500002"
@@ -326,7 +326,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </code>
         <priority id="ID1415420498">
           <posattr x="-238.000002"
@@ -340,7 +340,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </priority>
       </trans>
       <trans id="ID4972"
@@ -388,7 +388,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </cond>
         <time id="ID4974">
           <posattr x="133.499999"
@@ -402,7 +402,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </time>
         <code id="ID4975">
           <posattr x="153.499999"
@@ -416,7 +416,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </code>
         <priority id="ID1415420499">
           <posattr x="21.000000"
@@ -430,7 +430,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </priority>
       </trans>
       <arc id="ID4790"
@@ -462,7 +462,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </annot>
       </arc>
       <arc id="ID4792"
@@ -494,7 +494,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </annot>
       </arc>
       <arc id="ID4794"
@@ -526,7 +526,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </annot>
       </arc>
       <arc id="ID4976"
@@ -558,7 +558,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </annot>
       </arc>
       <arc id="ID4978"
@@ -590,7 +590,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </annot>
       </arc>
       <arc id="ID4980"
@@ -622,7 +622,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </annot>
       </arc>
       <constraints/>
@@ -664,7 +664,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">Car</text>
+                version="4.0.1">Car</text>
         </type>
         <initmark id="ID4805">
           <posattr x="169.000000"
@@ -678,7 +678,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </initmark>
         <port id="ID4856"
               type="Out">
@@ -729,7 +729,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">Car</text>
+                version="4.0.1">Car</text>
         </type>
         <initmark id="ID4810">
           <posattr x="166.000000"
@@ -743,7 +743,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </initmark>
         <port id="ID4857"
               type="In">
@@ -794,7 +794,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">Car</text>
+                version="4.0.1">Car</text>
         </type>
         <initmark id="ID4815">
           <posattr x="169.000000"
@@ -808,7 +808,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </initmark>
         <port id="ID4858"
               type="In">
@@ -859,7 +859,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">Tint</text>
+                version="4.0.1">Tint</text>
         </type>
         <initmark id="ID24148">
           <posattr x="-391.000000"
@@ -873,7 +873,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">1</text>
+                version="4.0.1">1</text>
         </initmark>
       </place>
       <place id="ID3830268">
@@ -911,7 +911,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">INT</text>
+                version="4.0.1">INT</text>
         </type>
         <initmark id="ID3830270">
           <posattr x="-290.000000"
@@ -925,7 +925,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </initmark>
       </place>
       <trans id="ID5518"
@@ -957,7 +957,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">[i&lt;=10000]</text>
+                version="4.0.1">[i&lt;=10000]</text>
         </cond>
         <time id="ID5520">
           <posattr x="-152.500000"
@@ -971,7 +971,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </time>
         <code id="ID5521">
           <posattr x="-132.500000"
@@ -985,7 +985,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </code>
         <priority id="ID1415420501">
           <posattr x="-264.999999"
@@ -999,7 +999,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </priority>
       </trans>
       <trans id="ID5610"
@@ -1031,7 +1031,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </cond>
         <time id="ID5612">
           <posattr x="-120.500002"
@@ -1045,7 +1045,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </time>
         <code id="ID5613">
           <posattr x="-100.500002"
@@ -1059,7 +1059,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </code>
         <priority id="ID1415420502">
           <posattr x="-293.000001"
@@ -1073,7 +1073,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </priority>
       </trans>
       <trans id="ID36417"
@@ -1105,7 +1105,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </cond>
         <time id="ID36419">
           <posattr x="-113.500002"
@@ -1119,7 +1119,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </time>
         <code id="ID36420">
           <posattr x="-93.500001"
@@ -1133,7 +1133,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </code>
         <priority id="ID1415420503">
           <posattr x="-300.000001"
@@ -1147,7 +1147,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </priority>
       </trans>
       <trans id="ID3830705"
@@ -1179,7 +1179,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </cond>
         <time id="ID3830707">
           <posattr x="-435.500000"
@@ -1193,7 +1193,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </time>
         <code id="ID3830708">
           <posattr x="-415.500000"
@@ -1207,7 +1207,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </code>
         <priority id="ID1415420504">
           <posattr x="-568.000000"
@@ -1221,7 +1221,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </priority>
       </trans>
       <arc id="ID5567"
@@ -1253,7 +1253,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">(&quot;car_&quot;^Int.toString(i),time())</text>
+                version="4.0.1">(&quot;car_&quot;^Int.toString(i),time())</text>
         </annot>
       </arc>
       <arc id="ID26585"
@@ -1285,7 +1285,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">i</text>
+                version="4.0.1">i</text>
         </annot>
       </arc>
       <arc id="ID26955"
@@ -1330,7 +1330,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">i+1@++exponential(1.0/4.0)</text>
+                version="4.0.1">i+1@++exponential(1.0/4.0)</text>
         </annot>
       </arc>
       <arc id="ID87451"
@@ -1362,7 +1362,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">(cid,t)</text>
+                version="4.0.1">(cid,t)</text>
         </annot>
       </arc>
       <arc id="ID88882"
@@ -1394,7 +1394,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">(cid,t)</text>
+                version="4.0.1">(cid,t)</text>
         </annot>
       </arc>
       <arc id="ID3830343"
@@ -1426,7 +1426,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">1</text>
+                version="4.0.1">1</text>
         </annot>
       </arc>
       <arc id="ID3830476"
@@ -1458,7 +1458,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">0</text>
+                version="4.0.1">0</text>
         </annot>
       </arc>
       <arc id="ID3830886"
@@ -1490,7 +1490,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">i</text>
+                version="4.0.1">i</text>
         </annot>
       </arc>
       <constraints/>
@@ -1546,7 +1546,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">Car</text>
+                version="4.0.1">Car</text>
         </type>
         <initmark id="ID4991">
           <posattr x="-129.000000"
@@ -1560,7 +1560,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </initmark>
         <port id="ID5042"
               type="Out">
@@ -1611,7 +1611,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">Car</text>
+                version="4.0.1">Car</text>
         </type>
         <initmark id="ID4996">
           <posattr x="-66.000000"
@@ -1625,7 +1625,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </initmark>
         <port id="ID5043"
               type="In">
@@ -1676,7 +1676,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">Car</text>
+                version="4.0.1">Car</text>
         </type>
         <initmark id="ID5001">
           <posattr x="105.000000"
@@ -1690,7 +1690,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </initmark>
         <port id="ID5044"
               type="Out">
@@ -1741,7 +1741,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">Queue</text>
+                version="4.0.1">Queue</text>
         </type>
         <initmark id="ID7468">
           <posattr x="-164.000000"
@@ -1755,7 +1755,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">[]</text>
+                version="4.0.1">[]</text>
         </initmark>
       </place>
       <place id="ID14195">
@@ -1793,7 +1793,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">Car</text>
+                version="4.0.1">Car</text>
         </type>
         <initmark id="ID14197">
           <posattr x="-255.000000"
@@ -1807,7 +1807,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </initmark>
       </place>
       <place id="ID14898">
@@ -1845,7 +1845,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">Pump</text>
+                version="4.0.1">Pump</text>
         </type>
         <initmark id="ID14900">
           <posattr x="-16.000000"
@@ -1859,7 +1859,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">()</text>
+                version="4.0.1">()</text>
         </initmark>
       </place>
       <trans id="ID7137"
@@ -1891,7 +1891,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">[len(q)&lt;3]</text>
+                version="4.0.1">[len(q)&lt;3]</text>
         </cond>
         <time id="ID7139">
           <posattr x="-119.500001"
@@ -1905,7 +1905,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </time>
         <code id="ID7140">
           <posattr x="-99.500000"
@@ -1919,7 +1919,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </code>
         <priority id="ID1415420506">
           <posattr x="-272.000000"
@@ -1933,7 +1933,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </priority>
       </trans>
       <trans id="ID7351"
@@ -1965,7 +1965,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">[len(q)&gt;=3]</text>
+                version="4.0.1">[len(q)&gt;=3]</text>
         </cond>
         <time id="ID7353">
           <posattr x="110.500001"
@@ -1979,7 +1979,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </time>
         <code id="ID7354">
           <posattr x="130.500001"
@@ -1993,7 +1993,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </code>
         <priority id="ID1415420507">
           <posattr x="-35.999999"
@@ -2007,7 +2007,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </priority>
       </trans>
       <trans id="ID11643"
@@ -2039,7 +2039,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </cond>
         <time id="ID11645">
           <posattr x="-128.500001"
@@ -2053,7 +2053,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </time>
         <code id="ID11646">
           <posattr x="-108.500001"
@@ -2067,7 +2067,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </code>
         <priority id="ID1415420508">
           <posattr x="-263.000000"
@@ -2081,7 +2081,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </priority>
       </trans>
       <trans id="ID16920"
@@ -2113,7 +2113,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </cond>
         <time id="ID16922">
           <posattr x="-135.500002"
@@ -2127,7 +2127,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </time>
         <code id="ID16923">
           <posattr x="-115.500002"
@@ -2141,7 +2141,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </code>
         <priority id="ID1415420509">
           <posattr x="-260.000001"
@@ -2155,7 +2155,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7"/>
+                version="4.0.1"/>
         </priority>
       </trans>
       <arc id="ID8457"
@@ -2187,7 +2187,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">c</text>
+                version="4.0.1">c</text>
         </annot>
       </arc>
       <arc id="ID8746"
@@ -2219,7 +2219,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">c</text>
+                version="4.0.1">c</text>
         </annot>
       </arc>
       <arc id="ID9047"
@@ -2251,7 +2251,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">q^^[c]</text>
+                version="4.0.1">q^^[c]</text>
         </annot>
       </arc>
       <arc id="ID9210"
@@ -2296,7 +2296,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">q</text>
+                version="4.0.1">q</text>
         </annot>
       </arc>
       <arc id="ID10515"
@@ -2341,7 +2341,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">q</text>
+                version="4.0.1">q</text>
         </annot>
       </arc>
       <arc id="ID10882"
@@ -2386,7 +2386,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">q</text>
+                version="4.0.1">q</text>
         </annot>
       </arc>
       <arc id="ID11261"
@@ -2418,7 +2418,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">c</text>
+                version="4.0.1">c</text>
         </annot>
       </arc>
       <arc id="ID12250"
@@ -2450,7 +2450,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">c::q</text>
+                version="4.0.1">c::q</text>
         </annot>
       </arc>
       <arc id="ID12467"
@@ -2495,7 +2495,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">q</text>
+                version="4.0.1">q</text>
         </annot>
       </arc>
       <arc id="ID15883"
@@ -2527,7 +2527,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">c@++uniform(2.0,5.0)</text>
+                version="4.0.1">c@++uniform(2.0,5.0)</text>
         </annot>
       </arc>
       <arc id="ID16400"
@@ -2559,7 +2559,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">()</text>
+                version="4.0.1">()</text>
         </annot>
       </arc>
       <arc id="ID17461"
@@ -2591,7 +2591,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">c</text>
+                version="4.0.1">c</text>
         </annot>
       </arc>
       <arc id="ID18015"
@@ -2623,7 +2623,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">c</text>
+                version="4.0.1">c</text>
         </annot>
       </arc>
       <arc id="ID18580"
@@ -2655,7 +2655,7 @@
           <textattr colour="Black"
                     bold="false"/>
           <text tool="CPN Tools"
-                version="3.5.7">()</text>
+                version="4.0.1">()</text>
         </annot>
       </arc>
       <constraints/>
@@ -2690,22 +2690,7 @@
           <text>&lt;same as model&gt;</text>
         </value>
       </option>
-      <option name="extensions.10004.enable">
-        <value>
-          <boolean>true</boolean>
-        </value>
-      </option>
-      <option name="extensions.10001.enable">
-        <value>
-          <boolean>true</boolean>
-        </value>
-      </option>
       <option name="extensions.10003.enable">
-        <value>
-          <boolean>true</boolean>
-        </value>
-      </option>
-      <option name="extensions.10006.enable">
         <value>
           <boolean>true</boolean>
         </value>
@@ -2715,24 +2700,19 @@
           <boolean>true</boolean>
         </value>
       </option>
+      <option name="extensions.10001.enable">
+        <value>
+          <boolean>true</boolean>
+        </value>
+      </option>
       <option name="extensions.10005.enable">
         <value>
           <boolean>true</boolean>
         </value>
       </option>
-      <option name="extensions.10004.options.visible">
+      <option name="extensions.10006.enable">
         <value>
-          <boolean>false</boolean>
-        </value>
-      </option>
-      <option name="extensions.10001.options.data_aware">
-        <value>
-          <boolean>false</boolean>
-        </value>
-      </option>
-      <option name="extensions.10001.options.smart">
-        <value>
-          <boolean>false</boolean>
+          <boolean>true</boolean>
         </value>
       </option>
       <option name="repavg">
@@ -2933,8 +2913,8 @@
     </options>
     <binders>
       <cpnbinder id="ID1415423628"
-                 x="416"
-                 y="201"
+                 x="433"
+                 y="118"
                  width="984"
                  height="701">
         <sheets>
@@ -2967,9 +2947,9 @@
           </cpnsheet>
         </sheets>
         <zorder>
+          <position value="1"/>
           <position value="2"/>
           <position value="0"/>
-          <position value="1"/>
         </zorder>
       </cpnbinder>
     </binders>
@@ -3264,14 +3244,6 @@ end</layout>
           <IndexNode expanded="false"/>
           <IndexNode expanded="false"/>
           <IndexNode expanded="false"/>
-          <IndexNode expanded="false"/>
-          <IndexNode expanded="false"/>
-          <IndexNode expanded="false"/>
-        </IndexNode>
-        <IndexNode expanded="false">
-          <IndexNode expanded="false"/>
-        </IndexNode>
-        <IndexNode expanded="false">
           <IndexNode expanded="false"/>
           <IndexNode expanded="false"/>
         </IndexNode>

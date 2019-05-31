@@ -180,7 +180,7 @@ TextBox.prototype.create = function (bounds, style, value, options) {
   // domEvent.bind(content, 'mousedown', stopPropagation);
   domEvent.bind(content, 'paste', self.handlePaste);
 
-  console.log('TextBox.prototype.create(), options = ', options);
+  // console.log('TextBox.prototype.create(), options = ', options);
 
   if (options.autoResize) {
     domEvent.bind(content, 'input', this.autoResize);
@@ -304,8 +304,8 @@ TextBox.prototype.autoResize = function () {
 
   var fontSize = parseInt(this.style.fontSize) || 12;
 
-  console.log('TextBox.prototype.autoResize, parent = ', parent);
-  console.log('TextBox.prototype.autoResize, content = ', content);
+  // console.log('TextBox.prototype.autoResize, parent = ', parent);
+  // console.log('TextBox.prototype.autoResize, content = ', content);
 
   // if (content.scrollHeight > parent.offsetHeight ||
   //     content.scrollHeight < parent.offsetHeight - fontSize) {

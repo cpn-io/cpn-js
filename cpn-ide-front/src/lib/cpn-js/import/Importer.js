@@ -11,7 +11,7 @@ import { CPN_CONNECTION, CPN_PLACE, CPN_TEXT_ANNOTATION, CPN_TRANSITION, is } fr
 
 export function importCpnPage(diagram, cpnPageElement) {
 
-  console.log('Importer.importCpnPage(), cpnPageElement = ', cpnPageElement);
+  // console.log('Importer.importCpnPage(), cpnPageElement = ', cpnPageElement);
 
   var importer, eventBus, translate, canvas, elementRegistry, layouter;
 
@@ -51,7 +51,7 @@ export function importCpnPage(diagram, cpnPageElement) {
    */
   function render(cpnPageElement) {
 
-    console.log('Importer.render(), cpnElement = ', cpnPageElement);
+    // console.log('Importer.render(), cpnElement = ', cpnPageElement);
 
     diagram.clear();
 

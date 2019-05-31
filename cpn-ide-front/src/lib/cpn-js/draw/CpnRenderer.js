@@ -58,7 +58,7 @@ var RENDERER_IDS = new Ids();
 var ERROR_STROKE_COLOR = '#ff999966';
 var ERROR_STROKE_THICK = 5;
 
-var DEFAULT_FILL_COLOR = '#ebebeb';
+var DEFAULT_LABEL_FILL_COLOR = '#ebebeb99';
 
 var PORT_FILL_COLOR = '#e0e0fd';
 var PORT_STROKE_COLOR = '#4c66cc';
@@ -438,7 +438,7 @@ export default function CpnRenderer(
         y: 0,
         width: attrs.box.width - 2,
         height: attrs.box.height - 1,
-        fill: DEFAULT_FILL_COLOR,
+        fill: DEFAULT_LABEL_FILL_COLOR,
       });
       svgAppend(parentGfx, rect);
     }
@@ -513,12 +513,42 @@ export default function CpnRenderer(
   // }
 
   function createPathFromConnection(connection) {
-    var waypoints = connection.waypoints;
+    let waypoints = connection.waypoints;
 
-    var pathData = 'm  ' + waypoints[0].x + ',' + waypoints[0].y;
-    for (var i = 1; i < waypoints.length; i++) {
-      pathData += 'L' + waypoints[i].x + ',' + waypoints[i].y + ' ';
+    let D = 15;
+
+    let prevPoint = waypoints[0];
+    let pathData = 'm  ' + waypoints[0].x + ',' + waypoints[0].y;
+    let prevWp;
+
+    for (let i = 1; i < waypoints.length; i++) {
+
+        // just draw line
+        // pathData += 'L' + waypoints[i].x + ',' + waypoints[i].y + ' ';
+
+        // draw spline angles
+        let dx = waypoints[i].x - prevPoint.x;
+        let dy = waypoints[i].y - prevPoint.y;
+        let d = Math.sqrt(dx * dx + dy * dy);
+
+        let wp = { x: (prevPoint.x + D * dx / d), y: (prevPoint.y + D * dy / d) };
+
+        if (prevWp) {
+          pathData += 'Q' + prevPoint.x + ' ' + prevPoint.y + ', ' + wp.x + ' ' + wp.y + ' ';
+        }
+
+        let wp2 = waypoints[i];
+        if (i < waypoints.length - 1) {
+          wp2 = { x: (prevPoint.x + dx - D * dx / d), y: (prevPoint.y + dy - D * dy / d) };
+        }
+
+        pathData += 'L' + wp2.x + ',' + wp2.y + ' ';
+
+        prevPoint = waypoints[i];
+        prevWp = wp;
+
     }
+
     return pathData;
   }
 
@@ -554,7 +584,7 @@ export default function CpnRenderer(
     const cx = parseFloat(box.width / 2);
     const cy = parseFloat(box.height / 2);
 
-    const strokeWidth = getStrokeWidth(element);
+    const strokeWidth = getStrokeWidth(element) + 1;
 
     // Draw error state
     var isError = element.iserror;
@@ -601,8 +631,8 @@ export default function CpnRenderer(
       svgAttr(ellipse, {
         cx: cx,
         cy: cy,
-        rx: cx - strokeWidth * 3,
-        ry: cy - strokeWidth * 3
+        rx: cx - strokeWidth * 2,
+        ry: cy - strokeWidth * 2
       });
       svgAttr(ellipse, {
         fill: 'transparent',
@@ -626,7 +656,7 @@ export default function CpnRenderer(
     // console.log('drawTransition(), element = ', element);
     var box = getBox(element);
 
-    const strokeWidth = getStrokeWidth(element);
+    const strokeWidth = getStrokeWidth(element) + 1;
 
     // Draw error state
     var isError = element.iserror;
@@ -677,10 +707,10 @@ export default function CpnRenderer(
     if (element.cpnElement && element.cpnElement.subst && element.cpnElement.subst._subpage) {
       rect = svgCreate('rect');
       svgAttr(rect, {
-        x: strokeWidth * 3,
-        y: strokeWidth * 3,
-        width: box.width - strokeWidth * 6,
-        height: box.height - strokeWidth * 6
+        x: strokeWidth * 2,
+        y: strokeWidth * 2,
+        width: box.width - strokeWidth * 4,
+        height: box.height - strokeWidth * 4
       });
       svgAttr(rect, {
         fill: 'transparent',
@@ -695,7 +725,7 @@ export default function CpnRenderer(
 
 
   function drawArc(parentGfx, element, d) {
-    console.log('drawArc(), element = ', element);
+    // console.log('drawArc(), element = ', element);
 
     var endMrker = drawEndMarker(parentGfx);
 
@@ -780,8 +810,8 @@ export default function CpnRenderer(
     var attrs = {};
 
     var fill = getFillColor(element),
-    strokeColor = getStrokeColor(element),
-    strokeWidth = getStrokeWidth(element);
+      strokeColor = getStrokeColor(element),
+      strokeWidth = getStrokeWidth(element);
 
     if (element.cpnElement && element.cpnElement._orientation) {
 

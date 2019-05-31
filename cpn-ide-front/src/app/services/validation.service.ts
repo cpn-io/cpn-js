@@ -125,9 +125,9 @@ export class ValidationService {
       }
 
       const t = new Date().getTime() - startTime;
-      // if (t > 10) {
-      console.log('END detectChanges(), time = ', t);
-      // }
+      if (t > 10) {
+        console.log('END detectChanges(), time = ', t);
+      }
     }
 
     if (this.needValidation) {

@@ -344,7 +344,7 @@ export class ModelEditorComponent implements OnInit {
   }
 
   loadPageDiagram(pageObject) {
-    console.log('loadPageDiagram(), import, pageObject = ', pageObject);
+    // console.log('loadPageDiagram(), import, pageObject = ', pageObject);
 
     this.clearPage();
 

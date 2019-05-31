@@ -54,7 +54,8 @@ CpnPortMenuProvider.prototype.open = function (target, position, modeling) {
 };
 
 CpnPortMenuProvider.prototype.close = function () {
-  console.log('CpnPortMenuProvider.prototype.close');
+  // console.log('CpnPortMenuProvider.prototype.close');
+
   let isOp = this._popupMenu.isOpen();
   let cur = this._popupMenu._current;
   if( this._popupMenu._current && this._popupMenu._current.className  === 'cpnPortMenu' && this._popupMenu.isOpen())
@@ -118,7 +119,7 @@ CpnPortMenuProvider.prototype.getHeaderEntries = function (element) {
 CpnPortMenuProvider.prototype._changePortSock = function(port, transEnd, placeEnd) {
   transEnd.cpnElement.subst._portsock =  transEnd.cpnElement.subst._portsock + '(' + port.id + ', '+ placeEnd.id +')';
   this.changes =  transEnd.cpnElement.subst._portsock;
-  console.log('CpnPortMenuProvider._changePortSock -  ', transEnd);
+  // console.log('CpnPortMenuProvider._changePortSock -  ', transEnd);
   this.close();
 }
 

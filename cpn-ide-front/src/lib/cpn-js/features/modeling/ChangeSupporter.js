@@ -6,10 +6,10 @@ ChangeSupporter.$inject = [
 ];
 
 export default function ChangeSupporter(eventBus, modeling, textRenderer) {
-  console.log('ChangeSupporter()');
+  // console.log('ChangeSupporter()');
 
   eventBus.on('model.update.tokens', function (event) {
-    console.log('ChangeSupporter(), model.update.tokens, event = ', event);
+    // console.log('ChangeSupporter(), model.update.tokens, event = ', event);
 
     if (event.data) {
       updateTokens(event.data);
@@ -17,7 +17,7 @@ export default function ChangeSupporter(eventBus, modeling, textRenderer) {
   });
 
   eventBus.on('model.update.cpn.status', function (event) {
-    console.log('ChangeSupporter(), model.update.cpn.status, event = ', event);
+    // console.log('ChangeSupporter(), model.update.cpn.status, event = ', event);
 
     if (event.data) {
       modeling.setCpnStatus(event.data);
@@ -47,14 +47,14 @@ export default function ChangeSupporter(eventBus, modeling, textRenderer) {
           idList.push(item.id);
         //}
       }
-      console.log('ChangeSupporter(), updateTokens(), idList = ', idList);
+      // console.log('ChangeSupporter(), updateTokens(), idList = ', idList);
 
       if (idList.length > 0) {
 
         // Get list of elements for array of id (index of array is id of elements, elementList[id] == element)
         const elementList = modeling.getElementsByCpnElementIds(idList);
 
-        console.log('ChangeSupporter(), updateTokens(), elementList = ', elementList, Object.keys(elementList).length);
+        // console.log('ChangeSupporter(), updateTokens(), elementList = ', elementList, Object.keys(elementList).length);
 
         if (Object.keys(elementList).length > 0) {
 

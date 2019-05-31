@@ -90,9 +90,9 @@ export class AccessCpnService {
           }
 
           // Init simulator
-          if (!this.simInitialized) {
-            this.initSim();
-          }
+          // if (!this.simInitialized) {
+          //   this.initSim();
+          // }
         },
         (error) => {
           console.error('AccessCpnService, initNet(), ERROR, data = ', error);
@@ -233,7 +233,7 @@ export class AccessCpnService {
     );
   }
 
-  setIsSimulation(state) {
+  public setIsSimulation(state) {
     this.isSimulation = state;
   }
 

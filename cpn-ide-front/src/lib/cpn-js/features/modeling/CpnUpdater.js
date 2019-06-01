@@ -50,6 +50,7 @@ import {
   getDefText,
   getNextId
 } from './util/AttrsUtil';
+import { getDistance } from '../../draw/CpnRenderUtil';
 
 
 /**
@@ -132,7 +133,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   // });
 
   domEvent.bind(document, 'mousedown', function (event) {
-    console.log('CpnUpdater(), domEvent, mousedown, event = ', event);
+    // console.log('CpnUpdater(), domEvent, mousedown, event = ', event);
 
     const position = toPoint(event);
     const target = document.elementFromPoint(position.x, position.y);
@@ -142,8 +143,8 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
       element = elementRegistry.get(gfx);
     }
 
-    console.log('CpnUpdater(), domEvent, mousedown, target = ', target);
-    console.log('CpnUpdater(), domEvent, mousedown, gfx = ', gfx);
+    // console.log('CpnUpdater(), domEvent, mousedown, target = ', target);
+    // console.log('CpnUpdater(), domEvent, mousedown, gfx = ', gfx);
 
     if (element === canvas.getRootElement()) {
       popupMenuProvider.close();
@@ -158,10 +159,10 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
       popupMenuProvider.close();
       portMenuProvider.close();
 
-      console.log('CpnUpdater(), domEvent, mousedown, popup menu, x,y = ', event.x, event.y);
+      // console.log('CpnUpdater(), domEvent, mousedown, popup menu, x,y = ', event.x, event.y);
 
       if (element) {
-        console.log('CpnUpdater(), domEvent, mousedown, popup menu, element = ', element);
+        // console.log('CpnUpdater(), domEvent, mousedown, popup menu, element = ', element);
 
         if (isAny(element, [CPN_PLACE, CPN_TRANSITION, CPN_CONNECTION])) {
           popupMenuProvider.close();
@@ -287,34 +288,55 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
       if (shape.waypoints instanceof Array && shape.waypoints.length > 2) {
         // console.log('CpnUpdater().updateCpnElement(), connection, element = ', element);
 
-        // console.log('CpnUpdater().updateCpnElement(), connection, shape.waypoints = ', shape.waypoints);
-        // console.log('CpnUpdater().updateCpnElement(), connection, cpnElement.bendpoint = ', cpnElement.bendpoint);
-
-        let bendpoints = cpnElement.bendpoint || [];
+        // let bendpoints = cpnElement.bendpoint || [];
+        let bendpoints = [];
         for (let i = 1; i < shape.waypoints.length - 1; i++) {
           const wp = shape.waypoints[i];
 
-          if (!updateBendpoints(cpnElement, wp)) {
-            // create new bendpoint item for cpnElement
-            const position = {
-              x: (wp.x).toString(),
-              y: (wp.y).toString(),
-            };
+          // if (!updateBendpoints(cpnElement, wp)) {
+          // create new bendpoint item for cpnElement
+          const position = {
+            x: (wp.x).toString(),
+            y: (wp.y).toString(),
+          };
 
-            // bendpoints.push({
-            //   posattr: getDefPosattr(position),
-            //   fillattr: getDefFillattr(),
-            //   lineattr: getDefLineattr(),
-            //   textattr: getDefTextattr(),
-            //   _id: getNextId(),
-            //   _serial: (1).toString()
-            // });
-          }
+          bendpoints.push({
+            posattr: getDefPosattr(position),
+            fillattr: getDefFillattr(),
+            lineattr: getDefLineattr(),
+            textattr: getDefTextattr(),
+            _id: getNextId(),
+            _serial: (1).toString()
+          });
+          // }
         }
-        // console.log('CpnUpdater().updateCpnElement(), connection, bendpoint = ', bendpoints);
 
-        if (bendpoints.length > 0)
+
+        if (bendpoints.length > 0) {
+
+          const wp0 = shape.waypoints[0];
+
+          let reverse = false;
+          if (cpnElement._orientation && cpnElement._orientation == 'TtoP') {
+            reverse = true;
+          }
+
+          // console.log('CpnUpdater().updateCpnElement(), connection, wp0 = ', JSON.stringify(wp0));
+          // console.log('CpnUpdater().updateCpnElement(), connection, bendpoints (1) = ', JSON.stringify(bendpoints));
+
+          // // sort by distance from first point
+          bendpoints = bendpoints.sort((a, b) => {
+            let d_a = getDistance(wp0, { x: a.posattr._x, y: -1 * a.posattr._y });
+            let d_b = getDistance(wp0, { x: b.posattr._x, y: -1 * b.posattr._y });
+            return reverse ? d_a - d_b : d_b - d_a;
+          });
+
+          // console.log('CpnUpdater().updateCpnElement(), connection, bendpoints (2) = ', JSON.stringify(bendpoints));
+
           cpnElement.bendpoint = bendpoints;
+        }
+
+
       }
 
       if (cpnElement.text instanceof Object) {

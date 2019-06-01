@@ -110,7 +110,7 @@ export class ModelEditorComponent implements OnInit {
       console.log('import.render.complete, event = ', event);
 
       // this.updateElementStatus();
-      this.eventBus.fire('model.update.cpn.status', { data: { process: '*' } });
+      // this.eventBus.fire('model.update.cpn.status', { data: { process: '*' } });
     });
 
     // eventBus.on('element.changed', (event) => {
@@ -287,7 +287,8 @@ export class ModelEditorComponent implements OnInit {
           labels[lab.labelType] = lab.cpnElement;
         }
 
-        this.eventService.send(Message.SHAPE_SELECT, { element: element, labels: labels, cpnElement: element.cpnElement, type: element.type });
+        this.eventService.send(Message.SHAPE_SELECT,
+          { element: element, labels: labels, cpnElement: element.cpnElement, type: element.type });
       }
     }
   }

@@ -16,8 +16,11 @@ import { ValidationService } from './validation.service';
 export class ModelService {
 
   private isLoaded = false;
-  public projectName = '';
+
+  public project = undefined;
   public projectData = undefined;
+  public projectName = '';
+
   private backupModel = [];
   private redoBackupModel;
   private modelCase = [];
@@ -48,8 +51,10 @@ export class ModelService {
     this.modelCase['arc'] = 'arc';
     this.modelCase['label'] = 'label';
 
-    this.eventService.on(Message.PROJECT_LOAD, (data) => {
-      this.loadProject(data);
+    this.eventService.on(Message.PROJECT_LOAD, (event) => {
+      if (event.project) {
+        this.loadProject(event.project);
+      }
     });
 
     this.eventService.on(Message.PAGE_OPEN, (data) => {
@@ -77,6 +82,7 @@ export class ModelService {
   public loadProject(project) {
     console.log('ModelService.loadProject(), project = ', project);
 
+    this.project = project;
     this.projectData = project.data;
     this.projectName = project.name;
   }
@@ -105,7 +111,7 @@ export class ModelService {
     this.markOpenedModel();
 
     const project = { data: this.projectData, name: this.projectName };
-    this.eventService.send(Message.PROJECT_LOAD, project);
+    this.eventService.send(Message.PROJECT_LOAD, { project: project });
 
     if (modelState.page) {
       this.eventService.send(Message.PAGE_OPEN, { pageObject: this.getPageById(modelState.page), subPages: this.subPages });
@@ -119,6 +125,10 @@ export class ModelService {
 
   getModelCase(labelType) {
     return this.modelCase[labelType];
+  }
+
+  public getProject() {
+    return this.project;
   }
 
   public getProjectData() {
@@ -150,9 +160,12 @@ export class ModelService {
   //   }
   // }
 
+  /**
+   * Get root cpnet element from CPN project JSON object
+   * @returns - cpnElement for cpnet element
+   */
   getCpn() {
     let cpnet;
-
     if (this.projectData.workspaceElements) {
       if (this.projectData.workspaceElements instanceof Array) {
         for (const workspaceElement of this.projectData.workspaceElements) {

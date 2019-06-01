@@ -57,6 +57,12 @@
         <span>Redo</span>
       </div>
     </li>
+    <li class="nav-item">
+      <div class="nav-link mb-0" (click)="reloadProject()">
+        <i class="fas fa-sync-alt"></i>
+        <span>Reload</span>
+      </div>
+    </li>
 
     <div class="divider"></div>
 
@@ -66,19 +72,38 @@
         <span>Expand diagram</span>
       </div>
     </li>
-    <li *ngIf="accessCpnService.isSimulation" class="nav-item"><a (click)="onDoStep()" class="nav-link" href="#">Step</a></li>
+
+    <div class="divider"></div>
+
+    <li class="nav-item disabled">
+      <div class="nav-link mb-0 disabled">
+        <span style="color:gray">Simulation:</span>
+      </div>
+    </li>
+
+    <li *ngIf="accessCpnService.isSimulation" class="nav-item">
+      <div (click)="onDoStep()" class="nav-link mb-0">
+        <i class="fas fa-step-forward"></i>
+        <span>Step</span>
+      </div>
+    </li>
 
     <li class="nav-item">
       <div *ngIf="accessCpnService.isSimulation; else notSim">
-        <div (click)="onStopSimulation()" class="nav-link mb-0" >
+        <div (click)="onStopSimulation()" class="nav-link mb-0">
           <i class="fas fa-stop"></i>
-          <span>Stop simulation</span>
+          <span>Stop</span>
         </div>
       </div>
       <ng-template #notSim>
-        <div (click)="onStartSimulation()" class="nav-link mb-0"><i class="fas fa-play"></i><span>Start simulation</span></div>
+        <div (click)="onStartSimulation()" class="nav-link mb-0">
+          <i class="fas fa-play"></i>
+          <span>Start</span>
+        </div>
       </ng-template>
     </li>
+
+
   </ul>
 
   <ul class="navbar-nav ml-auto">

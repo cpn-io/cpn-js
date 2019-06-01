@@ -11,7 +11,9 @@ var MIN_TEXT_ANNOTATION_HEIGHT = 30;
 export default function TextRenderer(config) {
 
   var defaultStyle = assign({
-    fontFamily: 'Arial, sans-serif',
+    // fontFamily: '\'Droid Sans Mono\'',
+    // fontFamily: 'Arial, Tahoma',
+    fontFamily: 'monospace',
     fontSize: DEFAULT_FONT_SIZE,
     fontWeight: 'normal',
     lineHeight: LINE_HEIGHT_RATIO

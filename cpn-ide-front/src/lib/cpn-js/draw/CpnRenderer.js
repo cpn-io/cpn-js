@@ -58,6 +58,9 @@ var RENDERER_IDS = new Ids();
 var ERROR_STROKE_COLOR = '#ff999966';
 var ERROR_STROKE_THICK = 5;
 
+var SELECT_STROKE_COLOR = '#00CC00';
+var SELECT_STROKE_THICK = 2;
+
 var DEFAULT_LABEL_FILL_COLOR = '#ebebeb99';
 
 var PORT_FILL_COLOR = '#e0e0fd';
@@ -523,29 +526,29 @@ export default function CpnRenderer(
 
     for (let i = 1; i < waypoints.length; i++) {
 
-        // just draw line
-        // pathData += 'L' + waypoints[i].x + ',' + waypoints[i].y + ' ';
+      // just draw line
+      // pathData += 'L' + waypoints[i].x + ',' + waypoints[i].y + ' ';
 
-        // draw spline angles
-        let dx = waypoints[i].x - prevPoint.x;
-        let dy = waypoints[i].y - prevPoint.y;
-        let d = Math.sqrt(dx * dx + dy * dy);
+      // draw spline angles
+      let dx = waypoints[i].x - prevPoint.x;
+      let dy = waypoints[i].y - prevPoint.y;
+      let d = Math.sqrt(dx * dx + dy * dy);
 
-        let wp = { x: (prevPoint.x + D * dx / d), y: (prevPoint.y + D * dy / d) };
+      let wp = { x: (prevPoint.x + D * dx / d), y: (prevPoint.y + D * dy / d) };
 
-        if (prevWp) {
-          pathData += 'Q' + prevPoint.x + ' ' + prevPoint.y + ', ' + wp.x + ' ' + wp.y + ' ';
-        }
+      if (prevWp) {
+        pathData += 'Q' + prevPoint.x + ' ' + prevPoint.y + ', ' + wp.x + ' ' + wp.y + ' ';
+      }
 
-        let wp2 = waypoints[i];
-        if (i < waypoints.length - 1) {
-          wp2 = { x: (prevPoint.x + dx - D * dx / d), y: (prevPoint.y + dy - D * dy / d) };
-        }
+      let wp2 = waypoints[i];
+      if (i < waypoints.length - 1) {
+        wp2 = { x: (prevPoint.x + dx - D * dx / d), y: (prevPoint.y + dy - D * dy / d) };
+      }
 
-        pathData += 'L' + wp2.x + ',' + wp2.y + ' ';
+      pathData += 'L' + wp2.x + ',' + wp2.y + ' ';
 
-        prevPoint = waypoints[i];
-        prevWp = wp;
+      prevPoint = waypoints[i];
+      prevWp = wp;
 
     }
 
@@ -586,28 +589,11 @@ export default function CpnRenderer(
 
     const strokeWidth = getStrokeWidth(element) + 1;
 
-    // Draw error state
-    var isError = element.iserror;
-    // isError = true;
-
-    // if (isError) {
-    //   var ellipse = svgCreate('ellipse');
-    //   svgAttr(ellipse, {
-    //     cx: cx,
-    //     cy: cy,
-    //     rx: cx + ERROR_STROKE_THICK / 2 + strokeWidth / 2,
-    //     ry: cy + ERROR_STROKE_THICK / 2 + strokeWidth / 2
-    //   });
-    //   svgAttr(ellipse, {
-    //     fill: 'transparent',
-    //     stroke: ERROR_STROKE_COLOR,
-    //     strokeWidth: ERROR_STROKE_THICK
-    //   });
-    //   svgAppend(parentGfx, ellipse);
-    // }
+    // Draw selected state
+    drawSelectedStatus(parentGfx, element);
 
     // Draw element
-    var ellipse = svgCreate('ellipse');
+    let ellipse = svgCreate('ellipse');
     svgAttr(ellipse, {
       cx: cx,
       cy: cy,
@@ -658,31 +644,8 @@ export default function CpnRenderer(
 
     const strokeWidth = getStrokeWidth(element) + 1;
 
-    // Draw error state
-    var isError = element.iserror;
-    // isError = true;
-
-    // if (isError) {
-    //   var rect = svgCreate('rect');
-    //   const b = {
-    //     x: -(ERROR_STROKE_THICK + strokeWidth) / 2,
-    //     y: -(ERROR_STROKE_THICK + strokeWidth) / 2,
-    //     width: box.width + (ERROR_STROKE_THICK + strokeWidth),
-    //     height: box.height + (ERROR_STROKE_THICK + strokeWidth)
-    //   };
-    //   console.log('drawTransition(), error, strokeWidth = ', strokeWidth);
-    //   console.log('drawTransition(), error, ERROR_STROKE_THICK + strokeWidth = ', ERROR_STROKE_THICK + strokeWidth);
-    //   console.log('drawTransition(), error, box = ', box);
-    //   console.log('drawTransition(), error, b = ', b);
-
-    //   svgAttr(rect, b);
-    //   svgAttr(rect, {
-    //     fill: 'transparent',
-    //     stroke: ERROR_STROKE_COLOR,
-    //     strokeWidth: ERROR_STROKE_THICK
-    //   });
-    //   svgAppend(parentGfx, rect);
-    // }
+    // Draw selected state
+    drawSelectedStatus(parentGfx, element);
 
     // Draw element
     var rect = svgCreate('rect');
@@ -723,6 +686,49 @@ export default function CpnRenderer(
     return rect;
   }
 
+  function drawSelectedStatus(parentGfx, element) {
+    if (element.selected) {
+      var box = getBox(element);
+
+      const cx = parseFloat(box.width / 2);
+      const cy = parseFloat(box.height / 2);
+
+      const sel = svgCreate('rect');
+      svgAttr(sel, {
+        x: -5,
+        y: -5,
+        width: cx * 2 + 10,
+        height: cy * 2 + 10
+      });
+      svgAttr(sel, {
+        fill: 'transparent',
+        stroke: SELECT_STROKE_COLOR,
+        strokeWidth: SELECT_STROKE_THICK,
+        strokeDasharray: "2,2"
+      });
+      svgAppend(parentGfx, sel);
+    }
+  }
+
+  function drawErrorStatus(parentGfx, element, type) {
+    if (type === 'rect') {
+      var rect = svgCreate('rect');
+      const b = {
+        x: -(ERROR_STROKE_THICK + strokeWidth) / 2,
+        y: -(ERROR_STROKE_THICK + strokeWidth) / 2,
+        width: box.width + (ERROR_STROKE_THICK + strokeWidth),
+        height: box.height + (ERROR_STROKE_THICK + strokeWidth)
+      };
+
+      svgAttr(rect, b);
+      svgAttr(rect, {
+        fill: 'transparent',
+        stroke: ERROR_STROKE_COLOR,
+        strokeWidth: ERROR_STROKE_THICK
+      });
+      svgAppend(parentGfx, rect);
+    }
+  }
 
   function drawArc(parentGfx, element, d) {
     // console.log('drawArc(), element = ', element);

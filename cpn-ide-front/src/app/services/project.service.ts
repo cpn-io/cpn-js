@@ -111,7 +111,7 @@ export class ProjectService {
     this.modelService.markNewModel();
 
     // load new project
-    this.eventService.send(Message.PROJECT_LOAD, this.project);
+    this.eventService.send(Message.PROJECT_LOAD, { project: this.project } );
   }
 
   loadEmptyProject() {

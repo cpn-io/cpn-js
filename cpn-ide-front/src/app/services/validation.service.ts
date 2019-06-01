@@ -40,6 +40,19 @@ export class ValidationService {
     return (C && C !== '');
   }
 
+  skipKeyList = [
+    'aux',
+    'token',
+    'marking',
+    'posattr',
+    'fillattr',
+    'lineattr',
+    'textattr',
+    'box',
+    'ellipse',
+    'bendpoint'
+  ];
+
   /**
    * Detect changes between two objects
    */
@@ -54,7 +67,7 @@ export class ValidationService {
 
       for (const key of Object.keys(obj1)) {
 
-        if (['aux', 'token', 'marking', 'posattr', 'box', 'ellipse', 'bendpoint'].includes(key.toLowerCase())) {
+        if (this.skipKeyList.includes(key.toLowerCase())) {
           continue;
         }
         // if (!['text', 'ml'].includes(key)) {

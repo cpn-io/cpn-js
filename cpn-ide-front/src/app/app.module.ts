@@ -46,6 +46,8 @@ import { OptionsNamePipePipe } from './pipes/options-name.pipe';
 import { SettingsService } from './services/settings.service';
 import { ValidationService } from './services/validation.service';
 
+require('typeface-droid-sans-mono');
+
 // -----------------------------------------------------------------------------
 
 @NgModule({

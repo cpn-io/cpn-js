@@ -50,40 +50,40 @@ CpnPaletteProvider.prototype.getPaletteEntries = function () {
       }
     },
 
-    'global-connect-tool': {
-      group: 'tools',
-      className: 'bpmn-icon-connection-multi',
-      title: 'Activate Connection Tool',
-      action: {
-        click: function(event) {
-          // globalConnect.toggle(event);
-        }
-      }
-    },
+    // 'global-connect-tool': {
+    //   group: 'tools',
+    //   className: 'bpmn-icon-connection-multi',
+    //   title: 'Activate Connection Tool',
+    //   action: {
+    //     click: function(event) {
+    //       // globalConnect.toggle(event);
+    //     }
+    //   }
+    // },
 
-    'tool-separator': {
-      group: 'tools',
-      separator: true
-    },
+    // 'tool-separator': {
+    //   group: 'tools',
+    //   separator: true
+    // },
 
-    'create-place': {
-      group: 'create',
-      className: 'bpmn-icon-start-event-none',
-      title: 'Create Place',
-      action: function() { self._createPlace(event) }
-    },
+    // 'create-place': {
+    //   group: 'create',
+    //   className: 'bpmn-icon-start-event-none',
+    //   title: 'Create Place',
+    //   action: function() { self._createPlace(event) }
+    // },
 
-    'create-transition': {
-      group: 'create',
-      className: 'bpmn-icon-task',
-      title: 'Create Transition',
-      action: function() { self._createTransition(event) }
-    },
+    // 'create-transition': {
+    //   group: 'create',
+    //   className: 'bpmn-icon-task',
+    //   title: 'Create Transition',
+    //   action: function() { self._createTransition(event) }
+    // },
 
-    'tool-separator': {
-      group: 'create',
-      separator: true
-    },
+    // 'tool-separator': {
+    //   group: 'create',
+    //   separator: true
+    // },
 
   };
 };

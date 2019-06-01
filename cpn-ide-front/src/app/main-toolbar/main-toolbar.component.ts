@@ -21,7 +21,7 @@ export class MainToolbarComponent implements OnInit {
     private eventService: EventService,
     private validationService: ValidationService,
     private accessCpnService: AccessCpnService
-    ) {
+  ) {
   }
 
   ngOnInit() {
@@ -58,6 +58,11 @@ export class MainToolbarComponent implements OnInit {
 
   redoChanges() {
     this.modelService.cancelModelChanges('redo');
+  }
+
+  reloadProject() {
+    this.eventService.send(Message.PROJECT_LOAD, { project: this.modelService.getProject() });
+    this.validationService.validate();
   }
 
   fullScreen() {

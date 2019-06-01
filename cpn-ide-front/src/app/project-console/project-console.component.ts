@@ -29,7 +29,10 @@ export class ProjectConsoleComponent implements OnInit {
     this.eventService.on(Message.PROJECT_LOAD, (event) => {
       this.logHtml = [];
       this.nodes = [];
-      this.logSuccess('Project ' + event.name + ' loaded.');
+
+      if (event.project) {
+        this.logSuccess('Project ' + event.project.name + ' loaded.');
+      }
     });
 
     // VALIDATION

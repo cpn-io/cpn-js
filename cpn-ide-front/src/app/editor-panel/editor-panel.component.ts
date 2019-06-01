@@ -9,10 +9,10 @@ import {
   ViewContainerRef
 } from '@angular/core';
 
-import {ModelEditorComponent} from '../model-editor/model-editor.component';
-import {TabsContainer} from './../tabs/tabs-container/tabs.container';
-import {Message} from '../common/message';
-import {EventService} from '../services/event.service';
+import { ModelEditorComponent } from '../model-editor/model-editor.component';
+import { TabsContainer } from './../tabs/tabs-container/tabs.container';
+import { Message } from '../common/message';
+import { EventService } from '../services/event.service';
 
 
 @Component({
@@ -36,8 +36,10 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // Subscribe on project load event
-    this.eventService.on(Message.PROJECT_LOAD, (data) => {
-      this.loadProject(data);
+    this.eventService.on(Message.PROJECT_LOAD, (event) => {
+      if (event.project) {
+        this.loadProject(event.project);
+      }
     });
 
     this.eventService.on(Message.PAGE_OPEN, (data) => {
@@ -81,7 +83,7 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
   }
 
   addTab(tabArray, id, name) {
-    tabArray.push({id: id, title: name});
+    tabArray.push({ id: id, title: name });
 
     setTimeout(() => {
       const tab = this.tabsComponent.getTabByID(id);
@@ -92,7 +94,7 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
   }
 
   addMlTab(tabArray, id, name, project) {
-    tabArray.push({id: id, title: name});
+    tabArray.push({ id: id, title: name });
 
     setTimeout(() => {
       const tab = this.tabsComponent.getTabByID(id);
@@ -103,7 +105,7 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
   }
 
   openModelEditor(pageObject, subPage) {
-    // console.log('openPage(), pageObject = ', pageObject);
+    console.log('openPage(), pageObject = ', pageObject);
 
     // var pageId = pageObject['@attributes'].id;
     // var pageName = pageObject.pageattr['@attributes'].name;

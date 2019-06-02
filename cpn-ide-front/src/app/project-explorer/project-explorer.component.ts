@@ -246,14 +246,16 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     this.eventService.on(Message.SUBPAGE_TRANS_CREATE, (data) => {
       // this.createPageNode()
-     const defValue = this.settings.getAppSettings()['page'];
-     const cpnElement = this.modelService.createCpnPage(defValue + ' ' + (++this.newPageCount), data.id);
-     const newNode = this.createPageNode(cpnElement);
+      const defValue = this.settings.getAppSettings()['page'];
+      const cpnElement = this.modelService.createCpnPage(defValue + ' ' + (++this.newPageCount), data.id);
+      const newNode = this.createPageNode(cpnElement);
+
       data.cpnElement.subst.subpageinfo._name = newNode.cpnElement.pageattr._name;
-     const treeNode = this.treeComponent.treeModel.getNodeById(data.currentPageId);
-     const cpnParentElement = treeNode.parent.data.cpnElement;
-     this.addCreatedNode(treeNode, newNode, cpnElement, 'page', cpnParentElement);
-     this.updatePagesNode(data.currentPageId);
+      const treeNode = this.treeComponent.treeModel.getNodeById(data.currentPageId);
+      const cpnParentElement = treeNode.parent.data.cpnElement;
+      this.addCreatedNode(treeNode, newNode, cpnElement, 'page', cpnParentElement, false);
+      this.updatePagesNode(data.currentPageId);
+
       const emiterData = {
         labels: [],
         elementid: data.cpnElement._id,
@@ -324,7 +326,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     if (currentPageId) {
       this.expandNode(currentPageId);
-      this.gotoNode(currentPageId);
+      // this.gotoNode(currentPageId);
     }
   }
 
@@ -334,7 +336,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * @param cpnElement
    */
   updateTreeByCpnElement(cpnElement, newTextValue) {
-    let nodeForUpdate = this.treeComponent.treeModel.getNodeBy((node) => {
+    const nodeForUpdate = this.treeComponent.treeModel.getNodeBy((node) => {
       // console.log('UPDATE_TREE, getNodeBy(), node = ', node);
       return node.data && node.data.cpnElement === cpnElement;
     });
@@ -690,11 +692,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         break;
     }
 
-    this.addCreatedNode(treeNode, newNode, cpnElement, cpnType, cpnParentElement);
+    this.addCreatedNode(treeNode, newNode, cpnElement, cpnType, cpnParentElement, true);
   }
 
 
-  addCreatedNode(treeNode, newNode, cpnElement, cpnType, cpnParentElement) {
+  addCreatedNode(treeNode, newNode, cpnElement, cpnType, cpnParentElement, gotoEdit = false) {
     console.log('onAddNode(), cpnType = ', cpnType);
     console.log('onAddNode(), cpnParentElement = ', cpnParentElement);
     console.log('onAddNode(), cpnElement = ', cpnElement);
@@ -719,10 +721,13 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       }
 
       this.treeComponent.treeModel.update();
-      setTimeout(() => {
-        this.treeComponent.treeModel.getNodeById(newNode.id).setActiveAndVisible();
-        this.goToEditNode(newNode.id);
-      }, 100);
+
+      if (gotoEdit) {
+        setTimeout(() => {
+          this.treeComponent.treeModel.getNodeById(newNode.id).setActiveAndVisible();
+          this.goToEditNode(newNode.id);
+        }, 100);
+      }
     }
   }
 
@@ -739,7 +744,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     console.log('onDeleteNode(), node = ', treeNode);
 
     if (treeNode.parent) {
-      let parentChildren = treeNode.parent.data.children;
+      const parentChildren = treeNode.parent.data.children;
       if (parentChildren) {
         parentChildren.splice(
           parentChildren.indexOf(treeNode.data), 1);
@@ -1650,8 +1655,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     pagesNode.actions = ['page'];
     pagesNode.type = 'pages';
 
-    let pageNodeList = [];
-
+    const pageNodeList = [];
 
     console.log('createPagesNode(), cpnElement.page = ', cpnElement.page);
 
@@ -1668,7 +1672,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     // console.log('createPagesNode(), pageNodeList = ', pageNodeList);
 
     // Move subpages to it's parent page
-    let subpages = [];
+    const subpages = [];
     for (const pageId of Object.keys(pageNodeList)) {
       const pageNode = pageNodeList[pageId];
       if (pageNode.subpages instanceof Array) {
@@ -2344,8 +2348,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     if (cpnParentElement[cpnType] instanceof Array) {
       for (let i = 0; i < cpnParentElement[cpnType].length; i++) {
-        if (cpnParentElement[cpnType][i]._id === cpnElement._id)
+        if (cpnParentElement[cpnType][i]._id === cpnElement._id) {
           cpnParentElement[cpnType][i] = cpnElement;
+        }
       }
     } else {
       cpnParentElement[cpnType] = cpnElement;

@@ -6,12 +6,6 @@ import { AccessCpnService } from '../services/access-cpn.service';
 @Injectable()
 export class ValidationService {
 
-  VALIDATION_TIMEOUT = 1000;
-
-  needValidation = false;
-
-  lastProjectData = {};
-
   constructor(
     private eventService: EventService,
     private modelService: ModelService,
@@ -20,25 +14,11 @@ export class ValidationService {
     this.checkValidation();
   }
 
-  /**
-   * public method for setting validation flag
-   */
-  public validate() {
-    if (!this.accessCpnService.isSimulation)
-      this.needValidation = true;
-  }
+  VALIDATION_TIMEOUT = 1000;
 
-  getDiff = (string, diffBy) => string.split(diffBy).join('');
+  needValidation = false;
 
-  detectChanges2(projectData) {
-    // return (JSON.stringify(this.lastProjectData) !== JSON.stringify(projectData));
-
-    const A = JSON.stringify(this.lastProjectData);
-    const B = JSON.stringify(projectData);
-    const C = this.getDiff(B, A);
-
-    return (C && C !== '');
-  }
+  lastProjectData = {};
 
   skipKeyList = [
     'aux',
@@ -54,13 +34,35 @@ export class ValidationService {
   ];
 
   /**
+   * public method for setting validation flag
+   */
+  public validate() {
+    if (!this.accessCpnService.isSimulation) {
+      this.needValidation = true;
+    }
+  }
+
+  getDiff = (string, diffBy) => string.split(diffBy).join('');
+
+  detectChanges2(projectData) {
+    // return (JSON.stringify(this.lastProjectData) !== JSON.stringify(projectData));
+
+    const A = JSON.stringify(this.lastProjectData);
+    const B = JSON.stringify(projectData);
+    const C = this.getDiff(B, A);
+
+    return (C && C !== '');
+  }
+
+  /**
    * Detect changes between two objects
    */
   detectChanges(obj1, obj2) {
 
     if (obj1 instanceof Object && obj2 instanceof Object) {
 
-      if (Object.keys(obj1).length !== Object.keys(obj2).length) {
+      if (Object.keys(obj1).filter(key => !this.skipKeyList.includes(key)).length !==
+        Object.keys(obj2).filter(key => !this.skipKeyList.includes(key)).length) {
         console.log('detectChanges(), KEYS LENGTH DIFFERENT ', obj1, obj2);
         return true;
       }
@@ -70,16 +72,14 @@ export class ValidationService {
         if (this.skipKeyList.includes(key.toLowerCase())) {
           continue;
         }
-        // if (!['text', 'ml'].includes(key)) {
-        //   continue;
-        // }
 
         if (obj1.hasOwnProperty(key) && obj2.hasOwnProperty(key)) {
           if (this.detectChanges(obj1[key], obj2[key])) {
+            console.log('detectChanges(), DETECTED, OBJECTS DIFFERENT, ', obj1[key], obj1[key]);
             return true;
           }
         } else {
-          console.log('detectChanges(), KEYS OBJECTS DIFFERENT, ', key, obj1, obj2, ' [', obj1[key], '] [', obj2[key], ']');
+          console.log('detectChanges(), DETECTED, KEYS OBJECTS DIFFERENT, ', key, obj1, obj2, ' [', obj1[key], '] [', obj2[key], ']');
           return true;
         }
 

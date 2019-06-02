@@ -408,12 +408,14 @@ Modeling.prototype.connect = function (source, target, attrs, hints) {
       const conElem = this.createNewConnection(placeShape, transShape, orientation);
 
       this._eventBus.fire('shape.create.end', { elements: [conElem] });
+
       // this._eventBus.fire('shape.editing.activate', {shape: conElem});
       // this._eventBus.fire('shape.contextpad.activate', {shape: conElem});
 
       //openPortProvider(this._portMenuProvider, transShape);
       //this._portMenuProvider.open(transShape, { cursor: { x: 609, y: 575 } });
       // openPortMenu(this._eventBus, transShape, placeShape, conElem, orientation);
+
       return conElem;
     }
   }
@@ -463,7 +465,8 @@ Modeling.prototype.createNewConnection = function (placeShape, transShape, orien
           this._canvas.addShape(label, root);
         }
       }
-      openPortMenu(this._eventBus, transShape, placeShape, connection, connection.cpnElement._orientation);
+
+      // openPortMenu(this._eventBus, transShape, placeShape, connection, connection.cpnElement._orientation);
 
       return connection;
     }
@@ -934,7 +937,6 @@ Modeling.prototype.declareSubPage = function (cpnElement, name, pageId) {
   // const attrs = this.getLabelAttrs(element, element.cpnElement['subst'].subpageinfo, 'subst');
   // const label = this._elementFactory.createLabel(attrs);
   // this._canvas.addShape(label, this._canvas.getRootElement());
-
 
   //this._eventBus.fire('element.changed', { element: element });
 

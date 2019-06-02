@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import * as X2JS from 'src/lib/x2js/xml2json.js';
 import { EventService } from './event.service';
 import { Message } from '../common/message';
+import { xmlBeautify } from '../../lib/xml-beautifier/xml-beautifier.js';
 
 @Injectable()
 export class AccessCpnService {
@@ -69,7 +70,10 @@ export class AccessCpnService {
     console.log('AccessCpnService, initNet(), START, this.sessionId = ', this.sessionId);
 
     const x2js = new X2JS();
-    const cpnXml = x2js.json2xml_str(JSON.parse(JSON.stringify(cpnJson)));
+    let cpnXml = x2js.json2xml_str(JSON.parse(JSON.stringify(cpnJson)));
+
+    cpnXml = cpnXml.toString('iso-8859-1');
+    cpnXml = xmlBeautify(cpnXml);
 
     this.initNetProcessing = true;
     this.eventService.send(Message.SERVER_INIT_NET_START, {});
@@ -138,8 +142,8 @@ export class AccessCpnService {
         this.eventService.send(Message.SERVER_INIT_SIM_DONE, { data: data });
         // Get token marks and transition
         if (data) {
-          this.tokenData =  data.tokensAndMark;
-          this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data:  this.tokenData });
+          this.tokenData = data.tokensAndMark;
+          this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
           this.readyData = data.enableTrans;
           this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
 
@@ -211,7 +215,7 @@ export class AccessCpnService {
   }
 
 
-  doStep(){
+  doStep() {
     if (!this.simInitialized || !this.sessionId) {
       return;
     }
@@ -221,8 +225,8 @@ export class AccessCpnService {
       (data: any) => {
         console.log('AccessCpnService, getTransitions(), SUCCESS, data = ', data);
         if (data) {
-          this.tokenData =  data.tokensAndMark;
-          this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data:  this.tokenData });
+          this.tokenData = data.tokensAndMark;
+          this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
           this.readyData = data.enableTrans;
           this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
         }
@@ -237,6 +241,32 @@ export class AccessCpnService {
     this.isSimulation = state;
   }
 
+
+  /**
+   * Get token/marking state from simulator
+   */
+  getXmlFromServer() {
+    return new Promise((resolve, reject) => {
+
+      console.log('AccessCpnService, getXmlFromServer(), this.sessionId = ', this.sessionId);
+
+      if (!this.sessionId) {
+        reject('ERROR: sessionId not defined!');
+      }
+
+      this.http.get('/api/v2/cpn/xml/export', { headers: { 'X-SessionId': this.sessionId } }).subscribe(
+        (data: any) => {
+          console.log('AccessCpnService, getXmlFromServer(), SUCCESS, data = ', data);
+          resolve(data);
+        },
+        (error) => {
+          console.error('AccessCpnService, getXmlFromServer(), ERROR, data = ', error);
+          reject(error);
+        }
+      );
+
+    });
+  }
 
 
 }

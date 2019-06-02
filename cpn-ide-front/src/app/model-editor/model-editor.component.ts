@@ -119,7 +119,7 @@ export class ModelEditorComponent implements OnInit {
 
     this.eventService.on(Message.SERVER_INIT_NET_START, () => {
       this.log('Validation process...');
-      this.eventBus.fire('model.update.cpn.status', { data: { process: '*' } });
+      // this.eventBus.fire('model.update.cpn.status', { data: { process: '*' } });
     });
 
     // VALIDATION RESULT
@@ -171,8 +171,10 @@ export class ModelEditorComponent implements OnInit {
         for (const element of event.elements) {
           if (element.cpnElement) {
             this.modelService.addElementJsonOnPage(element.cpnElement, this.pageId, element.type);
+
             if (element.type === CPN_TRANSITION && element.cpnElement.subst) {
               element.cpnElement.subst._subpage = 'id' + new Date().getTime();
+
               this.eventService.send(Message.SUBPAGE_TRANS_CREATE, {
                 currentPageId: this.pageId,
                 id: element.cpnElement.subst._subpage,

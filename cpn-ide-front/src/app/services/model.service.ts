@@ -3,6 +3,7 @@ import { EventService } from './event.service';
 import { Message } from '../common/message';
 import { AccessCpnService } from './access-cpn.service';
 import { SettingsService } from '../services/settings.service';
+import { ValidationService } from './validation.service';
 
 
 /**
@@ -15,8 +16,11 @@ import { SettingsService } from '../services/settings.service';
 export class ModelService {
 
   private isLoaded = false;
-  public projectName = '';
+
+  public project = undefined;
   public projectData = undefined;
+  public projectName = '';
+
   private backupModel = [];
   private redoBackupModel;
   private modelCase = [];
@@ -33,7 +37,7 @@ export class ModelService {
 
   constructor(private eventService: EventService,
     private accessCpnService: AccessCpnService,
-    private settings: SettingsService
+    private settings: SettingsService,
   ) {
     console.log('ModelService instance CREATED!');
 
@@ -47,8 +51,10 @@ export class ModelService {
     this.modelCase['arc'] = 'arc';
     this.modelCase['label'] = 'label';
 
-    this.eventService.on(Message.PROJECT_LOAD, (data) => {
-      this.loadProject(data);
+    this.eventService.on(Message.PROJECT_LOAD, (event) => {
+      if (event.project) {
+        this.loadProject(event.project);
+      }
     });
 
     this.eventService.on(Message.PAGE_OPEN, (data) => {
@@ -76,13 +82,9 @@ export class ModelService {
   public loadProject(project) {
     console.log('ModelService.loadProject(), project = ', project);
 
+    this.project = project;
     this.projectData = project.data;
     this.projectName = project.name;
-
-    // this.accessCpnService.initNet(this.projectData);
-
-    // // verify loaded project
-    // this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.projectData });
   }
 
   saveBackup(model, pageId) {
@@ -109,7 +111,7 @@ export class ModelService {
     this.markOpenedModel();
 
     const project = { data: this.projectData, name: this.projectName };
-    this.eventService.send(Message.PROJECT_LOAD, project);
+    this.eventService.send(Message.PROJECT_LOAD, { project: project });
 
     if (modelState.page) {
       this.eventService.send(Message.PAGE_OPEN, { pageObject: this.getPageById(modelState.page), subPages: this.subPages });
@@ -123,6 +125,10 @@ export class ModelService {
 
   getModelCase(labelType) {
     return this.modelCase[labelType];
+  }
+
+  public getProject() {
+    return this.project;
   }
 
   public getProjectData() {
@@ -154,9 +160,12 @@ export class ModelService {
   //   }
   // }
 
+  /**
+   * Get root cpnet element from CPN project JSON object
+   * @returns - cpnElement for cpnet element
+   */
   getCpn() {
     let cpnet;
-
     if (this.projectData.workspaceElements) {
       if (this.projectData.workspaceElements instanceof Array) {
         for (const workspaceElement of this.projectData.workspaceElements) {
@@ -178,7 +187,7 @@ export class ModelService {
   //// ChangeModelActions
 
 
-  deleteElementFromPageJson(pageId, id, type) {
+   deleteElementFromPageJson(pageId, id, type) {
     this.saveBackup(this.projectData, pageId);
     const jsonPageObject = this.getPageById(pageId);
     if (!jsonPageObject[this.modelCase[type]].length || jsonPageObject[this.modelCase[type]].length === 1) {
@@ -1153,7 +1162,7 @@ export class ModelService {
    * @param name - name of new page
    * @returns - new page cpnElement
    */
-  createCpnPage(name) {
+  createCpnPage(name, id) {
     const newPage = {
       pageattr: {
         _name: name
@@ -1162,11 +1171,13 @@ export class ModelService {
       trans: [],
       arc: [],
       constraints: '',
-      _id: 'ID' + new Date().getTime()
+      _id: id ? id :  'ID' + new Date().getTime()
     };
 
     return newPage;
   }
+
+
 
   /**
    * Creating empty block cpnElement
@@ -1464,9 +1475,9 @@ export class ModelService {
 
 
   /**
-   * Getting all port places for transition 
-   * @param cpnElement 
-   * @param transEnd 
+   * Getting all port places for transition
+   * @param cpnElement
+   * @param transEnd
    */
   getAllPorts(cpnElement, transEnd) {
     let ports = [];

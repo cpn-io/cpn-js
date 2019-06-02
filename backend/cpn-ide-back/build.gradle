@@ -1,0 +1,78 @@
+
+plugins {
+    id 'java'
+    id 'io.spring.dependency-management' version '1.0.7.RELEASE'
+    id 'org.springframework.boot' version '2.1.1.RELEASE'
+}
+
+println "java.home = " + System.getProperty("java.home")
+
+group 'com.indev.cpn.rest'
+version '1.5-SNAPSHOT'
+
+sourceSets {
+
+    test {
+        java {
+            srcDirs = ["src/main/java/test"]  // Note @Peter's comment below
+        }
+    }
+}
+
+        sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+bootJar{
+    exclude ("src/main/resources/application.properties")
+    exclude ("src/main/resources/logback.xml")
+}
+
+
+dependencies {
+    compile 'org.apache.commons:commons-io:1.3.2'
+    compile fileTree(include: ['*.jar'], dir: 'lib/')
+
+    compile 'org.apache.commons:commons-lang3:3.5'
+    compile 'com.google.code.gson:gson:2.8.2'
+    compile 'org.springframework:spring-context-support:5.0.5.RELEASE'
+    compile 'com.jayway.jsonpath:json-path:2.4.0'
+    compile 'io.springfox:springfox-swagger2:2.7.0'
+    compile 'io.springfox:springfox-swagger-ui:2.7.0'
+    compile ('org.springframework.boot:spring-boot-starter-web:2.1.1.RELEASE') {
+        exclude module: "spring-boot-starter-tomcat"
+    }
+    compile 'org.springframework.boot:spring-boot-starter-jetty:2.1.1.RELEASE'
+    compile 'org.springframework.boot:spring-boot-starter-logging:2.1.1.RELEASE'
+    compile 'org.slf4j:slf4j-api:1.7.25'
+//
+//    compile project(':org.cpntools.accesscpn.cosimulation')
+//    compile project(':org.cpntools.accesscpn.engine')
+//    compile project(':org.cpntools.accesscpn.engine.highlevel')
+//    compile project(':org.cpntools.accesscpn.engine.protocol')
+//    compile project(':org.cpntools.accesscpn.engine.proxy')
+//    compile project(':org.cpntools.accesscpn.model')
+//    compile project(':org.cpntools.accesscpn.model.exporter')
+//    compile project(':org.cpntools.accesscpn.model.importer')
+
+    //compile 'org.eclipse.emf:common:2.9.2'
+    //compile 'org.eclipse.emf:ecore:2.9.2'
+
+    compile group: 'junit', name: 'junit'
+
+    compileOnly 'org.projectlombok:lombok:1.18.4'
+    annotationProcessor 'org.projectlombok:lombok:1.18.4'
+// https://mvnrepository.com/artifact/junit/junit
+    //testCompile group: 'junit', name: 'junit', version: '4.4'
+   // testCompile group: 'org.mockito', name: 'mockito-core', version: '1.9.5'
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test
+    //testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '1.5.2.RELEASE'
+
+    testCompile group: 'junit', name: 'junit'
+
+}
+
+
+jar {
+    baseName = 'cpn-ide-server'
+    version =  '0.5.0'
+}

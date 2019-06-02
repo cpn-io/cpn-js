@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="instance" nsURI="http:///org/cpntools/accesscpn/engine/highlevel/instance.ecore"
+    nsPrefix="org.cpntools.accesscpn.engine.highlevel.instance">
+  <eClassifiers xsi:type="ecore:EClass" name="Binding">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="transitionInstance">
+      <eGenericType eClassifier="#//Instance">
+        <eTypeArguments eClassifier="ecore:EClass ../../org.cpntools.accesscpn.model/model/model.ecore#//Transition"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="allAssignments" upperBound="-1"
+        eType="#//ValueAssignment" containment="true" resolveProxies="false"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Instance">
+    <eTypeParameters name="T"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="node">
+      <eGenericType eTypeParameter="#//Instance/T"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="transitionPath">
+      <eGenericType eClassifier="#//Instance">
+        <eTypeArguments eClassifier="ecore:EClass ../../org.cpntools.accesscpn.model/model/model.ecore#//Instance"/>
+      </eGenericType>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Marking">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="placeInstance">
+      <eGenericType eClassifier="#//Instance">
+        <eTypeArguments>
+          <eUpperBound eClassifier="ecore:EClass ../../org.cpntools.accesscpn.model/model/model.ecore#//PlaceNode"/>
+        </eTypeArguments>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="tokenCount" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="marking" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        changeable="false" transient="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="structuredMarking" upperBound="-1"
+        eType="#//MultisetEntry" containment="true" resolveProxies="false"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MultisetEntry">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="coefficient" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="valueAsString" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="State">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="allMarkings" upperBound="-1"
+        eType="#//Marking" containment="true" resolveProxies="false"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ValueAssignment">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+</ecore:EPackage>

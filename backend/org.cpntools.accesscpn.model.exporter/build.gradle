@@ -1,0 +1,41 @@
+
+plugins {
+    id 'idea'
+    id 'java'
+}
+
+
+group 'org.cpntools.accesscpn.model.exporter'
+version '1.0-SNAPSHOT'
+
+
+println "java.home = " + System.getProperty("java.home")
+
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'src'
+        }
+
+        resources {
+            srcDir 'simulator'
+        }
+    }
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile fileTree(include: ['*.jar'], dir: 'lib/')
+    implementation project(':org.cpntools.accesscpn.model')
+    implementation project(':org.cpntools.accesscpn.model.importer')
+    implementation project(':org.cpntools.accesscpn.engine.highlevel')
+}
+

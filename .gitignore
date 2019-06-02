@@ -1,0 +1,10 @@
+backend/org.cpntools.accesscpn.model/build/
+backend/org.cpntools.accesscpn.model.importer/build/
+backend/org.cpntools.accesscpn.model.exporter/build/
+backend/org.cpntools.accesscpn.engine/build/
+backend/org.cpntools.accesscpn.engine.proxy/build/
+backend/org.cpntools.accesscpn.engine.protocol/build/
+backend/org.cpntools.accesscpn.engine.highlevel/build/
+backend/org.cpntools.accesscpn.cosimulation/build/
+backend/cpn-ide-back/build/
+backend/org.cpntools.accesscpn.model.exporter/out/

@@ -50,50 +50,50 @@ CpnPaletteProvider.prototype.getPaletteEntries = function () {
       }
     },
 
-    'global-connect-tool': {
-      group: 'tools',
-      className: 'bpmn-icon-connection-multi',
-      title: 'Activate Connection Tool',
-      action: {
-        click: function(event) {
-          // globalConnect.toggle(event);
-        }
-      }
-    },
+    // 'global-connect-tool': {
+    //   group: 'tools',
+    //   className: 'bpmn-icon-connection-multi',
+    //   title: 'Activate Connection Tool',
+    //   action: {
+    //     click: function(event) {
+    //       // globalConnect.toggle(event);
+    //     }
+    //   }
+    // },
 
-    'tool-separator': {
-      group: 'tools',
-      separator: true
-    },
+    // 'tool-separator': {
+    //   group: 'tools',
+    //   separator: true
+    // },
 
-    'create-place': {
-      group: 'create',
-      className: 'bpmn-icon-start-event-none',
-      title: 'Create Place',
-      action: function() { self._createPlace(event) }
-    },
+    // 'create-place': {
+    //   group: 'create',
+    //   className: 'bpmn-icon-start-event-none',
+    //   title: 'Create Place',
+    //   action: function() { self._createPlace(event) }
+    // },
 
-    'create-transition': {
-      group: 'create',
-      className: 'bpmn-icon-task',
-      title: 'Create Transition',
-      action: function() { self._createTransition(event) }
-    },
+    // 'create-transition': {
+    //   group: 'create',
+    //   className: 'bpmn-icon-task',
+    //   title: 'Create Transition',
+    //   action: function() { self._createTransition(event) }
+    // },
 
-    'tool-separator': {
-      group: 'create',
-      separator: true
-    },
+    // 'tool-separator': {
+    //   group: 'create',
+    //   separator: true
+    // },
 
   };
 };
 
 CpnPaletteProvider.prototype._createPlace = function (event) {
-  const shape = this._cpnFactory.createShape(undefined, undefined, CPN_PLACE, { x: 0, y: 0 }, false);
+  const shape = this._cpnFactory.createShape(undefined, undefined, CPN_PLACE, undefined, false);
   this._create.start(event, shape);
 }
 
 CpnPaletteProvider.prototype._createTransition = function (event) {
-  const shape = this._cpnFactory.createShape(undefined, undefined, CPN_TRANSITION, { x: 0, y: 0 }, false);
+  const shape = this._cpnFactory.createShape(undefined, undefined, CPN_TRANSITION, undefined, false);
   this._create.start(event, shape);
 }

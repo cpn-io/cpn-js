@@ -81,6 +81,14 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
   }
 
+  // getCpnElement() {
+  //   return JSON.stringify(this.cpnElement);
+  // }
+
+  // onChange() {
+  //   console.log('onChange(), this.cpnElement = ', this.cpnElement);
+  // }
+
   updateChanges() {
     console.log('updateChanges(), this = ', this);
 
@@ -167,7 +175,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
    * Get list of names for pages wich is not current or not subpage
    */
   getSubstPages() {
-    console.log('getSubstPages()');
+   // console.log('getSubstPages()');
 
     const pageList = this.modelService.getAllPages();
 

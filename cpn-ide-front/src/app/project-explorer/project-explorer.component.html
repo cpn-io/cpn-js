@@ -44,9 +44,6 @@
 
           <div class="divider"></div>
         </div>
-
-        <!-- Reload action (for debug) -->
-        <li class="nav-item"><a (click)="onReload()" class="nav-link" href="#">Reload</a></li>
       </ul>
 
       <!-- Project tree filter -->
@@ -100,7 +97,7 @@
 
                       <!-- Tree node label (can be editable) -->
                       <td class="node"
-                          [ngClass]="{'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id)}">
+                          [ngClass]="{'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id), 'node-highlight-error': isError(node.id)}">
 
                         <div *ngIf="!isOption(node) && !isMonitorRef(node)" [id]="'textinpfield_' + node.id"
                              class="editablenode"

@@ -9,6 +9,7 @@ html {
 
 html, body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  // font-family: 'Courier New', Courier, monospace;
   font-size: 12px;
 
   margin: 0;
@@ -182,12 +183,12 @@ html, body {
 
   .nav-item {
     margin: 0 1px;
-    white-space: nowrap;    
+    white-space: nowrap;
   }
 
   .nav-link {
     color: black;
-    white-space: nowrap;    
+    white-space: nowrap;
   }
 
   .nav-link img {

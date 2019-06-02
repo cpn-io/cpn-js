@@ -24,7 +24,7 @@ export class ProjectService {
     private accessCpnService: AccessCpnService
     ) {
 
-    console.log('ProjectService instance CREATED!');
+    // console.log('ProjectService instance CREATED!');
 
     this.loadEmptyProject();
   }
@@ -111,7 +111,7 @@ export class ProjectService {
     this.modelService.markNewModel();
 
     // load new project
-    this.eventService.send(Message.PROJECT_LOAD, this.project);
+    this.eventService.send(Message.PROJECT_LOAD, { project: this.project } );
   }
 
   loadEmptyProject() {
@@ -126,6 +126,7 @@ export class ProjectService {
     // const modelFile = 'mscProtocol.cpn'
 
     // const modelFile = 'emptynet.cpn';
+
     // const modelFile = 'test-1.cpn';
     // const modelFile = 'test-2.cpn';
 

@@ -121,8 +121,8 @@ export function getExternalLabelBounds(element) {
     size = DEFAULT_LABEL_SIZE;
   }
 
-  console.log('getExternalLabelBounds(), element = ', element);
-  console.log('getExternalLabelBounds(), size = ', size);
+  // console.log('getExternalLabelBounds(), element = ', element);
+  // console.log('getExternalLabelBounds(), size = ', size);
 
   return assign({
     x: mid.x - size.width / 2,

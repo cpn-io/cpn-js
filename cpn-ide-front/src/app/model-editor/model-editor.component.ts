@@ -7,6 +7,7 @@ import { Message } from '../common/message';
 import { EventService } from '../services/event.service';
 import { ModelService } from '../services/model.service';
 import { SettingsService } from '../services/settings.service';
+import { ValidationService } from '../services/validation.service';
 
 import { importCpnPage } from '../../lib/cpn-js/import/Importer';
 
@@ -21,6 +22,7 @@ import {
   CPN_CONNECTION,
   isAny,
 } from '../../lib/cpn-js/util/ModelUtil';
+import { AccessCpnService } from '../services/access-cpn.service';
 
 
 @Component({
@@ -32,7 +34,9 @@ export class ModelEditorComponent implements OnInit {
 
   constructor(private eventService: EventService,
     private settings: SettingsService,
-    private modelService: ModelService) {
+    private modelService: ModelService,
+    private validationService: ValidationService,
+    private accessCpnService: AccessCpnService) {
   }
 
   @ViewChild('container') containerElementRef: ElementRef;
@@ -45,6 +49,7 @@ export class ModelEditorComponent implements OnInit {
   canvas;
   dragging;
   modeling;
+  eventBus;
   labelEditingProvider;
   textRenderer;
   selectedElement;
@@ -65,9 +70,6 @@ export class ModelEditorComponent implements OnInit {
     'Fucia': '#f0f'
   };
 
-  tokenData;
-  readyData;
-
   ngOnInit() {
     this.subscripeToAppMessage();
 
@@ -85,16 +87,17 @@ export class ModelEditorComponent implements OnInit {
       ]
     });
 
-    const eventBus = this.diagram.get('eventBus');
-
     this.elementFactory = this.diagram.get('elementFactory');
     this.dragging = this.diagram.get('dragging');
     this.canvas = this.diagram.get('canvas');
     this.modeling = this.diagram.get('modeling');
+    this.eventBus = this.diagram.get('eventBus');
     this.labelEditingProvider = this.diagram.get('labelEditingProvider');
     this.textRenderer = this.diagram.get('textRenderer');
     this.cpnFactory = this.diagram.get('cpnFactory');
     this.portMenuProvider = this.diagram.get('portMenuProvider');
+
+    const eventBus = this.eventBus;
 
     // set defualt values to diagram
     // -----------------------------------------------------
@@ -104,96 +107,36 @@ export class ModelEditorComponent implements OnInit {
 
     eventBus.on('import.render.complete', (event) => {
       this.loading = false;
-
-      const pageElement = event.source;
-
       console.log('import.render.complete, event = ', event);
 
-      this.eventService.send(Message.MODEL_UPDATE, { pageObject: pageElement });
-
-      // set status 'clear' for all shapes on diagram
-      this.modeling.setCpnStatus({ clear: '*' });
-
-      // set status 'process' for all shapes on diagram
-      this.modeling.setCpnStatus({ process: '*' });
-
-      // verify loaded project
-      this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData() });
+      // this.updateElementStatus();
+      // this.eventBus.fire('model.update.cpn.status', { data: { process: '*' } });
     });
 
+    // eventBus.on('element.changed', (event) => {
+    //   console.log('ModelEditor, element.changed, event = ', event);
+    // });
+
+    this.eventService.on(Message.SERVER_INIT_NET_START, () => {
+      this.log('Validation process...');
+      // this.eventBus.fire('model.update.cpn.status', { data: { process: '*' } });
+    });
+
+    // VALIDATION RESULT
     this.eventService.on(Message.SERVER_INIT_NET_DONE, (event) => {
-      // set status 'clear' for all shapes on diagram
-      this.modeling.setCpnStatus({ clear: '*' });
-
       console.log('ModelEditor, SERVER_INIT_NET_DONE, event = ', event);
-
-      // TODO: temporary set error and ready status for test shapes. Should be changed to real id
-      // this.modeling.setCpnStatus({ error: ['ID1412328424','ID1412328605'], ready: ['ID1412328496'] });
-
-      // this.accessCpnService.getMarking('ID0000001').subscribe(
-      //   (data: any) => {
-      //     console.log('getMarking(), data = ', data);
-
-      //     eventBus.fire('model.update.tokens', { data: data });
-      //   });
-
-      // this.accessCpnService.getEnableTransitions('ID0000001').subscribe(
-      //   (data: any) => {
-      //     console.log('getEnableTransitions(), data = ', data);
-
-      //     this.modeling.setCpnStatus({ ready: data });
-      //   });
-
-      eventBus.fire('model.update.tokens', { data: this.tokenData });
-
-      this.modeling.setCpnStatus({ ready: this.readyData });
-
-      // set errors info
-      // {"data":
-      //    {"issues":
-      //      {"ID1412328454":[{"id":"ID1412328454","type":"page","description":"Error in color-set!"}],
-      //       "ID1412328496":[{"id":"ID1412328496","type":"page","description":"Transition not checked because a neighbour place has an error."}],
-      //       "ID6":[{"id":"ID6","type":"page","description":" ID6"}]
-      //      },
-      //      "success":false}}
-
-      console.log('SET ERRORS, event = ', event);
-
-      if (!event.data.success) {
-        let errorIds = [];
-        for (let id of Object.keys(event.data.issues))
-          errorIds.push(id);
-
-        console.log('SET ERRORS, errorIds = ', errorIds);
-
-        this.modeling.setCpnStatus({ error: errorIds });
-      }
-
+      this.updateElementStatus();
     });
 
     // TOKENS
     this.eventService.on(Message.SERVER_GET_TOKEN_MARKS, (event) => {
-      if (event && event.data) {
-        // {"data":[{"id":"ID1412328424","tokens":8,"marking":"1`1++\n3`2++\n4`3"},
-        //          {"id":"ID1412328454","tokens":0,"marking":"empty"}]}
-
-        this.tokenData = event.data;
-
-        eventBus.fire('model.update.tokens', { data: this.tokenData });
-      }
+      this.updateElementStatus();
     });
 
     // TRANSITIONS
     this.eventService.on(Message.SERVER_GET_TRANSITIONS, (data) => {
-      if (data && data.data) {
-        // {"data":["ID1412328496"]}
-
-        this.readyData = data.data;
-
-        this.modeling.setCpnStatus({ ready: this.readyData });
-      }
+      this.updateElementStatus();
     });
-
 
     eventBus.on('element.hover', (event) => {
       if (event.element.type === 'cpn:Transition' || event.element.type === 'cpn:Place') {
@@ -228,7 +171,25 @@ export class ModelEditorComponent implements OnInit {
         for (const element of event.elements) {
           if (element.cpnElement) {
             this.modelService.addElementJsonOnPage(element.cpnElement, this.pageId, element.type);
+
+            if (element.type === CPN_TRANSITION && element.cpnElement.subst) {
+              element.cpnElement.subst._subpage = 'id' + new Date().getTime();
+
+              this.eventService.send(Message.SUBPAGE_TRANS_CREATE, {
+                currentPageId: this.pageId,
+                id: element.cpnElement.subst._subpage,
+                cpnElement: element.cpnElement
+              });
+            }
           }
+        }
+      }
+    });
+
+    eventBus.on('shape.delete', (event) => {
+      if (event.elements) {
+        for (const elem of event.elements) {
+          this.modelService.deleteElementFromPageJson(this.pageId, elem.id, elem.type);
         }
       }
     });
@@ -247,18 +208,42 @@ export class ModelEditorComponent implements OnInit {
               });
             }
           }
-          this.portMenuProvider.open({ trans: event.trans, place: event.place, arc: event.arc, list: list }, event.position);
+          this.portMenuProvider.open({ trans: event.trans, place: event.place, arc: event.arc, list: list }, event.position, this.modeling);
         }
       }
     });
-    eventBus.on('bind.port.cancel', (event) => {
-      if (event.connection) {
-        this.modeling.removeElements([event.connection]);
-      }
-    });
+
 
     // this._eventBus.fire('bind.port.cancel', {connection: this._createdArc});
 
+  }
+
+  /**
+   * Update element status
+   */
+  updateElementStatus() {
+    this.eventBus.fire('model.update.cpn.status', { data: { clear: '*' } });
+
+    // console.log('updateElementStatus(), tokenData = ', this.accessCpnService.getTokenData());
+    // console.log('updateElementStatus(), readyData = ', this.accessCpnService.getReadyData());
+    // console.log('updateElementStatus(), errorData = ', this.accessCpnService.getErrorData());
+
+    if (this.accessCpnService.getTokenData().length > 0) {
+      this.eventBus.fire('model.update.tokens', { data: this.accessCpnService.getTokenData() });
+    }
+
+    if (this.accessCpnService.getReadyData().length > 0) {
+      this.eventBus.fire('model.update.cpn.status', { data: { ready: this.accessCpnService.getReadyData() } });
+    }
+
+    if (Object.keys(this.accessCpnService.getErrorData()).length > 0) {
+      const errorIds = [];
+      for (const id of Object.keys(this.accessCpnService.getErrorData())) {
+        errorIds.push(id);
+      }
+      console.log('SET ERRORS, errorIds = ', errorIds);
+      this.eventBus.fire('model.update.cpn.status', { data: { error: errorIds } });
+    }
   }
 
   subscripeToAppMessage() {
@@ -285,8 +270,7 @@ export class ModelEditorComponent implements OnInit {
       const element = this.modeling.getElementByCpnElement(data.cpnElement);
       console.log('PROPERTY_UPDATE, element = ', element);
 
-      this.modeling.updateElement(element);
-      this.modeling.updateElementBounds(element);
+      this.modeling.updateElement(element, true);
       // this.selectedElement = element;
 
       this.modelUpdate();
@@ -305,7 +289,8 @@ export class ModelEditorComponent implements OnInit {
           labels[lab.labelType] = lab.cpnElement;
         }
 
-        this.eventService.send(Message.SHAPE_SELECT, { element: element, labels: labels, cpnElement: element.cpnElement, type: element.type });
+        this.eventService.send(Message.SHAPE_SELECT,
+          { element: element, labels: labels, cpnElement: element.cpnElement, type: element.type });
       }
     }
   }
@@ -314,12 +299,9 @@ export class ModelEditorComponent implements OnInit {
     const page = this.jsonPageObject;
 
     // set status 'process' for all shapes on diagram
-    this.modeling.setCpnStatus({ process: '*' });
+    // this.eventBus.fire('model.update.cpn.status', { data: { process: '*' } });
 
     this.eventService.send(Message.MODEL_UPDATE, { pageObject: page });
-
-    // verify loaded project
-    // this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData() });
   }
 
   changeSubPageName(subpage) {
@@ -361,8 +343,13 @@ export class ModelEditorComponent implements OnInit {
     }
   }
 
+  clearPage() {
+  }
+
   loadPageDiagram(pageObject) {
-    console.log('loadPageDiagram(), import, pageObject = ', pageObject);
+    // console.log('loadPageDiagram(), import, pageObject = ', pageObject);
+
+    this.clearPage();
 
     importCpnPage(this.diagram, pageObject);
   }

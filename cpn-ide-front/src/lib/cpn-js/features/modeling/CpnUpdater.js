@@ -12,6 +12,7 @@ import {
 
 function getGfx(target) {
   var node = domClosest(target, 'svg, .djs-element', true);
+  // var node = domClosest(target, 'rect, .djs-hit', true);
   return node;
 }
 
@@ -30,7 +31,8 @@ CpnUpdater.$inject = [
   'selection',
   'popupMenuProvider',
   'contextPad',
-  'canvas'
+  'canvas',
+  'portMenuProvider'
 ];
 
 import {
@@ -39,12 +41,26 @@ import {
 import Modeling from "./Modeling";
 import { assign } from 'min-dash';
 
+
+import {
+  getDefPosattr,
+  getDefFillattr,
+  getDefLineattr,
+  getDefTextattr,
+  getDefText,
+  getNextId
+} from './util/AttrsUtil';
+import { getDistance } from '../../draw/CpnRenderUtil';
+
+
 /**
  * A handler responsible for updating
  * once changes on the diagram happen
  */
 export default function CpnUpdater(eventBus, modeling, elementRegistry,
-  connectionDocking, selection, popupMenuProvider, contextPad, canvas) {
+  connectionDocking, selection, popupMenuProvider, contextPad, canvas, portMenuProvider) {
+
+  this.modeling = modeling;
 
   console.log('CpnUpdater()');
 
@@ -73,7 +89,13 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     // updateLabels(e.element);
     // console.log('CpnUpdater(), shape.changed, event.element = ', event.element);
 
-    updateBounds({ context: { shape: event.element } });
+    // updateBounds({ context: { shape: event.element } });
+
+    updateCpnElement(event.element);
+  });
+
+  eventBus.on('connection.changed', function (event) {
+    // console.log('CpnUpdater(), connection.changed, event = ', event);
 
     updateCpnElement(event.element);
   });
@@ -121,9 +143,13 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
       element = elementRegistry.get(gfx);
     }
 
+    // console.log('CpnUpdater(), domEvent, mousedown, target = ', target);
+    // console.log('CpnUpdater(), domEvent, mousedown, gfx = ', gfx);
+
     if (element === canvas.getRootElement()) {
       popupMenuProvider.close();
       contextPad.close();
+      portMenuProvider.close();
     }
 
     if (event.button === 2) {
@@ -131,9 +157,9 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
       event.preventDefault();
 
       popupMenuProvider.close();
+      portMenuProvider.close();
 
       // console.log('CpnUpdater(), domEvent, mousedown, popup menu, x,y = ', event.x, event.y);
-
 
       if (element) {
         // console.log('CpnUpdater(), domEvent, mousedown, popup menu, element = ', element);
@@ -157,7 +183,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
       return;
 
     tokenElement.label.hidden = !tokenElement.label.hidden;
-    modeling.updateElement(tokenElement.label);
+    modeling.updateElement(tokenElement.label, true);
 
     if (!tokenElement.label.hidden) {
       modeling.moveShape(tokenElement.label, { x: 0, y: 0 }, tokenElement.label.parent, undefined, undefined);
@@ -231,42 +257,113 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     //   'cpn:Connection': { entry: ['annot'] }
     // }
 
-    console.log('CpnUpdater().updateCpnElement(), element = ', element);
+    // console.log('CpnUpdater().updateCpnElement(), element = ', element);
 
     var shape = element;
     let elemCase = modelCase[element.type];
     const cpnElement = shape.cpnElement;
 
-    // if element is Place object
-    if (cpnElement && cpnElement.posattr && cpnElement.ellipse) {
-      cpnElement.posattr._x = shape.x;
-      cpnElement.posattr._y = shape.y * -1;
-      cpnElement.ellipse._w = shape.width;
-      cpnElement.ellipse._h = shape.height;
-    }
+    if (cpnElement) {
 
-    // if element is Transition object
-    if (cpnElement && cpnElement.posattr && cpnElement.box) {
-      cpnElement.posattr._x = shape.x;
-      cpnElement.posattr._y = shape.y * -1;
-      cpnElement.box._w = shape.width;
-      cpnElement.box._h = shape.height;
-    }
+      // update shapes
+      if (shape.x && shape.y && shape.width && shape.height) {
+        // if element is any shape object
+        if (cpnElement.posattr) {
+          cpnElement.posattr._x = (shape.x + shape.width / 2).toString();
+          cpnElement.posattr._y = ((shape.y + shape.height / 2) * -1).toString();
+        }
+        // if element is Place object
+        if (cpnElement.ellipse) {
+          cpnElement.ellipse._w = (shape.width).toString();
+          cpnElement.ellipse._h = (shape.height).toString();
+        }
+        // if element is Transition object
+        if (cpnElement.box) {
+          cpnElement.box._w = (shape.width).toString();
+          cpnElement.box._h = (shape.height).toString();
+        }
+      }
 
-    if (shape.x && shape.y && cpnElement && cpnElement.posattr && shape.type === CPN_LABEL) {
-      cpnElement.posattr._x = shape.x;
-      cpnElement.posattr._y = shape.y * -1;
-    }
-    // else if(cpnElement._x && cpnElement._y){
-    //   cpnElement._x = shape.x;
-    //   cpnElement._y = shape.y * -1;
-    // }
+      // update connections
+      if (shape.waypoints instanceof Array && shape.waypoints.length > 2) {
+        // console.log('CpnUpdater().updateCpnElement(), connection, element = ', element);
 
-    if (cpnElement.text instanceof Object) {
-      cpnElement.text.__text = shape.text || shape.name;
-    } else cpnElement.text = shape.text || shape.name;
+        // let bendpoints = cpnElement.bendpoint || [];
+        let bendpoints = [];
+        for (let i = 1; i < shape.waypoints.length - 1; i++) {
+          const wp = shape.waypoints[i];
+
+          // if (!updateBendpoints(cpnElement, wp)) {
+          // create new bendpoint item for cpnElement
+          const position = {
+            x: (wp.x).toString(),
+            y: (wp.y).toString(),
+          };
+
+          bendpoints.push({
+            posattr: getDefPosattr(position),
+            fillattr: getDefFillattr(),
+            lineattr: getDefLineattr(),
+            textattr: getDefTextattr(),
+            _id: getNextId(),
+            _serial: (1).toString()
+          });
+          // }
+        }
+
+
+        if (bendpoints.length > 0) {
+
+          const wp0 = shape.waypoints[0];
+
+          let reverse = false;
+          if (cpnElement._orientation && cpnElement._orientation == 'TtoP') {
+            reverse = true;
+          }
+
+          // console.log('CpnUpdater().updateCpnElement(), connection, wp0 = ', JSON.stringify(wp0));
+          // console.log('CpnUpdater().updateCpnElement(), connection, bendpoints (1) = ', JSON.stringify(bendpoints));
+
+          // // sort by distance from first point
+          bendpoints = bendpoints.sort((a, b) => {
+            let d_a = getDistance(wp0, { x: a.posattr._x, y: -1 * a.posattr._y });
+            let d_b = getDistance(wp0, { x: b.posattr._x, y: -1 * b.posattr._y });
+            return reverse ? d_a - d_b : d_b - d_a;
+          });
+
+          // console.log('CpnUpdater().updateCpnElement(), connection, bendpoints (2) = ', JSON.stringify(bendpoints));
+
+          cpnElement.bendpoint = bendpoints;
+        }
+
+
+      }
+
+      if (cpnElement.text instanceof Object) {
+        cpnElement.text.__text = shape.text || shape.name;
+      } else cpnElement.text = shape.text || shape.name;
+
+    }
 
     updateLabels(element);
+  }
+
+  function updateBendpoints(cpnElement, shapeWaypoint) {
+    let updated = false;
+    if (cpnElement && cpnElement.bendpoints instanceof Array) {
+      for (const bp of cpnElement.bendpoints) {
+        if (bp._id === shapeWaypoint.id) {
+          const position = {
+            x: (shapeWaypoint.x).toString(),
+            y: (shapeWaypoint.y).toString(),
+          };
+          bp.posattr = getDefPosattr(position);
+          updated = true;
+          break;
+        }
+      }
+    }
+    return updated;
   }
 }
 

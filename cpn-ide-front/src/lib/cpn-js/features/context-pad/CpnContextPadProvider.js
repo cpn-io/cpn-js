@@ -140,7 +140,10 @@ CpnContextPadProvider.prototype._createShape = function (event, type) {
     let elemArr = [];
     elemArr.push(element);
     if(arcElement) elemArr.push(arcElement);
+
     this._eventBus.fire('shape.create.end', {elements: elemArr});
+    this._eventBus.fire('shape.editing.activate', {shape: element});
+    this._eventBus.fire('shape.contextpad.activate', {shape: element});
   }
 
   return arcElement;

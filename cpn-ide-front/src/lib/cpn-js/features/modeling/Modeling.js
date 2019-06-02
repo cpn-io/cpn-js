@@ -22,6 +22,15 @@ import {
 
 import { getText, getBox } from '../../draw/CpnRenderUtil';
 
+import {
+  getDefPosattr,
+  getDefFillattr,
+  getDefLineattr,
+  getDefTextattr,
+  getDefText,
+  getNextId
+} from './util/AttrsUtil';
+
 /**
  * CPN modeling features activator
  *
@@ -31,9 +40,15 @@ import { getText, getBox } from '../../draw/CpnRenderUtil';
  * @param {CpnRules} cpnRules
  */
 export default function Modeling(eventBus, elementFactory, elementRegistry, commandStack, cpnRules, textRenderer, canvas, portMenuProvider) {
-  console.log('Modeling()');
+  // console.log('Modeling()');
 
   BaseModeling.call(this, eventBus, elementFactory, commandStack);
+
+  // eventBus.on('bind.port.cancel', (event) => {
+  //   if (event.connection) {
+  //       this.removeElements([event.connection]);
+  //   }
+  // });
 
   this._eventBus = eventBus;
   this._elementFactory = elementFactory;
@@ -78,9 +93,15 @@ Modeling.prototype.getHandlers = function () {
  *    { process: '*' } or
  *    { error: ['ID1412328424'], ready: ['ID1412328496'] }
  */
-Modeling.prototype.setCpnStatus = function (event) {
+Modeling.prototype.setCpnStatus = function (data) {
+  // console.log('START setCpnStatus(), data = ', data);
+
+  const startTime = new Date().getTime();
+
   for (const key of Object.keys(this._elementRegistry._elements)) {
     const element = this._elementRegistry._elements[key].element;
+
+    const oldStatus = element.cpnStatus;
 
     if (element.cpnStatus === 'process') {
       element.cpnStatus = undefined;
@@ -88,17 +109,23 @@ Modeling.prototype.setCpnStatus = function (event) {
 
     if (isAny(element, [CPN_PLACE, CPN_TRANSITION, CPN_CONNECTION]) && element.cpnElement) {
       for (var status of ['clear', 'process', 'error', 'warning', 'ready']) {
-        // console.log('Modeling.prototype.setCpnStatus(), status, event = ', status, event);
-        // console.log('Modeling.prototype.setCpnStatus(), event[status] = ', event[status]);
-
-        if (event[status]) {
-          if (event[status] === '*' || event[status].includes(element.cpnElement._id)) {
+        if (data[status]) {
+          if (data[status] === '*' || data[status].includes(element.cpnElement._id)) {
             element.cpnStatus = status;
           }
         }
       }
-      this.updateElement(element);
     }
+
+    // repaint element if status is changed
+    if (oldStatus !== element.cpnStatus) {
+      this.repaintElement(element);
+    }
+  }
+
+  const t = new Date().getTime() - startTime;
+  if (t > 10) {
+    console.log('END setCpnStatus(), time = ', t);
   }
 }
 
@@ -119,21 +146,28 @@ Modeling.prototype.updateLabel = function (element, newLabel, newBounds, hints) 
   }
 };
 
-Modeling.prototype.updateElement = function (element) {
+Modeling.prototype.updateElement = function (element, repaint = false) {
   // console.log('Modeling().updateElement(), element = ', element);
 
   if (element) {
     if (element.labels) {
       for (const lb of element.labels) {
-        this.updateElement(lb);
+        this.updateElement(lb, repaint);
       }
     }
 
     this.updateShapeByCpnElement(element, this._canvas, this._eventBus);
 
-    this._eventBus.fire('element.changed', { element: element });
+    if (repaint) {
+      this.updateElementBounds(element);
+      this.repaintElement(element);
+    }
   }
 };
+
+Modeling.prototype.repaintElement = function (element) {
+  this._eventBus.fire('element.changed', { element: element });
+}
 
 Modeling.prototype.updateElementBounds = function (element) {
   if (element && element.labels) {
@@ -255,8 +289,8 @@ Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus
     let changingCpnEntry = changingElement.cpnElement.posattr ? changingElement.cpnElement.posattr : changingElement.cpnElement;
 
     if (changingCpnEntry && changingCpnEntry._x && changingCpnEntry._y) {
-      let x = Math.round(changingCpnEntry._x);
-      let y = Math.round(changingCpnEntry._y) * -1;
+      let x = 1 * (changingCpnEntry._x);
+      let y = -1 * (changingCpnEntry._y);
 
       // if (is(changingElement, CPN_LABEL)) {
       //   var bounds = { x: x, y: y, width: 200, height: 20 };
@@ -301,8 +335,8 @@ Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus
 
     if (changingCpnEntry && changingCpnEntry._w && changingCpnEntry._h) {
 
-      let w = Math.round(changingCpnEntry._w);
-      let h = Math.round(changingCpnEntry._h);
+      let w = 1 * (changingCpnEntry._w);
+      let h = 1 * (changingCpnEntry._h);
       delta.dx = w - changingElement.width;
       delta.dy = h - changingElement.height;
 
@@ -372,10 +406,16 @@ Modeling.prototype.connect = function (source, target, attrs, hints) {
 
     if (placeShape && transShape) {
       const conElem = this.createNewConnection(placeShape, transShape, orientation);
+
       this._eventBus.fire('shape.create.end', { elements: [conElem] });
+
+      // this._eventBus.fire('shape.editing.activate', {shape: conElem});
+      // this._eventBus.fire('shape.contextpad.activate', {shape: conElem});
+
       //openPortProvider(this._portMenuProvider, transShape);
       //this._portMenuProvider.open(transShape, { cursor: { x: 609, y: 575 } });
       // openPortMenu(this._eventBus, transShape, placeShape, conElem, orientation);
+
       return conElem;
     }
   }
@@ -425,7 +465,8 @@ Modeling.prototype.createNewConnection = function (placeShape, transShape, orien
           this._canvas.addShape(label, root);
         }
       }
-      openPortMenu(this._eventBus, transShape, placeShape, connection, connection.cpnElement._orientation);
+
+      // openPortMenu(this._eventBus, transShape, placeShape, connection, connection.cpnElement._orientation);
 
       return connection;
     }
@@ -466,15 +507,14 @@ Modeling.prototype.getElementByCpnElement = function (cpnElement) {
   return result;
 };
 
-Modeling.prototype.getElementByCpnElementId = function (cpnElementId) {
-  var result;
+Modeling.prototype.getElementsByCpnElementIds = function (cpnElementIdList) {
+  const result = [];
 
   for (const key of Object.keys(this._elementRegistry._elements)) {
     const element = this._elementRegistry._elements[key].element;
 
-    if (element && element.cpnElement && element.cpnElement._id === cpnElementId) {
-      result = element;
-      break;
+    if (element && element.cpnElement && cpnElementIdList.includes(element.cpnElement._id)) {
+      result[element.cpnElement._id] = element;
     }
   }
 
@@ -540,14 +580,13 @@ Modeling.prototype.getDefaultValue = function (key) {
 }
 
 Modeling.prototype.getPlaceAttrs = function (cpnPlaceElement, type) {
-  var x = Math.round(cpnPlaceElement.posattr._x);
-  var y = Math.round(cpnPlaceElement.posattr._y) * -1;
-  var w = Math.round(cpnPlaceElement.ellipse._w);
-  var h = Math.round(cpnPlaceElement.ellipse._h);
+  var x = 1 * (cpnPlaceElement.posattr._x);
+  var y = -1 * (cpnPlaceElement.posattr._y);
+  var w = 1 * (cpnPlaceElement.ellipse._w);
+  var h = 1 * (cpnPlaceElement.ellipse._h);
   x -= w / 2;
   y -= h / 2;
-  cpnPlaceElement.posattr._x = x;
-  cpnPlaceElement.posattr._y = -1 * y;
+
   var attrs = {
     type: type,
     id: cpnPlaceElement._id,
@@ -563,8 +602,8 @@ Modeling.prototype.getPlaceAttrs = function (cpnPlaceElement, type) {
 }
 
 Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, labelType) {
-  var x = Math.round(cpnLabelElement.posattr._x);
-  var y = Math.round(cpnLabelElement.posattr._y) * -1;
+  var x = 1 * (cpnLabelElement.posattr._x);
+  var y = -1 * (cpnLabelElement.posattr._y);
 
   var text, defaultValue;
 
@@ -625,8 +664,8 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
 }
 
 Modeling.prototype.getTokenLabelAttrs = function (labelTarget, cpnTokenLabelElement, labelType) {
-  var x = Math.round(cpnTokenLabelElement._x);
-  var y = Math.round(cpnTokenLabelElement._y) * -1;
+  var x = 1 * (cpnTokenLabelElement._x);
+  var y = -1 * (cpnTokenLabelElement._y);
 
   // var text = '8';
   var text = '';
@@ -641,8 +680,8 @@ Modeling.prototype.getTokenLabelAttrs = function (labelTarget, cpnTokenLabelElem
     y -= bounds.height / 2;
   }
 
-  x += Math.round(labelTarget.x + labelTarget.width);
-  y += Math.round(labelTarget.y + labelTarget.height / 2);
+  x += 1 * (labelTarget.x + labelTarget.width);
+  y += 1 * (labelTarget.y + labelTarget.height / 2);
 
   var attrs = {
     type: CPN_TOKEN_LABEL,
@@ -665,8 +704,8 @@ Modeling.prototype.getTokenLabelAttrs = function (labelTarget, cpnTokenLabelElem
 }
 
 Modeling.prototype.getMarkingLabelAttrs = function (labelTarget, cpnMarkingLabelElement, labelType) {
-  var x = Math.round(cpnMarkingLabelElement._x);
-  var y = Math.round(cpnMarkingLabelElement._y) * -1;
+  var x = 1 * (cpnMarkingLabelElement._x);
+  var y = -1 * (cpnMarkingLabelElement._y);
 
   // var text = '2`0@0,0\n2`0@0,0\n2`0@0,0\n2`0@0,0';
   var text = '';
@@ -676,8 +715,8 @@ Modeling.prototype.getMarkingLabelAttrs = function (labelTarget, cpnMarkingLabel
 
   y -= bounds.height / 2;
 
-  x += Math.round(labelTarget.x + labelTarget.width * 3);
-  y += Math.round(labelTarget.y + labelTarget.height / 2);
+  x += 1 * (labelTarget.x + labelTarget.width * 3);
+  y += 1 * (labelTarget.y + labelTarget.height / 2);
 
   var hidden = text === '' || !(cpnMarkingLabelElement._hidden === 'false');
 
@@ -703,14 +742,12 @@ Modeling.prototype.getMarkingLabelAttrs = function (labelTarget, cpnMarkingLabel
 }
 
 Modeling.prototype.getTransAttrs = function (cpnTransElement, type) {
-  var x = Math.round(cpnTransElement.posattr._x);
-  var y = Math.round(cpnTransElement.posattr._y) * -1;
-  var w = Math.round(cpnTransElement.box._w);
-  var h = Math.round(cpnTransElement.box._h);
+  var x = 1 * (cpnTransElement.posattr._x);
+  var y = -1 * (cpnTransElement.posattr._y);
+  var w = 1 * (cpnTransElement.box._w);
+  var h = 1 * (cpnTransElement.box._h);
   x -= w / 2;
   y -= h / 2;
-  cpnTransElement.posattr._x = x;
-  cpnTransElement.posattr._y = -1 * y;
 
   var attrs = {
     type: type,
@@ -752,8 +789,8 @@ Modeling.prototype.getArcData = function (pageObject, cpnArcElement, type, place
     if (cpnArcElement.bendpoint.posattr) {
       // @ts-ignore
       waypoints.push({
-        x: 1 * cpnArcElement.bendpoint.posattr._x,
-        y: -1 * cpnArcElement.bendpoint.posattr._y,
+        x: 1 * (cpnArcElement.bendpoint.posattr._x),
+        y: -1 * (cpnArcElement.bendpoint.posattr._y),
         id: cpnArcElement.bendpoint._id
       });
     }
@@ -764,8 +801,8 @@ Modeling.prototype.getArcData = function (pageObject, cpnArcElement, type, place
       }
       arr.forEach(p => {
         waypoints.push({
-          x: 1 * p.posattr._x,
-          y: -1 * p.posattr._y,
+          x: 1 * (p.posattr._x),
+          y: -1 * (p.posattr._y),
           id: p._id
         });
       });
@@ -799,17 +836,33 @@ Modeling.prototype.getArcData = function (pageObject, cpnArcElement, type, place
     }
 
   }
+  else if (this._elementRegistry) {
 
-  else if (pageObject) {
-
-    for (const arc of pageObject.arc) {
-      if (cpnArcElement._id !== arc._id &&
-        ((cpnArcElement.placeend._idref === arc.transend._idref && cpnArcElement.transend._idref === arc.placeend._idref) ||
-          (cpnArcElement.placeend._idref === arc.placeend._idref && cpnArcElement.transend._idref === arc.transend._idref))) {
-        waypoints = optimiseEqualsArcsByWayoints(waypoints, source.width / 8);
+    for (const key of Object.keys(this._elementRegistry._elements)) {
+      const element = this._elementRegistry._elements[key].element;
+      if (element.type === CPN_CONNECTION && element.cpnElement) {
+        const arc = element.cpnElement;
+        if (cpnArcElement._id !== arc._id &&
+          ((cpnArcElement.placeend._idref === arc.transend._idref && cpnArcElement.transend._idref === arc.placeend._idref) ||
+            (cpnArcElement.placeend._idref === arc.placeend._idref && cpnArcElement.transend._idref === arc.transend._idref))) {
+          waypoints = optimiseEqualsArcsByWayoints(waypoints, source.width / 8);
+        }
       }
     }
 
+  }
+
+
+  //разделение совпадающих стрелок
+  for (const key of Object.keys(this._elementRegistry._elements)) {
+    const element = this._elementRegistry._elements[key].element;
+    if (element.type === CPN_CONNECTION) {
+      if (isEqualsWaypoints(element.waypoints, waypoints)) {
+        for (let point of waypoints) {
+          point.x = point.y + 15;
+        }
+      }
+    }
   }
 
   if (source && target) {
@@ -830,6 +883,14 @@ Modeling.prototype.getArcData = function (pageObject, cpnArcElement, type, place
   return undefined;
 }
 
+
+
+function isEqualsWaypoints(exArcWapoints, newArcWaypoints) {
+  const lenghtExArc = exArcWapoints.length - 1;
+  const lenghtNewArc = newArcWaypoints.length - 1;
+  return exArcWapoints[0].x === newArcWaypoints[0].x && exArcWapoints[0].y === newArcWaypoints[0].y && exArcWapoints[lenghtExArc].x === newArcWaypoints[lenghtNewArc].x && exArcWapoints[lenghtExArc].y === newArcWaypoints[lenghtNewArc].y ||
+    exArcWapoints[0].x === newArcWaypoints[lenghtNewArc].x && exArcWapoints[0].y === newArcWaypoints[lenghtNewArc].y && exArcWapoints[lenghtExArc].x === newArcWaypoints[0].x && exArcWapoints[lenghtExArc].y === newArcWaypoints[0].y
+}
 // Helpers
 // ------------------------------------------------------------
 
@@ -877,8 +938,8 @@ Modeling.prototype.declareSubPage = function (cpnElement, name, pageId) {
   // const label = this._elementFactory.createLabel(attrs);
   // this._canvas.addShape(label, this._canvas.getRootElement());
 
-
   //this._eventBus.fire('element.changed', { element: element });
+
   return cpnElement;
 }
 
@@ -1051,48 +1112,40 @@ Modeling.prototype.createArcInModel = function (placeCpnElement, transCpnElement
   return cpnArcElement;
 }
 
-function getDefPosattr(position = undefined) {
-  return position
-    ? {
-      _x: position.x,
-      _y: -1 * position.y
-    }
-    : {
-      _x: 0,
-      _y: 0
-    };
-}
-
-function getDefFillattr() {
-  return {
-    _colour: "White",
-    _pattern: "Solid",
-    _filled: "false"
+Modeling.prototype.reconnectEnd = function (connection, newTarget, dockingOrPoints) {
+  console.log('Modeling.prototype.reconnectEnd ---')
+  var context = {
+    connection: connection,
+    newTarget: newTarget,
+    dockingOrPoints: dockingOrPoints
   };
-}
+  this.excuteReconectionCommand('connection.reconnectEnd', context)
+};
 
-function getDefLineattr() {
-  return {
-    _colour: "Black",
-    _thick: "1",
-    _type: "Solid"
+
+Modeling.prototype.reconnectStart = function (connection, newSource, dockingOrPoints) {
+  var context = {
+    connection: connection,
+    newTarget: newSource,
+    dockingOrPoints: dockingOrPoints
   };
+
+  this.excuteReconectionCommand('connection.reconnectStart', context);
+};
+
+
+Modeling.prototype.excuteReconectionCommand = function (command, context) {
+  if (context.connection.cpnElement && context.newTarget.type === (context.connection.cpnElement._orientation === 'TtoP' ? CPN_PLACE : CPN_TRANSITION))
+    this._commandStack.execute('connection.reconnectEnd', context);
+  else this.updateElement(context.connection, true);
 }
 
-function getDefTextattr() {
-  return {
-    _colour: "Black",
-    _bold: "false"
+
+Modeling.prototype.removeElements = function (elements) {
+  var context = {
+    elements: elements
   };
-}
 
-function getDefText() {
-  return {
-    _tool: "CPN Tools",
-    _version: "4.0.1"
-  };
-}
-
-function getNextId() {
-  return 'ID' + new Date().getTime();
-}
+  this._eventBus.fire('shape.delete', { elements: elements });
+  this._commandStack.execute('elements.delete', context);
+};

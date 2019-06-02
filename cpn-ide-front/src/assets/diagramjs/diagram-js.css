@@ -647,7 +647,7 @@ svg.new-parent {
 }
 
 .djs-search-result-secondary {
-  font-family: monospace;
+  font-family: 'Courier New', Courier, monospace;
   margin: 0;
 }
 

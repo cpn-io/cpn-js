@@ -22,6 +22,7 @@ export default function CpnPortMenuProvider( popupMenu, canvas, eventBus) {
   this._transEnd =  undefined;
   this._placeEnd = undefined;
   this._createdArc  = undefined;
+  this._modeling = undefined;
   this.changes =  undefined;
 }
 
@@ -39,33 +40,34 @@ CpnPortMenuProvider.$inject = [
  */
 CpnPortMenuProvider.prototype.register = function () {
   this._popupMenu.registerProvider('cpnPortMenu', this);
-
-  this._eventBus.on('popupMenu.close', (event) => {
-    console.log('popupMenu.close', this._popupMenu, event);
-    if(this._popupMenu._current.className === 'cpnPortMenu'){
-      if(this.changes){
-        this.changes =  undefined;
-      } else {
-        if(this._createdArc)
-          this._eventBus.fire('bind.port.cancel', {connection: this._createdArc});
-      }
-    }
-  });
 };
 
-CpnPortMenuProvider.prototype.open = function (target, position) {
+CpnPortMenuProvider.prototype.open = function (target, position, modeling) {
   this._portList = target.list;
   this._transEnd =  target.trans;
   this._placeEnd =  target.place;
   this._createdArc =  target.arc;
+  this._modeling = modeling;
   this._element = this._canvas.getRootElement();
   this._position = toGlobalPoint(this._canvas, position.cursor);
   this._popupMenu.open( this._element , 'cpnPortMenu', {cursor: this._position});
 };
 
 CpnPortMenuProvider.prototype.close = function () {
-  console.log('CpnPortMenuProvider.prototype.close');
-  this._popupMenu.close();
+  // console.log('CpnPortMenuProvider.prototype.close');
+
+  let isOp = this._popupMenu.isOpen();
+  let cur = this._popupMenu._current;
+  if( this._popupMenu._current && this._popupMenu._current.className  === 'cpnPortMenu' && this._popupMenu.isOpen())
+    this._popupMenu.close();
+    if(this.changes){
+      this.changes =  undefined;
+    } else {
+      if(this._createdArc){
+        this._modeling.removeElements([this._createdArc]);
+      }
+    }
+
 };
 
 
@@ -117,7 +119,7 @@ CpnPortMenuProvider.prototype.getHeaderEntries = function (element) {
 CpnPortMenuProvider.prototype._changePortSock = function(port, transEnd, placeEnd) {
   transEnd.cpnElement.subst._portsock =  transEnd.cpnElement.subst._portsock + '(' + port.id + ', '+ placeEnd.id +')';
   this.changes =  transEnd.cpnElement.subst._portsock;
-  console.log('CpnPortMenuProvider._changePortSock -  ', transEnd);
+  // console.log('CpnPortMenuProvider._changePortSock -  ', transEnd);
   this.close();
 }
 

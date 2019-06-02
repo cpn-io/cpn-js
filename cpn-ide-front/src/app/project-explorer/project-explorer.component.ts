@@ -10,6 +10,7 @@ import { OptionsNamePipePipe } from '../pipes/options-name.pipe';
 import { Constants } from '../common/constants';
 import { AccessCpnService } from '../services/access-cpn.service';
 import { SettingsService } from '../services/settings.service';
+import { ValidationService } from '../services/validation.service';
 
 // import {TreeComponent} from 'angular-tree-component';
 
@@ -54,6 +55,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   modelName;
   subpages = [];
   editableNode;
+
+  // error identificators
+  // errorIds = ['ID4'];
+  errorIds = [];
+
   /**
    * treeComponent - component for displaying project tree
    */
@@ -177,7 +183,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     private settings: SettingsService,
     private modelService: ModelService,
     private _colorDeclarationsPipe: ColorDeclarationsPipe,
-    private accessCpnService: AccessCpnService) {
+    private accessCpnService: AccessCpnService,
+    private validationService: ValidationService) {
 
     this.colorDeclarationsPipe = this._colorDeclarationsPipe;
   }
@@ -186,8 +193,10 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     this.appSettings = this.settings.getAppSettings();
     this.appSettingsKeys = Object.keys(this.appSettings);
 
-    this.eventService.on(Message.PROJECT_LOAD, (data) => {
-      this.loadProject(data);
+    this.eventService.on(Message.PROJECT_LOAD, (event) => {
+      if (event.project) {
+        this.loadProject(event.project);
+      }
     });
 
     this.eventService.on(Message.UPDATE_TREE, (data) => {
@@ -235,6 +244,29 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       this.updatePagesNode(data.currentPageId);
     });
 
+    this.eventService.on(Message.SUBPAGE_TRANS_CREATE, (data) => {
+      // this.createPageNode()
+      const defValue = this.settings.getAppSettings()['page'];
+      const cpnElement = this.modelService.createCpnPage(defValue + ' ' + (++this.newPageCount), data.id);
+      const newNode = this.createPageNode(cpnElement);
+
+      data.cpnElement.subst.subpageinfo._name = newNode.cpnElement.pageattr._name;
+      const treeNode = this.treeComponent.treeModel.getNodeById(data.currentPageId);
+      const cpnParentElement = treeNode.parent.data.cpnElement;
+      this.addCreatedNode(treeNode, newNode, cpnElement, 'page', cpnParentElement, false);
+      this.updatePagesNode(data.currentPageId);
+
+      const emiterData = {
+        labels: [],
+        elementid: data.cpnElement._id,
+        cpnElement: data.cpnElement,
+        type: 'cpn:Transition',
+        pagename: this.modelService.getPageById(data.currentPageId).pageattr._name
+      };
+      this.eventService.send(Message.PROPERTY_UPDATE, emiterData);
+    });
+
+
     // this.eventService.on(Message.CHANGE_NAME_PAGE, (data) => {
     //   if (data.changedElement === 'tran') {
     //     const node = this.getObjects(this.nodes, 'id', data.id);
@@ -258,20 +290,33 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       // console.log(' ----- SHAPE_OUT, data = ' + data);
       this.doUnderlineNodeLabel(false);
     });
+
+    // Get error identificators
+    this.eventService.on(Message.SERVER_INIT_NET_DONE, (event) => {
+      this.errorIds = [];
+      if (event && event.data) {
+        if (!event.data.success) {
+          for (const id of Object.keys(event.data.issues)) {
+            this.errorIds.push(id);
+          }
+        }
+      }
+    });
+
   }
 
   ngOnDestroy() {
   }
 
   updatePagesNode(currentPageId) {
-    let cpnet = this.getCpnetElement(this.currentProjectModel);
+    const cpnet = this.modelService.getCpn();
     if (!cpnet) {
       return;
     }
 
-    let projectNode = this.nodes[0];
+    const projectNode = this.nodes[0];
 
-    let pagesNode = this.createPagesNode('Pages', cpnet);
+    const pagesNode = this.createPagesNode('Pages', cpnet);
 
     console.log('updatePagesNode(), pagesNode = ', pagesNode);
 
@@ -281,7 +326,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     if (currentPageId) {
       this.expandNode(currentPageId);
-      this.gotoNode(currentPageId);
+      // this.gotoNode(currentPageId);
     }
   }
 
@@ -291,7 +336,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * @param cpnElement
    */
   updateTreeByCpnElement(cpnElement, newTextValue) {
-    var nodeForUpdate = this.treeComponent.treeModel.getNodeBy((node) => {
+    const nodeForUpdate = this.treeComponent.treeModel.getNodeBy((node) => {
       // console.log('UPDATE_TREE, getNodeBy(), node = ', node);
       return node.data && node.data.cpnElement === cpnElement;
     });
@@ -563,6 +608,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     return (this.underlineNodeSet.has(id) && this.openedLabel[id]);
   }
 
+  isError(id: any) {
+    // console.log('isError(), errorIds, id = ', this.errorIds, id);
+    return this.errorIds.includes(id);
+  }
+
   // </editor-fold>
 
   getStringValueForAddingCp(node) {
@@ -607,9 +657,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     this.expandNode(treeNode.id);
 
-    var cpnElement, newNode;
+    let cpnElement, newNode;
 
-    var cpnParentElement = treeNode.data.cpnElement;
+    let cpnParentElement = treeNode.data.cpnElement;
     if (['declaration', 'page'].includes(treeNode.data.type)) {
       if (!treeNode.parent || !treeNode.parent.data) {
         console.error('onAddNode(), ERROR: Fail to get parent node for treeNode = ', treeNode);
@@ -620,7 +670,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     const defValue = this.settings.getAppSettings()[type];
 
-    var cpnType;
+    let cpnType;
 
     switch (type) {
       case 'block':
@@ -636,12 +686,17 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         break;
 
       case 'page':
-        cpnElement = this.modelService.createCpnPage(defValue + ' ' + (++this.newPageCount));
+        cpnElement = this.modelService.createCpnPage(defValue + ' ' + (++this.newPageCount), undefined);
         newNode = this.createPageNode(cpnElement);
         cpnType = 'page';
         break;
     }
 
+    this.addCreatedNode(treeNode, newNode, cpnElement, cpnType, cpnParentElement, true);
+  }
+
+
+  addCreatedNode(treeNode, newNode, cpnElement, cpnType, cpnParentElement, gotoEdit = false) {
     console.log('onAddNode(), cpnType = ', cpnType);
     console.log('onAddNode(), cpnParentElement = ', cpnParentElement);
     console.log('onAddNode(), cpnElement = ', cpnElement);
@@ -666,10 +721,13 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       }
 
       this.treeComponent.treeModel.update();
-      setTimeout(() => {
-        this.treeComponent.treeModel.getNodeById(newNode.id).setActiveAndVisible();
-        this.goToEditNode(newNode.id);
-      }, 100);
+
+      if (gotoEdit) {
+        setTimeout(() => {
+          this.treeComponent.treeModel.getNodeById(newNode.id).setActiveAndVisible();
+          this.goToEditNode(newNode.id);
+        }, 100);
+      }
     }
   }
 
@@ -686,7 +744,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     console.log('onDeleteNode(), node = ', treeNode);
 
     if (treeNode.parent) {
-      var parentChildren = treeNode.parent.data.children;
+      const parentChildren = treeNode.parent.data.children;
       if (parentChildren) {
         parentChildren.splice(
           parentChildren.indexOf(treeNode.data), 1);
@@ -1488,7 +1546,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * @returns - tree node for corresponding key
    */
   createDeclarationNode(cpnElement, key = undefined) {
-    var declarationNode = this.createTreeNode('* empty declaration *');
+    let declarationNode = this.createTreeNode('* empty declaration *');
     if (cpnElement) {
       declarationNode.id = cpnElement._id;
       declarationNode.name = cpnElement.layout;
@@ -1519,7 +1577,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     declarationNode.editable = true;
     declarationNode.actions = ['block', 'declaration', 'delete'];
     return declarationNode;
-  };
+  }
 
 
   /**
@@ -1597,8 +1655,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     pagesNode.actions = ['page'];
     pagesNode.type = 'pages';
 
-    var pageNodeList = [];
-
+    const pageNodeList = [];
 
     console.log('createPagesNode(), cpnElement.page = ', cpnElement.page);
 
@@ -1615,7 +1672,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     // console.log('createPagesNode(), pageNodeList = ', pageNodeList);
 
     // Move subpages to it's parent page
-    var subpages = [];
+    const subpages = [];
     for (const pageId of Object.keys(pageNodeList)) {
       const pageNode = pageNodeList[pageId];
       if (pageNode.subpages instanceof Array) {
@@ -1650,7 +1707,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     pageNode.actions = ['page', 'delete'];
 
     // fill subpages array for this page
-    let subpages = [];
+    const subpages = [];
     if (cpnElement.trans) {
       if (cpnElement.trans instanceof Array) {
         for (const tran of cpnElement.trans) {
@@ -1683,7 +1740,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     monitorsNode.cpnElement = cpnElement;
     // monitorsNode.actions = ['page'];
 
-    let monitorsNodeList = [];
+    const monitorsNodeList = [];
 
     // Monitor nodes, create and save it to monitorsNodeList
     if (cpnElement.monitor instanceof Array) {
@@ -1717,13 +1774,13 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     // node.actions = ['page', 'delete'];
 
     // typedescription
-    let subnodes11 = [];
+    const subnodes11 = [];
     const monTypeNode = this.createTreeNode('monitor_type_' + cpnElement._id, cpnElement._typedescription);
     monTypeNode.cpnElement = cpnElement;
     monTypeNode.type = 'monitor_type';
 
     // options
-    let subnodes12 = [];
+    const subnodes12 = [];
     if (cpnElement.option instanceof Array) {
       for (const option of cpnElement.option) {
         const opt = this.createMonitorOptionNode(cpnElement, option);
@@ -1763,9 +1820,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   createMonitorNodesOrderedByPage(cpnElement): any {
-    let nobp = this.createTreeNode('nobp_' + cpnElement._id, 'Nodes ordered by pages');
-    let subnodes = [];
-    let pageinstanceidref = new Map<string, Array<string>>();
+    const nobp = this.createTreeNode('nobp_' + cpnElement._id, 'Nodes ordered by pages');
+    const subnodes = [];
+    const pageinstanceidref = new Map<string, Array<string>>();
     if (cpnElement.node instanceof Array) {
       for (const node of cpnElement.node) {
         if (pageinstanceidref.has(node._pageinstanceidref)) {
@@ -1778,10 +1835,10 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       pageinstanceidref.set(cpnElement.node._pageinstanceidref, [cpnElement.node._idref]);
     }
     for (const k of pageinstanceidref.keys()) {
-      let instRefNode = this.createTreeNode(k + '_' + cpnElement._id, k);
-      let subnodes1 = [];
+      const instRefNode = this.createTreeNode(k + '_' + cpnElement._id, k);
+      const subnodes1 = [];
       for (const id of pageinstanceidref.get(k)) {
-        let idrefNode = this.createTreeNode(id + '_' + cpnElement._id, id);
+        const idrefNode = this.createTreeNode(id + '_' + cpnElement._id, id);
         idrefNode.type = 'monitor_ref';
         subnodes1.push(idrefNode);
 
@@ -1849,9 +1906,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   createMonitorDeclaration(decl, cpnElement): any {
-    let d = this.createTreeNode('monitor_' + decl._name.split(' ')[0] + '_' + cpnElement._id, decl._name);
+    const d = this.createTreeNode('monitor_' + decl._name.split(' ')[0] + '_' + cpnElement._id, decl._name);
 
-    let d1 = this.createTreeNode(decl.ml._id, decl.ml.__text);
+    const d1 = this.createTreeNode(decl.ml._id, decl.ml.__text);
     d1.editable = true;
     d1.type = 'monitor_' + decl._name.split(' ')[0];
 
@@ -1892,36 +1949,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   // </editor-fold>
 
   /**
-   * Get root cpnet element from CPN project JSON object
-   * @param projectData - CPN project JSON object
-   * @returns - cpnElement for cpnet element
-   */
-  getCpnetElement(projectData) {
-    var cpnet;
-    if (projectData.workspaceElements) {
-      if (projectData.workspaceElements instanceof Array) {
-        for (const workspaceElement of projectData.workspaceElements) {
-          if (workspaceElement.cpnet) {
-            cpnet = workspaceElement.cpnet;
-            break;
-          }
-        }
-      } else {
-        if (projectData.workspaceElements.cpnet) {
-          cpnet = projectData.workspaceElements.cpnet;
-        }
-      }
-    }
-    return cpnet;
-  }
-
-  onReload() {
-    // this.loadProject(this.currentProject);
-    if (this.currentProject)
-      this.eventService.send(Message.PROJECT_LOAD, this.currentProject);
-  }
-
-  /**
    * Loading project JSON to tree component object
    * @param project - cpn net JSON object
    */
@@ -1935,7 +1962,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     this.clearTree();
 
-    let cpnet = this.getCpnetElement(projectData);
+    const cpnet = this.modelService.getCpn(); // this.getCpnetElement(projectData);
     if (!cpnet) {
       return;
     }
@@ -2288,7 +2315,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     const cpnType = node.data.declarationType;
     const cpnElement = node.data.cpnElement;
-    var cpnParentElement = node.parent.data.cpnElement;
+    let cpnParentElement = node.parent.data.cpnElement;
 
     if (cpnType != oldCpnType) {
       console.log('updateDeclarationNodeText(). cpnParentElement = ', cpnParentElement);
@@ -2320,9 +2347,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
 
     if (cpnParentElement[cpnType] instanceof Array) {
-      for (let i = 0; i < cpnParentElement[cpnType].length; i++)
-        if (cpnParentElement[cpnType][i]._id === cpnElement._id)
+      for (let i = 0; i < cpnParentElement[cpnType].length; i++) {
+        if (cpnParentElement[cpnType][i]._id === cpnElement._id) {
           cpnParentElement[cpnType][i] = cpnElement;
+        }
+      }
     } else {
       cpnParentElement[cpnType] = cpnElement;
     }

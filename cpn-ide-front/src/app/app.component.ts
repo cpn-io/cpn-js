@@ -1,5 +1,5 @@
-import {Component, HostListener} from '@angular/core';
-import {ElectronService} from 'ngx-electron';
+import { Component, HostListener } from '@angular/core';
+import { ElectronService } from 'ngx-electron';
 
 @Component({
   selector: 'app-root',
@@ -7,7 +7,7 @@ import {ElectronService} from 'ngx-electron';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'cpn-ide';
+  title = 'CPN-IDE';
 
   constructor(private electronService: ElectronService) {
   }
@@ -18,7 +18,7 @@ export class AppComponent {
 
   @HostListener('document:contextmenu', ['$event'])
   onContextMenu(e) {
-    console.log("AppComponent.onContextMenu, e = ", e);
+    console.log('AppComponent.onContextMenu, e = ', e);
 
     e.preventDefault();
   }

@@ -6,7 +6,6 @@ export class Message {
   static SHAPE_HOVER = 'shape.hover';
   static SHAPE_OUT = 'shape.out';
 
-  static SML_VERIFY = 'sml.verify';
   static SML_TO_EDITOR = 'sml.to.editor';
   static MODEL_UPDATE = 'model.update';
   static XML_UPDATE = 'xml.update';
@@ -17,6 +16,7 @@ export class Message {
   static UPDATE_TREE = 'update.tree';
   static UPDATE_TREE_PAGES = 'update.tree.pages';
   static SUBPAGE_CREATE = 'subpage.create';
+  static SUBPAGE_TRANS_CREATE = 'subpage.trans.create';
   static OPEN_DECLARATION_BLOCK = 'open.declaration.block';
   static CHANGE_EXPLORER_TREE = 'change.explorer.tree';
   static SELECT_TREE_NODE = 'select.tree.node';
@@ -35,7 +35,7 @@ export class Message {
 
   static SERVER_GET_TOKEN_MARKS = 'server.get.token.mark';
   static SERVER_GET_TRANSITIONS = 'server.get.transitions';
-
+  static MODEL_STEP = 'model.step';
   id: string;
   data: object;
 }

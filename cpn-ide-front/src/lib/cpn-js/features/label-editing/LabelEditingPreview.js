@@ -79,7 +79,7 @@ export default function LabelEditingPreview(eventBus, canvas, modeling, elementR
 
   eventBus.on('directEditing.resize', function (context) {
 
-    console.log('LabelEditiongPreview, directEditing.resize, context = ', context);
+    // console.log('LabelEditiongPreview, directEditing.resize, context = ', context);
 
     // var newBounds = context.newBounds;
     // element.width = newBounds.width;
@@ -130,7 +130,7 @@ export default function LabelEditingPreview(eventBus, canvas, modeling, elementR
 
   eventBus.on(['directEditing.complete', 'directEditing.cancel'], function (context) {
 
-    console.log('LabelEditiongPreview, directEditing[.complete|.cancel], context = ', context);
+    // console.log('LabelEditiongPreview, directEditing[.complete|.cancel], context = ', context);
 
     var activeProvider = context.active;
 

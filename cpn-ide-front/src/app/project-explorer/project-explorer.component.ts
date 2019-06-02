@@ -299,6 +299,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           for (const id of Object.keys(event.data.issues)) {
             this.errorIds.push(id);
           }
+
+          // expand error nodes
+          for (const id of this.errorIds) {
+            this.expandParentNode(id);
+          }
         }
       }
     });
@@ -412,7 +417,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    */
   processArc(arc: any, elementId: string) {
     if ((arc.placeend && arc.placeend._idref === elementId) || (arc.transend && arc.transend._idref === elementId)) {
-      this.processMlCodeRecursively(arc.annot.text.toString());
+      if (arc.annot && arc.annot.text) {
+        this.processMlCodeRecursively(arc.annot.text.toString());
+      }
     }
   }
 
@@ -2025,6 +2032,15 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         this.gotoNode(firstPageId);
       }
     }
+  }
+
+  expandParentNode(nodeId) {
+    setTimeout(() => {
+      const treeNode = this.treeComponent.treeModel.getNodeById(nodeId);
+      if (treeNode && treeNode.parent) {
+        treeNode.parent.expand();
+      }
+    }, 100);
   }
 
   expandNode(nodeId) {

@@ -49,7 +49,7 @@ import {
   getDefTextattr,
   getDefText,
   getNextId
-} from './util/AttrsUtil';
+} from './CpnElementFactory';
 import { getDistance } from '../../draw/CpnRenderUtil';
 
 

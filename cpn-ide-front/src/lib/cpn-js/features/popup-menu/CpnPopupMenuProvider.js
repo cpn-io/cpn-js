@@ -180,7 +180,7 @@ CpnPopupMenuProvider.prototype._createSubpage = function (event) {
 
   // alert(JSON.stringify(position));
   let id = 'ID' + new Date().getTime();
-  let cpnElement = this._modeling.createElementInModel(position, CPN_TRANSITION);
+  let cpnElement = this._modeling.createShapeCpnElement(position, CPN_TRANSITION);
 
   cpnElement = this._modeling.declareSubPage(cpnElement, 'Subpage', id);
 

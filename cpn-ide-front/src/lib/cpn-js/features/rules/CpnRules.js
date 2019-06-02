@@ -10,7 +10,8 @@ import {
   CPN_TOKEN_LABEL,
   CPN_MARKING_LABEL,
   is,
-  isCpn
+  isCpn,
+  isAny
 } from '../../util/ModelUtil';
 
 export default function CpnRules(eventBus) {
@@ -73,6 +74,10 @@ function canCreate(target, shape) {
 }
 
 CpnRules.prototype.canConnect = function(source, target) {
+
+  if (!isAny(source, [CPN_PLACE, CPN_TRANSITION])) return false;
+  if (!isAny(target, [CPN_PLACE, CPN_TRANSITION])) return false;
+
   return (
     is(source, CPN_PLACE) && is(target, CPN_TRANSITION) ||
     is(target, CPN_PLACE) && is(source, CPN_TRANSITION));

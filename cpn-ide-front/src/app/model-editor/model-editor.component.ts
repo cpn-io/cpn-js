@@ -167,6 +167,7 @@ export class ModelEditorComponent implements OnInit {
     });
 
     eventBus.on('shape.create.end', (event) => {
+      console.log('shape.create.end, event = ', event);
       if (event.elements) {
         for (const element of event.elements) {
           if (element.cpnElement) {
@@ -255,7 +256,7 @@ export class ModelEditorComponent implements OnInit {
         const y = bounds.y + bounds.height / 2;
 
         const position = { x: x, y: y };
-        let cpnElement = this.modeling.createElementInModel(position, CPN_TRANSITION);
+        let cpnElement = this.modeling.createShapeCpnElement(position, CPN_TRANSITION);
         cpnElement = this.modeling.declareSubPage(cpnElement, data.name, data.id);
         const element = this.cpnFactory.createShape(undefined, cpnElement, CPN_TRANSITION, position, true);
         this.modelService.addElementJsonOnPage(cpnElement, this.pageId, CPN_TRANSITION);

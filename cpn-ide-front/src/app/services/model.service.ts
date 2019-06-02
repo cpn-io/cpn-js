@@ -187,10 +187,14 @@ export class ModelService {
   //// ChangeModelActions
 
 
-   deleteElementFromPageJson(pageId, id, type) {
+  deleteElementFromPageJson(pageId, id, type) {
     this.saveBackup(this.projectData, pageId);
     const jsonPageObject = this.getPageById(pageId);
-    if (!jsonPageObject[this.modelCase[type]].length || jsonPageObject[this.modelCase[type]].length === 1) {
+
+    if (!jsonPageObject[this.modelCase[type]] ||
+      !jsonPageObject[this.modelCase[type]].length ||
+      jsonPageObject[this.modelCase[type]].length === 1) {
+        
       jsonPageObject[this.modelCase[type]] = [];
     } else {
       jsonPageObject[this.modelCase[type]] = jsonPageObject[this.modelCase[type]].filter(elem => elem._id !== id);
@@ -1171,7 +1175,7 @@ export class ModelService {
       trans: [],
       arc: [],
       constraints: '',
-      _id: id ? id :  'ID' + new Date().getTime()
+      _id: id ? id : 'ID' + new Date().getTime()
     };
 
     return newPage;
@@ -1420,10 +1424,20 @@ export class ModelService {
    * @param portType
    */
   createPortObject(cpnElement, portType) {
+
+    if (!cpnElement || !cpnElement.ellipse) {
+      return undefined;
+    }
+
+    const x = Number(cpnElement.posattr._x);
+    const y = Number(cpnElement.posattr._y);
+    const w = Number(cpnElement.ellipse._w);
+    const h = Number(cpnElement.ellipse._h);
+
     return {
       fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
       lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
-      posattr: { _x: cpnElement.posattr._x, _y: cpnElement.posattr._y - cpnElement.ellipse._h },
+      posattr: { _x: (x).toString(), _y: (y - h / 2).toString() },
       textattr: { _colour: 'Black', _bold: 'false' },
       text: portType,
       _id: cpnElement._id + 'e',
@@ -1438,11 +1452,21 @@ export class ModelService {
    * @param pageId
    */
   createSubstObject(cpnElement, name, pageId) {
+
+    if (!cpnElement || !cpnElement.box) {
+      return undefined;
+    }
+
+    const x = Number(cpnElement.posattr._x);
+    const y = Number(cpnElement.posattr._y);
+    const w = Number(cpnElement.box._w);
+    const h = Number(cpnElement.box._h);
+
     return {
       subpageinfo: {
         fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
         lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
-        posattr: { _x: cpnElement.posattr._x + cpnElement.box._w / 2, _y: cpnElement.posattr._y - cpnElement.box._h },
+        posattr: { _x: (x).toString(), _y: (y - h / 2).toString() },
         textattr: { _colour: 'Black', _bold: 'false' },
         _id: cpnElement._id + 'e',
         _name: name

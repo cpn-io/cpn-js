@@ -2016,9 +2016,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     // let monitorsNode = this.createTreeNode('Monitors');
     // monitorsNode.classes = ['tree-project'];
     // monitorsNode.children = [this.createTreeNode('* empty *')];
+    let monitorsNode;
     if (cpnet.monitorblock) {
-      const monitorsNode = this.createMonitorsRootNode('Monitors', cpnet.monitorblock);
-      projectNode.children.push(monitorsNode);
+      monitorsNode = this.createMonitorsRootNode('Monitors', cpnet.monitorblock);
     }
 
     // Create project Declarations node
@@ -2037,6 +2037,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     // projectNode.children.push(historyNode);
     projectNode.children.push(declarationsNode);
+    if (monitorsNode) {
+      projectNode.children.push(monitorsNode);
+    }
     projectNode.children.push(pagesNode);
 
     this.nodes.push(projectNode);

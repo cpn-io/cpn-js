@@ -272,6 +272,49 @@ export class ModelService {
     }
   }
 
+  deleteFromModel(cpnElement) {
+    const id = cpnElement._id;
+
+    const e = this.getCpnElementById(undefined, this.projectData, id);
+
+    console.log('deleteFromModel(), e = ', e);
+
+    if (e) {
+      if (e.cpnParentElement instanceof Array) {
+        e.cpnParentElement.splice(e.cpnParentElement.indexOf(e.cpnElement), 1);
+      } else if (e.cpnParentElement instanceof Object) {
+        this.deleteFromObject(e.cpnParentElement, e.cpnElement);
+      }
+    }
+  }
+
+  deleteFromObject(cpnParentElement, cpnElement) {
+    if (cpnParentElement instanceof Object) {
+      for (const key of Object.keys(cpnParentElement)) {
+        if (cpnParentElement[key] === cpnElement) {
+          delete cpnParentElement[key];
+        }
+      }
+    }
+  }
+
+  getCpnElementById(cpnParentElement, cpnElement, id) {
+    if (cpnElement instanceof Object || cpnElement instanceof Array) {
+      console.log('getCpnElementById(), cpnElement = ', cpnElement);
+
+      if (cpnElement._id === id) {
+        return { cpnParentElement: cpnParentElement, cpnElement: cpnElement };
+      }
+
+      for (const key of Object.keys(cpnElement)) {
+        const e = this.getCpnElementById(cpnElement, cpnElement[key], id);
+        if (e) {
+          return { cpnParentElement: e.cpnParentElement, cpnElement: e.cpnElement };
+        }
+      }
+    }
+    return undefined;
+  }
 
   addElementJsonOnPage(cpnElement, pageId, type) {
     console.log('addElementJsonOnPage()', cpnElement, pageId, type);

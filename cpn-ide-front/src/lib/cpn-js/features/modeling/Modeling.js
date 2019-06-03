@@ -980,13 +980,13 @@ Modeling.prototype.createShapeCpnElement = function (position, type) {
 
   switch (type) {
     case CPN_PLACE:
-      newElement = getDefPlace('Place', position);
+      newElement = getDefPlace('P', position);
       break;
     case CPN_TRANSITION:
-      newElement = getDefTransition('Trans', position);
+      newElement = getDefTransition('T', position);
       break;
     case CPN_TEXT_ANNOTATION:
-      newElement = getDefAux('Annotation', position);
+      newElement = getDefAux('Text', position);
       break;
   }
 

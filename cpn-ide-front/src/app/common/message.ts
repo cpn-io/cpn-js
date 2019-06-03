@@ -6,8 +6,11 @@ export class Message {
   static SHAPE_HOVER = 'shape.hover';
   static SHAPE_OUT = 'shape.out';
 
-  static SML_TO_EDITOR = 'sml.to.editor';
   static MODEL_UPDATE = 'model.update';
+  static MODEL_CHANGED = 'model.changed';
+  static MODEL_RELOAD = 'model.reload';
+
+  static SML_TO_EDITOR = 'sml.to.editor';
   static XML_UPDATE = 'xml.update';
   static PROPERTY_UPDATE = 'property.update';
   static DELETE_PAGE = 'delete.page;';

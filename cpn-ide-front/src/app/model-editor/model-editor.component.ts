@@ -117,6 +117,17 @@ export class ModelEditorComponent implements OnInit {
     //   console.log('ModelEditor, element.changed, event = ', event);
     // });
 
+    this.eventService.on(Message.MODEL_RELOAD, () => {
+      this.log('Reload page diagram...');
+      if (this.pageId) {
+        const pageObject = this.modelService.getPageById(this.pageId);
+        if (pageObject) {
+          this.jsonPageObject = pageObject;
+          this.loadPageDiagram(pageObject);
+        }
+      }
+    });
+
     this.eventService.on(Message.SERVER_INIT_NET_START, () => {
       this.log('Validation process...');
       // this.eventBus.fire('model.update.cpn.status', { data: { process: '*' } });

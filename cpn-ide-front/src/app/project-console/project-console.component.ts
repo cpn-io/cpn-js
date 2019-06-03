@@ -16,6 +16,7 @@ export class ProjectConsoleComponent implements OnInit {
 
   nodes = [];
   logHtml = [];
+  changesHtml = [];
   processing = false;
 
   timeInitStart;
@@ -28,6 +29,7 @@ export class ProjectConsoleComponent implements OnInit {
   ngOnInit() {
     this.eventService.on(Message.PROJECT_LOAD, (event) => {
       this.logHtml = [];
+      this.changesHtml = [];
       this.nodes = [];
 
       if (event.project) {
@@ -109,6 +111,13 @@ export class ProjectConsoleComponent implements OnInit {
       }
     });
 
+    // MODEL CHANGES
+    this.eventService.on(Message.MODEL_CHANGED, (event) => {
+      if (event && event.changesPath) {
+        this.logChanges('Model is changed: ' + event.changesPath);
+      }
+    });
+
   }
 
   logColor(text, className) {
@@ -135,6 +144,20 @@ export class ProjectConsoleComponent implements OnInit {
   logSuccess(text) {
     this.logColor(text, 'success');
   }
+
+  logChanges(text) {
+    this.changesHtml.push({
+      date: new Date(),
+      class: 'normal',
+      text: text
+    });
+
+    setTimeout(() => {
+      const changesScrollPane = document.getElementById('changesScrollPane');
+      changesScrollPane.scrollTop = changesScrollPane.scrollHeight;
+    }, 100);
+  }
+
 
   timeConversion(millisec) {
     const seconds: number = (millisec / 1000);

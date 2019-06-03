@@ -373,10 +373,14 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     if (element.type === 'cpn:Place') {
 
       // подчеркиваем тип
-      this.underlineRelationsRecursively(this.nodes[0], element.cpnElement.type.text.toString());
+      if (element.cpnElement.type && element.cpnElement.type.text) {
+        this.underlineRelationsRecursively(this.nodes[0], element.cpnElement.type.text.toString());
+      }
 
       // разбираем инитмарк и находим в нем литералы
-      this.processMlCodeRecursively(element.cpnElement.initmark.text.toString());
+      if (element.cpnElement.initmark && element.cpnElement.initmark.text) {
+        this.processMlCodeRecursively(element.cpnElement.initmark.text.toString());
+      }
 
     } else if (element.type === 'cpn:Transition') {
       elementId = element.cpnElement._id;
@@ -1991,9 +1995,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       projectNode.children.push(optionsNode);
     }
 
-    const historyNode = this.createTreeNode('History');
-    historyNode.classes = ['tree-project'];
-    historyNode.children = [this.createTreeNode('* empty *')];
+    // const historyNode = this.createTreeNode('History');
+    // historyNode.classes = ['tree-project'];
+    // historyNode.children = [this.createTreeNode('* empty *')];
 
     // let monitorsNode = this.createTreeNode('Monitors');
     // monitorsNode.classes = ['tree-project'];
@@ -2017,7 +2021,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       pagesNode = this.createPagesNode('Pages', cpnet);
     }
 
-    projectNode.children.push(historyNode);
+    // projectNode.children.push(historyNode);
     projectNode.children.push(declarationsNode);
     projectNode.children.push(pagesNode);
 

@@ -65,6 +65,14 @@ export class ModelService {
     this.eventService.on(Message.MODEL_UPDATE, (data) => {
       this.updateModel(data);
     });
+
+    // MODEL CHANGES
+    this.eventService.on(Message.MODEL_CHANGED, (event) => {
+      if (event && event.lastProjectData) {
+        this.saveBackup2(event.lastProjectData);
+      }
+    });
+
   }
 
   markNewModel() {
@@ -87,34 +95,76 @@ export class ModelService {
     this.projectName = project.name;
   }
 
-  saveBackup(model, pageId) {
-    this.redoBackupModel = [];
-    console.log('Save data....');
-    const modelCopy = JSON.parse(JSON.stringify(model)); // Object.assign({}, model);
-    this.backupModel.push({ project: modelCopy, page: pageId ? pageId : this.pageId }); // unshift({project: modelCopy, page: pageId});
+  modelHistory = [];
+  modelHistoryPos = 0;
+
+  skipBackup = false;
+
+  saveBackup2(model) {
+    console.log('BACKUP, saveBackup2(), model = ', model);
+
+    if (!this.skipBackup) {
+      this.modelHistory.push(model);
+      this.modelHistoryPos = this.modelHistory.length - 1;
+    }
+    this.skipBackup = false;
+  }
+
+  saveBackup(model, pageId = undefined) {
+    // this.redoBackupModel = [];
+    // console.log('Save data....');
+    // const modelCopy = JSON.parse(JSON.stringify(model)); // Object.assign({}, model);
+    // this.backupModel.push({ project: modelCopy, page: pageId ? pageId : this.pageId }); // unshift({project: modelCopy, page: pageId});
   }
 
   cancelModelChanges(command) {
-    let stackPop;
-    let stackPush;
-    if (command === 'redo') {
-      stackPop = 'redoBackupModel';
-      stackPush = 'backupModel';
-    } else {
-      stackPop = 'backupModel';
-      stackPush = 'redoBackupModel';
+    // let stackPop;
+    // let stackPush;
+    // if (command === 'redo') {
+    //   stackPop = 'redoBackupModel';
+    //   stackPush = 'backupModel';
+    // } else {
+    //   stackPop = 'backupModel';
+    //   stackPush = 'redoBackupModel';
+    // }
+    // const modelState = this[stackPop].pop();
+    // this[stackPush].push({ project: JSON.parse(JSON.stringify(this.projectData)), page: this.pageId });
+    // this.projectData = modelState.project;
+
+    // this.markOpenedModel();
+
+    // const project = { data: this.projectData, name: this.projectName };
+    // this.eventService.send(Message.PROJECT_LOAD, { project: project });
+
+    // if (modelState.page) {
+    //   this.eventService.send(Message.PAGE_OPEN, { pageObject: this.getPageById(modelState.page), subPages: this.subPages });
+    // }
+
+    let prevPos = this.modelHistoryPos;
+    switch (command) {
+      case 'undo':
+        this.modelHistoryPos--;
+        break;
+      case 'redo':
+        this.modelHistoryPos++;
+        break;
     }
-    const modelState = this[stackPop].pop();
-    this[stackPush].push({ project: JSON.parse(JSON.stringify(this.projectData)), page: this.pageId });
-    this.projectData = modelState.project;
+    if (this.modelHistoryPos < 0) {
+      this.modelHistoryPos = 0;
+    }
+    if (this.modelHistoryPos > this.modelHistory.length - 1) {
+      this.modelHistoryPos = this.modelHistory.length - 1;
+    }
+    if (this.modelHistoryPos !== prevPos) {
 
-    this.markOpenedModel();
+      console.log('BACKUP, cancelModelChanges(), this.modelHistory = ', this.modelHistory);
+      console.log('BACKUP, cancelModelChanges(), this.modelHistoryPos = ', this.modelHistoryPos);
 
-    const project = { data: this.projectData, name: this.projectName };
-    this.eventService.send(Message.PROJECT_LOAD, { project: project });
+      this.projectData = this.modelHistory[this.modelHistoryPos];
+      this.project = { data: this.projectData, name: this.projectName };
 
-    if (modelState.page) {
-      this.eventService.send(Message.PAGE_OPEN, { pageObject: this.getPageById(modelState.page), subPages: this.subPages });
+      this.skipBackup = true;
+      this.eventService.send(Message.MODEL_RELOAD);
     }
   }
 
@@ -136,7 +186,9 @@ export class ModelService {
   }
 
   public getPageById(id): any {
-    return this.projectData.workspaceElements.cpnet.page.length ? this.projectData.workspaceElements.cpnet.page.find(page => page._id === id) : this.projectData.workspaceElements.cpnet.page;
+    return this.projectData.workspaceElements.cpnet.page.length ?
+      this.projectData.workspaceElements.cpnet.page.find(page => page._id === id) :
+      this.projectData.workspaceElements.cpnet.page;
   }
 
 
@@ -189,12 +241,13 @@ export class ModelService {
 
   deleteElementFromPageJson(pageId, id, type) {
     this.saveBackup(this.projectData, pageId);
+
     const jsonPageObject = this.getPageById(pageId);
 
     if (!jsonPageObject[this.modelCase[type]] ||
       !jsonPageObject[this.modelCase[type]].length ||
       jsonPageObject[this.modelCase[type]].length === 1) {
-        
+
       jsonPageObject[this.modelCase[type]] = [];
     } else {
       jsonPageObject[this.modelCase[type]] = jsonPageObject[this.modelCase[type]].filter(elem => elem._id !== id);

@@ -48,6 +48,10 @@ export class MainToolbarComponent implements OnInit {
     this.accessCpnService.setIsSimulation(false);
   }
 
+  onValidate() {
+    this.validationService.validate();
+  }
+
   newCPNet() {
     this.projectService.loadEmptyProject();
   }

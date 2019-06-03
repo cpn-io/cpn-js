@@ -772,16 +772,10 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     // }
 
     if (treeNode.parent) {
-      // let cpnParentElement = treeNode.parent.data.cpnElement;
-      // let cpnElement = treeNode.data.cpnElement;
-
-      // if (cpnParentElement && cpnElement) {
-      //   if (cpnParentElement instanceof Array) {
-      //     cpnParentElement.splice(cpnParentElement.indexOf(cpnElement), 1);
-      //   } else {
-      //     delete cpnParentElement[cpnElement];
-      //   }
-      // }
+      const cpnElement = treeNode.data.cpnElement;
+      if (cpnElement) {
+        this.modelService.deleteFromModel(cpnElement);
+      }
 
       const parentChildren = treeNode.parent.data.children;
       if (parentChildren) {
@@ -1549,13 +1543,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     console.log('createDeclarationsNode(), cpnElement = ', cpnElement);
 
-    // Block nodes
-    // var element = cpnElement.block ? cpnElement.block : cpnElement;
-    // var array = element instanceof Array ? element : [element];
-    // for (const block of array) {
-    //   declarationsNode.children.push(this.createBlockNode(block));
-    // }
-
     if (cpnElement.block) {
       if (cpnElement.block instanceof Array) {
         for (const block of cpnElement.block) {
@@ -2054,9 +2041,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     // let monitorsNode = this.createTreeNode('Monitors');
     // monitorsNode.classes = ['tree-project'];
     // monitorsNode.children = [this.createTreeNode('* empty *')];
+    let monitorsNode;
     if (cpnet.monitorblock) {
-      const monitorsNode = this.createMonitorsRootNode('Monitors', cpnet.monitorblock);
-      projectNode.children.push(monitorsNode);
+      monitorsNode = this.createMonitorsRootNode('Monitors', cpnet.monitorblock);
     }
 
     // Create project Declarations node
@@ -2075,6 +2062,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     // projectNode.children.push(historyNode);
     projectNode.children.push(declarationsNode);
+    if (monitorsNode) {
+      projectNode.children.push(monitorsNode);
+    }
     projectNode.children.push(pagesNode);
 
     this.nodes.push(projectNode);
@@ -2319,7 +2309,12 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const value = htmlElement.textContent;
+    let value = htmlElement.textContent;
+
+    if (value.trim() === '') {
+      value = '* empty *';
+    }
+
     console.log('saveEditedData(), value = ', value);
     console.log('saveEditedData(), node.data.name = ', node.data.name);
 
@@ -2474,15 +2469,15 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   addCpnElement(cpnParentElement, cpnElement, cpnType) {
     if (!cpnParentElement) {
       console.error('ProjectExplorerComponent.addCpnElement(). ERROR: Undefined cpnParentElement element.');
-      return;
+      return cpnParentElement;
     }
     if (!cpnElement) {
       console.error('ProjectExplorerComponent.addCpnElement(). ERROR: Undefined cpnElement element.');
-      return;
+      return cpnParentElement;
     }
     if (!cpnType) {
       console.error('ProjectExplorerComponent.addCpnElement(). ERROR: Undefined cpnType.');
-      return;
+      return cpnParentElement;
     }
 
     if (cpnParentElement[cpnType] instanceof Array) {

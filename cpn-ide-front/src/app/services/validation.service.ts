@@ -104,7 +104,7 @@ export class ValidationService {
           if (this.skipKeyList2.includes(key.toLowerCase())) {
             this.nobackupChanges = true;
           }
-        return true;
+          return true;
         }
 
       }
@@ -143,6 +143,58 @@ export class ValidationService {
     return false;
   }
 
+
+
+  detectChanges3(obj1, obj2, log) {
+
+    if (obj1 && obj2 && obj1 instanceof Object && obj2 instanceof Object) {
+
+      if (Object.keys(obj1).length !== Object.keys(obj2).length) {
+        log.path = 'keyLength' + (log.path ? '.' + log.path : '');
+        log.pathHistory.push(log.path);
+      }
+
+      for (const key of Object.keys(obj1)) {
+
+        if (obj1.hasOwnProperty(key) && obj2.hasOwnProperty(key)) {
+          this.detectChanges3(obj1[key], obj2[key], log);
+
+          // log.path = key + (log.path ? '.' + log.path : '');
+          // log.pathHistory.push(log.path);
+        } else {
+          log.path = 'diffKeys' + (log.path ? '.' + log.path : '');
+          log.pathHistory.push(log.path);
+        }
+
+      }
+
+    } else if (obj1 instanceof Array && obj2 instanceof Array) {
+
+      if (obj1.length !== obj2.length) {
+        log.path = 'arrayLength' + (log.path ? '.' + log.path : '');
+        log.pathHistory.push(log.path);
+      }
+
+      for (let i = 0; i < obj1.length; i++) {
+        if (obj1[i] && obj2[i]) {
+          this.detectChanges3(obj1[i], obj2[i], log);
+        }
+      }
+
+    }
+
+    if (!(obj1 instanceof Object) && !(obj2 instanceof Object)) {
+      if (obj1 !== obj2) {
+        log.path = 'value' + (log.path ? '.' + log.path : '');
+        log.pathHistory.push(log.path);
+      }
+    }
+
+  }
+
+
+
+
   /**
    * Regular checking validation
    */
@@ -158,15 +210,17 @@ export class ValidationService {
       this.geometryChanges = false;
       this.nobackupChanges = false;
 
-      let log = { path: undefined };
+      const log = { path: undefined, pathHistory: [] };
 
-      if (this.detectChanges(lastModel, currentModel, 1, log)) {
+      // this.detectChanges3(lastModel, currentModel, log);
+
+      if (log.pathHistory.length > 0) {
         // console.log('detectChanges(), CHANGE DETECTED, A = ', JSON.stringify(currentModel));
         // console.log('detectChanges(), CHANGE DETECTED, B = ', JSON.stringify(lastModel));
 
+        console.log('END detectChanges(), log = ', log);
         console.log('END detectChanges(), this.geometryChanges = ', this.geometryChanges);
         console.log('END detectChanges(), this.nobackupChanges = ', this.nobackupChanges);
-        console.log('END detectChanges(), log = ', log);
 
         if (!this.geometryChanges) {
           this.validate();

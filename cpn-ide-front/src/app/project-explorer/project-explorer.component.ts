@@ -199,6 +199,14 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       }
     });
 
+    this.eventService.on(Message.MODEL_RELOAD, () => {
+      const project = this.modelService.getProject();
+      console.log('MODEL_RELOAD, project = ', project);
+      // if (project) {
+      //   this.loadProject(project);
+      // }
+    });
+
     this.eventService.on(Message.UPDATE_TREE, (data) => {
 
       if (data.cpnElement && data.newTextValue) {
@@ -754,7 +762,27 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   onDeleteNode(treeNode) {
     console.log('onDeleteNode(), node = ', treeNode);
 
+    // let cpnParentElement = treeNode.data.cpnElement;
+    // if (['declaration', 'page'].includes(treeNode.data.type)) {
+    //   if (!treeNode.parent || !treeNode.parent.data) {
+    //     console.error('onAddNode(), ERROR: Fail to get parent node for treeNode = ', treeNode);
+    //     return;
+    //   }
+    //   cpnParentElement = treeNode.parent.data.cpnElement;
+    // }
+
     if (treeNode.parent) {
+      // let cpnParentElement = treeNode.parent.data.cpnElement;
+      // let cpnElement = treeNode.data.cpnElement;
+
+      // if (cpnParentElement && cpnElement) {
+      //   if (cpnParentElement instanceof Array) {
+      //     cpnParentElement.splice(cpnParentElement.indexOf(cpnElement), 1);
+      //   } else {
+      //     delete cpnParentElement[cpnElement];
+      //   }
+      // }
+
       const parentChildren = treeNode.parent.data.children;
       if (parentChildren) {
         parentChildren.splice(

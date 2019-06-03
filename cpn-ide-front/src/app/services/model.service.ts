@@ -103,9 +103,11 @@ export class ModelService {
   saveBackup2(model) {
     console.log('BACKUP, saveBackup2(), model = ', model);
 
-    if (!this.skipBackup) {
-      this.modelHistory.push(model);
-      this.modelHistoryPos = this.modelHistory.length - 1;
+    if (Object.keys(model).length > 0) {
+      if (!this.skipBackup) {
+        this.modelHistory.push(model);
+        this.modelHistoryPos = this.modelHistory.length - 1;
+      }
     }
     this.skipBackup = false;
   }
@@ -160,11 +162,13 @@ export class ModelService {
       console.log('BACKUP, cancelModelChanges(), this.modelHistory = ', this.modelHistory);
       console.log('BACKUP, cancelModelChanges(), this.modelHistoryPos = ', this.modelHistoryPos);
 
-      this.projectData = this.modelHistory[this.modelHistoryPos];
-      this.project = { data: this.projectData, name: this.projectName };
+      if (this.modelHistory[this.modelHistoryPos]) {
+        this.projectData = this.modelHistory[this.modelHistoryPos];
+        this.project = { data: this.projectData, name: this.projectName };
 
-      this.skipBackup = true;
-      this.eventService.send(Message.MODEL_RELOAD);
+        this.skipBackup = true;
+        this.eventService.send(Message.MODEL_RELOAD);
+      }
     }
   }
 

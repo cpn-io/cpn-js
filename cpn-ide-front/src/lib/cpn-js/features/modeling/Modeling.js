@@ -262,7 +262,7 @@ Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus
   const self = this;
 
   if (element.type === CPN_LABEL && (element.text || element.name)) {
-    element.hidden = false;
+    // element.hidden = false;
   }
 
   const changeName = (modeling, changingElement) => {
@@ -639,7 +639,7 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
   else if (cpnLabelElement.text)
     text = cpnLabelElement.text.__text; // for shape external label
 
-  // console.log('Modeling.prototype.getLabelAttrs(), text = ', text);
+  console.log('Modeling.prototype.getLabelAttrs(), text = ', text);
 
   // if label is empty check for default values
   if (labelType) {

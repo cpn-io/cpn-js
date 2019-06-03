@@ -169,7 +169,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
           contextPad.open(element);
         } else {
           contextPad.close();
-          popupMenuProvider.open(element, { cursor: { x: position.x, y: position.y } });
+          popupMenuProvider.open(element, { cursor: { x: position.x, y: position.y + 90 } });
         }
       }
     }

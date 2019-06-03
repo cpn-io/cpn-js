@@ -49,7 +49,7 @@ CpnPopupMenuProvider.prototype.register = function () {
 CpnPopupMenuProvider.prototype.open = function (element, position) {
   this._element = element;
   this._position = position.cursor;
-
+  
   this._popupMenu.open(element, 'cpnPopupMenu', position);
 };
 
@@ -165,6 +165,7 @@ CpnPopupMenuProvider.prototype._createShape = function (event, type) {
 
   this._popupMenu.close();
   const position = toLocalPoint(this._canvas, this._position);
+  position.y -= 90;
 
   let element = this._cpnFactory.createShape(undefined, undefined, type, position, true);
   this._eventBus.fire('shape.create.end', {elements: [element]});

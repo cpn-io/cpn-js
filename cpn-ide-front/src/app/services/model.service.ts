@@ -969,11 +969,10 @@ export class ModelService {
 
   deletePage(pageId) {
     this.saveBackup(this.projectData, pageId);
-    if (this.projectData.workspaceElements.cpnet.page.length) {
-      this.projectData.workspaceElements.cpnet.page = this.projectData.workspaceElements.cpnet.page.filter(x => x._id !== pageId);
-    } else {
-      this.projectData.workspaceElements.cpnet.page = [];
+    if(!(this.projectData.workspaceElements.cpnet.page instanceof Array)) {
+      this.projectData.workspaceElements.cpnet.page = [this.projectData.workspaceElements.cpnet.page];
     }
+    this.projectData.workspaceElements.cpnet.page = this.projectData.workspaceElements.cpnet.page.filter(x => x._id !== pageId);
   }
 
 
@@ -1053,17 +1052,38 @@ export class ModelService {
     cpnet.globbox.block = cpnet.globbox.block.filter(e => e.id !== id);
   }
 
-  deleteElementInBlock(blcok, elementType, id) {
+  deleteElementInBlock(block, elementType, id) {
     this.saveBackup(this.projectData, undefined);
     //blcok[elementType] = blcok[elementType].filter(elem => elem._id !== id);
-    for (var i = 0; i < blcok[elementType].length; i++) {
-      if (blcok[elementType][i]._id === id) {
-        blcok[elementType].splice(i, 1);
+    if (!(block[elementType] instanceof Array)){
+      block[elementType] = [block[elementType]];
+    }
+    for (var i = 0; i < block[elementType].length; i++) {
+      if (block[elementType][i]._id === id) {
+        block[elementType].splice(i, 1);
+        if(block[elementType].length === 0) delete block[elementType];
       }
     }
   }
 
-
+  deleteMonitorInBlock(block, id) {
+    // this.saveBackup(this.projectData, undefined);
+    // //blcok[elementType] = blcok[elementType].filter(elem => elem._id !== id);
+    // if (!(block[elementType] instanceof Array)){
+    //   block[elementType] = [block[elementType]];
+    // }
+    // for (var i = 0; i < block[elementType].length; i++) {
+    //   if (block[elementType][i]._id === id) {
+    //     block[elementType].splice(i, 1);
+    //     if(block[elementType].length === 0) delete block[elementType];
+    //   }
+    // }
+  }
+  deleteMonitorBlock(id){
+    this.saveBackup(this.projectData, undefined);
+    const cpnet = this.getCpn();
+    cpnet.monitorblock.monitor = cpnet.monitorblock.monitor.filter(e => e._id !== id);
+  }
   addItemToBlock(block, elementGroup): any {
     this.saveBackup(this.projectData, undefined);
     let newNode;

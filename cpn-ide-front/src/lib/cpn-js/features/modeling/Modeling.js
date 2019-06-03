@@ -1037,3 +1037,16 @@ Modeling.prototype.removeElements = function (elements) {
   this._eventBus.fire('shape.delete', { elements: elements });
   this._commandStack.execute('elements.delete', context);
 };
+
+
+Modeling.prototype.deleteSubPageTrans = function(id){
+  for (const key of Object.keys(this._elementRegistry._elements)) {
+    if (this._elementRegistry._elements[key]) {
+      const element = this._elementRegistry._elements[key].element;
+      if (element.type === CPN_TRANSITION && element.cpnElement.subst && element.cpnElement.subst._subpage === id) {
+        delete element.cpnElement.subst;
+        this.updateElement(element, true);
+      }
+    }
+  }
+}

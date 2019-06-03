@@ -149,6 +149,12 @@ export class ModelEditorComponent implements OnInit {
       this.updateElementStatus();
     });
 
+    this.eventService.on(Message.DELETE_PAGE, (data) => {
+      if (data.parent === this.pageId){
+        this.modeling.deleteSubPageTrans(data.id);
+      }
+    });
+
     eventBus.on('element.hover', (event) => {
       if (event.element.type === 'cpn:Transition' || event.element.type === 'cpn:Place') {
         this.eventService.send(Message.SHAPE_HOVER, { element: event.element });

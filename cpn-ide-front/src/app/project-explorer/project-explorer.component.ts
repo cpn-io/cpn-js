@@ -785,9 +785,32 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
       const parentChildren = treeNode.parent.data.children;
       if (parentChildren) {
+        const indexElem = parentChildren.indexOf(treeNode.data);
         parentChildren.splice(
-          parentChildren.indexOf(treeNode.data), 1);
+          indexElem , 1);
         this.treeComponent.treeModel.update();
+        if (treeNode.data) {
+          if (treeNode.data.type === 'declaration') {
+            this.modelService.deleteElementInBlock(treeNode.parent.data.cpnElement, treeNode.data.declarationType, treeNode.id);
+          } else if (treeNode.data.type === 'page') {
+            let upperPage;
+            if (treeNode.parent.id !== 'Pages') {
+              upperPage = treeNode.parent.data.cpnElement;
+            } else {
+              if(indexElem !== 0)
+                upperPage = treeNode.parent.children[indexElem - 1].data.cpnElement;
+            }
+            if (upperPage) {
+              this.eventService.send(Message.PAGE_OPEN, {pageObject: upperPage});
+            }
+            this.modelService.deletePage(treeNode.id);
+            this.eventService.send(Message.DELETE_PAGE, { id: treeNode.id, parent: treeNode.parent.id });
+          } else if(treeNode.data.type === 'block'){
+            this.modelService.deleteBlock(treeNode.id);
+          } else if(treeNode.data.type === 'Monitor') {
+            this.modelService.deleteMonitorBlock(treeNode.id);
+          }
+        }
       }
     }
   }
@@ -1810,7 +1833,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     if (cpnElement._disabled === 'true') {
       monitorsNode.options = { nodeClass: 'disabledNode' };
     }
-    // node.actions = ['page', 'delete'];
+    monitorsNode.actions = [ 'delete'];
 
     // typedescription
     const subnodes11 = [];
@@ -1905,6 +1928,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       subnodes.push(instRefNode);
     }
     nobp.children = subnodes;
+    nobp.actions  = [ 'delete'];
     return nobp;
   }
 

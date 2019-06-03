@@ -772,21 +772,14 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     // }
 
     if (treeNode.parent) {
-      // let cpnParentElement = treeNode.parent.data.cpnElement;
-      // let cpnElement = treeNode.data.cpnElement;
-
-      // if (cpnParentElement && cpnElement) {
-      //   if (cpnParentElement instanceof Array) {
-      //     cpnParentElement.splice(cpnParentElement.indexOf(cpnElement), 1);
-      //   } else {
-      //     delete cpnParentElement[cpnElement];
-      //   }
-      // }
+      const cpnElement = treeNode.data.cpnElement;
+      if (cpnElement) {
+        this.modelService.deleteFromModel(cpnElement);
+      }
 
       const parentChildren = treeNode.parent.data.children;
       if (parentChildren) {
-        parentChildren.splice(
-          parentChildren.indexOf(treeNode.data), 1);
+        parentChildren.splice(parentChildren.indexOf(treeNode.data), 1);
         this.treeComponent.treeModel.update();
       }
     }
@@ -1525,13 +1518,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     declarationsNode.actions = ['block'];
 
     console.log('createDeclarationsNode(), cpnElement = ', cpnElement);
-
-    // Block nodes
-    // var element = cpnElement.block ? cpnElement.block : cpnElement;
-    // var array = element instanceof Array ? element : [element];
-    // for (const block of array) {
-    //   declarationsNode.children.push(this.createBlockNode(block));
-    // }
 
     if (cpnElement.block) {
       if (cpnElement.block instanceof Array) {
@@ -2295,7 +2281,12 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const value = htmlElement.textContent;
+    let value = htmlElement.textContent;
+
+    if (value.trim() === '') {
+      value = '* empty *';
+    }
+
     console.log('saveEditedData(), value = ', value);
     console.log('saveEditedData(), node.data.name = ', node.data.name);
 
@@ -2450,15 +2441,15 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   addCpnElement(cpnParentElement, cpnElement, cpnType) {
     if (!cpnParentElement) {
       console.error('ProjectExplorerComponent.addCpnElement(). ERROR: Undefined cpnParentElement element.');
-      return;
+      return cpnParentElement;
     }
     if (!cpnElement) {
       console.error('ProjectExplorerComponent.addCpnElement(). ERROR: Undefined cpnElement element.');
-      return;
+      return cpnParentElement;
     }
     if (!cpnType) {
       console.error('ProjectExplorerComponent.addCpnElement(). ERROR: Undefined cpnType.');
-      return;
+      return cpnParentElement;
     }
 
     if (cpnParentElement[cpnType] instanceof Array) {

@@ -1300,9 +1300,9 @@ export class ModelService {
       pageattr: {
         _name: name
       },
-      place: [],
-      trans: [],
-      arc: [],
+      //place: [],
+      //trans: [],
+     // arc: [],
       constraints: '',
       _id: id ? id : 'ID' + new Date().getTime()
     };

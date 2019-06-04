@@ -15,6 +15,7 @@ export class MainToolbarComponent implements OnInit {
 
   version = AppVersion.buildVersion;
   isStart;
+
   constructor(
     private projectService: ProjectService,
     private modelService: ModelService,
@@ -54,14 +55,6 @@ export class MainToolbarComponent implements OnInit {
 
   newCPNet() {
     this.projectService.loadEmptyProject();
-  }
-
-  undoChanges() {
-    this.modelService.cancelModelChanges('undo');
-  }
-
-  redoChanges() {
-    this.modelService.cancelModelChanges('redo');
   }
 
   reloadProject() {

@@ -46,15 +46,17 @@
     <div class="divider"></div>
 
     <li class="nav-item">
-      <div class="nav-link mb-0" (click)="undoChanges()">
+      <div class="nav-link mb-0" [ngClass]="{'disabled': modelService.getUndoCount() === 0 }"
+        (click)="modelService.undoChanges()">
         <i class="fas fa-undo"></i>
-        <span>Undo</span>
+        <span>Undo</span>&nbsp;<span *ngIf="modelService.getUndoCount() > 0">({{ modelService.getUndoCount() }})</span>
       </div>
     </li>
     <li class="nav-item">
-      <div class="nav-link mb-0" (click)="redoChanges()">
+      <div class="nav-link mb-0" [ngClass]="{'disabled': modelService.getRedoCount() === 0 }"
+        (click)="modelService.redoChanges()">
         <i class="fas fa-redo"></i>
-        <span>Redo</span>
+        <span>Redo</span>&nbsp;<span *ngIf="modelService.getRedoCount() > 0">({{ modelService.getRedoCount() }})</span>
       </div>
     </li>
     <li class="nav-item">

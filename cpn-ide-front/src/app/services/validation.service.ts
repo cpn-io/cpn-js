@@ -20,7 +20,7 @@ export class ValidationService {
 
   lastProjectData = {};
 
-  skipKeyList = [
+  geometryKeyList = [
     'aux',
     'token',
     'marking',
@@ -33,12 +33,16 @@ export class ValidationService {
     'bendpoint'
   ];
 
+  // workspaceElements.cpnet.page.pageattr._name.
+
   skipKeyList2 = [
     'bendpoint'
   ];
 
   geometryChanges = false;
   nobackupChanges = false;
+
+  checkValidationBusy = false;
 
   /**
    * public method for setting validation flag
@@ -64,141 +68,74 @@ export class ValidationService {
   /**
    * Detect changes between two objects
    */
-  detectChanges(obj1, obj2, level, log) {
+  detectChanges(obj1, obj2, key, path, pathHistory) {
+    let isDifferent = false;
 
-    if (obj1 instanceof Object && obj2 instanceof Object) {
-
-      if (Object.keys(obj1).filter(key => !this.skipKeyList.includes(key)).length !==
-        Object.keys(obj2).filter(key => !this.skipKeyList.includes(key)).length) {
-        // console.log('detectChanges(), KEYS LENGTH DIFFERENT ', level, obj1, obj2);
-        return true;
-      }
-
-      for (const key of Object.keys(obj1)) {
-
-        // if (this.skipKeyList.includes(key.toLowerCase())) {
-        //   continue;
-        // }
-
-        if (obj1.hasOwnProperty(key) && obj2.hasOwnProperty(key)) {
-          if (this.detectChanges(obj1[key], obj2[key], level + 1, log)) {
-
-            log.path = key + (log.path ? '.' + log.path : '');
-
-            // console.log('detectChanges(), DETECTED, OBJECTS DIFFERENT, ', level, obj1[key], obj1[key]);
-
-            if (this.skipKeyList.includes(key.toLowerCase())) {
-              this.geometryChanges = true;
-            }
-            if (this.skipKeyList2.includes(key.toLowerCase())) {
-              this.nobackupChanges = true;
-            }
-            return true;
-          }
-        } else {
-          // console.log('detectChanges(), DETECTED, KEYS OBJECTS DIFFERENT, ', level, key, obj1, obj2, ' [', obj1[key], '] [', obj2[key], ']');
-
-          if (this.skipKeyList.includes(key.toLowerCase())) {
-            this.geometryChanges = true;
-          }
-          if (this.skipKeyList2.includes(key.toLowerCase())) {
-            this.nobackupChanges = true;
-          }
-          return true;
-        }
-
-      }
-
-      return false;
-
-    } else if (obj1 instanceof Array && obj2 instanceof Array) {
-
-      if (obj1.length !== obj2.length) {
-        // console.log('detectChanges(), ARRAY LENGTH DIFFERENT ', level, obj1, obj2);
-        return true;
-      }
-
-      for (let i = 0; i < obj1.length; i++) {
-        if (obj1[i] && obj2[i]) {
-          if (this.detectChanges(obj1[i], obj2[i], level + 1, log)) {
-            return true;
-          }
-        } else {
-          // console.log('detectChanges(), ARRAY OBJECTS DIFFERENT ', level, obj1[i], obj2[i]);
-          return true;
-        }
-      }
-
-      return false;
-
+    if (key) {
+      path = path + key + '.';
     }
 
-    if (!(obj1 instanceof Object) && !(obj2 instanceof Object)) {
-      if (obj1 !== obj2) {
-        // console.log('detectChanges(), VALUES DIFFERENT ', level, obj1, obj2);
-        return true;
-      }
+    if (!obj1 || !obj2) {
+      return isDifferent;
     }
 
-    return false;
-  }
+    if (typeof obj1 === 'object' && typeof obj2 === 'object') {
 
-
-
-  detectChanges3(obj1, obj2, log) {
-
-    if (obj1 && obj2 && obj1 instanceof Object && obj2 instanceof Object) {
-
+      // if objects are arrays or objects
       if (Object.keys(obj1).length !== Object.keys(obj2).length) {
-        log.path = 'keyLength' + (log.path ? '.' + log.path : '');
-        log.pathHistory.push(log.path);
-      }
 
-      for (const key of Object.keys(obj1)) {
+        pathHistory.push('DIFF KEY COUNT: ' + path);
+        isDifferent = true;
 
-        if (obj1.hasOwnProperty(key) && obj2.hasOwnProperty(key)) {
-          this.detectChanges3(obj1[key], obj2[key], log);
+      } else {
 
-          // log.path = key + (log.path ? '.' + log.path : '');
-          // log.pathHistory.push(log.path);
-        } else {
-          log.path = 'diffKeys' + (log.path ? '.' + log.path : '');
-          log.pathHistory.push(log.path);
-        }
+        for (const k in obj1) {
+          if (k in obj2) {
+            if (this.detectChanges(obj1[k], obj2[k], k, path, pathHistory)) {
+              isDifferent = true;
+            }
+          } else {
+            pathHistory.push('DIFF KEYS: ' + path);
+            isDifferent = true;
+          }
 
-      }
-
-    } else if (obj1 instanceof Array && obj2 instanceof Array) {
-
-      if (obj1.length !== obj2.length) {
-        log.path = 'arrayLength' + (log.path ? '.' + log.path : '');
-        log.pathHistory.push(log.path);
-      }
-
-      for (let i = 0; i < obj1.length; i++) {
-        if (obj1[i] && obj2[i]) {
-          this.detectChanges3(obj1[i], obj2[i], log);
         }
       }
 
-    }
+    } else {
 
-    if (!(obj1 instanceof Object) && !(obj2 instanceof Object)) {
+      // if objects are simple values
       if (obj1 !== obj2) {
-        log.path = 'value' + (log.path ? '.' + log.path : '');
-        log.pathHistory.push(log.path);
+        pathHistory.push('DIFF VALUES: ' + path);
+        isDifferent = true;
       }
     }
+
+    return isDifferent;
 
   }
 
-
-
+  filterChangeList(changeList, wordList) {
+    return changeList.filter((p) => {
+      for (const w of wordList) {
+        if (p.includes(w)) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }
 
   /**
    * Regular checking validation
    */
   checkValidation() {
+    if (this.checkValidationBusy) {
+      return true;
+    }
+
+    this.checkValidationBusy = true;
+
     const startTime = new Date().getTime();
     if (this.modelService.getProjectData()) {
       // console.log('START detectChanges(), time = ', new Date().getTime(), this.modelService.getProjectData());
@@ -210,25 +147,33 @@ export class ValidationService {
       this.geometryChanges = false;
       this.nobackupChanges = false;
 
-      const log = { path: undefined, pathHistory: [] };
+      const path = '';
+      const changeList = [];
 
-      // this.detectChanges3(lastModel, currentModel, log);
+      this.detectChanges(lastModel, currentModel, undefined, path, changeList);
 
-      if (log.pathHistory.length > 0) {
+      const nonGeometryChangeList = this.filterChangeList(changeList, this.geometryKeyList);
+
+      // console.log('END detectChanges(), changeList = ', changeList);
+      // console.log('END detectChanges(), nonGeometryChangeList = ', nonGeometryChangeList);
+
+      if (changeList.length > 0) {
         // console.log('detectChanges(), CHANGE DETECTED, A = ', JSON.stringify(currentModel));
         // console.log('detectChanges(), CHANGE DETECTED, B = ', JSON.stringify(lastModel));
 
-        console.log('END detectChanges(), log = ', log);
-        console.log('END detectChanges(), this.geometryChanges = ', this.geometryChanges);
-        console.log('END detectChanges(), this.nobackupChanges = ', this.nobackupChanges);
+        console.log('END DETECTED detectChanges(), changeList = ', changeList);
+        console.log('END DETECTED detectChanges(), nonGeometryChangeList = ', nonGeometryChangeList);
 
-        if (!this.geometryChanges) {
+        if (nonGeometryChangeList.length > 0) {
           this.validate();
         }
 
-        if (!this.nobackupChanges) {
-          this.eventService.send(Message.MODEL_CHANGED, { lastProjectData: this.lastProjectData, changesPath: log.path });
+        // if (!this.nobackupChanges) {
+        for (const changePath of changeList) {
+          this.eventService.send(Message.MODEL_CHANGED, { changesPath: changePath });
         }
+
+        this.eventService.send(Message.MODEL_SAVE_BACKUP, { lastProjectData: this.lastProjectData });
 
         this.lastProjectData = currentModel;
       }
@@ -246,5 +191,8 @@ export class ValidationService {
     }
 
     setTimeout(() => this.checkValidation(), this.VALIDATION_TIMEOUT);
+
+    this.checkValidationBusy = false;
   }
+
 }

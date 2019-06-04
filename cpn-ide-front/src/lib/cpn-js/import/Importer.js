@@ -9,7 +9,7 @@
  */
 import { CPN_CONNECTION, CPN_PLACE, CPN_TEXT_ANNOTATION, CPN_TRANSITION, is } from "../util/ModelUtil";
 
-export function importCpnPage(diagram, cpnPageElement) {
+export function importCpnPage(diagram, cpnPageElement, alignToCenter) {
 
   // console.log('Importer.importCpnPage(), cpnPageElement = ', cpnPageElement);
 
@@ -31,11 +31,13 @@ export function importCpnPage(diagram, cpnPageElement) {
     render(cpnPageElement);
 
     // calculate diagram viewbox
-    const vb = getViewbox();
-    if (vb) {
-      canvas.viewbox(vb);
-      canvas.zoom(1.0);
-      // canvas.zoom(0.7);
+    if (alignToCenter) {
+      const vb = getViewbox();
+      if (vb) {
+        canvas.viewbox(vb);
+        canvas.zoom(1.0);
+        // canvas.zoom(0.7);
+      }
     }
 
     eventBus.fire('import.render.complete', { source: cpnPageElement, error: error, warnings: warnings });
@@ -98,8 +100,8 @@ export function importCpnPage(diagram, cpnPageElement) {
    */
   function getViewbox() {
     // console.log('importCpnPage(), canvas._elementRegistry._elements = ', canvas._elementRegistry._elements);
-    // const viewbox = canvas.viewbox();
-    // console.log('importCpnPage(), viewbox = ', viewbox);
+    const viewbox = canvas.viewbox();
+    console.log('importCpnPage(), viewbox = ', viewbox);
 
     if (!canvas._elementRegistry._elements) {
       return undefined;

@@ -9,6 +9,7 @@ export class Message {
   static MODEL_UPDATE = 'model.update';
   static MODEL_CHANGED = 'model.changed';
   static MODEL_RELOAD = 'model.reload';
+  static MODEL_SAVE_BACKUP = 'model.save.backup';
 
   static SML_TO_EDITOR = 'sml.to.editor';
   static XML_UPDATE = 'xml.update';

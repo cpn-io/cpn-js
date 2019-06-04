@@ -105,9 +105,17 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       // console.log('allowDrop, element ', element, ' to ', parent, ' index = ', index);
       console.log('allowDrop, element ', element.data.type, ' to ', parent.data.type, ' index = ', index);
 
-      return element && parent &&
-        element.data.type === 'declaration' &&
-        parent.data.type === 'block' ? true : false;
+      let permis  = false;
+      if( element && parent) {
+       if(element.data.type === 'declaration') {
+         permis = parent.data.type === 'block' ? true : false;
+       }
+       // } else if (element.data.type === 'page' ) {
+       //   permis =  parent.data.type === 'page' || parent.data.type === 'Pages' ? true : false;
+       // }
+      }
+
+      return permis;
 
       // return true;
 
@@ -136,10 +144,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           console.log('dragAndDrop, from ', from, ' to ', to);
           console.log('dragAndDrop, moveNode ', node.name, ' to ', to.parent.name, ' at index ', to.index);
 
-          // const parentJson = from.parent.data.cpnElement;
-          // const type = node.data.type === 'page' ? 'page' : this.paramsTypes.includes(from.parent.data.name) ? undefined : from.data.name;
-          // const isEntryExist: boolean = to.parent.data.cpnElement[type];
-          // this.modelService.moveNonModelJsonElement(from.data.cpnElement, parentJson, to.parent.data.cpnElement, to.index, type);
+          const parentJson = from.parent.data.cpnElement;
+          const type = node.data.type === 'page' ? 'page' : this.paramsTypes.includes(from.parent.data.declarationType) ? undefined : from.data.declarationType;
+          const isEntryExist: boolean = to.parent.data.cpnElement[type];
+          this.modelService.moveNonModelJsonElement(from.data.cpnElement, parentJson, to.parent.data.cpnElement, to.index, type);
+          TREE_ACTIONS.MOVE_NODE(tree, node, $event, { from, to });
           // if (isEntryExist) {
           //   to.parent = tree.getNodeById((to.parent.children.find(e => e.data.name === type)).id);
           //   node = node.children.find(chld => chld.data.name === from.data.name);
@@ -156,7 +165,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           //   this.deleteNode(this.nodes[0], onDeleteNodeId);
           //   this.updateTree();
           //   this.treeComponent.treeModel.setState(tree.getState());
-
+          //
           // } else {
           //   TREE_ACTIONS.MOVE_NODE(tree, node, $event, { from, to });
           // }
@@ -799,9 +808,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
             }
             this.modelService.deletePage(treeNode.id);
             this.eventService.send(Message.DELETE_PAGE, { id: treeNode.id, parent: treeNode.parent.id });
-          } else if(treeNode.data.type === 'block'){
+          } else if (treeNode.data.type === 'block') {
             this.modelService.deleteBlock(treeNode.id);
-          } else if(treeNode.data.type === 'Monitor') {
+          } else if (treeNode.data.type === 'monitor') {
             this.modelService.deleteMonitorBlock(treeNode.id);
           }
         }
@@ -1855,7 +1864,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         subnodes11.push(this.createMonitorDeclaration(cpnElement.declaration, cpnElement));
       }
     }
-
+    // for(let subn of subnodes11) {
+    //   subn.actions = ['delete'];
+    // }
     monitorsNode.children = subnodes11;
 
     return monitorsNode;

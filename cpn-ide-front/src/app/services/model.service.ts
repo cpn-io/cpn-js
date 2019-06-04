@@ -666,7 +666,16 @@ export class ModelService {
       }
     } else if (this.paramsTypes.includes(type)) {
       addelemToEntry(type);
-      delete parent[type];
+      if (parent[type] instanceof Array && parent[type].length > 0) {
+        for (let i = 0; i < parent[type].length; i++) {
+          if (parent[type][i]._id === element._id) {
+            parent[type].splice(i, 1);
+            break;
+          }
+        }
+      } else {
+        delete parent[type];
+      }
     } else {
       addelemToEntry('block');
       if (parent.block instanceof Array) {

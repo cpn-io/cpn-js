@@ -48,8 +48,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   /**
    * JSON object, contains full CPN-model
    */
-  currentProject;
-  currentProjectModel;
 
   // subscription: Subscription;
   modelName;
@@ -2045,8 +2043,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     const projectData = project.data;
     const projectName = project.name;
-    this.currentProjectModel = project.data;
-    this.currentProject = project;
 
     this.clearTree();
 

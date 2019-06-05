@@ -35,6 +35,14 @@ export class ModelService {
   };
   paramsTypes = ['ml', 'color', 'var', 'globref'];
 
+
+  undoHistory = [];
+  redoHistory = [];
+  skipBackup = false;
+
+  backupBusy = false;
+  undoRedoBusy = false;
+
   constructor(private eventService: EventService,
     private accessCpnService: AccessCpnService,
     private settings: SettingsService,
@@ -90,15 +98,13 @@ export class ModelService {
   public loadProject(project) {
     console.log('ModelService.loadProject(), project = ', project);
 
+    this.undoHistory = [];
+    this.redoHistory = [];
+
     this.project = project;
     this.projectData = project.data;
     this.projectName = project.name;
   }
-
-  undoHistory = [];
-  redoHistory = [];
-
-  skipBackup = false;
 
   getUndoCount() {
     // console.log('getUndoCount()');
@@ -113,19 +119,36 @@ export class ModelService {
   }
 
   saveBackup(model) {
+    if (this.backupBusy) {
+      return;
+    }
+    this.backupBusy = true;
+
     console.log('BACKUP, saveBackup(), model, this.skipBackup = ', model, this.skipBackup);
 
     if (Object.keys(model).length > 0) {
       if (!this.skipBackup) {
         this.undoHistory.push(model);
         this.redoHistory = [];
+
+        if (this.undoHistory.length > 100) {
+          this.undoHistory.splice(0, 1);
+        }
+
         console.log('BACKUP, saveBackup2(), this.modelHistory.length = ', this.undoHistory.length);
       }
     }
     this.skipBackup = false;
+
+    this.backupBusy = false;
   }
 
   undoChanges() {
+    if (this.undoRedoBusy) {
+      return;
+    }
+    this.undoRedoBusy = true;
+
     if (this.undoHistory.length > 0) {
       // add current model to redo history
       this.redoHistory.push(this.projectData);
@@ -136,9 +159,16 @@ export class ModelService {
       this.skipBackup = true;
       this.eventService.send(Message.MODEL_RELOAD);
     }
+
+    this.undoRedoBusy = false;
   }
 
   redoChanges() {
+    if (this.undoRedoBusy) {
+      return;
+    }
+    this.undoRedoBusy = true;
+
     if (this.redoHistory.length > 0) {
       // get model from undo history
       this.projectData = this.redoHistory.pop();
@@ -149,6 +179,8 @@ export class ModelService {
       // add current model to undo history
       this.undoHistory.push(this.projectData);
     }
+
+    this.undoRedoBusy = false;
   }
 
   getLabelEntry() {
@@ -1280,7 +1312,7 @@ export class ModelService {
       },
       //place: [],
       //trans: [],
-     // arc: [],
+      // arc: [],
       constraints: '',
       _id: id ? id : 'ID' + new Date().getTime()
     };

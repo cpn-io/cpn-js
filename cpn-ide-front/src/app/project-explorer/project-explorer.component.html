@@ -38,11 +38,27 @@
           <li *ngIf="selectedNode.data.actions.includes('delete')" class="nav-item">
             <a (click)="onDeleteNode(selectedNode)" class="nav-link" href="#">
               <i class="fas fa-minus"></i>
-              Delete
+              <span>Delete</span>
             </a>
           </li>
 
           <div class="divider"></div>
+
+          <!-- Up/down actions -->
+          <li class="nav-item">
+            <a (click)="onUpNode(selectedNode)" class="nav-link" href="#">
+              <i class="fas fa-arrow-up"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a (click)="onDownNode(selectedNode)" class="nav-link" href="#">
+              <i class="fas fa-arrow-down"></i>
+            </a>
+          </li>
+
+          <div class="divider"></div>
+
+
         </div>
       </ul>
 

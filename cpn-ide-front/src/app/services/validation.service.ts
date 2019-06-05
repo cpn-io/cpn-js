@@ -35,8 +35,14 @@ export class ValidationService {
 
   // workspaceElements.cpnet.page.pageattr._name.
 
-  skipKeyList2 = [
-    'bendpoint'
+  nobackupKeyList = [
+    'bendpoint.0._id',
+    'bendpoint.1._id',
+    'bendpoint.2._id',
+    'bendpoint.3._id',
+    'bendpoint.4._id',
+    'bendpoint.5._id',
+    'bendpoint.6._id',
   ];
 
   geometryChanges = false;
@@ -131,9 +137,8 @@ export class ValidationService {
    */
   checkValidation() {
     if (this.checkValidationBusy) {
-      return true;
+      return;
     }
-
     this.checkValidationBusy = true;
 
     const startTime = new Date().getTime();
@@ -152,7 +157,8 @@ export class ValidationService {
 
       this.detectChanges(lastModel, currentModel, undefined, path, changeList);
 
-      const nonGeometryChangeList = this.filterChangeList(changeList, this.geometryKeyList);
+      const noGeometryChangeList = this.filterChangeList(changeList, this.geometryKeyList);
+      const backupChangeList = this.filterChangeList(changeList, this.nobackupKeyList);
 
       // console.log('END detectChanges(), changeList = ', changeList);
       // console.log('END detectChanges(), nonGeometryChangeList = ', nonGeometryChangeList);
@@ -162,18 +168,19 @@ export class ValidationService {
         // console.log('detectChanges(), CHANGE DETECTED, B = ', JSON.stringify(lastModel));
 
         console.log('END DETECTED detectChanges(), changeList = ', changeList);
-        console.log('END DETECTED detectChanges(), nonGeometryChangeList = ', nonGeometryChangeList);
+        console.log('END DETECTED detectChanges(), nonGeometryChangeList = ', noGeometryChangeList);
 
-        if (nonGeometryChangeList.length > 0) {
+        if (noGeometryChangeList.length > 0) {
           this.validate();
         }
 
-        // if (!this.nobackupChanges) {
+        if (backupChangeList.length > 0) {
+          this.eventService.send(Message.MODEL_SAVE_BACKUP, { lastProjectData: this.lastProjectData });
+        }
+
         for (const changePath of changeList) {
           this.eventService.send(Message.MODEL_CHANGED, { changesPath: changePath });
         }
-
-        this.eventService.send(Message.MODEL_SAVE_BACKUP, { lastProjectData: this.lastProjectData });
 
         this.lastProjectData = currentModel;
       }

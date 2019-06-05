@@ -3,22 +3,11 @@ import { EventService } from './event.service';
 import { ModelService } from './model.service';
 import { Message } from '../common/message';
 import { AccessCpnService } from '../services/access-cpn.service';
+import { initDomAdapter } from '@angular/platform-browser/src/browser';
 @Injectable()
 export class ValidationService {
 
-  constructor(
-    private eventService: EventService,
-    private modelService: ModelService,
-    private accessCpnService: AccessCpnService) {
-
-    this.checkValidation();
-  }
-
   VALIDATION_TIMEOUT = 1000;
-
-  needValidation = false;
-
-  lastProjectData = {};
 
   geometryKeyList = [
     'aux',
@@ -45,10 +34,29 @@ export class ValidationService {
     'bendpoint.6._id',
   ];
 
-  geometryChanges = false;
-  nobackupChanges = false;
-
+  needValidation = false;
+  lastProjectData = {};
   checkValidationBusy = false;
+
+  constructor(
+    private eventService: EventService,
+    private modelService: ModelService,
+    private accessCpnService: AccessCpnService) {
+
+    this.eventService.on(Message.PROJECT_LOAD, (event) => {
+      this.init();
+    });
+    this.eventService.on(Message.MODEL_RELOAD, () => {
+      this.init();
+    });
+
+    this.checkValidation();
+  }
+
+  init() {
+    this.needValidation = false;
+    this.lastProjectData = {};
+  }
 
   /**
    * public method for setting validation flag
@@ -149,9 +157,6 @@ export class ValidationService {
       const currentModel = JSON.parse(JSON.stringify(this.modelService.getProjectData()));
       // const currentModel = this.modelService.getProjectData();
 
-      this.geometryChanges = false;
-      this.nobackupChanges = false;
-
       const path = '';
       const changeList = [];
 
@@ -167,8 +172,8 @@ export class ValidationService {
         // console.log('detectChanges(), CHANGE DETECTED, A = ', JSON.stringify(currentModel));
         // console.log('detectChanges(), CHANGE DETECTED, B = ', JSON.stringify(lastModel));
 
-        console.log('END DETECTED detectChanges(), changeList = ', changeList);
-        console.log('END DETECTED detectChanges(), nonGeometryChangeList = ', noGeometryChangeList);
+        // console.log('END DETECTED detectChanges(), changeList = ', changeList);
+        // console.log('END DETECTED detectChanges(), nonGeometryChangeList = ', noGeometryChangeList);
 
         if (noGeometryChangeList.length > 0) {
           this.validate();

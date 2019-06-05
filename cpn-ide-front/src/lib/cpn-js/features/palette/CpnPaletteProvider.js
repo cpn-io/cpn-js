@@ -50,6 +50,32 @@ CpnPaletteProvider.prototype.getPaletteEntries = function () {
       }
     },
 
+    // bpmn-icon-subprocess-expanded
+    'subst-tool': {
+      group: 'tools',
+      className: 'bpmn-icon-subprocess-expanded',
+      title: 'Move selected elements to subpage',
+      action: {
+        click: function (event) {
+        }
+      }
+    },
+
+    'tool-separator': {
+      group: 'tools',
+      separator: true
+    },
+
+    'delete-tool': {
+      group: 'tools',
+      className: 'bpmn-icon-trash',
+      title: 'Remove selected elements',
+      action: {
+        click: function (event) {
+        }
+      }
+    },
+
     // 'global-connect-tool': {
     //   group: 'tools',
     //   className: 'bpmn-icon-connection-multi',

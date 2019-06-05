@@ -1050,3 +1050,18 @@ Modeling.prototype.deleteSubPageTrans = function(id){
     }
   }
 }
+
+Modeling.prototype.getShapeArcs = function(shape){
+  let arcs = [];
+  for (const key of Object.keys(this._elementRegistry._elements)) {
+    if (this._elementRegistry._elements[key]) {
+      const element = this._elementRegistry._elements[key].element;
+      if(element.type === CPN_CONNECTION && element.cpnElement){
+        if(element.cpnElement && element.cpnElement.transend._idref === shape.id || element.cpnElement.placeend._idref === shape.id){
+          arcs.push(element);
+        }
+      }
+    }
+  }
+  return arcs;
+}

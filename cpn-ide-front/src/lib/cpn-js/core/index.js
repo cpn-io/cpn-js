@@ -32,10 +32,11 @@ import CpnModelingModule from '../features/modeling';
 import CpnContextPadModule from '../features/context-pad';
 import CpnImportModule from '../import';
 import CpnLassoToolModule from '../features/lasso-tool';
+import CpnSelectionModule from '../features/selection';
 
+import DrawModule from '../draw';
 import DirectEditingModule from '../features/direct-editing';
 import LabelEditingModule from '../features/label-editing';
-import DrawModule from '../draw';
 
 
 export default {
@@ -69,6 +70,7 @@ export default {
     CpnImportModule,
     CpnContextPadModule,
     CpnLassoToolModule,
+    CpnSelectionModule,
 
     // Custom
     DrawModule,

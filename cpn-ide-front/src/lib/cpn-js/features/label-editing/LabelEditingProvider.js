@@ -44,18 +44,23 @@ export default function LabelEditingProvider(
   // listen to direct editing event
   // eventBus.on('element.dblclick', function (event) {
   eventBus.on('element.click', function (event) {
+    // console.log('LabelEditingProvider, element.click, event = ', event);
+
     var element = event.element;
     // console.log('LabelEditingProvider, element.click, element = ', element);
 
-    if (element) {
-      if (is(element, CPN_CONNECTION)) {
-        if (element.labels.length > 0) {
-          element = event.element.labels[0];
-        } else {
-          return;
+    if (!(event.originalEvent && event.originalEvent.ctrlKey)) {
+      // activate durect editing
+      if (element) {
+        if (is(element, CPN_CONNECTION)) {
+          if (element.labels.length > 0) {
+            element = event.element.labels[0];
+          } else {
+            return;
+          }
         }
+        activateDirectEdit(element, true);
       }
-      activateDirectEdit(element, true);
     }
   });
 

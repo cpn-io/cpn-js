@@ -43,7 +43,9 @@ CpnContextPadProvider.prototype.getContextPadEntries = function (element) {
 
   function removeElement() {
     contextPad.close();
-    modeling.removeElements([element]);
+    let forDelete = modeling.getShapeArcs(element);
+    forDelete.push(element);
+    modeling.removeElements(forDelete);
   }
 
   function startConnect(event, element, autoActivate) {

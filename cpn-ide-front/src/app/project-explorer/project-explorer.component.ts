@@ -108,7 +108,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       let permis  = false;
       if( element && parent) {
        if(element.data.type === 'declaration') {
-         permis = parent.data.type === 'block' ? true : false;
+          permis = parent.data.type === 'block'  && this.isOneGroup(element, parent, index) ? true : false;
        }
        // } else if (element.data.type === 'page' ) {
        //   permis =  parent.data.type === 'page' || parent.data.type === 'Pages' ? true : false;
@@ -147,7 +147,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           const parentJson = from.parent.data.cpnElement;
           const type = node.data.type === 'page' ? 'page' : this.paramsTypes.includes(from.parent.data.declarationType) ? undefined : from.data.declarationType;
           const isEntryExist: boolean = to.parent.data.cpnElement[type];
-          this.modelService.moveNonModelJsonElement(from.data.cpnElement, parentJson, to.parent.data.cpnElement, to.index, type);
+          this.modelService.moveNonModelJsonElement(from.data.cpnElement, parentJson, to.parent.data.cpnElement, this.getIndexToDrop(to.index, type, to), type);
           TREE_ACTIONS.MOVE_NODE(tree, node, $event, { from, to });
           // if (isEntryExist) {
           //   to.parent = tree.getNodeById((to.parent.children.find(e => e.data.name === type)).id);
@@ -174,6 +174,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
   };
 
+
+
   /*onMoveNode(event) {
     console.log('onMoveNode', event.node.name, 'to', event.to.parent.name, 'at index', event.to.index);
     let parentJson = (this.treeComponent.treeModel.getNodeById(event.node.id));//.parent.data.cpnElement;
@@ -197,6 +199,24 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     this.colorDeclarationsPipe = this._colorDeclarationsPipe;
   }
+
+
+  getIndexToDrop(toIndex, type, target) {
+    let startIndex = 0;
+    for (let i = 0; i < target.parent.data.children.length; i++) {
+      if (target.parent.data.children[i].declarationType === type) {
+        startIndex = i;
+        break;
+      }
+    }
+    return toIndex - startIndex;
+  }
+
+  isOneGroup(element, parent, index) {
+    console.log('isOneGroup ------', parent.data.children[index + 1].declarationType, parent.data.children[index].declarationType)
+    return (parent.data.children[index + 1] && (parent.data.children[index + 1].declarationType === element.data.declarationType) ) || (parent.data.children[index ] && ( parent.data.children[index ].declarationType === element.data.declarationType));
+  }
+
 
   ngOnInit() {
     this.appSettings = this.settings.getAppSettings();

@@ -35,6 +35,14 @@ export class ModelService {
   };
   paramsTypes = ['ml', 'color', 'var', 'globref'];
 
+
+  undoHistory = [];
+  redoHistory = [];
+  skipBackup = false;
+
+  backupBusy = false;
+  undoRedoBusy = false;
+
   constructor(private eventService: EventService,
     private accessCpnService: AccessCpnService,
     private settings: SettingsService,
@@ -66,10 +74,10 @@ export class ModelService {
       this.updateModel(data);
     });
 
-    // MODEL CHANGES
-    this.eventService.on(Message.MODEL_CHANGED, (event) => {
+    // MODEL SAVE BACKUP
+    this.eventService.on(Message.MODEL_SAVE_BACKUP, (event) => {
       if (event && event.lastProjectData) {
-        this.saveBackup2(event.lastProjectData);
+        this.saveBackup(event.lastProjectData);
       }
     });
 
@@ -90,88 +98,90 @@ export class ModelService {
   public loadProject(project) {
     console.log('ModelService.loadProject(), project = ', project);
 
+    this.undoHistory = [];
+    this.redoHistory = [];
+
     this.project = project;
     this.projectData = project.data;
     this.projectName = project.name;
   }
 
-  modelHistory = [];
-  modelHistoryPos = 0;
+  getUndoCount() {
+    // console.log('getUndoCount()');
+    return this.undoHistory.length;
+  }
 
-  skipBackup = false;
+  getRedoCount() {
+    return this.redoHistory.length;
+  }
 
-  saveBackup2(model) {
-    console.log('BACKUP, saveBackup2(), model = ', model);
+  saveBackupBak(model, pageId = undefined) {
+  }
+
+  saveBackup(model) {
+    if (this.backupBusy) {
+      return;
+    }
+    this.backupBusy = true;
+
+    console.log('BACKUP, saveBackup(), model, this.skipBackup = ', model, this.skipBackup);
 
     if (Object.keys(model).length > 0) {
       if (!this.skipBackup) {
-        this.modelHistory.push(model);
-        this.modelHistoryPos = this.modelHistory.length - 1;
+        this.undoHistory.push(model);
+        this.redoHistory = [];
+
+        if (this.undoHistory.length > 100) {
+          this.undoHistory.splice(0, 1);
+        }
+
+        console.log('BACKUP, saveBackup2(), this.modelHistory.length = ', this.undoHistory.length);
       }
     }
     this.skipBackup = false;
+
+    this.backupBusy = false;
   }
 
-  saveBackup(model, pageId = undefined) {
-    // this.redoBackupModel = [];
-    // console.log('Save data....');
-    // const modelCopy = JSON.parse(JSON.stringify(model)); // Object.assign({}, model);
-    // this.backupModel.push({ project: modelCopy, page: pageId ? pageId : this.pageId }); // unshift({project: modelCopy, page: pageId});
+  undoChanges() {
+    if (this.undoRedoBusy) {
+      return;
+    }
+    this.undoRedoBusy = true;
+
+    if (this.undoHistory.length > 0) {
+      // add current model to redo history
+      this.redoHistory.push(this.projectData);
+
+      // get model from redo history
+      this.projectData = this.undoHistory.pop();
+      this.project = { data: this.projectData, name: this.projectName };
+      this.skipBackup = true;
+      this.eventService.send(Message.MODEL_RELOAD);
+    }
+
+    this.undoRedoBusy = false;
   }
 
-  cancelModelChanges(command) {
-    // let stackPop;
-    // let stackPush;
-    // if (command === 'redo') {
-    //   stackPop = 'redoBackupModel';
-    //   stackPush = 'backupModel';
-    // } else {
-    //   stackPop = 'backupModel';
-    //   stackPush = 'redoBackupModel';
-    // }
-    // const modelState = this[stackPop].pop();
-    // this[stackPush].push({ project: JSON.parse(JSON.stringify(this.projectData)), page: this.pageId });
-    // this.projectData = modelState.project;
-
-    // this.markOpenedModel();
-
-    // const project = { data: this.projectData, name: this.projectName };
-    // this.eventService.send(Message.PROJECT_LOAD, { project: project });
-
-    // if (modelState.page) {
-    //   this.eventService.send(Message.PAGE_OPEN, { pageObject: this.getPageById(modelState.page), subPages: this.subPages });
-    // }
-
-    let prevPos = this.modelHistoryPos;
-    switch (command) {
-      case 'undo':
-        this.modelHistoryPos--;
-        break;
-      case 'redo':
-        this.modelHistoryPos++;
-        break;
+  redoChanges() {
+    if (this.undoRedoBusy) {
+      return;
     }
-    if (this.modelHistoryPos < 0) {
-      this.modelHistoryPos = 0;
-    }
-    if (this.modelHistoryPos > this.modelHistory.length - 1) {
-      this.modelHistoryPos = this.modelHistory.length - 1;
-    }
-    if (this.modelHistoryPos !== prevPos) {
+    this.undoRedoBusy = true;
 
-      console.log('BACKUP, cancelModelChanges(), this.modelHistory = ', this.modelHistory);
-      console.log('BACKUP, cancelModelChanges(), this.modelHistoryPos = ', this.modelHistoryPos);
+    if (this.redoHistory.length > 0) {
+      // get model from undo history
+      this.projectData = this.redoHistory.pop();
+      this.project = { data: this.projectData, name: this.projectName };
+      this.skipBackup = true;
+      this.eventService.send(Message.MODEL_RELOAD);
 
-      if (this.modelHistory[this.modelHistoryPos]) {
-        this.projectData = this.modelHistory[this.modelHistoryPos];
-        this.project = { data: this.projectData, name: this.projectName };
-
-        this.skipBackup = true;
-        this.eventService.send(Message.MODEL_RELOAD);
-      }
+      // add current model to undo history
+      this.undoHistory.push(this.projectData);
     }
+
+    this.undoRedoBusy = false;
   }
-
 
   getLabelEntry() {
     return this.labelsEntry;
@@ -244,7 +254,7 @@ export class ModelService {
 
 
   deleteElementFromPageJson(pageId, id, type) {
-    this.saveBackup(this.projectData, pageId);
+    this.saveBackupBak(this.projectData, pageId);
 
     const jsonPageObject = this.getPageById(pageId);
 
@@ -259,7 +269,7 @@ export class ModelService {
   }
 
   deleteLabelJsonByCPNElem(CPNElem, index, typeElem, pageId) {
-    this.saveBackup(this.projectData, pageId);
+    this.saveBackupBak(this.projectData, pageId);
     const jsonPageObject = this.getPageById(pageId);
     try {
       if (jsonPageObject[typeElem] instanceof Array) {
@@ -319,7 +329,7 @@ export class ModelService {
   addElementJsonOnPage(cpnElement, pageId, type) {
     console.log('addElementJsonOnPage()', cpnElement, pageId, type);
 
-    this.saveBackup(this.projectData, pageId);
+    this.saveBackupBak(this.projectData, pageId);
 
     const jsonPageObject = this.getPageById(pageId);
     console.log('addElementJsonOnPage(), jsonPageObject = ', jsonPageObject);
@@ -665,8 +675,17 @@ export class ModelService {
         parent = [];
       }
     } else if (this.paramsTypes.includes(type)) {
+      if (parent[type] instanceof Array && parent[type].length > 0) {
+        for (let i = 0; i < parent[type].length; i++) {
+          if (parent[type][i]._id === element._id) {
+            parent[type].splice(i, 1);
+            break;
+          }
+        }
+      } else {
+        delete parent[type];
+      }
       addelemToEntry(type);
-      delete parent[type];
     } else {
       addelemToEntry('block');
       if (parent.block instanceof Array) {
@@ -709,7 +728,7 @@ export class ModelService {
 
 
   applyPageChanges(pageId, placeShapes, textRenderer, transShapes, arcShapes) {
-    this.saveBackup(this.projectData, pageId);
+    this.saveBackupBak(this.projectData, pageId);
 
     const page = this.getPageById(pageId);
 
@@ -986,14 +1005,14 @@ export class ModelService {
 
 
   changeLabelText(label, text, pageId) {
-    this.saveBackup(this.projectData, pageId);
+    this.saveBackupBak(this.projectData, pageId);
     if (label && label.text) {
       label.text.__text = text;
     }
   }
 
   changePageName(pageId, name) {
-    this.saveBackup(this.projectData, pageId);
+    this.saveBackupBak(this.projectData, pageId);
     const changedPage = this.getPageById(pageId);
     if (changedPage) {
       changedPage.pageattr._name = name;
@@ -1001,7 +1020,7 @@ export class ModelService {
   }
 
   createNewPage(page) {
-    this.saveBackup(this.projectData, page._id);
+    this.saveBackupBak(this.projectData, page._id);
     if (this.projectData.workspaceElements.cpnet.length) {
       this.projectData.workspaceElements.cpnet.page.push(page);
     } else {
@@ -1011,17 +1030,16 @@ export class ModelService {
   }
 
   deletePage(pageId) {
-    this.saveBackup(this.projectData, pageId);
-    if (this.projectData.workspaceElements.cpnet.page.length) {
-      this.projectData.workspaceElements.cpnet.page = this.projectData.workspaceElements.cpnet.page.filter(x => x._id !== pageId);
-    } else {
-      this.projectData.workspaceElements.cpnet.page = [];
+    this.saveBackupBak(this.projectData, pageId);
+    if (!(this.projectData.workspaceElements.cpnet.page instanceof Array)) {
+      this.projectData.workspaceElements.cpnet.page = [this.projectData.workspaceElements.cpnet.page];
     }
+    this.projectData.workspaceElements.cpnet.page = this.projectData.workspaceElements.cpnet.page.filter(x => x._id !== pageId);
   }
 
 
   updateModel(updatedData) {
-    this.saveBackup(this.projectData, undefined);
+    this.saveBackupBak(this.projectData, undefined);
     const project = this.projectData;
     if (project.workspaceElements.cpnet.page.length) {
       for (let page of project.workspaceElements.cpnet.page) {
@@ -1043,7 +1061,7 @@ export class ModelService {
 
 
   createNewBlock(block, targetBlock) {
-    this.saveBackup(this.projectData, undefined);
+    this.saveBackupBak(this.projectData, undefined);
     if (targetBlock) {
       if (targetBlock.block && targetBlock.block instanceof Array) {
         targetBlock.block.push(block);
@@ -1091,24 +1109,45 @@ export class ModelService {
 
 
   deleteBlock(id) {
-    this.saveBackup(this.projectData, undefined);
+    this.saveBackupBak(this.projectData, undefined);
     const cpnet = this.getCpn();
     cpnet.globbox.block = cpnet.globbox.block.filter(e => e.id !== id);
   }
 
-  deleteElementInBlock(blcok, elementType, id) {
-    this.saveBackup(this.projectData, undefined);
+  deleteElementInBlock(block, elementType, id) {
+    this.saveBackupBak(this.projectData, undefined);
     //blcok[elementType] = blcok[elementType].filter(elem => elem._id !== id);
-    for (var i = 0; i < blcok[elementType].length; i++) {
-      if (blcok[elementType][i]._id === id) {
-        blcok[elementType].splice(i, 1);
+    if (!(block[elementType] instanceof Array)) {
+      block[elementType] = [block[elementType]];
+    }
+    for (var i = 0; i < block[elementType].length; i++) {
+      if (block[elementType][i]._id === id) {
+        block[elementType].splice(i, 1);
+        if (block[elementType].length === 0) delete block[elementType];
       }
     }
   }
 
-
+  deleteMonitorInBlock(block, id) {
+    // this.saveBackup(this.projectData, undefined);
+    // //blcok[elementType] = blcok[elementType].filter(elem => elem._id !== id);
+    // if (!(block[elementType] instanceof Array)){
+    //   block[elementType] = [block[elementType]];
+    // }
+    // for (var i = 0; i < block[elementType].length; i++) {
+    //   if (block[elementType][i]._id === id) {
+    //     block[elementType].splice(i, 1);
+    //     if(block[elementType].length === 0) delete block[elementType];
+    //   }
+    // }
+  }
+  deleteMonitorBlock(id) {
+    this.saveBackupBak(this.projectData, undefined);
+    const cpnet = this.getCpn();
+    cpnet.monitorblock.monitor = cpnet.monitorblock.monitor.filter(e => e._id !== id);
+  }
   addItemToBlock(block, elementGroup): any {
-    this.saveBackup(this.projectData, undefined);
+    this.saveBackupBak(this.projectData, undefined);
     let newNode;
     if (!block[elementGroup]) {
       newNode = this.newElemetn(elementGroup);
@@ -1122,7 +1161,7 @@ export class ModelService {
   }
 
   newElemetn(elementType): any {
-    this.saveBackup(this.projectData, undefined);
+    this.saveBackupBak(this.projectData, undefined);
     switch (elementType) {
       case 'var':
         return {
@@ -1166,7 +1205,7 @@ export class ModelService {
    * @param blockType - type variable (color, var, ml, gkobref)
    */
   parseVariableLayout(layout, elem, blockType) {
-    this.saveBackup(this.projectData, undefined);
+    this.saveBackupBak(this.projectData, undefined);
     switch (blockType) {
       case 'var':
         let splitLayoutArray;
@@ -1271,9 +1310,9 @@ export class ModelService {
       pageattr: {
         _name: name
       },
-      place: [],
-      trans: [],
-      arc: [],
+      //place: [],
+      //trans: [],
+      // arc: [],
       constraints: '',
       _id: id ? id : 'ID' + new Date().getTime()
     };

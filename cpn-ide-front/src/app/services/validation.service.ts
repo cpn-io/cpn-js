@@ -3,24 +3,13 @@ import { EventService } from './event.service';
 import { ModelService } from './model.service';
 import { Message } from '../common/message';
 import { AccessCpnService } from '../services/access-cpn.service';
+import { initDomAdapter } from '@angular/platform-browser/src/browser';
 @Injectable()
 export class ValidationService {
 
-  constructor(
-    private eventService: EventService,
-    private modelService: ModelService,
-    private accessCpnService: AccessCpnService) {
-
-    this.checkValidation();
-  }
-
   VALIDATION_TIMEOUT = 1000;
 
-  needValidation = false;
-
-  lastProjectData = {};
-
-  skipKeyList = [
+  geometryKeyList = [
     'aux',
     'token',
     'marking',
@@ -33,12 +22,41 @@ export class ValidationService {
     'bendpoint'
   ];
 
-  skipKeyList2 = [
-    'bendpoint'
+  // workspaceElements.cpnet.page.pageattr._name.
+
+  nobackupKeyList = [
+    'bendpoint.0._id',
+    'bendpoint.1._id',
+    'bendpoint.2._id',
+    'bendpoint.3._id',
+    'bendpoint.4._id',
+    'bendpoint.5._id',
+    'bendpoint.6._id',
   ];
 
-  geometryChanges = false;
-  nobackupChanges = false;
+  needValidation = false;
+  lastProjectData = {};
+  checkValidationBusy = false;
+
+  constructor(
+    private eventService: EventService,
+    private modelService: ModelService,
+    private accessCpnService: AccessCpnService) {
+
+    this.eventService.on(Message.PROJECT_LOAD, (event) => {
+      this.init();
+    });
+    this.eventService.on(Message.MODEL_RELOAD, () => {
+      this.init();
+    });
+
+    this.checkValidation();
+  }
+
+  init() {
+    this.needValidation = false;
+    this.lastProjectData = {};
+  }
 
   /**
    * public method for setting validation flag
@@ -64,89 +82,73 @@ export class ValidationService {
   /**
    * Detect changes between two objects
    */
-  detectChanges(obj1, obj2, level, log) {
+  detectChanges(obj1, obj2, key, path, pathHistory) {
+    let isDifferent = false;
 
-    if (obj1 instanceof Object && obj2 instanceof Object) {
-
-      if (Object.keys(obj1).filter(key => !this.skipKeyList.includes(key)).length !==
-        Object.keys(obj2).filter(key => !this.skipKeyList.includes(key)).length) {
-        // console.log('detectChanges(), KEYS LENGTH DIFFERENT ', level, obj1, obj2);
-        return true;
-      }
-
-      for (const key of Object.keys(obj1)) {
-
-        // if (this.skipKeyList.includes(key.toLowerCase())) {
-        //   continue;
-        // }
-
-        if (obj1.hasOwnProperty(key) && obj2.hasOwnProperty(key)) {
-          if (this.detectChanges(obj1[key], obj2[key], level + 1, log)) {
-
-            log.path = key + (log.path ? '.' + log.path : '');
-
-            // console.log('detectChanges(), DETECTED, OBJECTS DIFFERENT, ', level, obj1[key], obj1[key]);
-
-            if (this.skipKeyList.includes(key.toLowerCase())) {
-              this.geometryChanges = true;
-            }
-            if (this.skipKeyList2.includes(key.toLowerCase())) {
-              this.nobackupChanges = true;
-            }
-            return true;
-          }
-        } else {
-          // console.log('detectChanges(), DETECTED, KEYS OBJECTS DIFFERENT, ', level, key, obj1, obj2, ' [', obj1[key], '] [', obj2[key], ']');
-
-          if (this.skipKeyList.includes(key.toLowerCase())) {
-            this.geometryChanges = true;
-          }
-          if (this.skipKeyList2.includes(key.toLowerCase())) {
-            this.nobackupChanges = true;
-          }
-        return true;
-        }
-
-      }
-
-      return false;
-
-    } else if (obj1 instanceof Array && obj2 instanceof Array) {
-
-      if (obj1.length !== obj2.length) {
-        // console.log('detectChanges(), ARRAY LENGTH DIFFERENT ', level, obj1, obj2);
-        return true;
-      }
-
-      for (let i = 0; i < obj1.length; i++) {
-        if (obj1[i] && obj2[i]) {
-          if (this.detectChanges(obj1[i], obj2[i], level + 1, log)) {
-            return true;
-          }
-        } else {
-          // console.log('detectChanges(), ARRAY OBJECTS DIFFERENT ', level, obj1[i], obj2[i]);
-          return true;
-        }
-      }
-
-      return false;
-
+    if (key) {
+      path = path + key + '.';
     }
 
-    if (!(obj1 instanceof Object) && !(obj2 instanceof Object)) {
+    if (!obj1 || !obj2) {
+      return isDifferent;
+    }
+
+    if (typeof obj1 === 'object' && typeof obj2 === 'object') {
+
+      // if objects are arrays or objects
+      if (Object.keys(obj1).length !== Object.keys(obj2).length) {
+
+        pathHistory.push('DIFF KEY COUNT: ' + path);
+        isDifferent = true;
+
+      } else {
+
+        for (const k in obj1) {
+          if (k in obj2) {
+            if (this.detectChanges(obj1[k], obj2[k], k, path, pathHistory)) {
+              isDifferent = true;
+            }
+          } else {
+            pathHistory.push('DIFF KEYS: ' + path);
+            isDifferent = true;
+          }
+
+        }
+      }
+
+    } else {
+
+      // if objects are simple values
       if (obj1 !== obj2) {
-        // console.log('detectChanges(), VALUES DIFFERENT ', level, obj1, obj2);
-        return true;
+        pathHistory.push('DIFF VALUES: ' + path);
+        isDifferent = true;
       }
     }
 
-    return false;
+    return isDifferent;
+
+  }
+
+  filterChangeList(changeList, wordList) {
+    return changeList.filter((p) => {
+      for (const w of wordList) {
+        if (p.includes(w)) {
+          return false;
+        }
+      }
+      return true;
+    });
   }
 
   /**
    * Regular checking validation
    */
   checkValidation() {
+    if (this.checkValidationBusy) {
+      return;
+    }
+    this.checkValidationBusy = true;
+
     const startTime = new Date().getTime();
     if (this.modelService.getProjectData()) {
       // console.log('START detectChanges(), time = ', new Date().getTime(), this.modelService.getProjectData());
@@ -155,25 +157,34 @@ export class ValidationService {
       const currentModel = JSON.parse(JSON.stringify(this.modelService.getProjectData()));
       // const currentModel = this.modelService.getProjectData();
 
-      this.geometryChanges = false;
-      this.nobackupChanges = false;
+      const path = '';
+      const changeList = [];
 
-      let log = { path: undefined };
+      this.detectChanges(lastModel, currentModel, undefined, path, changeList);
 
-      if (this.detectChanges(lastModel, currentModel, 1, log)) {
+      const noGeometryChangeList = this.filterChangeList(changeList, this.geometryKeyList);
+      const backupChangeList = this.filterChangeList(changeList, this.nobackupKeyList);
+
+      // console.log('END detectChanges(), changeList = ', changeList);
+      // console.log('END detectChanges(), nonGeometryChangeList = ', nonGeometryChangeList);
+
+      if (changeList.length > 0) {
         // console.log('detectChanges(), CHANGE DETECTED, A = ', JSON.stringify(currentModel));
         // console.log('detectChanges(), CHANGE DETECTED, B = ', JSON.stringify(lastModel));
 
-        console.log('END detectChanges(), this.geometryChanges = ', this.geometryChanges);
-        console.log('END detectChanges(), this.nobackupChanges = ', this.nobackupChanges);
-        console.log('END detectChanges(), log = ', log);
+        // console.log('END DETECTED detectChanges(), changeList = ', changeList);
+        // console.log('END DETECTED detectChanges(), nonGeometryChangeList = ', noGeometryChangeList);
 
-        if (!this.geometryChanges) {
+        if (noGeometryChangeList.length > 0) {
           this.validate();
         }
 
-        if (!this.nobackupChanges) {
-          this.eventService.send(Message.MODEL_CHANGED, { lastProjectData: this.lastProjectData, changesPath: log.path });
+        if (backupChangeList.length > 0) {
+          this.eventService.send(Message.MODEL_SAVE_BACKUP, { lastProjectData: this.lastProjectData });
+        }
+
+        for (const changePath of changeList) {
+          this.eventService.send(Message.MODEL_CHANGED, { changesPath: changePath });
         }
 
         this.lastProjectData = currentModel;
@@ -192,5 +203,8 @@ export class ValidationService {
     }
 
     setTimeout(() => this.checkValidation(), this.VALIDATION_TIMEOUT);
+
+    this.checkValidationBusy = false;
   }
+
 }

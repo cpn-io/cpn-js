@@ -3,11 +3,12 @@ import { values } from 'min-dash';
 import { getEnclosedElements } from 'diagram-js/lib/util/Elements';
 import { isAny, CPN_PLACE, CPN_TRANSITION } from '../../util/ModelUtil';
 
-export default function LassoToolProvider(eventBus, elementRegistry, selection) {
+export default function LassoToolProvider(eventBus, elementRegistry, selection, selectionProvider) {
 
   this._eventBus = eventBus;
   this._elementRegistry = elementRegistry;
   this._selection = selection;
+  this._selectionProvider = selectionProvider;
 
   var self = this;
 
@@ -26,7 +27,8 @@ export default function LassoToolProvider(eventBus, elementRegistry, selection) 
 LassoToolProvider.$inject = [
   'eventBus',
   'elementRegistry',
-  'selection'
+  'selection',
+  'selectionProvider'
 ];
 
 LassoToolProvider.prototype.select = function (elements, bbox) {
@@ -36,33 +38,15 @@ LassoToolProvider.prototype.select = function (elements, bbox) {
 };
 
 LassoToolProvider.prototype.deselect = function () {
-  // const selectedElements = this._selection.get();
-
-  console.log('LassoToolProvider. deselect, this._selection.get() = ', this._selection.get());
-
+  // console.log('LassoToolProvider. deselect, this._selection.get() = ', this._selection.get());
 
   const selectedElements = [];
   for (const e of this._selection.get()) {
     selectedElements.push(e);
   }
 
-  var elements = this._elementRegistry.filter(function (element) { return element; });
-  for (const e of elements) {
-    this._selection.deselect(e);
-    if (isAny(e, [CPN_PLACE, CPN_TRANSITION])) {
-      e.selected = undefined;
-      this._eventBus.fire('element.changed', { element: e });
-    }
-  }
-
-  for (const e of selectedElements) {
-    if (isAny(e, [CPN_PLACE, CPN_TRANSITION])) {
-      e.selected = true;
-      this._eventBus.fire('element.changed', { element: e });
-    }
-  }
-
-  console.log('LassoToolProvider. deselect, this._selection.get() = ', this._selection.get());
+  this._selectionProvider.deselectAll();
+  this._selectionProvider.selectElements(selectedElements, true);
 };
 
 function toBBox(event) {

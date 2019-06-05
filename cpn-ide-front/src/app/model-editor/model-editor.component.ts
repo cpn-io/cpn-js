@@ -123,7 +123,7 @@ export class ModelEditorComponent implements OnInit {
         const pageObject = this.modelService.getPageById(this.pageId);
         if (pageObject) {
           this.jsonPageObject = pageObject;
-          this.loadPageDiagram(pageObject);
+          this.loadPageDiagram(pageObject, false);
         }
       }
     });
@@ -147,6 +147,12 @@ export class ModelEditorComponent implements OnInit {
     // TRANSITIONS
     this.eventService.on(Message.SERVER_GET_TRANSITIONS, (data) => {
       this.updateElementStatus();
+    });
+
+    this.eventService.on(Message.DELETE_PAGE, (data) => {
+      if (data.parent === this.pageId){
+        this.modeling.deleteSubPageTrans(data.id);
+      }
     });
 
     eventBus.on('element.hover', (event) => {
@@ -358,12 +364,12 @@ export class ModelEditorComponent implements OnInit {
   clearPage() {
   }
 
-  loadPageDiagram(pageObject) {
+  loadPageDiagram(pageObject, alignToCenter = true) {
     // console.log('loadPageDiagram(), import, pageObject = ', pageObject);
 
     this.clearPage();
 
-    importCpnPage(this.diagram, pageObject);
+    importCpnPage(this.diagram, pageObject, alignToCenter);
   }
 
   makeid(length) {

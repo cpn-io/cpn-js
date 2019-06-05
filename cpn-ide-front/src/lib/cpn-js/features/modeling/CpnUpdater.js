@@ -60,7 +60,10 @@ import { getDistance } from '../../draw/CpnRenderUtil';
 export default function CpnUpdater(eventBus, modeling, elementRegistry,
   connectionDocking, selection, popupMenuProvider, contextPad, canvas, portMenuProvider) {
 
-  this.modeling = modeling;
+  this._modeling = modeling;
+  this._elementRegistry = elementRegistry;
+
+  const self = this;
 
   console.log('CpnUpdater()');
 
@@ -80,6 +83,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   this.executed([
     'shape.create',
   ], updateNewShape);
+
 
   // this.reverted(['connection.layout'], function (e) {
   //   delete e.context.cropped;

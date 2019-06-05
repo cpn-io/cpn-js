@@ -9,6 +9,7 @@ export class Message {
   static MODEL_UPDATE = 'model.update';
   static MODEL_CHANGED = 'model.changed';
   static MODEL_RELOAD = 'model.reload';
+  static MODEL_SAVE_BACKUP = 'model.save.backup';
 
   static SML_TO_EDITOR = 'sml.to.editor';
   static XML_UPDATE = 'xml.update';
@@ -39,6 +40,7 @@ export class Message {
   static SERVER_GET_TOKEN_MARKS = 'server.get.token.mark';
   static SERVER_GET_TRANSITIONS = 'server.get.transitions';
   static MODEL_STEP = 'model.step';
+  static DELETE_TREE_NODE = 'model.tree.node';
   id: string;
   data: object;
 }

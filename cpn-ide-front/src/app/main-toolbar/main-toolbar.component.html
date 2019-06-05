@@ -45,20 +45,28 @@
 
     <div class="divider"></div>
 
+    <!-- Undo -->
     <li class="nav-item">
       <div class="nav-link mb-0" [ngClass]="{'disabled': modelService.getUndoCount() === 0 }"
         (click)="modelService.undoChanges()">
         <i class="fas fa-undo"></i>
-        <span>Undo</span>&nbsp;<span *ngIf="modelService.getUndoCount() > 0">({{ modelService.getUndoCount() }})</span>
+        <!-- <span>Undo</span>&nbsp;<span *ngIf="modelService.getUndoCount() > 0">({{ modelService.getUndoCount() }})</span> -->
+        <span *ngIf="modelService.getUndoCount() > 0; else elseUndoBlock">Undo ({{ modelService.getUndoCount() }})</span>
+        <ng-template #elseUndoBlock><span>Undo</span></ng-template>
       </div>
     </li>
+
+    <!-- Redo -->
     <li class="nav-item">
       <div class="nav-link mb-0" [ngClass]="{'disabled': modelService.getRedoCount() === 0 }"
         (click)="modelService.redoChanges()">
         <i class="fas fa-redo"></i>
-        <span>Redo</span>&nbsp;<span *ngIf="modelService.getRedoCount() > 0">({{ modelService.getRedoCount() }})</span>
+        <span *ngIf="modelService.getRedoCount() > 0; else elseRedoBlock">Redo ({{ modelService.getRedoCount() }})</span>
+        <ng-template #elseRedoBlock><span>Redo</span></ng-template>
       </div>
     </li>
+
+    <!-- Reload -->
     <li class="nav-item">
       <div class="nav-link mb-0" (click)="reloadProject()">
         <i class="fas fa-sync-alt"></i>
@@ -68,6 +76,7 @@
 
     <div class="divider"></div>
 
+    <!-- Expand diagram -->
     <li class="nav-item">
       <div class="nav-link mb-0" (click)="fullScreen()">
         <i class="fas fa-expand-arrows-alt"></i>
@@ -77,6 +86,7 @@
 
     <div class="divider"></div>
 
+    <!-- Validate -->
     <li class="nav-item">
       <div (click)="onValidate()" class="nav-link mb-0">
         <i class="fas fa-check-double"></i>
@@ -92,6 +102,7 @@
       </div>
     </li>
 
+    <!-- Step -->
     <li *ngIf="accessCpnService.isSimulation" class="nav-item">
       <div (click)="onDoStep()" class="nav-link mb-0">
         <i class="fas fa-step-forward"></i>
@@ -99,6 +110,7 @@
       </div>
     </li>
 
+    <!-- Start/Stop simulation -->
     <li class="nav-item">
       <div *ngIf="accessCpnService.isSimulation; else notSim">
         <div (click)="onStopSimulation()" class="nav-link mb-0">

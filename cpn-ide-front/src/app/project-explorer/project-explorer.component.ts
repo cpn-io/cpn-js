@@ -763,6 +763,13 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     return JSON.parse(JSON.stringify(obj));
   }
 
+  onUpNode(treeNode) {
+  }
+
+  onDownNode(treeNode) {
+  }
+
+
   /**
    * Deleting node from the tree
    *

@@ -81,7 +81,7 @@
     <!--------------------------->
     <div class="workspace-container-with-tab">
       <div class="inner">
-        <div class="scroll-y">
+        <div class="scroll-y" id="tree-scroll-pane">
           <div class="pane" style="padding:10px">
 
             <tree-root #tree [nodes]="nodes" [options]="options" (activate)="activateNode($event)"
@@ -91,7 +91,7 @@
                 <div [ngClass]="node.data.classes">
 
                   <!-- Tree node view -->
-                  <table class="table-textarea">
+                  <table class="table-textarea" [id]="'node-table-' + node.id">
                     <tr>
                       <!-- Expanding/collapsing arrow -->
                       <td>
@@ -111,8 +111,8 @@
                           (change)="setMonitorOption($event, node)">
                       </td>
 
-                      <td *ngIf="isPage(node)" style="padding-right: 5px; color:lightseagreen">
-                          <i class="fas fa-project-diagram"></i>
+                      <td *ngIf="isPage(node)" style="padding-right: 5px; color:lightskyblue">
+                        <i class="fas fa-project-diagram"></i>
                       </td>
 
                       <!-- Tree node label (can be editable) -->
@@ -120,10 +120,8 @@
                         [ngClass]="{'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id), 'node-highlight-error': isError(node.id)}">
 
                         <div *ngIf="!isOption(node) && !isMonitorRef(node)" [id]="'textinpfield_' + node.id"
-                          class="editablenode"
-                          (click)="onNodeClick($event, node)"
-                          (dblclick)="onNodeDblClick($event, node)"
-                          (focusout)="saveEditedData($event, node)"
+                          class="editablenode" (click)="onNodeClick($event, node)"
+                          (dblclick)="onNodeDblClick($event, node)" (focusout)="saveEditedData($event, node)"
                           [contentEditable]="canEdit(node) && (openedLabel[node.id] || (editableNode === node))"
                           [innerHTML]="getLabel(node) | colorDeclarations | safeHtml">
                         </div>

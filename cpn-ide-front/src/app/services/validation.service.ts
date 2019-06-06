@@ -199,7 +199,7 @@ export class ValidationService {
     if (this.needValidation) {
       this.needValidation = false;
 
-      this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData() });
+      this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData(), complexVerify: false });
     }
 
     setTimeout(() => this.checkValidation(), this.VALIDATION_TIMEOUT);

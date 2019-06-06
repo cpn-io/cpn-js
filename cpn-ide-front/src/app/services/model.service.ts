@@ -4,6 +4,7 @@ import { Message } from '../common/message';
 import { AccessCpnService } from './access-cpn.service';
 import { SettingsService } from '../services/settings.service';
 import { ValidationService } from './validation.service';
+import { keyframes } from '@angular/animations';
 
 /**
  * Common service for getting access to project data from all application
@@ -876,6 +877,20 @@ export class ModelService {
     }
   }
 
+
+  /**
+   * Parse declaration type from string
+   */
+  parseDeclarationTypeFromString(str) {
+    let parser = str.match('^\\S+');
+
+    if (parser) {
+      return parser[0];
+    }
+
+    return undefined;
+  }
+
   /**
    * Convert string to cpn declaration element
    * @param cpnElement
@@ -888,18 +903,15 @@ export class ModelService {
     let parser = str.match('^\\S+');
     // console.log('stringToCpnDeclarationElement(), parser = ', parser);
 
-    let type, cpnType;
-    if (parser) {
-      type = parser[0];
-    }
+    const declarationType = this.parseDeclarationTypeFromString(str);
 
-    if (!type) {
+    if (!declarationType) {
       return;
     }
 
-    console.log('stringToCpnDeclarationElement(), type = ', type);
+    let cpnType;
 
-    switch (type) {
+    switch (declarationType) {
       case 'var':
         cpnType = 'var';
         let splitLayoutArray;
@@ -972,9 +984,12 @@ export class ModelService {
         cpnElement.layout = str;
         break;
     }
+
+    console.log('stringToCpnDeclarationElement(), cpnType = ', cpnType);
+    console.log('stringToCpnDeclarationElement(), declarationType = ', declarationType);
     console.log('stringToCpnDeclarationElement(), cpnElement = ', cpnElement);
 
-    return { cpnType: cpnType, cpnElement: cpnElement };
+    return { cpnType: cpnType, declarationType: declarationType, cpnElement: cpnElement };
   }
 
 
@@ -1095,7 +1110,7 @@ export class ModelService {
 
     if (transEnd.subst) {
       const page = this.getPageById(transEnd.subst._subpage);
-      if (page) {
+      if (page && page.place) {
         console.log('getAllPorts(), page = ', page);
 
         for (const place of page.place) {

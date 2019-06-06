@@ -85,6 +85,13 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
         this.selectDeclarationNode(event);
       }
     });
+
+    this.eventService.on(Message.DECLARATION_CHANGED, (event) => {
+      if (event.cpnElement && event.newTextValue) {
+        this.updateNodeByCpnElement(event.cpnElement, event.newTextValue);
+      }
+    });
+
   }
 
   ngOnDestroy() {
@@ -124,7 +131,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   createBlockDeclarationNodes(cpnParentElement, cpnElement) {
     console.log('createBlockDeclarationNodes(), cpnElement = ', cpnElement);
 
-    const blockDeclarationsNodes = [];
+    let blockDeclarationsNodes = [];
 
     const blockNode: any = {};
     if (cpnElement) {
@@ -145,6 +152,11 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       }
     }
 
+    // console.log('createBlockDeclarationNodes(), blockDeclarationsNodes = ', blockDeclarationsNodes);
+    // if (blockDeclarationsNodes.length < 2) {
+    //   blockDeclarationsNodes = [];
+    // }
+
     return blockDeclarationsNodes;
   }
 
@@ -159,7 +171,6 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     declarationNode.cpnParentElement = cpnParentElement;
     declarationNode.cpnElement = cpnElement;
     declarationNode.id = cpnElement._id;
-    declarationNode.declarationType = 'ml';
     declarationNode.text = declarationNode.name = this.settings.getAppSettings()['declaration'];
 
     if (cpnElement && key) {
@@ -177,7 +188,8 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
           declarationNode.text = text;
           declarationNode.name = cpnElement.layout;
           declarationNode.type = 'declaration';
-          declarationNode.declarationType = key;
+          declarationNode.cpnType = key;
+          declarationNode.declarationType = this.modelService.parseDeclarationTypeFromString(text);
           break;
       }
     }
@@ -415,7 +427,32 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
         this.updatePageNodeText(node, value);
         break;
     }
+
+    this.eventService.send(Message.DECLARATION_CHANGED, {
+      cpnElement: node.cpnElement,
+      newTextValue: value
+    });
   }
+
+  getNodeByCpnElement(cpnElement) {
+    return this.getNodeById(cpnElement._id);
+  }
+
+  /**
+   * Find node by cpn element and update it's text
+   * @param cpnElement
+   */
+  updateNodeByCpnElement(cpnElement, newTextValue) {
+    const nodeForUpdate = this.getNodeByCpnElement(cpnElement);
+
+    console.log(this.constructor.name, 'updateNodeByCpnElement(), cpnElement, newTextValue, nodeForUpdate = ',
+      cpnElement, newTextValue, nodeForUpdate);
+
+    if (nodeForUpdate) {
+      this.updateDeclarationNodeText(nodeForUpdate, newTextValue);
+    }
+  }
+
 
   /**
    * Updating block node
@@ -445,14 +482,14 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
    * @param newValue
    */
   updateDeclarationNodeText(node, newValue) {
-    node.name = newValue; // update tree node text
+    node.text = node.name = newValue; // update tree node text
     // node.cpnElement.pageattr._name = newValue; // update cpnElement
 
     const oldCpnType = node.declarationType;
 
     const result = this.modelService.stringToCpnDeclarationElement(node.cpnElement, newValue);
     node.cpnElement = result.cpnElement;
-    node.declarationType = result.cpnType;
+    node.declarationType = result.declarationType;
 
     console.log('updateDeclarationNodeText(). parsing result = ', result);
 

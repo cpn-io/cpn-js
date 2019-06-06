@@ -21,10 +21,10 @@ export class AccessCpnService {
   constructor(private http: HttpClient,
     private eventService: EventService) {
 
-    this.eventService.on(Message.SERVER_INIT_NET, (data) => {
-      console.log('AccessCpnService(), SERVER_INIT_NET, data = ', data);
-      if (data) {
-        this.initNet(data.projectData);
+    this.eventService.on(Message.SERVER_INIT_NET, (event) => {
+      console.log('AccessCpnService(), SERVER_INIT_NET, data = ', event);
+      if (event) {
+        this.initNet(event.projectData, event.complexVerify);
       }
     });
   }
@@ -58,7 +58,7 @@ export class AccessCpnService {
   /**
    * Access/CPN API
    */
-  initNet(cpnJson) {
+  initNet(cpnJson, complexVerify) {
     if (this.initNetProcessing) {
       return;
     }
@@ -82,7 +82,7 @@ export class AccessCpnService {
 
     this.errorData = [];
 
-    this.http.post('/api/v2/cpn/init', { 'xml': cpnXml }, { headers: { 'X-SessionId': this.sessionId } })
+    this.http.post('/api/v2/cpn/init', { xml: cpnXml, complex_verify: complexVerify }, { headers: { 'X-SessionId': this.sessionId } })
       .subscribe(
         (data: any) => {
           console.log('AccessCpnService, initNet(), SUCCESS, data = ', data);

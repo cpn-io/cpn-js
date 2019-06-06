@@ -6,14 +6,14 @@
 
       <!-- Project details toolbar -->
       <!------------------------------>
-      <nav class="navbar navbar-sm navbar-expand shadow-sm">
+      <!-- <nav class="navbar navbar-sm navbar-expand shadow-sm">
 
         <ul class="navbar-nav mr-auto">
 
-          <!-- Action buttons -->
+          // Action buttons
           <div style="display: contents">
 
-            <!-- New action with dropdown menu -->
+            // New action with dropdown menu
             <div *ngIf="selectedNode.type !== 'block'">
               <li class="dropdown nav-item">
                 <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle nav-link" data-toggle="dropdown"
@@ -32,7 +32,7 @@
               <div class="divider"></div>
             </div>
 
-            <!-- Delete action -->
+            // Delete action
             <li *ngIf="selectedNode.actions && selectedNode.actions.includes('delete')" class="nav-item">
               <a (click)="onDeleteNode(selectedNode)" class="nav-link" href="#">
                 <i class="fas fa-minus"></i>
@@ -42,7 +42,7 @@
 
             <div class="divider"></div>
 
-            <!-- Up/down actions -->
+            // Up/down actions
             <li class="nav-item">
               <a (click)="onUpNode(selectedNode)" class="nav-link" href="#">
                 <i class="fas fa-arrow-up"></i>
@@ -56,17 +56,16 @@
 
             <div class="divider"></div>
 
-
           </div>
         </ul>
 
-      </nav>
+      </nav> -->
 
 
       <!-- Project details table -->
       <!--------------------------->
 
-      <div class="workspace-container-with-tab">
+      <div class="workspace-container">
         <div class="inner">
           <div class="scroll-y">
             <div class="pane">

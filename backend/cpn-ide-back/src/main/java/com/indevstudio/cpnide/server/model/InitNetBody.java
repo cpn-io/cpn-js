@@ -6,4 +6,5 @@ import lombok.Data;
 @Data
 public class InitNetBody {
     String xml;
+    boolean complex_verify = true;
 }

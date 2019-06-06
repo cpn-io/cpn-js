@@ -44,12 +44,13 @@ public class NetController {
 
             _netConatiner.CreateNewNet(sessionId, body.getXml());
 
-            Map<String, List<IssueDescription>> issues = _netConatiner.PerfomEntireChecking(sessionId);
+            Map<String, List<IssueDescription>> issues = body.isComplex_verify() ? _netConatiner.PerfomEntireChecking(sessionId) : _netConatiner.PerfomEntireCheckingFast(sessionId);
 
             return ResponseEntity.status(HttpStatus.OK).body(VerifyResp.builder().isSuccess(issues.size() == 0).issues(issues).build());
 
         });
     }
+
 
     @GetMapping(value = "/xml/export")
     @ApiOperation(nickname = "Export net to XML", value = "Export current net object to XML")

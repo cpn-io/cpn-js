@@ -968,6 +968,19 @@ Modeling.prototype.declareSubPage = function (cpnElement, name, pageId) {
 
 
 
+Modeling.prototype.changeTransitionSubPageLabel = function(id, name){
+  for (const key of Object.keys(this._elementRegistry._elements)) {
+    if (this._elementRegistry._elements[key]) {
+      const element = this._elementRegistry._elements[key].element;
+      if (element.type === CPN_TRANSITION && element.cpnElement.subst && element.cpnElement.subst._subpage === id) {
+        element.cpnElement.subst.subpageinfo._name = name;
+        element.cpnElement.subst.subpageinfo.text = name;
+        this.updateElement(element, true);
+        break;
+      }
+    }
+  }
+}
 
 /**
  * saving the created place in the model json
@@ -1065,3 +1078,8 @@ Modeling.prototype.getShapeArcs = function(shape){
   }
   return arcs;
 }
+
+
+
+
+

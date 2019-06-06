@@ -49,10 +49,7 @@ public class SimulatorController {
                     @ApiResponse(code = 500, message = "Internal error. Object with description", response = ErrorDescription.class)
             })
     public ResponseEntity getMarks(@RequestHeader(value = "X-SessionId") String sessionId) {
-        return RequestBaseLogic.HandleRequest(sessionId, () -> {
-
-            return ResponseEntity.status(HttpStatus.OK).body(_netConatiner.returnTokensAndMarking(sessionId));
-        });
+        return RequestBaseLogic.HandleRequest(sessionId, () -> ResponseEntity.status(HttpStatus.OK).body(_netConatiner.returnTokensAndMarking(sessionId)));
     }
 
     @GetMapping(value = "/sim/transitions/enabled")
@@ -64,9 +61,7 @@ public class SimulatorController {
                     @ApiResponse(code = 500, message = "Internal error. Object with description", response = ErrorDescription.class)
             })
     public ResponseEntity getEnabledTransitions(@RequestHeader(value = "X-SessionId") String sessionId) {
-        return RequestBaseLogic.HandleRequest(sessionId, () -> {
-            return ResponseEntity.status(HttpStatus.OK).body(_netConatiner.returnEnableTrans(sessionId));
-        });
+        return RequestBaseLogic.HandleRequest(sessionId, () -> ResponseEntity.status(HttpStatus.OK).body(_netConatiner.returnEnableTrans(sessionId)));
     }
 
 

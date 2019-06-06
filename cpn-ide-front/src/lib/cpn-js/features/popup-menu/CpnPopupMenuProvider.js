@@ -49,7 +49,7 @@ CpnPopupMenuProvider.prototype.register = function () {
 CpnPopupMenuProvider.prototype.open = function (element, position) {
   this._element = element;
   this._position = position.cursor;
-  
+
   this._popupMenu.open(element, 'cpnPopupMenu', position);
 };
 
@@ -174,7 +174,7 @@ CpnPopupMenuProvider.prototype._createShape = function (event, type) {
 }
 
 CpnPopupMenuProvider.prototype._createSubpage = function (event) {
-  // console.log('CpnPopupMenuProvider.prototype._createSubpage, this.position = ', this._position);
+   console.log('CpnPopupMenuProvider.prototype._createSubpage, this.position = ', this._position);
 
   this._popupMenu.close();
   const position = toLocalPoint(this._canvas, this._position);
@@ -186,6 +186,7 @@ CpnPopupMenuProvider.prototype._createSubpage = function (event) {
   cpnElement = this._modeling.declareSubPage(cpnElement, 'Subpage', id);
 
   let element = this._cpnFactory.createShape(undefined, cpnElement, CPN_TRANSITION, position, true);
+  //this._modeling.updateElement(element, true);
   this._eventBus.fire('shape.create.end', {elements: [element]});
   this._eventBus.fire('shape.editing.activate', {shape: element});
   this._eventBus.fire('shape.contextpad.activate', {shape: element});

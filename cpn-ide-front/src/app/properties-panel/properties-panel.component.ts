@@ -185,7 +185,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     for (let page of pageList) {
       var transList = page.trans instanceof Array ? page.trans : [page.trans];
       for (let trans of transList) {
-        if (trans.subst && trans.subst._subpage) {
+        if (trans && trans.subst && trans.subst._subpage) {
           if (page._id !== this.pageId)
             subPageIdList.push(trans.subst._subpage);
 

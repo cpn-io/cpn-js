@@ -155,6 +155,11 @@ export class ModelEditorComponent implements OnInit {
       }
     });
 
+    this.eventService.on(Message.CHANGE_NAME_PAGE, (data) => {
+      if (this.pageId === data.parent)
+        this.modeling.changeTransitionSubPageLabel(data.id, data.name);
+    })
+
     eventBus.on('element.hover', (event) => {
       if (event.element.type === 'cpn:Transition' || event.element.type === 'cpn:Place') {
         this.eventService.send(Message.SHAPE_HOVER, { element: event.element });
@@ -191,12 +196,20 @@ export class ModelEditorComponent implements OnInit {
             this.modelService.addElementJsonOnPage(element.cpnElement, this.pageId, element.type);
 
             if (element.type === CPN_TRANSITION && element.cpnElement.subst) {
-              element.cpnElement.subst._subpage = 'id' + new Date().getTime();
+             if(! element.cpnElement.subst._subpage) element.cpnElement.subst._subpage = 'id' + new Date().getTime();
+             let pageName;
+              // for(let label of element.labels ) {
+              //   if(label.labelType === 'subst') {
+              //     pageName = this.settings.getAppSettings()['page'];
+              //     this.modeling.updateElement(element, true);
+              //     break;
+              //   }
+              // }
 
               this.eventService.send(Message.SUBPAGE_TRANS_CREATE, {
                 currentPageId: this.pageId,
                 id: element.cpnElement.subst._subpage,
-                cpnElement: element.cpnElement
+                cpnElement: element.cpnElement,
               });
             }
           }
@@ -287,7 +300,9 @@ export class ModelEditorComponent implements OnInit {
 
       const element = this.modeling.getElementByCpnElement(data.cpnElement);
       console.log('PROPERTY_UPDATE, element = ', element);
-
+      if (data.subpageName && data.cpnElement.subst && data.cpnElement.subst.subpageinfo){
+        data.cpnElement.subst.subpageinfo._name = data.subpageName;
+      }
       this.modeling.updateElement(element, true);
       // this.selectedElement = element;
 

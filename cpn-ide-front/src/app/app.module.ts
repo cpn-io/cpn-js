@@ -17,7 +17,6 @@ import { AppComponent } from './app.component';
 
 import { MainFrameComponent } from './main-frame/main-frame.component';
 import { AccessCpnService } from './services/access-cpn.service';
-import { ProjectExplorerToolbarComponent } from './project-explorer/project-explorer-toolbar/project-explorer-toolbar.component';
 import { MainToolbarComponent } from './main-toolbar/main-toolbar.component';
 import { OpenprojectButtonComponent } from './actions/openproject-button/openproject-button.component';
 
@@ -63,7 +62,6 @@ require('typeface-droid-sans-mono');
     // Components
     MainFrameComponent,
     ProjectExplorerComponent,
-    ProjectExplorerToolbarComponent,
     MainToolbarComponent,
     OpenprojectButtonComponent,
     ModelEditorComponent,

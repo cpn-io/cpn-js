@@ -33,14 +33,14 @@ CpnFactory.$inject = [
 ];
 
 CpnFactory.prototype.createShape = function (pageObject, cpnElement, type, position, addToCanvas) {
-  // console.log('CpnFactory.prototype.createShape(), position, type =  ', position, type);
+  console.log('CpnFactory.prototype.createShape(), position, type =  ', position, type);
 
   if (!position) {
     position = { x: 0, y: 0 };
   }
 
   if (!cpnElement) {
-    cpnElement = this._modeling.createElementInModel(position, type);
+    cpnElement = this._modeling.createShapeCpnElement(position, type);
   }
 
   let element, attrs, label;
@@ -61,8 +61,10 @@ CpnFactory.prototype.createShape = function (pageObject, cpnElement, type, posit
       if (cpnElement[key]) {
         attrs = this._modeling.getLabelAttrs(element, cpnElement[key], key);
         label = this._elementFactory.createLabel(attrs);
-        if (addToCanvas)
+        if (addToCanvas) {
           this._canvas.addShape(label, root);
+          // this._modeling.moveShape(label, { x: 0, y: 0 });
+        }
       }
     }
 
@@ -70,8 +72,9 @@ CpnFactory.prototype.createShape = function (pageObject, cpnElement, type, posit
     if (cpnElement.token) {
       attrs = this._modeling.getTokenLabelAttrs(element, cpnElement.token, 'token');
       var tokenLabel = this._elementFactory.createLabel(attrs);
-      if (addToCanvas)
+      if (addToCanvas) {
         this._canvas.addShape(tokenLabel, root);
+      }
 
       // add marking label
       if (cpnElement.marking) {
@@ -98,8 +101,10 @@ CpnFactory.prototype.createShape = function (pageObject, cpnElement, type, posit
         const e = key === 'subst' ? cpnElement[key].subpageinfo : cpnElement[key];
         attrs = this._modeling.getLabelAttrs(element, e, key);
         label = this._elementFactory.createLabel(attrs);
-        if (addToCanvas)
+        if (addToCanvas) {
           this._canvas.addShape(label, root);
+          // this._modeling.moveShape(label, { x: 0, y: 0 });
+        }
       }
     }
   }

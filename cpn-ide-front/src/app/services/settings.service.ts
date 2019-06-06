@@ -19,7 +19,7 @@ export class SettingsService {
     this.appSettings['globref'] = 'newGlobref';
     this.appSettings['block'] = 'newblock';
     this.appSettings['type'] = 'UNIT';
-    this.appSettings['initmark'] = 'INIT MARK';
+    this.appSettings['initmark'] = 'empty';
     this.appSettings['code'] = 'input();\noutput();\naction();';
     this.appSettings['cond'] = '[]';
     this.appSettings['time'] = '@+';

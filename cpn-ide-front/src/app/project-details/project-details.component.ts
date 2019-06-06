@@ -46,12 +46,18 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // Subscribe on project load event
-    this.eventService.on(Message.PROJECT_LOAD, (event) => {
-      console.log('ProjectDetailsComponent. Message.PROJECT_LOAD, event -> ', event);
+    // this.eventService.on(Message.PROJECT_LOAD, (event) => {
+    //   console.log('ProjectDetailsComponent. Message.PROJECT_LOAD, event -> ', event);
 
+    //   if (event.project) {
+    //     this.loadProjectData(event.project.data);
+    //     this.currentPojectModel = event.project.data;
+    //   }
+    // });
+
+    this.eventService.on(Message.PROJECT_LOAD, (event) => {
       if (event.project) {
-        this.loadProjectData(event.project.data);
-        this.currentPojectModel = event.project.data;
+        this.loadProject(event.project);
       }
     });
 
@@ -266,7 +272,110 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
-  loadProjectData(project: any) {
+  /**
+   * Clear tree component
+   */
+  clear() {
+  }
+
+  declarationNodes = [];
+
+  createDeclarationsNodes(cpnElement) {
+    console.log('createDeclarationsNodes(), cpnElement = ', cpnElement);
+
+    const declarationsNodes = [];
+
+    const blockElement = cpnElement.block ? cpnElement.block : cpnElement;
+    const blockArray = blockElement instanceof Array ? blockElement : [blockElement];
+    for (const block of blockArray) {
+      for (const decl of this.createBlockDeclarationsNodes(block)) {
+        declarationsNodes.push(decl);
+      }
+    }
+
+    return declarationsNodes;
+  }
+
+  createBlockDeclarationsNodes(cpnElement) {
+    console.log('createBlockDeclarationsNodes(), cpnElement = ', cpnElement);
+
+    const blockDeclarationsNodes = [];
+
+    for (const key of ['block', 'globref', 'color', 'var', 'ml']) {
+      if (cpnElement[key]) {
+        const childCpnElementArray = cpnElement[key] instanceof Array ? cpnElement[key] : [cpnElement[key]];
+        for (const item of childCpnElementArray) {
+          blockDeclarationsNodes.push(this.createDeclarationNode(item, key));
+        }
+      }
+    }
+
+    return blockDeclarationsNodes;
+  }
+
+  /**
+   * Get declaration node creator
+   * @param key - key of declaration block
+   * @param cpnElement - cpn JSON object
+   * @returns - tree node for corresponding key
+   */
+  createDeclarationNode(cpnElement, key = undefined) {
+    let declarationNode: any = {};
+    if (cpnElement) {
+      declarationNode.cpnElement = cpnElement;
+      declarationNode.id = cpnElement._id;
+    }
+    if (cpnElement && key) {
+      switch (key) {
+        case 'block':
+          declarationNode = this.createBlockDeclarationsNodes(cpnElement);
+          declarationNode.type = 'block';
+          break;
+
+        case 'globref':
+        case 'color':
+        case 'var':
+        case 'ml':
+          const text = this.modelService.cpnDeclarationElementToString(cpnElement, key);
+          declarationNode.text = text;
+          declarationNode.name = cpnElement.layout;
+          declarationNode.declarationType = key;
+          break;
+      }
+    }
+    declarationNode.editable = true;
+    declarationNode.actions = ['block', 'declaration', 'delete'];
+    return declarationNode;
+  }
+
+
+  /**
+   * Loading project JSON to tree component object
+   * @param project - cpn net JSON object
+   */
+  loadProject(project) {
+    const projectData = project.data;
+    const projectName = project.name;
+
+    this.clear();
+
+    const cpnet = this.modelService.getCpn(); // this.getCpnetElement(projectData);
+    if (!cpnet) {
+      return;
+    }
+
+    console.log('loadProject(), cpnet = ', cpnet);
+
+    // Create project Declarations nodes
+    if (cpnet.globbox) {
+      this.declarationNodes = this.createDeclarationsNodes(cpnet.globbox);
+
+      console.log(this.constructor.name, 'loadProject(), this.declarationNodes = ', this.declarationNodes);
+    }
+  }
+
+
+  loadProjectData_OLD(project: any) {
     console.log('ProjectDetailsComponent. loadProjectData(), project = ', project);
 
     this.declarations = [];

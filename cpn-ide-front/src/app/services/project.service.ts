@@ -131,6 +131,7 @@ export class ProjectService {
     // const modelFile = 'test-2.cpn';
 
     const modelFile = 'mynet.cpn';
+    // const modelFile = 'mynet2.cpn';
 
     // const modelFile = 'fuelstation.cpn';
 

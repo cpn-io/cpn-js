@@ -58,10 +58,11 @@ var RENDERER_IDS = new Ids();
 var ERROR_STROKE_COLOR = '#ff999966';
 var ERROR_STROKE_THICK = 5;
 
-var SELECT_STROKE_COLOR = '#00CC00';
+var SELECT_STROKE_COLOR = '#00cc00';
+var SELECT_FILL_COLOR = '#00ff0011';
 var SELECT_STROKE_THICK = 2;
 
-var DEFAULT_LABEL_FILL_COLOR = '#ebebeb99';
+var DEFAULT_LABEL_FILL_COLOR = '#ebebeb00';
 
 var PORT_FILL_COLOR = '#e0e0fd';
 var PORT_STROKE_COLOR = '#4c66cc';
@@ -589,9 +590,6 @@ export default function CpnRenderer(
 
     const strokeWidth = getStrokeWidth(element) + 1;
 
-    // Draw selected state
-    drawSelectedStatus(parentGfx, element);
-
     // Draw element
     let ellipse = svgCreate('ellipse');
     svgAttr(ellipse, {
@@ -628,6 +626,9 @@ export default function CpnRenderer(
       svgAppend(parentGfx, ellipse);
     }
 
+    // Draw selected state
+    drawSelectedStatus(parentGfx, element);
+
     return ellipse;
   }
 
@@ -643,9 +644,6 @@ export default function CpnRenderer(
     var box = getBox(element);
 
     const strokeWidth = getStrokeWidth(element) + 1;
-
-    // Draw selected state
-    drawSelectedStatus(parentGfx, element);
 
     // Draw element
     var rect = svgCreate('rect');
@@ -683,6 +681,9 @@ export default function CpnRenderer(
       svgAppend(parentGfx, rect);
     }
 
+    // Draw selected state
+    drawSelectedStatus(parentGfx, element);
+
     return rect;
   }
 
@@ -701,7 +702,7 @@ export default function CpnRenderer(
         height: cy * 2 + 10
       });
       svgAttr(sel, {
-        fill: 'transparent',
+        fill: SELECT_FILL_COLOR,
         stroke: SELECT_STROKE_COLOR,
         strokeWidth: SELECT_STROKE_THICK,
         strokeDasharray: "2,2"

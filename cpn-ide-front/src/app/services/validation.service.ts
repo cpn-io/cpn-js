@@ -3,29 +3,68 @@ import { EventService } from './event.service';
 import { ModelService } from './model.service';
 import { Message } from '../common/message';
 import { AccessCpnService } from '../services/access-cpn.service';
+import { initDomAdapter } from '@angular/platform-browser/src/browser';
 @Injectable()
 export class ValidationService {
 
   VALIDATION_TIMEOUT = 1000;
 
-  needValidation = false;
+  geometryKeyList = [
+    'aux',
+    'token',
+    'marking',
+    'posattr',
+    'fillattr',
+    'lineattr',
+    'textattr',
+    'box',
+    'ellipse',
+    'bendpoint'
+  ];
 
+  // workspaceElements.cpnet.page.pageattr._name.
+
+  nobackupKeyList = [
+    'bendpoint.0._id',
+    'bendpoint.1._id',
+    'bendpoint.2._id',
+    'bendpoint.3._id',
+    'bendpoint.4._id',
+    'bendpoint.5._id',
+    'bendpoint.6._id',
+  ];
+
+  needValidation = false;
   lastProjectData = {};
+  checkValidationBusy = false;
 
   constructor(
     private eventService: EventService,
     private modelService: ModelService,
     private accessCpnService: AccessCpnService) {
 
+    this.eventService.on(Message.PROJECT_LOAD, (event) => {
+      this.init();
+    });
+    this.eventService.on(Message.MODEL_RELOAD, () => {
+      this.init();
+    });
+
     this.checkValidation();
+  }
+
+  init() {
+    this.needValidation = false;
+    this.lastProjectData = {};
   }
 
   /**
    * public method for setting validation flag
    */
   public validate() {
-    if (!this.accessCpnService.isSimulation)
+    if (!this.accessCpnService.isSimulation) {
       this.needValidation = true;
+    }
   }
 
   getDiff = (string, diffBy) => string.split(diffBy).join('');
@@ -40,101 +79,115 @@ export class ValidationService {
     return (C && C !== '');
   }
 
-  skipKeyList = [
-    'aux',
-    'token',
-    'marking',
-    'posattr',
-    'fillattr',
-    'lineattr',
-    'textattr',
-    'box',
-    'ellipse',
-    'bendpoint'
-  ];
-
   /**
    * Detect changes between two objects
    */
-  detectChanges(obj1, obj2) {
+  detectChanges(obj1, obj2, key, path, pathHistory) {
+    let isDifferent = false;
 
-    if (obj1 instanceof Object && obj2 instanceof Object) {
+    if (key) {
+      path = path + key + '.';
+    }
 
+    if (!obj1 || !obj2) {
+      return isDifferent;
+    }
+
+    if (typeof obj1 === 'object' && typeof obj2 === 'object') {
+
+      // if objects are arrays or objects
       if (Object.keys(obj1).length !== Object.keys(obj2).length) {
-        console.log('detectChanges(), KEYS LENGTH DIFFERENT ', obj1, obj2);
-        return true;
-      }
 
-      for (const key of Object.keys(obj1)) {
+        pathHistory.push('DIFF KEY COUNT: ' + path);
+        isDifferent = true;
 
-        if (this.skipKeyList.includes(key.toLowerCase())) {
-          continue;
-        }
-        // if (!['text', 'ml'].includes(key)) {
-        //   continue;
-        // }
+      } else {
 
-        if (obj1.hasOwnProperty(key) && obj2.hasOwnProperty(key)) {
-          if (this.detectChanges(obj1[key], obj2[key])) {
-            return true;
+        for (const k in obj1) {
+          if (k in obj2) {
+            if (this.detectChanges(obj1[k], obj2[k], k, path, pathHistory)) {
+              isDifferent = true;
+            }
+          } else {
+            pathHistory.push('DIFF KEYS: ' + path);
+            isDifferent = true;
           }
-        } else {
-          console.log('detectChanges(), KEYS OBJECTS DIFFERENT, ', key, obj1, obj2, ' [', obj1[key], '] [', obj2[key], ']');
-          return true;
-        }
 
-      }
-
-      return false;
-
-    } else if (obj1 instanceof Array && obj2 instanceof Array) {
-
-      if (obj1.length !== obj2.length) {
-        console.log('detectChanges(), ARRAY LENGTH DIFFERENT ', obj1, obj2);
-        return true;
-      }
-
-      for (let i = 0; i < obj1.length; i++) {
-        if (obj1[i] && obj2[i]) {
-          if (this.detectChanges(obj1[i], obj2[i])) {
-            return true;
-          }
-        } else {
-          console.log('detectChanges(), ARRAY OBJECTS DIFFERENT ', obj1[i], obj2[i]);
-          return true;
         }
       }
 
-      return false;
+    } else {
 
-    }
-
-    if (!(obj1 instanceof Object) && !(obj2 instanceof Object)) {
+      // if objects are simple values
       if (obj1 !== obj2) {
-        console.log('detectChanges(), VALUES DIFFERENT ', obj1, obj2);
-        return true;
+        pathHistory.push('DIFF VALUES: ' + path);
+        isDifferent = true;
       }
     }
 
-    return false;
+    return isDifferent;
+
+  }
+
+  filterChangeList(changeList, wordList) {
+    return changeList.filter((p) => {
+      for (const w of wordList) {
+        if (p.includes(w)) {
+          return false;
+        }
+      }
+      return true;
+    });
   }
 
   /**
    * Regular checking validation
    */
   checkValidation() {
+    if (this.checkValidationBusy) {
+      return;
+    }
+    this.checkValidationBusy = true;
+
     const startTime = new Date().getTime();
     if (this.modelService.getProjectData()) {
       // console.log('START detectChanges(), time = ', new Date().getTime(), this.modelService.getProjectData());
 
       const lastModel = this.lastProjectData;
       const currentModel = JSON.parse(JSON.stringify(this.modelService.getProjectData()));
-      if (this.detectChanges(lastModel, currentModel)) {
+      // const currentModel = this.modelService.getProjectData();
+
+      const path = '';
+      const changeList = [];
+
+      this.detectChanges(lastModel, currentModel, undefined, path, changeList);
+
+      const noGeometryChangeList = this.filterChangeList(changeList, this.geometryKeyList);
+      const backupChangeList = this.filterChangeList(changeList, this.nobackupKeyList);
+
+      // console.log('END detectChanges(), changeList = ', changeList);
+      // console.log('END detectChanges(), nonGeometryChangeList = ', nonGeometryChangeList);
+
+      if (changeList.length > 0) {
         // console.log('detectChanges(), CHANGE DETECTED, A = ', JSON.stringify(currentModel));
         // console.log('detectChanges(), CHANGE DETECTED, B = ', JSON.stringify(lastModel));
 
+        // console.log('END DETECTED detectChanges(), changeList = ', changeList);
+        // console.log('END DETECTED detectChanges(), nonGeometryChangeList = ', noGeometryChangeList);
+
+        if (noGeometryChangeList.length > 0) {
+          this.validate();
+        }
+
+        if (backupChangeList.length > 0) {
+          this.eventService.send(Message.MODEL_SAVE_BACKUP, { lastProjectData: this.lastProjectData });
+        }
+
+        for (const changePath of changeList) {
+          this.eventService.send(Message.MODEL_CHANGED, { changesPath: changePath });
+        }
+
         this.lastProjectData = currentModel;
-        this.validate();
       }
 
       const t = new Date().getTime() - startTime;
@@ -150,5 +203,8 @@ export class ValidationService {
     }
 
     setTimeout(() => this.checkValidation(), this.VALIDATION_TIMEOUT);
+
+    this.checkValidationBusy = false;
   }
+
 }

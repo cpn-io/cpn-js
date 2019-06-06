@@ -28,8 +28,15 @@ import {
   getDefLineattr,
   getDefTextattr,
   getDefText,
-  getNextId
-} from './util/AttrsUtil';
+  getNextId,
+  getDefTransition,
+  getDefAux,
+  getDefPlace,
+  updateLabelsPosition,
+  setDefaultValue,
+  getDefaultValue,
+  getDefArc
+} from './CpnElementFactory';
 
 /**
  * CPN modeling features activator
@@ -57,7 +64,6 @@ export default function Modeling(eventBus, elementFactory, elementRegistry, comm
   this._textRenderer = textRenderer;
   this._canvas = canvas;
   this._portMenuProvider = portMenuProvider;
-  this._defaultValues = [];
 }
 
 inherits(Modeling, BaseModeling);
@@ -212,7 +218,10 @@ Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus
     } else
       if (!portLabel && element.cpnElement.port) {
         // create port label for element
-        const attrs = this.getLabelAttrs(element, element.cpnElement['port'], 'port');
+        const attrs = this.getLabelAttrs(element, element.cpnElement.port, 'port');
+
+        // console.log('updateShapeByCpnElement(CPN_PLACE), element.cpnElement.port = ', element.cpnElement.port);
+
         const label = this._elementFactory.createLabel(attrs);
         this._canvas.addShape(label, this._canvas.getRootElement());
       }
@@ -253,7 +262,7 @@ Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus
   const self = this;
 
   if (element.type === CPN_LABEL && (element.text || element.name)) {
-    element.hidden = false;
+    // element.hidden = false;
   }
 
   const changeName = (modeling, changingElement) => {
@@ -407,13 +416,17 @@ Modeling.prototype.connect = function (source, target, attrs, hints) {
     if (placeShape && transShape) {
       const conElem = this.createNewConnection(placeShape, transShape, orientation);
 
-      this._eventBus.fire('shape.create.end', { elements: [conElem] });
+      if (conElem) {
+        this._eventBus.fire('shape.create.end', { elements: [conElem] });
+      }
+
       // this._eventBus.fire('shape.editing.activate', {shape: conElem});
       // this._eventBus.fire('shape.contextpad.activate', {shape: conElem});
 
       //openPortProvider(this._portMenuProvider, transShape);
       //this._portMenuProvider.open(transShape, { cursor: { x: 609, y: 575 } });
       // openPortMenu(this._eventBus, transShape, placeShape, conElem, orientation);
+
       return conElem;
     }
   }
@@ -446,24 +459,37 @@ Modeling.prototype.createNewConnection = function (placeShape, transShape, orien
   // console.log('Modeling.prototype.createNewConnection(), place = ', placeShape);
   // console.log('Modeling.prototype.createNewConnection(), trans = ', transShape);
 
+  const modeling = this;
   var root = this._canvas.getRootElement();
 
-  if (placeShape && transShape) {
+  if (placeShape && transShape && placeShape.cpnElement && transShape.cpnElement) {
     var pageObject = undefined;
-    var cpnElement = this.createArcInModel(placeShape.cpnElement, transShape.cpnElement, orientation);
+    var cpnElement = this.createArcCpnElement(placeShape.cpnElement, transShape.cpnElement, orientation);
+    console.log('createNewConnection(), getDefArc(), (1) cpnElement.annot = ', JSON.stringify(cpnElement.annot));
 
     const data = this.getArcData(pageObject, cpnElement, CPN_CONNECTION, placeShape, transShape);
+
+    console.log('createNewConnection(), getDefArc(), (2) cpnElement.annot = ', JSON.stringify(cpnElement.annot));
+
     if (data) {
       var connection = this.connect(data.source, data.target, data.attrs, null);
 
-      for (var key of ['annot']) {
-        if (cpnElement[key]) {
-          var attrs = this.getLabelAttrs(connection, cpnElement[key], key);
+      console.log('createNewConnection(), getDefArc(), (3) cpnElement.annot = ', JSON.stringify(cpnElement.annot));
+
+      if (connection) {
+        if (cpnElement.annot) {
+          var attrs = this.getLabelAttrs(connection, cpnElement.annot, 'annot');
+
+          console.log('createNewConnection(), getDefArc(), annot attrs = ', attrs);
+
           var label = this._elementFactory.createLabel(attrs);
           this._canvas.addShape(label, root);
+
+          modeling.moveShape(label, { x: -35, y: 10 });
         }
       }
-      openPortMenu(this._eventBus, transShape, placeShape, connection, connection.cpnElement._orientation);
+
+      // openPortMenu(this._eventBus, transShape, placeShape, connection, connection.cpnElement._orientation);
 
       return connection;
     }
@@ -567,13 +593,13 @@ Modeling.prototype.clearErrorMarking = function () {
 
 
 Modeling.prototype.setDefaultValue = function (key, value) {
-  this._defaultValues[key] = value;
-  // console.log('Modeling.prototype.setDefaultValue(), this._defaultValues = ', this._defaultValues);
+  // console.log('Modeling.prototype.setDefaultValue(), defaultValues = ', defaultValues);
+  setDefaultValue(key, value);
 }
 
 Modeling.prototype.getDefaultValue = function (key) {
-  // console.log('Modeling.prototype.getDefaultValue(), this._defaultValues = ', this._defaultValues);
-  return this._defaultValues[key];
+  // console.log('Modeling.prototype.getDefaultValue(), defaultValues = ', defaultValues);
+  return getDefaultValue(key);
 }
 
 Modeling.prototype.getPlaceAttrs = function (cpnPlaceElement, type) {
@@ -610,10 +636,10 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
     text = cpnLabelElement._name; // for subst label
   else if (labelType === 'aux')
     text = cpnLabelElement.text; // for aux label
-  else
+  else if (cpnLabelElement.text)
     text = cpnLabelElement.text.__text; // for shape external label
 
-  // console.log('Modeling.prototype.getLabelAttrs(), text = ', text);
+  console.log('Modeling.prototype.getLabelAttrs(), text = ', text);
 
   // if label is empty check for default values
   if (labelType) {
@@ -935,7 +961,6 @@ Modeling.prototype.declareSubPage = function (cpnElement, name, pageId) {
   // const label = this._elementFactory.createLabel(attrs);
   // this._canvas.addShape(label, this._canvas.getRootElement());
 
-
   //this._eventBus.fire('element.changed', { element: element });
 
   return cpnElement;
@@ -949,165 +974,30 @@ Modeling.prototype.declareSubPage = function (cpnElement, name, pageId) {
  *
  * @param element
  */
-Modeling.prototype.createElementInModel = function (position, type) {
-  // let formCase = [];
-  // formCase[CPN_PLACE] = { form: 'ellipse', entry: ['initmark', 'type'] };
-  // formCase[CPN_TRANSITION] = { form: 'box', entry: ['time', 'code', 'priority', 'cond'] };
-  // formCase[CPN_CONNECTION] = { entry: ['annot'] };
+Modeling.prototype.createShapeCpnElement = function (position, type) {
 
-  var newElement;
+  let newElement;
 
-  // For Place and Transition
-  if ([CPN_PLACE, CPN_TRANSITION].includes(type)) {
-
-    let names = [];
-    names[CPN_PLACE] = 'P';
-    names[CPN_TRANSITION] = 'T';
-
-    let bounds = {
-      x: position.x,
-      y: position.y,
-      width: 80, // 90,
-      height: 30,
-    };
-
-    bounds = this._textRenderer.getExternalLabelBounds(bounds, 'Default');
-    newElement = {
-      posattr: getDefPosattr(position),
-      fillattr: getDefFillattr(),
-      lineattr: getDefLineattr(),
-      textattr: getDefTextattr(),
-      text: names[type],
-      token: {
-        _x: 0,
-        _y: 0
-      },
-      marking: {
-        snap: {
-          _snap_id: 9,
-          '_anchor.horizontal': 1,
-          '_anchor.vertical': 3
-        },
-        _x: 0,
-        _y: 0,
-        _hidden: true
-      },
-      _id: getNextId()
-    };
-
-    var x = newElement.posattr._x;
-    var y = newElement.posattr._y;
-    var w = bounds.width;
-    var h = bounds.height;
-
-    const defPos = {
-      _x: x,
-      _y: y
-    };
-
-    let relPos = [];
-
-    let elemType = modelCase[type];
-    if (elemType) {
-      if (elemType.form) {
-
-        w = this.getDefaultValue(elemType.form).w;
-        h = this.getDefaultValue(elemType.form).h;
-
-        newElement[elemType.form] = {
-          _w: w,
-          _h: h
-        };
-      }
-
-      relPos['initmark'] = { _x: x + w, _y: y + h / 2 };
-      relPos['type'] = { _x: x + w, _y: y - h / 2 };
-      relPos['time'] = { _x: x + w, _y: y + h / 2 };
-      relPos['code'] = { _x: x + w, _y: y - h / 2 };
-      relPos['cond'] = { _x: x - w, _y: y + h / 2 };
-      relPos['priority'] = { _x: x - w, _y: y - h / 2 };
-
-      relPos['subst'] = { _x: x + w / 2, _y: y + h };
-
-      for (let label of elemType.entry) {
-        newElement[label] = {
-          posattr: relPos[label] || defPos,
-          fillattr: getDefFillattr(),
-          lineattr: getDefLineattr(),
-          textattr: getDefTextattr(),
-          text: {
-            _tool: 'CPN Tools',
-            _version: '4.0.1'
-          },
-          _id: newElement._id + '' + label
-        }
-      }
-    }
-
-    // this.modelUpdate();
+  switch (type) {
+    case CPN_PLACE:
+      newElement = getDefPlace('P', position);
+      break;
+    case CPN_TRANSITION:
+      newElement = getDefTransition('T', position);
+      break;
+    case CPN_TEXT_ANNOTATION:
+      newElement = getDefAux('Text', position);
+      break;
   }
 
-  // For Aux
-  if ([CPN_TEXT_ANNOTATION].includes(type)) {
-
-    const text = '* empty *';
-
-    newElement = {
-      posattr: getDefPosattr(position),
-      fillattr: getDefFillattr(),
-      lineattr: getDefLineattr(),
-      textattr: getDefTextattr(),
-      label: text,
-      text: text,
-      _id: getNextId()
-    };
-
-  }
-
+  updateLabelsPosition(this._textRenderer, newElement);
 
   return newElement;
 }
 
 
-Modeling.prototype.createArcInModel = function (placeCpnElement, transCpnElement, orientation) {
-  var cpnArcElement =
-  {
-    posattr: getDefPosattr(),
-    fillattr: getDefFillattr(),
-    lineattr: getDefLineattr(),
-    textattr: getDefTextattr(),
-    arrowattr: {
-      _headsize: 1,
-      _currentcyckle: 2
-    },
-    transend: {
-      _idref: transCpnElement._id
-    },
-    placeend: {
-      _idref: placeCpnElement._id
-    },
-    // bendpoint: {
-    //   posattr: getDefPosattr(),
-    //   fillattr: getDefFillattr(),
-    //   lineattr: getDefLineattr(),
-    //   textattr: getDefTextattr(),
-    //   _id: getNextId() + 'b',
-    //   _serial: "1"
-    // },
-    annot: {
-      posattr: getDefPosattr(),
-      fillattr: getDefFillattr(),
-      lineattr: getDefLineattr(),
-      textattr: getDefTextattr(),
-      text: getDefText(),
-      _id: getNextId() + 'a'
-    },
-    _id: getNextId(),
-    _orientation: orientation || "BOTHDIR",
-    _order: 1
-  };
-
-  return cpnArcElement;
+Modeling.prototype.createArcCpnElement = function (placeCpnElement, transCpnElement, orientation) {
+  return getDefArc(placeCpnElement, transCpnElement, orientation);
 }
 
 Modeling.prototype.reconnectEnd = function (connection, newTarget, dockingOrPoints) {
@@ -1147,3 +1037,31 @@ Modeling.prototype.removeElements = function (elements) {
   this._eventBus.fire('shape.delete', { elements: elements });
   this._commandStack.execute('elements.delete', context);
 };
+
+
+Modeling.prototype.deleteSubPageTrans = function(id){
+  for (const key of Object.keys(this._elementRegistry._elements)) {
+    if (this._elementRegistry._elements[key]) {
+      const element = this._elementRegistry._elements[key].element;
+      if (element.type === CPN_TRANSITION && element.cpnElement.subst && element.cpnElement.subst._subpage === id) {
+        delete element.cpnElement.subst;
+        this.updateElement(element, true);
+      }
+    }
+  }
+}
+
+Modeling.prototype.getShapeArcs = function(shape){
+  let arcs = [];
+  for (const key of Object.keys(this._elementRegistry._elements)) {
+    if (this._elementRegistry._elements[key]) {
+      const element = this._elementRegistry._elements[key].element;
+      if(element.type === CPN_CONNECTION && element.cpnElement){
+        if(element.cpnElement && element.cpnElement.transend._idref === shape.id || element.cpnElement.placeend._idref === shape.id){
+          arcs.push(element);
+        }
+      }
+    }
+  }
+  return arcs;
+}

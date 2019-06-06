@@ -117,9 +117,20 @@ export class ModelEditorComponent implements OnInit {
     //   console.log('ModelEditor, element.changed, event = ', event);
     // });
 
+    this.eventService.on(Message.MODEL_RELOAD, () => {
+      this.log('Reload page diagram...');
+      if (this.pageId) {
+        const pageObject = this.modelService.getPageById(this.pageId);
+        if (pageObject) {
+          this.jsonPageObject = pageObject;
+          this.loadPageDiagram(pageObject, false);
+        }
+      }
+    });
+
     this.eventService.on(Message.SERVER_INIT_NET_START, () => {
       this.log('Validation process...');
-      this.eventBus.fire('model.update.cpn.status', { data: { process: '*' } });
+      // this.eventBus.fire('model.update.cpn.status', { data: { process: '*' } });
     });
 
     // VALIDATION RESULT
@@ -136,6 +147,12 @@ export class ModelEditorComponent implements OnInit {
     // TRANSITIONS
     this.eventService.on(Message.SERVER_GET_TRANSITIONS, (data) => {
       this.updateElementStatus();
+    });
+
+    this.eventService.on(Message.DELETE_PAGE, (data) => {
+      if (data.parent === this.pageId){
+        this.modeling.deleteSubPageTrans(data.id);
+      }
     });
 
     eventBus.on('element.hover', (event) => {
@@ -167,12 +184,15 @@ export class ModelEditorComponent implements OnInit {
     });
 
     eventBus.on('shape.create.end', (event) => {
+      console.log('shape.create.end, event = ', event);
       if (event.elements) {
         for (const element of event.elements) {
           if (element.cpnElement) {
             this.modelService.addElementJsonOnPage(element.cpnElement, this.pageId, element.type);
+
             if (element.type === CPN_TRANSITION && element.cpnElement.subst) {
               element.cpnElement.subst._subpage = 'id' + new Date().getTime();
+
               this.eventService.send(Message.SUBPAGE_TRANS_CREATE, {
                 currentPageId: this.pageId,
                 id: element.cpnElement.subst._subpage,
@@ -253,7 +273,7 @@ export class ModelEditorComponent implements OnInit {
         const y = bounds.y + bounds.height / 2;
 
         const position = { x: x, y: y };
-        let cpnElement = this.modeling.createElementInModel(position, CPN_TRANSITION);
+        let cpnElement = this.modeling.createShapeCpnElement(position, CPN_TRANSITION);
         cpnElement = this.modeling.declareSubPage(cpnElement, data.name, data.id);
         const element = this.cpnFactory.createShape(undefined, cpnElement, CPN_TRANSITION, position, true);
         this.modelService.addElementJsonOnPage(cpnElement, this.pageId, CPN_TRANSITION);
@@ -344,12 +364,12 @@ export class ModelEditorComponent implements OnInit {
   clearPage() {
   }
 
-  loadPageDiagram(pageObject) {
+  loadPageDiagram(pageObject, alignToCenter = true) {
     // console.log('loadPageDiagram(), import, pageObject = ', pageObject);
 
     this.clearPage();
 
-    importCpnPage(this.diagram, pageObject);
+    importCpnPage(this.diagram, pageObject, alignToCenter);
   }
 
   makeid(length) {

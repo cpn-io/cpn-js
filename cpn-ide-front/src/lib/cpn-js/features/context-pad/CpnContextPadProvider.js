@@ -43,7 +43,9 @@ CpnContextPadProvider.prototype.getContextPadEntries = function (element) {
 
   function removeElement() {
     contextPad.close();
-    modeling.removeElements([element]);
+    let forDelete = modeling.getShapeArcs(element);
+    forDelete.push(element);
+    modeling.removeElements(forDelete);
   }
 
   function startConnect(event, element, autoActivate) {
@@ -120,7 +122,7 @@ CpnContextPadProvider.prototype._createShape = function (event, type) {
   let arcElement = undefined;
   if (currentElement) {
     const position = {
-      x: currentElement.x + currentElement.width + 100,
+      x: currentElement.x + currentElement.width + 150,
       y: currentElement.y + currentElement.height / 2,
     };
     const element = this._cpnFactory.createShape(undefined, undefined, type, position, true);
@@ -134,16 +136,17 @@ CpnContextPadProvider.prototype._createShape = function (event, type) {
     if (is(currentElement, CPN_TRANSITION)) transShape = currentElement;
 
 
-    if (placeShape && transShape)
+    if (placeShape && transShape) {
       arcElement = modeling.createNewConnection(placeShape, transShape, type === CPN_PLACE ? 'TtoP' : 'PtoT');
+    }
 
     let elemArr = [];
     elemArr.push(element);
-    if(arcElement) elemArr.push(arcElement);
+    if (arcElement) elemArr.push(arcElement);
 
-    this._eventBus.fire('shape.create.end', {elements: elemArr});
-    this._eventBus.fire('shape.editing.activate', {shape: element});
-    this._eventBus.fire('shape.contextpad.activate', {shape: element});
+    this._eventBus.fire('shape.create.end', { elements: elemArr });
+    this._eventBus.fire('shape.editing.activate', { shape: element });
+    this._eventBus.fire('shape.contextpad.activate', { shape: element });
   }
 
   return arcElement;

@@ -48,8 +48,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   /**
    * JSON object, contains full CPN-model
    */
-  currentProject;
-  currentProjectModel;
 
   // subscription: Subscription;
   modelName;
@@ -105,9 +103,17 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       // console.log('allowDrop, element ', element, ' to ', parent, ' index = ', index);
       console.log('allowDrop, element ', element.data.type, ' to ', parent.data.type, ' index = ', index);
 
-      return element && parent &&
-        element.data.type === 'declaration' &&
-        parent.data.type === 'block' ? true : false;
+      let permis  = false;
+      if( element && parent) {
+       if(element.data.type === 'declaration') {
+          permis = parent.data.type === 'block'  && this.isOneGroup(element, parent, index) ? true : false;
+       }
+       // } else if (element.data.type === 'page' ) {
+       //   permis =  parent.data.type === 'page' || parent.data.type === 'Pages' ? true : false;
+       // }
+      }
+
+      return permis;
 
       // return true;
 
@@ -136,10 +142,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           console.log('dragAndDrop, from ', from, ' to ', to);
           console.log('dragAndDrop, moveNode ', node.name, ' to ', to.parent.name, ' at index ', to.index);
 
-          // const parentJson = from.parent.data.cpnElement;
-          // const type = node.data.type === 'page' ? 'page' : this.paramsTypes.includes(from.parent.data.name) ? undefined : from.data.name;
-          // const isEntryExist: boolean = to.parent.data.cpnElement[type];
-          // this.modelService.moveNonModelJsonElement(from.data.cpnElement, parentJson, to.parent.data.cpnElement, to.index, type);
+          const parentJson = from.parent.data.cpnElement;
+          const type = node.data.type === 'page' ? 'page' : this.paramsTypes.includes(from.parent.data.declarationType) ? undefined : from.data.declarationType;
+          const isEntryExist: boolean = to.parent.data.cpnElement[type];
+          this.modelService.moveNonModelJsonElement(from.data.cpnElement, parentJson, to.parent.data.cpnElement, this.getIndexToDrop(to.index, type, to), type);
+          TREE_ACTIONS.MOVE_NODE(tree, node, $event, { from, to });
           // if (isEntryExist) {
           //   to.parent = tree.getNodeById((to.parent.children.find(e => e.data.name === type)).id);
           //   node = node.children.find(chld => chld.data.name === from.data.name);
@@ -156,7 +163,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           //   this.deleteNode(this.nodes[0], onDeleteNodeId);
           //   this.updateTree();
           //   this.treeComponent.treeModel.setState(tree.getState());
-
+          //
           // } else {
           //   TREE_ACTIONS.MOVE_NODE(tree, node, $event, { from, to });
           // }
@@ -164,6 +171,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       }
     }
   };
+
+
 
   /*onMoveNode(event) {
     console.log('onMoveNode', event.node.name, 'to', event.to.parent.name, 'at index', event.to.index);
@@ -189,6 +198,24 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     this.colorDeclarationsPipe = this._colorDeclarationsPipe;
   }
 
+
+  getIndexToDrop(toIndex, type, target) {
+    let startIndex = 0;
+    for (let i = 0; i < target.parent.data.children.length; i++) {
+      if (target.parent.data.children[i].declarationType === type) {
+        startIndex = i;
+        break;
+      }
+    }
+    return toIndex - startIndex;
+  }
+
+  isOneGroup(element, parent, index) {
+    console.log('isOneGroup ------', parent.data.children[index + 1].declarationType, parent.data.children[index].declarationType)
+    return (parent.data.children[index + 1] && (parent.data.children[index + 1].declarationType === element.data.declarationType) ) || (parent.data.children[index ] && ( parent.data.children[index ].declarationType === element.data.declarationType));
+  }
+
+
   ngOnInit() {
     this.appSettings = this.settings.getAppSettings();
     this.appSettingsKeys = Object.keys(this.appSettings);
@@ -197,6 +224,14 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       if (event.project) {
         this.loadProject(event.project);
       }
+    });
+
+    this.eventService.on(Message.MODEL_RELOAD, () => {
+      const project = this.modelService.getProject();
+      console.log('MODEL_RELOAD, project = ', project);
+      // if (project) {
+      //   this.loadProject(project);
+      // }
     });
 
     this.eventService.on(Message.UPDATE_TREE, (data) => {
@@ -246,14 +281,16 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     this.eventService.on(Message.SUBPAGE_TRANS_CREATE, (data) => {
       // this.createPageNode()
-     const defValue = this.settings.getAppSettings()['page'];
-     const cpnElement = this.modelService.createCpnPage(defValue + ' ' + (++this.newPageCount), data.id);
-     const newNode = this.createPageNode(cpnElement);
+      const defValue = this.settings.getAppSettings()['page'];
+      const cpnElement = this.modelService.createCpnPage(defValue + ' ' + (++this.newPageCount), data.id);
+      const newNode = this.createPageNode(cpnElement);
+
       data.cpnElement.subst.subpageinfo._name = newNode.cpnElement.pageattr._name;
-     const treeNode = this.treeComponent.treeModel.getNodeById(data.currentPageId);
-     const cpnParentElement = treeNode.parent.data.cpnElement;
-     this.addCreatedNode(treeNode, newNode, cpnElement, 'page', cpnParentElement);
-     this.updatePagesNode(data.currentPageId);
+      const treeNode = this.treeComponent.treeModel.getNodeById(data.currentPageId);
+      const cpnParentElement = treeNode.parent.data.cpnElement;
+      this.addCreatedNode(treeNode, newNode, cpnElement, 'page', cpnParentElement, false);
+      this.updatePagesNode(data.currentPageId);
+
       const emiterData = {
         labels: [],
         elementid: data.cpnElement._id,
@@ -297,6 +334,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           for (const id of Object.keys(event.data.issues)) {
             this.errorIds.push(id);
           }
+
+          // expand error nodes
+          for (const id of this.errorIds) {
+            this.expandParentNode(id);
+          }
         }
       }
     });
@@ -324,7 +366,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     if (currentPageId) {
       this.expandNode(currentPageId);
-      this.gotoNode(currentPageId);
+      // this.gotoNode(currentPageId);
     }
   }
 
@@ -334,7 +376,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * @param cpnElement
    */
   updateTreeByCpnElement(cpnElement, newTextValue) {
-    let nodeForUpdate = this.treeComponent.treeModel.getNodeBy((node) => {
+    const nodeForUpdate = this.treeComponent.treeModel.getNodeBy((node) => {
       // console.log('UPDATE_TREE, getNodeBy(), node = ', node);
       return node.data && node.data.cpnElement === cpnElement;
     });
@@ -366,10 +408,14 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     if (element.type === 'cpn:Place') {
 
       // подчеркиваем тип
-      this.underlineRelationsRecursively(this.nodes[0], element.cpnElement.type.text.toString());
+      if (element.cpnElement.type && element.cpnElement.type.text) {
+        this.underlineRelationsRecursively(this.nodes[0], element.cpnElement.type.text.toString());
+      }
 
       // разбираем инитмарк и находим в нем литералы
-      this.processMlCodeRecursively(element.cpnElement.initmark.text.toString());
+      if (element.cpnElement.initmark && element.cpnElement.initmark.text) {
+        this.processMlCodeRecursively(element.cpnElement.initmark.text.toString());
+      }
 
     } else if (element.type === 'cpn:Transition') {
       elementId = element.cpnElement._id;
@@ -410,7 +456,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    */
   processArc(arc: any, elementId: string) {
     if ((arc.placeend && arc.placeend._idref === elementId) || (arc.transend && arc.transend._idref === elementId)) {
-      this.processMlCodeRecursively(arc.annot.text.toString());
+      if (arc.annot && arc.annot.text) {
+        this.processMlCodeRecursively(arc.annot.text.toString());
+      }
     }
   }
 
@@ -690,11 +738,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         break;
     }
 
-    this.addCreatedNode(treeNode, newNode, cpnElement, cpnType, cpnParentElement);
+    this.addCreatedNode(treeNode, newNode, cpnElement, cpnType, cpnParentElement, true);
   }
 
 
-  addCreatedNode(treeNode, newNode, cpnElement, cpnType, cpnParentElement) {
+  addCreatedNode(treeNode, newNode, cpnElement, cpnType, cpnParentElement, gotoEdit = false) {
     console.log('onAddNode(), cpnType = ', cpnType);
     console.log('onAddNode(), cpnParentElement = ', cpnParentElement);
     console.log('onAddNode(), cpnElement = ', cpnElement);
@@ -719,16 +767,26 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       }
 
       this.treeComponent.treeModel.update();
-      setTimeout(() => {
-        this.treeComponent.treeModel.getNodeById(newNode.id).setActiveAndVisible();
-        this.goToEditNode(newNode.id);
-      }, 100);
+
+      if (gotoEdit) {
+        setTimeout(() => {
+          this.treeComponent.treeModel.getNodeById(newNode.id).setActiveAndVisible();
+          this.goToEditNode(newNode.id);
+        }, 100);
+      }
     }
   }
 
   cloneObject(obj) {
     return JSON.parse(JSON.stringify(obj));
   }
+
+  onUpNode(treeNode) {
+  }
+
+  onDownNode(treeNode) {
+  }
+
 
   /**
    * Deleting node from the tree
@@ -738,12 +796,49 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   onDeleteNode(treeNode) {
     console.log('onDeleteNode(), node = ', treeNode);
 
+    // let cpnParentElement = treeNode.data.cpnElement;
+    // if (['declaration', 'page'].includes(treeNode.data.type)) {
+    //   if (!treeNode.parent || !treeNode.parent.data) {
+    //     console.error('onAddNode(), ERROR: Fail to get parent node for treeNode = ', treeNode);
+    //     return;
+    //   }
+    //   cpnParentElement = treeNode.parent.data.cpnElement;
+    // }
+
     if (treeNode.parent) {
-      let parentChildren = treeNode.parent.data.children;
+      const cpnElement = treeNode.data.cpnElement;
+      if (cpnElement) {
+        this.modelService.deleteFromModel(cpnElement);
+      }
+
+      const parentChildren = treeNode.parent.data.children;
       if (parentChildren) {
+        const indexElem = parentChildren.indexOf(treeNode.data);
         parentChildren.splice(
-          parentChildren.indexOf(treeNode.data), 1);
+          indexElem , 1);
         this.treeComponent.treeModel.update();
+        if (treeNode.data) {
+          if (treeNode.data.type === 'declaration') {
+            this.modelService.deleteElementInBlock(treeNode.parent.data.cpnElement, treeNode.data.declarationType, treeNode.id);
+          } else if (treeNode.data.type === 'page') {
+            let upperPage;
+            if (treeNode.parent.id !== 'Pages') {
+              upperPage = treeNode.parent.data.cpnElement;
+            } else {
+              if(indexElem !== 0)
+                upperPage = treeNode.parent.children[indexElem - 1].data.cpnElement;
+            }
+            if (upperPage) {
+              this.eventService.send(Message.PAGE_OPEN, {pageObject: upperPage});
+            }
+            this.modelService.deletePage(treeNode.id);
+            this.eventService.send(Message.DELETE_PAGE, { id: treeNode.id, parent: treeNode.parent.id });
+          } else if (treeNode.data.type === 'block') {
+            this.modelService.deleteBlock(treeNode.id);
+          } else if (treeNode.data.type === 'monitor') {
+            this.modelService.deleteMonitorBlock(treeNode.id);
+          }
+        }
       }
     }
   }
@@ -1482,13 +1577,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     console.log('createDeclarationsNode(), cpnElement = ', cpnElement);
 
-    // Block nodes
-    // var element = cpnElement.block ? cpnElement.block : cpnElement;
-    // var array = element instanceof Array ? element : [element];
-    // for (const block of array) {
-    //   declarationsNode.children.push(this.createBlockNode(block));
-    // }
-
     if (cpnElement.block) {
       if (cpnElement.block instanceof Array) {
         for (const block of cpnElement.block) {
@@ -1650,8 +1738,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     pagesNode.actions = ['page'];
     pagesNode.type = 'pages';
 
-    let pageNodeList = [];
-
+    const pageNodeList = [];
 
     console.log('createPagesNode(), cpnElement.page = ', cpnElement.page);
 
@@ -1668,7 +1755,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     // console.log('createPagesNode(), pageNodeList = ', pageNodeList);
 
     // Move subpages to it's parent page
-    let subpages = [];
+    const subpages = [];
     for (const pageId of Object.keys(pageNodeList)) {
       const pageNode = pageNodeList[pageId];
       if (pageNode.subpages instanceof Array) {
@@ -1767,7 +1854,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     if (cpnElement._disabled === 'true') {
       monitorsNode.options = { nodeClass: 'disabledNode' };
     }
-    // node.actions = ['page', 'delete'];
+    monitorsNode.actions = [ 'delete'];
 
     // typedescription
     const subnodes11 = [];
@@ -1802,7 +1889,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         subnodes11.push(this.createMonitorDeclaration(cpnElement.declaration, cpnElement));
       }
     }
-
+    // for(let subn of subnodes11) {
+    //   subn.actions = ['delete'];
+    // }
     monitorsNode.children = subnodes11;
 
     return monitorsNode;
@@ -1862,6 +1951,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       subnodes.push(instRefNode);
     }
     nobp.children = subnodes;
+    nobp.actions  = [ 'delete'];
     return nobp;
   }
 
@@ -1953,8 +2043,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     const projectData = project.data;
     const projectName = project.name;
-    this.currentProjectModel = project.data;
-    this.currentProject = project;
 
     this.clearTree();
 
@@ -1980,16 +2068,16 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       projectNode.children.push(optionsNode);
     }
 
-    const historyNode = this.createTreeNode('History');
-    historyNode.classes = ['tree-project'];
-    historyNode.children = [this.createTreeNode('* empty *')];
+    // const historyNode = this.createTreeNode('History');
+    // historyNode.classes = ['tree-project'];
+    // historyNode.children = [this.createTreeNode('* empty *')];
 
     // let monitorsNode = this.createTreeNode('Monitors');
     // monitorsNode.classes = ['tree-project'];
     // monitorsNode.children = [this.createTreeNode('* empty *')];
+    let monitorsNode;
     if (cpnet.monitorblock) {
-      const monitorsNode = this.createMonitorsRootNode('Monitors', cpnet.monitorblock);
-      projectNode.children.push(monitorsNode);
+      monitorsNode = this.createMonitorsRootNode('Monitors', cpnet.monitorblock);
     }
 
     // Create project Declarations node
@@ -2006,8 +2094,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       pagesNode = this.createPagesNode('Pages', cpnet);
     }
 
-    projectNode.children.push(historyNode);
+    // projectNode.children.push(historyNode);
     projectNode.children.push(declarationsNode);
+    if (monitorsNode) {
+      projectNode.children.push(monitorsNode);
+    }
     projectNode.children.push(pagesNode);
 
     this.nodes.push(projectNode);
@@ -2021,6 +2112,15 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         this.gotoNode(firstPageId);
       }
     }
+  }
+
+  expandParentNode(nodeId) {
+    setTimeout(() => {
+      const treeNode = this.treeComponent.treeModel.getNodeById(nodeId);
+      if (treeNode && treeNode.parent) {
+        treeNode.parent.expand();
+      }
+    }, 100);
   }
 
   expandNode(nodeId) {
@@ -2243,7 +2343,12 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const value = htmlElement.textContent;
+    let value = htmlElement.textContent;
+
+    if (value.trim() === '') {
+      value = '* empty *';
+    }
+
     console.log('saveEditedData(), value = ', value);
     console.log('saveEditedData(), node.data.name = ', node.data.name);
 
@@ -2344,8 +2449,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     if (cpnParentElement[cpnType] instanceof Array) {
       for (let i = 0; i < cpnParentElement[cpnType].length; i++) {
-        if (cpnParentElement[cpnType][i]._id === cpnElement._id)
+        if (cpnParentElement[cpnType][i]._id === cpnElement._id) {
           cpnParentElement[cpnType][i] = cpnElement;
+        }
       }
     } else {
       cpnParentElement[cpnType] = cpnElement;
@@ -2397,15 +2503,15 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   addCpnElement(cpnParentElement, cpnElement, cpnType) {
     if (!cpnParentElement) {
       console.error('ProjectExplorerComponent.addCpnElement(). ERROR: Undefined cpnParentElement element.');
-      return;
+      return cpnParentElement;
     }
     if (!cpnElement) {
       console.error('ProjectExplorerComponent.addCpnElement(). ERROR: Undefined cpnElement element.');
-      return;
+      return cpnParentElement;
     }
     if (!cpnType) {
       console.error('ProjectExplorerComponent.addCpnElement(). ERROR: Undefined cpnType.');
-      return;
+      return cpnParentElement;
     }
 
     if (cpnParentElement[cpnType] instanceof Array) {

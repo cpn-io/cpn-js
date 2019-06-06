@@ -1,11 +1,14 @@
 <tabs class="cpn-tabs">
 
+
+  <!-- Project console -->
+
   <tab tabTitle="Project console">
 
     <nav class="navbar navbar-sm navbar-expand shadow-sm">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item"><a (click)="logHtml = []" class="nav-link" href="#">
-          <i class="fas fa-plus"></i>Clear</a></li>
+            <i class="fas fa-plus"></i>Clear</a></li>
         <div class="divider"></div>
       </ul>
     </nav>
@@ -16,7 +19,7 @@
 
           <div class="logConsole">
             <div *ngFor="let item of logHtml" [ngClass]="item.class">
-              {{ item.date | date: 'yyyy-MM-dd HH:mm:ss' }} :  {{ item.text }}
+              {{ item.date | date: 'yyyy-MM-dd HH:mm:ss' }} : {{ item.text }}
             </div>
           </div>
 
@@ -26,10 +29,35 @@
 
   </tab>
 
-  <!-- <tab tabTitle="Model editor console">
+  <!-- Changes history -->
+
+  <tab tabTitle="Change history">
+
+    <nav class="navbar navbar-sm navbar-expand shadow-sm">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item"><a (click)="changesHtml = []" class="nav-link" href="#">
+            <i class="fas fa-plus"></i>Clear</a></li>
+        <div class="divider"></div>
+      </ul>
+    </nav>
+
+    <div class="workspace-container-with-tab">
+      <div class="inner">
+        <div class="scroll-y" id="changesScrollPane">
+
+          <div class="logConsole">
+            <div *ngFor="let item of changesHtml" [ngClass]="item.class">
+              {{ item.date | date: 'yyyy-MM-dd HH:mm:ss' }} : {{ item.text }}
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
   </tab>
 
-  <tab tabTitle="Model simulation console">
-  </tab> -->
+  <!-- <tab tabTitle="Model simulation console">
+  </tab> --> -->
 
 </tabs>

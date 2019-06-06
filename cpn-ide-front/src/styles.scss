@@ -187,17 +187,21 @@ html, body {
   }
 
   .nav-link {
-    color: black;
+    // color: black;
     white-space: nowrap;
   }
+
 
   .nav-link img {
     padding-right: 5px;
     vertical-align: top;
   }
 
-  .nav-link i {
-    margin-right: 7px;
+  // .nav-link i {
+  //   margin-right: 7px;
+  // }
+  .nav-link span {
+    margin-left: 7px;
   }
 
   .nav-link:hover {

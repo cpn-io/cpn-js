@@ -8,11 +8,11 @@ export class EventService {
     this.handlers.push({ id, func });
   }
 
-  public send(id, data = undefined) {
+  public send(id, event = undefined) {
     for (const handler of this.handlers) {
       if (handler && handler.id && handler.id === id) {
         setTimeout(() => {
-          handler.func(data);
+          handler.func(event);
         }, 1);
       }
     }

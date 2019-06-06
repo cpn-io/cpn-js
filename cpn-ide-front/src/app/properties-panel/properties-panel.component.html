@@ -7,7 +7,7 @@
 <!--</div>-->
 
 <div class="blockHeader">
-  {{title}}
+  {{ title }}
 </div>
 
 <!-- <input [value]="getCpnElement()" (change)="onChange()"> -->
@@ -59,8 +59,9 @@
 
 
       <!-- Port binds -->
-      <app-text-edit-row *ngIf="cpnElement._orientation && getBindTransElementSubst(cpnElement)" type="select" name="Port bind" [object]="getPortBind(cpnElement)"
-                         field="value" (changed)="updatePortBind($event)" [options]="getSubPagesPorts(cpnElement)">
+      <app-text-edit-row *ngIf="cpnElement._orientation && getBindTransElementSubst(cpnElement)" type="select"
+        name="Port bind" [object]="getPortBind(cpnElement)" field="value" (changed)="updatePortBind($event)"
+        [options]="getSubPagesPorts(cpnElement)">
       </app-text-edit-row>
 
     </div>

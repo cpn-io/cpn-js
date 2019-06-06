@@ -3,7 +3,7 @@
   <!-------------------------->
   <!-- Project explorer tab -->
   <!-------------------------->
-  <tab id="Explorer panel" tabTitle="Explorer panel" [isHidden]="false">
+  <tab id="explorerPanel" tabTitle="Explorer panel">
 
     <!-- Project explorer toolbar -->
     <!------------------------------>
@@ -111,12 +111,18 @@
                           (change)="setMonitorOption($event, node)">
                       </td>
 
+                      <td *ngIf="isPage(node)" style="padding-right: 5px; color:lightseagreen">
+                          <i class="fas fa-project-diagram"></i>
+                      </td>
+
                       <!-- Tree node label (can be editable) -->
                       <td class="node"
                         [ngClass]="{'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id), 'node-highlight-error': isError(node.id)}">
 
                         <div *ngIf="!isOption(node) && !isMonitorRef(node)" [id]="'textinpfield_' + node.id"
-                          class="editablenode" (click)="onNodeLabelClick($event, node)"
+                          class="editablenode"
+                          (click)="onNodeClick($event, node)"
+                          (dblclick)="onNodeDblClick($event, node)"
                           (focusout)="saveEditedData($event, node)"
                           [contentEditable]="canEdit(node) && (openedLabel[node.id] || (editableNode === node))"
                           [innerHTML]="getLabel(node) | colorDeclarations | safeHtml">
@@ -183,11 +189,11 @@
   <!------------------------------>
   <!-- Application settings tab -->
   <!------------------------------>
-  <tab [id]="'Application settings'" [tabTitle]="'Application settings'">
+  <tab id="applicationSettings" tabTitle="Application settings">
     <table [id]="'application-settings-table'" class="table table-bordered table-hover table-small"
       *ngIf="showTable !== 'application-settings-table'">
       <tr *ngFor="let item of appSettingsKeys">
-        <td width="50%" class="valueName">{{ item}}</td>
+        <td width="50%" class="valueName">{{ item }}</td>
         <td width="50%" contenteditable='true'>{{ appSettings[item] }}</td>
       </tr>
     </table>

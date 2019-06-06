@@ -5,10 +5,6 @@ import { AccessCpnService } from './access-cpn.service';
 import { SettingsService } from '../services/settings.service';
 import { ValidationService } from './validation.service';
 
-
-/**
- * Common service for getting access to project data from all application
- */
 /**
  * Common service for getting access to project data from all application
  */
@@ -205,27 +201,6 @@ export class ModelService {
       this.projectData.workspaceElements.cpnet.page;
   }
 
-
-  // getJsonElementOnPage(pageId, element, type) {
-  //   try {
-  //     const page = this.getPageById(pageId);
-  //     let entry;
-  //     if (type === 'cpn:Label') {
-  //       if (element.labelTarget && element.labelTarget.parent) {
-  //         entry = this.modelCase[element.labelTarget.type];
-  //         return page[entry].length ? page[entry].find(elem => elem._id === element.labelTarget.id)[element.labelType] : page[entry][element.labelType];
-  //       } else {
-  //         return page['Aux'].length ? page['Aux'].find(elem => elem._id === element.labelNodeId) : page['Aux'];
-  //       }
-  //     } else {
-  //       entry = this.modelCase[type];
-  //       return page[entry].length ? page[entry].find(elem => elem._id === element) : page[entry];
-  //     }
-  //   } catch (e) {
-  //     return undefined;
-  //   }
-  // }
-
   /**
    * Get root cpnet element from CPN project JSON object
    * @returns - cpnElement for cpnet element
@@ -353,245 +328,6 @@ export class ModelService {
   }
 
 
-  // sendChangingElementToDeclarationPanel(node, elementType, action, id, blockId, state) {
-  //   console.log('sendChangingElementToDeclarationPanel()', node, elementType, action, id, blockId, state)
-  //   if (elementType === 'Declarations' || elementType === 'block' || elementType === 'globbox') {
-  //     this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-  //       node: action === 'rename' ? node : undefined,
-  //       action: action,
-  //       element: 'tab',
-  //       target: blockId, // this.getCurrentBlock(node).id,
-  //       id: id,
-  //       state: state // this.treeComponent.treeModel.getState()
-  //     });
-  //   } else if (elementType === 'ml') {
-  //     this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-  //       node: action === 'rename' ? node : undefined,
-  //       action: action,
-  //       element: elementType,
-  //       target: blockId, // this.getCurrentBlock(node).id,
-  //       id: id,
-  //       state: state// this.treeComponent.treeModel.getState()
-  //     });
-  //   } else if (elementType === 'color') {
-  //     this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-  //       node: action === 'rename' ? node : undefined,
-  //       action: action,
-  //       element: elementType,
-  //       target: blockId, // this.getCurrentBlock(node).id,
-  //       id: id,
-  //       state: state// this.treeComponent.treeModel.getState()
-  //     });
-  //   } else if (elementType === 'var') {
-  //     this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-  //       node: action === 'rename' ? node : undefined,
-  //       action: action,
-  //       element: elementType,
-  //       target: blockId, // this.getCurrentBlock(node).id,
-  //       id: id,
-  //       state: state // this.treeComponent.treeModel.getState()
-  //     });
-  //   } else if (elementType === 'globref') {
-  //     this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-  //       node: action === 'rename' ? node : undefined,
-  //       action: action,
-  //       element: elementType,
-  //       target: blockId, // this.getCurrentBlock(node).id,
-  //       id: id,
-  //       state: state // this.treeComponent.treeModel.getState()
-  //     });
-  //   } else if (elementType === 'project') {
-  //     this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-  //       node: action === 'rename' ? node : undefined,
-  //       action: action,
-  //       element: elementType,
-  //       target: blockId, // this.getCurrentBlock(node).id,
-  //       id: id,
-  //       state: state // this.treeComponent.treeModel.getState()
-  //     });
-  //   } else if (this.paramsTypes.includes(id)) {
-  //     this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-  //       node: action === 'rename' ? node : undefined,
-  //       action: action,
-  //       target: blockId, // this.getCurrentBlock(node).id,
-  //       id: id,
-  //       state: state// this.treeComponent.treeModel.getState()
-  //     });
-  //   }
-  // }
-
-
-  /*for refact*/
-  // shapeResizeJsonSaver(event, pageId) {
-  // this.saveBackup(this.projectData, pageId);
-  // const page = this.getPageById(pageId);
-  // const form = event.shape.type === 'cpn:Place' ? 'ellipse' : 'box';
-  // const jsonMovingElement = this.getJsonElementOnPage(pageId, event.shape.type === 'cpn:Label' ? event.shape : event.shape.id, event.shape.type);
-  // jsonMovingElement[form]._w = event.shape.width;
-  // jsonMovingElement[form]._h = event.shape.height;
-  // jsonMovingElement.posattr._x = event.shape.x + jsonMovingElement[form]._w / 2;
-  // jsonMovingElement.posattr._y = -1 * event.shape.y - jsonMovingElement[form]._h / 2;
-
-  // for (const labelType of this.labelsEntry[this.modelCase[event.shape.type]]) {
-  //   if (labelType !== 'edit') {
-  //     if (((event.context.direction === 'ne' || event.context.direction === 'nw') && labelType !== 'type' && labelType !== 'code' && labelType !== 'priority')
-  //       || ((event.context.direction === 'se' || event.context.direction === 'sw') && labelType !== 'initmark' && labelType !== 'time' && labelType !== 'cond')) {
-
-  //       jsonMovingElement[labelType].posattr._y = parseFloat(jsonMovingElement[labelType].posattr._y) + event.context.delta.y;
-  //     }
-  //     if (((event.context.direction === 'sw' || event.context.direction === 'nw') && labelType !== 'type' && labelType !== 'initmark' && labelType !== 'time' && labelType !== 'code')
-  //       || ((event.context.direction === 'se' || event.context.direction === 'ne') && labelType !== 'cond' && labelType !== 'priority')) {
-  //       jsonMovingElement[labelType].posattr._x = parseFloat(jsonMovingElement[labelType].posattr._x) + event.context.delta.x;
-  //     }
-  //   }
-  // }
-
-
-  // this.eventService.send(Message.SHAPE_SELECT, {element: event.shape, pageJson: page});
-  // }
-
-  // shapeMoveJsonSaver(event, pageId, arcShapes) {
-  //   this.saveBackup(this.projectData, pageId);
-  //   const page = this.getPageById(pageId);
-  //   const jsonMovingElement = this.getJsonElementOnPage(pageId, event.shape.type === 'cpn:Label' ? event.shape : event.shape.id, event.shape.type);
-  //   this.moveElementInJson(jsonMovingElement, event.shape.type, { x: event.dx, y: -1 * event.dy }, event.shape);
-  //   if (event.shape.type !== 'cpn:Connection') {
-  //     if (page.arc instanceof Array) {
-  //       for (const arc of page.arc) {
-  //         if (arc.placeend._idref === event.shape.id || arc.transend._idref === event.shape.id) {
-  //           const placeEnd = this.getJsonElementOnPage(pageId, arc.placeend._idref, 'cpn:Place');
-  //           const transEnd = this.getJsonElementOnPage(pageId, arc.transend._idref, 'cpn:Transition');
-  //           const modelElem = arcShapes.find(modelArc => modelArc.id === arc._id);
-  //           if (placeEnd && transEnd && modelElem) {
-  //             this.moveElementInJson(arc, 'cpn:Connection', {
-  //               x: -1 * (parseFloat(arc.annot.posattr._x) - (parseFloat(placeEnd.posattr._x) + parseFloat(transEnd.posattr._x)) / 2) + 6,
-  //               y: -1 * (parseFloat(arc.annot.posattr._y) - (parseFloat(placeEnd.posattr._y) + parseFloat(transEnd.posattr._y)) / 2)
-  //             }, modelElem);
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-
-  // this.eventService.send(Message.SHAPE_SELECT, { element: event.shape, pageJson: page });
-  /* switch(event.shape.type){
-     case 'cpn:Place':
-       if(page.place.length) {
-         page.place.forEach(movingXmlElement => {
-           if (movingXmlElement._id === event.shape.id) {
-             movingXmlElement.posattr._x = parseFloat(movingXmlElement.posattr._x) + (event.dx);
-             movingXmlElement.posattr._y = parseFloat(movingXmlElement.posattr._y) + (-1 * event.dy);
-             movingXmlElement.type.posattr._x = parseFloat(movingXmlElement.type.posattr._x) + (event.dx);
-             movingXmlElement.type.posattr._y = parseFloat(movingXmlElement.type.posattr._y) + (-1 * event.dy);
-             movingXmlElement.initmark.posattr._x = parseFloat(movingXmlElement.initmark.posattr._x) + (event.dx);
-             movingXmlElement.initmark.posattr._y = parseFloat(movingXmlElement.initmark.posattr._y) + (-1 * event.dy);
-           }
-         })
-       } else {
-         page.place.posattr._x = parseFloat(page.place.posattr._x) + (event.dx);
-         page.place.posattr._y = parseFloat(page.place.posattr._y) + (-1 * event.dy);
-         page.place.type.posattr._x = parseFloat(page.place.type.posattr._x) + (event.dx);
-         page.place.type.posattr._y = parseFloat(page.place.type.posattr._y) + (-1 * event.dy);
-         page.place.initmark.posattr._x = parseFloat(page.place.initmark.posattr._x) + (event.dx);
-         page.place.initmark.posattr._y = parseFloat(page.place.initmark.posattr._y) + (-1 * event.dy);
-       }
-       break;
-     case 'cpn:Transition':
-       if(page.trans.length)
-         page.trans.forEach(movingXmlElement => {
-           if (movingXmlElement._id === event.shape.id) {
-             movingXmlElement.posattr._x = parseFloat(movingXmlElement.posattr._x) + (event.dx );
-             movingXmlElement.posattr._y = parseFloat(movingXmlElement.posattr._y) + (-1 * event.dy);
-             movingXmlElement.cond.posattr._x = parseFloat(movingXmlElement.cond.posattr._x) + (event.dx );
-             movingXmlElement.cond.posattr._y = parseFloat(movingXmlElement.cond.posattr._y) + (-1 * event.dy);
-             movingXmlElement.priority.posattr._x = parseFloat(movingXmlElement.priority.posattr._x) + (event.dx );
-             movingXmlElement.priority.posattr._y = parseFloat(movingXmlElement.priority.posattr._y) + (-1 * event.dy );
-             movingXmlElement.time.posattr._x = parseFloat(movingXmlElement.time.posattr._x) + (event.dx );
-             movingXmlElement.time.posattr._y = parseFloat(movingXmlElement.time.posattr._y) + (-1 * event.dy );
-             movingXmlElement.code.posattr._x = parseFloat(movingXmlElement.code.posattr._x) + (event.dx );
-             movingXmlElement.code.posattr._y = parseFloat(movingXmlElement.code.posattr._y) + (-1 * event.dy );
-           }
-         }); else {
-         page.trans.posattr._x = parseFloat(page.trans.posattr._x) + (event.dx );
-         page.trans.posattr._y = parseFloat(page.trans.posattr._y) + (-1 * event.dy);
-         page.trans.cond.posattr._x = parseFloat(page.trans.cond.posattr._x) + (event.dx );
-         page.trans.cond.posattr._y = parseFloat(page.trans.cond.posattr._y) + (-1 * event.dy);
-         page.trans.priority.posattr._x = parseFloat(page.trans.priority.posattr._x) + (event.dx );
-         page.trans.priority.posattr._y = parseFloat(page.trans.priority.posattr._y) + (-1 * event.dy );
-         page.trans.time.posattr._x = parseFloat(page.trans.time.posattr._x) + (event.dx );
-         page.trans.time.posattr._y = parseFloat(page.trans.time.posattr._y) + (-1 * event.dy );
-         page.trans.code.posattr._x = parseFloat(page.trans.code.posattr._x) + (event.dx );
-         page.trans.code.posattr._y = parseFloat(page.trans.code.posattr._y) + (-1 * event.dy );
-       }
-       break;
-     case 'cpn:Connection':
-       if(page.arc.length)
-         page.arc.forEach(movingXmlElement => {
-           if (movingXmlElement._id === event.shape.id) {
-             movingXmlElement.annot.posattr._x = parseFloat(movingXmlElement.annot.posattr._x) + (event.dx );
-             movingXmlElement.annot.posattr._y = parseFloat(movingXmlElement.annot.posattr._y) + (-1 * event.dy);
-           }
-         }); else {
-         page.arc.annot.posattr._x = parseFloat(page.arc.annot.posattr._x) + (event.dx );
-         page.arc.annot.posattr._y = parseFloat(page.arc.annot.posattr._y) + (-1 * event.dy);
-       }
-       break;
-     default:
-   }
-   // this.applyPageChanges();
-   // let element = event.shape;
-   this.eventService.send(Message.SHAPE_SELECT, {element: event.shape, pageJson: page });
-   */
-  // }
-
-
-  // moveElementInJson(jsonElem, elemntType, delta, modelElem) {
-
-  // console.log('moveElementInJson(), jsonElem = ', jsonElem);
-  // console.log('moveElementInJson(), elemntType = ', elemntType);
-  // console.log('moveElementInJson(), delta = ', delta);
-  // console.log('moveElementInJson(), modelElem = ', modelElem);
-
-  // for (const movingElement of this.labelsEntry[this.modelCase[elemntType]]) {
-  //   if (movingElement !== 'edit') {
-  //     jsonElem[movingElement].posattr._x = parseFloat(jsonElem[movingElement].posattr._x) + delta.x;
-  //     jsonElem[movingElement].posattr._y = parseFloat(jsonElem[movingElement].posattr._y) + delta.y;
-  //   } else {
-  //     jsonElem.posattr._x = parseFloat(jsonElem.posattr._x) + delta.x;
-  //     jsonElem.posattr._y = parseFloat(jsonElem.posattr._y) + delta.y;
-  //   }
-  //   if (elemntType === 'cpn:Connection') {
-  //     jsonElem.bendpoint = [];
-  //     const addToWay = 'push'; // jsonElem._orientation  === 'TtoP' ?  'push' : 'unshift'
-  //     for (const updWayPoint of modelElem.waypoints) {
-  //       if (!updWayPoint.original) {
-  //         jsonElem.bendpoint[addToWay]({
-  //           fillattr: {
-  //             _colour: 'White',
-  //             _pattern: 'Solid',
-  //             _filled: 'false'
-  //           },
-  //           lineattr: {
-  //             _colour: 'Black',
-  //             _thick: '0',
-  //             _type: 'Solid'
-  //           },
-  //           posattr: {
-  //             _x: updWayPoint.x,
-  //             _y: -1 * updWayPoint.y
-  //           },
-  //           textattr: {
-  //             _colour: 'Black',
-  //             _bold: 'false'
-  //           },
-  //           _id: 'ID' + new Date().getTime(),
-  //           _serial: '1'
-  //         });
-  //       }
-  //     }
-  //   }
-  // }
-  // }
 
   moveNonModelJsonElement(element, parent, target, index, type) {
 
@@ -601,7 +337,7 @@ export class ModelService {
           target[entry] = [target[entry]];
         }
         if (element instanceof Array) {
-          for (let el of element) {
+          for (const el of element) {
             target[entry].splice(++index, 0, el);
           }
         } else {
@@ -629,13 +365,13 @@ export class ModelService {
             target.trans = [subPageTrans];
           }
         }
-      }
-      let subPageTrans = undefined;
+      };
+      const subPageTrans = {};
       if (parent) {
         if (parent.trans instanceof Array) {
           for (let i = 0; i < parent.trans.length; i++) {
             swapSubPageTrans(parent.trans[i], subPageTrans);
-            if (subPageTrans) break;
+            if (subPageTrans) { break; }
           }
         } else {
           swapSubPageTrans(parent.trans, subPageTrans);
@@ -647,7 +383,7 @@ export class ModelService {
         id: element._id,
         parentid: target._id,
         event: event,
-        state: undefined, //this.treeComponent.treeModel.getState(),
+        state: undefined, // this.treeComponent.treeModel.getState(),
         object: subPageTrans
       });
 
@@ -698,32 +434,6 @@ export class ModelService {
         parent.block = [];
       }
     }
-    /*    const deleteElemFromEntryById = this.paramsTypes.includes(type) ? ( entry, type) => {
-          delete entry[type];
-          } :  (id, entry) => {
-          if(entry instanceof Array) {
-            for(let i = 0; i < entry.length; i++) {
-              if(entry[i]._id === element._id) entry.splice(i, 1);
-            }
-          } else {
-            entry = [];
-          }
-        };
-        const addElementToEntry = (addingElem, entry , indexPlace) => {
-          if(entry instanceof Array) {
-            entry.splice(indexPlace, 0, addingElem);
-          } else {
-            if(entry) {
-              entry = [entry];
-              entry.splice(indexPlace, 0, addingElem);
-            } else {
-              entry = [addingElem];
-            }
-          }
-        }
-        console.log('moveNonModelJsonElement - element: ', element, ', parent: ', parent, ', taregt: ', target, ', index: ', index);
-        addElementToEntry(element, target, index);
-        deleteElemFromEntryById(element._id, parent);*/
   }
 
 
@@ -731,273 +441,6 @@ export class ModelService {
     this.saveBackupBak(this.projectData, pageId);
 
     const page = this.getPageById(pageId);
-
-    // // console.log('actual data -------' + JSON.stringify(page.place[0]));
-    // // console.log('moddifi data -------' + JSON.stringify(this.placeShapes[page.place[0]._id]));
-
-    // // console.log(JSON.stringify(this.transShapes));
-    // //  console.log( JSON.stringify(this.arcShapes));
-    // let bounds;
-    // let updatedPlace;
-    // if (page.place && !(page.place.length === 0 && !page.place._id)) {
-    //   for (const place of page.place) {
-    //     updatedPlace = placeShapes[place._id];
-    //     place.posattr._x = updatedPlace.x + place.ellipse._w / 2;
-    //     place.posattr._y = -1 * updatedPlace.y - place.ellipse._h / 2;
-    //     place.ellipse._w = updatedPlace.width;
-    //     place.ellipse._h = updatedPlace.height;
-    //     place.lineattr._colour = updatedPlace.stroke;
-    //     place.lineattr._thick = updatedPlace.strokeWidth;
-    //     place.text = updatedPlace.name;
-
-    //     for (const label of placeShapes[place._id].labels) {
-    //       if (label.labelNodeId === place.type._id) {
-    //         bounds = {
-    //           width: 200, // 90,
-    //           height: 30,
-    //           x: place.type.posattr._x,
-    //           y: place.type.posattr._y
-    //         };
-    //         bounds = textRenderer.getExternalLabelBounds(bounds, place.type.text.__text ? place.type.text.__text : '');
-    //         place.type.lineattr._colour = label.stroke;
-    //         place.type.posattr._x = label.x + Math.round(bounds.width) / 2;
-    //         place.type.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
-    //         place.type.text.__text = label.text;
-    //       }
-    //       if (label.labelNodeId === place.initmark._id) {
-    //         bounds = {
-    //           width: 200, // 90,
-    //           height: 30,
-    //           x: place.initmark.posattr._x,
-    //           y: place.initmark.posattr._y
-    //         };
-    //         bounds = textRenderer.getExternalLabelBounds(bounds, place.initmark.text.__text ? place.initmark.text.__text : '');
-    //         place.initmark.lineattr._colour = label.stroke;
-    //         place.initmark.posattr._x = label.x + Math.round(bounds.width) / 2;
-    //         place.initmark.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
-    //         place.initmark.text.__text = label.text;
-    //       }
-    //     }
-    //   }
-    // }
-    // if (page.trans && !(page.trans.length === 0 && !page.trans._id)) {
-    //   let updatedTran;
-    //   if (page.trans.length) {
-    //     for (const tran of page.trans) {
-    //       updatedTran = transShapes[tran._id];
-    //       tran.posattr._x = updatedTran.x + tran.box._w / 2;
-    //       tran.posattr._y = -1 * updatedTran.y - tran.box._h / 2;
-    //       tran.box._w = updatedTran.width;
-    //       tran.box._h = updatedTran.height;
-    //       tran.lineattr._colour = updatedTran.stroke;
-    //       tran.lineattr._thick = updatedTran.strokeWidth;
-    //       tran.text = updatedTran.name;
-
-    //       for (const label of transShapes[tran._id].labels) {
-    //         if (label.labelNodeId === tran.cond._id) {
-    //           bounds = {
-    //             width: 200, // 90,
-    //             height: 30,
-    //             x: tran.cond.posattr._x,
-    //             y: tran.cond.posattr._y
-    //           };
-    //           bounds = textRenderer.getExternalLabelBounds(bounds, tran.cond.text.__text ? tran.cond.text.__text : '');
-    //           tran.cond.lineattr._colour = label.stroke;
-    //           tran.cond.posattr._x = label.x + Math.round(bounds.width) / 2;
-    //           tran.cond.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
-    //           tran.cond.text.__text = label.text;
-    //         }
-    //         if (label.labelNodeId === tran.time._id) {
-    //           bounds = {
-    //             width: 200, // 90,
-    //             height: 30,
-    //             x: tran.time.posattr._x,
-    //             y: tran.time.posattr._y
-    //           };
-    //           bounds = textRenderer.getExternalLabelBounds(bounds, tran.time.text.__text ? tran.time.text.__text : '');
-    //           tran.time.lineattr._colour = label.stroke;
-    //           tran.time.posattr._x = label.x + Math.round(bounds.width) / 2;
-    //           tran.time.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
-    //           tran.time.text.__text = label.text;
-    //         }
-    //         if (label.labelNodeId === tran.code._id) {
-    //           bounds = {
-    //             width: 200, // 90,
-    //             height: 30,
-    //             x: tran.time.posattr._x,
-    //             y: tran.code.posattr._y
-    //           };
-    //           bounds = textRenderer.getExternalLabelBounds(bounds, tran.code.text.__text ? tran.code.text.__text : '');
-    //           tran.code.lineattr._colour = label.stroke;
-    //           tran.code.posattr._x = label.x + Math.round(bounds.width) / 2;
-    //           tran.code.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
-    //           tran.code.text.__text = label.text;
-    //         }
-    //         if (label.labelNodeId === tran.priority._id) {
-    //           bounds = {
-    //             width: 200, // 90,
-    //             height: 30,
-    //             x: tran.priority.posattr._x,
-    //             y: tran.priority.posattr._y
-    //           };
-    //           bounds = textRenderer.getExternalLabelBounds(bounds, tran.priority.text.__text ? tran.priority.text.__text : '');
-    //           tran.priority.lineattr._colour = label.stroke;
-    //           tran.priority.posattr._x = label.x + Math.round(bounds.width) / 2;
-    //           tran.priority.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
-    //           tran.priority.text.__text = label.text;
-    //         }
-    //       }
-    //     }
-    //   } else {
-    //     const tran = page.trans;
-    //     updatedTran = transShapes[tran._id];
-    //     tran.posattr._x = updatedTran.x + tran.box._w / 2;
-    //     tran.posattr._y = -1 * updatedTran.y - tran.box._h / 2;
-    //     tran.box._w = updatedTran.width;
-    //     tran.box._h = updatedTran.height;
-    //     tran.lineattr._colour = updatedTran.stroke;
-    //     tran.lineattr._thick = updatedTran.strokeWidth;
-    //     tran.text = updatedTran.name;
-
-    //     for (const label of transShapes[tran._id].labels) {
-    //       if (label.labelNodeId === tran.cond._id) {
-    //         bounds = {
-    //           width: 200, // 90,
-    //           height: 30,
-    //           x: tran.cond.posattr._x,
-    //           y: tran.cond.posattr._y
-    //         };
-    //         bounds = textRenderer.getExternalLabelBounds(bounds, tran.cond.text.__text ? tran.cond.text.__text : '');
-    //         tran.cond.lineattr._colour = label.stroke;
-    //         tran.cond.posattr._x = label.x + Math.round(bounds.width) / 2;
-    //         tran.cond.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
-    //         tran.cond.text.__text = label.text;
-    //       }
-    //       if (label.labelNodeId === tran.time._id) {
-    //         bounds = {
-    //           width: 200, // 90,
-    //           height: 30,
-    //           x: tran.time.posattr._x,
-    //           y: tran.time.posattr._y
-    //         };
-    //         bounds = textRenderer.getExternalLabelBounds(bounds, tran.time.text.__text ? tran.time.text.__text : '');
-    //         tran.time.lineattr._colour = label.stroke;
-    //         tran.time.posattr._x = label.x + Math.round(bounds.width) / 2;
-    //         tran.time.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
-    //         tran.time.text.__text = label.text;
-    //       }
-    //       if (label.labelNodeId === tran.code._id) {
-    //         bounds = {
-    //           width: 200, // 90,
-    //           height: 30,
-    //           x: tran.time.posattr._x,
-    //           y: tran.code.posattr._y
-    //         };
-    //         bounds = textRenderer.getExternalLabelBounds(bounds, tran.code.text.__text ? tran.code.text.__text : '');
-    //         tran.code.lineattr._colour = label.stroke;
-    //         tran.code.posattr._x = label.x + Math.round(bounds.width) / 2;
-    //         tran.code.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
-    //         tran.code.text.__text = label.text;
-    //       }
-    //       if (label.labelNodeId === tran.priority._id) {
-    //         bounds = {
-    //           width: 200, // 90,
-    //           height: 30,
-    //           x: tran.priority.posattr._x,
-    //           y: tran.priority.posattr._y
-    //         };
-    //         bounds = textRenderer.getExternalLabelBounds(bounds, tran.priority.text.__text ? tran.priority.text.__text : '');
-    //         tran.priority.lineattr._colour = label.stroke;
-    //         tran.priority.posattr._x = label.x + Math.round(bounds.width) / 2;
-    //         tran.priority.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
-    //         tran.priority.text.__text = label.text;
-    //       }
-    //     }
-
-    //   }
-    // }
-    // if (page.arc && !(page.arc.length === 0 && !page.arc._id)) {
-    //   let uodatedCon;
-    //   for (const arc of page.arc) {
-    //     for (const modelArc of arcShapes) {
-    //       if (modelArc.id === arc._id) {
-    //         uodatedCon = modelArc;
-    //       }
-    //     }
-    //     arc.bendpoint = [];
-    //     const addToWay = 'push'; // arc._orientation  === 'TtoP' ?  'push' : 'unshift'
-    //     for (const updWayPoint of uodatedCon.waypoints) {
-    //       if (!updWayPoint.original) {
-    //         arc.bendpoint[addToWay](
-    //           {
-    //             fillattr: {
-    //               _colour: 'White',
-    //               _pattern: 'Solid',
-    //               _filled: 'false'
-    //             },
-    //             lineattr: {
-    //               _colour: 'Black',
-    //               _thick: '0',
-    //               _type: 'Solid'
-    //             },
-    //             posattr: {
-    //               _x: updWayPoint.x,
-    //               _y: -1 * updWayPoint.y
-    //             },
-    //             textattr: {
-    //               _colour: 'Black',
-    //               _bold: 'false'
-    //             },
-    //             _id: 'ID' + new Date().getTime(),
-    //             _serial: '1'
-    //           }
-    //         );
-    //       }
-    //     }
-
-
-    // if (arc.bendpoint) {
-    //   if (arc.bendpoint.length) {
-    //     for (let point of arc.bendpoint) {
-    //       for (let updWayPoint of uodatedCon.waypoints) {
-    //         if (point._id === updWayPoint.id) {
-    //           point.posattr._x = updWayPoint.x;
-    //           point.posattr._y = -1 * updWayPoint.y;
-    //         }
-    //       }
-    //     }
-    //   } else {
-    //     for (let updWayPoint of uodatedCon.waypoints) {
-    //       if (arc.bendpoint._id === updWayPoint.id) {
-    //         arc.bendpoint.posattr._x = updWayPoint.x;
-    //         arc.bendpoint.posattr._y = -1 * updWayPoint.y;
-    //       }
-    //     }
-    //   }
-    // }
-
-    //     arc.lineattr._colour = uodatedCon.stroke;
-    //     arc.lineattr._thick = uodatedCon.strokeWidth;
-    //     for (const label of uodatedCon.labels) {
-    //       if (label.labelNodeId === arc.annot._id) {
-    //         bounds = {
-    //           width: 200, // 90,
-    //           height: 30,
-    //           x: arc.annot.posattr._x,
-    //           y: arc.annot.posattr._y
-    //         };
-    //         bounds = textRenderer.getExternalLabelBounds(bounds, arc.annot.text.__text ? arc.annot.text.__text : '');
-    //         arc.annot.lineattr._colour = label.stroke;
-    //         arc.annot.posattr._x = label.x + Math.round(bounds.width) / 2;
-    //         arc.annot.posattr._y = -1 * label.y - Math.round(bounds.height) / 2;
-    //         arc.annot.__text = label.text;
-    //         arc.annot.text.__text = label.text;
-    //       }
-
-    //     }
-
-    //   }
-    // }
 
     // this.eventService.send(Message.MODEL_UPDATE, {pageObject: page});
     return page;
@@ -1116,14 +559,14 @@ export class ModelService {
 
   deleteElementInBlock(block, elementType, id) {
     this.saveBackupBak(this.projectData, undefined);
-    //blcok[elementType] = blcok[elementType].filter(elem => elem._id !== id);
+    // blcok[elementType] = blcok[elementType].filter(elem => elem._id !== id);
     if (!(block[elementType] instanceof Array)) {
       block[elementType] = [block[elementType]];
     }
-    for (var i = 0; i < block[elementType].length; i++) {
+    for (let i = 0; i < block[elementType].length; i++) {
       if (block[elementType][i]._id === id) {
         block[elementType].splice(i, 1);
-        if (block[elementType].length === 0) delete block[elementType];
+        if (block[elementType].length === 0) { delete block[elementType]; }
       }
     }
   }
@@ -1141,11 +584,13 @@ export class ModelService {
     //   }
     // }
   }
+
   deleteMonitorBlock(id) {
     this.saveBackupBak(this.projectData, undefined);
     const cpnet = this.getCpn();
     cpnet.monitorblock.monitor = cpnet.monitorblock.monitor.filter(e => e._id !== id);
   }
+
   addItemToBlock(block, elementGroup): any {
     this.saveBackupBak(this.projectData, undefined);
     let newNode;
@@ -1273,7 +718,7 @@ export class ModelService {
 
   setDescendantProp(obj, desc, value) {
     if (desc) {
-      let arr = desc.split('.');
+      const arr = desc.split('.');
       while (arr.length > 1) {
         obj = obj[arr.shift()];
       }
@@ -1282,7 +727,7 @@ export class ModelService {
   }
 
   getRelations(id: string, elem: string): Array<string> {
-    let result = [];
+    const result = [];
     switch (elem) {
       case 'Place': {
         this.getProjectData();
@@ -1310,8 +755,8 @@ export class ModelService {
       pageattr: {
         _name: name
       },
-      //place: [],
-      //trans: [],
+      // place: [],
+      // trans: [],
       // arc: [],
       constraints: '',
       _id: id ? id : 'ID' + new Date().getTime()
@@ -1361,7 +806,7 @@ export class ModelService {
    * @param cpnElement - color(colset) cpn element
    */
   cpnColorToString(cpnElement) {
-    var str = 'colset ' + cpnElement.id;
+    let str = 'colset ' + cpnElement.id;
 
     const color = cpnElement;
     if (color.layout) {
@@ -1397,7 +842,7 @@ export class ModelService {
    * @param cpnElement - var cpn element
    */
   cpnVarToString(cpnElement) {
-    var str = 'var ' + cpnElement.id;
+    let str = 'var ' + cpnElement.id;
 
     if (cpnElement.layout) {
       str = cpnElement.layout;
@@ -1440,10 +885,10 @@ export class ModelService {
 
     cpnElement = { _id: cpnElement._id };
 
-    var parser = str.match('^\\S+');
+    let parser = str.match('^\\S+');
     // console.log('stringToCpnDeclarationElement(), parser = ', parser);
 
-    var type, cpnType;
+    let type, cpnType;
     if (parser) {
       type = parser[0];
     }
@@ -1468,8 +913,9 @@ export class ModelService {
         if (!cpnElement.type) {
           cpnElement.type = {};
         }
-        if (splitLayoutArray[1])
+        if (splitLayoutArray[1]) {
           cpnElement.type.id = splitLayoutArray[1][0];
+        }
         break;
       case 'ml':
       case 'val':
@@ -1546,10 +992,10 @@ export class ModelService {
    * @param pageName
    */
   getPageId(pageName) {
-    let pageList = this.getCpn().page instanceof Array
+    const pageList = this.getCpn().page instanceof Array
       ? this.getCpn().page
       : [this.getCpn().page];
-    for (let p of pageList) {
+    for (const p of pageList) {
       if (p.pageattr._name === pageName) {
         return p._id;
       }
@@ -1616,21 +1062,22 @@ export class ModelService {
   }
 
   getArcEnds(cpnElement) {
-    let page = this.getAllPages().find(p => {
+    const page = this.getAllPages().find(p => {
       return p.arc.find(pl => {
         return pl._id === cpnElement._id;
-      })
+      });
     });
-    for (let entry of ['place', 'trans'])
+    for (const entry of ['place', 'trans']) {
       if (!(page[entry] instanceof Array)) {
         page[entry] = [page[entry]];
       }
-    let placeEnd
+    }
+    let placeEnd;
     placeEnd = page.place.find(el => {
       return el._id === cpnElement.placeend._idref;
     });
-    let transEnd
-    transEnd = page.trans.find((tr) => { return cpnElement.transend._idref === tr._id });
+    let transEnd;
+    transEnd = page.trans.find((tr) => cpnElement.transend._idref === tr._id);
     return { place: placeEnd, trans: transEnd, orient: cpnElement._orientation };
   }
 
@@ -1643,15 +1090,15 @@ export class ModelService {
    * @param transEnd
    */
   getAllPorts(cpnElement, transEnd) {
-    let ports = [];
+    const ports = [];
     console.log('getAllPorts(), transEnd = ', transEnd);
 
     if (transEnd.subst) {
-      let page = this.getPageById(transEnd.subst._subpage);
+      const page = this.getPageById(transEnd.subst._subpage);
       if (page) {
         console.log('getAllPorts(), page = ', page);
 
-        for (let place of page.place) {
+        for (const place of page.place) {
           console.log('getAllPorts(), place = ', place);
           console.log('getAllPorts(), place.port = ', place.port);
           if (place.port
@@ -1665,22 +1112,120 @@ export class ModelService {
     return ports;
   }
 
-
   getPortNameById(pageId, id) {
-    let page = this.getPageById(pageId);
+    const page = this.getPageById(pageId);
     if (page) {
-      let port = page.place.find(e => { return e._id === id });
+      const port = page.place.find(e => e._id === id);
       return port.text;
     }
   }
 
-
   getPortIdByName(pageId, text, orient) {
-    let page = this.getPageById(pageId);
+    const page = this.getPageById(pageId);
     if (page && text !== '') {
-      let port = page.place.find(e => { return e.text === text && (e.port._type === 'I/O' || e.port._type === (orient === 'TtoP' ? 'Out' : 'In')) });
+      const port = page.place.find(e => e.text === text && (e.port._type === 'I/O' || e.port._type === (orient === 'TtoP' ? 'Out' : 'In')));
       return port._id;
-    } else return undefined;
+    } else { return undefined; }
   }
+
+
+  /**
+   * Add cpn element to parent
+   * @param cpnParentElement
+   * @param cpnElement
+   * @param cpnType - new cpn type where cpn element should be placed
+   */
+  addCpnElement(cpnParentElement, cpnElement, cpnType) {
+    if (!cpnParentElement) {
+      console.error(this.constructor.name, 'addCpnElement(). ERROR: Undefined cpnParentElement element.');
+      return cpnParentElement;
+    }
+    if (!cpnElement) {
+      console.error(this.constructor.name, 'addCpnElement(). ERROR: Undefined cpnElement element.');
+      return cpnParentElement;
+    }
+    if (!cpnType) {
+      console.error(this.constructor.name, 'addCpnElement(). ERROR: Undefined cpnType.');
+      return cpnParentElement;
+    }
+
+    if (cpnParentElement[cpnType] instanceof Array) {
+      cpnParentElement[cpnType].push(cpnElement);
+    } else if (cpnParentElement[cpnType]) {
+      cpnParentElement[cpnType] = [cpnParentElement[cpnType], cpnElement];
+    } else {
+      cpnParentElement[cpnType] = cpnElement;
+    }
+    return cpnParentElement;
+  }
+
+  /**
+   * Update cpn element in it's parent
+   * @param cpnParentElement
+   * @param cpnElement
+   * @param cpnType - new cpn type where cpn element should be placed
+   */
+  updateCpnElement(cpnParentElement, cpnElement, cpnType) {
+    if (!cpnParentElement) {
+      console.error(this.constructor.name, 'updateCpnElement(). ERROR: Undefined cpnParentElement element.');
+      return;
+    }
+    if (!cpnElement) {
+      console.error(this.constructor.name, 'updateCpnElement(). ERROR: Undefined cpnElement element.');
+      return;
+    }
+    if (!cpnType) {
+      console.error(this.constructor.name, 'updateCpnElement(). ERROR: Undefined cpnType.');
+      return;
+    }
+
+    if (cpnParentElement[cpnType] instanceof Array) {
+      for (let i = 0; i < cpnParentElement[cpnType].length; i++) {
+        if (cpnParentElement[cpnType][i]._id === cpnElement._id) {
+          cpnParentElement[cpnType][i] = cpnElement;
+        }
+      }
+    } else {
+      cpnParentElement[cpnType] = cpnElement;
+    }
+    return cpnParentElement;
+  }
+
+  /**
+   * Remove cpn element from it's parent
+   * @param cpnParentElement
+   * @param cpnElement
+   * @param cpnType - old cpn type from where cpn element should be removed
+   */
+  removeCpnElement(cpnParentElement, cpnElement, cpnType) {
+    if (!cpnParentElement) {
+      console.error(this.constructor.name, 'removeCpnElement(). ERROR: Undefined cpnParentElement element.');
+      return;
+    }
+    if (!cpnElement) {
+      console.error(this.constructor.name, 'removeCpnElement(). ERROR: Undefined cpnElement element.');
+      return;
+    }
+    if (!cpnType) {
+      console.error(this.constructor.name, 'removeCpnElement(). ERROR: Undefined cpnType.');
+      return;
+    }
+
+    if (cpnParentElement[cpnType]) {
+      if (cpnParentElement[cpnType] instanceof Array) {
+        cpnParentElement[cpnType] = cpnParentElement[cpnType].filter((e) => {
+          return e._id !== cpnElement._id;
+        });
+        if (cpnParentElement[cpnType].length === 0) {
+          cpnParentElement[cpnType] = undefined;
+        }
+      } else {
+        cpnParentElement[cpnType] = undefined;
+      }
+    }
+    return cpnParentElement;
+  }
+
+
 
 }

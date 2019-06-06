@@ -103,14 +103,14 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       // console.log('allowDrop, element ', element, ' to ', parent, ' index = ', index);
       console.log('allowDrop, element ', element.data.type, ' to ', parent.data.type, ' index = ', index);
 
-      let permis  = false;
-      if( element && parent) {
-       if(element.data.type === 'declaration') {
-          permis = parent.data.type === 'block'  && this.isOneGroup(element, parent, index) ? true : false;
-       }
-       // } else if (element.data.type === 'page' ) {
-       //   permis =  parent.data.type === 'page' || parent.data.type === 'Pages' ? true : false;
-       // }
+      let permis = false;
+      if (element && parent) {
+        if (element.data.type === 'declaration') {
+          permis = parent.data.type === 'block' && this.isOneGroup(element, parent, index) ? true : false;
+        }
+        // } else if (element.data.type === 'page' ) {
+        //   permis =  parent.data.type === 'page' || parent.data.type === 'Pages' ? true : false;
+        // }
       }
 
       return permis;
@@ -212,11 +212,14 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   isOneGroup(element, parent, index) {
     console.log('isOneGroup ------', parent.data.children[index + 1].declarationType, parent.data.children[index].declarationType)
-    return (parent.data.children[index + 1] && (parent.data.children[index + 1].declarationType === element.data.declarationType) ) || (parent.data.children[index ] && ( parent.data.children[index ].declarationType === element.data.declarationType));
+    return (parent.data.children[index + 1] && (parent.data.children[index + 1].declarationType === element.data.declarationType)) || (parent.data.children[index] && (parent.data.children[index].declarationType === element.data.declarationType));
   }
 
 
   ngOnInit() {
+
+    const self = this;
+
     this.appSettings = this.settings.getAppSettings();
     this.appSettingsKeys = Object.keys(this.appSettings);
 
@@ -234,45 +237,10 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       // }
     });
 
-    this.eventService.on(Message.UPDATE_TREE, (data) => {
-
-      if (data.cpnElement && data.newTextValue) {
-        // console.log('UPDATE_TREE, data.cpnElement = ', data.cpnElement);
-        // console.log('UPDATE_TREE, this.treeComponent.treeModel = ', this.treeComponent.treeModel);
-
-        this.updateTreeByCpnElement(data.cpnElement, data.newTextValue);
+    this.eventService.on(Message.DECLARATION_CHANGED, (event) => {
+      if (event.cpnElement && event.newTextValue) {
+        this.updateTreeByCpnElement(event.cpnElement, event.newTextValue);
       }
-
-      // const newNodeId = data.newNodeId; // ? data.newNodeId  : data.comonBlock.id;
-      // if (data.state) {
-      //   this.stateTree = data.state;
-      //   // this.treeComponent.treeModel.setState(data.state);
-      // }
-      // this.loadProjectData(data.project);
-      // this.updateTree();
-
-      // setTimeout(() => {
-      //   this.treeComponent.treeModel.setState(data.state);
-      //   // const node = this.treeComponent.treeModel.getNodeById('project');
-
-      //   if (newNodeId) {
-      //     const nodeForEdit = this.treeComponent.treeModel.getNodeById(newNodeId);
-      //     if (!data.comonBlock) {
-      //       this.eventService.send(Message.OPEN_DECLARATION_BLOCK, { id: this.getCurrentBlock(nodeForEdit).id });
-      //     }
-      //     let expnNode = nodeForEdit;
-      //     while (expnNode.id !== 'project') {
-      //       expnNode.expand();
-      //       expnNode = expnNode.parent;
-      //     }
-
-      //     this.treeComponent.treeModel.setFocusedNode(nodeForEdit);
-      //     if (data.after !== 'delete' && data.after !== 'edit') {
-      //       this.goToEditNode(nodeForEdit);
-      //     }
-      //   }
-      // }, 100);
-
     });
 
     this.eventService.on(Message.UPDATE_TREE_PAGES, (data) => {
@@ -300,7 +268,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       };
       this.eventService.send(Message.PROPERTY_UPDATE, emiterData);
     });
-
 
     // this.eventService.on(Message.CHANGE_NAME_PAGE, (data) => {
     //   if (data.changedElement === 'tran') {
@@ -343,6 +310,21 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       }
     });
 
+    this.eventService.on(Message.SELECT_DECLARATION_NODE, (event) => {
+      console.log(self.constructor.name, 'SELECT_DECLARATION_NODE, event = ', event);
+      if (event && event.sender !== self) {
+        if (event.cpnElement) {
+          this.gotoNode(event.cpnElement._id);
+          // const node = this.getNodeByCpnElement(event.cpnElement);
+          // if (node) {
+          //   console.log(self.constructor.name, 'SELECT_DECLARATION_NODE, node = ', node);
+          //   this.gotoNode(node.id);
+          // }
+        }
+      }
+    });
+
+
   }
 
   ngOnDestroy() {
@@ -371,20 +353,23 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
 
+  getNodeByCpnElement(cpnElement) {
+    return this.treeComponent.treeModel.getNodeBy((node) => {
+      return node.data && node.data.cpnElement === cpnElement;
+    });
+  }
+
+
   /**
    * Find tree node by cpn element and update it's name
    * @param cpnElement
    */
   updateTreeByCpnElement(cpnElement, newTextValue) {
-    const nodeForUpdate = this.treeComponent.treeModel.getNodeBy((node) => {
-      // console.log('UPDATE_TREE, getNodeBy(), node = ', node);
-      return node.data && node.data.cpnElement === cpnElement;
-    });
+    const nodeForUpdate = this.getNodeByCpnElement(cpnElement);
     // if (nodeForUpdate
     //   && nodeForUpdate.data
     //   && nodeForUpdate.data.declarationType
     //   && !(nodeForUpdate instanceof Array)) {
-    //   // console.log('UPDATE_TREE, nodeForUpdate = ', nodeForUpdate);
     //   nodeForUpdate.data.name = this.modelService.cpnDeclarationElementToString(
     //     cpnElement,
     //     nodeForUpdate.data.declarationType);
@@ -747,7 +732,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     console.log('onAddNode(), cpnParentElement = ', cpnParentElement);
     console.log('onAddNode(), cpnElement = ', cpnElement);
 
-    this.addCpnElement(cpnParentElement, cpnElement, cpnType);
+    this.modelService.addCpnElement(cpnParentElement, cpnElement, cpnType);
 
     if (newNode) {
       if (treeNode.data.children && !(['declaration', 'page'].includes(treeNode.data.type))) {
@@ -815,7 +800,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       if (parentChildren) {
         const indexElem = parentChildren.indexOf(treeNode.data);
         parentChildren.splice(
-          indexElem , 1);
+          indexElem, 1);
         this.treeComponent.treeModel.update();
         if (treeNode.data) {
           if (treeNode.data.type === 'declaration') {
@@ -825,11 +810,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
             if (treeNode.parent.id !== 'Pages') {
               upperPage = treeNode.parent.data.cpnElement;
             } else {
-              if(indexElem !== 0)
+              if (indexElem !== 0)
                 upperPage = treeNode.parent.children[indexElem - 1].data.cpnElement;
             }
             if (upperPage) {
-              this.eventService.send(Message.PAGE_OPEN, {pageObject: upperPage});
+              this.eventService.send(Message.PAGE_OPEN, { pageObject: upperPage });
             }
             this.modelService.deletePage(treeNode.id);
             this.eventService.send(Message.DELETE_PAGE, { id: treeNode.id, parent: treeNode.parent.id });
@@ -904,64 +889,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
   }
 
-  /*sendChangingElementToDeclarationPanel(node, elementType, action, id) {
-    if (elementType === 'Declarations' || elementType === 'block') {
-      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-        node: action === 'rename' ? node : undefined,
-        action: action,
-        element: 'tab',
-        target: this.getCurrentBlock(node).id,
-        id: id,
-        state: this.treeComponent.treeModel.getState()
-      });
-    } else if (elementType === 'ml') {
-      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-        node: action === 'rename' ? node : undefined,
-        action: action,
-        element: elementType,
-        target: this.getCurrentBlock(node).id,
-        id: id,
-        state: this.treeComponent.treeModel.getState()
-      });
-    } else if (elementType === 'colset') {
-      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-        node: action === 'rename' ? node : undefined,
-        action: action,
-        element: elementType,
-        target: this.getCurrentBlock(node).id,
-        id: id,
-        state: this.treeComponent.treeModel.getState()
-      });
-    } else if (elementType === 'var') {
-      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-        node: action === 'rename' ? node : undefined,
-        action: action,
-        element: elementType,
-        target: this.getCurrentBlock(node).id,
-        id: id,
-        state: this.treeComponent.treeModel.getState()
-      });
-    } else if (elementType === 'globref') {
-      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-        node: action === 'rename' ? node : undefined,
-        action: action,
-        element: elementType,
-        target: this.getCurrentBlock(node).id,
-        id: id,
-        state: this.treeComponent.treeModel.getState()
-      });
-    } else if (this.modelService.paramsTypes.includes(id)) {
-      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
-        node: action === 'rename' ? node : undefined,
-        action: action,
-        target: this.getCurrentBlock(node).id,
-        id: id,
-        state: this.treeComponent.treeModel.getState()
-      });
-    }
-  }*/
-
-
   onNodeArrowClick(event, node) {
     this.openedLabel[node.id] = !this.openedLabel[node.id];
     if (this.openedLabel[node.id]) {
@@ -972,20 +899,25 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
   }
 
-  onNodeLabelClick(event, node) {
+  onNodeClick(event, node) {
     if (!this.openedLabel[node.id]) {
       this.onNodeArrowClick(event, node);
     } else {
       this.goToEditNode(node.id);
     }
+  }
 
-    // this.openNode(event, node);
-    // if (this.canCollapse(node)) {
-    //   if (this.openedLabel[node.id]) {
-    //     this.openedLabel[node.id] = false;
-    //   }
-    // }
-    // this.goToEditNode(node.id);
+  onNodeDblClick(event, node) {
+    this.onNodeClick(event, node);
+
+    if (this.selectedNode.data.type === 'declaration') {
+      this.eventService.send(Message.SELECT_DECLARATION_NODE, {
+        sender: this,
+        openEditorTab: true,
+        declarationType: this.selectedNode.data.declarationType,
+        cpnElement: this.selectedNode.data.cpnElement
+      });
+    }
   }
 
   /*
@@ -1015,11 +947,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   openNode(event, node) {
     const currentNode = this.getCurrentBlock(node);
     this.eventService.send(Message.OPEN_DECLARATION_BLOCK, { id: currentNode.id });
-    if (this.canCollapse(node)) {
-      this.sendMlToMlEditor(node.data.name);
-    } else {
-      this.sendMlToMlEditor('');
-    }
+
     event.preventDefault();
   }
 
@@ -1102,7 +1030,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   sendMlToMlEditor(value: any) {
-    this.eventService.send(Message.SML_TO_EDITOR, { fn: { data: value } });
   }
 
   getCurrentBlock(currentNode): any {
@@ -1854,7 +1781,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     if (cpnElement._disabled === 'true') {
       monitorsNode.options = { nodeClass: 'disabledNode' };
     }
-    monitorsNode.actions = [ 'delete'];
+    monitorsNode.actions = ['delete'];
 
     // typedescription
     const subnodes11 = [];
@@ -1951,7 +1878,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       subnodes.push(instRefNode);
     }
     nobp.children = subnodes;
-    nobp.actions  = [ 'delete'];
+    nobp.actions = ['delete'];
     return nobp;
   }
 
@@ -2031,6 +1958,12 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       node.data.cpnElement._value = event.target.checked ? 'true' : 'false';
     }
   }
+
+  isPage(node) {
+    return node.data
+      && node.data.type === 'page';
+  }
+
 
   // </editor-fold>
 
@@ -2294,9 +2227,10 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
 
     if (this.selectedNode.data.type === 'declaration') {
-      this.eventService.send(Message.CHANGE_EXPLORER_TREE, {
+      this.eventService.send(Message.SELECT_DECLARATION_NODE, {
+        sender: this,
+        openEditorTab: false,
         declarationType: this.selectedNode.data.declarationType,
-        action: 'select',
         cpnElement: this.selectedNode.data.cpnElement
       });
     }
@@ -2423,106 +2357,16 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       console.log('updateDeclarationNodeText(). cpnElement = ', cpnElement);
       console.log('updateDeclarationNodeText(). oldCpnType = ', oldCpnType);
 
-      node.parent.data.cpnElement = this.removeCpnElement(cpnParentElement, cpnElement, oldCpnType);
+      node.parent.data.cpnElement = this.modelService.removeCpnElement(cpnParentElement, cpnElement, oldCpnType);
       console.log('updateDeclarationNodeText(). node.parent.data.cpnElement = ', node.parent.data.cpnElement);
 
       cpnParentElement = node.parent.data.cpnElement;
-      node.parent.data.cpnElement = this.addCpnElement(cpnParentElement, cpnElement, cpnType);
+      node.parent.data.cpnElement = this.modelService.addCpnElement(cpnParentElement, cpnElement, cpnType);
     } else {
-      this.updateCpnElement(cpnParentElement, cpnElement, cpnType);
+      this.modelService.updateCpnElement(cpnParentElement, cpnElement, cpnType);
     }
   }
 
-  updateCpnElement(cpnParentElement, cpnElement, cpnType) {
-    if (!cpnParentElement) {
-      console.error('ProjectExplorerComponent.updateCpnElement(). ERROR: Undefined cpnParentElement element.');
-      return;
-    }
-    if (!cpnElement) {
-      console.error('ProjectExplorerComponent.updateCpnElement(). ERROR: Undefined cpnElement element.');
-      return;
-    }
-    if (!cpnType) {
-      console.error('ProjectExplorerComponent.updateCpnElement(). ERROR: Undefined cpnType.');
-      return;
-    }
-
-    if (cpnParentElement[cpnType] instanceof Array) {
-      for (let i = 0; i < cpnParentElement[cpnType].length; i++) {
-        if (cpnParentElement[cpnType][i]._id === cpnElement._id) {
-          cpnParentElement[cpnType][i] = cpnElement;
-        }
-      }
-    } else {
-      cpnParentElement[cpnType] = cpnElement;
-    }
-    return cpnParentElement;
-  }
-
-  /**
-   * Remove cpn element from it's parent
-   * @param cpnParentElement
-   * @param cpnElement
-   * @param cpnType - old cpn type from where cpn element should be removed
-   */
-  removeCpnElement(cpnParentElement, cpnElement, cpnType) {
-    if (!cpnParentElement) {
-      console.error('ProjectExplorerComponent.removeCpnElement(). ERROR: Undefined cpnParentElement element.');
-      return;
-    }
-    if (!cpnElement) {
-      console.error('ProjectExplorerComponent.removeCpnElement(). ERROR: Undefined cpnElement element.');
-      return;
-    }
-    if (!cpnType) {
-      console.error('ProjectExplorerComponent.removeCpnElement(). ERROR: Undefined cpnType.');
-      return;
-    }
-
-    if (cpnParentElement[cpnType]) {
-      if (cpnParentElement[cpnType] instanceof Array) {
-        cpnParentElement[cpnType] = cpnParentElement[cpnType].filter((e) => {
-          return e._id !== cpnElement._id;
-        });
-        if (cpnParentElement[cpnType].length === 0) {
-          cpnParentElement[cpnType] = undefined;
-        }
-      } else {
-        cpnParentElement[cpnType] = undefined;
-      }
-    }
-    return cpnParentElement;
-  }
-
-  /**
-   * Add cpn element to parent
-   * @param cpnParentElement
-   * @param cpnElement
-   * @param cpnType - new cpn type where cpn element should be placed
-   */
-  addCpnElement(cpnParentElement, cpnElement, cpnType) {
-    if (!cpnParentElement) {
-      console.error('ProjectExplorerComponent.addCpnElement(). ERROR: Undefined cpnParentElement element.');
-      return cpnParentElement;
-    }
-    if (!cpnElement) {
-      console.error('ProjectExplorerComponent.addCpnElement(). ERROR: Undefined cpnElement element.');
-      return cpnParentElement;
-    }
-    if (!cpnType) {
-      console.error('ProjectExplorerComponent.addCpnElement(). ERROR: Undefined cpnType.');
-      return cpnParentElement;
-    }
-
-    if (cpnParentElement[cpnType] instanceof Array) {
-      cpnParentElement[cpnType].push(cpnElement);
-    } else if (cpnParentElement[cpnType]) {
-      cpnParentElement[cpnType] = [cpnParentElement[cpnType], cpnElement];
-    } else {
-      cpnParentElement[cpnType] = cpnElement;
-    }
-    return cpnParentElement;
-  }
 
   saveEditedData_OLD(event) {
     console.log('saveEditedData(), event = ', event);

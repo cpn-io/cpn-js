@@ -4,6 +4,68 @@
 
     <tab *ngIf="tab" [id]="tab.id" [tabTitle]="tab.name">
 
+      <!-- Project details toolbar -->
+      <!------------------------------>
+      <nav class="navbar navbar-sm navbar-expand shadow-sm">
+
+        <ul class="navbar-nav mr-auto">
+
+          <!-- Action buttons -->
+          <div style="display: contents">
+
+            <!-- New action with dropdown menu -->
+            <div *ngIf="selectedNode.type !== 'block'">
+              <li class="dropdown nav-item">
+                <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle nav-link" data-toggle="dropdown"
+                  href="#" id="navbarDropdown">
+                  <i class="fas fa-plus"></i>
+                  <span>New</span>
+                </a>
+                <div aria-labelledby="navbarDropdown" class="dropdown-menu shadow">
+                  <a *ngIf="selectedNode.actions && selectedNode.actions.includes('declaration')"
+                    (click)="onAddNode(selectedNode, 'declaration')" class="dropdown-item" href="#">New declaration</a>
+                  <a *ngIf="selectedNode.actions && selectedNode.actions.includes('block')"
+                    (click)="onAddNode(selectedNode, 'block')" class="dropdown-item" href="#">New block</a>
+                </div>
+              </li>
+
+              <div class="divider"></div>
+            </div>
+
+            <!-- Delete action -->
+            <li *ngIf="selectedNode.actions && selectedNode.actions.includes('delete')" class="nav-item">
+              <a (click)="onDeleteNode(selectedNode)" class="nav-link" href="#">
+                <i class="fas fa-minus"></i>
+                <span>Delete</span>
+              </a>
+            </li>
+
+            <div class="divider"></div>
+
+            <!-- Up/down actions -->
+            <li class="nav-item">
+              <a (click)="onUpNode(selectedNode)" class="nav-link" href="#">
+                <i class="fas fa-arrow-up"></i>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a (click)="onDownNode(selectedNode)" class="nav-link" href="#">
+                <i class="fas fa-arrow-down"></i>
+              </a>
+            </li>
+
+            <div class="divider"></div>
+
+
+          </div>
+        </ul>
+
+      </nav>
+
+
+      <!-- Project details table -->
+      <!--------------------------->
+
       <div class="workspace-container-with-tab">
         <div class="inner">
           <div class="scroll-y">
@@ -11,24 +73,24 @@
 
               <div style="margin:-1px">
 
-                <!-- <h1>Hello !</h1> -->
-                <div *ngIf="tab.id === 'all'">
-                  <table class="table table-bordered table-hover table-small">
-                    <tr *ngFor="let node of declarationNodes">
-                      <!-- <td width="50%" class="valueName">{{ item.declarationType }}</td>
-                      <td width="50%" contenteditable='true'>{{ item.name }}</td> -->
+                <table class="table table-bordered table-hover table-small">
+                  <tr *ngFor="let node of getNodes(tab.id)">
 
-                      <td>
-                        <div [id]="'textinpfield_' + node.id" class="editablenode" [contentEditable]="true"
-                          [innerHTML]="node.text | colorDeclarations | safeHtml">
-                        </div>
-                      </td>
+                    <td [ngClass]="node.type === 'block' ? 'blockHeader' : 'editablenode'">
+                      <!-- <div *ngIf="node.type === 'block'">
+                          {{ node.text }}
+                        </div> -->
 
-                    </tr>
-                  </table>
+                      <div [id]="'textinpfield_' + node.id" class="editablenode" [contentEditable]="true"
+                        (click)="onNodeClick($event, node)"
+                        (dblclick)="onNodeDblClick($event, node)"
+                        (focusout)="saveEditedData($event, node)"
+                        [innerHTML]="node.text | colorDeclarations | safeHtml">
+                      </div>
+                    </td>
 
-
-                </div>
+                  </tr>
+                </table>
 
               </div>
 

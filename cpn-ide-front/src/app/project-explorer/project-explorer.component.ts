@@ -73,6 +73,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   // Множество идентификаторов узлов, которые должны быть подсвечены снизу в даный момент
   underlineNodeSet = new Set();
 
+  // Множество идентификаторов узлов, которые должны быть подсвечены снизу в даный момент
+  disabledNodeSet = new Set();
+
   // Состояние укороченных названий узлов
   openedLabel = [];
 
@@ -149,7 +152,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       }
     }
   };
-
 
 
   /*onMoveNode(event) {
@@ -1766,7 +1768,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   // </editor-fold>
 
-  // <editor-fold desc="Creating nodes for monitors">
+  // <editor-fold desc="Creating monitors nodes and actions">
 
   /**
    * Creating monitors node
@@ -1778,7 +1780,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     const monitorsNode = this.createTreeNode(name);
     monitorsNode.classes = ['tree-project'];
     monitorsNode.cpnElement = cpnElement;
-    // monitorsNode.actions = ['page'];
+    monitorsNode.type = 'monitors';
+    monitorsNode.actions = ['block', 'disable'];
 
     const monitorsNodeList = [];
 
@@ -1804,14 +1807,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * @returns - tree node
    */
   createMonitorNode(cpnElement) {
-    const monitorsNode = this.createTreeNode(cpnElement._id, cpnElement._name);
-    monitorsNode.cpnElement = cpnElement;
-    monitorsNode.editable = true;
-    monitorsNode.type = 'monitor';
-    if (cpnElement._disabled === 'true') {
-      monitorsNode.options = { nodeClass: 'disabledNode' };
-    }
-    monitorsNode.actions = ['delete'];
+    const monitorNode = this.createTreeNode(cpnElement._id, cpnElement._name);
+    monitorNode.cpnElement = cpnElement;
+    monitorNode.editable = true;
+    monitorNode.type = 'monitor';
+    monitorNode.actions = [];
 
     // typedescription
     const subnodes11 = [];
@@ -1849,9 +1849,16 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     // for(let subn of subnodes11) {
     //   subn.actions = ['delete'];
     // }
-    monitorsNode.children = subnodes11;
+    monitorNode.children = subnodes11;
 
-    return monitorsNode;
+    if (cpnElement._disabled === 'true') {
+      monitorNode.actions.push('enable');
+      this.doDisableMonitorNodeInTree(monitorNode, true);
+    } else {
+      monitorNode.actions.push('disable');
+    }
+
+    return monitorNode;
   }
 
   createMonitorOptionNode(cpnElement, option) {
@@ -1960,19 +1967,34 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     return d;
   }
 
-  isMonitorType(node) {
-    return node.data
-      && node.data.type === 'monitor_type';
+  isMonitorsSubnode(treeNode): boolean {
+    return treeNode.data
+      && treeNode.data.type.toString().startWith('monitor');
   }
 
-  isMonitorOption(node) {
-    return node.data
-      && node.data.type === 'monitor_option';
+  isMonitorType(treeNode): boolean {
+    return treeNode.data
+      && treeNode.data.type === 'monitor_type';
   }
 
-  isMonitorRef(node) {
-    return node.data
-      && node.data.type === 'monitor_ref';
+  isMonitor(treeNode): boolean {
+    return treeNode.data
+      && treeNode.data.type === 'monitor';
+  }
+
+  isMonitorsRoot(treeNode): boolean {
+    return treeNode.data
+      && treeNode.data.type === 'monitors';
+  }
+
+  isMonitorOption(treeNode): boolean {
+    return treeNode.data
+      && treeNode.data.type === 'monitor_option';
+  }
+
+  isMonitorRef(treeNode): boolean {
+    return treeNode.data
+      && treeNode.data.type === 'monitor_ref';
   }
 
   getMonitorOption(node): boolean {
@@ -1989,13 +2011,63 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
   }
 
+  onDisableMonitor(treeNode) {
+    console.log('onDisableMonitor(), node = ', treeNode);
+    this.disableMonitor(treeNode, true);
+  }
+
+  onEnableMonitor(treeNode) {
+    console.log('onEnableMonitor(), node = ', treeNode);
+    this.disableMonitor(treeNode, false);
+  }
+
+  disableMonitor(treeNode, disable: boolean) {
+    console.log('disableMonitor(), treeNode = ', treeNode);
+    treeNode.data.actions.pop(disable ? 'disable' : 'enable');
+    treeNode.data.actions.push(disable ? 'enable' : 'disable');
+    if (this.isMonitorsRoot(treeNode)) {
+      console.log('disableMonitor(), MonitorsRoot');
+      for (const subNode of treeNode.children) {
+        subNode.data.cpnElement._disabled = disable.toString();
+        subNode.data.actions.pop(disable ? 'disable' : 'enable');
+        subNode.data.actions.push(disable ? 'enable' : 'disable');
+        this.doDisableMonitorNodeInTree(subNode, disable);
+      }
+    } else {
+      console.log('disableMonitor(), not MonitorsRoot');
+      treeNode.data.cpnElement._disabled = disable.toString();
+      this.doDisableMonitorNodeInTree(treeNode, disable);
+    }
+  }
+
+  doDisableMonitorNodeInTree(treeNode: any, disable: boolean) {
+    console.log('doDisableMonitorNode(), treeNode = ', treeNode);
+    this.doDisableNodeInTree(treeNode.id, disable);
+    for (const childNode of treeNode.children) {
+      this.doDisableMonitorNodeInTree(childNode, disable);
+    }
+  }
+
+  doDisableNodeInTree(nodeId, disable: boolean) {
+    if (disable) {
+      this.disabledNodeSet.add(nodeId);
+    } else {
+      if (this.disabledNodeSet.has(nodeId)) {
+        this.disabledNodeSet.delete(nodeId);
+      }
+    }
+  }
+
+  isDisabledNode(nodeId):  boolean {
+    return this.disabledNodeSet.has(nodeId);
+  }
+
+  // </editor-fold desc="Monitors">
+
   isPage(node) {
     return node.data
       && node.data.type === 'page';
   }
-
-
-  // </editor-fold>
 
   /**
    * Loading project JSON to tree component object

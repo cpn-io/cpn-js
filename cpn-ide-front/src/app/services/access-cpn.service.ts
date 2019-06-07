@@ -103,12 +103,32 @@ export class AccessCpnService {
   }
 
   getErrorIds(issues) {
+    console.log('getErrorIds(), issues = ', issues);
+
     const errorIds = [];
-    if (issues) {
+    if (issues && issues.length > 0) {
       for (const id in issues) {
         errorIds.push(id);
       }
+
+      for (const issue of issues) {
+        if (issue) {
+          if (!errorIds.includes(issue.id)) {
+            errorIds.push(issue.id);
+          }
+
+          // parse from description
+          if (issue.description) {
+            const parser = issue.description.match('^\\S+');
+            for (const w of parser) {
+              console.log('getErrorIds(), w = ', w);
+            }
+          }
+        }
+      }
     }
+
+
     return errorIds;
   }
 

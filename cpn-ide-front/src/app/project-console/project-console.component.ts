@@ -58,9 +58,9 @@ export class ProjectConsoleComponent implements OnInit {
           for (const id of Object.keys(event.data.issues)) {
             const issue = event.data.issues[id][0];
             if (issue.description.includes(issue.id)) {
-              this.logError('Error: ' + issue.description);
+              this.logError(issue.description);
             } else {
-              this.logError('Error: ' + issue.id + ': ' + issue.description);
+              this.logError(issue.id + ': ' + issue.description);
             }
           }
         }

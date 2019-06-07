@@ -92,14 +92,8 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   updateChanges() {
     console.log('updateChanges(), this = ', this);
 
-    const emiterData = {
-      labels: [],
-      elementid: this.cpnElement._id,
-      cpnElement: this.cpnElement,
-      type: this.elementType,
-      pagename: this.modelService.getPageById(this.pageId).pageattr._name
-    };
-    this.eventService.send(Message.PROPERTY_UPDATE, emiterData);
+    this.eventService.send(Message.MODEL_UPDATE_DIAGRAM, { cpnElement: this.cpnElement });
+    this.eventService.send(Message.MODEL_CHANGED);
   }
 
 
@@ -287,6 +281,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
       portsock += '(' + bind[0] + ',' + bind[1] + ')';
     }
     bindObj.trans.subst._portsock = portsock;
+
     this.updateChanges();
   }
 

@@ -43,6 +43,7 @@ CpnContextPadProvider.prototype.getContextPadEntries = function (element) {
 
   function removeElement() {
     contextPad.close();
+    
     let forDelete = modeling.getShapeArcs(element);
     forDelete.push(element);
     modeling.removeElements(forDelete);

@@ -639,7 +639,7 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
   else if (cpnLabelElement.text)
     text = cpnLabelElement.text.__text; // for shape external label
 
-  console.log('Modeling.prototype.getLabelAttrs(), text = ', text);
+  // console.log('Modeling.prototype.getLabelAttrs(), text = ', text);
 
   // if label is empty check for default values
   if (labelType) {
@@ -680,8 +680,8 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
   if (text.trim() === '' || text === defaultValue)
     attrs.hidden = true;
 
-  if (labelType === 'port')
-    console.log('Modeling.prototype.getLabelAttrs(), text = ', text);
+  // if (labelType === 'port')
+  //   console.log('Modeling.prototype.getLabelAttrs(), text = ', text);
 
   return attrs;
 }

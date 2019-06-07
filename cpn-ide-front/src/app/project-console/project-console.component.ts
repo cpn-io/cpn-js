@@ -112,7 +112,7 @@ export class ProjectConsoleComponent implements OnInit {
     });
 
     // MODEL CHANGES
-    this.eventService.on(Message.MODEL_CHANGED, (event) => {
+    this.eventService.on(Message.MODEL_CHANGED_DETAILS, (event) => {
       if (event && event.changesPath) {
         this.logChanges(event.changesPath);
       }

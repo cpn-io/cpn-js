@@ -49,6 +49,9 @@ export class ValidationService {
     this.eventService.on(Message.MODEL_RELOAD, () => {
       this.init();
     });
+    this.eventService.on(Message.MODEL_CHANGED, () => {
+      this.checkValidation();
+    });
 
     this.checkValidation();
   }
@@ -132,9 +135,16 @@ export class ValidationService {
   filterChangeList(changeList, wordList) {
     return changeList.filter((p) => {
       for (const w of wordList) {
-        if (p.includes(w)) {
+
+        // /\bhow\b/i.test(p);
+
+        if (new RegExp('\\b' + w + '\\b', 'gi').test(p)) {
           return false;
         }
+
+        // if (p.includes(w)) {
+        //   return false;
+        // }
       }
       return true;
     });
@@ -144,6 +154,8 @@ export class ValidationService {
    * Regular checking validation
    */
   checkValidation() {
+    // console.log('checkValidation()');
+
     if (this.checkValidationBusy) {
       return;
     }
@@ -166,7 +178,7 @@ export class ValidationService {
       const backupChangeList = this.filterChangeList(changeList, this.nobackupKeyList);
 
       // console.log('END detectChanges(), changeList = ', changeList);
-      // console.log('END detectChanges(), nonGeometryChangeList = ', nonGeometryChangeList);
+      // console.log('END detectChanges(), noGeometryChangeList = ', noGeometryChangeList);
 
       if (changeList.length > 0) {
         // console.log('detectChanges(), CHANGE DETECTED, A = ', JSON.stringify(currentModel));
@@ -184,7 +196,7 @@ export class ValidationService {
         }
 
         for (const changePath of changeList) {
-          this.eventService.send(Message.MODEL_CHANGED, { changesPath: changePath });
+          this.eventService.send(Message.MODEL_CHANGED_DETAILS, { changesPath: changePath });
         }
 
         this.lastProjectData = currentModel;
@@ -202,7 +214,7 @@ export class ValidationService {
       this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData(), complexVerify: false });
     }
 
-    setTimeout(() => this.checkValidation(), this.VALIDATION_TIMEOUT);
+    // setTimeout(() => this.checkValidation(), this.VALIDATION_TIMEOUT);
 
     this.checkValidationBusy = false;
   }

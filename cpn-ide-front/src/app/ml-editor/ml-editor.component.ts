@@ -13,7 +13,7 @@ export class MlEditorComponent implements OnInit, OnDestroy {
 
   textValue = '';
   cpnElement = {};
-  declarationType;
+  cpnType;
 
   constructor(
     private eventService: EventService,
@@ -27,13 +27,15 @@ export class MlEditorComponent implements OnInit, OnDestroy {
   }
 
   selectDeclarationNode(event) {
-    if (event.cpnElement && event.declarationType) {
+    console.log(this.constructor.name, 'selectDeclarationNode(), event = ', event);
+
+    if (event.cpnElement && event.cpnType) {
       this.cpnElement = event.cpnElement;
-      this.declarationType = event.declarationType;
+      this.cpnType = event.cpnType;
 
       this.textValue = this.modelService.cpnDeclarationElementToString(
         this.cpnElement,
-        this.declarationType);
+        this.cpnType);
     }
   }
 
@@ -59,6 +61,8 @@ export class MlEditorComponent implements OnInit, OnDestroy {
         cpnElement: this.cpnElement,
         newTextValue: event.target.textContent
       });
+
+      this.eventService.send(Message.MODEL_CHANGED);
     }
   }
 

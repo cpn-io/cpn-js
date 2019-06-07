@@ -87,11 +87,7 @@ export class AccessCpnService {
         (data: any) => {
           console.log('AccessCpnService, initNet(), SUCCESS, data = ', data);
           this.initNetProcessing = false;
-          this.eventService.send(Message.SERVER_INIT_NET_DONE, { data: data });
-
-          if (!data.success) {
-            this.errorData = data.issues;
-          }
+          this.eventService.send(Message.SERVER_INIT_NET_DONE, { data: data, errorIds: this.getErrorIds(data.issues) });
 
           // Init simulator
           // if (!this.simInitialized) {
@@ -105,6 +101,37 @@ export class AccessCpnService {
         }
       );
   }
+
+  getErrorIds(issues) {
+    console.log('getErrorIds(), issues = ', issues);
+
+    const errorIds = [];
+    if (issues && issues.length > 0) {
+      for (const id in issues) {
+        errorIds.push(id);
+      }
+
+      for (const issue of issues) {
+        if (issue) {
+          if (!errorIds.includes(issue.id)) {
+            errorIds.push(issue.id);
+          }
+
+          // parse from description
+          if (issue.description) {
+            const parser = issue.description.match('^\\S+');
+            for (const w of parser) {
+              console.log('getErrorIds(), w = ', w);
+            }
+          }
+        }
+      }
+    }
+
+
+    return errorIds;
+  }
+
 
   /**
    * Reset simulator initialization flag

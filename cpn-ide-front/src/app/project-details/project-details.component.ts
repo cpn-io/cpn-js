@@ -129,7 +129,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   }
 
   createBlockDeclarationNodes(cpnParentElement, cpnElement) {
-    console.log('createBlockDeclarationNodes(), cpnElement = ', cpnElement);
+    // console.log(this.constructor.name, 'createBlockDeclarationNodes(), cpnElement = ', cpnElement);
 
     let blockDeclarationsNodes = [];
 
@@ -327,18 +327,25 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   }
 
 
+  sendSelectDeclarationNode(node, openEditor) {
+    this.eventService.send(Message.SELECT_DECLARATION_NODE, {
+      sender: this,
+      openEditorTab: openEditor,
+      cpnType: node.cpnType,
+      cpnElement: node.cpnElement
+    });
+  }
+
+
   onNodeClick(event, node) {
-    this.selectedNode = node;
+    if (this.selectedNode !== node) {
+      this.selectedNode = node;
 
-    this.goToEditNode(node.id);
+      this.goToEditNode(node.id);
 
-    if (node.type === 'declaration') {
-      this.eventService.send(Message.SELECT_DECLARATION_NODE, {
-        sender: this,
-        openEditorTab: false,
-        declarationType: node.declarationType,
-        cpnElement: node.cpnElement
-      });
+      if (node.type === 'declaration') {
+        this.sendSelectDeclarationNode(node, false);
+      }
     }
   }
 
@@ -346,12 +353,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     this.onNodeClick(event, node);
 
     if (node.type === 'declaration') {
-      this.eventService.send(Message.SELECT_DECLARATION_NODE, {
-        sender: this,
-        openEditorTab: true,
-        declarationType: node.declarationType,
-        cpnElement: node.cpnElement
-      });
+      this.sendSelectDeclarationNode(node, true);
     }
   }
 
@@ -432,6 +434,10 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       cpnElement: node.cpnElement,
       newTextValue: value
     });
+
+    this.eventService.send(Message.MODEL_CHANGED);
+
+    this.sendSelectDeclarationNode(node, false);
   }
 
   getNodeByCpnElement(cpnElement) {

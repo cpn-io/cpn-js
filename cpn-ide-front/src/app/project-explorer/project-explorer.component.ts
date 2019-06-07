@@ -106,7 +106,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       let permis = false;
       if (element && parent) {
         if (element.data.type === 'declaration') {
-          permis = parent.data.type === 'block' && this.isOneGroup(element, parent, index) ? true : false;
+         // permis = parent.data.type === 'block' && this.isOneGroup(element, parent, index) ? true : false;
+          permis = parent.data.type === 'block' && this.isOneGroup({from: element, to: { index: index, parent: parent}}) ? true : false;
         }
         // } else if (element.data.type === 'page' ) {
         //   permis =  parent.data.type === 'page' || parent.data.type === 'Pages' ? true : false;
@@ -183,16 +184,31 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     return toIndex - startIndex;
   }
 
-  isOneGroup(element, parent, index) {
-    //console.log('isOneGroup ----', parent.data.children[index ].declarationType, parent.data.children[index - 1 ].declarationType)
+  // isOneGroup(element, parent, index) {
+  //   //console.log('isOneGroup ----', parent.data.children[index ].declarationType, parent.data.children[index - 1 ].declarationType)
+  //
+  //   const prevNode = parent.data.children[index - 1];
+  //   const currNode = parent.data.children[index];
+  //
+  //   return (
+  //     (element.data.type === 'declaration' || element.data.type === 'block')  && ((currNode && currNode.declarationType === element.data.declarationType)
+  //     || (prevNode && (prevNode.declarationType === element.data.declarationType))
+  //     || ((!prevNode || !currNode) && !parent.data.cpnElement[element.data.declarationType]))
+  //   );
+  // }
 
+  isOneGroup(data) {
+    //console.log('isOneGroup ----', parent.data.children[index ].declarationType, parent.data.children[index - 1 ].declarationType)
+    const element = data.from;
+    const parent = data.from.parent;
+    const index = data.to.index
     const prevNode = parent.data.children[index - 1];
     const currNode = parent.data.children[index];
 
     return (
-      element.data.type === 'declaration' && (currNode && currNode.declarationType === element.data.declarationType)
-      || (prevNode && (prevNode.declarationType === element.data.declarationType))
-      || ((!prevNode || !currNode) && !parent.data.cpnElement[element.data.declarationType])
+      (element.data.type === 'declaration' || element.data.type === 'block')  && ((currNode && currNode.declarationType === element.data.declarationType)
+        || (prevNode && (prevNode.declarationType === element.data.declarationType))
+        || ((!prevNode || !currNode) && !parent.data.cpnElement[element.data.declarationType]))
     );
   }
 
@@ -776,35 +792,67 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     return JSON.parse(JSON.stringify(obj));
   }
 
-  onUpNode() {
-    const treeNode = this.treeComponent.treeModel.getActiveNode();
-    const from = treeNode;
-    const to = { index: treeNode.parent.data.children.indexOf(treeNode.data) - 1, parent: treeNode.parent };
-    if (this.isOneGroup(treeNode, treeNode.parent, to.index)) {
-      this.treeComponent.treeModel.moveNode(from, to);
-      this.modelService.moveNonModelJsonElement(
-        treeNode.data.cpnElement,
-        treeNode.parent.data.cpnElement,
-        treeNode.parent.data.cpnElement,
-        to.index,
-        treeNode.data.cpnType);
-    }
+  // onUpNode() {
+  //   const treeNode = this.treeComponent.treeModel.getActiveNode();
+  //   const from = treeNode;
+  //   const type = treeNode.data.cpnType ?  treeNode.data.cpnType : treeNode.data.declarationType || treeNode.data.type;
+  //   const to = { index: treeNode.parent.data.children.indexOf(treeNode.data) - 1, parent: treeNode.parent };
+  //   if (this.isOneGroup(treeNode, treeNode.parent, to.index)) {
+  //     this.treeComponent.treeModel.moveNode(from, to);
+  //     this.modelService.moveNonModelJsonElement(
+  //       treeNode.data.cpnElement,
+  //       treeNode.parent.data.cpnElement,
+  //       treeNode.parent.data.cpnElement,
+  //       to.index,
+  //       type);
+  //   }
+  //
+  //   //  this.moveNodeInTree(this.treeComponent, treeNode.parent, undefined, {from, to});
+  // }
 
-    //  this.moveNodeInTree(this.treeComponent, treeNode.parent, undefined, {from, to});
+  onUpNode() {
+    this.moveDeclUpDown(this.getDataForMoving('up'));
   }
 
+  // onDownNode() {
+  //   const treeNode = this.treeComponent.treeModel.getActiveNode();
+  //   const from = treeNode;
+  //   const type = treeNode.data.cpnType ?  treeNode.data.cpnType : treeNode.data.declarationType || treeNode.data.type;
+  //   const to = { index: treeNode.parent.data.children.indexOf(treeNode.data) + 2, parent: treeNode.parent };
+  //   if (this.isOneGroup(treeNode, treeNode.parent, to.index)) {
+  //     this.treeComponent.treeModel.moveNode(from, to);
+  //     this.modelService.moveNonModelJsonElement(
+  //       treeNode.data.cpnElement,
+  //       treeNode.parent.data.cpnElement,
+  //       treeNode.parent.data.cpnElement,
+  //       to.index - 1,
+  //       type);
+  //   }
+  // }
+
   onDownNode() {
-    const treeNode = this.treeComponent.treeModel.getActiveNode();
-    const from = treeNode;
-    const to = { index: treeNode.parent.data.children.indexOf(treeNode.data) + 2, parent: treeNode.parent };
-    if (this.isOneGroup(treeNode, treeNode.parent, to.index)) {
-      this.treeComponent.treeModel.moveNode(from, to);
+    this.moveDeclUpDown(this.getDataForMoving('down'));
+  }
+
+  moveDeclUpDown(data) {
+    if (this.isOneGroup(data)) {
+      this.treeComponent.treeModel.moveNode(data.from, data.to);
       this.modelService.moveNonModelJsonElement(
-        treeNode.data.cpnElement,
-        treeNode.parent.data.cpnElement,
-        treeNode.parent.data.cpnElement,
-        to.index - 1,
-        treeNode.data.cpnType);
+        data.from.data.cpnElement,
+        data.from.parent.data.cpnElement,
+        data.from.parent.data.cpnElement,
+        data.to.index - 1,
+        data.type);
+    }
+  }
+
+
+  getDataForMoving(direction){
+    const treeNode = this.treeComponent.treeModel.getActiveNode();
+    return {
+      from: treeNode,
+      type: treeNode.data.cpnType ?  treeNode.data.cpnType : treeNode.data.declarationType || treeNode.data.type,
+      to : { index: direction === 'down' ? treeNode.parent.data.children.indexOf(treeNode.data) + 2 : treeNode.parent.data.children.indexOf(treeNode.data) - 1, parent: treeNode.parent }
     }
   }
 

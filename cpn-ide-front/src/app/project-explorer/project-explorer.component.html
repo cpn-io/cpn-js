@@ -46,12 +46,12 @@
 
           <!-- Up/down actions -->
           <li class="nav-item">
-            <a (click)="onUpNode(selectedNode)" class="nav-link" href="#">
+            <a (click)="onUpNode(selectedNode)" class="nav-link"   [ngClass]="{'disabled': !isOneGroup(getDataForMoving('up'))}" href="#">
               <i class="fas fa-arrow-up"></i>
             </a>
           </li>
-          <li class="nav-item">
-            <a (click)="onDownNode(selectedNode)" class="nav-link" href="#">
+          <li class="nav-item" >
+            <a (click)="onDownNode(selectedNode)" class="nav-link"  [ngClass]="{'disabled': !isOneGroup(getDataForMoving('down'))}" href="#">
               <i class="fas fa-arrow-down"></i>
             </a>
           </li>

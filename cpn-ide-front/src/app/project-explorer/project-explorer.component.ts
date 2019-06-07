@@ -28,6 +28,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   JSON = JSON;
 
+  tabList = [
+    { id: 'explorerPanel', name: 'Project explorer' },
+    { id: 'applicationSettings', name: 'Application settings' },
+  ];
+
   idNodeCounter = 0;
   private eventHub: any;
   newPageCount = 0;
@@ -224,31 +229,18 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.eventService.on(Message.UPDATE_TREE_PAGES, (data) => {
-      this.updatePagesNode(data.currentPageId);
+    this.eventService.on(Message.UPDATE_TREE_PAGES, (event) => {
+      this.updatePagesNode(event.currentPageId);
     });
 
-    this.eventService.on(Message.SUBPAGE_TRANS_CREATE, (data) => {
-      // this.createPageNode()
-      const defValue = data.pageName ? data.pageName : this.settings.getAppSettings()['page'] + ' ' + (++this.newPageCount);
-      const cpnElement = this.modelService.createCpnPage(defValue, data.id);
-      const newNode = this.createPageNode(cpnElement);
+    this.eventService.on(Message.SUBPAGE_TRANS_CREATE, (event) => {
+      const subpageCpnElement = this.modelService.createSubpage(event.cpnElement, event.subPageName, event.subPageId);
+      this.updatePagesNode(event.currentPageId);
 
-      data.cpnElement.subst.subpageinfo._name = newNode.cpnElement.pageattr._name;
-      const treeNode = this.treeComponent.treeModel.getNodeById(data.currentPageId);
-      const cpnParentElement = this.modelService.getCpn(); //treeNode.parent.data.cpnElement; //
-      this.addCreatedNode(treeNode, newNode, cpnElement, 'page', cpnParentElement, false);
-      this.updatePagesNode(data.currentPageId);
-
-      const emiterData = {
-        labels: [],
-        elementid: data.cpnElement._id,
-        cpnElement: data.cpnElement,
-        type: 'cpn:Transition',
-        pagename: this.modelService.getPageById(data.currentPageId).pageattr._name,
-        subpageName: defValue
-      };
-      this.eventService.send(Message.PROPERTY_UPDATE, emiterData);
+      this.eventService.send(Message.SUBPAGE_UPDATE_TRANSITION, {
+        cpnElement: event.cpnElement,
+        subpageName: subpageCpnElement.pageattr._name
+      });
     });
 
     // this.eventService.on(Message.CHANGE_NAME_PAGE, (data) => {
@@ -278,16 +270,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     // Get error identificators
     this.eventService.on(Message.SERVER_INIT_NET_DONE, (event) => {
       this.errorIds = [];
-      if (event && event.data) {
-        if (!event.data.success) {
-          for (const id of Object.keys(event.data.issues)) {
-            this.errorIds.push(id);
-          }
-
-          // expand error nodes
-          for (const id of this.errorIds) {
-            this.expandParentNode(id);
-          }
+      if (event && event.errorIds) {
+        this.errorIds = event.errorIds;
+        // expand error nodes
+        for (const id of this.errorIds) {
+          this.expandParentNode(id);
         }
       }
     });
@@ -947,14 +934,19 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     this.onNodeClick(event, node);
 
     if (this.selectedNode.data.type === 'declaration') {
-      this.eventService.send(Message.SELECT_DECLARATION_NODE, {
-        sender: this,
-        openEditorTab: true,
-        declarationType: this.selectedNode.data.declarationType,
-        cpnElement: this.selectedNode.data.cpnElement
-      });
+      this.sendSelectDeclarationNode(this.selectedNode, true);
     }
   }
+
+  sendSelectDeclarationNode(node, openEditor) {
+    this.eventService.send(Message.SELECT_DECLARATION_NODE, {
+      sender: this,
+      openEditorTab: openEditor,
+      cpnType: node.data.cpnType,
+      cpnElement: node.data.cpnElement
+    });
+  }
+
 
   /*
    * Edit node text by click on node handler or by context menu
@@ -2273,12 +2265,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
 
     if (this.selectedNode.data.type === 'declaration') {
-      this.eventService.send(Message.SELECT_DECLARATION_NODE, {
-        sender: this,
-        openEditorTab: false,
-        declarationType: this.selectedNode.data.declarationType,
-        cpnElement: this.selectedNode.data.cpnElement
-      });
+      this.sendSelectDeclarationNode(this.selectedNode, false);
     }
   }
 
@@ -2356,6 +2343,10 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       cpnElement: node.data.cpnElement,
       newTextValue: htmlElement.textContent
     });
+
+    this.eventService.send(Message.MODEL_CHANGED);
+
+    this.sendSelectDeclarationNode(node, false);
   }
 
   /**

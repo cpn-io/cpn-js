@@ -71,6 +71,9 @@ export class ModelEditorComponent implements OnInit {
   };
 
   ngOnInit() {
+
+    const self = this;
+
     this.subscripeToAppMessage();
 
 
@@ -107,15 +110,17 @@ export class ModelEditorComponent implements OnInit {
 
     eventBus.on('import.render.complete', (event) => {
       this.loading = false;
-      console.log('import.render.complete, event = ', event);
+      // console.log('import.render.complete, event = ', event);
 
       // this.updateElementStatus();
       // this.eventBus.fire('model.update.cpn.status', { data: { process: '*' } });
     });
 
-    // eventBus.on('element.changed', (event) => {
-    //   console.log('ModelEditor, element.changed, event = ', event);
-    // });
+    eventBus.on('element.changed', (event) => {
+      // console.log(self.constructor.name, 'element.changed, event = ', event);
+
+      this.eventService.send(Message.MODEL_CHANGED);
+    });
 
     this.eventService.on(Message.MODEL_RELOAD, () => {
       this.log('Reload page diagram...');
@@ -135,7 +140,6 @@ export class ModelEditorComponent implements OnInit {
 
     // VALIDATION RESULT
     this.eventService.on(Message.SERVER_INIT_NET_DONE, (event) => {
-      console.log('ModelEditor, SERVER_INIT_NET_DONE, event = ', event);
       this.updateElementStatus();
     });
 
@@ -150,7 +154,7 @@ export class ModelEditorComponent implements OnInit {
     });
 
     this.eventService.on(Message.DELETE_PAGE, (data) => {
-      if (data.parent === this.pageId){
+      if (data.parent === this.pageId) {
         this.modeling.deleteSubPageTrans(data.id);
       }
     });
@@ -170,15 +174,17 @@ export class ModelEditorComponent implements OnInit {
         this.eventService.send(Message.SHAPE_OUT, { element: event.element });
       }
     });
-    const self = this;
+
     eventBus.on('directEditing.cancel', function (e) {
-      console.log('model-editor directEditing.cancel - event', e);
+      // console.log('model-editor directEditing.cancel - event', e);
+
       self.openPropPanel(e.active.element);
       self.selectedElement = undefined;
     });
 
     eventBus.on('directEditing.complete', function (e) {
-      console.log('model-editor directEditing.complete - event', e);
+      // console.log('model-editor directEditing.complete - event', e);
+
       if (e.active && e.active.element) {
         self.openPropPanel(e.active.element);
       }
@@ -189,26 +195,22 @@ export class ModelEditorComponent implements OnInit {
     });
 
     eventBus.on('shape.create.end', (event) => {
-      console.log('shape.create.end, event = ', event);
+      // console.log('shape.create.end, event = ', event);
+
       if (event.elements) {
         for (const element of event.elements) {
           if (element.cpnElement) {
             this.modelService.addElementJsonOnPage(element.cpnElement, this.pageId, element.type);
 
             if (element.type === CPN_TRANSITION && element.cpnElement.subst) {
-             if(! element.cpnElement.subst._subpage) element.cpnElement.subst._subpage = 'id' + new Date().getTime();
-             let pageName;
-              // for(let label of element.labels ) {
-              //   if(label.labelType === 'subst') {
-              //     pageName = this.settings.getAppSettings()['page'];
-              //     this.modeling.updateElement(element, true);
-              //     break;
-              //   }
-              // }
+              if (!element.cpnElement.subst._subpage) {
+                element.cpnElement.subst._subpage = 'id' + new Date().getTime();
+              }
 
               this.eventService.send(Message.SUBPAGE_TRANS_CREATE, {
                 currentPageId: this.pageId,
-                id: element.cpnElement.subst._subpage,
+                subPageName: element.cpnElement.subst.subpageinfo._name,
+                subPageId: element.cpnElement.subst._subpage,
                 cpnElement: element.cpnElement,
               });
             }
@@ -244,9 +246,34 @@ export class ModelEditorComponent implements OnInit {
       }
     });
 
+    eventBus.on('extract.subpage', (event) => {
+      const subPageId = event.subPageId;
+      const places = event.places;
+      const transitions = event.transitions;
+
+      console.log(self.constructor.name, 'extract.subpage, places, transitions = ', places, transitions);
+
+      let cpnElements = [];
+      cpnElements = cpnElements.concat(places).concat(transitions);
+      if (cpnElements.length < 1) {
+        return;
+      }
+
+      console.log(self.constructor.name, 'extract.subpage, cpnElements = ', cpnElements);
+
+      const subpage = self.modelService.getPageById(subPageId);
+      if (!subpage) {
+        return;
+      }
+
+      console.log(self.constructor.name, 'extract.subpage, subpage = ', subpage);
+
+      const arcs = self.modelService.getArcsForElements(cpnElements);
+
+      console.log(self.constructor.name, 'extract.subpage, arcs = ', arcs);
+    });
 
     // this._eventBus.fire('bind.port.cancel', {connection: this._createdArc});
-
   }
 
   /**
@@ -272,7 +299,8 @@ export class ModelEditorComponent implements OnInit {
       for (const id of Object.keys(this.accessCpnService.getErrorData())) {
         errorIds.push(id);
       }
-      console.log('SET ERRORS, errorIds = ', errorIds);
+
+      // console.log('SET ERRORS, errorIds = ', errorIds);
       this.eventBus.fire('model.update.cpn.status', { data: { error: errorIds } });
     }
   }
@@ -293,22 +321,29 @@ export class ModelEditorComponent implements OnInit {
       }
     });
 
-    // Subscribe on property update event
-    this.eventService.on(Message.PROPERTY_UPDATE, (data) => {
+    this.eventService.on(Message.SUBPAGE_UPDATE_TRANSITION, (event) => {
 
-      console.log('PROPERTY_UPDATE, data = ', data);
+      const element = this.modeling.getElementByCpnElement(event.cpnElement);
 
-      const element = this.modeling.getElementByCpnElement(data.cpnElement);
-      console.log('PROPERTY_UPDATE, element = ', element);
-      if (data.subpageName && data.cpnElement.subst && data.cpnElement.subst.subpageinfo){
-        data.cpnElement.subst.subpageinfo._name = data.subpageName;
+      if (event.subpageName && event.cpnElement.subst && event.cpnElement.subst.subpageinfo) {
+        event.cpnElement.subst.subpageinfo._name = event.subpageName;
       }
-      this.modeling.updateElement(element, true);
-      // this.selectedElement = element;
 
+      this.modeling.updateElement(element, true);
       this.modelUpdate();
-      // this.openPropPanel(element);
     });
+
+    this.eventService.on(Message.MODEL_UPDATE_DIAGRAM, (event) => {
+      console.log(this.constructor.name, 'MODEL_UPDATE_DIAGRAM, event = ', event);
+
+      if (event.cpnElement) {
+        const element = this.modeling.getElementByCpnElement(event.cpnElement);
+
+        this.modeling.updateElement(element, true);
+        this.modelUpdate();
+      }
+    });
+
   }
 
   openPropPanel(element) {
@@ -353,8 +388,8 @@ export class ModelEditorComponent implements OnInit {
     }
   }
 
-  log(text) {
-    console.log('ModelEditorComponent. log(), text = ' + text);
+  log(obj) {
+    console.log(this.constructor.name, 'log(), text = ' + JSON.stringify(obj));
   }
 
   load(pageObject, subPages) {

@@ -121,19 +121,19 @@ export class ModelService {
     }
     this.backupBusy = true;
 
-    console.log('BACKUP, saveBackup(), model, this.skipBackup = ', model, this.skipBackup);
+    // console.log('BACKUP, saveBackup(), model, this.skipBackup = ', model, this.skipBackup);
 
     if (Object.keys(model).length > 0) {
-      if (!this.skipBackup) {
-        this.undoHistory.push(model);
-        this.redoHistory = [];
+      // if (!this.skipBackup) {
+      this.undoHistory.push(model);
+      this.redoHistory = [];
 
-        if (this.undoHistory.length > 100) {
-          this.undoHistory.splice(0, 1);
-        }
-
-        console.log('BACKUP, saveBackup2(), this.modelHistory.length = ', this.undoHistory.length);
+      if (this.undoHistory.length > 100) {
+        this.undoHistory.splice(0, 1);
       }
+
+      console.log('BACKUP, saveBackup2(), this.modelHistory.length = ', this.undoHistory.length);
+      // }
     }
     this.skipBackup = false;
 
@@ -194,12 +194,6 @@ export class ModelService {
 
   public getProjectData() {
     return this.projectData;
-  }
-
-  public getPageById(id): any {
-    return this.projectData.workspaceElements.cpnet.page.length ?
-      this.projectData.workspaceElements.cpnet.page.find(page => page._id === id) :
-      this.projectData.workspaceElements.cpnet.page;
   }
 
   /**
@@ -320,6 +314,8 @@ export class ModelService {
         jsonPageObject[this.modelCase[type]] = [cpnElement];
       }
     }
+
+    this.eventService.send(Message.MODEL_CHANGED);
   }
 
   // send changes
@@ -465,16 +461,17 @@ export class ModelService {
 
   createNewPage(page) {
     this.saveBackupBak(this.projectData, page._id);
-    if (this.projectData.workspaceElements.cpnet.length) {
+
+    if (this.projectData.workspaceElements.cpnet.page instanceof Array) {
       this.projectData.workspaceElements.cpnet.page.push(page);
     } else {
-      this.projectData.workspaceElements.cpnet.page = [this.projectData.workspaceElements.cpnet.page];
-      this.projectData.workspaceElements.cpnet.page.push(page);
+      this.projectData.workspaceElements.cpnet.page = [this.projectData.workspaceElements.cpnet.page, page];
     }
   }
 
   deletePage(pageId) {
     this.saveBackupBak(this.projectData, pageId);
+
     if (!(this.projectData.workspaceElements.cpnet.page instanceof Array)) {
       this.projectData.workspaceElements.cpnet.page = [this.projectData.workspaceElements.cpnet.page];
     }
@@ -997,9 +994,16 @@ export class ModelService {
    * Get all pages list
    */
   getAllPages() {
-    return this.getCpn().page instanceof Array
-      ? this.getCpn().page
-      : [this.getCpn().page];
+    const page = this.getCpn().page;
+    return page instanceof Array ? page : [page];
+  }
+
+  /**
+   * Get page object from model by id
+   * @param id
+   */
+  getPageById(id): any {
+    return this.getAllPages().find(page => page._id === id);
   }
 
   /**
@@ -1007,15 +1011,85 @@ export class ModelService {
    * @param pageName
    */
   getPageId(pageName) {
-    const pageList = this.getCpn().page instanceof Array
-      ? this.getCpn().page
-      : [this.getCpn().page];
+    const pageList = this.getAllPages();
     for (const p of pageList) {
       if (p.pageattr._name === pageName) {
         return p._id;
       }
     }
     return undefined;
+  }
+
+  /**
+   * Get all acrs for model
+   */
+  getAllArcs() {
+    const allArcs = [];
+
+    for (const page of this.getAllPages()) {
+      const arcs = page.arc instanceof Array ? page.arc : [page.arc];
+      for (const arc of arcs) {
+        allArcs.push(arc);
+      }
+    }
+
+    return allArcs;
+  }
+
+  /**
+   * Get all arcs, wich are connecting elements
+   * @param cpnElements - array of elements
+   */
+  getArcsForElements(cpnElements) {
+    const cpnElementIds = [];
+    for (const e of cpnElements) {
+      if (e._id) {
+        cpnElementIds.push(e._id);
+      }
+    }
+    if (cpnElementIds.length < 1) {
+      return;
+    }
+
+    const arcs = [];
+    for (const arc of this.getAllArcs()) {
+      if (cpnElementIds.includes(arc.placeend._idref)
+        && cpnElementIds.includes(arc.transend._idref)) {
+        arcs.push(arc);
+      }
+    }
+    return arcs;
+  }
+
+
+  getNextPageName(pageName) {
+    let n = 1;
+    let newPageName = pageName ? pageName : this.settings.getAppSettings()['page'] + ' ' + n;
+
+    for (const page of this.getAllPages()) {
+      if (newPageName === page.pageattr._name) {
+        if (newPageName.includes(n.toString())) {
+          newPageName = newPageName.replace(n.toString(), (++n).toString());
+        } else {
+          newPageName = newPageName + ' ' + n;
+        }
+      }
+    }
+
+    return newPageName;
+  }
+
+  createSubpage(transCpnElement, newPageName, newPageId) {
+    let pageName = this.getNextPageName(newPageName);
+    let pageId = newPageId ? newPageId : 'ID' + new Date().getTime();
+
+    const subpageCpnElement = this.createCpnPage(pageName, pageId);
+    transCpnElement.subst.subpageinfo._name = subpageCpnElement.pageattr._name;
+    transCpnElement.subst._subpage = subpageCpnElement._id;
+
+    this.createNewPage(subpageCpnElement);
+
+    return subpageCpnElement;
   }
 
   /**
@@ -1240,7 +1314,5 @@ export class ModelService {
     }
     return cpnParentElement;
   }
-
-
 
 }

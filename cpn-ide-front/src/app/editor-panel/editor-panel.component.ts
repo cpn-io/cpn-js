@@ -42,16 +42,22 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.eventService.on(Message.PAGE_OPEN, (data) => {
-      this.openModelEditor(data.pageObject, data.subPages);
+    this.eventService.on(Message.SELECT_DECLARATION_NODE, (event) => {
+      if (event && event.openEditorTab) {
+        this.openMlEditor();
+      }
     });
 
-    this.eventService.on(Message.DELETE_PAGE, (data) => {
-      this.deleteTab(data.id);
+    this.eventService.on(Message.PAGE_OPEN, (event) => {
+      this.openModelEditor(event.pageObject, event.subPages);
     });
 
-    this.eventService.on(Message.CHANGE_NAME_PAGE, (data) => {
-      this.changeName(data.id, data.name);
+    this.eventService.on(Message.DELETE_PAGE, (event) => {
+      this.deleteTab(event.id);
+    });
+
+    this.eventService.on(Message.CHANGE_NAME_PAGE, (event) => {
+      this.changeName(event.id, event.name);
     });
 
   }
@@ -59,12 +65,12 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
   }
 
-  loadProject(data) {
+  loadProject(project) {
     this.modelTabArray = [];
     this.mlTabArray = [];
     this.tabsComponent.clear();
 
-    this.openMlEditor(data);
+    this.openMlEditor();
   }
 
   currentTabChange(event) {
@@ -93,7 +99,7 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
     }, 0);
   }
 
-  addMlTab(tabArray, id, name, project) {
+  addMlTab(tabArray, id, name) {
     tabArray.push({ id: id, title: name });
 
     setTimeout(() => {
@@ -136,21 +142,19 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
     }
   }
 
-  openMlEditor(project) {
-    console.log('openMlEditor(), project = ', project);
-
+  openMlEditor() {
     const pageId = 'ml-editor';
     const pageName = 'ML editor';
 
-    const tab = this.tabsComponent.getTabByID(pageId);
+    let tab = this.tabsComponent.getTabByID(pageId);
     if (tab) {
       this.tabsComponent.selectTab(tab);
     } else {
-      this.addMlTab(this.mlTabArray, pageId, pageName, project);
+      this.addMlTab(this.mlTabArray, pageId, pageName);
 
       setTimeout(() => {
         if (this.modelEditorList) {
-          const tab = this.tabsComponent.getSelectedTab();
+          tab = this.tabsComponent.getSelectedTab();
           if (tab) {
           }
         }

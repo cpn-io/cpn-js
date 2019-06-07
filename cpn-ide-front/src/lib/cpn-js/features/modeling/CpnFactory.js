@@ -33,7 +33,7 @@ CpnFactory.$inject = [
 ];
 
 CpnFactory.prototype.createShape = function (pageObject, cpnElement, type, position, addToCanvas) {
-  console.log('CpnFactory.prototype.createShape(), position, type =  ', position, type);
+  // console.log('CpnFactory.prototype.createShape(), position, type =  ', position, type);
 
   if (!position) {
     position = { x: 0, y: 0 };

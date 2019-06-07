@@ -7,23 +7,26 @@ export class Message {
   static SHAPE_OUT = 'shape.out';
 
   static MODEL_UPDATE = 'model.update';
+  static MODEL_UPDATE_DIAGRAM = 'model.update.diagram';
   static MODEL_CHANGED = 'model.changed';
+  static MODEL_CHANGED_DETAILS = 'model.changed.details';
   static MODEL_RELOAD = 'model.reload';
   static MODEL_SAVE_BACKUP = 'model.save.backup';
-
-  static SML_TO_EDITOR = 'sml.to.editor';
+  
   static XML_UPDATE = 'xml.update';
-  static PROPERTY_UPDATE = 'property.update';
   static DELETE_PAGE = 'delete.page;';
   static CHANGE_NAME_PAGE = 'change.name';
   static UPDATE_GLOBBOX = 'update.globbox';
-  static UPDATE_TREE = 'update.tree';
   static UPDATE_TREE_PAGES = 'update.tree.pages';
-  static SUBPAGE_CREATE = 'subpage.create';
   static SUBPAGE_TRANS_CREATE = 'subpage.trans.create';
   static OPEN_DECLARATION_BLOCK = 'open.declaration.block';
   static CHANGE_EXPLORER_TREE = 'change.explorer.tree';
+  static SELECT_DECLARATION_NODE = 'select.declaration.node';
   static SELECT_TREE_NODE = 'select.tree.node';
+  static DECLARATION_CHANGED = 'declaration.changed';
+
+  static SUBPAGE_CREATE = 'subpage.create';
+  static SUBPAGE_UPDATE_TRANSITION = 'subpage.update.transition';
 
   static MODEL_EDITOR_FULLSCREEN = 'model.editor.fullscreen';
 

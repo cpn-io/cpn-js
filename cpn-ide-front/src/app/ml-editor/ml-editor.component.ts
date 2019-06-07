@@ -13,7 +13,7 @@ export class MlEditorComponent implements OnInit, OnDestroy {
 
   textValue = '';
   cpnElement = {};
-  declarationType;
+  cpnType;
 
   constructor(
     private eventService: EventService,
@@ -21,37 +21,21 @@ export class MlEditorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.eventService.on(Message.CHANGE_EXPLORER_TREE, (data) => {
-      this.explorerTreeChangeHandler(data);
+    this.eventService.on(Message.SELECT_DECLARATION_NODE, (event) => {
+      this.selectDeclarationNode(event);
     });
   }
 
-  explorerTreeChangeHandler(data) {
-    // switch (data.action) {
-    //   case 'add':
-    //     this.textValue = data.node.data.name;
-    //     break;
+  selectDeclarationNode(event) {
+    console.log(this.constructor.name, 'selectDeclarationNode(), event = ', event);
 
-    //   case 'rename':
-    //     this.textValue = data.node.data.name;
-    //     break;
+    if (event.cpnElement && event.cpnType) {
+      this.cpnElement = event.cpnElement;
+      this.cpnType = event.cpnType;
 
-    //   case 'delete':
-    //     this.textValue = '';
-    //     break;
-
-    //   default:
-    // }
-
-    if (data.action === 'select') {
-      if (data.cpnElement && data.declarationType) {
-        this.cpnElement = data.cpnElement;
-        this.declarationType = data.declarationType;
-
-        this.textValue = this.modelService.cpnDeclarationElementToString(
-          this.cpnElement,
-          this.declarationType);
-      }
+      this.textValue = this.modelService.cpnDeclarationElementToString(
+        this.cpnElement,
+        this.cpnType);
     }
   }
 
@@ -70,16 +54,15 @@ export class MlEditorComponent implements OnInit, OnDestroy {
     console.log('saveEditedData(), event = ', event);
 
     if (event.target && event.target.textContent) {
-      // this.modelService.stringToCpnDeclarationElement(
-      //   this.cpnElement,
-      //   event.target.textContent);
+      // console.log('saveEditedData(), event.target.textContent = ', event.target.textContent);
+      // console.log('saveEditedData(), this.cpnElement = ', this.cpnElement);
 
-      console.log('saveEditedData(), event.target.textContent = ', event.target.textContent);
-      console.log('saveEditedData(), this.cpnElement = ', this.cpnElement);
-
-      this.eventService.send(Message.UPDATE_TREE, {
+      this.eventService.send(Message.DECLARATION_CHANGED, {
         cpnElement: this.cpnElement,
-        newTextValue: event.target.textContent });
+        newTextValue: event.target.textContent
+      });
+
+      this.eventService.send(Message.MODEL_CHANGED);
     }
   }
 

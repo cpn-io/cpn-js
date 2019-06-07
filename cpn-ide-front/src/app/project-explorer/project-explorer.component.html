@@ -1,196 +1,209 @@
-<tabs #tabsComponent class="cpn-tabs">
+<tabs class="cpn-tabs">
+  <ng-template ngFor let-tab [ngForOf]="tabList">
+    <tab *ngIf="tab" [id]="tab.id" [tabTitle]="tab.name">
 
-  <!-------------------------->
-  <!-- Project explorer tab -->
-  <!-------------------------->
-  <tab id="Explorer panel" tabTitle="Explorer panel" [isHidden]="false">
+      <!-------------------------->
+      <!-- Project explorer tab -->
+      <!-------------------------->
+      <div *ngIf="tab.id === 'explorerPanel'">
 
-    <!-- Project explorer toolbar -->
-    <!------------------------------>
-    <nav class="navbar navbar-sm navbar-expand shadow-sm">
+        <!-- Project explorer toolbar -->
+        <!------------------------------>
+        <nav class="navbar navbar-sm navbar-expand shadow-sm">
 
-      <ul class="navbar-nav mr-auto">
+          <ul class="navbar-nav mr-auto">
 
-        <!-- Action buttons -->
-        <div *ngIf="selectedNode && selectedNode.data && selectedNode.data.actions ? true : false"
-          style="display: contents">
+            <!-- Action buttons -->
+            <div *ngIf="selectedNode && selectedNode.data && selectedNode.data.actions ? true : false"
+              style="display: contents">
 
-          <!-- New action with dropdown menu -->
-          <li class="dropdown nav-item">
-            <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle nav-link" data-toggle="dropdown"
-              href="#" id="navbarDropdown">
-              <i class="fas fa-plus"></i>
-              <span>New</span>
-            </a>
-            <div aria-labelledby="navbarDropdown" class="dropdown-menu shadow">
-              <a *ngIf="selectedNode.data.actions.includes('declaration')"
-                (click)="onAddNode(selectedNode, 'declaration')" class="dropdown-item" href="#">New declaration</a>
-              <a *ngIf="selectedNode.data.actions.includes('block')" (click)="onAddNode(selectedNode, 'block')"
-                class="dropdown-item" href="#">New block</a>
-              <a *ngIf="selectedNode.data.actions.includes('page')" (click)="onAddNode(selectedNode, 'page')"
-                class="dropdown-item" href="#">New page</a>
-            </div>
-          </li>
-
-          <div class="divider"></div>
-
-          <!-- Delete action -->
-          <li *ngIf="selectedNode.data.actions.includes('delete')" class="nav-item">
-            <a (click)="onDeleteNode(selectedNode)" class="nav-link" href="#">
-              <i class="fas fa-minus"></i>
-              <span>Delete</span>
-            </a>
-          </li>
-
-          <div class="divider"></div>
-
-          <!-- Up/down actions -->
-          <li class="nav-item">
-            <a (click)="onUpNode(selectedNode)" class="nav-link" href="#">
-              <i class="fas fa-arrow-up"></i>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a (click)="onDownNode(selectedNode)" class="nav-link" href="#">
-              <i class="fas fa-arrow-down"></i>
-            </a>
-          </li>
-
-          <div class="divider"></div>
-
-
-        </div>
-      </ul>
-
-      <!-- Project tree filter -->
-      <ul class="navbar-nav ml-auto">
-        <li>
-          <input (input)="changeFilter($event.target.value)" [value]="filterText" placeholder="Filter" type="text" />
-        </li>
-
-        <li class="nav-item">
-          <a (click)="changeFilter('')" class="nav-link btn-close" href="#">
-            <i class="fas fa-times"></i>
-          </a>
-        </li>
-      </ul>
-
-    </nav>
-
-    <!-- Project tree explorer -->
-    <!--------------------------->
-    <div class="workspace-container-with-tab">
-      <div class="inner">
-        <div class="scroll-y">
-          <div class="pane" style="padding:10px">
-
-            <tree-root #tree [nodes]="nodes" [options]="options" (activate)="activateNode($event)"
-              (ngModelChange)="treeModelChanged($event)">
-              <ng-template #treeNodeTemplate let-node let-index="index">
-
-                <div [ngClass]="node.data.classes">
-
-                  <!-- Tree node view -->
-                  <table class="table-textarea">
-                    <tr>
-                      <!-- Expanding/collapsing arrow -->
-                      <td>
-                        <span *ngIf="canCollapse(node)" class="toggle-children-wrapper">
-                          <span
-                            [class]="openedLabel[node.id] ? 'toggle-children-wrapper-expanded' : 'toggle-children-wrapper-collapsed'"
-                            (click)="onNodeArrowClick($event, node)">
-                            <span class="toggle-children"></span>
-                          </span>
-                        </span>
-                        <span *ngIf="node.parent.parent === null">Project: </span>
-                        <span *ngIf="isMonitorType(node)">Type: </span>
-                      </td>
-
-                      <td *ngIf="isMonitorOption(node)" style="padding-right: 5px;">
-                        <input type="checkbox" [checked]="getMonitorOption(node)" style="margin-top: 3px"
-                          (change)="setMonitorOption($event, node)">
-                      </td>
-
-                      <!-- Tree node label (can be editable) -->
-                      <td class="node"
-                        [ngClass]="{'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id), 'node-highlight-error': isError(node.id)}">
-
-                        <div *ngIf="!isOption(node) && !isMonitorRef(node)" [id]="'textinpfield_' + node.id"
-                          class="editablenode" (click)="onNodeLabelClick($event, node)"
-                          (focusout)="saveEditedData($event, node)"
-                          [contentEditable]="canEdit(node) && (openedLabel[node.id] || (editableNode === node))"
-                          [innerHTML]="getLabel(node) | colorDeclarations | safeHtml">
-                        </div>
-                      </td>
-
-                      <!-- Monitor - idref -->
-                      <td *ngIf="isMonitorRef(node)" class="node"
-                        [ngClass]="{'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id)}">
-                        <div [id]="'textinpfield_' + node.id" style="white-space: normal">{{node.data.name}}
-                        </div>
-                      </td>
-
-                      <!-- Checkbox for boolean option -->
-                      <td *ngIf="isBooleanOption(node)" style="padding-right: 5px;">
-                        <input type="checkbox" [checked]="getBooleanOption(node)" style="margin-top: 3px"
-                          (change)="setBooleanOption($event, node)">
-                      </td>
-
-                      <!-- Name of the option-->
-                      <td *ngIf="isOption(node)">
-                        <div [innerHTML]="node.id | optionName"></div>
-                      </td>
-
-                      <!-- Text input for text option -->
-                      <td *ngIf="isTextOption(node)" style="padding-left: 5px">
-                        <div class="editablenode" contentEditable="true" [innerText]="getTextOption(node)"></div>
-                      </td>
-
-                    </tr>
-
-                  </table>
-
-                  <!-- Tree node context menu -->
-                  <div *ngIf="node.data.actions ? true : false" class="dropdown-menu dropdown-menu-fixed shadow"
-                    id="context-menu-{{node.id | replaceSpaces}}">
-
-                    <a *ngIf="node.data.actions.includes('declaration')" (click)="onAddNode(node, 'declaration')"
-                      class="dropdown-item" href="#">New declaration</a>
-                    <a *ngIf="node.data.actions.includes('block')" (click)="onAddNode(node, 'block')"
-                      class="dropdown-item" href="#">New block</a>
-                    <a *ngIf="node.data.actions.includes('page')" (click)="onAddNode(node, 'page')"
-                      class="dropdown-item" href="#">New page</a>
-
-                    <div *ngIf="node.data.actions.length > 1" class="dropdown-divider" href="#"></div>
-
-                    <a *ngIf="node.data.actions.includes('delete')" (click)="onDeleteNode(node)" class="dropdown-item"
-                      href="#">Delete</a>
-                  </div>
-
+              <!-- New action with dropdown menu -->
+              <li class="dropdown nav-item">
+                <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle nav-link" data-toggle="dropdown"
+                  href="#" id="navbarDropdown">
+                  <i class="fas fa-plus"></i>
+                  <span>New</span>
+                </a>
+                <div aria-labelledby="navbarDropdown" class="dropdown-menu shadow">
+                  <a *ngIf="selectedNode.data.actions.includes('declaration')"
+                    (click)="onAddNode(selectedNode, 'declaration')" class="dropdown-item" href="#">New declaration</a>
+                  <a *ngIf="selectedNode.data.actions.includes('block')" (click)="onAddNode(selectedNode, 'block')"
+                    class="dropdown-item" href="#">New block</a>
+                  <a *ngIf="selectedNode.data.actions.includes('page')" (click)="onAddNode(selectedNode, 'page')"
+                    class="dropdown-item" href="#">New page</a>
                 </div>
+              </li>
 
-              </ng-template>
-            </tree-root>
-            <!------------------->
+              <div class="divider"></div>
 
+              <!-- Delete action -->
+              <li *ngIf="selectedNode.data.actions.includes('delete')" class="nav-item">
+                <a (click)="onDeleteNode(selectedNode)" class="nav-link" href="#">
+                  <i class="fas fa-minus"></i>
+                  <span>Delete</span>
+                </a>
+              </li>
+
+              <div class="divider"></div>
+
+              <!-- Up/down actions -->
+              <li class="nav-item">
+                <a (click)="onUpNode(selectedNode)" class="nav-link" href="#">
+                  <i class="fas fa-arrow-up"></i>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a (click)="onDownNode(selectedNode)" class="nav-link" href="#">
+                  <i class="fas fa-arrow-down"></i>
+                </a>
+              </li>
+
+              <div class="divider"></div>
+
+
+            </div>
+          </ul>
+
+          <!-- Project tree filter -->
+          <ul class="navbar-nav ml-auto">
+            <li>
+              <input (input)="changeFilter($event.target.value)" [value]="filterText" placeholder="Filter"
+                type="text" />
+            </li>
+
+            <li class="nav-item">
+              <a (click)="changeFilter('')" class="nav-link btn-close" href="#">
+                <i class="fas fa-times"></i>
+              </a>
+            </li>
+          </ul>
+
+        </nav>
+
+        <!-- Project tree explorer -->
+        <!--------------------------->
+        <div class="workspace-container-with-tab">
+          <div class="inner">
+            <div class="scroll-y" id="tree-scroll-pane">
+              <div class="pane" style="padding:10px">
+
+                <tree-root #tree [nodes]="nodes" [options]="options" (activate)="activateNode($event)"
+                  (ngModelChange)="treeModelChanged($event)">
+                  <ng-template #treeNodeTemplate let-node let-index="index">
+
+                    <div [ngClass]="node.data.classes">
+
+                      <!-- Tree node view -->
+                      <table class="table-textarea" [id]="'node-table-' + node.id">
+                        <tr>
+                          <!-- Expanding/collapsing arrow -->
+                          <td>
+                            <span *ngIf="canCollapse(node)" class="toggle-children-wrapper">
+                              <span
+                                [class]="openedLabel[node.id] ? 'toggle-children-wrapper-expanded' : 'toggle-children-wrapper-collapsed'"
+                                (click)="onNodeArrowClick($event, node)">
+                                <span class="toggle-children"></span>
+                              </span>
+                            </span>
+                            <span *ngIf="node.parent.parent === null">Project: </span>
+                            <span *ngIf="isMonitorType(node)">Type: </span>
+                          </td>
+
+                          <td *ngIf="isMonitorOption(node)" style="padding-right: 5px;">
+                            <input type="checkbox" [checked]="getMonitorOption(node)" style="margin-top: 3px"
+                              (change)="setMonitorOption($event, node)">
+                          </td>
+
+                          <td *ngIf="isPage(node)" style="padding-right: 5px; color:lightskyblue">
+                            <i class="fas fa-project-diagram"></i>
+                          </td>
+
+                          <!-- Tree node label (can be editable) -->
+                          <td class="node"
+                            [ngClass]="{'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id), 'node-highlight-error': isError(node.id)}">
+
+                            <div *ngIf="!isOption(node) && !isMonitorRef(node)" [id]="'textinpfield_' + node.id"
+                              class="editablenode" (click)="onNodeClick($event, node)"
+                              (dblclick)="onNodeDblClick($event, node)" (focusout)="saveEditedData($event, node)"
+                              [contentEditable]="canEdit(node) && (openedLabel[node.id] || (editableNode === node))"
+                              [innerHTML]="getLabel(node) | colorDeclarations | safeHtml">
+                            </div>
+                          </td>
+
+                          <!-- Monitor - idref -->
+                          <td *ngIf="isMonitorRef(node)" class="node"
+                            [ngClass]="{'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id)}">
+                            <div [id]="'textinpfield_' + node.id" style="white-space: normal">{{node.data.name}}
+                            </div>
+                          </td>
+
+                          <!-- Checkbox for boolean option -->
+                          <td *ngIf="isBooleanOption(node)" style="padding-right: 5px;">
+                            <input type="checkbox" [checked]="getBooleanOption(node)" style="margin-top: 3px"
+                              (change)="setBooleanOption($event, node)">
+                          </td>
+
+                          <!-- Name of the option-->
+                          <td *ngIf="isOption(node)">
+                            <div [innerHTML]="node.id | optionName"></div>
+                          </td>
+
+                          <!-- Text input for text option -->
+                          <td *ngIf="isTextOption(node)" style="padding-left: 5px">
+                            <div class="editablenode" contentEditable="true" [innerText]="getTextOption(node)"></div>
+                          </td>
+
+                        </tr>
+
+                      </table>
+
+                      <!-- Tree node context menu -->
+                      <div *ngIf="node.data.actions ? true : false" class="dropdown-menu dropdown-menu-fixed shadow"
+                        id="context-menu-{{node.id | replaceSpaces}}">
+
+                        <a *ngIf="node.data.actions.includes('declaration')" (click)="onAddNode(node, 'declaration')"
+                          class="dropdown-item" href="#">New declaration</a>
+                        <a *ngIf="node.data.actions.includes('block')" (click)="onAddNode(node, 'block')"
+                          class="dropdown-item" href="#">New block</a>
+                        <a *ngIf="node.data.actions.includes('page')" (click)="onAddNode(node, 'page')"
+                          class="dropdown-item" href="#">New page</a>
+
+                        <div *ngIf="node.data.actions.length > 1" class="dropdown-divider" href="#"></div>
+
+                        <a *ngIf="node.data.actions.includes('delete')" (click)="onDeleteNode(node)"
+                          class="dropdown-item" href="#">Delete</a>
+                      </div>
+
+                    </div>
+
+                  </ng-template>
+                </tree-root>
+                <!------------------->
+
+              </div>
+            </div>
           </div>
         </div>
+
       </div>
-    </div>
-  </tab>
 
 
-  <!------------------------------>
-  <!-- Application settings tab -->
-  <!------------------------------>
-  <tab [id]="'Application settings'" [tabTitle]="'Application settings'">
-    <table [id]="'application-settings-table'" class="table table-bordered table-hover table-small"
-      *ngIf="showTable !== 'application-settings-table'">
-      <tr *ngFor="let item of appSettingsKeys">
-        <td width="50%" class="valueName">{{ item}}</td>
-        <td width="50%" contenteditable='true'>{{ appSettings[item] }}</td>
-      </tr>
-    </table>
-  </tab>
+      <!------------------------------>
+      <!-- Application settings tab -->
+      <!------------------------------>
 
+      <div *ngIf="tab.id === 'applicationSettings'">
+
+        <table [id]="'application-settings-table'" class="table table-bordered table-hover table-small"
+          *ngIf="showTable !== 'application-settings-table'">
+          <tr *ngFor="let item of appSettingsKeys">
+            <td width="50%" class="valueName">{{ item }}</td>
+            <td width="50%" contenteditable='true'>{{ appSettings[item] }}</td>
+          </tr>
+        </table>
+
+      </div>
+
+    </tab>
+  </ng-template>
 </tabs>

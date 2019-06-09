@@ -14,11 +14,10 @@
           <ul class="navbar-nav mr-auto">
 
             <!-- Action buttons -->
-            <div *ngIf="selectedNode && selectedNode.data && selectedNode.data.actions ? true : false"
-                 style="display: contents">
+            <div style="display: contents">
 
               <!-- New action with dropdown menu -->
-              <li class="dropdown nav-item">
+              <li *ngIf="(selectedNode && selectedNode.data && selectedNode.data.actions ? true : false)" class="dropdown nav-item">
                 <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle nav-link" data-toggle="dropdown"
                    href="#" id="navbarDropdown">
                   <i class="fas fa-plus"></i>
@@ -32,50 +31,97 @@
                   <a *ngIf="selectedNode.data.actions.includes('page')" (click)="onAddNode(selectedNode, 'page')"
                      class="dropdown-item" href="#">New page</a>
                 </div>
+
+              </li>
+
+              <div *ngIf="(selectedNode && selectedNode.data && selectedNode.data.actions ? true : false)" class="divider"></div>
+
+              <li class="dropdown nav-item">
+                <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle nav-link" data-toggle="dropdown"
+                   href="#" id="navbarMonitorsDD">
+                  <i class="fas fa-plus"></i>
+                  <span>Monitor</span>
+                </a>
+                <div aria-labelledby="navbarDropdown" class="dropdown-menu shadow">
+                  <a (click)="onCreateNewMonitor(monitorType.DC)"
+                     class="dropdown-item" href="#">{{monitorType.DC}}</a>
+                  <a (click)="onCreateNewMonitor(monitorType.MS)"
+                     class="dropdown-item" href="#">{{monitorType.MS}}</a>
+                  <a (click)="onCreateNewMonitor(monitorType.BP)"
+                     class="dropdown-item" href="#">{{monitorType.BP}}</a>
+                  <a (click)="onCreateNewMonitor(monitorType.UD)"
+                     class="dropdown-item" href="#">{{monitorType.UD}}</a>
+                  <a (click)="onCreateNewMonitor(monitorType.WIF)"
+                     class="dropdown-item" href="#">{{monitorType.WIF}}</a>
+                  <a (click)="onCreateNewMonitor(monitorType.LLDC)"
+                     class="dropdown-item" href="#">{{monitorType.LLDC}}</a>
+                  <a (click)="onCreateNewMonitor(monitorType.CTODC)"
+                     class="dropdown-item" href="#">{{monitorType.CTODC}}</a>
+                  <a (click)="onCreateNewMonitor(monitorType.PCBP)"
+                     class="dropdown-item" href="#">{{monitorType.PCBP}}</a>
+                  <a (click)="onCreateNewMonitor(monitorType.TEBP)"
+                     class="dropdown-item" href="#">{{monitorType.TEBP}}</a>
+                </div>
+
               </li>
 
               <div class="divider"></div>
-
-              <!-- Delete action -->
-              <li *ngIf="selectedNode.data.actions.includes('delete')" class="nav-item">
-                <a (click)="onDeleteNode(selectedNode)" class="nav-link" href="#">
-                  <i class="fas fa-minus"></i>
-                  <span>Delete</span>
+              <!-- Clone action -->
+              <li *ngIf="canDoEditAction(selectedNode, 'clone')" class="nav-item">
+                <a (click)="onCloneMonitor(selectedNode)" class="nav-link" href="#" title="Clone monitor">
+                  <i class="far fa-clone"></i>
                 </a>
               </li>
 
               <!-- Disable action -->
-              <li *ngIf="selectedNode.data.actions.includes('disable')" class="nav-item">
-                <a (click)="onDisableMonitor(selectedNode)" class="nav-link" href="#">
+              <li *ngIf="canDoEditAction(selectedNode, 'disable')" class="nav-item">
+                <a (click)="onDisableMonitor(selectedNode)" class="nav-link" href="#" title="Disable monitor">
                   <i class="fas fa-toggle-off"></i>
-                  <span>Disable</span>
+                </a>
+              </li>
+
+              <li *ngIf="canDoEditAction(selectedNode, 'disable_all')" class="nav-item">
+                <a (click)="onDisableMonitor(selectedNode)" class="nav-link" href="#" title="Disable all">
+                  <i class="fas fa-toggle-off"></i>
                 </a>
               </li>
 
               <!-- Enable action -->
-              <li *ngIf="selectedNode.data.actions.includes('enable')" class="nav-item">
-                <a (click)="onEnableMonitor(selectedNode)" class="nav-link" href="#">
+              <li *ngIf="canDoEditAction(selectedNode, 'enable')" class="nav-item">
+                <a (click)="onEnableMonitor(selectedNode)" class="nav-link" href="#" title="Enable monitor">
                   <i class="fas fa-toggle-on"></i>
-                  <span>Enable</span>
                 </a>
               </li>
 
-              <div class="divider"></div>
+              <li *ngIf="canDoEditAction(selectedNode, 'enable_all')" class="nav-item">
+                <a (click)="onEnableMonitor(selectedNode)" class="nav-link" href="#" title="Enable all">
+                  <i class="fas fa-toggle-on"></i>
+                </a>
+              </li>
+
+              <!-- Delete action -->
+              <li *ngIf="canDoEditAction(selectedNode, 'delete')" class="nav-item">
+                <a (click)="onDeleteNode(selectedNode)" class="nav-link" href="#" title="Delete">
+                  <i class="fas fa-minus"></i>
+                  <span *ngIf="!isMonitorsSubnode(selectedNode)">Delete</span>
+                </a>
+              </li>
+
+              <div class="divider" *ngIf="isExistsEditSection(selectedNode)"></div>
 
               <!-- Up/down actions -->
-              <li class="nav-item">
-                <a (click)="onUpNode(selectedNode)" class="nav-link" href="#">
+              <li *ngIf="selectedNode && selectedNode.data && selectedNode.data.actions "  class="nav-item">
+                <a (click)="onUpNode(selectedNode)" class="nav-link" href="#" title="Move up">
                   <i class="fas fa-arrow-up"></i>
                 </a>
               </li>
-              <li class="nav-item">
-                <a (click)="onDownNode(selectedNode)" class="nav-link" href="#">
+              <li *ngIf="selectedNode && selectedNode.data && selectedNode.data.actions"  class="nav-item">
+                <a (click)="onDownNode(selectedNode)" class="nav-link" href="#" title="Move down">
                   <i class="fas fa-arrow-down"></i>
                 </a>
               </li>
 
               <div class="divider"></div>
-
 
             </div>
           </ul>
@@ -88,7 +134,7 @@
             </li>
 
             <li class="nav-item">
-              <a (click)="changeFilter('')" class="nav-link btn-close" href="#">
+              <a (click)="changeFilter('')" class="nav-link btn-close" href="#" title="Clear filter">
                 <i class="fas fa-times"></i>
               </a>
             </li>
@@ -187,15 +233,24 @@
 
                         <div *ngIf="node.data.actions.length > 1" class="dropdown-divider" href="#"></div>
 
+                        <a *ngIf="node.data.actions.includes('clone')" (click)="onCloneMonitor(node)"
+                           class="dropdown-item"
+                           href="#">Clone monitor</a>
+                        <a *ngIf="node.data.actions.includes('disable')" (click)="onDisableMonitor(node)"
+                           class="dropdown-item"
+                           href="#">Disable monitor</a>
+                        <a *ngIf="node.data.actions.includes('enable')" (click)="onEnableMonitor(node)"
+                           class="dropdown-item"
+                           href="#">Enable monitor</a>
+                        <a *ngIf="node.data.actions.includes('disable_all')" (click)="onDisableMonitor(node)"
+                           class="dropdown-item"
+                           href="#">Disable all</a>
+                        <a *ngIf="node.data.actions.includes('enable_all')" (click)="onEnableMonitor(node)"
+                           class="dropdown-item"
+                           href="#">Enable all</a>
                         <a *ngIf="node.data.actions.includes('delete')" (click)="onDeleteNode(node)"
                            class="dropdown-item"
                            href="#">Delete</a>
-                        <a *ngIf="node.data.actions.includes('disable')" (click)="onDisableMonitor(node)"
-                           class="dropdown-item"
-                           href="#">Disable</a>
-                        <a *ngIf="node.data.actions.includes('enable')" (click)="onEnableMonitor(node)"
-                           class="dropdown-item"
-                           href="#">Enable</a>
                       </div>
 
                     </div>
@@ -210,7 +265,6 @@
         </div>
 
       </div>
-
 
       <!------------------------------>
       <!-- Application settings tab -->

@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
-import { EventService } from './event.service';
-import { Message } from '../common/message';
-import { AccessCpnService } from './access-cpn.service';
-import { SettingsService } from '../services/settings.service';
-import { ValidationService } from './validation.service';
-import { keyframes } from '@angular/animations';
+import {Injectable} from '@angular/core';
+import {EventService} from './event.service';
+import {Message} from '../common/message';
+import {AccessCpnService} from './access-cpn.service';
+import {SettingsService} from '../services/settings.service';
+import {ValidationService} from './validation.service';
+import {keyframes} from '@angular/animations';
 
 /**
  * Common service for getting access to project data from all application
@@ -41,8 +41,8 @@ export class ModelService {
   undoRedoBusy = false;
 
   constructor(private eventService: EventService,
-    private accessCpnService: AccessCpnService,
-    private settings: SettingsService,
+              private accessCpnService: AccessCpnService,
+              private settings: SettingsService,
   ) {
     console.log('ModelService instance CREATED!');
 
@@ -152,7 +152,7 @@ export class ModelService {
 
       // get model from redo history
       this.projectData = this.undoHistory.pop();
-      this.project = { data: this.projectData, name: this.projectName };
+      this.project = {data: this.projectData, name: this.projectName};
       this.skipBackup = true;
       this.eventService.send(Message.MODEL_RELOAD);
     }
@@ -169,7 +169,7 @@ export class ModelService {
     if (this.redoHistory.length > 0) {
       // get model from undo history
       this.projectData = this.redoHistory.pop();
-      this.project = { data: this.projectData, name: this.projectName };
+      this.project = {data: this.projectData, name: this.projectName};
       this.skipBackup = true;
       this.eventService.send(Message.MODEL_RELOAD);
 
@@ -283,13 +283,13 @@ export class ModelService {
       console.log('getCpnElementById(), cpnElement = ', cpnElement);
 
       if (cpnElement._id === id) {
-        return { cpnParentElement: cpnParentElement, cpnElement: cpnElement };
+        return {cpnParentElement: cpnParentElement, cpnElement: cpnElement};
       }
 
       for (const key of Object.keys(cpnElement)) {
         const e = this.getCpnElementById(cpnElement, cpnElement[key], id);
         if (e) {
-          return { cpnParentElement: e.cpnParentElement, cpnElement: e.cpnElement };
+          return {cpnParentElement: e.cpnParentElement, cpnElement: e.cpnElement};
         }
       }
     }
@@ -321,9 +321,8 @@ export class ModelService {
   // send changes
 
   changeSubPageTransitionName(subpage) {
-    this.eventService.send(Message.CHANGE_NAME_PAGE, { id: subpage.subpageid, name: subpage.name, changedElement: 'tran' });
+    this.eventService.send(Message.CHANGE_NAME_PAGE, {id: subpage.subpageid, name: subpage.name, changedElement: 'tran'});
   }
-
 
 
   moveNonModelJsonElement(element, parent, target, index, type) {
@@ -368,7 +367,9 @@ export class ModelService {
         if (parent.trans instanceof Array) {
           for (let i = 0; i < parent.trans.length; i++) {
             swapSubPageTrans(parent.trans[i], subPageTrans);
-            if (subPageTrans) { break; }
+            if (subPageTrans) {
+              break;
+            }
           }
         } else {
           swapSubPageTrans(parent.trans, subPageTrans);
@@ -487,7 +488,7 @@ export class ModelService {
         if (page.pageattr._name === updatedData.pageObject.pageattr._name) {
           page = updatedData.pageObject;
 
-          this.eventService.send(Message.XML_UPDATE, { project: { data: project, name: this.projectName } });
+          this.eventService.send(Message.XML_UPDATE, {project: {data: project, name: this.projectName}});
         }
       }
     } else {
@@ -495,7 +496,7 @@ export class ModelService {
       if (page.pageattr._name === updatedData.pageObject.pageattr._name) {
         page = updatedData.pageObject;
 
-        this.eventService.send(Message.XML_UPDATE, { project: { data: project, name: this.projectName } });
+        this.eventService.send(Message.XML_UPDATE, {project: {data: project, name: this.projectName}});
       }
     }
   }
@@ -564,7 +565,9 @@ export class ModelService {
     for (let i = 0; i < block[elementType].length; i++) {
       if (block[elementType][i]._id === id) {
         block[elementType].splice(i, 1);
-        if (block[elementType].length === 0) { delete block[elementType]; }
+        if (block[elementType].length === 0) {
+          delete block[elementType];
+        }
       }
     }
   }
@@ -609,7 +612,7 @@ export class ModelService {
       case 'var':
         return {
           id: this.settings.getAppSettings()[elementType] + (++this.countNewItems),
-          type: { id: this.settings.getAppSettings()[elementType] },
+          type: {id: this.settings.getAppSettings()[elementType]},
           _id: 'ID' + new Date().getTime()
         };
         break;
@@ -683,11 +686,11 @@ export class ModelService {
         if (testElem === 'product') {
           const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
           elem.id = splitLayoutArray[0].replace(/\s+/g, '');
-          elem.product = { id: productList };
+          elem.product = {id: productList};
         } else if (testElem === 'list') {
           const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
           elem.id = splitLayoutArray[0].replace(/\s+/g, '');
-          elem.list = { id: productList };
+          elem.list = {id: productList};
         } else {
           testElem = testElem.replace(/\s+/g, '').replace(';', '');
           splitLayoutArray[0] = splitLayoutArray[0].replace(/\s+/g, '').replace(';', '');
@@ -696,7 +699,7 @@ export class ModelService {
             elem[testElem.toLowerCase()] = '';
           } else {
             elem.id = splitLayoutArray[0];
-            elem.alias = { id: testElem };
+            elem.alias = {id: testElem};
           }
         }
         break;
@@ -764,7 +767,6 @@ export class ModelService {
   }
 
 
-
   /**
    * Creating empty block cpnElement
    * @param name - name of new block
@@ -788,6 +790,71 @@ export class ModelService {
       layout: layout,
       _id: 'ID' + new Date().getTime()
     };
+  }
+
+  createMonitorBP(cpnElement) {
+
+  }
+
+  createMonitorCTODC(cpnElement: any): any {
+    console.log('createMonitorCTODC(), cpnElement = ', cpnElement);
+    return {
+      _id: 'ID' + new Date().getTime(),
+      _name: 'Count_trans_occur_PAGENAME_' + cpnElement.text, //TODO add page name: 'Count_trans_occur_' + PAGENAME + '_' + cpnElement.text
+      _type: '6',
+      _typedescription: 'Count transition occurrence data collection',
+      _disabled: 'false',
+      node: {
+        _idref: cpnElement.id,
+        _pageinstanceidref: 'PAGEID' // TODO add page ID
+      },
+      option: {
+        _name: 'Logging',
+        _value: 'false'
+      }
+    };
+  }
+
+  createMonitorDC(cpnElement) {
+    return {
+      _id: 'ID' + new Date().getTime(),
+      _name: '',
+      _type: '3',
+      _typedescription: 'Data collection',
+      _disabled: 'false',
+      option: {
+        _name: 'Timed',
+        _value: 'false'
+      },
+      option: {
+        _name: 'Logging',
+        _value: 'false'
+      }
+    };
+  }
+
+  createMonitorLLDC(cpnElement) {
+
+  }
+
+  createMonitorMS(cpnElement) {
+
+  }
+
+  createMonitorPCBP(cpnElement) {
+
+  }
+
+  createMonitorTEBP(cpnElement) {
+
+  }
+
+  createMonitorUS(cpnElement) {
+
+  }
+
+  createMonitorWIF(cpnElement) {
+
   }
 
   /**
@@ -867,10 +934,14 @@ export class ModelService {
    */
   cpnDeclarationElementToString(cpnElement, type) {
     switch (type) {
-      case 'globref': return this.cpnGlobrefToString(cpnElement);
-      case 'color': return this.cpnColorToString(cpnElement);
-      case 'var': return this.cpnVarToString(cpnElement);
-      case 'ml': return this.cpnMlToString(cpnElement);
+      case 'globref':
+        return this.cpnGlobrefToString(cpnElement);
+      case 'color':
+        return this.cpnColorToString(cpnElement);
+      case 'var':
+        return this.cpnVarToString(cpnElement);
+      case 'ml':
+        return this.cpnMlToString(cpnElement);
     }
   }
 
@@ -895,7 +966,7 @@ export class ModelService {
    */
   stringToCpnDeclarationElement(cpnElement, str) {
 
-    cpnElement = { _id: cpnElement._id };
+    cpnElement = {_id: cpnElement._id};
 
     let parser = str.match('^\\S+');
     // console.log('stringToCpnDeclarationElement(), parser = ', parser);
@@ -955,11 +1026,11 @@ export class ModelService {
           if (testElem === 'product') {
             const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
             cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
-            cpnElement.product = { id: productList };
+            cpnElement.product = {id: productList};
           } else if (testElem === 'list') {
             const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
             cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
-            cpnElement.list = { id: productList };
+            cpnElement.list = {id: productList};
           } else {
             testElem = testElem.replace(/\s+/g, '').replace(';', '');
             splitLayoutArray[0] = splitLayoutArray[0].replace(/\s+/g, '').replace(';', '');
@@ -968,7 +1039,7 @@ export class ModelService {
               cpnElement[testElem.toLowerCase()] = '';
             } else {
               cpnElement.id = splitLayoutArray[0];
-              cpnElement.alias = { id: testElem };
+              cpnElement.alias = {id: testElem};
             }
           }
         }
@@ -986,7 +1057,7 @@ export class ModelService {
     console.log('stringToCpnDeclarationElement(), declarationType = ', declarationType);
     console.log('stringToCpnDeclarationElement(), cpnElement = ', cpnElement);
 
-    return { cpnType: cpnType, declarationType: declarationType, cpnElement: cpnElement };
+    return {cpnType: cpnType, declarationType: declarationType, cpnElement: cpnElement};
   }
 
 
@@ -1109,10 +1180,10 @@ export class ModelService {
     const h = Number(cpnElement.ellipse._h);
 
     return {
-      fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
-      lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
-      posattr: { _x: (x).toString(), _y: (y - h / 2).toString() },
-      textattr: { _colour: 'Black', _bold: 'false' },
+      fillattr: {_colour: 'White', _pattern: 'Solid', _filled: 'false'},
+      lineattr: {_colour: 'Black', _thick: '0', _type: 'Solid'},
+      posattr: {_x: (x).toString(), _y: (y - h / 2).toString()},
+      textattr: {_colour: 'Black', _bold: 'false'},
       text: portType,
       _id: cpnElement._id + 'e',
       _type: portType === 'In/Out' ? 'I/O' : portType
@@ -1138,10 +1209,10 @@ export class ModelService {
 
     return {
       subpageinfo: {
-        fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
-        lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
-        posattr: { _x: (x).toString(), _y: (y - h / 2).toString() },
-        textattr: { _colour: 'Black', _bold: 'false' },
+        fillattr: {_colour: 'White', _pattern: 'Solid', _filled: 'false'},
+        lineattr: {_colour: 'Black', _thick: '0', _type: 'Solid'},
+        posattr: {_x: (x).toString(), _y: (y - h / 2).toString()},
+        textattr: {_colour: 'Black', _bold: 'false'},
         _id: cpnElement._id + 'e',
         _name: name
       },
@@ -1167,10 +1238,8 @@ export class ModelService {
     });
     let transEnd;
     transEnd = page.trans.find((tr) => cpnElement.transend._idref === tr._id);
-    return { place: placeEnd, trans: transEnd, orient: cpnElement._orientation };
+    return {place: placeEnd, trans: transEnd, orient: cpnElement._orientation};
   }
-
-
 
 
   /**
@@ -1214,7 +1283,9 @@ export class ModelService {
     if (page && text !== '') {
       const port = page.place.find(e => e.text === text && (e.port._type === 'I/O' || e.port._type === (orient === 'TtoP' ? 'Out' : 'In')));
       return port._id;
-    } else { return undefined; }
+    } else {
+      return undefined;
+    }
   }
 
 

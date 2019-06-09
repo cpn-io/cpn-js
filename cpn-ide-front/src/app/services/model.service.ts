@@ -822,14 +822,14 @@ export class ModelService {
       _type: '3',
       _typedescription: 'Data collection',
       _disabled: 'false',
-      option: {
-        _name: 'Timed',
-        _value: 'false'
-      },
-      option: {
-        _name: 'Logging',
-        _value: 'false'
-      }
+      // option: {
+      //   _name: 'Timed',
+      //   _value: 'false'
+      // },
+      // option: {
+      //   _name: 'Logging',
+      //   _value: 'false'
+      // }
     };
   }
 

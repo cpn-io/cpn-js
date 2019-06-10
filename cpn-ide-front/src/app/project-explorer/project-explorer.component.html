@@ -5,7 +5,7 @@
       <!-------------------------->
       <!-- Project explorer tab -->
       <!-------------------------->
-      <div *ngIf="tab.id === 'explorerPanel'">
+      <ng-container *ngIf="tab.id === 'explorerPanel'">
 
         <!-- Project explorer toolbar -->
         <!------------------------------>
@@ -14,68 +14,112 @@
           <ul class="navbar-nav mr-auto">
 
             <!-- Action buttons -->
-            <div *ngIf="selectedNode && selectedNode.data && selectedNode.data.actions ? true : false"
-                 style="display: contents">
+            <div style="display: contents">
 
               <!-- New action with dropdown menu -->
-              <li class="dropdown nav-item">
+              <li *ngIf="(selectedNode && selectedNode.data && selectedNode.data.actions ? true : false)"
+                class="dropdown nav-item">
                 <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle nav-link" data-toggle="dropdown"
-                   href="#" id="navbarDropdown">
+                  href="#" id="navbarDropdown">
                   <i class="fas fa-plus"></i>
                   <span>New</span>
                 </a>
                 <div aria-labelledby="navbarDropdown" class="dropdown-menu shadow">
                   <a *ngIf="selectedNode.data.actions.includes('declaration')"
-                     (click)="onAddNode(selectedNode, 'declaration')" class="dropdown-item" href="#">New declaration</a>
+                    (click)="onAddNode(selectedNode, 'declaration')" class="dropdown-item" href="#">New declaration</a>
                   <a *ngIf="selectedNode.data.actions.includes('block')" (click)="onAddNode(selectedNode, 'block')"
-                     class="dropdown-item" href="#">New block</a>
+                    class="dropdown-item" href="#">New block</a>
                   <a *ngIf="selectedNode.data.actions.includes('page')" (click)="onAddNode(selectedNode, 'page')"
-                     class="dropdown-item" href="#">New page</a>
+                    class="dropdown-item" href="#">New page</a>
                 </div>
+
+              </li>
+
+              <div *ngIf="(selectedNode && selectedNode.data && selectedNode.data.actions ? true : false)"
+                class="divider"></div>
+
+              <li class="dropdown nav-item">
+                <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle nav-link" data-toggle="dropdown"
+                  href="#" id="navbarMonitorsDD">
+                  <i class="fas fa-plus"></i>
+                  <span>Monitor</span>
+                </a>
+                <div aria-labelledby="navbarDropdown" class="dropdown-menu shadow">
+                  <a (click)="onCreateNewMonitor(monitorType.DC)" class="dropdown-item" href="#">{{monitorType.DC}}</a>
+                  <a (click)="onCreateNewMonitor(monitorType.MS)" class="dropdown-item" href="#">{{monitorType.MS}}</a>
+                  <a (click)="onCreateNewMonitor(monitorType.BP)" class="dropdown-item" href="#">{{monitorType.BP}}</a>
+                  <a (click)="onCreateNewMonitor(monitorType.UD)" class="dropdown-item" href="#">{{monitorType.UD}}</a>
+                  <a (click)="onCreateNewMonitor(monitorType.WIF)" class="dropdown-item"
+                    href="#">{{monitorType.WIF}}</a>
+                  <a (click)="onCreateNewMonitor(monitorType.LLDC)" class="dropdown-item"
+                    href="#">{{monitorType.LLDC}}</a>
+                  <a (click)="onCreateNewMonitor(monitorType.CTODC)" class="dropdown-item"
+                    href="#">{{monitorType.CTODC}}</a>
+                  <a (click)="onCreateNewMonitor(monitorType.PCBP)" class="dropdown-item"
+                    href="#">{{monitorType.PCBP}}</a>
+                  <a (click)="onCreateNewMonitor(monitorType.TEBP)" class="dropdown-item"
+                    href="#">{{monitorType.TEBP}}</a>
+                </div>
+
               </li>
 
               <div class="divider"></div>
-
-              <!-- Delete action -->
-              <li *ngIf="selectedNode.data.actions.includes('delete')" class="nav-item">
-                <a (click)="onDeleteNode(selectedNode)" class="nav-link" href="#">
-                  <i class="fas fa-minus"></i>
-                  <span>Delete</span>
+              <!-- Clone action -->
+              <li *ngIf="canDoEditAction(selectedNode, 'clone')" class="nav-item">
+                <a (click)="onCloneMonitor(selectedNode)" class="nav-link" href="#" title="Clone monitor">
+                  <i class="far fa-clone"></i>
                 </a>
               </li>
 
               <!-- Disable action -->
-              <li *ngIf="selectedNode.data.actions.includes('disable')" class="nav-item">
-                <a (click)="onDisableMonitor(selectedNode)" class="nav-link" href="#">
+              <li *ngIf="canDoEditAction(selectedNode, 'disable')" class="nav-item">
+                <a (click)="onDisableMonitor(selectedNode)" class="nav-link" href="#" title="Disable monitor">
                   <i class="fas fa-toggle-off"></i>
-                  <span>Disable</span>
+                </a>
+              </li>
+
+              <li *ngIf="canDoEditAction(selectedNode, 'disable_all')" class="nav-item">
+                <a (click)="onDisableMonitor(selectedNode)" class="nav-link" href="#" title="Disable all">
+                  <i class="fas fa-toggle-off"></i>
                 </a>
               </li>
 
               <!-- Enable action -->
-              <li *ngIf="selectedNode.data.actions.includes('enable')" class="nav-item">
-                <a (click)="onEnableMonitor(selectedNode)" class="nav-link" href="#">
+              <li *ngIf="canDoEditAction(selectedNode, 'enable')" class="nav-item">
+                <a (click)="onEnableMonitor(selectedNode)" class="nav-link" href="#" title="Enable monitor">
                   <i class="fas fa-toggle-on"></i>
-                  <span>Enable</span>
                 </a>
               </li>
 
-              <div class="divider"></div>
+              <li *ngIf="canDoEditAction(selectedNode, 'enable_all')" class="nav-item">
+                <a (click)="onEnableMonitor(selectedNode)" class="nav-link" href="#" title="Enable all">
+                  <i class="fas fa-toggle-on"></i>
+                </a>
+              </li>
+
+              <!-- Delete action -->
+              <li *ngIf="canDoEditAction(selectedNode, 'delete')" class="nav-item">
+                <a (click)="onDeleteNode(selectedNode)" class="nav-link" href="#" title="Delete">
+                  <i class="fas fa-minus"></i>
+                  <span *ngIf="!isMonitorsSubnode(selectedNode)">Delete</span>
+                </a>
+              </li>
+
+              <div class="divider" *ngIf="isExistsEditSection(selectedNode)"></div>
 
           <!-- Up/down actions -->
-          <li class="nav-item">
+          <li  *ngIf="selectedNode && selectedNode.data && selectedNode.data.actions "  class="nav-item">
             <a (click)="onUpNode(selectedNode)" class="nav-link"   [ngClass]="{'disabled': !isOneGroup(getDataForMoving('up'))}" href="#">
               <i class="fas fa-arrow-up"></i>
             </a>
           </li>
-          <li class="nav-item" >
+          <li *ngIf="selectedNode && selectedNode.data && selectedNode.data.actions "  class="nav-item" >
             <a (click)="onDownNode(selectedNode)" class="nav-link"  [ngClass]="{'disabled': !isOneGroup(getDataForMoving('down'))}" href="#">
               <i class="fas fa-arrow-down"></i>
             </a>
           </li>
 
               <div class="divider"></div>
-
 
             </div>
           </ul>
@@ -84,11 +128,11 @@
           <ul class="navbar-nav ml-auto">
             <li>
               <input (input)="changeFilter($event.target.value)" [value]="filterText" placeholder="Filter"
-                     type="text"/>
+                type="text" />
             </li>
 
             <li class="nav-item">
-              <a (click)="changeFilter('')" class="nav-link btn-close" href="#">
+              <a (click)="changeFilter('')" class="nav-link btn-close" href="#" title="Clear filter">
                 <i class="fas fa-times"></i>
               </a>
             </li>
@@ -104,7 +148,7 @@
               <div class="pane" style="padding:10px">
 
                 <tree-root #tree [nodes]="nodes" [options]="options" (activate)="activateNode($event)"
-                           (ngModelChange)="treeModelChanged($event)">
+                  (ngModelChange)="treeModelChanged($event)">
                   <ng-template #treeNodeTemplate let-node let-index="index">
 
                     <div [ngClass]="node.data.classes">
@@ -114,21 +158,21 @@
                         <tr>
                           <!-- Expanding/collapsing arrow -->
                           <td [ngClass]="{'node-disabled': isDisabledNode(node.id)}">
-                        <span *ngIf="canCollapse(node)" class="toggle-children-wrapper">
-                          <span
-                            [class]="openedLabel[node.id] ? 'toggle-children-wrapper-expanded' : 'toggle-children-wrapper-collapsed'"
-                            (click)="onNodeArrowClick($event, node)">
-                            <span class="toggle-children"></span>
-                          </span>
-                        </span>
+                            <span *ngIf="canCollapse(node)" class="toggle-children-wrapper">
+                              <span
+                                [class]="openedLabel[node.id] ? 'toggle-children-wrapper-expanded' : 'toggle-children-wrapper-collapsed'"
+                                (click)="onNodeArrowClick($event, node)">
+                                <span class="toggle-children"></span>
+                              </span>
+                            </span>
                             <span *ngIf="node.parent.parent === null">Project: </span>
                             <span *ngIf="isMonitorType(node)">Type: </span>
                           </td>
 
                           <td *ngIf="isMonitorOption(node)" style="padding-right: 5px;"
-                              [ngClass]="{'node-disabled': isDisabledNode(node.id)}">
+                            [ngClass]="{'node-disabled': isDisabledNode(node.id)}">
                             <input type="checkbox" [checked]="getMonitorOption(node)" style="margin-top: 3px"
-                                   (change)="setMonitorOption($event, node)">
+                              (change)="setMonitorOption($event, node)">
                           </td>
 
                           <td *ngIf="isPage(node)" style="padding-right: 5px; color:lightskyblue">
@@ -137,19 +181,19 @@
 
                           <!-- Tree node label (can be editable) -->
                           <td class="node"
-                              [ngClass]="{'node-disabled': isDisabledNode(node.id), 'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id), 'node-highlight-error': isError(node.id)}">
+                            [ngClass]="{'node-disabled': isDisabledNode(node.id), 'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id), 'node-highlight-error': isError(node.id)}">
 
                             <div *ngIf="!isOption(node) && !isMonitorRef(node)" [id]="'textinpfield_' + node.id"
-                                 class="editablenode" (click)="onNodeClick($event, node)"
-                                 (dblclick)="onNodeDblClick($event, node)" (focusout)="saveEditedData($event, node)"
-                                 [contentEditable]="canEdit(node) && (openedLabel[node.id] || (editableNode === node))"
-                                 [innerHTML]="getLabel(node) | colorDeclarations | safeHtml">
+                              class="editablenode" (click)="onNodeClick($event, node)"
+                              (dblclick)="onNodeDblClick($event, node)" (focusout)="saveEditedData($event, node)"
+                              [contentEditable]="canEdit(node) && (openedLabel[node.id] || (editableNode === node))"
+                              [innerHTML]="getLabel(node) | colorDeclarations | safeHtml">
                             </div>
                           </td>
 
                           <!-- Monitor - idref -->
                           <td id="monitorref" *ngIf="isMonitorRef(node)" class="node"
-                              [ngClass]="{'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id), 'node-disabled': isDisabledNode(node.id)}">
+                            [ngClass]="{'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id), 'node-disabled': isDisabledNode(node.id)}">
                             <div [id]="'textinpfield_' + node.id" style="white-space: normal">{{node.data.name}}
                             </div>
                           </td>
@@ -157,7 +201,7 @@
                           <!-- Checkbox for boolean option -->
                           <td *ngIf="isBooleanOption(node)" style="padding-right: 5px;">
                             <input type="checkbox" [checked]="getBooleanOption(node)" style="margin-top: 3px"
-                                   (change)="setBooleanOption($event, node)">
+                              (change)="setBooleanOption($event, node)">
                           </td>
 
                           <!-- Name of the option-->
@@ -176,26 +220,29 @@
 
                       <!-- Tree node context menu -->
                       <div *ngIf="node.data.actions ? true : false" class="dropdown-menu dropdown-menu-fixed shadow"
-                           id="context-menu-{{node.id | replaceSpaces}}">
+                        id="context-menu-{{node.id | replaceSpaces}}">
 
                         <a *ngIf="node.data.actions.includes('declaration')" (click)="onAddNode(node, 'declaration')"
-                           class="dropdown-item" href="#">New declaration</a>
+                          class="dropdown-item" href="#">New declaration</a>
                         <a *ngIf="node.data.actions.includes('block')" (click)="onAddNode(node, 'block')"
-                           class="dropdown-item" href="#">New block</a>
+                          class="dropdown-item" href="#">New block</a>
                         <a *ngIf="node.data.actions.includes('page')" (click)="onAddNode(node, 'page')"
-                           class="dropdown-item" href="#">New page</a>
+                          class="dropdown-item" href="#">New page</a>
 
                         <div *ngIf="node.data.actions.length > 1" class="dropdown-divider" href="#"></div>
 
-                        <a *ngIf="node.data.actions.includes('delete')" (click)="onDeleteNode(node)"
-                           class="dropdown-item"
-                           href="#">Delete</a>
+                        <a *ngIf="node.data.actions.includes('clone')" (click)="onCloneMonitor(node)"
+                          class="dropdown-item" href="#">Clone monitor</a>
                         <a *ngIf="node.data.actions.includes('disable')" (click)="onDisableMonitor(node)"
-                           class="dropdown-item"
-                           href="#">Disable</a>
+                          class="dropdown-item" href="#">Disable monitor</a>
                         <a *ngIf="node.data.actions.includes('enable')" (click)="onEnableMonitor(node)"
-                           class="dropdown-item"
-                           href="#">Enable</a>
+                          class="dropdown-item" href="#">Enable monitor</a>
+                        <a *ngIf="node.data.actions.includes('disable_all')" (click)="onDisableMonitor(node)"
+                          class="dropdown-item" href="#">Disable all</a>
+                        <a *ngIf="node.data.actions.includes('enable_all')" (click)="onEnableMonitor(node)"
+                          class="dropdown-item" href="#">Enable all</a>
+                        <a *ngIf="node.data.actions.includes('delete')" (click)="onDeleteNode(node)"
+                          class="dropdown-item" href="#">Delete</a>
                       </div>
 
                     </div>
@@ -209,24 +256,29 @@
           </div>
         </div>
 
-      </div>
-
+      </ng-container>
 
       <!------------------------------>
       <!-- Application settings tab -->
       <!------------------------------>
 
-      <div *ngIf="tab.id === 'applicationSettings'">
+      <ng-container *ngIf="tab.id === 'applicationSettings'">
+        <div class="workspace-container">
+          <div class="inner">
+            <div class="scroll-y">
 
-        <table [id]="'application-settings-table'" class="table table-bordered table-hover table-small"
-               *ngIf="showTable !== 'application-settings-table'">
-          <tr *ngFor="let item of appSettingsKeys">
-            <td width="50%" class="valueName">{{ item }}</td>
-            <td width="50%" contenteditable='true'>{{ appSettings[item] }}</td>
-          </tr>
-        </table>
+              <table [id]="'application-settings-table'" class="table table-bordered table-hover table-small"
+                *ngIf="showTable !== 'application-settings-table'">
+                <tr *ngFor="let item of appSettingsKeys">
+                  <td width="50%" class="valueName">{{ item }}</td>
+                  <td width="50%" contenteditable='true'>{{ appSettings[item] }}</td>
+                </tr>
+              </table>
 
-      </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
 
     </tab>
   </ng-template>

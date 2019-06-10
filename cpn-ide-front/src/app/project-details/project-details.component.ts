@@ -1,7 +1,7 @@
 import { Component, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Message } from '../common/message';
 import { EventService } from '../services/event.service';
-import { TabsContainer } from '../tabs/tabs-container/tabs.container';
+import { TabsContainer } from '../../lib/tabs/tabs-container/tabs.container';
 import { ProjectService } from '../services/project.service';
 import { ModelService } from '../services/model.service';
 import { SettingsService } from '../services/settings.service';

@@ -6,6 +6,11 @@ import { SettingsService } from '../services/settings.service';
 import { ValidationService } from './validation.service';
 import { keyframes } from '@angular/animations';
 
+import {
+  getNextId,
+} from '../../lib/cpn-js/features/modeling/CpnElementFactory';
+
+
 /**
  * Common service for getting access to project data from all application
  */
@@ -325,7 +330,6 @@ export class ModelService {
   }
 
 
-
   moveNonModelJsonElement(element, parent, target, index, type) {
 
     const addelemToEntry = (entry) => {
@@ -353,7 +357,7 @@ export class ModelService {
           delete tran['subst'];
           if (target.trans) {
             if (target.trans instanceof Array) {
-              subPageTrans._id = 'ID' + new Date().getTime();
+              subPageTrans._id = getNextId();
               target.trans.push(subPageTrans);
             } else {
               target.trans = [subPageTrans, target.trans];
@@ -368,7 +372,9 @@ export class ModelService {
         if (parent.trans instanceof Array) {
           for (let i = 0; i < parent.trans.length; i++) {
             swapSubPageTrans(parent.trans[i], subPageTrans);
-            if (subPageTrans) { break; }
+            if (subPageTrans) {
+              break;
+            }
           }
         } else {
           swapSubPageTrans(parent.trans, subPageTrans);
@@ -565,7 +571,9 @@ export class ModelService {
     for (let i = 0; i < block[elementType].length; i++) {
       if (block[elementType][i]._id === id) {
         block[elementType].splice(i, 1);
-        if (block[elementType].length === 0) { delete block[elementType]; }
+        if (block[elementType].length === 0) {
+          delete block[elementType];
+        }
       }
     }
   }
@@ -611,7 +619,7 @@ export class ModelService {
         return {
           id: this.settings.getAppSettings()[elementType] + (++this.countNewItems),
           type: { id: this.settings.getAppSettings()[elementType] },
-          _id: 'ID' + new Date().getTime()
+          _id: getNextId()
         };
         break;
       case 'color':
@@ -619,12 +627,13 @@ export class ModelService {
           id: this.settings.getAppSettings()[elementType] + (++this.countNewItems),
           timed: '',
           name: this.settings.getAppSettings()[elementType],
-          _id: 'ID' + new Date().getTime()
+          _id: getNextId()
         };
         break;
       case 'ml':
         return {
-          _id: 'ID' + new Date().getTime(), __text: this.settings.getAppSettings()[elementType], toString() {
+          _id: getNextId(),
+          __text: this.settings.getAppSettings()[elementType], toString() {
             return (this.__text != null ? this.__text : '');
           }
         };
@@ -633,7 +642,7 @@ export class ModelService {
         return {
           id: this.settings.getAppSettings()[elementType] + (++this.countNewItems),
           ml: this.settings.getAppSettings()[elementType],
-          _id: 'ID' + new Date().getTime()
+          _id: getNextId()
         };
         break;
       default:
@@ -758,12 +767,11 @@ export class ModelService {
       // trans: [],
       // arc: [],
       constraints: '',
-      _id: id ? id : 'ID' + new Date().getTime()
+      _id: id ? id : getNextId()
     };
 
     return newPage;
   }
-
 
 
   /**
@@ -774,7 +782,7 @@ export class ModelService {
   createCpnBlock(name) {
     return {
       id: name,
-      _id: 'ID' + new Date().getTime()
+      _id: getNextId()
     };
   }
 
@@ -787,8 +795,73 @@ export class ModelService {
   createCpnDeclaration(layout) {
     return {
       layout: layout,
-      _id: 'ID' + new Date().getTime()
+      _id: getNextId()
     };
+  }
+
+  createMonitorBP(cpnElement) {
+
+  }
+
+  createMonitorCTODC(cpnElement: any): any {
+    console.log('createMonitorCTODC(), cpnElement = ', cpnElement);
+    return {
+      _id: getNextId(),
+      _name: 'Count_trans_occur_PAGENAME_' + cpnElement.text, //TODO add page name: 'Count_trans_occur_' + PAGENAME + '_' + cpnElement.text
+      _type: '6',
+      _typedescription: 'Count transition occurrence data collection',
+      _disabled: 'false',
+      node: {
+        _idref: cpnElement.id,
+        _pageinstanceidref: 'PAGEID' // TODO add page ID
+      },
+      option: {
+        _name: 'Logging',
+        _value: 'false'
+      }
+    };
+  }
+
+  createMonitorDC(cpnElement) {
+    return {
+      _id: getNextId(),
+      _name: '',
+      _type: '3',
+      _typedescription: 'Data collection',
+      _disabled: 'false',
+      // option: {
+      //   _name: 'Timed',
+      //   _value: 'false'
+      // },
+      // option: {
+      //   _name: 'Logging',
+      //   _value: 'false'
+      // }
+    };
+  }
+
+  createMonitorLLDC(cpnElement) {
+
+  }
+
+  createMonitorMS(cpnElement) {
+
+  }
+
+  createMonitorPCBP(cpnElement) {
+
+  }
+
+  createMonitorTEBP(cpnElement) {
+
+  }
+
+  createMonitorUS(cpnElement) {
+
+  }
+
+  createMonitorWIF(cpnElement) {
+
   }
 
   /**
@@ -868,10 +941,14 @@ export class ModelService {
    */
   cpnDeclarationElementToString(cpnElement, type) {
     switch (type) {
-      case 'globref': return this.cpnGlobrefToString(cpnElement);
-      case 'color': return this.cpnColorToString(cpnElement);
-      case 'var': return this.cpnVarToString(cpnElement);
-      case 'ml': return this.cpnMlToString(cpnElement);
+      case 'globref':
+        return this.cpnGlobrefToString(cpnElement);
+      case 'color':
+        return this.cpnColorToString(cpnElement);
+      case 'var':
+        return this.cpnVarToString(cpnElement);
+      case 'ml':
+        return this.cpnMlToString(cpnElement);
     }
   }
 
@@ -1082,7 +1159,7 @@ export class ModelService {
 
   createSubpage(transCpnElement, newPageName, newPageId) {
     let pageName = this.getNextPageName(newPageName);
-    let pageId = newPageId ? newPageId : 'ID' + new Date().getTime();
+    let pageId = newPageId ? newPageId : getNextId();
 
     const subpageCpnElement = this.createCpnPage(pageName, pageId);
     transCpnElement.subst.subpageinfo._name = subpageCpnElement.pageattr._name;
@@ -1172,8 +1249,6 @@ export class ModelService {
   }
 
 
-
-
   /**
    * Getting all port places for transition
    * @param cpnElement
@@ -1215,7 +1290,9 @@ export class ModelService {
     if (page && text !== '') {
       const port = page.place.find(e => e.text === text && (e.port._type === 'I/O' || e.port._type === (orient === 'TtoP' ? 'Out' : 'In')));
       return port._id;
-    } else { return undefined; }
+    } else {
+      return undefined;
+    }
   }
 
 

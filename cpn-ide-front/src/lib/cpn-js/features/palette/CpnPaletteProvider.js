@@ -1,4 +1,5 @@
 import { CPN_PLACE, CPN_TRANSITION, is } from "../../util/ModelUtil";
+import { getNextId } from "../modeling/CpnElementFactory";
 
 /**
  * A example palette provider.
@@ -68,7 +69,7 @@ CpnPaletteProvider.prototype.getPaletteEntries = function () {
 
     let cpnElement = modeling.createShapeCpnElement(position, CPN_TRANSITION);
 
-    const subPageId = 'ID' + new Date().getTime();
+    const subPageId = getNextId();
     cpnElement = modeling.declareSubPage(cpnElement, 'Subpage', subPageId);
 
     const element = cpnFactory.createShape(undefined, cpnElement, CPN_TRANSITION, position, true);

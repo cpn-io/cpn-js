@@ -17,17 +17,12 @@ import {
 
 import {
   CPN_LABEL,
-  CPN_TOKEN_LABEL,
-  CPN_MARKING_LABEL,
-  isCpn,
-  is,
-  CPN_PLACE,
   CPN_TRANSITION,
-  CPN_CONNECTION,
-  isAny,
+  isCpn,
 } from '../../lib/cpn-js/util/ModelUtil';
 
 import { AccessCpnService } from '../services/access-cpn.service';
+import { isComponent } from '@angular/core/src/render3/util';
 
 
 @Component({
@@ -71,9 +66,7 @@ export class ModelEditorComponent implements OnInit {
 
   loading = false;
 
-  correctColor = {
-    'Fucia': '#f0f'
-  };
+  errorData;
 
   ngOnInit() {
 
@@ -129,13 +122,7 @@ export class ModelEditorComponent implements OnInit {
 
     this.eventService.on(Message.MODEL_RELOAD, () => {
       this.log('Reload page diagram...');
-      if (this.pageId) {
-        const pageObject = this.modelService.getPageById(this.pageId);
-        if (pageObject) {
-          this.jsonPageObject = pageObject;
-          this.loadPageDiagram(pageObject, false);
-        }
-      }
+      this.reloadPage();
     });
 
     this.eventService.on(Message.SERVER_INIT_NET_START, () => {
@@ -145,6 +132,8 @@ export class ModelEditorComponent implements OnInit {
 
     // VALIDATION RESULT
     this.eventService.on(Message.SERVER_INIT_NET_DONE, (event) => {
+      this.errorData = {};
+
       this.updateElementStatus();
     });
 
@@ -207,6 +196,7 @@ export class ModelEditorComponent implements OnInit {
           if (element.cpnElement) {
             this.modelService.addElementJsonOnPage(element.cpnElement, this.pageId, element.type, this.modeling);
 
+            // Check if transition is subpage and create subpage
             if (element.type === CPN_TRANSITION && element.cpnElement.subst) {
               if (!element.cpnElement.subst._subpage) {
                 element.cpnElement.subst._subpage = getNextId();
@@ -224,17 +214,66 @@ export class ModelEditorComponent implements OnInit {
       }
     });
 
+    eventBus.on('extract.subpage', (event) => {
+      const transCpnElement = event.transCpnElement;
+      const places = event.places;
+      const transitions = event.transitions;
+
+      self.modelService.addElementJsonOnPage(transCpnElement, self.pageId, CPN_TRANSITION);
+
+      console.log(self.constructor.name, 'extract.subpage, places, transitions = ', places, transitions);
+
+      let selectedElements = [];
+      selectedElements = selectedElements.concat(places).concat(transitions);
+      if (selectedElements.length < 1) {
+        return;
+      }
+
+      console.log(self.constructor.name, 'extract.subpage, selectedElements = ', selectedElements);
+
+      self.eventService.send(Message.SUBPAGE_TRANS_CREATE,
+        {
+          currentPageId: self.pageId,
+          subPageName: transCpnElement.subst.subpageinfo._name,
+          subPageId: transCpnElement.subst._subpage,
+          cpnElement: transCpnElement
+        },
+        true // wait event handlers finish
+      );
+
+      const subPageId = transCpnElement.subst._subpage;
+      const subpage = self.modelService.getPageById(subPageId);
+      if (!subpage) {
+        return;
+      }
+
+      console.log(self.constructor.name, 'extract.subpage, subpage = ', subpage);
+
+      // console.log(self.constructor.name, 'extract.subpage, getAllArcs() = ', self.modelService.getAllArcs());
+
+      const arcs = self.modelService.getArcsForElements(selectedElements);
+
+      console.log(self.constructor.name, 'extract.subpage, arcs = ', arcs);
+
+      selectedElements = selectedElements.concat(arcs);
+
+      self.modelService.moveElements(self.pageId, subPageId, selectedElements);
+
+      self.reloadPage();
+    });
+
+
     eventBus.on('shape.delete', (event) => {
       if (event.elements) {
         for (const elem of event.elements) {
-          this.modelService.deleteElementFromPageJson(this.pageId, elem.id, elem.type);
+          self.modelService.deleteElementFromPageJson(self.pageId, elem.id, elem.type);
         }
       }
     });
 
     eventBus.on('portMenuProvider.open', (event) => {
       if (event.trans && event.trans.cpnElement && event.trans.cpnElement.subst) {
-        const pageObj = this.modelService.getPageById(event.trans.cpnElement.subst._subpage);
+        const pageObj = self.modelService.getPageById(event.trans.cpnElement.subst._subpage);
         if (pageObj) {
           const list = [];
           for (const place of pageObj.place) {
@@ -246,39 +285,47 @@ export class ModelEditorComponent implements OnInit {
               });
             }
           }
-          this.portMenuProvider.open({ trans: event.trans, place: event.place, arc: event.arc, list: list }, event.position, this.modeling);
+          self.portMenuProvider.open({ trans: event.trans, place: event.place, arc: event.arc, list: list }, event.position, self.modeling);
         }
       }
     });
 
-    eventBus.on('extract.subpage', (event) => {
-      const subPageId = event.subPageId;
-      const places = event.places;
-      const transitions = event.transitions;
 
-      console.log(self.constructor.name, 'extract.subpage, places, transitions = ', places, transitions);
+    eventBus.on('element.hover', (event) => {
+      const element = event.element;
 
-      let cpnElements = [];
-      cpnElements = cpnElements.concat(places).concat(transitions);
-      if (cpnElements.length < 1) {
-        return;
+      console.log(self.constructor.name, 'element.hover, event = ', event);
+
+      const errorPopup: HTMLElement = document.getElementById('errorPopup');
+
+      if (self.errorData && isCpn(element) && element.cpnElement._id in self.errorData) {
+
+        if (event.originalEvent) {
+          errorPopup.style.left = event.originalEvent.offsetX + 'px';
+          errorPopup.style.top = (event.originalEvent.offsetY + 20) + 'px';
+          errorPopup.style.display = 'block';
+          errorPopup.innerText = self.errorData[element.cpnElement._id];
+        }
+      } else {
+        // setTimeout(() => {
+        errorPopup.style.display = 'none';
+        errorPopup.innerText = '';
+        // }, 3000);
       }
-
-      console.log(self.constructor.name, 'extract.subpage, cpnElements = ', cpnElements);
-
-      const subpage = self.modelService.getPageById(subPageId);
-      if (!subpage) {
-        return;
-      }
-
-      console.log(self.constructor.name, 'extract.subpage, subpage = ', subpage);
-
-      const arcs = self.modelService.getArcsForElements(cpnElements);
-
-      console.log(self.constructor.name, 'extract.subpage, arcs = ', arcs);
     });
 
+
     // this._eventBus.fire('bind.port.cancel', {connection: this._createdArc});
+  }
+
+  reloadPage() {
+    if (this.pageId) {
+      const pageObject = this.modelService.getPageById(this.pageId);
+      if (pageObject) {
+        this.jsonPageObject = pageObject;
+        this.loadPageDiagram(pageObject, false);
+      }
+    }
   }
 
   /**
@@ -300,8 +347,9 @@ export class ModelEditorComponent implements OnInit {
     }
 
     if (Object.keys(this.accessCpnService.getErrorData()).length > 0) {
+      this.errorData = this.accessCpnService.getErrorData();
       const errorIds = [];
-      for (const id of Object.keys(this.accessCpnService.getErrorData())) {
+      for (const id of Object.keys(this.errorData)) {
         errorIds.push(id);
       }
 

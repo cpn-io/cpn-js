@@ -147,8 +147,8 @@
             <div class="scroll-y" id="tree-scroll-pane">
               <div class="pane" style="padding:10px">
 
-                <tree-root #tree [nodes]="nodes" [options]="options" (activate)="activateNode($event)"
-                  (ngModelChange)="treeModelChanged($event)">
+                <tree-root #tree [state]="treeState" (stateChange)="setState($event)" [nodes]="nodes" [options]="options"
+                  (activate)="activateNode($event)" (ngModelChange)="treeModelChanged($event)">
                   <ng-template #treeNodeTemplate let-node let-index="index">
 
                     <div [ngClass]="node.data.classes">

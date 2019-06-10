@@ -851,21 +851,31 @@ export class ModelService {
     };
   }
 
-  createMonitorBP(cpnElement) {
+  createCpnMonitorBP(cpnElement) {
 
   }
 
+// <monitor id="ID1438426776"
+//   name="Count_trans_occur_Customer&apos;place_                    order_1"
+//   type="6"
+//   typedescription="Count transition occurrence data collection"
+//   disabled="false">
+//   <node idref="ID1437019464"
+//   pageinstanceidref="ID1437019576"/>
+//   <option name="Logging"
+//   value="true"/>
+// </monitor>
   createMonitorCTODC(cpnElement: any): any {
     console.log('createMonitorCTODC(), cpnElement = ', cpnElement);
     return {
       _id: getNextId(),
-      _name: 'Count_trans_occur_PAGENAME_' + cpnElement.text, //TODO add page name: 'Count_trans_occur_' + PAGENAME + '_' + cpnElement.text
+      _name: 'Count_trans_occur_PAGENAME_' + cpnElement.text, // TODO add page name: 'Count_trans_occur_' + PAGENAME + '_' + cpnElement.text
       _type: '6',
       _typedescription: 'Count transition occurrence data collection',
       _disabled: 'false',
       node: {
         _idref: cpnElement.id,
-        _pageinstanceidref: 'PAGEID' // TODO add page ID
+        _pageinstanceidref: 'PAGEINSTANCEID' // TODO add page instance ID
       },
       option: {
         _name: 'Logging',
@@ -874,45 +884,204 @@ export class ModelService {
     };
   }
 
-  createMonitorDC(cpnElement) {
+// <monitor id="ID1437510504"
+//   name="Throughput times order size 3"
+//   type="3"
+//   typedescription="Data collection"
+//   disabled="true">
+//   <node idref="ID1437019470"
+//   pageinstanceidref="ID1437019576"/>
+//   <declaration name="Predicate">
+//   <ml id="ID1437510512">fun pred (bindelem) =
+//   let
+//   fun predBindElem (Customer&apos;consume (1, {its,oid,s})) = true
+//   | predBindElem _ = false
+//   in
+//   predBindElem bindelem
+// end
+// <layout>fun pred (bindelem) =
+//   let
+// fun predBindElem (Customer&apos;consume (1, {its,oid,s})) = true
+//   | predBindElem _ = false
+//   in
+//   predBindElem bindelem
+// end</layout>
+// </ml>
+// </declaration>
+// <declaration name="Observer">
+// <ml id="ID1437510516">fun obs (bindelem) =
+//   let
+// fun obsBindElem (Customer&apos;consume (1, {its,oid,s})) = 0
+//   | obsBindElem _ = ~1
+//   in
+//   obsBindElem bindelem
+// end
+// <layout>fun obs (bindelem) =
+//   let
+// fun obsBindElem (Customer&apos;consume (1, {its,oid,s})) = 0
+//   | obsBindElem _ = ~1
+//   in
+//   obsBindElem bindelem
+// end</layout>
+// </ml>
+// </declaration>
+// <declaration name="Init function">
+// <ml id="ID1437510520">fun init () =
+//   NONE
+//   <layout>fun init () =
+//   NONE</layout>
+//   </ml>
+//   </declaration>
+//   <declaration name="Stop">
+// <ml id="ID1437510524">fun stop () =
+//   NONE
+//   <layout>fun stop () =
+//   NONE</layout>
+//   </ml>
+//   </declaration>
+//   <option name="Timed"
+// value="false"/>
+// <option name="Logging"
+// value="false"/>
+// </monitor>
+  createCpnMonitorDC(cpnElement) {
+
+    let predicate: string;
+    if (cpnElement.cpnType === 'cpn:Place') {
+      predicate =
+        'fun pred (PAGENAME&apos;SHAPETEXT_1_mark : U ms) = ' +
+        '  true';
+    } else {
+      predicate =
+        'fun pred (bindelem) =\n' +
+        '  let\n' +
+        '  fun predBindElem (PAGENAME&apos;SHAPETEXT (1, {x,y})) = true\n' + // TODO here
+        '    | predBindElem _ = false\n' +
+        'in\n' +
+        '  predBindElem bindelem\n' +
+        'end';
+    }
     return {
       _id: getNextId(),
       _name: '',
       _type: '3',
       _typedescription: 'Data collection',
       _disabled: 'false',
-      // option: {
-      //   _name: 'Timed',
-      //   _value: 'false'
-      // },
-      // option: {
-      //   _name: 'Logging',
-      //   _value: 'false'
-      // }
+      node: {
+        _idref: cpnElement.id,
+        _pageinstanceidref: 'PAGEINSTANCEID' // TODO add page instance ID
+      },
+      declaration: [
+        {
+          _name: 'Predicate',
+          ml: {
+            _id: 'ID' + new Date().getTime(),
+            layout: predicate
+          }
+        },
+        {
+          _name: 'Observer',
+          ml: {
+            _id: 'ID' + new Date().getTime(),
+            layout:
+              'fun obs (bindelem) =\n' +
+              '  let\n' +
+              'fun obsBindElem (PAGENAME&apos;SHAPETEXT (1, {x,y})) = 0\n' + // TODO here
+              '  | obsBindElem _ = ~1\n' +
+              ' in\n' +
+              '  obsBindElem bindelem\n' +
+              'end'
+          }
+        },
+        {
+          _name: 'Init function',
+          ml: {
+            _id: 'ID' + new Date().getTime(),
+            layout: 'fun init () =\n' +
+              'NONE'
+          }
+        },
+        {
+          _name: 'Stop',
+          ml: {
+            _id: 'ID' + new Date().getTime(),
+            layout: 'fun stop () =' +
+              'NONE'
+          }
+        },
+      ],
+      option: [
+        {
+          _name: 'Timed',
+          _value: 'false'
+        },
+        {
+          _name: 'Logging',
+          _value: 'false'
+        }
+      ]
     };
   }
 
-  createMonitorLLDC(cpnElement) {
+  createCpnMonitorLLDC(cpnElement) {
 
   }
 
-  createMonitorMS(cpnElement) {
+// <monitor id="ID1438122141"
+//   name="Marking_size_BurgerHeaven&apos;C busy_1"
+//   type="0"
+//   typedescription="Marking size"
+//   disabled="true">
+//   <node idref="ID1438112416"
+//   pageinstanceidref="ID1437053129"/>
+//   <node idref="ID1438118761"
+//   pageinstanceidref="ID1437053129"/>
+//   <node idref="ID1437052949"
+//   pageinstanceidref="ID1437053129"/>
+//   <option name="Logging"
+//   value="true"/>
+// </monitor>
+  createCpnMonitorMS(cpnElement) {
+    return {
+      _id: 'ID' + new Date().getTime(),
+      _name: 'Marking_size_PAGENAME_' + cpnElement.text, //TODO add page name: 'Count_trans_occur_' + PAGENAME + '_' + cpnElement.text
+      _type: '0',
+      _typedescription: 'Marking size',
+      _disabled: 'false',
+      node: [
+        {
+          _idref: 'IDREF', // TODO
+          _pageinstanceidref: 'PAGEINSTANCEID' // TODO
+        },
+        {
+          _idref: 'IDREF', // TODO
+          _pageinstanceidref: 'PAGEINSTANCEID' // TODO
+        },
+        {
+          _idref: 'IDREF', // TODO
+          _pageinstanceidref: 'PAGEINSTANCEID' // TODO
+        }
+      ],
+      option: {
+        _name: 'Logging',
+        _value: 'true'
+      }
+    };
+  }
+
+  createCpnMonitorPCBP(cpnElement) {
 
   }
 
-  createMonitorPCBP(cpnElement) {
+  createCpnMonitorTEBP(cpnElement) {
 
   }
 
-  createMonitorTEBP(cpnElement) {
+  createCpnMonitorUD(cpnElement) {
 
   }
 
-  createMonitorUS(cpnElement) {
-
-  }
-
-  createMonitorWIF(cpnElement) {
+  createCpnMonitorWIF(cpnElement) {
 
   }
 
@@ -1009,7 +1178,7 @@ export class ModelService {
    * Parse declaration type from string
    */
   parseDeclarationTypeFromString(str) {
-    let parser = str.match('^\\S+');
+    const parser = str.match('^\\S+');
 
     if (parser) {
       return parser[0];
@@ -1027,7 +1196,7 @@ export class ModelService {
 
     cpnElement = { _id: cpnElement._id };
 
-    let parser = str.match('^\\S+');
+    const parser = str.match('^\\S+');
     // console.log('stringToCpnDeclarationElement(), parser = ', parser);
 
     const declarationType = this.parseDeclarationTypeFromString(str);
@@ -1132,7 +1301,7 @@ export class ModelService {
    * Get page object from model by id
    * @param id
    */
-  getPageById(id): any {
+  getPageById(id) {
     return this.getAllPages().find(page => page._id === id);
   }
 
@@ -1149,6 +1318,23 @@ export class ModelService {
     }
     return undefined;
   }
+
+  /**
+   * Get all trans for model
+   */
+  getAllTrans() {
+    const allTrans = [];
+
+    for (const page of this.getAllPages()) {
+      const trans = page.trans instanceof Array ? page.trans : [page.trans];
+      for (const t of trans) {
+        allTrans.push(t);
+      }
+    }
+
+    return allTrans;
+  }
+
 
   /**
    * Get all acrs for model
@@ -1183,13 +1369,63 @@ export class ModelService {
 
     const arcs = [];
     for (const arc of this.getAllArcs()) {
-      if (cpnElementIds.includes(arc.placeend._idref)
-        && cpnElementIds.includes(arc.transend._idref)) {
-        arcs.push(arc);
+      if (arc) {
+        if (cpnElementIds.includes(arc.placeend._idref)
+          && cpnElementIds.includes(arc.transend._idref)) {
+          arcs.push(arc);
+        }
       }
     }
     return arcs;
   }
+
+  /**
+   * Move elements from page to page
+   */
+  moveElements(fromPageId, toPageId, elements) {
+
+    const fromPage = this.getPageById(fromPageId);
+    const toPage = this.getPageById(toPageId);
+
+    if (!fromPage || !toPage) {
+      return;
+    }
+
+    for (const element of elements) {
+
+      // place element
+      if (element.ellipse) {
+
+        // remove place from old page
+        this.removeCpnElement(fromPage, element, 'place');
+        // add place to new page
+        this.addCpnElement(toPage, element, 'place');
+
+      } else
+
+        // transition element
+        if (element.box) {
+
+          // remove trans from old page
+          this.removeCpnElement(fromPage, element, 'trans');
+          // add trans to new page
+          this.addCpnElement(toPage, element, 'trans');
+
+        } else
+
+          // arc element
+          if (element.transend) {
+
+            // remove arc from old page
+            this.removeCpnElement(fromPage, element, 'arc');
+            // add arc to new page
+            this.addCpnElement(toPage, element, 'arc');
+
+          }
+
+    }
+  }
+
 
 
   getNextPageName(pageName) {
@@ -1210,8 +1446,8 @@ export class ModelService {
   }
 
   createSubpage(transCpnElement, newPageName, newPageId) {
-    let pageName = this.getNextPageName(newPageName);
-    let pageId = newPageId ? newPageId : getNextId();
+    const pageName = this.getNextPageName(newPageName);
+    const pageId = newPageId ? newPageId : getNextId();
 
     const subpageCpnElement = this.createCpnPage(pageName, pageId);
     transCpnElement.subst.subpageinfo._name = subpageCpnElement.pageattr._name;
@@ -1282,21 +1518,21 @@ export class ModelService {
 
   getArcEnds(cpnElement) {
     const page = this.getAllPages().find(p => {
-      return p.arc.find(pl => {
-        return pl._id === cpnElement._id;
-      });
+      const arcs = p.arc instanceof Array ? p.arc : [p.arc];
+      return arcs.find(pl => pl._id === cpnElement._id);
     });
     for (const entry of ['place', 'trans']) {
-      if (!(page[entry] instanceof Array)) {
-        page[entry] = [page[entry]];
-      }
+      if (!(page[entry] instanceof Array)) { page[entry] = [page[entry]]; }
     }
+
     let placeEnd;
-    placeEnd = page.place.find(el => {
-      return el._id === cpnElement.placeend._idref;
-    });
+    const place = page.place instanceof Array ? page.place : [page.place];
+    placeEnd = place.find(el => el._id === cpnElement.placeend._idref);
+
     let transEnd;
-    transEnd = page.trans.find((tr) => cpnElement.transend._idref === tr._id);
+    const trans = page.trans instanceof Array ? page.trans : [page.trans];
+    transEnd = trans.find((tr) => cpnElement.transend._idref === tr._id);
+
     return { place: placeEnd, trans: transEnd, orient: cpnElement._orientation };
   }
 

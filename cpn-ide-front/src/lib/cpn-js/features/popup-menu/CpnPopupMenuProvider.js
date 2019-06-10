@@ -3,6 +3,7 @@ import {
   filter
 } from 'min-dash';
 import { is, CPN_PLACE, CPN_TRANSITION, CPN_TEXT_ANNOTATION } from '../../util/ModelUtil';
+import { getNextId } from '../modeling/CpnElementFactory';
 
 /**
  * This module is an element agnostic replace menu provider for the popup menu.
@@ -180,7 +181,7 @@ CpnPopupMenuProvider.prototype._createSubpage = function (event) {
   const position = toLocalPoint(this._canvas, this._position);
 
   // alert(JSON.stringify(position));
-  let id = 'ID' + new Date().getTime();
+  let id = getNextId();
   let cpnElement = this._modeling.createShapeCpnElement(position, CPN_TRANSITION);
 
   cpnElement = this._modeling.declareSubPage(cpnElement, 'Subpage', id);

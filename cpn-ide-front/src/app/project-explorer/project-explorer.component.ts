@@ -934,8 +934,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
             if (treeNode.parent.id !== 'Pages') {
               upperPage = treeNode.parent.data.cpnElement;
             } else {
-              if (indexElem !== 0)
+              if (indexElem !== 0) {
                 upperPage = treeNode.parent.children[indexElem - 1].data.cpnElement;
+              }
             }
             if (upperPage) {
               this.eventService.send(Message.PAGE_OPEN, { pageObject: upperPage });
@@ -949,67 +950,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           }
         }
       }
-    }
-  }
-
-  /**
-   * icon Add click handler
-   * @param node - current page node in explorer
-   */
-  onAddNode_OLD(node, addingElement) {
-    console.log('onAddNode(), node = ', node);
-
-    if (node.data.type === 'page' || node.data.id === 'Pages') {
-      console.log('content' + node.id + 'IsSelected ---');
-      const newPage = {
-        pageattr: {
-          _name: this.settings.getAppSettings()['page'] + (this.newPageCount++)
-        },
-        place: [],
-        trans: [],
-        arc: [],
-        constraints: '',
-        _id: 'ID' + new Date().getTime()
-      };
-      const pageNode = {
-        // id: page['@attributes'].id,
-        // name: page.pageattr['@attributes'].name,
-        id: newPage._id, // page._id,
-        name: newPage.pageattr._name, // page.pageattr._name,
-        type: 'page',
-        cpnElement: newPage, // page,
-        children: []
-      };
-
-      this.modelService.createNewPage(newPage);
-      //  let page = this.getObjects(this.nodes, 'id', node.data.id)
-      // page[0].children.push(pageNode);
-      node.data.children.push(pageNode);
-      this.updateTree();
-      const editableNode = this.treeComponent.treeModel.getNodeById(pageNode.id);
-      this.treeComponent.treeModel.setFocusedNode(editableNode);
-      this.goToEditNode(pageNode.id);
-      let expnNode = editableNode;
-      while (expnNode && expnNode.id !== 'project') {
-        expnNode.expand();
-        expnNode = expnNode.parent;
-      }
-      // this.eventService.send(Message.XML_UPDATE, {project: {data: this.currentProjectModel, name: this.modelName}});
-      if (node.data.id !== 'Pages') {
-        this.eventService.send(Message.SUBPAGE_CREATE, {
-          name: pageNode.name,
-          id: pageNode.id,
-          parentid: node.id,
-          event: event,
-          state: this.treeComponent.treeModel.getState()
-        });
-      }
-    } else {
-      if (!addingElement) {
-        addingElement = node.data.name;
-      }
-
-      // this.modelService.sendChangingElementToDeclarationPanel(node, addingElement, 'add', undefined, this.getCurrentBlock(node).id, this.treeComponent.treeModel.getState());
     }
   }
 

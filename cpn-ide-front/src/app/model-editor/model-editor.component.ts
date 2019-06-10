@@ -12,6 +12,10 @@ import { ValidationService } from '../services/validation.service';
 import { importCpnPage } from '../../lib/cpn-js/import/Importer';
 
 import {
+  getNextId,
+} from '../../lib/cpn-js/features/modeling/CpnElementFactory';
+
+import {
   CPN_LABEL,
   CPN_TOKEN_LABEL,
   CPN_MARKING_LABEL,
@@ -22,6 +26,7 @@ import {
   CPN_CONNECTION,
   isAny,
 } from '../../lib/cpn-js/util/ModelUtil';
+
 import { AccessCpnService } from '../services/access-cpn.service';
 
 
@@ -204,7 +209,7 @@ export class ModelEditorComponent implements OnInit {
 
             if (element.type === CPN_TRANSITION && element.cpnElement.subst) {
               if (!element.cpnElement.subst._subpage) {
-                element.cpnElement.subst._subpage = 'id' + new Date().getTime();
+                element.cpnElement.subst._subpage = getNextId();
               }
 
               this.eventService.send(Message.SUBPAGE_TRANS_CREATE, {

@@ -1,10 +1,15 @@
-import {Injectable} from '@angular/core';
-import {EventService} from './event.service';
-import {Message} from '../common/message';
-import {AccessCpnService} from './access-cpn.service';
-import {SettingsService} from '../services/settings.service';
-import {ValidationService} from './validation.service';
-import {keyframes} from '@angular/animations';
+import { Injectable } from '@angular/core';
+import { EventService } from './event.service';
+import { Message } from '../common/message';
+import { AccessCpnService } from './access-cpn.service';
+import { SettingsService } from '../services/settings.service';
+import { ValidationService } from './validation.service';
+import { keyframes } from '@angular/animations';
+
+import {
+  getNextId,
+} from '../../lib/cpn-js/features/modeling/CpnElementFactory';
+
 
 /**
  * Common service for getting access to project data from all application
@@ -41,8 +46,8 @@ export class ModelService {
   undoRedoBusy = false;
 
   constructor(private eventService: EventService,
-              private accessCpnService: AccessCpnService,
-              private settings: SettingsService,
+    private accessCpnService: AccessCpnService,
+    private settings: SettingsService,
   ) {
     console.log('ModelService instance CREATED!');
 
@@ -152,7 +157,7 @@ export class ModelService {
 
       // get model from redo history
       this.projectData = this.undoHistory.pop();
-      this.project = {data: this.projectData, name: this.projectName};
+      this.project = { data: this.projectData, name: this.projectName };
       this.skipBackup = true;
       this.eventService.send(Message.MODEL_RELOAD);
     }
@@ -169,7 +174,7 @@ export class ModelService {
     if (this.redoHistory.length > 0) {
       // get model from undo history
       this.projectData = this.redoHistory.pop();
-      this.project = {data: this.projectData, name: this.projectName};
+      this.project = { data: this.projectData, name: this.projectName };
       this.skipBackup = true;
       this.eventService.send(Message.MODEL_RELOAD);
 
@@ -283,13 +288,13 @@ export class ModelService {
       console.log('getCpnElementById(), cpnElement = ', cpnElement);
 
       if (cpnElement._id === id) {
-        return {cpnParentElement: cpnParentElement, cpnElement: cpnElement};
+        return { cpnParentElement: cpnParentElement, cpnElement: cpnElement };
       }
 
       for (const key of Object.keys(cpnElement)) {
         const e = this.getCpnElementById(cpnElement, cpnElement[key], id);
         if (e) {
-          return {cpnParentElement: e.cpnParentElement, cpnElement: e.cpnElement};
+          return { cpnParentElement: e.cpnParentElement, cpnElement: e.cpnElement };
         }
       }
     }
@@ -321,7 +326,7 @@ export class ModelService {
   // send changes
 
   changeSubPageTransitionName(subpage) {
-    this.eventService.send(Message.CHANGE_NAME_PAGE, {id: subpage.subpageid, name: subpage.name, changedElement: 'tran'});
+    this.eventService.send(Message.CHANGE_NAME_PAGE, { id: subpage.subpageid, name: subpage.name, changedElement: 'tran' });
   }
 
 
@@ -352,7 +357,7 @@ export class ModelService {
           delete tran['subst'];
           if (target.trans) {
             if (target.trans instanceof Array) {
-              subPageTrans._id = 'ID' + new Date().getTime();
+              subPageTrans._id = getNextId();
               target.trans.push(subPageTrans);
             } else {
               target.trans = [subPageTrans, target.trans];
@@ -488,7 +493,7 @@ export class ModelService {
         if (page.pageattr._name === updatedData.pageObject.pageattr._name) {
           page = updatedData.pageObject;
 
-          this.eventService.send(Message.XML_UPDATE, {project: {data: project, name: this.projectName}});
+          this.eventService.send(Message.XML_UPDATE, { project: { data: project, name: this.projectName } });
         }
       }
     } else {
@@ -496,7 +501,7 @@ export class ModelService {
       if (page.pageattr._name === updatedData.pageObject.pageattr._name) {
         page = updatedData.pageObject;
 
-        this.eventService.send(Message.XML_UPDATE, {project: {data: project, name: this.projectName}});
+        this.eventService.send(Message.XML_UPDATE, { project: { data: project, name: this.projectName } });
       }
     }
   }
@@ -612,8 +617,8 @@ export class ModelService {
       case 'var':
         return {
           id: this.settings.getAppSettings()[elementType] + (++this.countNewItems),
-          type: {id: this.settings.getAppSettings()[elementType]},
-          _id: 'ID' + new Date().getTime()
+          type: { id: this.settings.getAppSettings()[elementType] },
+          _id: getNextId()
         };
         break;
       case 'color':
@@ -621,12 +626,13 @@ export class ModelService {
           id: this.settings.getAppSettings()[elementType] + (++this.countNewItems),
           timed: '',
           name: this.settings.getAppSettings()[elementType],
-          _id: 'ID' + new Date().getTime()
+          _id: getNextId()
         };
         break;
       case 'ml':
         return {
-          _id: 'ID' + new Date().getTime(), __text: this.settings.getAppSettings()[elementType], toString() {
+          _id: getNextId(),
+          __text: this.settings.getAppSettings()[elementType], toString() {
             return (this.__text != null ? this.__text : '');
           }
         };
@@ -635,7 +641,7 @@ export class ModelService {
         return {
           id: this.settings.getAppSettings()[elementType] + (++this.countNewItems),
           ml: this.settings.getAppSettings()[elementType],
-          _id: 'ID' + new Date().getTime()
+          _id: getNextId()
         };
         break;
       default:
@@ -686,11 +692,11 @@ export class ModelService {
         if (testElem === 'product') {
           const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
           elem.id = splitLayoutArray[0].replace(/\s+/g, '');
-          elem.product = {id: productList};
+          elem.product = { id: productList };
         } else if (testElem === 'list') {
           const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
           elem.id = splitLayoutArray[0].replace(/\s+/g, '');
-          elem.list = {id: productList};
+          elem.list = { id: productList };
         } else {
           testElem = testElem.replace(/\s+/g, '').replace(';', '');
           splitLayoutArray[0] = splitLayoutArray[0].replace(/\s+/g, '').replace(';', '');
@@ -699,7 +705,7 @@ export class ModelService {
             elem[testElem.toLowerCase()] = '';
           } else {
             elem.id = splitLayoutArray[0];
-            elem.alias = {id: testElem};
+            elem.alias = { id: testElem };
           }
         }
         break;
@@ -760,7 +766,7 @@ export class ModelService {
       // trans: [],
       // arc: [],
       constraints: '',
-      _id: id ? id : 'ID' + new Date().getTime()
+      _id: id ? id : getNextId()
     };
 
     return newPage;
@@ -775,7 +781,7 @@ export class ModelService {
   createCpnBlock(name) {
     return {
       id: name,
-      _id: 'ID' + new Date().getTime()
+      _id: getNextId()
     };
   }
 
@@ -788,7 +794,7 @@ export class ModelService {
   createCpnDeclaration(layout) {
     return {
       layout: layout,
-      _id: 'ID' + new Date().getTime()
+      _id: getNextId()
     };
   }
 
@@ -799,7 +805,7 @@ export class ModelService {
   createMonitorCTODC(cpnElement: any): any {
     console.log('createMonitorCTODC(), cpnElement = ', cpnElement);
     return {
-      _id: 'ID' + new Date().getTime(),
+      _id: getNextId(),
       _name: 'Count_trans_occur_PAGENAME_' + cpnElement.text, //TODO add page name: 'Count_trans_occur_' + PAGENAME + '_' + cpnElement.text
       _type: '6',
       _typedescription: 'Count transition occurrence data collection',
@@ -817,7 +823,7 @@ export class ModelService {
 
   createMonitorDC(cpnElement) {
     return {
-      _id: 'ID' + new Date().getTime(),
+      _id: getNextId(),
       _name: '',
       _type: '3',
       _typedescription: 'Data collection',
@@ -966,7 +972,7 @@ export class ModelService {
    */
   stringToCpnDeclarationElement(cpnElement, str) {
 
-    cpnElement = {_id: cpnElement._id};
+    cpnElement = { _id: cpnElement._id };
 
     let parser = str.match('^\\S+');
     // console.log('stringToCpnDeclarationElement(), parser = ', parser);
@@ -1026,11 +1032,11 @@ export class ModelService {
           if (testElem === 'product') {
             const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
             cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
-            cpnElement.product = {id: productList};
+            cpnElement.product = { id: productList };
           } else if (testElem === 'list') {
             const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
             cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
-            cpnElement.list = {id: productList};
+            cpnElement.list = { id: productList };
           } else {
             testElem = testElem.replace(/\s+/g, '').replace(';', '');
             splitLayoutArray[0] = splitLayoutArray[0].replace(/\s+/g, '').replace(';', '');
@@ -1039,7 +1045,7 @@ export class ModelService {
               cpnElement[testElem.toLowerCase()] = '';
             } else {
               cpnElement.id = splitLayoutArray[0];
-              cpnElement.alias = {id: testElem};
+              cpnElement.alias = { id: testElem };
             }
           }
         }
@@ -1057,7 +1063,7 @@ export class ModelService {
     console.log('stringToCpnDeclarationElement(), declarationType = ', declarationType);
     console.log('stringToCpnDeclarationElement(), cpnElement = ', cpnElement);
 
-    return {cpnType: cpnType, declarationType: declarationType, cpnElement: cpnElement};
+    return { cpnType: cpnType, declarationType: declarationType, cpnElement: cpnElement };
   }
 
 
@@ -1152,7 +1158,7 @@ export class ModelService {
 
   createSubpage(transCpnElement, newPageName, newPageId) {
     let pageName = this.getNextPageName(newPageName);
-    let pageId = newPageId ? newPageId : 'ID' + new Date().getTime();
+    let pageId = newPageId ? newPageId : getNextId();
 
     const subpageCpnElement = this.createCpnPage(pageName, pageId);
     transCpnElement.subst.subpageinfo._name = subpageCpnElement.pageattr._name;
@@ -1180,10 +1186,10 @@ export class ModelService {
     const h = Number(cpnElement.ellipse._h);
 
     return {
-      fillattr: {_colour: 'White', _pattern: 'Solid', _filled: 'false'},
-      lineattr: {_colour: 'Black', _thick: '0', _type: 'Solid'},
-      posattr: {_x: (x).toString(), _y: (y - h / 2).toString()},
-      textattr: {_colour: 'Black', _bold: 'false'},
+      fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
+      lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
+      posattr: { _x: (x).toString(), _y: (y - h / 2).toString() },
+      textattr: { _colour: 'Black', _bold: 'false' },
       text: portType,
       _id: cpnElement._id + 'e',
       _type: portType === 'In/Out' ? 'I/O' : portType
@@ -1209,10 +1215,10 @@ export class ModelService {
 
     return {
       subpageinfo: {
-        fillattr: {_colour: 'White', _pattern: 'Solid', _filled: 'false'},
-        lineattr: {_colour: 'Black', _thick: '0', _type: 'Solid'},
-        posattr: {_x: (x).toString(), _y: (y - h / 2).toString()},
-        textattr: {_colour: 'Black', _bold: 'false'},
+        fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
+        lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
+        posattr: { _x: (x).toString(), _y: (y - h / 2).toString() },
+        textattr: { _colour: 'Black', _bold: 'false' },
         _id: cpnElement._id + 'e',
         _name: name
       },
@@ -1238,7 +1244,7 @@ export class ModelService {
     });
     let transEnd;
     transEnd = page.trans.find((tr) => cpnElement.transend._idref === tr._id);
-    return {place: placeEnd, trans: transEnd, orient: cpnElement._orientation};
+    return { place: placeEnd, trans: transEnd, orient: cpnElement._orientation };
   }
 
 

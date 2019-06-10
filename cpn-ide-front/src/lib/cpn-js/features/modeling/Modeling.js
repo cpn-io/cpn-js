@@ -35,7 +35,8 @@ import {
   updateLabelsPosition,
   setDefaultValue,
   getDefaultValue,
-  getDefArc
+  getDefArc,
+  getDefSubst
 } from './CpnElementFactory';
 
 /**
@@ -941,18 +942,21 @@ function optimiseEqualsArcsByWayoints(arc, delta) {
 
 
 Modeling.prototype.declareSubPage = function (cpnElement, name, pageId) {
-  cpnElement['subst'] = {
-    subpageinfo: {
-      fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
-      lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
-      posattr: { _x: cpnElement.posattr._x, _y: cpnElement.posattr._y - cpnElement.box._h / 2 },
-      textattr: { _colour: 'Black', _bold: 'false' },
-      _id: cpnElement._id + 'e',
-      _name: name
-    },                  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    _portsock: '',     /// <<--------------------------------------------------------------------TO DO FILL THIS FIELD ARCS ID---------------------------------------------------------------------
-    _subpage: pageId ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  };
+
+  cpnElement['subst'] = getDefSubst(cpnElement, name, pageId);
+
+  // cpnElement['subst'] = {
+  //   subpageinfo: {
+  //     fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
+  //     lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
+  //     posattr: { _x: cpnElement.posattr._x, _y: cpnElement.posattr._y - cpnElement.box._h / 2 },
+  //     textattr: { _colour: 'Black', _bold: 'false' },
+  //     _id: cpnElement._id + 'e',
+  //     _name: name
+  //   },
+  //   _portsock: '',
+  //   _subpage: pageId
+  // };
 
   // element.name = name;
   // element.text = name;

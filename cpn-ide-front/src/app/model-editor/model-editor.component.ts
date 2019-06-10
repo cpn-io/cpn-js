@@ -219,7 +219,7 @@ export class ModelEditorComponent implements OnInit {
       const places = event.places;
       const transitions = event.transitions;
 
-      self.modelService.addElementJsonOnPage(transCpnElement, self.pageId, CPN_TRANSITION);
+      self.modelService.addElementJsonOnPage(transCpnElement, self.pageId, CPN_TRANSITION, this.modeling);
 
       console.log(self.constructor.name, 'extract.subpage, places, transitions = ', places, transitions);
 

@@ -1036,7 +1036,7 @@ Modeling.prototype.deleteSubPageTrans = function(id){
       delete trans.cpnElement.subst;
       this.updateElement(trans, true);
     }
-  }
+
 }
 
 Modeling.prototype.getShapeArcs = function (shape) {
@@ -1066,9 +1066,7 @@ Modeling.prototype.getTransitionByPage = function(id) {
   }
 }
 
-Modeling.prototype.instaceForTransition = function(id){
-  return {_id: getNextId(), _trans: id}
-}
+
 
 
 

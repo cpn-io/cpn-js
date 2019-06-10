@@ -320,7 +320,7 @@ export class ModelService {
       }
     }
     if (cpnElement.subst) {
-      this.addInstanceInJson( modeling.instaceForTransition(cpnElement._id), pageId, modeling);
+      this.addInstanceInJson( this.instaceForTransition(cpnElement._id, false), pageId);
     //   const cpn = this.getCpn();
     //   if (cpn.instances && cpn.instances.instance) {
     //        if (!(cpn.instances.instance instanceof Array)) {
@@ -338,10 +338,12 @@ export class ModelService {
     this.eventService.send(Message.MODEL_CHANGED);
   }
 
+  instaceForTransition(id, isRoot){
+    return isRoot ? {_id: getNextId(), _trans: id} : {_id: getNextId(), _page: id}
+  }
 
 
-
-  addInstanceInJson(newinstance, pageId, modeling){
+  addInstanceInJson(newinstance, pageId){
     const cpn = this.getCpn();
     if(!pageId){
       if(cpn.instances && cpn.instances.instance){
@@ -354,24 +356,34 @@ export class ModelService {
       cpn.instances.instance.push(newinstance);
     } else {
         const self = this;
-        const trans = modeling.getTransitionByPage(pageId)
-        if(trans) {
-          const pg = this.searchPageForInstace(cpn.instances.instance, trans, self);
-          console.log(pg);
+        const trans = this.getAllTrans().find(tr => { return tr.subst && tr.subst._subpage === pageId});
+        const tranid = trans ? trans._id : '';
+        const pginstance = this.searchPageForInstace(cpn.instances.instance, tranid, self, pageId);
+        if(pginstance.instance){
+          if(!(pginstance.instance instanceof Array)) {
+            pginstance.instance = [pginstance.instance];
+          }
+        } else {
+          pginstance.instance = [];
         }
+        pginstance.instance.push(newinstance);
+        //console.log(pg);
+
     }
 
   }
 
-  searchPageForInstace(instance, pageId, self){
-    if(instance._trans === pageId) {
+  searchPageForInstace(instance, tranId, self, pageId){
+    if(instance._trans === tranId || instance._page === pageId) {
       return instance;
     }  else if(instance.instance) {
       if(instance.instance instanceof Array){
         return instance.instance.map(function(e){
-          if(self)  return self.searchPageForInstace(e, pageId); else return undefined
-        }).filter(function( element ) {return element !== undefined;});
-      } else return self.searchPageForInstace(instance.instance, pageId);
+          if(self)  return self.searchPageForInstace(e, tranId, self); else return undefined;
+        }).filter(function( element ) {
+          return element !== undefined;
+        })[0];
+      } else return self.searchPageForInstace(instance.instance, tranId, self);
     }
   }
 
@@ -526,6 +538,7 @@ export class ModelService {
     } else {
       this.projectData.workspaceElements.cpnet.page = [this.projectData.workspaceElements.cpnet.page, page];
     }
+    this.addInstanceInJson( this.instaceForTransition(page._id, true), undefined);
   }
 
   deletePage(pageId) {

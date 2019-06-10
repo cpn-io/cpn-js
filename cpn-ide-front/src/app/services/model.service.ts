@@ -1099,6 +1099,23 @@ export class ModelService {
   }
 
   /**
+   * Get all trans for model
+   */
+  getAllTrans() {
+    const allTrans = [];
+
+    for (const page of this.getAllPages()) {
+      const trans = page.trans instanceof Array ? page.trans : [page.trans];
+      for (const t of trans) {
+        allTrans.push(t);
+      }
+    }
+
+    return allTrans;
+  }
+
+
+  /**
    * Get all acrs for model
    */
   getAllArcs() {

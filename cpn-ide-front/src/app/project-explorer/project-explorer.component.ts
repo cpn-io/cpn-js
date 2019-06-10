@@ -228,6 +228,10 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   // }
 
   isOneGroup(data) {
+    if (!data) {
+      return false;
+    }
+
     //console.log('isOneGroup ----', parent.data.children[index ].declarationType, parent.data.children[index - 1 ].declarationType)
     const element = data.from;
     const parent = data.from.parent;
@@ -951,6 +955,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   getDataForMoving(direction){
     const treeNode = this.treeComponent.treeModel.getActiveNode();
+    if (!treeNode) {
+      return null;
+    }
     return {
       from: treeNode,
       type: treeNode.data.cpnType ?  treeNode.data.cpnType : treeNode.data.declarationType || treeNode.data.type,

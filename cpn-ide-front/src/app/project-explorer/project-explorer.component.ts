@@ -61,7 +61,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   selectedNode;
   createMonitorIntent = null;
-  monitorsRootNode = null;
 
   filterText = '';
 
@@ -323,7 +322,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         switch (this.createMonitorIntent) {
           case this.monitorType.BP: {
             if (element.type === this.cpnElementType.place || element.type === this.cpnElementType.transition) {
-              newCpnElement = this.modelService.createMonitorBP(element.cpnElement);
+              newCpnElement = this.modelService.createCpnMonitorBP(element.cpnElement);
             }
             break;
           }
@@ -335,43 +334,43 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           }
           case this.monitorType.DC: {
             if (element.type === this.cpnElementType.place || element.type === this.cpnElementType.transition) {
-              newCpnElement = this.modelService.createMonitorDC(element.cpnElement);
+              newCpnElement = this.modelService.createCpnMonitorDC(element.cpnElement);
             }
             break;
           }
           case this.monitorType.LLDC: {
             if (element.type === this.cpnElementType.place) {
-              newCpnElement = this.modelService.createMonitorLLDC(element.cpnElement);
+              newCpnElement = this.modelService.createCpnMonitorLLDC(element.cpnElement);
             }
             break;
           }
           case this.monitorType.MS: {
             if (element.type === this.cpnElementType.place) {
-              newCpnElement = this.modelService.createMonitorMS(element.cpnElement);
+              newCpnElement = this.modelService.createCpnMonitorMS(element.cpnElement);
             }
             break;
           }
           case this.monitorType.PCBP: {
             if (element.type === this.cpnElementType.place) {
-              newCpnElement = this.modelService.createMonitorPCBP(element.cpnElement);
+              newCpnElement = this.modelService.createCpnMonitorPCBP(element.cpnElement);
             }
             break;
           }
           case this.monitorType.TEBP: {
             if (element.type === this.cpnElementType.transition) {
-              newCpnElement = this.modelService.createMonitorTEBP(element.cpnElement);
+              newCpnElement = this.modelService.createCpnMonitorTEBP(element.cpnElement);
             }
             break;
           }
           case this.monitorType.UD: {
             if (element.type === this.cpnElementType.place || element.type === this.cpnElementType.transition) {
-              newCpnElement = this.modelService.createMonitorUS(element.cpnElement);
+              newCpnElement = this.modelService.createCpnMonitorUD(element.cpnElement);
             }
             break;
           }
           case this.monitorType.WIF: {
             if (element.type === this.cpnElementType.place || element.type === this.cpnElementType.transition) {
-              newCpnElement = this.modelService.createMonitorWIF(element.cpnElement);
+              newCpnElement = this.modelService.createCpnMonitorWIF(element.cpnElement);
             }
             break;
           }
@@ -382,8 +381,14 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           console.log('newNode = ', newNode);
           cpnType = newNode.type;
           this.clearCreateMonitorIntent();
+          let monitorsRootNode;
+          for (const monitors of this.nodes[0].children) {
+            if (monitors.id === 'Monitors') {
+              monitorsRootNode = monitors;
+              break;
+            }}
           // TODO дописать эту функция для добавления мониторов
-          //this.addCreatedNode(this.monitorsRootNode, newNode, newCpnElement, cpnType, this.monitorsRootNode.cpnElement, false);
+          //this.addCreatedNode(monitorsRootNode, newNode, newCpnElement, cpnType, monitorsRootNode.cpnElement, false);
         }
       }
     });
@@ -856,8 +861,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     console.log('onAddNode(), cpnType = ', cpnType);
     console.log('onAddNode(), cpnParentElement = ', cpnParentElement);
     console.log('onAddNode(), cpnElement = ', cpnElement);
+    console.log('onAddNode(), treeNode = ', treeNode);
 
-    this.modelService.addCpnElement(cpnParentElement, cpnElement, cpnType);
+    const result = this.modelService.addCpnElement(cpnParentElement, cpnElement, cpnType);
 
     if (newNode) {
       if (treeNode.data.children && !(['declaration', 'page'].includes(treeNode.data.type))) {
@@ -2038,8 +2044,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     // historyNode.classes = ['tree-project'];
     // historyNode.children = [this.createTreeNode('* empty *')];
 
+    let monitors;
     if (cpnet.monitorblock) {
-      this.monitorsRootNode = this.createMonitorsRootNode('Monitors', cpnet.monitorblock);
+      monitors = this.createMonitorsRootNode('Monitors', cpnet.monitorblock);
     }
 
     // Create project Declarations node
@@ -2058,8 +2065,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     // projectNode.children.push(historyNode);
     projectNode.children.push(declarationsNode);
-    if (this.monitorsRootNode) {
-      projectNode.children.push(this.monitorsRootNode);
+    if (monitors) {
+      projectNode.children.push(monitors);
     }
     projectNode.children.push(pagesNode);
 

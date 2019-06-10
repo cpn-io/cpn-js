@@ -301,7 +301,7 @@ export class ModelService {
     return undefined;
   }
 
-  addElementJsonOnPage(cpnElement, pageId, type) {
+  addElementJsonOnPage(cpnElement, pageId, type, modeling) {
     console.log('addElementJsonOnPage()', cpnElement, pageId, type);
 
     this.saveBackupBak(this.projectData, pageId);
@@ -319,8 +319,60 @@ export class ModelService {
         jsonPageObject[this.modelCase[type]] = [cpnElement];
       }
     }
+    if (cpnElement.subst) {
+      this.addInstanceInJson( modeling.instaceForTransition(cpnElement._id), pageId, modeling);
+    //   const cpn = this.getCpn();
+    //   if (cpn.instances && cpn.instances.instance) {
+    //        if (!(cpn.instances.instance instanceof Array)) {
+    //          cpn.instances = [cpn.instances.instance];
+    //        }
+    //   } else {
+    //     cpn.instances.instance = [];
+    //   }
+    //   const pageInst = cpn.instances.instance.find(inst => { return inst._page === pageId});
+    //   if(pageInst)
+    //     pageInst.instance = modeling.instaceForTransition(cpnElement._id);
+     }
+
 
     this.eventService.send(Message.MODEL_CHANGED);
+  }
+
+
+
+
+  addInstanceInJson(newinstance, pageId, modeling){
+    const cpn = this.getCpn();
+    if(!pageId){
+      if(cpn.instances && cpn.instances.instance){
+        if(!(cpn.instances.instance instanceof Array)) {
+          cpn.instances.instance =  [cpn.instances.instance]
+        }
+      } else {
+        cpn.instances.instance = [];
+      }
+      cpn.instances.instance.push(newinstance);
+    } else {
+        const self = this;
+        const trans = modeling.getTransitionByPage(pageId)
+        if(trans) {
+          const pg = this.searchPageForInstace(cpn.instances.instance, trans, self);
+          console.log(pg);
+        }
+    }
+
+  }
+
+  searchPageForInstace(instance, pageId, self){
+    if(instance._trans === pageId) {
+      return instance;
+    }  else if(instance.instance) {
+      if(instance.instance instanceof Array){
+        return instance.instance.map(function(e){
+          if(self)  return self.searchPageForInstace(e, pageId); else return undefined
+        }).filter(function( element ) {return element !== undefined;});
+      } else return self.searchPageForInstace(instance.instance, pageId);
+    }
   }
 
   // send changes

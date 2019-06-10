@@ -205,7 +205,7 @@ export class ModelEditorComponent implements OnInit {
       if (event.elements) {
         for (const element of event.elements) {
           if (element.cpnElement) {
-            this.modelService.addElementJsonOnPage(element.cpnElement, this.pageId, element.type);
+            this.modelService.addElementJsonOnPage(element.cpnElement, this.pageId, element.type, this.modeling);
 
             if (element.type === CPN_TRANSITION && element.cpnElement.subst) {
               if (!element.cpnElement.subst._subpage) {
@@ -322,7 +322,7 @@ export class ModelEditorComponent implements OnInit {
         let cpnElement = this.modeling.createShapeCpnElement(position, CPN_TRANSITION);
         cpnElement = this.modeling.declareSubPage(cpnElement, data.name, data.id);
         const element = this.cpnFactory.createShape(undefined, cpnElement, CPN_TRANSITION, position, true);
-        this.modelService.addElementJsonOnPage(cpnElement, this.pageId, CPN_TRANSITION);
+        this.modelService.addElementJsonOnPage(cpnElement, this.pageId, CPN_TRANSITION, this.modeling);
       }
     });
 

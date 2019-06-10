@@ -1057,15 +1057,11 @@ Modeling.prototype.removeElements = function (elements) {
 
 
 Modeling.prototype.deleteSubPageTrans = function(id){
-  for (const key of Object.keys(this._elementRegistry._elements)) {
-    if (this._elementRegistry._elements[key]) {
-      const element = this._elementRegistry._elements[key].element;
-      if (element.type === CPN_TRANSITION && element.cpnElement.subst && element.cpnElement.subst._subpage === id) {
-        delete element.cpnElement.subst;
-        this.updateElement(element, true);
-      }
+    const trans = this.getTransitionByPage(id);
+    if(trans) {
+      delete trans.cpnElement.subst;
+      this.updateElement(trans, true);
     }
-  }
 }
 
 Modeling.prototype.getShapeArcs = function(shape){
@@ -1081,6 +1077,22 @@ Modeling.prototype.getShapeArcs = function(shape){
     }
   }
   return arcs;
+}
+
+
+Modeling.prototype.getTransitionByPage = function(id) {
+  for (const key of Object.keys(this._elementRegistry._elements)) {
+    if (this._elementRegistry._elements[key]) {
+      const element = this._elementRegistry._elements[key].element;
+      if (element.type === CPN_TRANSITION && element.cpnElement.subst && element.cpnElement.subst._subpage === id) {
+          return element;
+      }
+    }
+  }
+}
+
+Modeling.prototype.instaceForTransition = function(id){
+  return {_id: getNextId(), _trans: id}
 }
 
 

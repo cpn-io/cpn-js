@@ -272,12 +272,13 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     // Get error identificators
     this.eventService.on(Message.SERVER_INIT_NET_DONE, (event) => {
       this.errorIds = [];
-      if (event && event.errorIds) {
-        this.errorIds = event.errorIds;
-        // expand error nodes
-        for (const id of this.errorIds) {
-          this.expandParentNode(id);
-        }
+      for (const id of Object.keys(this.accessCpnService.getErrorData())) {
+        this.errorIds.push(id);
+      }
+
+      // expand error nodes
+      for (const id of this.errorIds) {
+        this.expandParentNode(id);
       }
     });
 
@@ -2058,7 +2059,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
   }
 
-  isDisabledNode(nodeId):  boolean {
+  isDisabledNode(nodeId): boolean {
     return this.disabledNodeSet.has(nodeId);
   }
 
@@ -2481,6 +2482,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       this.modelService.updateCpnElement(cpnParentElement, cpnElement, cpnType);
     }
   }
+
 
 
   saveEditedData_OLD(event) {

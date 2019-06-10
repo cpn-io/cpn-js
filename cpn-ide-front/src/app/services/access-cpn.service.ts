@@ -87,6 +87,9 @@ export class AccessCpnService {
         (data: any) => {
           console.log('AccessCpnService, initNet(), SUCCESS, data = ', data);
           this.initNetProcessing = false;
+
+          this.saveErrorData(data);
+
           this.eventService.send(Message.SERVER_INIT_NET_DONE, { data: data, errorIssues: data.issues });
 
           // Init simulator
@@ -102,43 +105,21 @@ export class AccessCpnService {
       );
   }
 
-  // getErrorIds(issues) {
-  //   console.log('getErrorIds(), issues = ', issues);
+  saveErrorData(data) {
+    this.errorData = [];
 
-  //   const errorIds = [];
-  //   if (issues) {
-  //     for (const id in issues) {
-  //       console.log('getErrorIds(), id = ', id);
-
-  //       errorIds.push(id);
-
-  //       for (const issue of issues[id]) {
-
-  //         if (issue) {
-  //           if (!errorIds.includes(issue.id)) {
-  //             errorIds.push(issue.id);
-  //           }
-
-  //           // parse from description
-  //           if (issue.description) {
-  //             const parser = issue.description.match(/ID\w+/g);
-  //             if (parser) {
-  //               for (const w of parser) {
-  //                 console.log('getErrorIds(), w = ', w);
-  //               }
-  //             }
-  //           }
-  //         }
-
-  //       }
-  //     }
-  //   }
-
-  //   console.log('getErrorIds(), errorIds = ', errorIds);
-
-  //   return errorIds;
-  // }
-
+    if (!data.success) {
+      for (const id of Object.keys(data.issues)) {
+        for (const issue of data.issues[id]) {
+          issue.description = issue.description.replace(issue.id + ':', '');
+          issue.description = issue.description.replace(issue.id, '');
+          issue.description = issue.description.replace(':', '');
+          issue.description = issue.description.trim();
+          this.errorData[issue.id] = issue.description;
+        }
+      }
+    }
+  }
 
   /**
    * Reset simulator initialization flag

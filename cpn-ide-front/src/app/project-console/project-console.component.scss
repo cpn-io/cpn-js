@@ -1,6 +1,10 @@
 .logConsole {
   padding: 10px;
 
+  div {
+    white-space: pre;
+  }
+
   .normal {
     color: gray;
   }

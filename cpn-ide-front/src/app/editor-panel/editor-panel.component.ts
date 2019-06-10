@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 
 import { ModelEditorComponent } from '../model-editor/model-editor.component';
-import { TabsContainer } from './../tabs/tabs-container/tabs.container';
+import { TabsContainer } from '../../lib/tabs/tabs-container/tabs.container';
 import { Message } from '../common/message';
 import { EventService } from '../services/event.service';
 

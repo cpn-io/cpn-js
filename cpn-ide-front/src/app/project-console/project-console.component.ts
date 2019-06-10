@@ -51,16 +51,15 @@ export class ProjectConsoleComponent implements OnInit {
         const elapsed = new Date().getTime() - this.timeInitStart;
 
         if (event.data.success) {
-          this.logSuccess('Complete in ' + this.timeConversion(elapsed) + '.Model is correct.');
+          this.logSuccess('Complete in ' + this.timeConversion(elapsed) + '. Model is correct.');
         } else {
+          this.logError('Complete in ' + this.timeConversion(elapsed) + ' with errors:');
 
-          // this.logError('Error: ' + JSON.stringify(event));
-          for (const id of Object.keys(event.data.issues)) {
-            const issue = event.data.issues[id][0];
-            if (issue.description.includes(issue.id)) {
-              this.logError(issue.description);
-            } else {
-              this.logError(issue.id + ': ' + issue.description);
+          const errorData = this.accessCpnService.getErrorData();
+          console.log('errorData: ', errorData);
+          if (Object.keys(errorData).length > 0) {
+            for (const id of Object.keys(errorData)) {
+              this.logError(id + ': ' + errorData[id]);
             }
           }
         }
@@ -71,10 +70,13 @@ export class ProjectConsoleComponent implements OnInit {
 
     this.eventService.on(Message.SERVER_INIT_NET_ERROR, (event) => {
       if (event) {
-        this.logError('Validation server error: ' + JSON.stringify(event.data));
+        if (event.data && event.data.error && event.data.error.stackTrace) {
+          this.logError('Validation server error:\n' + event.data.error.stackTrace);
+        } else {
+          this.logError('Validation server error: ' + JSON.stringify(event.data));
+        }
       }
     });
-
 
     // SIMULATION
 
@@ -93,7 +95,11 @@ export class ProjectConsoleComponent implements OnInit {
 
     this.eventService.on(Message.SERVER_INIT_SIM_ERROR, (event) => {
       if (event) {
-        this.logError('Simulator initializing error: ' + JSON.stringify(event.data));
+        if (event.data && event.data.error && event.data.error.stackTrace) {
+          this.logError('Simulator initializing error:\n' + event.data.error.stackTrace);
+        } else {
+          this.logError('Simulator initializing error: ' + JSON.stringify(event.data));
+        }
       }
     });
 

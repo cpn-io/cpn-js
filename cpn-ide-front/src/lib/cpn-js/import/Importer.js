@@ -68,7 +68,7 @@ export function importCpnPage(diagram, cpnPageElement, alignToCenter) {
     importContent(cpnPageElement, cpnPageElement.arc, CPN_CONNECTION);
     importContent(cpnPageElement, cpnPageElement.Aux, CPN_TEXT_ANNOTATION);
 
-    layoutConnections();
+    layouter.layoutConnections();
   }
 
   function importContent(page, element, type) {
@@ -83,16 +83,6 @@ export function importCpnPage(diagram, cpnPageElement, alignToCenter) {
     }
   }
 
-  function layoutConnections() {
-    for (const key of Object.keys(elementRegistry._elements)) {
-      const element = elementRegistry._elements[key].element;
-
-      if (is(element, CPN_CONNECTION)) {
-        // console.log('importCpnPage(), layoutConnections(), element = ', element);
-        layouter.cropConnection(element);
-      }
-    }
-  }
 
 
   /**

@@ -17,10 +17,12 @@ import {
 
 import CommandInterceptor from 'diagram-js/lib/command/CommandInterceptor';
 import CpnRules from "../rules/CpnRules";
+import { is, CPN_CONNECTION } from '../../util/ModelUtil';
 
 CpnLayouter.$inject = [
   'eventBus',
-  'connectionDocking'
+  'connectionDocking',
+  'elementRegistry'
 ];
 
 /**
@@ -28,12 +30,26 @@ CpnLayouter.$inject = [
  * that layouts the connection by directly connecting
  * mid(source) + mid(target).
  */
-export default function CpnLayouter(eventBus, connectionDocking) {
+export default function CpnLayouter(eventBus, connectionDocking, elementRegistry) {
   // console.log('CpnLayouter()');
 
   this._eventBus = eventBus;
   this._connectionDocking = connectionDocking;
+  this._elementRegistry = elementRegistry;
 }
+
+CpnLayouter.prototype.layoutConnections = function () {
+  for (const key of Object.keys(this._elementRegistry._elements)) {
+    const element = this._elementRegistry._elements[key].element;
+
+    if (is(element, CPN_CONNECTION)) {
+      // console.log('importCpnPage(), layoutConnections(), element = ', element);
+      this.cropConnection(element);
+      // this.layoutConnection(element);
+    }
+  }
+}
+
 
 /**
  * Return the new layouted waypoints for the given connection.
@@ -45,7 +61,7 @@ export default function CpnLayouter(eventBus, connectionDocking) {
  *
  * @return {Array<Point>} the layouted connection waypoints
  */
-CpnLayouter.prototype.layoutConnection = function (connection, hints) {
+CpnLayouter.prototype.layoutConnection = function (connection, hints = null) {
 
   // console.log('CpnLayouter.prototype.layoutConnection(), connection = ', connection);
   // console.log('CpnLayouter.prototype.layoutConnection(), hints = ', hints);

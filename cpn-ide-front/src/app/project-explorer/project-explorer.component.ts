@@ -136,8 +136,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       let permis = false;
       if (element && parent) {
         if (element.data.type === 'declaration') {
-         // permis = parent.data.type === 'block' && this.isOneGroup(element, parent, index) ? true : false;
-          permis = parent.data.type === 'block' && this.isOneGroup({from: element, to: { index: index, parent: parent}}) ? true : false;
+          // permis = parent.data.type === 'block' && this.isOneGroup(element, parent, index) ? true : false;
+          permis = parent.data.type === 'block' && this.isOneGroup({ from: element, to: { index: index, parent: parent } }) ? true : false;
         }
         // } else if (element.data.type === 'page' ) {
         //   permis =  parent.data.type === 'page' || parent.data.type === 'Pages' ? true : false;
@@ -239,7 +239,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     const currNode = parent.data.children[index];
 
     return (
-      (element.data.type === 'declaration' || element.data.type === 'block')  && ((currNode && currNode.declarationType === element.data.declarationType)
+      (element.data.type === 'declaration' || element.data.type === 'block') && ((currNode && currNode.declarationType === element.data.declarationType)
         || (prevNode && (prevNode.declarationType === element.data.declarationType))
         || ((!prevNode || !currNode) && !parent.data.cpnElement[element.data.declarationType]))
     );
@@ -255,7 +255,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     this.eventService.on(Message.PROJECT_LOAD, (event) => {
       if (event.project) {
-        // this.treeState = {};
+        this.treeState = {};
         this.loadProject(event.project);
       }
     });
@@ -390,7 +390,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
             if (monitors.id === 'Monitors') {
               monitorsRootNode = monitors;
               break;
-            }}
+            }
+          }
           // TODO дописать эту функция для добавления мониторов
           //this.addCreatedNode(monitorsRootNode, newNode, newCpnElement, cpnType, monitorsRootNode.cpnElement, false);
         }
@@ -959,15 +960,15 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
 
-  getDataForMoving(direction){
+  getDataForMoving(direction) {
     const treeNode = this.treeComponent.treeModel.getActiveNode();
     if (!treeNode) {
       return null;
     }
     return {
       from: treeNode,
-      type: treeNode.data.cpnType ?  treeNode.data.cpnType : treeNode.data.declarationType || treeNode.data.type,
-      to : { index: direction === 'down' ? treeNode.parent.data.children.indexOf(treeNode.data) + 2 : treeNode.parent.data.children.indexOf(treeNode.data) - 1, parent: treeNode.parent }
+      type: treeNode.data.cpnType ? treeNode.data.cpnType : treeNode.data.declarationType || treeNode.data.type,
+      to: { index: direction === 'down' ? treeNode.parent.data.children.indexOf(treeNode.data) + 2 : treeNode.parent.data.children.indexOf(treeNode.data) - 1, parent: treeNode.parent }
     }
 
     this.eventService.send(Message.MODEL_CHANGED);
@@ -2086,7 +2087,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     // console.log(this.constructor.name, 'loadProject(), treeModel.activeNodeIds = ',
     //   this.treeComponent.treeModel.activeNodeIds);
 
-    if (Object.entries(this.treeComponent.treeModel.activeNodeIds).length < 1) {
+    if (Object.entries(this.treeState).length < 1 ||
+      Object.entries(this.treeComponent.treeModel.activeNodeIds).length < 1) {
       if (pagesNode.children.length > 0) {
         const firstPageId = pagesNode.children[0].id;
         if (firstPageId) {

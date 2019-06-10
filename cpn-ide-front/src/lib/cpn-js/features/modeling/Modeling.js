@@ -631,6 +631,12 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
 
   var text, defaultValue;
 
+  // check if cpnLabelElement doesn't have text attr
+  // console.log('Modeling.prototype.getLabelAttrs(), cpnLabelElement = ', cpnLabelElement);
+  // if (!cpnLabelElement.text || !(typeof cpnLabelElement.text !== 'object')) {
+  //   cpnLabelElement.text = getDefText('');
+  // }
+
   if (labelType === 'port')
     text = (cpnLabelElement._type === 'I/O') ? 'In/Out' : cpnLabelElement._type;
   else if (labelType === 'subst')

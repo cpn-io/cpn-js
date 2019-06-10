@@ -61,11 +61,11 @@ export function getDefTextattr() {
   };
 }
 
-export function getDefText(text = undefined) {
+export function getDefText(text = '') {
   return {
     // _tool: "CPN Tools",
     // _version: "4.0.1",
-    __text: (text || "")
+    __text: (text || '')
   };
 }
 
@@ -104,7 +104,8 @@ export function getDefPlace(name = undefined, position = undefined, size = undef
       fillattr: getDefFillattr(),
       lineattr: getDefLineattr(),
       textattr: getDefTextattr(),
-      text: getDefText(getDefaultValue(type) || type),
+      // text: getDefText(getDefaultValue(type) || type),
+      text: getDefText(''),
       _id: id + idPostfix[type]
     };
   }
@@ -134,7 +135,8 @@ export function getDefTransition(name = undefined, position = undefined, size = 
       fillattr: getDefFillattr(),
       lineattr: getDefLineattr(),
       textattr: getDefTextattr(),
-      text: getDefText(getDefaultValue(type) || type),
+      // text: getDefText(getDefaultValue(type) || type),
+      text: getDefText(''),
       _id: id + idPostfix[type]
     };
   }

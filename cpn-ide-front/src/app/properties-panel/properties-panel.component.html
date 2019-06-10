@@ -34,7 +34,8 @@
 
           <!-- Shape Labels -->
           <div *ngFor="let labelKey of ['initmark', 'type', 'cond', 'time', 'code', 'priority', 'annot']">
-            <app-text-edit-row *ngIf="cpnElement[labelKey]" [name]="names[labelKey] || labelKey"
+            <!-- {{ JSON.stringify(cpnElement[labelKey]) }}<br> -->
+            <app-text-edit-row *ngIf="cpnElement[labelKey]" type="text" [name]="names[labelKey] || labelKey"
               [object]="cpnElement[labelKey].text" field="__text" (changed)="updateChanges()">
             </app-text-edit-row>
           </div>

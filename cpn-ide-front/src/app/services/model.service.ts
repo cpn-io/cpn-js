@@ -806,7 +806,7 @@ export class ModelService {
     console.log('createMonitorCTODC(), cpnElement = ', cpnElement);
     return {
       _id: getNextId(),
-      _name: 'Count_trans_occur_PAGENAME_' + cpnElement.text, //TODO add page name: 'Count_trans_occur_' + PAGENAME + '_' + cpnElement.text
+      _name: 'Count_trans_occur_PAGENAME_' + cpnElement.text, // TODO add page name: 'Count_trans_occur_' + PAGENAME + '_' + cpnElement.text
       _type: '6',
       _typedescription: 'Count transition occurrence data collection',
       _disabled: 'false',
@@ -956,7 +956,7 @@ export class ModelService {
    * Parse declaration type from string
    */
   parseDeclarationTypeFromString(str) {
-    let parser = str.match('^\\S+');
+    const parser = str.match('^\\S+');
 
     if (parser) {
       return parser[0];
@@ -974,7 +974,7 @@ export class ModelService {
 
     cpnElement = { _id: cpnElement._id };
 
-    let parser = str.match('^\\S+');
+    const parser = str.match('^\\S+');
     // console.log('stringToCpnDeclarationElement(), parser = ', parser);
 
     const declarationType = this.parseDeclarationTypeFromString(str);
@@ -1079,7 +1079,7 @@ export class ModelService {
    * Get page object from model by id
    * @param id
    */
-  getPageById(id): any {
+  getPageById(id) {
     return this.getAllPages().find(page => page._id === id);
   }
 
@@ -1130,13 +1130,63 @@ export class ModelService {
 
     const arcs = [];
     for (const arc of this.getAllArcs()) {
-      if (cpnElementIds.includes(arc.placeend._idref)
-        && cpnElementIds.includes(arc.transend._idref)) {
-        arcs.push(arc);
+      if (arc) {
+        if (cpnElementIds.includes(arc.placeend._idref)
+          && cpnElementIds.includes(arc.transend._idref)) {
+          arcs.push(arc);
+        }
       }
     }
     return arcs;
   }
+
+  /**
+   * Move elements from page to page
+   */
+  moveElements(fromPageId, toPageId, elements) {
+
+    const fromPage = this.getPageById(fromPageId);
+    const toPage = this.getPageById(toPageId);
+
+    if (!fromPage || !toPage) {
+      return;
+    }
+
+    for (const element of elements) {
+
+      // place element
+      if (element.ellipse) {
+
+        // remove place from old page
+        this.removeCpnElement(fromPage, element, 'place');
+        // add place to new page
+        this.addCpnElement(toPage, element, 'place');
+
+      } else
+
+        // transition element
+        if (element.box) {
+
+          // remove trans from old page
+          this.removeCpnElement(fromPage, element, 'trans');
+          // add trans to new page
+          this.addCpnElement(toPage, element, 'trans');
+
+        } else
+
+          // arc element
+          if (element.transend) {
+
+            // remove arc from old page
+            this.removeCpnElement(fromPage, element, 'arc');
+            // add arc to new page
+            this.addCpnElement(toPage, element, 'arc');
+
+          }
+
+    }
+  }
+
 
 
   getNextPageName(pageName) {
@@ -1157,8 +1207,8 @@ export class ModelService {
   }
 
   createSubpage(transCpnElement, newPageName, newPageId) {
-    let pageName = this.getNextPageName(newPageName);
-    let pageId = newPageId ? newPageId : getNextId();
+    const pageName = this.getNextPageName(newPageName);
+    const pageId = newPageId ? newPageId : getNextId();
 
     const subpageCpnElement = this.createCpnPage(pageName, pageId);
     transCpnElement.subst.subpageinfo._name = subpageCpnElement.pageattr._name;
@@ -1229,21 +1279,21 @@ export class ModelService {
 
   getArcEnds(cpnElement) {
     const page = this.getAllPages().find(p => {
-      return p.arc.find(pl => {
-        return pl._id === cpnElement._id;
-      });
+      const arcs = p.arc instanceof Array ? p.arc : [p.arc];
+      return arcs.find(pl => pl._id === cpnElement._id);
     });
     for (const entry of ['place', 'trans']) {
-      if (!(page[entry] instanceof Array)) {
-        page[entry] = [page[entry]];
-      }
+      if (!(page[entry] instanceof Array)) { page[entry] = [page[entry]]; }
     }
+
     let placeEnd;
-    placeEnd = page.place.find(el => {
-      return el._id === cpnElement.placeend._idref;
-    });
+    const place = page.place instanceof Array ? page.place : [page.place];
+    placeEnd = place.find(el => el._id === cpnElement.placeend._idref);
+
     let transEnd;
-    transEnd = page.trans.find((tr) => cpnElement.transend._idref === tr._id);
+    const trans = page.trans instanceof Array ? page.trans : [page.trans];
+    transEnd = trans.find((tr) => cpnElement.transend._idref === tr._id);
+
     return { place: placeEnd, trans: transEnd, orient: cpnElement._orientation };
   }
 

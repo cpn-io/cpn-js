@@ -180,14 +180,12 @@ CpnPopupMenuProvider.prototype._createSubpage = function (event) {
   this._popupMenu.close();
   const position = toLocalPoint(this._canvas, this._position);
 
-  // alert(JSON.stringify(position));
   let id = getNextId();
   let cpnElement = this._modeling.createShapeCpnElement(position, CPN_TRANSITION);
 
   cpnElement = this._modeling.declareSubPage(cpnElement, 'Subpage', id);
 
   let element = this._cpnFactory.createShape(undefined, cpnElement, CPN_TRANSITION, position, true);
-  //this._modeling.updateElement(element, true);
   this._eventBus.fire('shape.create.end', {elements: [element]});
   this._eventBus.fire('shape.editing.activate', {shape: element});
   this._eventBus.fire('shape.contextpad.activate', {shape: element});

@@ -25,23 +25,23 @@ import { ValidationService } from '../services/validation.service';
 export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   monitorType = {
-  DC: 'Data collection',
-  MS: 'Marking size',
-  BP: 'Break point',
-  UD: 'User defined',
-  WIF: 'Write in file',
-  LLDC: 'List length data collection',
-  CTODC: 'Count transition occurence data collector',
-  PCBP: 'Place content break point',
-  TEBP: 'Transition enabled break point'
-};
+    DC: 'Data collection',
+    MS: 'Marking size',
+    BP: 'Break point',
+    UD: 'User defined',
+    WIF: 'Write in file',
+    LLDC: 'List length data collection',
+    CTODC: 'Count transition occurence data collector',
+    PCBP: 'Place content break point',
+    TEBP: 'Transition enabled break point'
+  };
 
   cpnElementType = {
     place: 'cpn:Place',
     transition: 'cpn:Transition'
   };
 
-@Input() message = 'Not set';
+  @Input() message = 'Not set';
 
   JSON = JSON;
 
@@ -53,9 +53,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   idNodeCounter = 0;
   private eventHub: any;
   newPageCount = 0;
-  stateTree;
+
   showTable = 'not';
   lastContextMenuId;
+
+  treeState;
 
   selectedNode;
   createMonitorIntent = null;
@@ -234,6 +236,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     this.eventService.on(Message.PROJECT_LOAD, (event) => {
       if (event.project) {
+        // this.treeState = {};
         this.loadProject(event.project);
       }
     });
@@ -241,9 +244,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     this.eventService.on(Message.MODEL_RELOAD, () => {
       const project = this.modelService.getProject();
       console.log('MODEL_RELOAD, project = ', project);
-      // if (project) {
-      //   this.loadProject(project);
-      // }
+      if (project) {
+        this.loadProject(project);
+      }
+      this.treeState = localStorage.treeState && JSON.parse(localStorage.treeState);
+      this.treeComponent.updateData();
     });
 
     this.eventService.on(Message.DECLARATION_CHANGED, (event) => {
@@ -393,12 +398,18 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         }
       }
     });
-
-
   }
 
   ngOnDestroy() {
   }
+
+
+  setState(state) {
+    console.log(this.constructor.name, 'setState(), state = ', state);
+
+    localStorage.treeState = JSON.stringify(state);
+  }
+
 
   updatePagesNode(currentPageId) {
     const cpnet = this.modelService.getCpn();
@@ -878,6 +889,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         treeNode.data.cpnType);
     }
 
+    this.eventService.send(Message.MODEL_CHANGED);
     //  this.moveNodeInTree(this.treeComponent, treeNode.parent, undefined, {from, to});
   }
 
@@ -894,6 +906,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         to.index - 1,
         treeNode.data.cpnType);
     }
+
+    this.eventService.send(Message.MODEL_CHANGED);
   }
 
 
@@ -923,9 +937,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       const parentChildren = treeNode.parent.data.children;
       if (parentChildren) {
         const indexElem = parentChildren.indexOf(treeNode.data);
-        parentChildren.splice(
-          indexElem, 1);
+        parentChildren.splice(indexElem, 1);
         this.treeComponent.treeModel.update();
+
         if (treeNode.data) {
           if (treeNode.data.type === 'declaration') {
             this.modelService.deleteElementInBlock(treeNode.parent.data.cpnElement, treeNode.data.cpnType, treeNode.id);
@@ -950,6 +964,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           }
         }
       }
+
+      this.eventService.send(Message.MODEL_CHANGED);
     }
   }
 
@@ -1208,36 +1224,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * icon delete click handler
-   * @param node - current page node in explorer
-   */
-  onDeleteNode_OLD(node) {
-    let parentNod;
-    if (node.data.type === 'page' || node.data.id === 'Pages') {
-      // if (this.currentProjectModel.workspaceElements.cpnet.page.length) {
-      //   this.currentProjectModel.workspaceElements.cpnet.page = this.currentProjectModel.workspaceElements.cpnet.page.filter(x => x._id !== node.id);
-      // } else {
-      //   this.currentProjectModel.workspaceElements.cpnet.page = [];
-      // }
-      this.modelService.deletePage(node.id);
-      parentNod = node.parent;
-      // node.parent.data.children = node.parent.data.children.filter(x => x.id !== node.id);
-      this.deleteNode(this.nodes[0], node.id);
-      this.eventService.send(Message.DELETE_PAGE, { id: node.id, parent: node.parent.data.name });
-      this.updateTree();
-      this.focusedNode(parentNod);
-      // this.eventService.send(Message.PAGE_OPEN, {pageObject: undefined, subPages: undefined});
-    } else {
-      parentNod = node.parent;
-      this.focusedNode(parentNod);
-      // deletingElem = !this.paramsTypes.includes(node.parent.id) ? node.data.id : node.parent.id;
-      // this.sendChangingElementToDeclarationPanel(node, node.parent.id, 'delete', node.data.id);
-      // this.modelService.sendChangingElementToDeclarationPanel(node, node.parent.name, 'delete', node.data.id, this.getCurrentBlock(node).id, this.treeComponent.treeModel.getState());
-    }
-
-  }
-
   focusedNode(node) {
     if (node) {
       const newfocusedBlock = this.getCurrentBlock(node);
@@ -1279,198 +1265,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       }
     }
     return objects;
-  }
-
-  buildGlobboxTree(block, projectNode) {
-    console.log('BUILDGLOBBOXTREE()');
-    let paramNode;
-    paramNode = {
-      id: block.id ? block.id : 'globbox',
-      name: block.id ? block.id : 'globbox',
-      cpnElement: block,
-      children: []
-    };
-
-    projectNode.children.push(paramNode);
-    if (block.ml) {
-      const mlNode = {
-        id: 'ml' + this.idNodeCounter++,
-        name: 'ml',
-        cpnElement: block.ml,
-        children: []
-      };
-      paramNode.children.push(mlNode);
-      let mlstr: string;
-      if (block.ml instanceof Array) {
-        for (const ml of block.ml) {
-          mlstr = ml.toString();
-          mlNode.children.push({
-            id: ml._id,
-            // id: globref['@attributes'].id,
-            name: ml,
-            cpnElement: ml
-          });
-        }
-      } else {
-        mlNode.children.push({
-          id: block.ml._id,
-          // id: globref['@attributes'].id,
-          name: block.ml,
-          cpnElement: block.ml
-        });
-      }
-    }
-    if (block.var) {
-      const varNode = {
-        id: 'var' + this.idNodeCounter++,
-        name: 'var',
-        cpnElement: block.var,
-        children: []
-      };
-      paramNode.children.push(varNode);
-      if (block.var instanceof Array) {
-        for (const v of block.var) {
-          const node = {
-            // id: v['@attributes'].id,
-            id: v._id,
-            name: v.id,
-            cpnElement: v
-          };
-          if (v.layout) {
-            // node.name += ' : ' + v.layout;
-            node.name = v.layout.replace('var ', '');
-          } else {
-            node.name = v.id + ' : ' + v.type.id + ';';
-          }
-          varNode.children.push(node);
-        }
-      } else {
-        const node = {
-          // id: v['@attributes'].id,
-          id: block.var._id,
-          name: block.var.id,
-          cpnElement: block.var
-        };
-
-        if (block.var.layout) {
-          //  node.name += ' : ' + block.var.layout;
-          node.name = block.var.layout.replace('var ', '');
-        } else {
-          node.name = block.var.id + ': ' + block.var.type.id + ';';
-        }
-
-        varNode.children.push(node);
-      }
-
-    }
-    if (block.globref) {
-      const globrefNode = {
-        id: 'globref' + this.idNodeCounter++,
-        name: 'globref',
-        cpnElement: block.var,
-        children: []
-      };
-      paramNode.children.push(globrefNode);
-      if (block.globref instanceof Array) {
-        for (const globref of block.globref) {
-          globrefNode.children.push({
-            // id: globref['@attributes'].id,
-            id: globref._id,
-            name: globref.layout ? globref.layout.replace('globref ', '') : globref.id + ' = ' + globref.ml + ';',
-            cpnElement: globref
-          });
-        }
-      } else {
-        globrefNode.children.push({
-          // id: globref['@attributes'].id,
-          id: block.globref._id,
-          name: block.globref.layout ? block.globref.layout.replace('globref ', '') : block.globref.id + ' = ' + block.globref.ml + ';',
-          cpnElement: block.globref
-        });
-      }
-    }
-    if (block.color) {
-      const colorNode = {
-        id: 'colset' + this.idNodeCounter++,
-        name: 'colset',
-        cpnElement: block.color,
-        children: []
-      };
-      paramNode.children.push(colorNode);
-      if (block.color instanceof Array) {
-        for (const color of block.color) {
-          const node = {
-            // id: color['@attributes'].id,
-            id: color._id,
-            name: color.id,
-            cpnElement: color
-          };
-          if (color.layout) {
-            node.name = color.layout.replace('colset ', '').replace('color ', '');
-          } else {
-            if (color.alias && color.alias.id) {
-              node.name += ' = ' + color.alias.id;
-            } else if (color.list && color.list.id) {
-              node.name += ' = list ' + color.list.id;
-            } else if (color.product && color.product.id) {
-              node.name += ' = product ';
-              if (color.product.id instanceof Array) {
-                for (let i = 0; i < color.product.id.length; i++) {
-                  node.name += i === 0 ? color.product.id[i] + ' ' : '* ' + color.product.id[i];
-                }
-              } else {
-                node.name += color.product.id;
-              }
-            } else {
-              node.name += ' = ' + color.id.toLowerCase();
-            }
-            if ('timed' in color) {
-              node.name += ' timed';
-            }
-          }
-          colorNode.children.push(node);
-        }
-      } else {
-        const node = {
-          // id: color['@attributes'].id,
-          id: block.color._id,
-          name: block.color.id,
-          cpnElement: block.color,
-        };
-        if (block.color.layout) {
-          node.name = block.color.layout.replace('colset ', '').replace('color ', '');
-        } else {
-          if (block.color.alias && block.color.alias.id) {
-            node.name += ' = ' + block.color.alias.id;
-          } else if (block.color.list && block.color.list.id) {
-            node.name += ' = list ' + block.color.list.id;
-          } else if (block.color.product && block.color.product.id) {
-            node.name += ' = product ';
-            if (block.color.product.id instanceof Array) {
-              for (let i = 0; i < block.color.product.id.length; i++) {
-                node.name += i === 0 ? block.color.product.id[i] + ' ' : '* ' + block.color.product.id[i];
-              }
-            } else {
-              node.name += block.color.product.id;
-            }
-          } else {
-            node.name += ' = ' + block.color.id.toLowerCase();
-          }
-          if ('timed' in block.color) {
-            node.name += ' timed';
-          }
-        }
-        colorNode.children.push(node);
-      }
-    }
-    if (block.block) {
-      for (const inblock of block.block) {
-        this.buildGlobboxTree(inblock, paramNode);
-      }
-      if (block.block.id) {
-        this.buildGlobboxTree(block.block, paramNode);
-      }
-    }
   }
 
   /**
@@ -2223,11 +2017,18 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     this.expandNode(projectNode.id);
     this.expandNode(pagesNode.id);
-    if (pagesNode.children.length > 0) {
-      const firstPageId = pagesNode.children[0].id;
-      if (firstPageId) {
-        this.expandNode(firstPageId);
-        this.gotoNode(firstPageId);
+
+    // go to first page if no node selected
+    // console.log(this.constructor.name, 'loadProject(), treeModel.activeNodeIds = ',
+    //   this.treeComponent.treeModel.activeNodeIds);
+
+    if (Object.entries(this.treeComponent.treeModel.activeNodeIds).length < 1) {
+      if (pagesNode.children.length > 0) {
+        const firstPageId = pagesNode.children[0].id;
+        if (firstPageId) {
+          this.expandNode(firstPageId);
+          this.gotoNode(firstPageId);
+        }
       }
     }
   }
@@ -2453,7 +2254,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event) {
-      this.hideContextMenu();
+    this.hideContextMenu();
   }
 
   saveEditedData(event, node) {

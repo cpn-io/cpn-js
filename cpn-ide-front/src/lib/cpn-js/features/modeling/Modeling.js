@@ -940,39 +940,13 @@ function optimiseEqualsArcsByWayoints(arc, delta) {
   return arc;
 }
 
-
 Modeling.prototype.declareSubPage = function (cpnElement, name, pageId) {
 
-  cpnElement['subst'] = getDefSubst(cpnElement, name, pageId);
-
-  // cpnElement['subst'] = {
-  //   subpageinfo: {
-  //     fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
-  //     lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
-  //     posattr: { _x: cpnElement.posattr._x, _y: cpnElement.posattr._y - cpnElement.box._h / 2 },
-  //     textattr: { _colour: 'Black', _bold: 'false' },
-  //     _id: cpnElement._id + 'e',
-  //     _name: name
-  //   },
-  //   _portsock: '',
-  //   _subpage: pageId
-  // };
-
-  // element.name = name;
-  // element.text = name;
-  //
-  // const attrs = this.getLabelAttrs(element, element.cpnElement['subst'].subpageinfo, 'subst');
-  // const label = this._elementFactory.createLabel(attrs);
-  // this._canvas.addShape(label, this._canvas.getRootElement());
-
-  //this._eventBus.fire('element.changed', { element: element });
-
+  cpnElement.subst = getDefSubst(cpnElement, name, pageId);
   return cpnElement;
 }
 
-
-
-Modeling.prototype.changeTransitionSubPageLabel = function(id, name){
+Modeling.prototype.changeTransitionSubPageLabel = function (id, name) {
   for (const key of Object.keys(this._elementRegistry._elements)) {
     if (this._elementRegistry._elements[key]) {
       const element = this._elementRegistry._elements[key].element;
@@ -1056,7 +1030,7 @@ Modeling.prototype.removeElements = function (elements) {
 };
 
 
-Modeling.prototype.deleteSubPageTrans = function(id){
+Modeling.prototype.deleteSubPageTrans = function (id) {
   for (const key of Object.keys(this._elementRegistry._elements)) {
     if (this._elementRegistry._elements[key]) {
       const element = this._elementRegistry._elements[key].element;
@@ -1068,13 +1042,13 @@ Modeling.prototype.deleteSubPageTrans = function(id){
   }
 }
 
-Modeling.prototype.getShapeArcs = function(shape){
+Modeling.prototype.getShapeArcs = function (shape) {
   let arcs = [];
   for (const key of Object.keys(this._elementRegistry._elements)) {
     if (this._elementRegistry._elements[key]) {
       const element = this._elementRegistry._elements[key].element;
-      if(element.type === CPN_CONNECTION && element.cpnElement){
-        if(element.cpnElement && element.cpnElement.transend._idref === shape.id || element.cpnElement.placeend._idref === shape.id){
+      if (element.type === CPN_CONNECTION && element.cpnElement) {
+        if (element.cpnElement && element.cpnElement.transend._idref === shape.id || element.cpnElement.placeend._idref === shape.id) {
           arcs.push(element);
         }
       }

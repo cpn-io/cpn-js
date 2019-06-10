@@ -14,3 +14,14 @@
     transform: translateY(-50%);
     font-size: 1.5em;
 }
+
+.errorPopup {
+  position: absolute;
+  left: 500px;
+  top: 300px;
+  background: #ffdddd;
+  border: darkred 1px solid;
+  color: darkred;
+  padding: 5px 10px;
+  display: none
+}

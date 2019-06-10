@@ -426,7 +426,6 @@ export class ModelService {
       }
       addelemToEntry(type);
     } else {
-      addelemToEntry('block');
       if (parent.block instanceof Array) {
         for (let i = 0; i < parent.block.length; i++) {
           if (parent.block[i]._id === element._id) {
@@ -436,6 +435,8 @@ export class ModelService {
       } else {
         parent.block = [];
       }
+      addelemToEntry('block');
+
     }
   }
 

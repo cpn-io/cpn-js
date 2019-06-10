@@ -107,17 +107,17 @@
 
               <div class="divider" *ngIf="isExistsEditSection(selectedNode)"></div>
 
-              <!-- Up/down actions -->
-              <li *ngIf="selectedNode && selectedNode.data && selectedNode.data.actions " class="nav-item">
-                <a (click)="onUpNode(selectedNode)" class="nav-link" href="#" title="Move up">
-                  <i class="fas fa-arrow-up"></i>
-                </a>
-              </li>
-              <li *ngIf="selectedNode && selectedNode.data && selectedNode.data.actions" class="nav-item">
-                <a (click)="onDownNode(selectedNode)" class="nav-link" href="#" title="Move down">
-                  <i class="fas fa-arrow-down"></i>
-                </a>
-              </li>
+          <!-- Up/down actions -->
+          <li  *ngIf="selectedNode && selectedNode.data && selectedNode.data.actions "  class="nav-item">
+            <a (click)="onUpNode(selectedNode)" class="nav-link"   [ngClass]="{'disabled': !isOneGroup(getDataForMoving('up'))}" href="#">
+              <i class="fas fa-arrow-up"></i>
+            </a>
+          </li>
+          <li *ngIf="selectedNode && selectedNode.data && selectedNode.data.actions "  class="nav-item" >
+            <a (click)="onDownNode(selectedNode)" class="nav-link"  [ngClass]="{'disabled': !isOneGroup(getDataForMoving('down'))}" href="#">
+              <i class="fas fa-arrow-down"></i>
+            </a>
+          </li>
 
               <div class="divider"></div>
 

@@ -339,7 +339,8 @@ export class ModelService {
   }
 
   instaceForTransition(id, isRoot){
-    return isRoot ? {_id: getNextId(), _trans: id} : {_id: getNextId(), _page: id}
+   // return isRoot ? {_id: getNextId(), _trans: id} : {_id: getNextId(), _page: id}
+    return  {_id: getNextId(), _trans: id};
   }
 
 
@@ -538,7 +539,7 @@ export class ModelService {
     } else {
       this.projectData.workspaceElements.cpnet.page = [this.projectData.workspaceElements.cpnet.page, page];
     }
-    this.addInstanceInJson( this.instaceForTransition(page._id, true), undefined);
+    //this.addInstanceInJson( this.instaceForTransition(page._id, true), undefined);
   }
 
   deletePage(pageId) {

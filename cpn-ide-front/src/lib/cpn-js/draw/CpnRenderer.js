@@ -539,8 +539,9 @@ export default function CpnRenderer(
       let dx = waypoints[i].x - prevPoint.x;
       let dy = waypoints[i].y - prevPoint.y;
       let d = Math.sqrt(dx * dx + dy * dy);
+      let DD = Math.min(D, d);
 
-      let wp = { x: (prevPoint.x + D * dx / d), y: (prevPoint.y + D * dy / d) };
+      let wp = { x: (prevPoint.x + DD * dx / d), y: (prevPoint.y + DD * dy / d) };
 
       if (prevWp) {
         pathData += 'Q' + prevPoint.x + ' ' + prevPoint.y + ', ' + wp.x + ' ' + wp.y + ' ';
@@ -548,7 +549,7 @@ export default function CpnRenderer(
 
       let wp2 = waypoints[i];
       if (i < waypoints.length - 1) {
-        wp2 = { x: (prevPoint.x + dx - D * dx / d), y: (prevPoint.y + dy - D * dy / d) };
+        wp2 = { x: (prevPoint.x + dx - DD * dx / d), y: (prevPoint.y + dy - DD * dy / d) };
       }
 
       pathData += 'L' + wp2.x + ',' + wp2.y + ' ';
@@ -909,16 +910,6 @@ export default function CpnRenderer(
     // cpn status
     // if (element.cpnStatus) {
     var color;
-
-    // if (element.cpnStatus === 'process') {
-    //   color = PROCESS_FILL_COLOR;
-    // }
-    // if (element.cpnStatus === 'error') {
-    //   color = ERROR_FILL_COLOR;
-    // }
-    // if (element.cpnStatus === 'ready') {
-    //   color = READY_FILL_COLOR;
-    // }
 
     if (self._stateProvider.getReadyState(element.cpnElement._id)) {
       color = READY_FILL_COLOR;

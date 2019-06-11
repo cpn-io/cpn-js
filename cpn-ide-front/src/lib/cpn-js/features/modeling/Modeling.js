@@ -137,6 +137,13 @@ Modeling.prototype.repaintElements = function () {
   }
 }
 
+Modeling.prototype.removeEmptyConnections = function () {
+  var arcs = this._elementRegistry.filter(function (element) { return is(element, CPN_CONNECTION); });
+
+  console.log('Modeling.prototype.removeEmptyConnections(), arcs = ', arcs);
+
+  // this.removeElements(forDelete);
+}
 
 Modeling.prototype.updateElementBounds = function (element) {
   if (element && element.labels) {
@@ -937,12 +944,14 @@ Modeling.prototype.createShapeCpnElement = function (position, type) {
 
   let newElement;
 
+  const n = this.getShapeCount(type) + 1;
+
   switch (type) {
     case CPN_PLACE:
-      newElement = getDefPlace('P', position);
+      newElement = getDefPlace('P' + n, position);
       break;
     case CPN_TRANSITION:
-      newElement = getDefTransition('T', position);
+      newElement = getDefTransition('T' + n, position);
       break;
     case CPN_TEXT_ANNOTATION:
       newElement = getDefAux('Text', position);
@@ -950,13 +959,12 @@ Modeling.prototype.createShapeCpnElement = function (position, type) {
   }
 
   updateLabelsPosition(this._textRenderer, newElement);
-
   return newElement;
 }
 
 Modeling.prototype.getShapeCount = function(type) {
-  var elements = elementRegistry.filter(function (element) { return element.type === type; });
-  return elements.length;
+  var elements = this._elementRegistry.filter(function (element) { return element.type === type; });
+  return elements.length || 0;
 }
 
 

@@ -65,34 +65,32 @@ CpnPaletteProvider.prototype.getPaletteEntries = function () {
 
     console.log(self.constructor.name, 'extractSubpage(), selectedElements = ', selectedElements);
 
-    const position = {x: selectedElements[0].x , y: selectedElements[0].y };
+    const position = { x: selectedElements[0].x, y: selectedElements[0].y };
 
     let transCpnElement = modeling.createShapeCpnElement(position, CPN_TRANSITION);
 
-    const subPageId = getNextId();
-    transCpnElement = modeling.declareSubPage(transCpnElement, 'Subpage', subPageId);
+    setTimeout(() => {
+      transCpnElement = modeling.declareSubPage(transCpnElement, 'Subpage', getNextId());
+      const element = cpnFactory.createShape(undefined, transCpnElement, CPN_TRANSITION, position, true);
 
-    const element = cpnFactory.createShape(undefined, transCpnElement, CPN_TRANSITION, position, true);
-    //this._modeling.updateElement(element, true);
-
-    // eventBus.fire('shape.create.end', { elements: [element] });
-    // eventBus.fire('shape.editing.activate', { shape: element });
-    // eventBus.fire('shape.contextpad.activate', { shape: element });
-
-    const places = [];
-    const transitions = [];
-    for (const e of selectedElements) {
-      if (is(e, CPN_PLACE)) {
-        places.push(e.cpnElement);
+      const places = [];
+      const transitions = [];
+      for (const e of selectedElements) {
+        if (is(e, CPN_PLACE)) {
+          places.push(e.cpnElement);
+        }
+        if (is(e, CPN_TRANSITION)) {
+          transitions.push(e.cpnElement);
+        }
       }
-      if (is(e, CPN_TRANSITION)) {
-        transitions.push(e.cpnElement);
-      }
-    }
 
-    eventBus.fire('extract.subpage', { transCpnElement: transCpnElement, places: places, transitions: transitions });
-    eventBus.fire('shape.editing.activate', { shape: element });
-    eventBus.fire('shape.contextpad.activate', { shape: element });
+      eventBus.fire('extract.subpage', { transCpnElement: transCpnElement, places: places, transitions: transitions });
+      eventBus.fire('shape.editing.activate', { shape: element });
+      eventBus.fire('shape.contextpad.activate', { shape: element });
+
+      modeling.removeEmptyConnections();
+    }, 1);
+
   }
 
   return {

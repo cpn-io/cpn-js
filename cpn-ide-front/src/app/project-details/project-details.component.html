@@ -73,7 +73,7 @@
                 <table class="table table-bordered table-hover table-small">
                   <tr *ngFor="let node of getNodes(tab.id)">
 
-                    <td [ngClass]="node.type === 'block' ? 'blockHeader' : 'editablenode'">
+                    <td [ngClass]="{'blockHeader': node.type === 'block', 'editablenode': node.type !== 'block', 'node-highlight-error': isError(node.id)}">
                       <!-- <div *ngIf="node.type === 'block'">
                           {{ node.text }}
                         </div> -->

@@ -82,7 +82,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   editActions = ['clone', 'enable', 'enable_all', 'disable', 'disable_all', 'delete'];
 
   // error identificators
-  // errorIds = ['ID4'];
   errorIds = [];
 
   /**

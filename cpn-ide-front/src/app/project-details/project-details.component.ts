@@ -5,6 +5,7 @@ import { TabsContainer } from '../../lib/tabs/tabs-container/tabs.container';
 import { ProjectService } from '../services/project.service';
 import { ModelService } from '../services/model.service';
 import { SettingsService } from '../services/settings.service';
+import { AccessCpnService } from '../services/access-cpn.service';
 
 @Component({
   selector: 'app-project-details',
@@ -24,6 +25,9 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   showTable = 'not';
   paramsTypes = ['ml', 'color', 'var', 'globref'];
 
+  // error identificators
+  errorIds = [];
+
   @ViewChild('tabsComponent') tabsComponent: TabsContainer;
 
 
@@ -32,7 +36,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   tabList = [
     { id: 'all', name: 'BatchOrdering' },
     { id: 'globref', name: 'Globref' },
-    { id: 'color', name: 'Color' },
+    { id: 'colset', name: 'Color' },
     { id: 'var', name: 'Var' },
     { id: 'val', name: 'Val' },
     { id: 'fun', name: 'Fun' },
@@ -43,7 +47,9 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     private eventService: EventService,
     private settings: SettingsService,
     private projectService: ProjectService,
-    private modelService: ModelService) {
+    private modelService: ModelService,
+    private accessCpnService: AccessCpnService
+  ) {
   }
 
   ngOnInit() {
@@ -92,10 +98,28 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       }
     });
 
+    // Get error identificators
+    this.eventService.on(Message.SERVER_INIT_NET_DONE, (event) => {
+      this.errorIds = [];
+      for (const id of Object.keys(this.accessCpnService.getErrorData())) {
+        this.errorIds.push(id);
+      }
+
+      // expand error nodes
+      // for (const id of this.errorIds) {
+      //   this.expandParentNode(id);
+      // }
+    });
+
   }
 
   ngOnDestroy() {
     // this.subscription.unsubscribe();
+  }
+
+  isError(id: any) {
+    // console.log('isError(), errorIds, id = ', this.errorIds, id);
+    return this.errorIds.includes(id);
   }
 
   selectDeclarationNode(event) {
@@ -232,11 +256,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       case 'all':
         nodes = this.declarationNodes;
         break;
-      case 'globref':
-      case 'color':
-      case 'var':
-      case 'val':
-      case 'fun':
+      default:
         nodes = this.declarationNodes.filter(node => node.type === 'block' || node.declarationType === tabId);
         break;
     }

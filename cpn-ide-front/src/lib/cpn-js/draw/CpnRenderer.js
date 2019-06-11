@@ -71,6 +71,7 @@ var TOKEN_FILL_COLOR = '#6fe117';
 var MARKING_FILL_COLOR = '#bcfd8b';
 
 var ERROR_FILL_COLOR = '#cc0000';
+var WARNING_FILL_COLOR = '#996600';
 var PROCESS_FILL_COLOR = '#999900';
 var READY_FILL_COLOR = '#009900';
 
@@ -91,6 +92,10 @@ export default function CpnRenderer(
   canvas, textRenderer, stateProvider, priority) {
 
   BaseRenderer.call(this, eventBus, priority);
+
+  this._stateProvider = stateProvider;
+
+  const self = this;
 
   var rendererId = RENDERER_IDS.next();
 
@@ -562,16 +567,27 @@ export default function CpnRenderer(
    * @param {*} element
    * @param {*} svgElement
    */
-  function setCpnStatus(element, svgElement) {
-    if (element.cpnStatus) {
-      if (element.cpnStatus === 'process') {
-        svgAttr(svgElement, { filter: shadow('shape', PROCESS_FILL_COLOR), });
-      }
-      if (element.cpnStatus === 'error') {
-        svgAttr(svgElement, { filter: shadow('shape', ERROR_FILL_COLOR), });
-      }
-      if (element.cpnStatus === 'ready') {
+  function drawCpnStatus(element, svgElement) {
+    // if (element.cpnStatus) {
+    //   if (element.cpnStatus === 'process') {
+    //     svgAttr(svgElement, { filter: shadow('shape', PROCESS_FILL_COLOR), });
+    //   }
+    //   if (element.cpnStatus === 'error') {
+    //     svgAttr(svgElement, { filter: shadow('shape', ERROR_FILL_COLOR), });
+    //   }
+    //   if (element.cpnStatus === 'ready') {
+    //     svgAttr(svgElement, { filter: shadow('shape', READY_FILL_COLOR), });
+    //   }
+    // }
+    if (element.cpnElement) {
+      if (self._stateProvider.getReadyState(element.cpnElement._id)) {
         svgAttr(svgElement, { filter: shadow('shape', READY_FILL_COLOR), });
+      }
+      if (self._stateProvider.getWarningState(element.cpnElement._id)) {
+        svgAttr(svgElement, { filter: shadow('shape', WARNING_FILL_COLOR), });
+      }
+      if (self._stateProvider.getErrorState(element.cpnElement._id)) {
+        svgAttr(svgElement, { filter: shadow('shape', ERROR_FILL_COLOR), });
       }
     }
   }
@@ -605,7 +621,7 @@ export default function CpnRenderer(
     });
 
     // Add CPN status shadow
-    setCpnStatus(element, ellipse);
+    drawCpnStatus(element, ellipse);
 
     svgAppend(parentGfx, ellipse);
 
@@ -660,7 +676,7 @@ export default function CpnRenderer(
     });
 
     // Add CPN status shadow
-    setCpnStatus(element, rect);
+    drawCpnStatus(element, rect);
 
     svgAppend(parentGfx, rect);
 

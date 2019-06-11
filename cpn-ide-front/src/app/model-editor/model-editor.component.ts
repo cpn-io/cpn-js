@@ -55,6 +55,8 @@ export class ModelEditorComponent implements OnInit {
   selectedElement;
   jsonPageObject;
   portMenuProvider;
+  stateProvider;
+
   // subscription: Subscription;
   subpages = [];
   placeShapes = [];
@@ -97,6 +99,7 @@ export class ModelEditorComponent implements OnInit {
     this.textRenderer = this.diagram.get('textRenderer');
     this.cpnFactory = this.diagram.get('cpnFactory');
     this.portMenuProvider = this.diagram.get('portMenuProvider');
+    this.stateProvider = this.diagram.get('stateProvider');
 
     const eventBus = this.eventBus;
 
@@ -332,7 +335,9 @@ export class ModelEditorComponent implements OnInit {
    * Update element status
    */
   updateElementStatus() {
-    this.eventBus.fire('model.update.cpn.status', { data: { clear: '*' } });
+    this.stateProvider.clear();
+
+    // this.eventBus.fire('model.update.cpn.status', { data: { clear: '*' } });
 
     // console.log('updateElementStatus(), tokenData = ', this.accessCpnService.getTokenData());
     // console.log('updateElementStatus(), readyData = ', this.accessCpnService.getReadyData());
@@ -343,19 +348,26 @@ export class ModelEditorComponent implements OnInit {
     }
 
     if (this.accessCpnService.getReadyData().length > 0) {
-      this.eventBus.fire('model.update.cpn.status', { data: { ready: this.accessCpnService.getReadyData() } });
+      // this.eventBus.fire('model.update.cpn.status', { data: { ready: this.accessCpnService.getReadyData() } });
+
+      this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
     }
 
     if (Object.keys(this.accessCpnService.getErrorData()).length > 0) {
       this.errorData = this.accessCpnService.getErrorData();
-      const errorIds = [];
-      for (const id of Object.keys(this.errorData)) {
-        errorIds.push(id);
-      }
+
+      this.stateProvider.setErrorState(this.errorData);
+
+      // const errorIds = [];
+      // for (const id of Object.keys(this.errorData)) {
+      //   errorIds.push(id);
+      // }
 
       // console.log('SET ERRORS, errorIds = ', errorIds);
-      this.eventBus.fire('model.update.cpn.status', { data: { error: errorIds } });
+      // this.eventBus.fire('model.update.cpn.status', { data: { error: errorIds } });
     }
+
+    this.modeling.repaintElements();
   }
 
   subscripeToAppMessage() {

@@ -176,6 +176,14 @@ Modeling.prototype.repaintElement = function (element) {
   this._eventBus.fire('element.changed', { element: element });
 }
 
+Modeling.prototype.repaintElements = function () {
+  var elements = this._elementRegistry.filter(function (element) { return element; });
+  for (const e of elements) {
+    this.repaintElement(e);
+  }
+}
+
+
 Modeling.prototype.updateElementBounds = function (element) {
   if (element && element.labels) {
     for (const l of element.labels) {

@@ -102,13 +102,18 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   eventBus.on('connection.changed', function (event) {
     // console.log('CpnUpdater(), connection.changed, event = ', event);
 
+    // layouter.layoutConnections();
+
     updateCpnElement(event.element);
   });
 
   eventBus.on('shape.create.end', (event) => {
     console.log('CpnUpdater(), shape.create.end, event = ', event);
+
     // updateCpnElement(event.element);
-    layouter.layoutConnections();
+    // layouter.layoutConnections();
+
+    modeling.updateElement(event.element, true);
   });
   eventBus.on('connection.create', (event) => {
     console.log('CpnUpdater(), connection.create, event = ', event);

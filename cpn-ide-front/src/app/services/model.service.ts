@@ -758,68 +758,68 @@ export class ModelService {
 
   /**
    * Parse variables Layout string and create object this variable
-   * @param layout - declaration string
-   * @param elem - changing variable object
+   * @param layoutStr - declaration string
+   * @param cpnElement - changing variable object
    * @param blockType - type variable (color, var, ml, gkobref)
    */
-  parseVariableLayout(layout, elem, blockType) {
+  parseVariableLayout(layoutStr, cpnElement, blockType) {
     this.saveBackupBak(this.projectData, undefined);
     switch (blockType) {
       case 'var':
         let splitLayoutArray;
-        elem.layout = blockType + ' ' + layout;
-        layout = layout.replace('var', '');
-        splitLayoutArray = layout.trim().split(':');
+        cpnElement.layout = blockType + ' ' + layoutStr;
+        layoutStr = layoutStr.replace('var', '');
+        splitLayoutArray = layoutStr.trim().split(':');
         for (let i = 0; i < splitLayoutArray.length; i++) {
           splitLayoutArray[i] = splitLayoutArray[i].replace(/\s+/g, '').split(',');
         }
-        elem.id = splitLayoutArray[0];
-        elem.type.id = splitLayoutArray[1][0];
+        cpnElement.id = splitLayoutArray[0];
+        cpnElement.type.id = splitLayoutArray[1][0];
         break;
       case 'ml':
-        elem.layout = layout;
-        elem.__text = layout;
+        cpnElement.layout = layoutStr;
+        cpnElement.__text = layoutStr;
         break;
       case 'color':   // *****отрефакторить*****
-        elem.layout = layout;
-        layout = layout.replace('colset', '');
-        splitLayoutArray = layout.split('=');
+        cpnElement.layout = layoutStr;
+        layoutStr = layoutStr.replace('colset', '');
+        splitLayoutArray = layoutStr.split('=');
         splitLayoutArray[1] = splitLayoutArray[1].split(' ').filter(e => e.trim() !== '');
         let testElem = splitLayoutArray[1][0].replace(/\s+/g, '');
-        for (const key of Object.keys(elem)) {
+        for (const key of Object.keys(cpnElement)) {
           if (key !== '_id' && key !== 'layout') {
-            delete elem[key];
+            delete cpnElement[key];
           }
         }
         if (splitLayoutArray[1][splitLayoutArray[1].length - 1].replace(';', '') === 'timed') {
-          elem.timed = '';
+          cpnElement.timed = '';
           splitLayoutArray[1].length = splitLayoutArray[1].length - 1;
         }
         if (testElem === 'product') {
           const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
-          elem.id = splitLayoutArray[0].replace(/\s+/g, '');
-          elem.product = { id: productList };
+          cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
+          cpnElement.product = { id: productList };
         } else if (testElem === 'list') {
           const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
-          elem.id = splitLayoutArray[0].replace(/\s+/g, '');
-          elem.list = { id: productList };
+          cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
+          cpnElement.list = { id: productList };
         } else {
           testElem = testElem.replace(/\s+/g, '').replace(';', '');
           splitLayoutArray[0] = splitLayoutArray[0].replace(/\s+/g, '').replace(';', '');
           if (testElem.toLowerCase() === splitLayoutArray[0].toLowerCase()) {
-            elem.id = splitLayoutArray[0];
-            elem[testElem.toLowerCase()] = '';
+            cpnElement.id = splitLayoutArray[0];
+            cpnElement[testElem.toLowerCase()] = '';
           } else {
-            elem.id = splitLayoutArray[0];
-            elem.alias = { id: testElem };
+            cpnElement.id = splitLayoutArray[0];
+            cpnElement.alias = { id: testElem };
           }
         }
         break;
       case 'globref':
-        splitLayoutArray = layout.split(' ').filter(e => e.trim() !== '' && e.trim() !== '=');
-        elem.id = splitLayoutArray[1].replace(/\s+/g, '').replace(';', '');
-        elem.ml = splitLayoutArray[2].replace(/\s+/g, '').replace(';', '');
-        elem.layout = blockType + ' ' + layout;
+        splitLayoutArray = layoutStr.split(' ').filter(e => e.trim() !== '' && e.trim() !== '=');
+        cpnElement.id = splitLayoutArray[1].replace(/\s+/g, '').replace(';', '');
+        cpnElement.ml = splitLayoutArray[2].replace(/\s+/g, '').replace(';', '');
+        cpnElement.layout = blockType + ' ' + layoutStr;
         break;
       default:
 
@@ -908,16 +908,16 @@ export class ModelService {
 
   }
 
-// <monitor id="ID1438426776"
-//   name="Count_trans_occur_Customer&apos;place_                    order_1"
-//   type="6"
-//   typedescription="Count transition occurrence data collection"
-//   disabled="false">
-//   <node idref="ID1437019464"
-//   pageinstanceidref="ID1437019576"/>
-//   <option name="Logging"
-//   value="true"/>
-// </monitor>
+  // <monitor id="ID1438426776"
+  //   name="Count_trans_occur_Customer&apos;place_                    order_1"
+  //   type="6"
+  //   typedescription="Count transition occurrence data collection"
+  //   disabled="false">
+  //   <node idref="ID1437019464"
+  //   pageinstanceidref="ID1437019576"/>
+  //   <option name="Logging"
+  //   value="true"/>
+  // </monitor>
   createMonitorCTODC(cpnElement: any): any {
     console.log('createMonitorCTODC(), cpnElement = ', cpnElement);
     return {
@@ -937,66 +937,66 @@ export class ModelService {
     };
   }
 
-// <monitor id="ID1437510504"
-//   name="Throughput times order size 3"
-//   type="3"
-//   typedescription="Data collection"
-//   disabled="true">
-//   <node idref="ID1437019470"
-//   pageinstanceidref="ID1437019576"/>
-//   <declaration name="Predicate">
-//   <ml id="ID1437510512">fun pred (bindelem) =
-//   let
-//   fun predBindElem (Customer&apos;consume (1, {its,oid,s})) = true
-//   | predBindElem _ = false
-//   in
-//   predBindElem bindelem
-// end
-// <layout>fun pred (bindelem) =
-//   let
-// fun predBindElem (Customer&apos;consume (1, {its,oid,s})) = true
-//   | predBindElem _ = false
-//   in
-//   predBindElem bindelem
-// end</layout>
-// </ml>
-// </declaration>
-// <declaration name="Observer">
-// <ml id="ID1437510516">fun obs (bindelem) =
-//   let
-// fun obsBindElem (Customer&apos;consume (1, {its,oid,s})) = 0
-//   | obsBindElem _ = ~1
-//   in
-//   obsBindElem bindelem
-// end
-// <layout>fun obs (bindelem) =
-//   let
-// fun obsBindElem (Customer&apos;consume (1, {its,oid,s})) = 0
-//   | obsBindElem _ = ~1
-//   in
-//   obsBindElem bindelem
-// end</layout>
-// </ml>
-// </declaration>
-// <declaration name="Init function">
-// <ml id="ID1437510520">fun init () =
-//   NONE
-//   <layout>fun init () =
-//   NONE</layout>
-//   </ml>
-//   </declaration>
-//   <declaration name="Stop">
-// <ml id="ID1437510524">fun stop () =
-//   NONE
-//   <layout>fun stop () =
-//   NONE</layout>
-//   </ml>
-//   </declaration>
-//   <option name="Timed"
-// value="false"/>
-// <option name="Logging"
-// value="false"/>
-// </monitor>
+  // <monitor id="ID1437510504"
+  //   name="Throughput times order size 3"
+  //   type="3"
+  //   typedescription="Data collection"
+  //   disabled="true">
+  //   <node idref="ID1437019470"
+  //   pageinstanceidref="ID1437019576"/>
+  //   <declaration name="Predicate">
+  //   <ml id="ID1437510512">fun pred (bindelem) =
+  //   let
+  //   fun predBindElem (Customer&apos;consume (1, {its,oid,s})) = true
+  //   | predBindElem _ = false
+  //   in
+  //   predBindElem bindelem
+  // end
+  // <layout>fun pred (bindelem) =
+  //   let
+  // fun predBindElem (Customer&apos;consume (1, {its,oid,s})) = true
+  //   | predBindElem _ = false
+  //   in
+  //   predBindElem bindelem
+  // end</layout>
+  // </ml>
+  // </declaration>
+  // <declaration name="Observer">
+  // <ml id="ID1437510516">fun obs (bindelem) =
+  //   let
+  // fun obsBindElem (Customer&apos;consume (1, {its,oid,s})) = 0
+  //   | obsBindElem _ = ~1
+  //   in
+  //   obsBindElem bindelem
+  // end
+  // <layout>fun obs (bindelem) =
+  //   let
+  // fun obsBindElem (Customer&apos;consume (1, {its,oid,s})) = 0
+  //   | obsBindElem _ = ~1
+  //   in
+  //   obsBindElem bindelem
+  // end</layout>
+  // </ml>
+  // </declaration>
+  // <declaration name="Init function">
+  // <ml id="ID1437510520">fun init () =
+  //   NONE
+  //   <layout>fun init () =
+  //   NONE</layout>
+  //   </ml>
+  //   </declaration>
+  //   <declaration name="Stop">
+  // <ml id="ID1437510524">fun stop () =
+  //   NONE
+  //   <layout>fun stop () =
+  //   NONE</layout>
+  //   </ml>
+  //   </declaration>
+  //   <option name="Timed"
+  // value="false"/>
+  // <option name="Logging"
+  // value="false"/>
+  // </monitor>
   createCpnMonitorDC(cpnElement) {
 
     let predicate: string;
@@ -1080,20 +1080,20 @@ export class ModelService {
 
   }
 
-// <monitor id="ID1438122141"
-//   name="Marking_size_BurgerHeaven&apos;C busy_1"
-//   type="0"
-//   typedescription="Marking size"
-//   disabled="true">
-//   <node idref="ID1438112416"
-//   pageinstanceidref="ID1437053129"/>
-//   <node idref="ID1438118761"
-//   pageinstanceidref="ID1437053129"/>
-//   <node idref="ID1437052949"
-//   pageinstanceidref="ID1437053129"/>
-//   <option name="Logging"
-//   value="true"/>
-// </monitor>
+  // <monitor id="ID1438122141"
+  //   name="Marking_size_BurgerHeaven&apos;C busy_1"
+  //   type="0"
+  //   typedescription="Marking size"
+  //   disabled="true">
+  //   <node idref="ID1438112416"
+  //   pageinstanceidref="ID1437053129"/>
+  //   <node idref="ID1438118761"
+  //   pageinstanceidref="ID1437053129"/>
+  //   <node idref="ID1437052949"
+  //   pageinstanceidref="ID1437053129"/>
+  //   <option name="Logging"
+  //   value="true"/>
+  // </monitor>
   createCpnMonitorMS(cpnElement) {
     return {
       _id: 'ID' + new Date().getTime(),
@@ -1314,12 +1314,16 @@ export class ModelService {
             cpnElement.list = { id: productList };
           } else {
             testElem = testElem.replace(/\s+/g, '').replace(';', '');
-            splitLayoutArray[0] = splitLayoutArray[0].replace(/\s+/g, '').replace(';', '');
-            if (testElem.toLowerCase() === splitLayoutArray[0].toLowerCase()) {
-              cpnElement.id = splitLayoutArray[0];
+            splitLayoutArray[1][0] = splitLayoutArray[1][0].replace(/\s+/g, '').replace(';', '');
+
+            // console.log('stringToCpnDeclarationElement(), testElem = ', testElem);
+            // console.log('stringToCpnDeclarationElement(), splitLayoutArray = ', splitLayoutArray);
+
+            if (testElem.toLowerCase() === splitLayoutArray[1][0].toLowerCase()) {
+              cpnElement.id = splitLayoutArray[0].trim();
               cpnElement[testElem.toLowerCase()] = '';
             } else {
-              cpnElement.id = splitLayoutArray[0];
+              cpnElement.id = splitLayoutArray[0].trim();
               cpnElement.alias = { id: testElem };
             }
           }

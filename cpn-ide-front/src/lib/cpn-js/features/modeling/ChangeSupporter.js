@@ -1,11 +1,14 @@
+import { is, CPN_CONNECTION, CPN_TRANSITION } from "../../util/ModelUtil";
 
 ChangeSupporter.$inject = [
   'eventBus',
   'modeling',
-  'textRenderer'
+  'textRenderer',
+  'elementRegistry',
+  'stateProvider'
 ];
 
-export default function ChangeSupporter(eventBus, modeling, textRenderer) {
+export default function ChangeSupporter(eventBus, modeling, textRenderer, elementRegistry, stateProvider) {
   // console.log('ChangeSupporter()');
 
   eventBus.on('model.update.tokens', function (event) {
@@ -16,12 +19,10 @@ export default function ChangeSupporter(eventBus, modeling, textRenderer) {
     }
   });
 
-  eventBus.on('model.update.cpn.status', function (event) {
-    // console.log('ChangeSupporter(), model.update.cpn.status, event = ', event);
+  eventBus.on('model.check.ports', function (event) {
+    // console.log('ChangeSupporter(), model.check.ports, event = ', event);
 
-    if (event.data) {
-      modeling.setCpnStatus(event.data);
-    }
+    checkPorts();
   });
 
 
@@ -44,7 +45,7 @@ export default function ChangeSupporter(eventBus, modeling, textRenderer) {
       const idList = [];
       for (var item of data) {
         //if (item.tokens > 0) {
-          idList.push(item.id);
+        idList.push(item.id);
         //}
       }
       // console.log('ChangeSupporter(), updateTokens(), idList = ', idList);
@@ -123,6 +124,37 @@ export default function ChangeSupporter(eventBus, modeling, textRenderer) {
     // console.log('ChangeSupporter(), updateTokens(), updateElementSize(), newBounds = ', newBounds);
     modeling.resizeShape(element, newBounds);
   }
+
+  /**
+   * Check ports for subst transitions
+   */
+  function checkPorts() {
+    var elements = elementRegistry.filter(function (element) { return element; });
+
+    const errors = {};
+    for (const e of elements) {
+
+      if (is(e, CPN_TRANSITION)) {
+        if (e.cpnElement.subst) {
+          var arcs = elementRegistry.filter(function (c) {
+            return is(c, CPN_CONNECTION)
+              && e.cpnElement._id === c.cpnElement.transend._idref
+              && !e.cpnElement.subst._portsock.includes(c.cpnElement.placeend._idref);
+          });
+          for (const a of arcs) {
+              errors[a.cpnElement._id] = 'Port not defined!';
+          }
+        }
+
+      }
+
+      // if (is(e, CPN_CONNECTION)) {
+      //   errors[e.cpnElement._id] = 'Port not defined!';
+      // }
+    }
+    stateProvider.setErrorState(errors, true);
+  }
+
 
 }
 

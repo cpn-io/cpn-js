@@ -18,6 +18,8 @@ import {
 import {
   CPN_LABEL,
   CPN_TRANSITION,
+  CPN_CONNECTION,
+  is,
   isCpn,
 } from '../../lib/cpn-js/util/ModelUtil';
 
@@ -40,6 +42,8 @@ export class ModelEditorComponent implements OnInit {
   }
 
   @ViewChild('container') containerElementRef: ElementRef;
+  @ViewChild('popup') popupElementRef: ElementRef;
+
   @Input() id: string;
 
 
@@ -67,8 +71,6 @@ export class ModelEditorComponent implements OnInit {
   transCount = 0;
 
   loading = false;
-
-  errorData;
 
   ngOnInit() {
 
@@ -113,14 +115,17 @@ export class ModelEditorComponent implements OnInit {
       this.loading = false;
       // console.log('import.render.complete, event = ', event);
 
-      // this.updateElementStatus();
-      // this.eventBus.fire('model.update.cpn.status', { data: { process: '*' } });
+      this.updateElementStatus();
     });
 
     eventBus.on('element.changed', (event) => {
       // console.log(self.constructor.name, 'element.changed, event = ', event);
 
-      this.eventService.send(Message.MODEL_CHANGED);
+      if (!this.loading) {
+        this.eventService.send(Message.MODEL_CHANGED);
+
+        eventBus.fire('model.check.ports');
+      }
     });
 
     this.eventService.on(Message.MODEL_RELOAD, () => {
@@ -130,13 +135,10 @@ export class ModelEditorComponent implements OnInit {
 
     this.eventService.on(Message.SERVER_INIT_NET_START, () => {
       this.log('Validation process...');
-      // this.eventBus.fire('model.update.cpn.status', { data: { process: '*' } });
     });
 
     // VALIDATION RESULT
     this.eventService.on(Message.SERVER_INIT_NET_DONE, (event) => {
-      this.errorData = {};
-
       this.updateElementStatus();
     });
 
@@ -297,28 +299,48 @@ export class ModelEditorComponent implements OnInit {
     eventBus.on('element.hover', (event) => {
       const element = event.element;
 
-      console.log(self.constructor.name, 'element.hover, event = ', event);
+      // console.log(self.constructor.name, 'element.hover, event = ', event);
 
-      const errorPopup: HTMLElement = document.getElementById('errorPopup');
+      if (event.originalEvent) {
+        const position = { x: event.originalEvent.offsetX, y: event.originalEvent.offsetY };
 
-      if (self.errorData && isCpn(element) && element.cpnElement._id in self.errorData) {
-
-        if (event.originalEvent) {
-          errorPopup.style.left = event.originalEvent.offsetX + 'px';
-          errorPopup.style.top = (event.originalEvent.offsetY + 20) + 'px';
-          errorPopup.style.display = 'block';
-          errorPopup.innerText = self.errorData[element.cpnElement._id];
+        let errorText, warningText, readyText;
+        if (isCpn(element)) {
+          errorText = this.stateProvider.getErrorText(element.cpnElement._id);
+          warningText = this.stateProvider.getWarningText(element.cpnElement._id);
+          readyText = this.stateProvider.getReadyText(element.cpnElement._id);
         }
-      } else {
-        // setTimeout(() => {
-        errorPopup.style.display = 'none';
-        errorPopup.innerText = '';
-        // }, 3000);
+        let popupVisible = false;
+        popupVisible = popupVisible || this.showPopup(position, element, errorText, 'errorPopup');
+        popupVisible = popupVisible || this.showPopup(position, element, warningText, 'warningPopup');
+        popupVisible = popupVisible || this.showPopup(position, element, readyText, 'readyPopup');
+        if (!popupVisible) {
+          this.hidePopup();
+        }
       }
     });
 
 
     // this._eventBus.fire('bind.port.cancel', {connection: this._createdArc});
+  }
+
+  showPopup(position, element, popupText, popupClass) {
+    const popup: HTMLElement = this.popupElementRef.nativeElement; // document.getElementById('popup');
+    if (popupText) {
+      popup.style.left = (position.x) + 'px';
+      popup.style.top = (position.y + 20) + 'px';
+      popup.style.display = 'block';
+      popup.className = 'popup ' + popupClass;
+      popup.innerText = popupText;
+      return true;
+    }
+    return false;
+  }
+
+  hidePopup() {
+    const popup: HTMLElement = this.popupElementRef.nativeElement; // document.getElementById('popup');
+    popup.style.display = 'none';
+    popup.innerText = '';
   }
 
   reloadPage() {
@@ -337,34 +359,20 @@ export class ModelEditorComponent implements OnInit {
   updateElementStatus() {
     this.stateProvider.clear();
 
-    // this.eventBus.fire('model.update.cpn.status', { data: { clear: '*' } });
-
     // console.log('updateElementStatus(), tokenData = ', this.accessCpnService.getTokenData());
     // console.log('updateElementStatus(), readyData = ', this.accessCpnService.getReadyData());
     // console.log('updateElementStatus(), errorData = ', this.accessCpnService.getErrorData());
 
-    if (this.accessCpnService.getTokenData().length > 0) {
+    if (Object.keys(this.accessCpnService.getTokenData()).length > 0) {
       this.eventBus.fire('model.update.tokens', { data: this.accessCpnService.getTokenData() });
     }
 
-    if (this.accessCpnService.getReadyData().length > 0) {
-      // this.eventBus.fire('model.update.cpn.status', { data: { ready: this.accessCpnService.getReadyData() } });
-
+    if (Object.keys(this.accessCpnService.getReadyData()).length > 0) {
       this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
     }
 
     if (Object.keys(this.accessCpnService.getErrorData()).length > 0) {
-      this.errorData = this.accessCpnService.getErrorData();
-
-      this.stateProvider.setErrorState(this.errorData);
-
-      // const errorIds = [];
-      // for (const id of Object.keys(this.errorData)) {
-      //   errorIds.push(id);
-      // }
-
-      // console.log('SET ERRORS, errorIds = ', errorIds);
-      // this.eventBus.fire('model.update.cpn.status', { data: { error: errorIds } });
+      this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
     }
 
     this.modeling.repaintElements();
@@ -436,12 +444,7 @@ export class ModelEditorComponent implements OnInit {
   }
 
   modelUpdate() {
-    const page = this.jsonPageObject;
-
-    // set status 'process' for all shapes on diagram
-    // this.eventBus.fire('model.update.cpn.status', { data: { process: '*' } });
-
-    this.eventService.send(Message.MODEL_UPDATE, { pageObject: page });
+    this.eventService.send(Message.MODEL_UPDATE, { pageObject: this.jsonPageObject });
   }
 
   changeSubPageName(subpage) {

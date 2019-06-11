@@ -20,3 +20,8 @@ div.editablenode {
 .scroll-y {
   overflow-y: scroll;
 }
+
+td.node-highlight-error {
+  background: #ffcccc;
+  border-bottom: solid red 2px;
+}

@@ -50,7 +50,8 @@ export class ValidationService {
       this.init();
     });
     this.eventService.on(Message.MODEL_CHANGED, () => {
-      this.checkValidation();
+      // this.checkValidation();
+      // this.validate();
     });
 
     this.checkValidation();
@@ -214,7 +215,7 @@ export class ValidationService {
       this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData(), complexVerify: false });
     }
 
-    // setTimeout(() => this.checkValidation(), this.VALIDATION_TIMEOUT);
+    setTimeout(() => this.checkValidation(), this.VALIDATION_TIMEOUT);
 
     this.checkValidationBusy = false;
   }

@@ -91,52 +91,6 @@ Modeling.prototype.getHandlers = function () {
   return handlers;
 };
 
-
-/**
- * Setting CPN element status (one of 'clear', 'process', 'error', 'warning', 'ready')
- *
- * @param {*} event - json object, example:
- *    { clear: '*' } or
- *    { process: '*' } or
- *    { error: ['ID1412328424'], ready: ['ID1412328496'] }
- */
-Modeling.prototype.setCpnStatus = function (data) {
-  // console.log('START setCpnStatus(), data = ', data);
-
-  const startTime = new Date().getTime();
-
-  for (const key of Object.keys(this._elementRegistry._elements)) {
-    const element = this._elementRegistry._elements[key].element;
-
-    const oldStatus = element.cpnStatus;
-
-    if (element.cpnStatus === 'process') {
-      element.cpnStatus = undefined;
-    }
-
-    if (isAny(element, [CPN_PLACE, CPN_TRANSITION, CPN_CONNECTION]) && element.cpnElement) {
-      for (var status of ['clear', 'process', 'error', 'warning', 'ready']) {
-        if (data[status]) {
-          if (data[status] === '*' || data[status].includes(element.cpnElement._id)) {
-            element.cpnStatus = status;
-          }
-        }
-      }
-    }
-
-    // repaint element if status is changed
-    if (oldStatus !== element.cpnStatus) {
-      this.repaintElement(element);
-    }
-  }
-
-  const t = new Date().getTime() - startTime;
-  if (t > 10) {
-    console.log('END setCpnStatus(), time = ', t);
-  }
-}
-
-
 Modeling.prototype.updateLabel = function (element, newLabel, newBounds, hints) {
   // console.log('Modeling().updateLabel(), newBounds = ', newBounds);
 
@@ -183,6 +137,13 @@ Modeling.prototype.repaintElements = function () {
   }
 }
 
+Modeling.prototype.removeEmptyConnections = function () {
+  var arcs = this._elementRegistry.filter(function (element) { return is(element, CPN_CONNECTION); });
+
+  console.log('Modeling.prototype.removeEmptyConnections(), arcs = ', arcs);
+
+  // this.removeElements(forDelete);
+}
 
 Modeling.prototype.updateElementBounds = function (element) {
   if (element && element.labels) {
@@ -983,12 +944,14 @@ Modeling.prototype.createShapeCpnElement = function (position, type) {
 
   let newElement;
 
+  const n = this.getShapeCount(type) + 1;
+
   switch (type) {
     case CPN_PLACE:
-      newElement = getDefPlace('P', position);
+      newElement = getDefPlace('P' + n, position);
       break;
     case CPN_TRANSITION:
-      newElement = getDefTransition('T', position);
+      newElement = getDefTransition('T' + n, position);
       break;
     case CPN_TEXT_ANNOTATION:
       newElement = getDefAux('Text', position);
@@ -996,8 +959,12 @@ Modeling.prototype.createShapeCpnElement = function (position, type) {
   }
 
   updateLabelsPosition(this._textRenderer, newElement);
-
   return newElement;
+}
+
+Modeling.prototype.getShapeCount = function(type) {
+  var elements = this._elementRegistry.filter(function (element) { return element.type === type; });
+  return elements.length || 0;
 }
 
 

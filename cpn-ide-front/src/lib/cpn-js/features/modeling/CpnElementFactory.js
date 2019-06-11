@@ -5,14 +5,13 @@ let defaultValues = [];
 let lastId = 0;
 
 export function getNextId() {
-  let id = (new Date().getTime()).toString();
+  let id = new Date().getTime();
   if (id <= lastId) {
     id ++;
   }
   lastId = id;
-  return "ID" + ('' + id ).substr(id.length - 10);
+  return "ID" + (id).toString().substr(id.length - 10);
 }
-
 export function setDefaultValue(key, value) {
   defaultValues[key] = value;
 }

@@ -82,7 +82,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   editActions = ['clone', 'enable', 'enable_all', 'disable', 'disable_all', 'delete'];
 
   // error identificators
-  // errorIds = ['ID4'];
   errorIds = [];
 
   /**
@@ -267,7 +266,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         this.loadProject(project);
       }
       this.treeState = localStorage.treeState && JSON.parse(localStorage.treeState);
-      this.treeComponent.updateData();
     });
 
     this.eventService.on(Message.DECLARATION_CHANGED, (event) => {

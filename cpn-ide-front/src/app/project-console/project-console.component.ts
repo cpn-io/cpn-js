@@ -94,12 +94,16 @@ export class ProjectConsoleComponent implements OnInit {
     });
 
     this.eventService.on(Message.SERVER_INIT_SIM_ERROR, (event) => {
-      if (event) {
-        if (event.data && event.data.error && event.data.error.stackTrace) {
+      if (event && event.data) {
+        if (event.data.error && event.data.error.description) {
+          this.logError('Simulator initializing error:\n' + event.data.error.description);
+        } else if (event.data.error && event.data.error.stackTrace) {
           this.logError('Simulator initializing error:\n' + event.data.error.stackTrace);
         } else {
-          this.logError('Simulator initializing error: ' + JSON.stringify(event.data));
+          this.logError('Simulator initializing error:\n' + JSON.stringify(event.data));
         }
+      } else {
+        this.logError('Simulator initializing error: UNDEFINED');
       }
     });
 

@@ -35,7 +35,8 @@ import {
   updateLabelsPosition,
   setDefaultValue,
   getDefaultValue,
-  getDefArc
+  getDefArc,
+  getDefSubst
 } from './CpnElementFactory';
 
 /**
@@ -630,6 +631,12 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
 
   var text, defaultValue;
 
+  // check if cpnLabelElement doesn't have text attr
+  // console.log('Modeling.prototype.getLabelAttrs(), cpnLabelElement = ', cpnLabelElement);
+  // if (!cpnLabelElement.text || !(typeof cpnLabelElement.text !== 'object')) {
+  //   cpnLabelElement.text = getDefText('');
+  // }
+
   if (labelType === 'port')
     text = (cpnLabelElement._type === 'I/O') ? 'In/Out' : cpnLabelElement._type;
   else if (labelType === 'subst')
@@ -939,36 +946,13 @@ function optimiseEqualsArcsByWayoints(arc, delta) {
   return arc;
 }
 
-
 Modeling.prototype.declareSubPage = function (cpnElement, name, pageId) {
-  cpnElement['subst'] = {
-    subpageinfo: {
-      fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
-      lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
-      posattr: { _x: cpnElement.posattr._x, _y: cpnElement.posattr._y - cpnElement.box._h / 2 },
-      textattr: { _colour: 'Black', _bold: 'false' },
-      _id: cpnElement._id + 'e',
-      _name: name
-    },                  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    _portsock: '',     /// <<--------------------------------------------------------------------TO DO FILL THIS FIELD ARCS ID---------------------------------------------------------------------
-    _subpage: pageId ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  };
 
-  // element.name = name;
-  // element.text = name;
-  //
-  // const attrs = this.getLabelAttrs(element, element.cpnElement['subst'].subpageinfo, 'subst');
-  // const label = this._elementFactory.createLabel(attrs);
-  // this._canvas.addShape(label, this._canvas.getRootElement());
-
-  //this._eventBus.fire('element.changed', { element: element });
-
+  cpnElement.subst = getDefSubst(cpnElement, name, pageId);
   return cpnElement;
 }
 
-
-
-Modeling.prototype.changeTransitionSubPageLabel = function(id, name){
+Modeling.prototype.changeTransitionSubPageLabel = function (id, name) {
   for (const key of Object.keys(this._elementRegistry._elements)) {
     if (this._elementRegistry._elements[key]) {
       const element = this._elementRegistry._elements[key].element;
@@ -1053,24 +1037,21 @@ Modeling.prototype.removeElements = function (elements) {
 
 
 Modeling.prototype.deleteSubPageTrans = function(id){
-  for (const key of Object.keys(this._elementRegistry._elements)) {
-    if (this._elementRegistry._elements[key]) {
-      const element = this._elementRegistry._elements[key].element;
-      if (element.type === CPN_TRANSITION && element.cpnElement.subst && element.cpnElement.subst._subpage === id) {
-        delete element.cpnElement.subst;
-        this.updateElement(element, true);
-      }
+    const trans = this.getTransitionByPage(id);
+    if(trans) {
+      delete trans.cpnElement.subst;
+      this.updateElement(trans, true);
     }
-  }
+
 }
 
-Modeling.prototype.getShapeArcs = function(shape){
+Modeling.prototype.getShapeArcs = function (shape) {
   let arcs = [];
   for (const key of Object.keys(this._elementRegistry._elements)) {
     if (this._elementRegistry._elements[key]) {
       const element = this._elementRegistry._elements[key].element;
-      if(element.type === CPN_CONNECTION && element.cpnElement){
-        if(element.cpnElement && element.cpnElement.transend._idref === shape.id || element.cpnElement.placeend._idref === shape.id){
+      if (element.type === CPN_CONNECTION && element.cpnElement) {
+        if (element.cpnElement && element.cpnElement.transend._idref === shape.id || element.cpnElement.placeend._idref === shape.id) {
           arcs.push(element);
         }
       }
@@ -1078,6 +1059,20 @@ Modeling.prototype.getShapeArcs = function(shape){
   }
   return arcs;
 }
+
+
+Modeling.prototype.getTransitionByPage = function(id) {
+  for (const key of Object.keys(this._elementRegistry._elements)) {
+    if (this._elementRegistry._elements[key]) {
+      const element = this._elementRegistry._elements[key].element;
+      if (element.type === CPN_TRANSITION && element.cpnElement.subst && element.cpnElement.subst._subpage === id) {
+          return element;
+      }
+    }
+  }
+}
+
+
 
 
 

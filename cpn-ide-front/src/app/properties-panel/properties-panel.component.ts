@@ -16,6 +16,8 @@ import { element } from 'protractor';
 export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
   console = console;
+  JSON = JSON;
+
   title = '';
 
   cpnElement;

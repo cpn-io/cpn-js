@@ -6,6 +6,11 @@ import { SettingsService } from '../services/settings.service';
 import { ValidationService } from './validation.service';
 import { keyframes } from '@angular/animations';
 
+import {
+  getNextId,
+} from '../../lib/cpn-js/features/modeling/CpnElementFactory';
+
+
 /**
  * Common service for getting access to project data from all application
  */
@@ -296,7 +301,7 @@ export class ModelService {
     return undefined;
   }
 
-  addElementJsonOnPage(cpnElement, pageId, type) {
+  addElementJsonOnPage(cpnElement, pageId, type, modeling) {
     console.log('addElementJsonOnPage()', cpnElement, pageId, type);
 
     this.saveBackupBak(this.projectData, pageId);
@@ -314,8 +319,73 @@ export class ModelService {
         jsonPageObject[this.modelCase[type]] = [cpnElement];
       }
     }
+    if (cpnElement.subst) {
+      this.addInstanceInJson( this.instaceForTransition(cpnElement._id, false), pageId);
+    //   const cpn = this.getCpn();
+    //   if (cpn.instances && cpn.instances.instance) {
+    //        if (!(cpn.instances.instance instanceof Array)) {
+    //          cpn.instances = [cpn.instances.instance];
+    //        }
+    //   } else {
+    //     cpn.instances.instance = [];
+    //   }
+    //   const pageInst = cpn.instances.instance.find(inst => { return inst._page === pageId});
+    //   if(pageInst)
+    //     pageInst.instance = modeling.instaceForTransition(cpnElement._id);
+     }
+
 
     this.eventService.send(Message.MODEL_CHANGED);
+  }
+
+  instaceForTransition(id, isRoot){
+   // return isRoot ? {_id: getNextId(), _trans: id} : {_id: getNextId(), _page: id}
+    return  {_id: getNextId(), _trans: id};
+  }
+
+
+  addInstanceInJson(newinstance, pageId){
+    const cpn = this.getCpn();
+    if(!pageId){
+      if(cpn.instances && cpn.instances.instance){
+        if(!(cpn.instances.instance instanceof Array)) {
+          cpn.instances.instance =  [cpn.instances.instance]
+        }
+      } else {
+        cpn.instances.instance = [];
+      }
+      cpn.instances.instance.push(newinstance);
+    } else {
+        const self = this;
+        const trans = this.getAllTrans().find(tr => { return tr.subst && tr.subst._subpage === pageId});
+        const tranid = trans ? trans._id : '';
+        const pginstance = this.searchPageForInstace(cpn.instances.instance, tranid, self, pageId);
+        if(pginstance.instance){
+          if(!(pginstance.instance instanceof Array)) {
+            pginstance.instance = [pginstance.instance];
+          }
+        } else {
+          pginstance.instance = [];
+        }
+        pginstance.instance.push(newinstance);
+        //console.log(pg);
+
+    }
+
+  }
+
+  searchPageForInstace(instance, tranId, self, pageId){
+    if(instance._trans === tranId || instance._page === pageId) {
+      return instance;
+    }  else if(instance.instance) {
+      if(instance.instance instanceof Array){
+        return instance.instance.map(function(e){
+          if(self)  return self.searchPageForInstace(e, tranId, self); else return undefined;
+        }).filter(function( element ) {
+          return element !== undefined;
+        })[0];
+      } else return self.searchPageForInstace(instance.instance, tranId, self);
+    }
   }
 
   // send changes
@@ -323,7 +393,6 @@ export class ModelService {
   changeSubPageTransitionName(subpage) {
     this.eventService.send(Message.CHANGE_NAME_PAGE, { id: subpage.subpageid, name: subpage.name, changedElement: 'tran' });
   }
-
 
 
   moveNonModelJsonElement(element, parent, target, index, type) {
@@ -353,7 +422,7 @@ export class ModelService {
           delete tran['subst'];
           if (target.trans) {
             if (target.trans instanceof Array) {
-              subPageTrans._id = 'ID' + new Date().getTime();
+              subPageTrans._id = getNextId();
               target.trans.push(subPageTrans);
             } else {
               target.trans = [subPageTrans, target.trans];
@@ -368,7 +437,9 @@ export class ModelService {
         if (parent.trans instanceof Array) {
           for (let i = 0; i < parent.trans.length; i++) {
             swapSubPageTrans(parent.trans[i], subPageTrans);
-            if (subPageTrans) { break; }
+            if (subPageTrans) {
+              break;
+            }
           }
         } else {
           swapSubPageTrans(parent.trans, subPageTrans);
@@ -420,7 +491,6 @@ export class ModelService {
       }
       addelemToEntry(type);
     } else {
-      addelemToEntry('block');
       if (parent.block instanceof Array) {
         for (let i = 0; i < parent.block.length; i++) {
           if (parent.block[i]._id === element._id) {
@@ -430,6 +500,8 @@ export class ModelService {
       } else {
         parent.block = [];
       }
+      addelemToEntry('block');
+
     }
   }
 
@@ -467,6 +539,7 @@ export class ModelService {
     } else {
       this.projectData.workspaceElements.cpnet.page = [this.projectData.workspaceElements.cpnet.page, page];
     }
+    //this.addInstanceInJson( this.instaceForTransition(page._id, true), undefined);
   }
 
   deletePage(pageId) {
@@ -564,7 +637,9 @@ export class ModelService {
     for (let i = 0; i < block[elementType].length; i++) {
       if (block[elementType][i]._id === id) {
         block[elementType].splice(i, 1);
-        if (block[elementType].length === 0) { delete block[elementType]; }
+        if (block[elementType].length === 0) {
+          delete block[elementType];
+        }
       }
     }
   }
@@ -610,7 +685,7 @@ export class ModelService {
         return {
           id: this.settings.getAppSettings()[elementType] + (++this.countNewItems),
           type: { id: this.settings.getAppSettings()[elementType] },
-          _id: 'ID' + new Date().getTime()
+          _id: getNextId()
         };
         break;
       case 'color':
@@ -618,12 +693,13 @@ export class ModelService {
           id: this.settings.getAppSettings()[elementType] + (++this.countNewItems),
           timed: '',
           name: this.settings.getAppSettings()[elementType],
-          _id: 'ID' + new Date().getTime()
+          _id: getNextId()
         };
         break;
       case 'ml':
         return {
-          _id: 'ID' + new Date().getTime(), __text: this.settings.getAppSettings()[elementType], toString() {
+          _id: getNextId(),
+          __text: this.settings.getAppSettings()[elementType], toString() {
             return (this.__text != null ? this.__text : '');
           }
         };
@@ -632,7 +708,7 @@ export class ModelService {
         return {
           id: this.settings.getAppSettings()[elementType] + (++this.countNewItems),
           ml: this.settings.getAppSettings()[elementType],
-          _id: 'ID' + new Date().getTime()
+          _id: getNextId()
         };
         break;
       default:
@@ -757,12 +833,11 @@ export class ModelService {
       // trans: [],
       // arc: [],
       constraints: '',
-      _id: id ? id : 'ID' + new Date().getTime()
+      _id: id ? id : getNextId()
     };
 
     return newPage;
   }
-
 
 
   /**
@@ -773,7 +848,7 @@ export class ModelService {
   createCpnBlock(name) {
     return {
       id: name,
-      _id: 'ID' + new Date().getTime()
+      _id: getNextId()
     };
   }
 
@@ -786,8 +861,242 @@ export class ModelService {
   createCpnDeclaration(layout) {
     return {
       layout: layout,
-      _id: 'ID' + new Date().getTime()
+      _id: getNextId()
     };
+  }
+
+  createCpnMonitorBP(cpnElement) {
+
+  }
+
+// <monitor id="ID1438426776"
+//   name="Count_trans_occur_Customer&apos;place_                    order_1"
+//   type="6"
+//   typedescription="Count transition occurrence data collection"
+//   disabled="false">
+//   <node idref="ID1437019464"
+//   pageinstanceidref="ID1437019576"/>
+//   <option name="Logging"
+//   value="true"/>
+// </monitor>
+  createMonitorCTODC(cpnElement: any): any {
+    console.log('createMonitorCTODC(), cpnElement = ', cpnElement);
+    return {
+      _id: getNextId(),
+      _name: 'Count_trans_occur_PAGENAME_' + cpnElement.text, // TODO add page name: 'Count_trans_occur_' + PAGENAME + '_' + cpnElement.text
+      _type: '6',
+      _typedescription: 'Count transition occurrence data collection',
+      _disabled: 'false',
+      node: {
+        _idref: cpnElement.id,
+        _pageinstanceidref: 'PAGEINSTANCEID' // TODO add page instance ID
+      },
+      option: {
+        _name: 'Logging',
+        _value: 'false'
+      }
+    };
+  }
+
+// <monitor id="ID1437510504"
+//   name="Throughput times order size 3"
+//   type="3"
+//   typedescription="Data collection"
+//   disabled="true">
+//   <node idref="ID1437019470"
+//   pageinstanceidref="ID1437019576"/>
+//   <declaration name="Predicate">
+//   <ml id="ID1437510512">fun pred (bindelem) =
+//   let
+//   fun predBindElem (Customer&apos;consume (1, {its,oid,s})) = true
+//   | predBindElem _ = false
+//   in
+//   predBindElem bindelem
+// end
+// <layout>fun pred (bindelem) =
+//   let
+// fun predBindElem (Customer&apos;consume (1, {its,oid,s})) = true
+//   | predBindElem _ = false
+//   in
+//   predBindElem bindelem
+// end</layout>
+// </ml>
+// </declaration>
+// <declaration name="Observer">
+// <ml id="ID1437510516">fun obs (bindelem) =
+//   let
+// fun obsBindElem (Customer&apos;consume (1, {its,oid,s})) = 0
+//   | obsBindElem _ = ~1
+//   in
+//   obsBindElem bindelem
+// end
+// <layout>fun obs (bindelem) =
+//   let
+// fun obsBindElem (Customer&apos;consume (1, {its,oid,s})) = 0
+//   | obsBindElem _ = ~1
+//   in
+//   obsBindElem bindelem
+// end</layout>
+// </ml>
+// </declaration>
+// <declaration name="Init function">
+// <ml id="ID1437510520">fun init () =
+//   NONE
+//   <layout>fun init () =
+//   NONE</layout>
+//   </ml>
+//   </declaration>
+//   <declaration name="Stop">
+// <ml id="ID1437510524">fun stop () =
+//   NONE
+//   <layout>fun stop () =
+//   NONE</layout>
+//   </ml>
+//   </declaration>
+//   <option name="Timed"
+// value="false"/>
+// <option name="Logging"
+// value="false"/>
+// </monitor>
+  createCpnMonitorDC(cpnElement) {
+
+    let predicate: string;
+    if (cpnElement.cpnType === 'cpn:Place') {
+      predicate =
+        'fun pred (PAGENAME&apos;SHAPETEXT_1_mark : U ms) = ' +
+        '  true';
+    } else {
+      predicate =
+        'fun pred (bindelem) =\n' +
+        '  let\n' +
+        '  fun predBindElem (PAGENAME&apos;SHAPETEXT (1, {x,y})) = true\n' + // TODO here
+        '    | predBindElem _ = false\n' +
+        'in\n' +
+        '  predBindElem bindelem\n' +
+        'end';
+    }
+    return {
+      _id: getNextId(),
+      _name: '',
+      _type: '3',
+      _typedescription: 'Data collection',
+      _disabled: 'false',
+      node: {
+        _idref: cpnElement.id,
+        _pageinstanceidref: 'PAGEINSTANCEID' // TODO add page instance ID
+      },
+      declaration: [
+        {
+          _name: 'Predicate',
+          ml: {
+            _id: 'ID' + new Date().getTime(),
+            layout: predicate
+          }
+        },
+        {
+          _name: 'Observer',
+          ml: {
+            _id: 'ID' + new Date().getTime(),
+            layout:
+              'fun obs (bindelem) =\n' +
+              '  let\n' +
+              'fun obsBindElem (PAGENAME&apos;SHAPETEXT (1, {x,y})) = 0\n' + // TODO here
+              '  | obsBindElem _ = ~1\n' +
+              ' in\n' +
+              '  obsBindElem bindelem\n' +
+              'end'
+          }
+        },
+        {
+          _name: 'Init function',
+          ml: {
+            _id: 'ID' + new Date().getTime(),
+            layout: 'fun init () =\n' +
+              'NONE'
+          }
+        },
+        {
+          _name: 'Stop',
+          ml: {
+            _id: 'ID' + new Date().getTime(),
+            layout: 'fun stop () =' +
+              'NONE'
+          }
+        },
+      ],
+      option: [
+        {
+          _name: 'Timed',
+          _value: 'false'
+        },
+        {
+          _name: 'Logging',
+          _value: 'false'
+        }
+      ]
+    };
+  }
+
+  createCpnMonitorLLDC(cpnElement) {
+
+  }
+
+// <monitor id="ID1438122141"
+//   name="Marking_size_BurgerHeaven&apos;C busy_1"
+//   type="0"
+//   typedescription="Marking size"
+//   disabled="true">
+//   <node idref="ID1438112416"
+//   pageinstanceidref="ID1437053129"/>
+//   <node idref="ID1438118761"
+//   pageinstanceidref="ID1437053129"/>
+//   <node idref="ID1437052949"
+//   pageinstanceidref="ID1437053129"/>
+//   <option name="Logging"
+//   value="true"/>
+// </monitor>
+  createCpnMonitorMS(cpnElement) {
+    return {
+      _id: 'ID' + new Date().getTime(),
+      _name: 'Marking_size_PAGENAME_' + cpnElement.text, //TODO add page name: 'Count_trans_occur_' + PAGENAME + '_' + cpnElement.text
+      _type: '0',
+      _typedescription: 'Marking size',
+      _disabled: 'false',
+      node: [
+        {
+          _idref: 'IDREF', // TODO
+          _pageinstanceidref: 'PAGEINSTANCEID' // TODO
+        },
+        {
+          _idref: 'IDREF', // TODO
+          _pageinstanceidref: 'PAGEINSTANCEID' // TODO
+        },
+        {
+          _idref: 'IDREF', // TODO
+          _pageinstanceidref: 'PAGEINSTANCEID' // TODO
+        }
+      ],
+      option: {
+        _name: 'Logging',
+        _value: 'true'
+      }
+    };
+  }
+
+  createCpnMonitorPCBP(cpnElement) {
+
+  }
+
+  createCpnMonitorTEBP(cpnElement) {
+
+  }
+
+  createCpnMonitorUD(cpnElement) {
+
+  }
+
+  createCpnMonitorWIF(cpnElement) {
+
   }
 
   /**
@@ -867,10 +1176,14 @@ export class ModelService {
    */
   cpnDeclarationElementToString(cpnElement, type) {
     switch (type) {
-      case 'globref': return this.cpnGlobrefToString(cpnElement);
-      case 'color': return this.cpnColorToString(cpnElement);
-      case 'var': return this.cpnVarToString(cpnElement);
-      case 'ml': return this.cpnMlToString(cpnElement);
+      case 'globref':
+        return this.cpnGlobrefToString(cpnElement);
+      case 'color':
+        return this.cpnColorToString(cpnElement);
+      case 'var':
+        return this.cpnVarToString(cpnElement);
+      case 'ml':
+        return this.cpnMlToString(cpnElement);
     }
   }
 
@@ -879,7 +1192,7 @@ export class ModelService {
    * Parse declaration type from string
    */
   parseDeclarationTypeFromString(str) {
-    let parser = str.match('^\\S+');
+    const parser = str.match('^\\S+');
 
     if (parser) {
       return parser[0];
@@ -897,7 +1210,7 @@ export class ModelService {
 
     cpnElement = { _id: cpnElement._id };
 
-    let parser = str.match('^\\S+');
+    const parser = str.match('^\\S+');
     // console.log('stringToCpnDeclarationElement(), parser = ', parser);
 
     const declarationType = this.parseDeclarationTypeFromString(str);
@@ -1002,7 +1315,7 @@ export class ModelService {
    * Get page object from model by id
    * @param id
    */
-  getPageById(id): any {
+  getPageById(id) {
     return this.getAllPages().find(page => page._id === id);
   }
 
@@ -1019,6 +1332,23 @@ export class ModelService {
     }
     return undefined;
   }
+
+  /**
+   * Get all trans for model
+   */
+  getAllTrans() {
+    const allTrans = [];
+
+    for (const page of this.getAllPages()) {
+      const trans = page.trans instanceof Array ? page.trans : [page.trans];
+      for (const t of trans) {
+        allTrans.push(t);
+      }
+    }
+
+    return allTrans;
+  }
+
 
   /**
    * Get all acrs for model
@@ -1053,13 +1383,63 @@ export class ModelService {
 
     const arcs = [];
     for (const arc of this.getAllArcs()) {
-      if (cpnElementIds.includes(arc.placeend._idref)
-        && cpnElementIds.includes(arc.transend._idref)) {
-        arcs.push(arc);
+      if (arc) {
+        if (cpnElementIds.includes(arc.placeend._idref)
+          && cpnElementIds.includes(arc.transend._idref)) {
+          arcs.push(arc);
+        }
       }
     }
     return arcs;
   }
+
+  /**
+   * Move elements from page to page
+   */
+  moveElements(fromPageId, toPageId, elements) {
+
+    const fromPage = this.getPageById(fromPageId);
+    const toPage = this.getPageById(toPageId);
+
+    if (!fromPage || !toPage) {
+      return;
+    }
+
+    for (const element of elements) {
+
+      // place element
+      if (element.ellipse) {
+
+        // remove place from old page
+        this.removeCpnElement(fromPage, element, 'place');
+        // add place to new page
+        this.addCpnElement(toPage, element, 'place');
+
+      } else
+
+        // transition element
+        if (element.box) {
+
+          // remove trans from old page
+          this.removeCpnElement(fromPage, element, 'trans');
+          // add trans to new page
+          this.addCpnElement(toPage, element, 'trans');
+
+        } else
+
+          // arc element
+          if (element.transend) {
+
+            // remove arc from old page
+            this.removeCpnElement(fromPage, element, 'arc');
+            // add arc to new page
+            this.addCpnElement(toPage, element, 'arc');
+
+          }
+
+    }
+  }
+
 
 
   getNextPageName(pageName) {
@@ -1080,8 +1460,8 @@ export class ModelService {
   }
 
   createSubpage(transCpnElement, newPageName, newPageId) {
-    let pageName = this.getNextPageName(newPageName);
-    let pageId = newPageId ? newPageId : 'ID' + new Date().getTime();
+    const pageName = this.getNextPageName(newPageName);
+    const pageId = newPageId ? newPageId : getNextId();
 
     const subpageCpnElement = this.createCpnPage(pageName, pageId);
     transCpnElement.subst.subpageinfo._name = subpageCpnElement.pageattr._name;
@@ -1152,25 +1532,23 @@ export class ModelService {
 
   getArcEnds(cpnElement) {
     const page = this.getAllPages().find(p => {
-      return p.arc.find(pl => {
-        return pl._id === cpnElement._id;
-      });
+      const arcs = p.arc instanceof Array ? p.arc : [p.arc];
+      return arcs.find(pl => pl._id === cpnElement._id);
     });
     for (const entry of ['place', 'trans']) {
-      if (!(page[entry] instanceof Array)) {
-        page[entry] = [page[entry]];
-      }
+      if (!(page[entry] instanceof Array)) { page[entry] = [page[entry]]; }
     }
+
     let placeEnd;
-    placeEnd = page.place.find(el => {
-      return el._id === cpnElement.placeend._idref;
-    });
+    const place = page.place instanceof Array ? page.place : [page.place];
+    placeEnd = place.find(el => el._id === cpnElement.placeend._idref);
+
     let transEnd;
-    transEnd = page.trans.find((tr) => cpnElement.transend._idref === tr._id);
+    const trans = page.trans instanceof Array ? page.trans : [page.trans];
+    transEnd = trans.find((tr) => cpnElement.transend._idref === tr._id);
+
     return { place: placeEnd, trans: transEnd, orient: cpnElement._orientation };
   }
-
-
 
 
   /**
@@ -1214,7 +1592,9 @@ export class ModelService {
     if (page && text !== '') {
       const port = page.place.find(e => e.text === text && (e.port._type === 'I/O' || e.port._type === (orient === 'TtoP' ? 'Out' : 'In')));
       return port._id;
-    } else { return undefined; }
+    } else {
+      return undefined;
+    }
   }
 
 

@@ -43,7 +43,7 @@ CpnContextPadProvider.prototype.getContextPadEntries = function (element) {
 
   function removeElement() {
     contextPad.close();
-    
+
     let forDelete = modeling.getShapeArcs(element);
     forDelete.push(element);
     modeling.removeElements(forDelete);
@@ -148,6 +148,8 @@ CpnContextPadProvider.prototype._createShape = function (event, type) {
     this._eventBus.fire('shape.create.end', { elements: elemArr });
     this._eventBus.fire('shape.editing.activate', { shape: element });
     this._eventBus.fire('shape.contextpad.activate', { shape: element });
+
+    modeling.updateElement(element, true);
   }
 
   return arcElement;

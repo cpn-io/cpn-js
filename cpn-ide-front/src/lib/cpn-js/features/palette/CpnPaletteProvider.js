@@ -1,4 +1,5 @@
 import { CPN_PLACE, CPN_TRANSITION, is } from "../../util/ModelUtil";
+import { getNextId } from "../modeling/CpnElementFactory";
 
 /**
  * A example palette provider.
@@ -66,12 +67,12 @@ CpnPaletteProvider.prototype.getPaletteEntries = function () {
 
     const position = {x: selectedElements[0].x , y: selectedElements[0].y };
 
-    let cpnElement = modeling.createShapeCpnElement(position, CPN_TRANSITION);
+    let transCpnElement = modeling.createShapeCpnElement(position, CPN_TRANSITION);
 
-    const subPageId = 'ID' + new Date().getTime();
-    cpnElement = modeling.declareSubPage(cpnElement, 'Subpage', subPageId);
+    const subPageId = getNextId();
+    transCpnElement = modeling.declareSubPage(transCpnElement, 'Subpage', subPageId);
 
-    const element = cpnFactory.createShape(undefined, cpnElement, CPN_TRANSITION, position, true);
+    const element = cpnFactory.createShape(undefined, transCpnElement, CPN_TRANSITION, position, true);
     //this._modeling.updateElement(element, true);
 
     // eventBus.fire('shape.create.end', { elements: [element] });
@@ -89,8 +90,7 @@ CpnPaletteProvider.prototype.getPaletteEntries = function () {
       }
     }
 
-    eventBus.fire('extract.subpage', { subPageId: subPageId, places: places, transitions: transitions });
-
+    eventBus.fire('extract.subpage', { transCpnElement: transCpnElement, places: places, transitions: transitions });
     eventBus.fire('shape.editing.activate', { shape: element });
     eventBus.fire('shape.contextpad.activate', { shape: element });
   }

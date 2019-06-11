@@ -32,7 +32,8 @@ CpnUpdater.$inject = [
   'popupMenuProvider',
   'contextPad',
   'canvas',
-  'portMenuProvider'
+  'portMenuProvider',
+  'layouter'
 ];
 
 import {
@@ -58,7 +59,7 @@ import { getDistance } from '../../draw/CpnRenderUtil';
  * once changes on the diagram happen
  */
 export default function CpnUpdater(eventBus, modeling, elementRegistry,
-  connectionDocking, selection, popupMenuProvider, contextPad, canvas, portMenuProvider) {
+  connectionDocking, selection, popupMenuProvider, contextPad, canvas, portMenuProvider, layouter) {
 
   this._modeling = modeling;
   this._elementRegistry = elementRegistry;
@@ -104,6 +105,15 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     updateCpnElement(event.element);
   });
 
+  eventBus.on('shape.create.end', (event) => {
+    console.log('CpnUpdater(), shape.create.end, event = ', event);
+    // updateCpnElement(event.element);
+    layouter.layoutConnections();
+  });
+  eventBus.on('connection.create', (event) => {
+    console.log('CpnUpdater(), connection.create, event = ', event);
+    // updateCpnElement(event.element);
+  });
 
   eventBus.on('element.hover', function (event) {
     var element = event.element;
@@ -343,9 +353,11 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
       }
 
-      if (cpnElement.text instanceof Object) {
-        cpnElement.text.__text = shape.text || shape.name;
-      } else cpnElement.text = shape.text || shape.name;
+      if (is(element, CPN_LABEL)) {
+        cpnElement.text = getDefText(shape.text || shape.name);
+      } else {
+        cpnElement.text = shape.text || shape.name;
+      }
 
     }
 

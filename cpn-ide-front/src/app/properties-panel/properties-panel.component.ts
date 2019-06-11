@@ -170,9 +170,10 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   /**
    * Get list of names for pages wich is not current or not subpage
    */
-  getSubstPages() {
+  getSubstPages(cpnElement) {
    // console.log('getSubstPages()');
-
+    const curentPage = this.modelService.getParentPageForTrans(cpnElement);
+    console.log('getSubstPages(cpnElement)  ---- ', curentPage);
     const pageList = this.modelService.getAllPages();
 
     const subPageIdList = [];
@@ -195,7 +196,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
     const pageNames = ['-- empty --'];
     for (let page of pageList) {
-      if (page._id !== this.pageId && !subPageIdList.includes(page._id) && !parentPageIdList.includes(page._id))
+      if ((page._id !== this.pageId && !subPageIdList.includes(page._id) && !parentPageIdList.includes(page._id)))
         pageNames.push(page.pageattr._name);
     }
     return pageNames;

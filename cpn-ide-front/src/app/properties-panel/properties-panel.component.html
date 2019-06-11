@@ -47,7 +47,7 @@
 
           <!-- Subst Labels -->
           <app-text-edit-row *ngIf="cpnElement.box" type="select" name="Suppage" [object]="getSubst(cpnElement)"
-            field="value" (changed)="updateSubst($event)" [options]="getSubstPages()">
+            field="value" (changed)="updateSubst($event)" [options]="getSubstPages(cpnElement)">
           </app-text-edit-row>
 
           <!-- PortSock -->

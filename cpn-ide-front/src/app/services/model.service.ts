@@ -1738,4 +1738,20 @@ export class ModelService {
     return cpnParentElement;
   }
 
+
+
+
+  getParentPageForTrans(cpnElement){
+    let page = this.getAllPages().find(p => {
+      let trans ;
+      if(!(p.trans instanceof Array)) {
+        trans = [p.trans];
+      } else {
+        trans = p.trans;
+      }
+        return trans.includes(cpnElement);
+    });
+    return page;
+  }
+
 }

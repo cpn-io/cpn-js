@@ -2,10 +2,17 @@ import { assign } from "min-dash";
 
 let defaultValues = [];
 
+let lastId = 0;
+
 export function getNextId() {
-  const id = (new Date().getTime()).toString();
-  return "ID" + id.substr(id.length - 10);
+  let id = (new Date().getTime()).toString();
+  if (id <= lastId) {
+    id ++;
+  }
+  lastId = id;
+  return "ID" + ('' + id ).substr(id.length - 10);
 }
+
 export function setDefaultValue(key, value) {
   defaultValues[key] = value;
 }
@@ -84,7 +91,7 @@ export function getDefMarking() {
 
 
 export function getDefPlace(name = undefined, position = undefined, size = undefined) {
-  const id = getNextId();
+  let id = getNextId();
 
   let attrs = {
     posattr: getDefPosattr(position),
@@ -117,7 +124,7 @@ export function getDefPlace(name = undefined, position = undefined, size = undef
 
 
 export function getDefTransition(name = undefined, position = undefined, size = undefined) {
-  const id = getNextId();
+  let id = getNextId();
 
   let attrs = {
     posattr: getDefPosattr(position),
@@ -147,7 +154,7 @@ export function getDefTransition(name = undefined, position = undefined, size = 
 };
 
 export function getDefAux(text = undefined, position = undefined) {
-  const id = getNextId();
+  let id = getNextId();
 
   return {
     posattr: getDefPosattr(position),
@@ -197,7 +204,7 @@ export function updateLabelsPosition(textRenderer, cpnElement) {
 
 
 export function getDefArc(placeCpnElement, transCpnElement, orientation) {
-  const id = getNextId();
+  let id = getNextId();
 
   let position = { x: 0, y: 0 };
   if (placeCpnElement && transCpnElement) {

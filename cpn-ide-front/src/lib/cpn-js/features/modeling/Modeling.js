@@ -954,6 +954,11 @@ Modeling.prototype.createShapeCpnElement = function (position, type) {
   return newElement;
 }
 
+Modeling.prototype.getShapeCount = function(type) {
+  var elements = elementRegistry.filter(function (element) { return element.type === type; });
+  return elements.length;
+}
+
 
 Modeling.prototype.createArcCpnElement = function (placeCpnElement, transCpnElement, orientation) {
   return getDefArc(placeCpnElement, transCpnElement, orientation);

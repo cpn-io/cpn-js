@@ -2,8 +2,14 @@ import { assign } from "min-dash";
 
 let defaultValues = [];
 
+let lastId = 0;
+
 export function getNextId() {
   const id = (new Date().getTime()).toString();
+  if (id <= lastId) {
+    id ++;
+  }
+  lastId = id;
   return "ID" + id.substr(id.length - 10);
 }
 export function setDefaultValue(key, value) {

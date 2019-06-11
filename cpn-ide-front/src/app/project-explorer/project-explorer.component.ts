@@ -267,7 +267,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         this.loadProject(project);
       }
       this.treeState = localStorage.treeState && JSON.parse(localStorage.treeState);
-      this.treeComponent.updateData();
     });
 
     this.eventService.on(Message.DECLARATION_CHANGED, (event) => {

@@ -51,7 +51,7 @@ export class MainToolbarComponent implements OnInit {
 
   onValidate() {
     // this.validationService.validate();
-    this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData(), complexVerify: true });
+    this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData(), complexVerify: false });
   }
 
   newCPNet() {

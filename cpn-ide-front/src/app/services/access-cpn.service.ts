@@ -36,7 +36,11 @@ export class AccessCpnService {
     return this.tokenData;
   }
   getReadyData() {
-    return this.readyData;
+    const readyData = {};
+    for (const id of this.readyData) {
+      readyData[id] = 'Transition is ready.';
+    }
+    return readyData;
   }
 
   /**

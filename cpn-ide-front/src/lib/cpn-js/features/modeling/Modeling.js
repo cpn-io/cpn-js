@@ -91,52 +91,6 @@ Modeling.prototype.getHandlers = function () {
   return handlers;
 };
 
-
-/**
- * Setting CPN element status (one of 'clear', 'process', 'error', 'warning', 'ready')
- *
- * @param {*} event - json object, example:
- *    { clear: '*' } or
- *    { process: '*' } or
- *    { error: ['ID1412328424'], ready: ['ID1412328496'] }
- */
-Modeling.prototype.setCpnStatus = function (data) {
-  // console.log('START setCpnStatus(), data = ', data);
-
-  const startTime = new Date().getTime();
-
-  for (const key of Object.keys(this._elementRegistry._elements)) {
-    const element = this._elementRegistry._elements[key].element;
-
-    const oldStatus = element.cpnStatus;
-
-    if (element.cpnStatus === 'process') {
-      element.cpnStatus = undefined;
-    }
-
-    if (isAny(element, [CPN_PLACE, CPN_TRANSITION, CPN_CONNECTION]) && element.cpnElement) {
-      for (var status of ['clear', 'process', 'error', 'warning', 'ready']) {
-        if (data[status]) {
-          if (data[status] === '*' || data[status].includes(element.cpnElement._id)) {
-            element.cpnStatus = status;
-          }
-        }
-      }
-    }
-
-    // repaint element if status is changed
-    if (oldStatus !== element.cpnStatus) {
-      this.repaintElement(element);
-    }
-  }
-
-  const t = new Date().getTime() - startTime;
-  if (t > 10) {
-    console.log('END setCpnStatus(), time = ', t);
-  }
-}
-
-
 Modeling.prototype.updateLabel = function (element, newLabel, newBounds, hints) {
   // console.log('Modeling().updateLabel(), newBounds = ', newBounds);
 

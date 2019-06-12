@@ -37,6 +37,7 @@ export class ValidationService {
   needValidation = false;
   lastProjectData = {};
   checkValidationBusy = false;
+  checkValidationScheduled = false;
 
   constructor(
     private eventService: EventService,
@@ -49,7 +50,16 @@ export class ValidationService {
     this.eventService.on(Message.MODEL_RELOAD, () => {
       this.init();
     });
+
     this.eventService.on(Message.MODEL_CHANGED, () => {
+      if (!this.checkValidationScheduled) {
+        this.checkValidationScheduled = true;
+        setTimeout(() => {
+          this.checkValidation();
+          this.checkValidationScheduled = false;
+        }, this.VALIDATION_TIMEOUT);
+      }
+
       // this.checkValidation();
       // this.validate();
     });
@@ -215,7 +225,7 @@ export class ValidationService {
       this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData(), complexVerify: false });
     }
 
-    setTimeout(() => this.checkValidation(), this.VALIDATION_TIMEOUT);
+    // setTimeout(() => this.checkValidation(), this.VALIDATION_TIMEOUT);
 
     this.checkValidationBusy = false;
   }

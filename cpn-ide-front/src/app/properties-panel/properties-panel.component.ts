@@ -18,6 +18,13 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   console = console;
   JSON = JSON;
 
+  projectData;
+
+  tabList = [
+    { id: 'propertiesPanel', name: 'Properties' },
+    { id: 'modelPanel', name: 'Model' },
+  ];
+
   title = '';
 
   cpnElement;
@@ -74,10 +81,29 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
   constructor(private eventService: EventService,
     private modelService: ModelService) {
+
   }
+
+  updateJsonScheduled = false;
 
   ngOnInit() {
     this.subscribeToProject();
+
+    this.eventService.on(Message.MODEL_CHANGED, () => {
+      console.log(this.constructor.name, 'Message.MODEL_CHANGED');
+
+      if (!this.updateJsonScheduled) {
+        this.updateJsonScheduled = true;
+        setTimeout(() => {
+          if (this.modelService.projectData
+            && this.modelService.projectData.workspaceElements
+            && this.modelService.projectData.workspaceElements.cpnet) {
+            this.projectData = JSON.parse(JSON.stringify(this.modelService.projectData.workspaceElements.cpnet));
+            this.updateJsonScheduled = false;
+          }
+        }, 1000);
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -171,7 +197,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
    * Get list of names for pages wich is not current or not subpage
    */
   getSubstPages(cpnElement) {
-   // console.log('getSubstPages()');
+    // console.log('getSubstPages()');
     const curentPage = this.modelService.getParentPageForTrans(cpnElement);
     console.log('getSubstPages(cpnElement)  ---- ', curentPage);
     const pageList = this.modelService.getAllPages();
@@ -349,4 +375,5 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   }
 
 }
+
 

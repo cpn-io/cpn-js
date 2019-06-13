@@ -92,17 +92,19 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     this.eventService.on(Message.MODEL_CHANGED, () => {
       console.log(this.constructor.name, 'Message.MODEL_CHANGED');
 
-      if (!this.updateJsonScheduled) {
-        this.updateJsonScheduled = true;
-        setTimeout(() => {
-          if (this.modelService.projectData
-            && this.modelService.projectData.workspaceElements
-            && this.modelService.projectData.workspaceElements.cpnet) {
-            this.projectData = JSON.parse(JSON.stringify(this.modelService.projectData.workspaceElements.cpnet));
-            this.updateJsonScheduled = false;
-          }
-        }, 1000);
-      }
+      localStorage.setItem('projectJson', JSON.stringify(this.modelService.projectData));
+
+      // if (!this.updateJsonScheduled) {
+      //   this.updateJsonScheduled = true;
+      //   setTimeout(() => {
+      //     if (this.modelService.projectData
+      //       && this.modelService.projectData.workspaceElements
+      //       && this.modelService.projectData.workspaceElements.cpnet) {
+      //       this.projectData = JSON.parse(JSON.stringify(this.modelService.projectData.workspaceElements.cpnet));
+      //       this.updateJsonScheduled = false;
+      //     }
+      //   }, 1000);
+      // }
     });
   }
 

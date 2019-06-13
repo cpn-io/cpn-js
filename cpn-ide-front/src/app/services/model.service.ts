@@ -362,6 +362,7 @@ export class ModelService {
       const self = this;
       const trans = this.getAllTrans().find(tr => tr && tr.subst && tr.subst._subpage === pageId);
       const objid = trans ? trans._id : pageId;
+
       if (cpnElement.subst) { this.deleteInstance(cpnElement.subst._subpage); }
       const entry = this.searchPageForInstace(cpn.instances, objid, self, undefined);
       if (entry && entry.inst) {

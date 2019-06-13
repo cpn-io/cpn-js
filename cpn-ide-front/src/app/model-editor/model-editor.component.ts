@@ -412,13 +412,18 @@ export class ModelEditorComponent implements OnInit {
       if (event.cpnElement) {
         const element = this.modeling.getElementByCpnElement(event.cpnElement);
 
-        if (element && element.type === CPN_TRANSITION) {
-          if (element.cpnElement.subst && (element.labels.length <= 5)) {
-            this.modelService.addInstanceInJson(this.modelService.instaceForTransition(element.cpnElement._id, false), this.pageId, element.cpnElement);
-          } else if (!element.cpnElement.subst && element.labels.length === 5) {
-            this.modelService.deleteInstance(element.id);
-          }
-        }
+        console.log(this.constructor.name, 'MODEL_UPDATE_DIAGRAM, element = ', JSON.stringify(element));
+
+        // if (element && element.type === CPN_TRANSITION) {
+        //   if (element.cpnElement.subst && (element.labels.length <= 5)) {
+        //     this.modelService.addInstanceInJson(
+        //       this.modelService.instaceForTransition(element.cpnElement._id, false),
+        //       this.pageId,
+        //       element.cpnElement);
+        //   } else if (!element.cpnElement.subst && element.labels.length === 5) {
+        //     this.modelService.deleteInstance(element.id);
+        //   }
+        // }
         this.modeling.updateElement(element, true);
         this.modelUpdate();
       }

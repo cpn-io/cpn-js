@@ -22,7 +22,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
   tabList = [
     { id: 'propertiesPanel', name: 'Properties' },
-    { id: 'modelPanel', name: 'Model' },
+    // { id: 'modelPanel', name: 'Model' },
   ];
 
   title = '';
@@ -92,17 +92,22 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     this.eventService.on(Message.MODEL_CHANGED, () => {
       console.log(this.constructor.name, 'Message.MODEL_CHANGED');
 
-      if (!this.updateJsonScheduled) {
-        this.updateJsonScheduled = true;
-        setTimeout(() => {
-          if (this.modelService.projectData
-            && this.modelService.projectData.workspaceElements
-            && this.modelService.projectData.workspaceElements.cpnet) {
-            this.projectData = JSON.parse(JSON.stringify(this.modelService.projectData.workspaceElements.cpnet));
-            this.updateJsonScheduled = false;
-          }
-        }, 1000);
-      }
+      localStorage.setItem('projectJson', JSON.stringify(this.modelService.projectData));
+
+      // if (!this.updateJsonScheduled) {
+      //   this.updateJsonScheduled = true;
+      //   setTimeout(() => {
+      //     localStorage.setItem('projectJson', JSON.stringify(this.modelService.projectData));
+
+      //     // if (this.modelService.projectData
+      //     //   && this.modelService.projectData.workspaceElements
+      //     //   && this.modelService.projectData.workspaceElements.cpnet) {
+      //     //   this.projectData = JSON.parse(JSON.stringify(this.modelService.projectData.workspaceElements.cpnet));
+      //     //   this.updateJsonScheduled = false;
+      //     // }
+      //     this.updateJsonScheduled = false;
+      //   }, 1000);
+      // }
     });
   }
 
@@ -205,15 +210,17 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     const subPageIdList = [];
     const parentPageIdList = [];
 
-    for (let page of pageList) {
-      var transList = page.trans instanceof Array ? page.trans : [page.trans];
-      for (let trans of transList) {
+    for (const page of pageList) {
+      let transList = page.trans instanceof Array ? page.trans : [page.trans];
+      for (const trans of transList) {
         if (trans && trans.subst && trans.subst._subpage) {
-          if (page._id !== this.pageId)
+          if (page._id !== this.pageId) {
             subPageIdList.push(trans.subst._subpage);
+          }
 
-          if (trans.subst._subpage === this.pageId || parentPageIdList.includes(trans.subst._subpage))
+          if (trans.subst._subpage === this.pageId || parentPageIdList.includes(trans.subst._subpage)) {
             parentPageIdList.push(page._id);
+          }
         }
       }
     }
@@ -221,23 +228,24 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     // console.log('getSubstPages(), supPageIdList = ', subPageIdList);
 
     const pageNames = ['-- empty --'];
-    for (let page of pageList) {
-      if ((page._id !== this.pageId && !subPageIdList.includes(page._id) && !parentPageIdList.includes(page._id)))
+    for (const page of pageList) {
+      if ((page._id !== this.pageId && !subPageIdList.includes(page._id) && !parentPageIdList.includes(page._id))) {
         pageNames.push(page.pageattr._name);
+      }
     }
     return pageNames;
   }
 
   getBindTransElementSubst(cpnElement) {
-    let bindObj = this.modelService.getArcEnds(cpnElement);
-    if (bindObj.trans) return bindObj.trans.subst;
-    else return false;
+    const bindObj = this.modelService.getArcEnds(cpnElement);
+    if (bindObj.trans) { return bindObj.trans.subst; }
+    else { return false; }
   }
 
   getSubPagesPorts(cpnElement, transEnd) {
     console.log('getSubPagesPorts(), transEnd = ', transEnd);
 
-    let bindObj = this.modelService.getArcEnds(cpnElement);
+    const bindObj = this.modelService.getArcEnds(cpnElement);
     const ports = this.modelService.getAllPorts(cpnElement, bindObj.trans);
     const portNames = [''];
     for (const port of ports) {
@@ -257,10 +265,10 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     const bindObj = this.modelService.getArcEnds(cpnElement);
     if (bindObj.trans.subst && bindObj.trans.subst._portsock) {
       const ids = this.parsePortSock(bindObj.trans.subst._portsock);
-      for (let pair of ids) {
+      for (const pair of ids) {
         if (pair.includes(cpnElement.placeend._idref)) {
-          for (let id of pair) {
-            if (id !== cpnElement.placeend._idref) return { value: this.modelService.getPortNameById(bindObj.trans.subst._subpage, id) };
+          for (const id of pair) {
+            if (id !== cpnElement.placeend._idref) { return { value: this.modelService.getPortNameById(bindObj.trans.subst._subpage, id) }; }
           }
         }
       }
@@ -272,9 +280,9 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   parsePortSock(portsock) {
     let str = portsock.trim().replace(new RegExp(/[),(]/, 'g'), '-');
     str = str.substr(1, str.length - 2);
-    //let ids = str.split(new RegExp(/-+/, 'g'))
-    let ids = [];
-    for (let el of str.split('--')) {
+    // let ids = str.split(new RegExp(/-+/, 'g'))
+    const ids = [];
+    for (const el of str.split('--')) {
       ids.push(el.split('-'));
     }
     return ids;
@@ -284,11 +292,11 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     console.log('updatePortBind    ', event);
     const bindObj = this.modelService.getArcEnds(this.cpnElement);
     const id = this.modelService.getPortIdByName(bindObj.trans.subst._subpage, event, bindObj.orient);
-    let ids = undefined;
+    let ids;
     if (bindObj.trans.subst._portsock !== '') {
       ids = this.parsePortSock(bindObj.trans.subst._portsock);
-      let pair = ids.find(p => {
-        return p.includes(bindObj.place._id)
+      const pair = ids.find(p => {
+        return p.includes(bindObj.place._id);
       });
 
       if (pair) {
@@ -306,7 +314,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     }
 
     let portsock = '';
-    for (let bind of ids) {
+    for (const bind of ids) {
       portsock += '(' + bind[0] + ',' + bind[1] + ')';
     }
     bindObj.trans.subst._portsock = portsock;
@@ -325,8 +333,9 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
     const portType = event.trim();
 
-    if (!this.cpnElement)
+    if (!this.cpnElement) {
       return;
+    }
 
     if (portType === '') {
       delete this.cpnElement.port;
@@ -334,8 +343,9 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (!this.cpnElement.port)
+    if (!this.cpnElement.port) {
       this.cpnElement.port = this.modelService.createPortObject(this.cpnElement, portType);
+    }
 
     this.cpnElement.port.text = portType;
     this.cpnElement.port._type = (portType === 'In/Out') ? 'I/O' : portType;
@@ -350,20 +360,34 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
     const pageName = event.trim();
 
-    if (!this.cpnElement)
+    if (!this.cpnElement) {
       return;
+    }
 
     if (pageName === '' || pageName === '-- empty --') {
-      delete this.cpnElement.subst;
-    } else {
-      let pageId = this.modelService.getPageId(pageName);
 
-      if (!this.cpnElement.subst)
+      // delete instance
+      this.modelService.deleteInstance(this.cpnElement._id);
+      // delete subst object
+      delete this.cpnElement.subst;
+
+    } else {
+      const pageId = this.modelService.getPageId(pageName);
+
+      // create subst object
+      if (!this.cpnElement.subst) {
         this.cpnElement.subst = this.modelService.createSubstObject(this.cpnElement, pageName, pageId);
+      }
 
       this.cpnElement.subst.subpageinfo.text = pageName;
       this.cpnElement.subst.subpageinfo._name = pageName;
       this.cpnElement.subst._subpage = pageId;
+
+      // create instance
+      this.modelService.addInstanceInJson(
+        this.modelService.instaceForTransition(this.cpnElement._id, false),
+        this.pageId,
+        this.cpnElement);
 
       // console.log(this.constructor.name, 'updateSubst(), this.cpnElement = ', this.cpnElement);
     }

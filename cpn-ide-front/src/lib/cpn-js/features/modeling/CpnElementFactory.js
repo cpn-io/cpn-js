@@ -10,7 +10,7 @@ export function getNextId() {
     id ++;
   }
   lastId = id;
-  return "ID" + (id).toString().substr(id.length - 10);
+  return "ID" + (id).toString().substr((id).toString().length - 10);
 }
 export function setDefaultValue(key, value) {
   defaultValues[key] = value;

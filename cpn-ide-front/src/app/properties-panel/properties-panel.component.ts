@@ -219,18 +219,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     }
 
     // console.log('getSubstPages(), supPageIdList = ', subPageIdList);
-    let transInPage;
-    if(curentPage.trans instanceof Array) {
-      transInPage =  curentPage.trans;
-    } else {
-      transInPage =  [curentPage.trans];
-    }
-    let subPagesOnCurrentPage =  [];
-    for(let t of transInPage){
-      if(t.subst && t.subst._subpage) {
-        subPageIdList.push(t.subst._subpage);
-      }
-    }
+
     const pageNames = ['-- empty --'];
     for (let page of pageList) {
       if (page._id !== this.pageId && ((!subPageIdList.includes(page._id) && !parentPageIdList.includes(page._id)) || subPageIdList.includes(page._id)))

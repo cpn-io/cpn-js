@@ -486,18 +486,22 @@ Modeling.prototype.getElementById = function (id) {
 };
 
 Modeling.prototype.getElementByCpnElement = function (cpnElement) {
-  var result;
+  // var result;
 
-  for (const key of Object.keys(this._elementRegistry._elements)) {
-    const element = this._elementRegistry._elements[key].element;
+  // for (const key of Object.keys(this._elementRegistry._elements)) {
+  //   const element = this._elementRegistry._elements[key].element;
 
-    if (element && element.cpnElement === cpnElement) {
-      result = element;
-      break;
-    }
-  }
+  //   if (element && element.cpnElement === cpnElement) {
+  //     result = element;
+  //     break;
+  //   }
+  // }
 
-  return result;
+  // return result;
+
+  var elements = this._elementRegistry.filter(function (element) { return element.cpnElement === cpnElement; });
+
+  return elements[0];
 };
 
 Modeling.prototype.getElementsByCpnElementIds = function (cpnElementIdList) {

@@ -35,6 +35,7 @@ export class ValidationService {
   ];
 
   needValidation = false;
+  needCheckValidation = false;
   lastProjectData = {};
   checkValidationBusy = false;
   checkValidationScheduled = false;
@@ -52,12 +53,15 @@ export class ValidationService {
     });
 
     this.eventService.on(Message.MODEL_CHANGED, () => {
-      if (!this.checkValidationScheduled) {
+      if (!this.checkValidationScheduled || this.needCheckValidation) {
         this.checkValidationScheduled = true;
         setTimeout(() => {
           this.checkValidation();
           this.checkValidationScheduled = false;
+          this.needCheckValidation = false;
         }, this.VALIDATION_TIMEOUT);
+      } else {
+        this.needCheckValidation = true;
       }
 
       // this.checkValidation();

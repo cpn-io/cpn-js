@@ -22,7 +22,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
   tabList = [
     { id: 'propertiesPanel', name: 'Properties' },
-    { id: 'modelPanel', name: 'Model' },
+    // { id: 'modelPanel', name: 'Model' },
   ];
 
   title = '';
@@ -95,12 +95,14 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
       if (!this.updateJsonScheduled) {
         this.updateJsonScheduled = true;
         setTimeout(() => {
-          if (this.modelService.projectData
-            && this.modelService.projectData.workspaceElements
-            && this.modelService.projectData.workspaceElements.cpnet) {
-            this.projectData = JSON.parse(JSON.stringify(this.modelService.projectData.workspaceElements.cpnet));
-            this.updateJsonScheduled = false;
-          }
+          localStorage.setItem('projectJson', JSON.stringify(this.modelService.getProjectData()));
+
+          // if (this.modelService.projectData
+          //   && this.modelService.projectData.workspaceElements
+          //   && this.modelService.projectData.workspaceElements.cpnet) {
+          //   this.projectData = JSON.parse(JSON.stringify(this.modelService.projectData.workspaceElements.cpnet));
+          //   this.updateJsonScheduled = false;
+          // }
         }, 1000);
       }
     });

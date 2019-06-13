@@ -100,7 +100,7 @@ export class ProjectService {
       return;
     }
 
-    localStorage.setItem('projectJson', JSON.stringify(json));
+    localStorage.setItem('projectJsonStr', JSON.stringify(json));
 
     this.project = { data: json, name: filename };
 

@@ -22,7 +22,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
   tabList = [
     { id: 'propertiesPanel', name: 'Properties' },
-    { id: 'modelPanel', name: 'Model' },
+    // { id: 'modelPanel', name: 'Model' },
   ];
 
   title = '';

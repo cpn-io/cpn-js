@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-text-edit-row',
@@ -55,7 +55,7 @@ export class TextEditRowComponent {
 
     console.log('keydown, e = ', e);
 
-    var keyCode = e.which || e.keyCode,
+    let keyCode = e.which || e.keyCode,
       target = e.target || e.srcElement;
 
     if (keyCode === 13 && !e.shiftKey) {
@@ -72,12 +72,15 @@ export class TextEditRowComponent {
   }
 
   onChange(event) {
-    if (this._type === 'text')
+    if (this._type === 'text') {
       this._object[this._field] = event.target.textContent;
-    if (this._type === 'int')
+    }
+    if (this._type === 'int') {
       this._object[this._field] = parseInt(event.target.textContent, 0);
-    if (this._type === 'color')
+    }
+    if (this._type === 'color') {
       this._object[this._field] = this.color2name(event.target.value);
+    }
     if (this._type === 'select') {
       // console.log('List in prop-panel - OBJ-', this._object);
       // //console.log('List in prop-panel - OBJ[field]-', this._object[this._field]);
@@ -102,7 +105,7 @@ export class TextEditRowComponent {
   }
 
   parseInt(x, base) {
-    var parsed = parseInt(x, base);
+    let parsed = parseInt(x, base);
     if (isNaN(parsed)) { return base; }
     return parsed;
   }

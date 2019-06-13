@@ -53,7 +53,7 @@ export class ValidationService {
     });
 
     this.eventService.on(Message.MODEL_CHANGED, () => {
-      if (!this.checkValidationScheduled || this.needCheckValidation) {
+      if (!this.checkValidationScheduled) {
         this.checkValidationScheduled = true;
         setTimeout(() => {
           this.checkValidation();
@@ -192,8 +192,8 @@ export class ValidationService {
       const noGeometryChangeList = this.filterChangeList(changeList, this.geometryKeyList);
       const backupChangeList = this.filterChangeList(changeList, this.nobackupKeyList);
 
-      // console.log('END detectChanges(), changeList = ', changeList);
-      // console.log('END detectChanges(), noGeometryChangeList = ', noGeometryChangeList);
+      console.log('END detectChanges(), changeList = ', changeList);
+      console.log('END detectChanges(), noGeometryChangeList = ', noGeometryChangeList);
 
       if (changeList.length > 0) {
         // console.log('detectChanges(), CHANGE DETECTED, A = ', JSON.stringify(currentModel));

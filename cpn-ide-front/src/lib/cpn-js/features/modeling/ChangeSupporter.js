@@ -153,6 +153,8 @@ export default function ChangeSupporter(eventBus, modeling, textRenderer, elemen
       // }
     }
     stateProvider.setErrorState(errors, true);
+
+    // modeling.updateConnections();
   }
 
 

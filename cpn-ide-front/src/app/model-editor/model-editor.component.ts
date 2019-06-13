@@ -118,15 +118,20 @@ export class ModelEditorComponent implements OnInit {
       this.updateElementStatus();
     });
 
-    eventBus.on('element.changed', (event) => {
-      // console.log(self.constructor.name, 'element.changed, event = ', event);
+    // eventBus.on('element.changed', (event) => {
+    eventBus.on([
+      'shape.move.end',
+      'create.end',
+      'connect.end',
+      'resize.end',
+      'bendpoint.move.end',
+      'connectionSegment.move.end',
+      'directEditing.complete'],
+      (event) => {
+        console.log(self.constructor.name, 'event = ', event);
 
-      if (!this.loading) {
         this.eventService.send(Message.MODEL_CHANGED);
-
-        eventBus.fire('model.check.ports');
-      }
-    });
+      });
 
     this.eventService.on(Message.MODEL_RELOAD, () => {
       this.log('Reload page diagram...');
@@ -353,6 +358,10 @@ export class ModelEditorComponent implements OnInit {
     }
   }
 
+  checkPorts() {
+    this.eventBus.fire('model.check.ports');
+  }
+
   /**
    * Update element status
    */
@@ -374,6 +383,8 @@ export class ModelEditorComponent implements OnInit {
     if (Object.keys(this.accessCpnService.getErrorData()).length > 0) {
       this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
     }
+
+    this.checkPorts();
 
     this.modeling.repaintElements();
   }
@@ -424,6 +435,7 @@ export class ModelEditorComponent implements OnInit {
         //     this.modelService.deleteInstance(element.id);
         //   }
         // }
+
         this.modeling.updateElement(element, true);
         this.modelUpdate();
       }

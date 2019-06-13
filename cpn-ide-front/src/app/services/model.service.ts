@@ -340,14 +340,12 @@ export class ModelService {
 
   instaceForTransition(id, isRoot) {
     return !isRoot ? { _id: getNextId(), _trans: id } : { _id: getNextId(), _page: id };
-    //  return  {_id: getNextId(), _trans: id};
   }
 
-
-  addInstanceInJson(newinstance, pageId, cpnElement) {
+  addInstanceInJson(newInstance, pageId, cpnElement) {
     const cpn = this.getCpn();
     if (!pageId) {
-      const exist = this.getAllTrans().find(tr => tr && tr.subst && tr.subst._subpage === newinstance._page);
+      const exist = this.getAllTrans().find(t => t && t.subst && t.subst._subpage === newInstance._page);
       if (!exist) {
         if (cpn.instances && cpn.instances.instance) {
           if (!(cpn.instances.instance instanceof Array)) {
@@ -356,15 +354,21 @@ export class ModelService {
         } else {
           cpn.instances.instance = [];
         }
-        cpn.instances.instance.push(newinstance);
+        cpn.instances.instance.push(newInstance);
       }
     } else {
       const self = this;
-      const trans = this.getAllTrans().find(tr => tr && tr.subst && tr.subst._subpage === pageId);
-      const objid = trans ? trans._id : pageId;
 
-      if (cpnElement.subst) { this.deleteInstance(cpnElement.subst._subpage); }
-      const entry = this.searchPageForInstace(cpn.instances, objid, self, undefined);
+      const trans = this.getAllTrans().find(t => t && t.subst && t.subst._subpage === pageId);
+      const objId = trans ? trans._id : pageId;
+
+      if (cpnElement.subst) {
+        this.deleteInstance(cpnElement.subst._subpage);
+      }
+      // delete instance if exists
+      this.deleteInstance(newInstance._trans);
+
+      const entry = this.searchPageForInstace(cpn.instances, objId, self, undefined);
       if (entry && entry.inst) {
         const pginstance = entry.inst;
         if (pginstance.instance) {
@@ -374,8 +378,9 @@ export class ModelService {
         } else {
           pginstance.instance = [];
         }
-        pginstance.instance.push(newinstance);
+        pginstance.instance.push(newInstance);
       }
+
       if (cpnElement.subst) {
         const page = this.getPageById(cpnElement.subst._subpage);
         if (page && page.trans) {
@@ -406,7 +411,6 @@ export class ModelService {
       } else { return self.searchPageForInstace(instance.instance, objId, self, instance); }
     }
   }
-
 
   deleteInstance(objId) {
     const cpn = this.getCpn();
@@ -1580,6 +1584,11 @@ export class ModelService {
       const arcs = p.arc instanceof Array ? p.arc : [p.arc];
       return arcs.find(pl => pl._id === cpnElement._id);
     });
+
+    if (!page) {
+      return undefined;
+    }
+
     for (const entry of ['place', 'trans']) {
       if (!(page[entry] instanceof Array)) { page[entry] = [page[entry]]; }
     }
@@ -1603,16 +1612,16 @@ export class ModelService {
    */
   getAllPorts(cpnElement, transEnd) {
     const ports = [];
-    console.log('getAllPorts(), transEnd = ', transEnd);
+    // console.log('getAllPorts(), transEnd = ', transEnd);
 
     if (transEnd.subst) {
       const page = this.getPageById(transEnd.subst._subpage);
       if (page && page.place) {
-        console.log('getAllPorts(), page = ', page);
+        // console.log('getAllPorts(), page = ', page);
 
         for (const place of page.place) {
-          console.log('getAllPorts(), place = ', place);
-          console.log('getAllPorts(), place.port = ', place.port);
+          // console.log('getAllPorts(), place = ', place);
+          // console.log('getAllPorts(), place.port = ', place.port);
           if (place.port
             && (place.port._type === 'I/O'
               || place.port._type === (cpnElement._orientation === 'TtoP' ? 'Out' : 'In'))) {

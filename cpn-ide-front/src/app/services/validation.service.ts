@@ -47,6 +47,8 @@ export class ValidationService {
 
     this.eventService.on(Message.PROJECT_LOAD, (event) => {
       this.init();
+      this.validate();
+      this.checkValidation();
     });
     this.eventService.on(Message.MODEL_RELOAD, () => {
       this.init();
@@ -68,7 +70,7 @@ export class ValidationService {
       // this.validate();
     });
 
-    this.checkValidation();
+    // this.checkValidation();
   }
 
   init() {

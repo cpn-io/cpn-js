@@ -1029,14 +1029,14 @@ Modeling.prototype.removeElements = function (elements) {
 };
 
 
-Modeling.prototype.deleteSubPageTrans = function (id) {
-  const trans = this.getTransitionByPage(id);
-  if (trans) {
-    delete trans.cpnElement.subst;
-    this.updateElement(trans, true);
-  }
+// Modeling.prototype.deleteSubPageTrans = function (id) {
+//   const trans = this.getTransitionByPage(id);
+//   if (trans) {
+//     delete trans.cpnElement.subst;
+//     this.updateElement(trans, true);
+//   }
 
-}
+// }
 
 Modeling.prototype.getShapeArcs = function (shape) {
   let arcs = [];
@@ -1054,16 +1054,16 @@ Modeling.prototype.getShapeArcs = function (shape) {
 }
 
 
-Modeling.prototype.getTransitionByPage = function (id) {
-  for (const key of Object.keys(this._elementRegistry._elements)) {
-    if (this._elementRegistry._elements[key]) {
-      const element = this._elementRegistry._elements[key].element;
-      if (element.type === CPN_TRANSITION && element.cpnElement.subst && element.cpnElement.subst._subpage === id) {
-        return element;
-      }
-    }
-  }
-}
+// Modeling.prototype.getTransitionByPage = function (id) {
+//   for (const key of Object.keys(this._elementRegistry._elements)) {
+//     if (this._elementRegistry._elements[key]) {
+//       const element = this._elementRegistry._elements[key].element;
+//       if (element.type === CPN_TRANSITION && element.cpnElement.subst && element.cpnElement.subst._subpage === id) {
+//         return element;
+//       }
+//     }
+//   }
+// }
 
 
 

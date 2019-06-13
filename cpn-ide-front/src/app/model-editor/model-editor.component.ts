@@ -126,9 +126,11 @@ export class ModelEditorComponent implements OnInit {
       'resize.end',
       'bendpoint.move.end',
       'connectionSegment.move.end',
-      'directEditing.complete'],
+      'directEditing.complete',
+      'shape.delete'
+    ],
       (event) => {
-        console.log(self.constructor.name, 'event = ', event);
+        console.log(self.constructor.name, 'MODEL_CHANGED event = ', event);
 
         this.eventService.send(Message.MODEL_CHANGED);
       });
@@ -159,7 +161,14 @@ export class ModelEditorComponent implements OnInit {
 
     this.eventService.on(Message.DELETE_PAGE, (data) => {
       if (data.parent === this.pageId) {
-        this.modeling.deleteSubPageTrans(data.id);
+        // this.modeling.deleteSubPageTrans(data.id);
+        this.modelService.deleteSubPageTrans(data.id);
+
+        this.eventService.send(Message.UPDATE_TREE_PAGES, {
+          currentPageId: self.pageId
+        });
+
+        this.reloadPage();
       }
     });
 
@@ -262,12 +271,21 @@ export class ModelEditorComponent implements OnInit {
       // console.log(self.constructor.name, 'extract.subpage, getAllArcs() = ', self.modelService.getAllArcs());
 
       const arcs = self.modelService.getArcsForElements(selectedElements);
+      const arcsToDelete = self.modelService.getExternalArcsForElements(selectedElements);
 
       console.log(self.constructor.name, 'extract.subpage, arcs = ', arcs);
+      console.log(self.constructor.name, 'extract.subpage, arcsToDelete = ', arcsToDelete);
 
       selectedElements = selectedElements.concat(arcs);
 
       self.modelService.moveElements(self.pageId, subPageId, selectedElements);
+
+      // delete not used arcs
+      if (arcsToDelete) {
+        for (const a of arcsToDelete) {
+          self.modelService.deleteElementFromPageJson(self.pageId, a, CPN_CONNECTION);
+        }
+      }
 
       self.reloadPage();
     });
@@ -275,8 +293,26 @@ export class ModelEditorComponent implements OnInit {
 
     eventBus.on('shape.delete', (event) => {
       if (event.elements) {
+
+        let reloadTree = false;
+
         for (const elem of event.elements) {
-          self.modelService.deleteElementFromPageJson(self.pageId, elem.id, elem.type);
+          if (elem.cpnElement) {
+            // console.log(self.constructor.name, 'shape.delete, elem.cpnElement = ', elem.cpnElement);
+            if (elem.cpnElement.subst) {
+              reloadTree = true;
+            }
+            self.modelService.deleteElementFromPageJson(self.pageId, elem.cpnElement, elem.type);
+          }
+        }
+
+        self.reloadPage();
+
+        if (reloadTree) {
+          // console.log(self.constructor.name, 'shape.delete, UPDATE_TREE_PAGES, self.pageId = ', self.pageId);
+          this.eventService.send(Message.UPDATE_TREE_PAGES, {
+            currentPageId: self.pageId
+          });
         }
       }
     });

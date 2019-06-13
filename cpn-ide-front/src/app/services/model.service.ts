@@ -163,6 +163,8 @@ export class ModelService {
     }
 
     this.undoRedoBusy = false;
+
+    this.eventService.send(Message.MODEL_CHANGED);
   }
 
   redoChanges() {
@@ -183,6 +185,8 @@ export class ModelService {
     }
 
     this.undoRedoBusy = false;
+
+    this.eventService.send(Message.MODEL_CHANGED);
   }
 
   getLabelEntry() {
@@ -227,11 +231,40 @@ export class ModelService {
 
   //// ChangeModelActions
 
+  deleteSubPageTrans(pageId) {
+    const allTrans = this.getAllTrans();
 
-  deleteElementFromPageJson(pageId, id, type) {
+    // console.log(this.constructor.name, 'deleteSubPageTrans(), pageId = ', pageId);
+
+    if (allTrans) {
+      for (const trans of allTrans) {
+        // console.log(this.constructor.name, 'deleteSubPageTrans(), trans (0) = ', trans);
+
+        if (trans.subst && trans.subst._subpage === pageId) {
+          // console.log(this.constructor.name, 'deleteSubPageTrans(), trans (1) = ', trans);
+
+          this.deleteInstance(trans._id);
+          delete trans.subst;
+
+          // console.log(this.constructor.name, 'deleteSubPageTrans(), trans (1) = ', trans);
+        }
+      }
+    }
+  }
+
+
+  deleteElementFromPageJson(pageId, cpnElement, type) {
     this.saveBackupBak(this.projectData, pageId);
 
     const jsonPageObject = this.getPageById(pageId);
+    const id = cpnElement._id;
+
+    console.log(this.constructor.name, 'deleteElementFromPageJson(), cpnElement = ', cpnElement);
+
+    if (cpnElement.subst) {
+      // delete instance
+      this.deleteInstance(cpnElement._id);
+    }
 
     if (!jsonPageObject[this.modelCase[type]] ||
       !jsonPageObject[this.modelCase[type]].length ||
@@ -513,15 +546,15 @@ export class ModelService {
       } else {
         target.block = [element];
       }
-      if (parent.block  instanceof Array) {
-        for (let i = 0; i < parent.block .length; i++) {
-          if (parent.block [i]._id === element._id) {
-            parent.block .splice(i, 1);
+      if (parent.block instanceof Array) {
+        for (let i = 0; i < parent.block.length; i++) {
+          if (parent.block[i]._id === element._id) {
+            parent.block.splice(i, 1);
             break;
           }
         }
       } else {
-        parent.block  = [];
+        parent.block = [];
       }
     } else if (this.paramsTypes.includes(type)) {
       if (parent[type] instanceof Array && parent[type].length > 0) {
@@ -1441,6 +1474,39 @@ export class ModelService {
     }
     return arcs;
   }
+
+  /**
+   * Get all arcs, wich are connecting with elements but not between them
+   * @param cpnElements - array of elements
+   */
+  getExternalArcsForElements(cpnElements) {
+    const cpnElementIds = [];
+    for (const e of cpnElements) {
+      if (e._id) {
+        cpnElementIds.push(e._id);
+      }
+    }
+    if (cpnElementIds.length < 1) {
+      return;
+    }
+
+    const arcs = [];
+    for (const arc of this.getAllArcs()) {
+      if (arc) {
+        if (
+          (cpnElementIds.includes(arc.placeend._idref)
+            && !cpnElementIds.includes(arc.transend._idref))
+          ||
+          (!cpnElementIds.includes(arc.placeend._idref)
+            && cpnElementIds.includes(arc.transend._idref))
+        ) {
+          arcs.push(arc);
+        }
+      }
+    }
+    return arcs;
+  }
+
 
   /**
    * Move elements from page to page

@@ -497,27 +497,27 @@ export class ModelService {
       });
 
     } else if (!type) {
-      if (target) {
-        if (target instanceof Array) {
-          target.splice(index, 0, element);
+      if (target.block) {
+        if (target.block instanceof Array) {
+          target.block.splice(index, 0, element);
         } else {
-          target = [target];
-          target.splice(index, 0, element);
+          target.block = [target.block];
+          target.block.splice(index, 0, element);
         }
       } else if (element instanceof Array) {
-        target = element;
+        target.block = element;
       } else {
-        target = [element];
+        target.block = [element];
       }
-      if (parent instanceof Array) {
-        for (let i = 0; i < parent.length; i++) {
-          if (parent[i]._id === element._id) {
-            parent.splice(i, 1);
+      if (parent.block  instanceof Array) {
+        for (let i = 0; i < parent.block .length; i++) {
+          if (parent.block [i]._id === element._id) {
+            parent.block .splice(i, 1);
             break;
           }
         }
       } else {
-        parent = [];
+        parent.block  = [];
       }
     } else if (this.paramsTypes.includes(type)) {
       if (parent[type] instanceof Array && parent[type].length > 0) {

@@ -1019,6 +1019,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
             if (upperPage) {
               this.eventService.send(Message.PAGE_OPEN, { pageObject: upperPage });
             }
+            this.modelService.deleteInstance(treeNode.id);
             this.modelService.deletePage(treeNode.id);
             this.eventService.send(Message.DELETE_PAGE, { id: treeNode.id, parent: treeNode.parent.id });
           } else if (treeNode.data.type === 'block') {

@@ -160,15 +160,18 @@ export class ModelEditorComponent implements OnInit {
     });
 
     this.eventService.on(Message.DELETE_PAGE, (data) => {
-      if (data.parent === this.pageId) {
+      if (data.id === this.pageId) {
         // this.modeling.deleteSubPageTrans(data.id);
-        this.modelService.deleteSubPageTrans(data.id);
+       // this.modelService.deleteSubPageTrans(data.id);
+      //  this.modelService.deleteInstance(data.id);
+      //   this.eventService.send(Message.UPDATE_TREE_PAGES, {
+      //     currentPageId: self.pageId
+      //   });
 
-        this.eventService.send(Message.UPDATE_TREE_PAGES, {
-          currentPageId: self.pageId
-        });
-
-        this.reloadPage();
+        // this.reloadPage();
+       // this.canvas._clear();
+        //this.diagram.destroy();
+        this.diagram.clear();
       }
     });
 

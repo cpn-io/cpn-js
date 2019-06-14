@@ -622,11 +622,12 @@ export class ModelService {
 
   deletePage(pageId) {
     this.saveBackupBak(this.projectData, pageId);
-
-    if (!(this.projectData.workspaceElements.cpnet.page instanceof Array)) {
-      this.projectData.workspaceElements.cpnet.page = [this.projectData.workspaceElements.cpnet.page];
+    if (this.projectData.workspaceElements.cpnet.page ) {
+      if (!(this.projectData.workspaceElements.cpnet.page instanceof Array)) {
+        this.projectData.workspaceElements.cpnet.page = [this.projectData.workspaceElements.cpnet.page];
+      }
+      this.projectData.workspaceElements.cpnet.page = this.projectData.workspaceElements.cpnet.page.filter(x => x._id !== pageId);
     }
-    this.projectData.workspaceElements.cpnet.page = this.projectData.workspaceElements.cpnet.page.filter(x => x._id !== pageId);
   }
 
 
@@ -1420,12 +1421,16 @@ export class ModelService {
    */
   getAllTrans() {
     const allTrans = [];
-
-    for (const page of this.getAllPages()) {
-      const trans = page.trans instanceof Array ? page.trans : [page.trans];
-      for (const t of trans) {
-        if (t) {
-          allTrans.push(t);
+    const allPages = this.getAllPages();
+    if (allPages && allPages.length > 0) {
+      for (const page of allPages) {
+        if (page) {
+          const trans = page.trans instanceof Array ? page.trans : [page.trans];
+          for (const t of trans) {
+            if (t) {
+              allTrans.push(t);
+            }
+          }
         }
       }
     }

@@ -18,10 +18,10 @@ export class MainToolbarComponent implements OnInit {
 
   constructor(
     private projectService: ProjectService,
-    private modelService: ModelService,
     private eventService: EventService,
     private validationService: ValidationService,
-    private accessCpnService: AccessCpnService
+    public accessCpnService: AccessCpnService,
+    public modelService: ModelService
   ) {
   }
 

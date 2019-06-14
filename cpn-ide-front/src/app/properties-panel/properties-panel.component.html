@@ -37,7 +37,7 @@
                   <div *ngFor="let labelKey of ['initmark', 'type', 'cond', 'time', 'code', 'priority', 'annot']">
                     <!-- {{ JSON.stringify(cpnElement[labelKey]) }}<br> -->
                     <app-text-edit-row *ngIf="cpnElement[labelKey]" type="text" [name]="names[labelKey] || labelKey"
-                      [object]="cpnElement[labelKey].text" field="__text" (changed)="updateChanges()">
+                      [object]="cpnElement[labelKey].text" field="__text" (changed)="updateLabel($event)">
                     </app-text-edit-row>
                   </div>
 

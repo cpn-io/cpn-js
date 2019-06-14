@@ -264,6 +264,8 @@ Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus
     if (cpnElement.text && cpnElement.text.__text) {
       element.text = cpnElement.text.__text;
     }
+
+    // console.log('Modeling.prototype.updateShapeByCpnElement(), changeName(), cpnElement.text = ', cpnElement.text);
   };
 
   const changePosition = (modeling, changingElement) => {
@@ -644,8 +646,7 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
   text = text || '';
 
   var bounds = { x: x, y: y, width: 200, height: 20 };
-  bounds = this._textRenderer.getExternalLabelBounds(bounds,
-    defaultValue && text.trim() === '' ? defaultValue : text);
+  bounds = this._textRenderer.getExternalLabelBounds(bounds, defaultValue && text.trim() === '' ? defaultValue : text);
 
   if (labelType !== 'aux') {
     x -= bounds.width / 2;

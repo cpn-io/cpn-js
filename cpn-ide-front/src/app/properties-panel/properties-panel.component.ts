@@ -140,6 +140,11 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     this.eventService.send(Message.MODEL_CHANGED);
   }
 
+  updateLabel(event) {
+    console.log('updateLabel(), event, this.cpnElement = ', event, this.cpnElement);
+
+    this.updateChanges();
+  }
 
   clearData() {
     this.title = '';

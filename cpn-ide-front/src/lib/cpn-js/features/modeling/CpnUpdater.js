@@ -93,7 +93,6 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   eventBus.on('shape.changed', function (event) {
     // updateLabels(e.element);
     // console.log('CpnUpdater(), shape.changed, event.element = ', event.element);
-
     // updateBounds({ context: { shape: event.element } });
 
     updateCpnElement(event.element);
@@ -101,11 +100,35 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
   eventBus.on('connection.changed', function (event) {
     // console.log('CpnUpdater(), connection.changed, event = ', event);
-
     // layouter.layoutConnections();
 
     updateCpnElement(event.element);
   });
+
+  // eventBus.on([
+  //   'shape.move.end',
+  //   'create.end',
+  //   'connect.end',
+  //   'resize.end',
+  //   'bendpoint.move.end',
+  //   'connectionSegment.move.end',
+  //   'directEditing.complete',
+  //   'shape.delete'
+  // ],
+  //   (event) => {
+  //     console.log(self.constructor.name, 'change events, event = ', event);
+
+  //     let element = event.element || event.shape;
+  //     if (event.active && event.active.element) {
+  //       element = event.active.element;
+  //     }
+
+  //     if (element) {
+  //       updateCpnElement(element);
+  //     }
+  //   });
+
+
 
   eventBus.on('shape.create.end', (event) => {
     console.log('CpnUpdater(), shape.create.end, event = ', event);
@@ -256,14 +279,15 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   }
 
   function updateLabels(element) {
-    // console.log('CpnUpdater(), updateLabel(), e = ', e);
-    var shape = element;
-    for (let label of shape.labels) {
-      updateCpnElement(label);
+    // console.log('CpnUpdater(), updateLabel(), element = ', element);
+    if (element.labels) {
+      for (let label of element.labels) {
+        updateCpnElement(label);
+      }
     }
 
-    // if (shape.labelTarget) {
-    //   shape.parent = shape.labelTarget;
+    // if (element.labelTarget) {
+    //   element.parent = element.labelTarget;
     // }
   }
 
@@ -358,10 +382,17 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
       }
 
+
+      let text = shape.text || shape.name || '';
+      text = text.trim();
+      if (shape.defaultValue && text === shape.defaultValue) {
+        text = '';
+      }
+
       if (typeof cpnElement.text === 'object') {
-        cpnElement.text.__text = shape.text || shape.name;
+        cpnElement.text.__text = text;
       } else {
-        cpnElement.text = shape.text || shape.name;
+        cpnElement.text = text;
       }
     }
 

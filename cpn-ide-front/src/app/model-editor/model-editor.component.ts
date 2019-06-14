@@ -459,7 +459,7 @@ export class ModelEditorComponent implements OnInit {
       if (event.cpnElement) {
         const element = this.modeling.getElementByCpnElement(event.cpnElement);
 
-        console.log(this.constructor.name, 'MODEL_UPDATE_DIAGRAM, element = ', JSON.stringify(element));
+        // console.log(this.constructor.name, 'MODEL_UPDATE_DIAGRAM, element = ', JSON.stringify(element));
 
         // if (element && element.type === CPN_TRANSITION) {
         //   if (element.cpnElement.subst && (element.labels.length <= 5)) {

@@ -7,7 +7,7 @@ import { initDomAdapter } from '@angular/platform-browser/src/browser';
 @Injectable()
 export class ValidationService {
 
-  VALIDATION_TIMEOUT = 1000;
+  VALIDATION_TIMEOUT = 100;
 
   geometryKeyList = [
     'aux',
@@ -194,8 +194,8 @@ export class ValidationService {
       const noGeometryChangeList = this.filterChangeList(changeList, this.geometryKeyList);
       const backupChangeList = this.filterChangeList(changeList, this.nobackupKeyList);
 
-      console.log('END detectChanges(), changeList = ', changeList);
-      console.log('END detectChanges(), noGeometryChangeList = ', noGeometryChangeList);
+      // console.log('END detectChanges(), changeList = ', changeList);
+      // console.log('END detectChanges(), noGeometryChangeList = ', noGeometryChangeList);
 
       if (changeList.length > 0) {
         // console.log('detectChanges(), CHANGE DETECTED, A = ', JSON.stringify(currentModel));

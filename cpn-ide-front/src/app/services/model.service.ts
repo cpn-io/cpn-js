@@ -231,7 +231,7 @@ export class ModelService {
 
   //// ChangeModelActions
 
-  deleteSubPageTrans(pageId) {
+  public deleteSubPageTrans(pageId) {
     const allTrans = this.getAllTrans();
 
     // console.log(this.constructor.name, 'deleteSubPageTrans(), pageId = ', pageId);
@@ -240,7 +240,7 @@ export class ModelService {
       for (const trans of allTrans) {
         // console.log(this.constructor.name, 'deleteSubPageTrans(), trans (0) = ', trans);
 
-        if (trans.subst && trans.subst._subpage === pageId) {
+        if (trans && trans.subst && trans.subst._subpage === pageId) {
           // console.log(this.constructor.name, 'deleteSubPageTrans(), trans (1) = ', trans);
 
           this.deleteInstance(trans._id);
@@ -1424,7 +1424,9 @@ export class ModelService {
     for (const page of this.getAllPages()) {
       const trans = page.trans instanceof Array ? page.trans : [page.trans];
       for (const t of trans) {
-        allTrans.push(t);
+        if (t) {
+          allTrans.push(t);
+        }
       }
     }
 
@@ -1440,8 +1442,10 @@ export class ModelService {
 
     for (const page of this.getAllPages()) {
       const arcs = page.arc instanceof Array ? page.arc : [page.arc];
-      for (const arc of arcs) {
-        allArcs.push(arc);
+      for (const a of arcs) {
+        if (a) {
+          allArcs.push(a);
+        }
       }
     }
 

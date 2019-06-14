@@ -118,15 +118,22 @@ export class ModelEditorComponent implements OnInit {
       this.updateElementStatus();
     });
 
-    eventBus.on('element.changed', (event) => {
-      // console.log(self.constructor.name, 'element.changed, event = ', event);
+    // eventBus.on('element.changed', (event) => {
+    eventBus.on([
+      'shape.move.end',
+      'create.end',
+      'connect.end',
+      'resize.end',
+      'bendpoint.move.end',
+      'connectionSegment.move.end',
+      'directEditing.complete',
+      'shape.delete'
+    ],
+      (event) => {
+        console.log(self.constructor.name, 'MODEL_CHANGED event = ', event);
 
-      if (!this.loading) {
         this.eventService.send(Message.MODEL_CHANGED);
-
-        eventBus.fire('model.check.ports');
-      }
-    });
+      });
 
     this.eventService.on(Message.MODEL_RELOAD, () => {
       this.log('Reload page diagram...');
@@ -154,7 +161,14 @@ export class ModelEditorComponent implements OnInit {
 
     this.eventService.on(Message.DELETE_PAGE, (data) => {
       if (data.parent === this.pageId) {
-        this.modeling.deleteSubPageTrans(data.id);
+        // this.modeling.deleteSubPageTrans(data.id);
+        this.modelService.deleteSubPageTrans(data.id);
+
+        this.eventService.send(Message.UPDATE_TREE_PAGES, {
+          currentPageId: self.pageId
+        });
+
+        this.reloadPage();
       }
     });
 
@@ -257,12 +271,21 @@ export class ModelEditorComponent implements OnInit {
       // console.log(self.constructor.name, 'extract.subpage, getAllArcs() = ', self.modelService.getAllArcs());
 
       const arcs = self.modelService.getArcsForElements(selectedElements);
+      const arcsToDelete = self.modelService.getExternalArcsForElements(selectedElements);
 
       console.log(self.constructor.name, 'extract.subpage, arcs = ', arcs);
+      console.log(self.constructor.name, 'extract.subpage, arcsToDelete = ', arcsToDelete);
 
       selectedElements = selectedElements.concat(arcs);
 
       self.modelService.moveElements(self.pageId, subPageId, selectedElements);
+
+      // delete not used arcs
+      if (arcsToDelete) {
+        for (const a of arcsToDelete) {
+          self.modelService.deleteElementFromPageJson(self.pageId, a, CPN_CONNECTION);
+        }
+      }
 
       self.reloadPage();
     });
@@ -270,8 +293,26 @@ export class ModelEditorComponent implements OnInit {
 
     eventBus.on('shape.delete', (event) => {
       if (event.elements) {
+
+        let reloadTree = false;
+
         for (const elem of event.elements) {
-          self.modelService.deleteElementFromPageJson(self.pageId, elem.id, elem.type);
+          if (elem.cpnElement) {
+            // console.log(self.constructor.name, 'shape.delete, elem.cpnElement = ', elem.cpnElement);
+            if (elem.cpnElement.subst) {
+              reloadTree = true;
+            }
+            self.modelService.deleteElementFromPageJson(self.pageId, elem.cpnElement, elem.type);
+          }
+        }
+
+        self.reloadPage();
+
+        if (reloadTree) {
+          // console.log(self.constructor.name, 'shape.delete, UPDATE_TREE_PAGES, self.pageId = ', self.pageId);
+          this.eventService.send(Message.UPDATE_TREE_PAGES, {
+            currentPageId: self.pageId
+          });
         }
       }
     });
@@ -353,6 +394,10 @@ export class ModelEditorComponent implements OnInit {
     }
   }
 
+  checkPorts() {
+    this.eventBus.fire('model.check.ports');
+  }
+
   /**
    * Update element status
    */
@@ -374,6 +419,8 @@ export class ModelEditorComponent implements OnInit {
     if (Object.keys(this.accessCpnService.getErrorData()).length > 0) {
       this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
     }
+
+    this.checkPorts();
 
     this.modeling.repaintElements();
   }
@@ -412,13 +459,19 @@ export class ModelEditorComponent implements OnInit {
       if (event.cpnElement) {
         const element = this.modeling.getElementByCpnElement(event.cpnElement);
 
-        if (element && element.type === CPN_TRANSITION) {
-          if (element.cpnElement.subst && (element.labels.length <= 5)) {
-            this.modelService.addInstanceInJson(this.modelService.instaceForTransition(element.cpnElement._id, false), this.pageId, element.cpnElement);
-          } else if (!element.cpnElement.subst && element.labels.length === 5) {
-            this.modelService.deleteInstance(element.id);
-          }
-        }
+        console.log(this.constructor.name, 'MODEL_UPDATE_DIAGRAM, element = ', JSON.stringify(element));
+
+        // if (element && element.type === CPN_TRANSITION) {
+        //   if (element.cpnElement.subst && (element.labels.length <= 5)) {
+        //     this.modelService.addInstanceInJson(
+        //       this.modelService.instaceForTransition(element.cpnElement._id, false),
+        //       this.pageId,
+        //       element.cpnElement);
+        //   } else if (!element.cpnElement.subst && element.labels.length === 5) {
+        //     this.modelService.deleteInstance(element.id);
+        //   }
+        // }
+
         this.modeling.updateElement(element, true);
         this.modelUpdate();
       }

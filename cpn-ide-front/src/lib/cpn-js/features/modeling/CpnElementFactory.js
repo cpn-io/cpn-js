@@ -12,6 +12,7 @@ export function getNextId() {
   lastId = id;
   return "ID" + (id).toString().substr((id).toString().length - 10);
 }
+
 export function setDefaultValue(key, value) {
   defaultValues[key] = value;
 }

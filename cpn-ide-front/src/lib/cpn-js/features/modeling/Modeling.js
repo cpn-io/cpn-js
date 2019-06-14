@@ -137,6 +137,15 @@ Modeling.prototype.repaintElements = function () {
   }
 }
 
+Modeling.prototype.updateConnections = function () {
+  var arcs = this._elementRegistry.filter(function (element) { return is(element, CPN_CONNECTION); });
+
+  for (const a of arcs) {
+    this.updateElement(a, true);
+  }
+}
+
+
 Modeling.prototype.removeEmptyConnections = function () {
   var arcs = this._elementRegistry.filter(function (element) { return is(element, CPN_CONNECTION); });
 
@@ -486,18 +495,22 @@ Modeling.prototype.getElementById = function (id) {
 };
 
 Modeling.prototype.getElementByCpnElement = function (cpnElement) {
-  var result;
+  // var result;
 
-  for (const key of Object.keys(this._elementRegistry._elements)) {
-    const element = this._elementRegistry._elements[key].element;
+  // for (const key of Object.keys(this._elementRegistry._elements)) {
+  //   const element = this._elementRegistry._elements[key].element;
 
-    if (element && element.cpnElement === cpnElement) {
-      result = element;
-      break;
-    }
-  }
+  //   if (element && element.cpnElement === cpnElement) {
+  //     result = element;
+  //     break;
+  //   }
+  // }
 
-  return result;
+  // return result;
+
+  var elements = this._elementRegistry.filter(function (element) { return element.cpnElement === cpnElement; });
+
+  return elements[0];
 };
 
 Modeling.prototype.getElementsByCpnElementIds = function (cpnElementIdList) {
@@ -612,8 +625,13 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
     text = cpnLabelElement._name; // for subst label
   else if (labelType === 'aux')
     text = cpnLabelElement.text; // for aux label
-  else if (cpnLabelElement.text)
+  else {
+    if (typeof cpnLabelElement.text !== 'object') {
+      cpnLabelElement.text = getDefText(cpnLabelElement.text);
+    }
     text = cpnLabelElement.text.__text; // for shape external label
+  }
+
 
   // console.log('Modeling.prototype.getLabelAttrs(), text = ', text);
 
@@ -962,7 +980,7 @@ Modeling.prototype.createShapeCpnElement = function (position, type) {
   return newElement;
 }
 
-Modeling.prototype.getShapeCount = function(type) {
+Modeling.prototype.getShapeCount = function (type) {
   var elements = this._elementRegistry.filter(function (element) { return element.type === type; });
   return elements.length || 0;
 }
@@ -1011,14 +1029,14 @@ Modeling.prototype.removeElements = function (elements) {
 };
 
 
-Modeling.prototype.deleteSubPageTrans = function(id){
-    const trans = this.getTransitionByPage(id);
-    if(trans) {
-      delete trans.cpnElement.subst;
-      this.updateElement(trans, true);
-    }
+// Modeling.prototype.deleteSubPageTrans = function (id) {
+//   const trans = this.getTransitionByPage(id);
+//   if (trans) {
+//     delete trans.cpnElement.subst;
+//     this.updateElement(trans, true);
+//   }
 
-}
+// }
 
 Modeling.prototype.getShapeArcs = function (shape) {
   let arcs = [];
@@ -1036,16 +1054,16 @@ Modeling.prototype.getShapeArcs = function (shape) {
 }
 
 
-Modeling.prototype.getTransitionByPage = function(id) {
-  for (const key of Object.keys(this._elementRegistry._elements)) {
-    if (this._elementRegistry._elements[key]) {
-      const element = this._elementRegistry._elements[key].element;
-      if (element.type === CPN_TRANSITION && element.cpnElement.subst && element.cpnElement.subst._subpage === id) {
-          return element;
-      }
-    }
-  }
-}
+// Modeling.prototype.getTransitionByPage = function (id) {
+//   for (const key of Object.keys(this._elementRegistry._elements)) {
+//     if (this._elementRegistry._elements[key]) {
+//       const element = this._elementRegistry._elements[key].element;
+//       if (element.type === CPN_TRANSITION && element.cpnElement.subst && element.cpnElement.subst._subpage === id) {
+//         return element;
+//       }
+//     }
+//   }
+// }
 
 
 

@@ -29,7 +29,7 @@
                   </app-text-edit-row>
 
                   <!-- Name (if no arc) -->
-                  <app-text-edit-row *ngIf="!cpnElement._orientation" name="Name" [object]="cpnElement" field="text"
+                  <app-text-edit-row *ngIf="!cpnElement._orientation" type="text" name="Name" [object]="cpnElement" field="text"
                     (changed)="updateChanges()">
                   </app-text-edit-row>
 

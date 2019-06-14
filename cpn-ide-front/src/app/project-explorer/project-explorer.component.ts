@@ -134,9 +134,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
       let permis = false;
       if (element && parent) {
-        if (element.data.type === 'declaration') {
+        if (element.data.type === 'declaration' || element.data.type === 'block') {
           // permis = parent.data.type === 'block' && this.isOneGroup(element, parent, index) ? true : false;
-          permis = parent.data.type === 'block' && this.isOneGroup({ from: element, to: { index: index, parent: parent } }) ? true : false;
+          permis = (element.data.type === 'declaration' && parent.data.type === 'block' ||  element.data.type === 'block' &&  parent.data.id === 'Declarations') && this.isOneGroup({ from: element, to: { index: index, parent: parent } }) ? true : false;
         }
         // } else if (element.data.type === 'page' ) {
         //   permis =  parent.data.type === 'page' || parent.data.type === 'Pages' ? true : false;
@@ -919,7 +919,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   // }
 
   onUpNode() {
-    this.moveDeclUpDown(this.getDataForMoving('up'));
+     const direction = 'up';
+    this.moveDeclUpDown(this.getDataForMoving(direction), direction);
   }
 
   // onDownNode() {
@@ -939,17 +940,18 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   // }
 
   onDownNode() {
-    this.moveDeclUpDown(this.getDataForMoving('down'));
+    const direction = 'down'
+    this.moveDeclUpDown(this.getDataForMoving(direction), direction);
   }
 
-  moveDeclUpDown(data) {
+  moveDeclUpDown(data, direction) {
     if (this.isOneGroup(data)) {
       this.treeComponent.treeModel.moveNode(data.from, data.to);
       this.modelService.moveNonModelJsonElement(
         data.from.data.cpnElement,
         data.from.parent.data.cpnElement,
         data.from.parent.data.cpnElement,
-        data.to.index - 1,
+        direction === 'down' ? data.to.index - 1 :  data.to.index,
         data.type);
     }
 

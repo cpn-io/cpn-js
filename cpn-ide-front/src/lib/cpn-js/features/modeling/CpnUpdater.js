@@ -358,12 +358,11 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
       }
 
-      if (is(element, CPN_LABEL)) {
-        cpnElement.text = getDefText(shape.text || shape.name);
+      if (typeof cpnElement.text === 'object') {
+        cpnElement.text.__text = shape.text || shape.name;
       } else {
         cpnElement.text = shape.text || shape.name;
       }
-
     }
 
     updateLabels(element);

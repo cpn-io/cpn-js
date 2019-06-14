@@ -35,6 +35,7 @@ export class ValidationService {
   ];
 
   needValidation = false;
+  needCheckValidation = false;
   lastProjectData = {};
   checkValidationBusy = false;
   checkValidationScheduled = false;
@@ -46,6 +47,8 @@ export class ValidationService {
 
     this.eventService.on(Message.PROJECT_LOAD, (event) => {
       this.init();
+      this.validate();
+      this.checkValidation();
     });
     this.eventService.on(Message.MODEL_RELOAD, () => {
       this.init();
@@ -57,14 +60,17 @@ export class ValidationService {
         setTimeout(() => {
           this.checkValidation();
           this.checkValidationScheduled = false;
+          this.needCheckValidation = false;
         }, this.VALIDATION_TIMEOUT);
+      } else {
+        this.needCheckValidation = true;
       }
 
       // this.checkValidation();
       // this.validate();
     });
 
-    this.checkValidation();
+    // this.checkValidation();
   }
 
   init() {
@@ -188,8 +194,8 @@ export class ValidationService {
       const noGeometryChangeList = this.filterChangeList(changeList, this.geometryKeyList);
       const backupChangeList = this.filterChangeList(changeList, this.nobackupKeyList);
 
-      // console.log('END detectChanges(), changeList = ', changeList);
-      // console.log('END detectChanges(), noGeometryChangeList = ', noGeometryChangeList);
+      console.log('END detectChanges(), changeList = ', changeList);
+      console.log('END detectChanges(), noGeometryChangeList = ', noGeometryChangeList);
 
       if (changeList.length > 0) {
         // console.log('detectChanges(), CHANGE DETECTED, A = ', JSON.stringify(currentModel));

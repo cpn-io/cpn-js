@@ -100,7 +100,7 @@ export class ProjectService {
       return;
     }
 
-    localStorage.setItem('projectJsonStr', JSON.stringify(json));
+    localStorage.setItem('projectJson-1', JSON.stringify(json));
 
     this.project = { data: json, name: filename };
 
@@ -132,6 +132,7 @@ export class ProjectService {
 
     const modelFile = 'mynet.cpn';
     // const modelFile = 'mynet2.cpn';
+    // const modelFile = 'mynet-sub-1.cpn';
 
     // const modelFile = 'fuelstation.cpn';
 

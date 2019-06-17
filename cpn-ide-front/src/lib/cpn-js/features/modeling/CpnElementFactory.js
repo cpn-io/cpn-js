@@ -115,6 +115,9 @@ export function getDefPlace(name = undefined, position = undefined, size = undef
       text: getDefText(''),
       _id: id + idPostfix[type]
     };
+    if (type === 'type') {
+      attrs[type].text = getDefText(getDefaultValue(type));
+    }
   }
 
   attrs._id = id;

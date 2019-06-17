@@ -384,10 +384,11 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
 
       let text = shape.text || shape.name || '';
+      // let text = shape.text || shape.name;
       text = text.trim();
-      if (shape.defaultValue && text === shape.defaultValue) {
-        text = '';
-      }
+      // if (shape.defaultValue && text === shape.defaultValue) {
+      //   text = '';
+      // }
 
       if (typeof cpnElement.text === 'object') {
         cpnElement.text.__text = text;

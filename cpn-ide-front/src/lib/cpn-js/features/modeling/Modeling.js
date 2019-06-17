@@ -634,8 +634,7 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
     text = cpnLabelElement.text.__text; // for shape external label
   }
 
-
-  // console.log('Modeling.prototype.getLabelAttrs(), text = ', text);
+  text = text || '';
 
   // if label is empty check for default values
   if (labelType) {
@@ -643,7 +642,15 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
     // console.log('Modeling.prototype.getLabelAttrs(), defualt text = ', defaultValue);
   }
 
-  text = text || '';
+  console.log('Modeling.prototype.getLabelAttrs(), labelType, defaultValue, text = ', labelType, defaultValue, text);
+
+  // fix empty value for colset label
+  if (labelType === 'type' && text === '') {
+    cpnLabelElement.text = getDefText(defaultValue);
+    text = cpnLabelElement.text.__text;
+  }
+
+  console.log('Modeling.prototype.getLabelAttrs(), cpnLabelElement.text = ', cpnLabelElement.text);
 
   var bounds = { x: x, y: y, width: 200, height: 20 };
   bounds = this._textRenderer.getExternalLabelBounds(bounds, defaultValue && text.trim() === '' ? defaultValue : text);

@@ -8,6 +8,7 @@ import { keyframes } from '@angular/animations';
 
 import {
   getNextId,
+  getDefText
 } from '../../lib/cpn-js/features/modeling/CpnElementFactory';
 
 
@@ -66,6 +67,9 @@ export class ModelService {
         this.loadProject(event.project);
       }
     });
+    this.eventService.on(Message.MODEL_RELOAD, () => {
+      this.loadProject(this.getProject());
+    });
 
     this.eventService.on(Message.PAGE_OPEN, (data) => {
       this.subPages = data.subPages;
@@ -106,6 +110,11 @@ export class ModelService {
     this.project = project;
     this.projectData = project.data;
     this.projectName = project.name;
+
+    this.updatePlaceTypes();
+    this.updateInstances();
+
+    localStorage.setItem('projectJson', JSON.stringify(this.projectData));
   }
 
   getUndoCount() {
@@ -375,6 +384,94 @@ export class ModelService {
     return !isRoot ? { _id: getNextId(), _trans: id } : { _id: getNextId(), _page: id };
   }
 
+  /**
+   * Correct Place types. It should be UNIT by default if empty
+   */
+  updatePlaceTypes() {
+    const defPlaceType = this.settings.getAppSettings()['type'];
+
+    const allPlaces = this.getAllPlaces();
+    for (const p of allPlaces) {
+      if (p.type) {
+
+        let text;
+        if (typeof p.type.text === 'object') {
+          text = p.type.text.__text || '';
+        } else {
+          text = p.type.text || '';
+        }
+
+        if (text === '') {
+          p.type.text = getDefText(defPlaceType);
+        }
+      }
+    }
+  }
+
+  updateInstances() {
+    const cpnet = this.getCpn();
+    const rootPages = this.getRootPages();
+
+    const instances = [];
+
+    for (const p of rootPages) {
+      const instance: any = {
+        _id: p._id + 'itop',
+        _page: p._id
+      };
+
+      const subinstances = this.getSubInstances(p);
+      if (subinstances) {
+        instance.instance = subinstances;
+      }
+
+      instances.push(instance);
+    }
+
+    cpnet.instances = instances.length === 1 ? instances[0] : instances;
+  }
+
+  getSubInstances(page) {
+    console.log(this.constructor.name, 'getSubInstances(), page = ', page);
+
+    if (!page) {
+      return undefined;
+    }
+
+    const instances = [];
+
+    if (page.trans) {
+      const transArray = page.trans instanceof Array ? page.trans : [page.trans];
+      for (const t of transArray) {
+        if (t && t.subst) {
+          const instance: any = {
+            _id: t._id + 'ia',
+            _trans: t._id
+          };
+
+          const subpage = this.getPageById(t.subst._subpage);
+          if (subpage) {
+            const subinstances = this.getSubInstances(subpage);
+            if (subinstances) {
+              instance.instance = subinstances;
+            }
+          }
+
+          instances.push(instance);
+        }
+      }
+    }
+
+    if (instances.length === 0) {
+      return undefined;
+    }
+    if (instances.length === 1) {
+      return instances[0];
+    }
+    return instances;
+  }
+
+
   addInstanceInJson(newInstance, pageId, cpnElement) {
     const cpn = this.getCpn();
     if (!pageId) {
@@ -622,7 +719,7 @@ export class ModelService {
 
   deletePage(pageId) {
     this.saveBackupBak(this.projectData, pageId);
-    if (this.projectData.workspaceElements.cpnet.page ) {
+    if (this.projectData.workspaceElements.cpnet.page) {
       if (!(this.projectData.workspaceElements.cpnet.page instanceof Array)) {
         this.projectData.workspaceElements.cpnet.page = [this.projectData.workspaceElements.cpnet.page];
       }
@@ -1394,6 +1491,21 @@ export class ModelService {
     return page instanceof Array ? page : [page];
   }
 
+  getRootPages() {
+    const subpageIdList = this.getSubPageIds();
+    return this.getAllPages().filter(p => !subpageIdList.includes(p._id));
+  }
+
+  getSubPageIds() {
+    const pageIdList = [];
+    for (const t of this.getAllTrans()) {
+      if (t && t.subst && t.subst._subpage) {
+        pageIdList.push(t.subst._subpage);
+      }
+    }
+    return pageIdList;
+  }
+
   /**
    * Get page object from model by id
    * @param id
@@ -1415,6 +1527,29 @@ export class ModelService {
     }
     return undefined;
   }
+
+  /**
+   * Get all places for model
+   */
+  getAllPlaces() {
+    const allPlaces = [];
+    const allPages = this.getAllPages();
+    if (allPages && allPages.length > 0) {
+      for (const page of allPages) {
+        if (page) {
+          const place = page.place instanceof Array ? page.place : [page.place];
+          for (const p of place) {
+            if (p) {
+              allPlaces.push(p);
+            }
+          }
+        }
+      }
+    }
+
+    return allPlaces;
+  }
+
 
   /**
    * Get all trans for model

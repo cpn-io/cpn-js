@@ -51,7 +51,7 @@ CpnFactory.prototype.createShape = function (pageObject, cpnElement, type, posit
   if (type === CPN_PLACE) {
     attrs = this._modeling.getPlaceAttrs(cpnElement, type);
 
-    // console.log('createShape(), CPN_PLACE, attrs.cpnElement = ', JSON.stringify(attrs.cpnElement));
+    console.log('createShape(), CPN_PLACE, attrs.cpnElement = ', JSON.stringify(attrs.cpnElement));
 
     element = this._elementFactory.createShape(attrs);
     if (addToCanvas)

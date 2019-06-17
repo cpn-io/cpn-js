@@ -408,13 +408,54 @@ export class ModelService {
     }
   }
 
+  updateBinders(rootInstanceId) {
+    const cpnet = this.getCpn();
+
+    const binders = {
+      cpnbinder: {
+        sheets: {
+          cpnsheet: {
+            zorder: {
+              position: {
+                _value: '0'
+              }
+            },
+            _id: getNextId(),
+            _panx: '0.000000',
+            _pany: '0.000000',
+            _zoom: '1.000000',
+            _instance: rootInstanceId
+          }
+        },
+        zorder: {
+          position: {
+            _value: '0'
+          }
+        },
+        _id: getNextId(),
+        _x: '300',
+        _y: '50',
+        _width: '1200',
+        _height: '600'
+      }
+    };
+
+    cpnet.binders = binders;
+  }
+
   updateInstances() {
     const cpnet = this.getCpn();
     const rootPages = this.getRootPages();
 
     const instances = [];
 
+    let rootInstanceId;
+
     for (const p of rootPages) {
+      if (!rootInstanceId) {
+        rootInstanceId = p._id + 'itop';
+      }
+
       const instance: any = {
         _id: p._id + 'itop',
         _page: p._id
@@ -428,7 +469,9 @@ export class ModelService {
       instances.push(instance);
     }
 
-    cpnet.instances = instances.length === 1 ? instances[0] : instances;
+    cpnet.instances = instances.length === 1 ? { instance: instances[0] } : { instance: instances };
+
+    this.updateBinders(rootInstanceId);
   }
 
   getSubInstances(page) {

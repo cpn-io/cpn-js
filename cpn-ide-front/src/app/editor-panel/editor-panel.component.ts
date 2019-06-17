@@ -8,7 +8,7 @@ import {
   ViewChildren,
   ViewContainerRef
 } from '@angular/core';
-
+import { ModelService } from '../services/model.service';
 import { ModelEditorComponent } from '../model-editor/model-editor.component';
 import { TabsContainer } from '../../lib/tabs/tabs-container/tabs.container';
 import { Message } from '../common/message';
@@ -30,8 +30,7 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
 
   modelTabArray = [];
   mlTabArray = [];
-
-  constructor(private eventService: EventService) {
+  constructor(private eventService: EventService, private modelService: ModelService) {
   }
 
   ngOnInit() {
@@ -54,6 +53,16 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
 
     this.eventService.on(Message.DELETE_PAGE, (event) => {
       this.deleteTab(event.id);
+      // this.modelEditorList.forEach(editor => {
+      //   console.log('editor-panel delete page --- ', editor.pageId);
+      // });
+     // const newFilterdQueryList = new QueryList<ModelEditorComponent>();
+     // (this.modelEditorList.find(e => { return   e.pageId === event.id})).diagram._clear();
+      const filteredList = this.modelEditorList.filter(e => { return e.pageId !== event.id})
+      this.modelEditorList.reset(filteredList);
+      if (filteredList.length === 0 )
+        this.loadProject(this.modelService.project);
+      console.log('editor-panel delete page --- ', this.modelEditorList);
     });
 
     this.eventService.on(Message.CHANGE_NAME_PAGE, (event) => {

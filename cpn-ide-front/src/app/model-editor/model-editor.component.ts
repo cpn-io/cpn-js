@@ -25,6 +25,7 @@ import {
 
 import { AccessCpnService } from '../services/access-cpn.service';
 import { isComponent } from '@angular/core/src/render3/util';
+import {element} from 'protractor';
 
 
 @Component({
@@ -184,6 +185,7 @@ export class ModelEditorComponent implements OnInit {
       if (event.element.type === 'cpn:Transition' || event.element.type === 'cpn:Place') {
         this.eventService.send(Message.SHAPE_HOVER, { element: event.element });
       }
+      console.log('element.hover', event.element);
     });
     eventBus.on('element.out', (event) => {
       if (event.element.type === 'cpn:Transition' || event.element.type === 'cpn:Place') {
@@ -214,8 +216,9 @@ export class ModelEditorComponent implements OnInit {
       // console.log('shape.create.end, event = ', event);
 
       if (event.elements) {
+       // let allPagesId = this.modelService.getAllPages().map(p => {return p._id});
         for (const element of event.elements) {
-          if (element.cpnElement) {
+          if (element.cpnElement ) { //if (element.cpnElement && allPagesId.includes(this.pageId)) {
             this.modelService.addElementJsonOnPage(element.cpnElement, this.pageId, element.type, this.modeling);
 
             // Check if transition is subpage and create subpage
@@ -563,5 +566,6 @@ export class ModelEditorComponent implements OnInit {
 
     return text;
   }
+
 
 }

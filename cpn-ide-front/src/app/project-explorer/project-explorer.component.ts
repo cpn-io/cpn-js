@@ -1014,6 +1014,10 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
             } else {
               if (indexElem !== 0) {
                 upperPage = treeNode.parent.children[indexElem - 1].data.cpnElement;
+              }  else {
+                if (treeNode.parent.data.children.length > 1) {
+                  upperPage = treeNode.parent.children[indexElem + 1].data.cpnElement;
+                }
               }
             }
             if (upperPage) {

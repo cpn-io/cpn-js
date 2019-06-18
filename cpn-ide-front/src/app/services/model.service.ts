@@ -1774,26 +1774,11 @@ export class ModelService {
   }
 
   getArcEnds(cpnElement) {
-    const page = this.getAllPages().find(p => {
-      const arcs = p.arc instanceof Array ? p.arc : [p.arc];
-      return arcs.find(pl => pl._id === cpnElement._id);
-    });
+    const allPlaces = this.getAllPlaces();
+    const allTrans = this.getAllTrans();
 
-    if (!page) {
-      return undefined;
-    }
-
-    for (const entry of ['place', 'trans']) {
-      if (!(page[entry] instanceof Array)) { page[entry] = [page[entry]]; }
-    }
-
-    let placeEnd;
-    const place = page.place instanceof Array ? page.place : [page.place];
-    placeEnd = place.find(el => el._id === cpnElement.placeend._idref);
-
-    let transEnd;
-    const trans = page.trans instanceof Array ? page.trans : [page.trans];
-    transEnd = trans.find((tr) => cpnElement.transend._idref === tr._id);
+    const placeEnd = allPlaces.find(p => p._id === cpnElement.placeend._idref);
+    const transEnd = allTrans.find(t => t._id === cpnElement.transend._idref);
 
     return { place: placeEnd, trans: transEnd, orient: cpnElement._orientation };
   }

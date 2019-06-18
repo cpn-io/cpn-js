@@ -374,10 +374,10 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     if (pageName === '' || pageName === '-- empty --') {
 
       // delete instance
-      this.modelService.deleteInstance(this.cpnElement._id);
+      // this.modelService.deleteInstance(this.cpnElement._id);
       // delete subst
-      delete this.cpnElement.subst;
 
+      delete this.cpnElement.subst;
     } else {
       const pageId = this.modelService.getPageId(pageName);
 
@@ -391,15 +391,19 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
       this.cpnElement.subst._subpage = pageId;
 
       // create instance
-      this.modelService.addInstanceInJson(
-        this.modelService.instaceForTransition(this.cpnElement._id, false),
-        this.pageId,
-        this.cpnElement);
+      // this.modelService.addInstanceInJson(
+      //   this.modelService.instaceForTransition(this.cpnElement._id, false),
+      //   this.pageId,
+      //   this.cpnElement);
 
       // console.log(this.constructor.name, 'updateSubst(), this.cpnElement = ', this.cpnElement);
     }
 
+    // update instances
+    this.modelService.updateInstances();
+
     this.updateChanges();
+
     this.eventService.send(Message.UPDATE_TREE_PAGES, {
       currentPageId: this.pageId
     });

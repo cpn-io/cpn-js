@@ -113,6 +113,7 @@ export class ModelService {
 
     this.updatePlaceTypes();
     this.updateInstances();
+    this.updateBinders();
 
     localStorage.setItem('projectJson', JSON.stringify(this.projectData));
   }
@@ -126,7 +127,7 @@ export class ModelService {
     return this.redoHistory.length;
   }
 
-  saveBackupBak(model, pageId = undefined) {
+  saveBackupBak(_model, _pageId = undefined) {
   }
 
   saveBackup(model) {
@@ -343,7 +344,7 @@ export class ModelService {
     return undefined;
   }
 
-  addElementJsonOnPage(cpnElement, pageId, type, modeling) {
+  addElementJsonOnPage(cpnElement, pageId, type, _modeling) {
     console.log('addElementJsonOnPage()', cpnElement, pageId, type);
 
     this.saveBackupBak(this.projectData, pageId);
@@ -361,21 +362,10 @@ export class ModelService {
         jsonPageObject[this.modelCase[type]] = [cpnElement];
       }
     }
-    if (cpnElement.subst) {
-      this.addInstanceInJson(this.instaceForTransition(cpnElement._id, false), pageId, cpnElement);
-      //   const cpn = this.getCpn();
-      //   if (cpn.instances && cpn.instances.instance) {
-      //        if (!(cpn.instances.instance instanceof Array)) {
-      //          cpn.instances = [cpn.instances.instance];
-      //        }
-      //   } else {
-      //     cpn.instances.instance = [];
-      //   }
-      //   const pageInst = cpn.instances.instance.find(inst => { return inst._page === pageId});
-      //   if(pageInst)
-      //     pageInst.instance = modeling.instaceForTransition(cpnElement._id);
-    }
 
+    if (cpnElement.subst) {
+      this.updateInstances();
+    }
 
     this.eventService.send(Message.MODEL_CHANGED);
   }
@@ -408,39 +398,39 @@ export class ModelService {
     }
   }
 
-  updateBinders(rootInstanceId) {
+  updateBinders(rootInstanceId = null) {
     const cpnet = this.getCpn();
 
-    const binders = {
-      cpnbinder: {
-        sheets: {
-          cpnsheet: {
-            zorder: {
-              position: {
-                _value: '0'
-              }
-            },
-            _id: getNextId(),
-            _panx: '0.000000',
-            _pany: '0.000000',
-            _zoom: '1.000000',
-            _instance: rootInstanceId
-          }
-        },
-        zorder: {
-          position: {
-            _value: '0'
-          }
-        },
-        _id: getNextId(),
-        _x: '300',
-        _y: '50',
-        _width: '1200',
-        _height: '600'
-      }
-    };
+    // const binders = {
+    //   cpnbinder: {
+    //     sheets: {
+    //       cpnsheet: {
+    //         zorder: {
+    //           position: {
+    //             _value: '0'
+    //           }
+    //         },
+    //         _id: getNextId(),
+    //         _panx: '0.000000',
+    //         _pany: '0.000000',
+    //         _zoom: '1.000000',
+    //         _instance: rootInstanceId
+    //       }
+    //     },
+    //     zorder: {
+    //       position: {
+    //         _value: '0'
+    //       }
+    //     },
+    //     _id: getNextId(),
+    //     _x: '300',
+    //     _y: '50',
+    //     _width: '1200',
+    //     _height: '600'
+    //   }
+    // };
 
-    cpnet.binders = binders;
+    cpnet.binders = {}; // binders;
   }
 
   updateInstances() {
@@ -471,7 +461,7 @@ export class ModelService {
 
     cpnet.instances = instances.length === 1 ? { instance: instances[0] } : { instance: instances };
 
-    this.updateBinders(rootInstanceId);
+    // this.updateBinders(rootInstanceId);
   }
 
   getSubInstances(page) {
@@ -512,63 +502,6 @@ export class ModelService {
       return instances[0];
     }
     return instances;
-  }
-
-
-  addInstanceInJson(newInstance, pageId, cpnElement) {
-    const cpn = this.getCpn();
-    if (!pageId) {
-      const exist = this.getAllTrans().find(t => t && t.subst && t.subst._subpage === newInstance._page);
-      if (!exist) {
-        if (cpn.instances && cpn.instances.instance) {
-          if (!(cpn.instances.instance instanceof Array)) {
-            cpn.instances.instance = [cpn.instances.instance];
-          }
-        } else {
-          cpn.instances.instance = [];
-        }
-        cpn.instances.instance.push(newInstance);
-      }
-    } else {
-      const self = this;
-
-      const trans = this.getAllTrans().find(t => t && t.subst && t.subst._subpage === pageId);
-      const objId = trans ? trans._id : pageId;
-
-      if (cpnElement.subst) {
-        this.deleteInstance(cpnElement.subst._subpage);
-      }
-      // delete instance if exists
-      this.deleteInstance(newInstance._trans);
-
-      const entry = this.searchPageForInstace(cpn.instances, objId, self, undefined);
-      if (entry && entry.inst) {
-        const pginstance = entry.inst;
-        if (pginstance.instance) {
-          if (!(pginstance.instance instanceof Array)) {
-            pginstance.instance = [pginstance.instance];
-          }
-        } else {
-          pginstance.instance = [];
-        }
-        pginstance.instance.push(newInstance);
-      }
-
-      if (cpnElement.subst) {
-        const page = this.getPageById(cpnElement.subst._subpage);
-        if (page && page.trans) {
-          if (!(page.trans instanceof Array)) {
-            page.trans = [page.trans];
-          }
-          for (const tran of page.trans) {
-            if (tran.subst) {
-              this.addInstanceInJson(this.instaceForTransition(trans._id, false), page._id, trans);
-            }
-          }
-        }
-      }
-    }
-
   }
 
   searchPageForInstace(instance, objId, self, parent) {
@@ -724,7 +657,7 @@ export class ModelService {
   }
 
 
-  applyPageChanges(pageId, placeShapes, textRenderer, transShapes, arcShapes) {
+  applyPageChanges(pageId, _placeShapes, _textRenderer, _transShapes, _arcShapes) {
     this.saveBackupBak(this.projectData, pageId);
 
     const page = this.getPageById(pageId);
@@ -752,12 +685,15 @@ export class ModelService {
   createNewPage(page) {
     this.saveBackupBak(this.projectData, page._id);
 
-    if (this.projectData.workspaceElements.cpnet.page instanceof Array) {
-      this.projectData.workspaceElements.cpnet.page.push(page);
+    const cpnet = this.getCpn();
+
+    if (cpnet.page instanceof Array) {
+      cpnet.page.push(page);
     } else {
-      this.projectData.workspaceElements.cpnet.page = [this.projectData.workspaceElements.cpnet.page, page];
+      cpnet.page = [cpnet.page, page];
     }
-    // this.addInstanceInJson( this.instaceForTransition(page._id, true), undefined);
+
+    this.updateInstances();
   }
 
   deletePage(pageId) {
@@ -768,8 +704,9 @@ export class ModelService {
       }
       this.projectData.workspaceElements.cpnet.page = this.projectData.workspaceElements.cpnet.page.filter(x => x._id !== pageId);
     }
-  }
 
+    this.updateInstances();
+  }
 
   updateModel(updatedData) {
     this.saveBackupBak(this.projectData, undefined);
@@ -863,7 +800,7 @@ export class ModelService {
     }
   }
 
-  deleteMonitorInBlock(block, id) {
+  deleteMonitorInBlock(_block, _id) {
     // this.saveBackup(this.projectData, undefined);
     // //blcok[elementType] = blcok[elementType].filter(elem => elem._id !== id);
     // if (!(block[elementType] instanceof Array)){
@@ -1019,7 +956,7 @@ export class ModelService {
     }
   }
 
-  getRelations(id: string, elem: string): Array<string> {
+  getRelations(_id: string, elem: string): Array<string> {
     const result = [];
     switch (elem) {
       case 'Place': {
@@ -1054,7 +991,11 @@ export class ModelService {
       constraints: '',
       _id: id ? id : getNextId()
     };
-    this.addInstanceInJson(this.instaceForTransition(newPage._id, true), undefined, newPage);
+
+    // this.addInstanceInJson(this.instaceForTransition(newPage._id, true), undefined, newPage);
+
+    this.updateInstances();
+
     return newPage;
   }
 
@@ -1084,7 +1025,7 @@ export class ModelService {
     };
   }
 
-  createCpnMonitorBP(cpnElement) {
+  createCpnMonitorBP(_cpnElement) {
 
   }
 
@@ -1256,7 +1197,7 @@ export class ModelService {
     };
   }
 
-  createCpnMonitorLLDC(cpnElement) {
+  createCpnMonitorLLDC(_cpnElement) {
 
   }
 
@@ -1302,19 +1243,19 @@ export class ModelService {
     };
   }
 
-  createCpnMonitorPCBP(cpnElement) {
+  createCpnMonitorPCBP(_cpnElement) {
 
   }
 
-  createCpnMonitorTEBP(cpnElement) {
+  createCpnMonitorTEBP(_cpnElement) {
 
   }
 
-  createCpnMonitorUD(cpnElement) {
+  createCpnMonitorUD(_cpnElement) {
 
   }
 
-  createCpnMonitorWIF(cpnElement) {
+  createCpnMonitorWIF(_cpnElement) {
 
   }
 

@@ -1,16 +1,19 @@
-import { CPN_PLACE, CPN_TRANSITION } from "../../util/ModelUtil";
+import { CPN_PLACE, CPN_TRANSITION, is } from "../../util/ModelUtil";
+import { getNextId } from "../modeling/CpnElementFactory";
 
 /**
  * A example palette provider.
  */
-export default function CpnPaletteProvider(create, elementFactory, cpnFactory, lassoTool,
+export default function CpnPaletteProvider(create, elementFactory, elementRegistry, cpnFactory, lassoTool,
   globalConnect, palette, eventBus, modeling, dragging) {
   this._create = create;
   this._elementFactory = elementFactory;
+  this._elementRegistry = elementRegistry;
   this._cpnFactory = cpnFactory;
   this._lassoTool = lassoTool;
   this._globalConnect = globalConnect;
   this._palette = palette;
+  this._eventBus = eventBus;
   this._dragging = dragging;
   this._modeling = modeling;
 
@@ -20,6 +23,7 @@ export default function CpnPaletteProvider(create, elementFactory, cpnFactory, l
 CpnPaletteProvider.$inject = [
   'create',
   'elementFactory',
+  'elementRegistry',
   'cpnFactory',
   'lassoTool',
   'globalConnect',
@@ -31,12 +35,63 @@ CpnPaletteProvider.$inject = [
 
 
 CpnPaletteProvider.prototype.getPaletteEntries = function () {
-  var create = this._create,
-    elementFactory = this._elementFactory,
-    globalConnect = this._globalConnect,
-    lassoTool = this._lassoTool;
 
   const self = this;
+
+  const eventBus = this._eventBus;
+  const lassoTool = this._lassoTool;
+  const modeling = this._modeling;
+  const elementRegistry = this._elementRegistry;
+  const cpnFactory = this._cpnFactory;
+
+  /**
+   * Remove selected elements
+   */
+  function removeElements() {
+    const selectedElements = elementRegistry.filter(function (element) { return element.selected; });
+
+    for (const element of selectedElements) {
+      const forDelete = modeling.getShapeArcs(element);
+      forDelete.push(element);
+      modeling.removeElements(forDelete);
+    }
+  }
+
+  function extractSubpage() {
+    const selectedElements = elementRegistry.filter(function (element) { return element.selected; });
+    if (selectedElements.length === 0) {
+      return;
+    }
+
+    console.log(self.constructor.name, 'extractSubpage(), selectedElements = ', selectedElements);
+
+    const position = { x: selectedElements[0].x, y: selectedElements[0].y };
+
+    let transCpnElement = modeling.createShapeCpnElement(position, CPN_TRANSITION);
+
+    setTimeout(() => {
+      transCpnElement = modeling.declareSubPage(transCpnElement, 'Subpage', getNextId());
+      const element = cpnFactory.createShape(undefined, transCpnElement, CPN_TRANSITION, position, true);
+
+      const places = [];
+      const transitions = [];
+      for (const e of selectedElements) {
+        if (is(e, CPN_PLACE)) {
+          places.push(e.cpnElement);
+        }
+        if (is(e, CPN_TRANSITION)) {
+          transitions.push(e.cpnElement);
+        }
+      }
+
+      eventBus.fire('extract.subpage', { transCpnElement: transCpnElement, places: places, transitions: transitions });
+      eventBus.fire('shape.editing.activate', { shape: element });
+      eventBus.fire('shape.contextpad.activate', { shape: element });
+
+      modeling.removeEmptyConnections();
+    }, 1);
+
+  }
 
   return {
     'lasso-tool': {
@@ -56,8 +111,7 @@ CpnPaletteProvider.prototype.getPaletteEntries = function () {
       className: 'bpmn-icon-subprocess-expanded',
       title: 'Move selected elements to subpage',
       action: {
-        click: function (event) {
-        }
+        click: extractSubpage
       }
     },
 
@@ -71,8 +125,7 @@ CpnPaletteProvider.prototype.getPaletteEntries = function () {
       className: 'bpmn-icon-trash',
       title: 'Remove selected elements',
       action: {
-        click: function (event) {
-        }
+        click: removeElements
       }
     },
 

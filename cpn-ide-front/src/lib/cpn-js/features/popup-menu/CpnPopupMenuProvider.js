@@ -3,6 +3,7 @@ import {
   filter
 } from 'min-dash';
 import { is, CPN_PLACE, CPN_TRANSITION, CPN_TEXT_ANNOTATION } from '../../util/ModelUtil';
+import { getNextId } from '../modeling/CpnElementFactory';
 
 /**
  * This module is an element agnostic replace menu provider for the popup menu.
@@ -49,12 +50,12 @@ CpnPopupMenuProvider.prototype.register = function () {
 CpnPopupMenuProvider.prototype.open = function (element, position) {
   this._element = element;
   this._position = position.cursor;
-  
+
   this._popupMenu.open(element, 'cpnPopupMenu', position);
 };
 
 CpnPopupMenuProvider.prototype.close = function () {
-  if( this._popupMenu._current && this._popupMenu._current.className  === 'cpnPopupMenu')
+  if (this._popupMenu._current && this._popupMenu._current.className === 'cpnPopupMenu')
     this._popupMenu.close();
 };
 
@@ -168,27 +169,32 @@ CpnPopupMenuProvider.prototype._createShape = function (event, type) {
   position.y -= 90;
 
   let element = this._cpnFactory.createShape(undefined, undefined, type, position, true);
-  this._eventBus.fire('shape.create.end', {elements: [element]});
-  this._eventBus.fire('shape.editing.activate', {shape: element});
-  this._eventBus.fire('shape.contextpad.activate', {shape: element});
+
+  setTimeout(() => {
+    this._eventBus.fire('shape.create.end', { elements: [element] });
+    this._eventBus.fire('shape.editing.activate', { shape: element });
+    this._eventBus.fire('shape.contextpad.activate', { shape: element });
+  }, 1);
 }
 
 CpnPopupMenuProvider.prototype._createSubpage = function (event) {
-  // console.log('CpnPopupMenuProvider.prototype._createSubpage, this.position = ', this._position);
+  console.log('CpnPopupMenuProvider.prototype._createSubpage, this.position = ', this._position);
 
   this._popupMenu.close();
   const position = toLocalPoint(this._canvas, this._position);
 
-  // alert(JSON.stringify(position));
-  let id = 'ID' + new Date().getTime();
-  let cpnElement = this._modeling.createShapeCpnElement(position, CPN_TRANSITION);
+  let transCpnElement = this._modeling.createShapeCpnElement(position, CPN_TRANSITION);
 
-  cpnElement = this._modeling.declareSubPage(cpnElement, 'Subpage', id);
+  setTimeout(() => {
+    transCpnElement = this._modeling.declareSubPage(transCpnElement, 'Subpage', getNextId());
 
-  let element = this._cpnFactory.createShape(undefined, cpnElement, CPN_TRANSITION, position, true);
-  this._eventBus.fire('shape.create.end', {elements: [element]});
-  this._eventBus.fire('shape.editing.activate', {shape: element});
-  this._eventBus.fire('shape.contextpad.activate', {shape: element});
+    let element = this._cpnFactory.createShape(undefined, transCpnElement, CPN_TRANSITION, position, true);
+    this._eventBus.fire('shape.create.end', { elements: [element] });
+    this._eventBus.fire('shape.editing.activate', { shape: element });
+    this._eventBus.fire('shape.contextpad.activate', { shape: element });
+
+    this._modeling.removeEmptyConnections();
+  }, 1);
 }
 
 /**

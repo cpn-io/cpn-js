@@ -22,10 +22,13 @@ export class ColorDeclarationsPipe implements PipeTransform {
   transform(value: string): string {
     let transformed = value;
 
-    for (const key of Object.keys(this.colors)) {
-      if (value.includes(key))
-        transformed = transformed.replace(new RegExp('\\b' + key + '\\b', 'gi'),
-          '<span style="color:' + this.colors[key] + '">' + key + '</span>');
+    if (value) {
+      for (const key of Object.keys(this.colors)) {
+        if (value.includes(key)) {
+          transformed = transformed.replace(new RegExp('\\b' + key + '\\b', 'gi'),
+            '<span style="color:' + this.colors[key] + '">' + key + '</span>');
+        }
+      }
     }
 
     return transformed;

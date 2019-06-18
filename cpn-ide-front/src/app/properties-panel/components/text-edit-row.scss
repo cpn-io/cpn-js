@@ -41,3 +41,8 @@ div.value-readonly {
   // background: none;
   width: 100%;
 }
+
+[contenteditable] {
+  white-space: pre;
+  font-family: 'Courier New', Courier, monospace;
+}

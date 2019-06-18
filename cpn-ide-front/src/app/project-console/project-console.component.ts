@@ -51,16 +51,15 @@ export class ProjectConsoleComponent implements OnInit {
         const elapsed = new Date().getTime() - this.timeInitStart;
 
         if (event.data.success) {
-          this.logSuccess('Complete in ' + this.timeConversion(elapsed) + '.Model is correct.');
+          this.logSuccess('Complete in ' + this.timeConversion(elapsed) + '. Model is correct.');
         } else {
+          this.logError('Complete in ' + this.timeConversion(elapsed) + ' with errors:');
 
-          // this.logError('Error: ' + JSON.stringify(event));
-          for (const id of Object.keys(event.data.issues)) {
-            const issue = event.data.issues[id][0];
-            if (issue.description.includes(issue.id)) {
-              this.logError('Error: ' + issue.description);
-            } else {
-              this.logError('Error: ' + issue.id + ': ' + issue.description);
+          const errorData = this.accessCpnService.getErrorData();
+          console.log('errorData: ', errorData);
+          if (Object.keys(errorData).length > 0) {
+            for (const id of Object.keys(errorData)) {
+              this.logError(id + ': ' + errorData[id]);
             }
           }
         }
@@ -71,10 +70,13 @@ export class ProjectConsoleComponent implements OnInit {
 
     this.eventService.on(Message.SERVER_INIT_NET_ERROR, (event) => {
       if (event) {
-        this.logError('Validation server error: ' + JSON.stringify(event.data));
+        if (event.data && event.data.error && event.data.error.stackTrace) {
+          this.logError('Validation server error:\n' + event.data.error.stackTrace);
+        } else {
+          this.logError('Validation server error: ' + JSON.stringify(event.data));
+        }
       }
     });
-
 
     // SIMULATION
 
@@ -92,8 +94,17 @@ export class ProjectConsoleComponent implements OnInit {
     });
 
     this.eventService.on(Message.SERVER_INIT_SIM_ERROR, (event) => {
-      if (event) {
-        this.logError('Simulator initializing error: ' + JSON.stringify(event.data));
+      if (event && event.data) {
+        if (event.data.error && event.data.error.description) {
+          this.logError('Simulator initializing error: ' + event.data.error.description);
+          this.logError(event.data.error.stackTrace);
+        } else if (event.data.error && event.data.error.stackTrace) {
+          this.logError('Simulator initializing error:\n' + event.data.error.stackTrace);
+        } else {
+          this.logError('Simulator initializing error:\n' + JSON.stringify(event.data));
+        }
+      } else {
+        this.logError('Simulator initializing error: UNDEFINED');
       }
     });
 
@@ -112,7 +123,7 @@ export class ProjectConsoleComponent implements OnInit {
     });
 
     // MODEL CHANGES
-    this.eventService.on(Message.MODEL_CHANGED, (event) => {
+    this.eventService.on(Message.MODEL_CHANGED_DETAILS, (event) => {
       if (event && event.changesPath) {
         this.logChanges(event.changesPath);
       }

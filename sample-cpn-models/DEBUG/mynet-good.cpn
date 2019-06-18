@@ -118,9 +118,14 @@
                     AVert
                 </text>
                 <ellipse w='74' h='70'/>
-                <token x='-80.000000' y='-49.000000'/>
+                <token x='-80.000000' y='-49.000000'>
+                    <text>
+                    </text>
+                </token>
                 <marking x='-4.000000' y='-10.000000' hidden='false'>
                     <snap snap_id='9' anchor.horizontal='1' anchor.vertical='3'/>
+                    <text>
+                    </text>
                 </marking>
                 <type id='ID1412330961'>
                     <posattr x='-265' y='128.5'/>
@@ -150,9 +155,14 @@
                     CVert
                 </text>
                 <ellipse w='60' h='40'/>
-                <token x='-10.000000' y='0.000000'/>
+                <token x='-10.000000' y='0.000000'>
+                    <text>
+                    </text>
+                </token>
                 <marking x='0.000000' y='0.000000' hidden='false'>
                     <snap snap_id='0' anchor.horizontal='0' anchor.vertical='0'/>
+                    <text>
+                    </text>
                 </marking>
                 <type id='ID1412328455'>
                     <posattr x='45' y='109.5'/>
@@ -168,7 +178,8 @@
                     <fillattr colour='White' pattern='Solid' filled='false'/>
                     <lineattr colour='Black' thick='0' type='Solid'/>
                     <textattr colour='Black' bold='false'/>
-                    <text tool='CPN Tools' version='4.0.1'/>
+                    <text tool='CPN Tools' version='4.0.1'>
+                    </text>
                 </initmark>
             </place>
             <trans id='ID1412328496' explicit='false'>
@@ -186,28 +197,32 @@
                     <fillattr colour='White' pattern='Solid' filled='false'/>
                     <lineattr colour='Black' thick='0' type='Solid'/>
                     <textattr colour='Black' bold='false'/>
-                    <text tool='CPN Tools' version='4.0.1'/>
+                    <text tool='CPN Tools' version='4.0.1'>
+                    </text>
                 </cond>
                 <time id='ID1412328498'>
                     <posattr x='-119.5' y='164.5'/>
                     <fillattr colour='White' pattern='Solid' filled='false'/>
                     <lineattr colour='Black' thick='0' type='Solid'/>
                     <textattr colour='Black' bold='false'/>
-                    <text tool='CPN Tools' version='4.0.1'/>
+                    <text tool='CPN Tools' version='4.0.1'>
+                    </text>
                 </time>
                 <code id='ID1412328499'>
                     <posattr x='-112' y='103'/>
                     <fillattr colour='White' pattern='Solid' filled='false'/>
                     <lineattr colour='Black' thick='0' type='Solid'/>
                     <textattr colour='Black' bold='false'/>
-                    <text tool='CPN Tools' version='4.0.1'/>
+                    <text tool='CPN Tools' version='4.0.1'>
+                    </text>
                 </code>
                 <priority id='ID1412328501'>
                     <posattr x='-256' y='102.5'/>
                     <fillattr colour='White' pattern='Solid' filled='false'/>
                     <lineattr colour='Black' thick='0' type='Solid'/>
                     <textattr colour='Black' bold='false'/>
-                    <text tool='CPN Tools' version='4.0.1'/>
+                    <text tool='CPN Tools' version='4.0.1'>
+                    </text>
                 </priority>
             </trans>
             <arc id='ID1412328564' orientation='PtoT' order='1'>
@@ -227,6 +242,8 @@
                         x
                     </text>
                 </annot>
+                <text>
+                </text>
             </arc>
             <arc id='ID1412328605' orientation='TtoP' order='1'>
                 <posattr x='0.000000' y='0.000000'/>
@@ -245,6 +262,8 @@
                         x
                     </text>
                 </annot>
+                <text>
+                </text>
             </arc>
             <constraints>
             </constraints>

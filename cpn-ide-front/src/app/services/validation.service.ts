@@ -7,7 +7,7 @@ import { initDomAdapter } from '@angular/platform-browser/src/browser';
 @Injectable()
 export class ValidationService {
 
-  VALIDATION_TIMEOUT = 1000;
+  VALIDATION_TIMEOUT = 100;
 
   geometryKeyList = [
     'aux',
@@ -35,8 +35,10 @@ export class ValidationService {
   ];
 
   needValidation = false;
+  needCheckValidation = false;
   lastProjectData = {};
   checkValidationBusy = false;
+  checkValidationScheduled = false;
 
   constructor(
     private eventService: EventService,
@@ -45,12 +47,30 @@ export class ValidationService {
 
     this.eventService.on(Message.PROJECT_LOAD, (event) => {
       this.init();
+      this.validate();
+      this.checkValidation();
     });
     this.eventService.on(Message.MODEL_RELOAD, () => {
       this.init();
     });
 
-    this.checkValidation();
+    this.eventService.on(Message.MODEL_CHANGED, () => {
+      if (!this.checkValidationScheduled) {
+        this.checkValidationScheduled = true;
+        setTimeout(() => {
+          this.checkValidation();
+          this.checkValidationScheduled = false;
+          this.needCheckValidation = false;
+        }, this.VALIDATION_TIMEOUT);
+      } else {
+        this.needCheckValidation = true;
+      }
+
+      // this.checkValidation();
+      // this.validate();
+    });
+
+    // this.checkValidation();
   }
 
   init() {
@@ -132,9 +152,16 @@ export class ValidationService {
   filterChangeList(changeList, wordList) {
     return changeList.filter((p) => {
       for (const w of wordList) {
-        if (p.includes(w)) {
+
+        // /\bhow\b/i.test(p);
+
+        if (new RegExp('\\b' + w + '\\b', 'gi').test(p)) {
           return false;
         }
+
+        // if (p.includes(w)) {
+        //   return false;
+        // }
       }
       return true;
     });
@@ -144,6 +171,8 @@ export class ValidationService {
    * Regular checking validation
    */
   checkValidation() {
+    // console.log('checkValidation()');
+
     if (this.checkValidationBusy) {
       return;
     }
@@ -162,11 +191,13 @@ export class ValidationService {
 
       this.detectChanges(lastModel, currentModel, undefined, path, changeList);
 
+      console.log('END detectChanges(), changeList = ', changeList);
+
       const noGeometryChangeList = this.filterChangeList(changeList, this.geometryKeyList);
       const backupChangeList = this.filterChangeList(changeList, this.nobackupKeyList);
 
-      // console.log('END detectChanges(), changeList = ', changeList);
-      // console.log('END detectChanges(), nonGeometryChangeList = ', nonGeometryChangeList);
+      console.log('END detectChanges(), changeList = ', changeList);
+      console.log('END detectChanges(), noGeometryChangeList = ', noGeometryChangeList);
 
       if (changeList.length > 0) {
         // console.log('detectChanges(), CHANGE DETECTED, A = ', JSON.stringify(currentModel));
@@ -184,7 +215,7 @@ export class ValidationService {
         }
 
         for (const changePath of changeList) {
-          this.eventService.send(Message.MODEL_CHANGED, { changesPath: changePath });
+          this.eventService.send(Message.MODEL_CHANGED_DETAILS, { changesPath: changePath });
         }
 
         this.lastProjectData = currentModel;
@@ -199,10 +230,10 @@ export class ValidationService {
     if (this.needValidation) {
       this.needValidation = false;
 
-      this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData() });
+      this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData(), complexVerify: false });
     }
 
-    setTimeout(() => this.checkValidation(), this.VALIDATION_TIMEOUT);
+    // setTimeout(() => this.checkValidation(), this.VALIDATION_TIMEOUT);
 
     this.checkValidationBusy = false;
   }

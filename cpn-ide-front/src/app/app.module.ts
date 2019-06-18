@@ -11,6 +11,9 @@ import { JsonEditorModule } from 'ng2-json-editor';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgxJsonViewerModule } from 'ngx-json-viewer-scrolling';
+// import { AgmJsonViewerModule } from 'agm-json-viewer';
+// import { JsonTree } from 'ng2-json-view'
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -26,7 +29,7 @@ import { ProjectExplorerComponent } from './project-explorer/project-explorer.co
 import { ProjectConsoleComponent } from './project-console/project-console.component';
 import { EditorPanelComponent } from './editor-panel/editor-panel.component';
 
-import { TabModule } from './tabs/tabs-component.module';
+import { TabModule } from '../lib/tabs/tabs-component.module';
 import { ProjectDetailsComponent } from './project-details/project-details.component';
 import { PropertiesPanelComponent } from './properties-panel/properties-panel.component';
 
@@ -44,6 +47,7 @@ import { OptionsNamePipePipe } from './pipes/options-name.pipe';
 
 import { SettingsService } from './services/settings.service';
 import { ValidationService } from './services/validation.service';
+import { ScrollPaneComponent } from './scroll-pane/scroll-pane.component';
 
 require('typeface-droid-sans-mono');
 
@@ -74,7 +78,8 @@ require('typeface-droid-sans-mono');
     SaveprojectButtonComponent,
 
     BlockHeaderComponent,
-    TextEditRowComponent
+    TextEditRowComponent,
+    ScrollPaneComponent
   ],
   imports: [
     BrowserModule,
@@ -90,6 +95,9 @@ require('typeface-droid-sans-mono');
     TabModule,
     FormsModule,
     CommonModule,
+    NgxJsonViewerModule,
+    // AgmJsonViewerModule,
+    // JsonTree,
 
     // Ngb
     NgbModule,

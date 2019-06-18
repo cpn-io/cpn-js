@@ -14,3 +14,29 @@
     transform: translateY(-50%);
     font-size: 1.5em;
 }
+
+.popup {
+  position: absolute;
+  left: 500px;
+  top: 300px;
+  padding: 5px 10px;
+  display: none
+}
+
+.readyPopup {
+  background: #ddffdd;
+  border: darkgreen 1px solid;
+  color: darkgreen;
+}
+
+.warningPopup {
+  background: #ffdd99;
+  border: darkorange 1px solid;
+  color: darkorange;
+}
+
+.errorPopup {
+  background: #ffdddd;
+  border: darkred 1px solid;
+  color: darkred;
+}

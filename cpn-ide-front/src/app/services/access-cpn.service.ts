@@ -21,10 +21,10 @@ export class AccessCpnService {
   constructor(private http: HttpClient,
     private eventService: EventService) {
 
-    this.eventService.on(Message.SERVER_INIT_NET, (data) => {
-      console.log('AccessCpnService(), SERVER_INIT_NET, data = ', data);
-      if (data) {
-        this.initNet(data.projectData);
+    this.eventService.on(Message.SERVER_INIT_NET, (event) => {
+      console.log('AccessCpnService(), SERVER_INIT_NET, data = ', event);
+      if (event) {
+        this.initNet(event.projectData, event.complexVerify);
       }
     });
   }
@@ -36,14 +36,18 @@ export class AccessCpnService {
     return this.tokenData;
   }
   getReadyData() {
-    return this.readyData;
+    const readyData = {};
+    for (const id of this.readyData) {
+      readyData[id] = 'Transition is ready.';
+    }
+    return readyData;
   }
 
   /**
    * Generate new user session
    */
   generateUserSession() {
-    this.userSessionId = 'ID' + new Date().getTime();
+    this.userSessionId = 'CPN-USER-SESSION-' + new Date().getTime();
     console.log('generateUserSession - new id -', this.userSessionId);
     return this.userSessionId;
   }
@@ -58,7 +62,7 @@ export class AccessCpnService {
   /**
    * Access/CPN API
    */
-  initNet(cpnJson) {
+  initNet(cpnJson, complexVerify) {
     if (this.initNetProcessing) {
       return;
     }
@@ -82,16 +86,15 @@ export class AccessCpnService {
 
     this.errorData = [];
 
-    this.http.post('/api/v2/cpn/init', { 'xml': cpnXml }, { headers: { 'X-SessionId': this.sessionId } })
+    this.http.post('/api/v2/cpn/init', { xml: cpnXml, complex_verify: complexVerify }, { headers: { 'X-SessionId': this.sessionId } })
       .subscribe(
         (data: any) => {
           console.log('AccessCpnService, initNet(), SUCCESS, data = ', data);
           this.initNetProcessing = false;
-          this.eventService.send(Message.SERVER_INIT_NET_DONE, { data: data });
 
-          if (!data.success) {
-            this.errorData = data.issues;
-          }
+          this.saveErrorData(data);
+
+          this.eventService.send(Message.SERVER_INIT_NET_DONE, { data: data, errorIssues: data.issues });
 
           // Init simulator
           // if (!this.simInitialized) {
@@ -104,6 +107,22 @@ export class AccessCpnService {
           this.eventService.send(Message.SERVER_INIT_NET_ERROR, { data: error });
         }
       );
+  }
+
+  saveErrorData(data) {
+    this.errorData = [];
+
+    if (!data.success) {
+      for (const id of Object.keys(data.issues)) {
+        for (const issue of data.issues[id]) {
+          issue.description = issue.description.replace(issue.id + ':', '');
+          issue.description = issue.description.replace(issue.id, '');
+          issue.description = issue.description.replace(':', '');
+          issue.description = issue.description.trim();
+          this.errorData[issue.id] = issue.description;
+        }
+      }
+    }
   }
 
   /**

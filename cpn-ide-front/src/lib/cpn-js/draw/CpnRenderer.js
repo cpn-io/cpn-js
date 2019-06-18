@@ -71,6 +71,7 @@ var TOKEN_FILL_COLOR = '#6fe117';
 var MARKING_FILL_COLOR = '#bcfd8b';
 
 var ERROR_FILL_COLOR = '#cc0000';
+var WARNING_FILL_COLOR = '#996600';
 var PROCESS_FILL_COLOR = '#999900';
 var READY_FILL_COLOR = '#009900';
 
@@ -91,6 +92,10 @@ export default function CpnRenderer(
   canvas, textRenderer, stateProvider, priority) {
 
   BaseRenderer.call(this, eventBus, priority);
+
+  this._stateProvider = stateProvider;
+
+  const self = this;
 
   var rendererId = RENDERER_IDS.next();
 
@@ -534,8 +539,9 @@ export default function CpnRenderer(
       let dx = waypoints[i].x - prevPoint.x;
       let dy = waypoints[i].y - prevPoint.y;
       let d = Math.sqrt(dx * dx + dy * dy);
+      let DD = Math.min(D, d);
 
-      let wp = { x: (prevPoint.x + D * dx / d), y: (prevPoint.y + D * dy / d) };
+      let wp = { x: (prevPoint.x + DD * dx / d), y: (prevPoint.y + DD * dy / d) };
 
       if (prevWp) {
         pathData += 'Q' + prevPoint.x + ' ' + prevPoint.y + ', ' + wp.x + ' ' + wp.y + ' ';
@@ -543,7 +549,7 @@ export default function CpnRenderer(
 
       let wp2 = waypoints[i];
       if (i < waypoints.length - 1) {
-        wp2 = { x: (prevPoint.x + dx - D * dx / d), y: (prevPoint.y + dy - D * dy / d) };
+        wp2 = { x: (prevPoint.x + dx - DD * dx / d), y: (prevPoint.y + dy - DD * dy / d) };
       }
 
       pathData += 'L' + wp2.x + ',' + wp2.y + ' ';
@@ -562,16 +568,28 @@ export default function CpnRenderer(
    * @param {*} element
    * @param {*} svgElement
    */
-  function setCpnStatus(element, svgElement) {
-    if (element.cpnStatus) {
-      if (element.cpnStatus === 'process') {
-        svgAttr(svgElement, { filter: shadow('shape', PROCESS_FILL_COLOR), });
-      }
-      if (element.cpnStatus === 'error') {
-        svgAttr(svgElement, { filter: shadow('shape', ERROR_FILL_COLOR), });
-      }
-      if (element.cpnStatus === 'ready') {
+  function drawCpnStatus(element, svgElement) {
+    // if (element.cpnStatus) {
+    //   if (element.cpnStatus === 'process') {
+    //     svgAttr(svgElement, { filter: shadow('shape', PROCESS_FILL_COLOR), });
+    //   }
+    //   if (element.cpnStatus === 'error') {
+    //     svgAttr(svgElement, { filter: shadow('shape', ERROR_FILL_COLOR), });
+    //   }
+    //   if (element.cpnStatus === 'ready') {
+    //     svgAttr(svgElement, { filter: shadow('shape', READY_FILL_COLOR), });
+    //   }
+    // }
+
+    if (element.cpnElement) {
+      if (self._stateProvider.getReadyState(element.cpnElement._id)) {
         svgAttr(svgElement, { filter: shadow('shape', READY_FILL_COLOR), });
+      }
+      if (self._stateProvider.getWarningState(element.cpnElement._id)) {
+        svgAttr(svgElement, { filter: shadow('shape', WARNING_FILL_COLOR), });
+      }
+      if (self._stateProvider.getErrorState(element.cpnElement._id)) {
+        svgAttr(svgElement, { filter: shadow('shape', ERROR_FILL_COLOR), });
       }
     }
   }
@@ -605,7 +623,7 @@ export default function CpnRenderer(
     });
 
     // Add CPN status shadow
-    setCpnStatus(element, ellipse);
+    drawCpnStatus(element, ellipse);
 
     svgAppend(parentGfx, ellipse);
 
@@ -660,7 +678,7 @@ export default function CpnRenderer(
     });
 
     // Add CPN status shadow
-    setCpnStatus(element, rect);
+    drawCpnStatus(element, rect);
 
     svgAppend(parentGfx, rect);
 
@@ -890,28 +908,28 @@ export default function CpnRenderer(
 
 
     // cpn status
-    if (element.cpnStatus) {
-      var color;
+    // if (element.cpnStatus) {
+    var color;
 
-      if (element.cpnStatus === 'process') {
-        color = PROCESS_FILL_COLOR;
-      }
-      if (element.cpnStatus === 'error') {
-        color = ERROR_FILL_COLOR;
-      }
-      if (element.cpnStatus === 'ready') {
-        color = READY_FILL_COLOR;
-      }
-
-      if (color) {
-        var attrs2 = assign({}, attrs, {
-          stroke: color + '33',
-          strokeWidth: getStrokeWidth(element) + 8,
-          // filter: shadow('blur', ERROR_FILL_COLOR),
-        });
-        drawPath(parentGfx, pathData, attrs2);
-      }
+    if (self._stateProvider.getReadyState(element.cpnElement._id)) {
+      color = READY_FILL_COLOR;
     }
+    if (self._stateProvider.getWarningState(element.cpnElement._id)) {
+      color = WARNING_FILL_COLOR;
+    }
+    if (self._stateProvider.getErrorState(element.cpnElement._id)) {
+      color = ERROR_FILL_COLOR;
+    }
+
+    if (color) {
+      var attrs2 = assign({}, attrs, {
+        stroke: color + '33',
+        strokeWidth: getStrokeWidth(element) + 8,
+        // filter: shadow('blur', ERROR_FILL_COLOR),
+      });
+      drawPath(parentGfx, pathData, attrs2);
+    }
+    // }
 
     // connection end markers
     attrs = assign(attrs, getConnectionEndMarkerAttrs(element));

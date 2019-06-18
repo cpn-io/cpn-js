@@ -12,17 +12,20 @@ import { ValidationService } from '../services/validation.service';
 import { importCpnPage } from '../../lib/cpn-js/import/Importer';
 
 import {
+  getNextId,
+} from '../../lib/cpn-js/features/modeling/CpnElementFactory';
+
+import {
   CPN_LABEL,
-  CPN_TOKEN_LABEL,
-  CPN_MARKING_LABEL,
-  isCpn,
-  is,
-  CPN_PLACE,
   CPN_TRANSITION,
   CPN_CONNECTION,
-  isAny,
+  is,
+  isCpn,
 } from '../../lib/cpn-js/util/ModelUtil';
+
 import { AccessCpnService } from '../services/access-cpn.service';
+import { isComponent } from '@angular/core/src/render3/util';
+import {element} from 'protractor';
 
 
 @Component({
@@ -40,6 +43,8 @@ export class ModelEditorComponent implements OnInit {
   }
 
   @ViewChild('container') containerElementRef: ElementRef;
+  @ViewChild('popup') popupElementRef: ElementRef;
+
   @Input() id: string;
 
 
@@ -55,6 +60,8 @@ export class ModelEditorComponent implements OnInit {
   selectedElement;
   jsonPageObject;
   portMenuProvider;
+  stateProvider;
+
   // subscription: Subscription;
   subpages = [];
   placeShapes = [];
@@ -66,11 +73,10 @@ export class ModelEditorComponent implements OnInit {
 
   loading = false;
 
-  correctColor = {
-    'Fucia': '#f0f'
-  };
-
   ngOnInit() {
+
+    const self = this;
+
     this.subscripeToAppMessage();
 
 
@@ -96,6 +102,7 @@ export class ModelEditorComponent implements OnInit {
     this.textRenderer = this.diagram.get('textRenderer');
     this.cpnFactory = this.diagram.get('cpnFactory');
     this.portMenuProvider = this.diagram.get('portMenuProvider');
+    this.stateProvider = this.diagram.get('stateProvider');
 
     const eventBus = this.eventBus;
 
@@ -107,35 +114,39 @@ export class ModelEditorComponent implements OnInit {
 
     eventBus.on('import.render.complete', (event) => {
       this.loading = false;
-      console.log('import.render.complete, event = ', event);
+      // console.log('import.render.complete, event = ', event);
 
-      // this.updateElementStatus();
-      // this.eventBus.fire('model.update.cpn.status', { data: { process: '*' } });
+      this.updateElementStatus();
     });
 
     // eventBus.on('element.changed', (event) => {
-    //   console.log('ModelEditor, element.changed, event = ', event);
-    // });
+    eventBus.on([
+      'shape.move.end',
+      'create.end',
+      'connect.end',
+      'resize.end',
+      'bendpoint.move.end',
+      'connectionSegment.move.end',
+      'directEditing.complete',
+      'shape.delete'
+    ],
+      (event) => {
+        console.log(self.constructor.name, 'MODEL_CHANGED event = ', event);
+
+        this.eventService.send(Message.MODEL_CHANGED);
+      });
 
     this.eventService.on(Message.MODEL_RELOAD, () => {
       this.log('Reload page diagram...');
-      if (this.pageId) {
-        const pageObject = this.modelService.getPageById(this.pageId);
-        if (pageObject) {
-          this.jsonPageObject = pageObject;
-          this.loadPageDiagram(pageObject, false);
-        }
-      }
+      this.reloadPage();
     });
 
     this.eventService.on(Message.SERVER_INIT_NET_START, () => {
       this.log('Validation process...');
-      // this.eventBus.fire('model.update.cpn.status', { data: { process: '*' } });
     });
 
     // VALIDATION RESULT
     this.eventService.on(Message.SERVER_INIT_NET_DONE, (event) => {
-      console.log('ModelEditor, SERVER_INIT_NET_DONE, event = ', event);
       this.updateElementStatus();
     });
 
@@ -150,30 +161,48 @@ export class ModelEditorComponent implements OnInit {
     });
 
     this.eventService.on(Message.DELETE_PAGE, (data) => {
-      if (data.parent === this.pageId){
-        this.modeling.deleteSubPageTrans(data.id);
+      if (data.id === this.pageId) {
+        // this.modeling.deleteSubPageTrans(data.id);
+       // this.modelService.deleteSubPageTrans(data.id);
+      //  this.modelService.deleteInstance(data.id);
+      //   this.eventService.send(Message.UPDATE_TREE_PAGES, {
+      //     currentPageId: self.pageId
+      //   });
+
+        // this.reloadPage();
+       // this.canvas._clear();
+        //this.diagram.destroy();
+        this.diagram.clear();
       }
     });
+
+    this.eventService.on(Message.CHANGE_NAME_PAGE, (data) => {
+      if (this.pageId === data.parent)
+        this.modeling.changeTransitionSubPageLabel(data.id, data.name);
+    })
 
     eventBus.on('element.hover', (event) => {
       if (event.element.type === 'cpn:Transition' || event.element.type === 'cpn:Place') {
         this.eventService.send(Message.SHAPE_HOVER, { element: event.element });
       }
+      console.log('element.hover', event.element);
     });
     eventBus.on('element.out', (event) => {
       if (event.element.type === 'cpn:Transition' || event.element.type === 'cpn:Place') {
         this.eventService.send(Message.SHAPE_OUT, { element: event.element });
       }
     });
-    const self = this;
+
     eventBus.on('directEditing.cancel', function (e) {
-      console.log('model-editor directEditing.cancel - event', e);
+      // console.log('model-editor directEditing.cancel - event', e);
+
       self.openPropPanel(e.active.element);
       self.selectedElement = undefined;
     });
 
     eventBus.on('directEditing.complete', function (e) {
-      console.log('model-editor directEditing.complete - event', e);
+      // console.log('model-editor directEditing.complete - event', e);
+
       if (e.active && e.active.element) {
         self.openPropPanel(e.active.element);
       }
@@ -184,19 +213,25 @@ export class ModelEditorComponent implements OnInit {
     });
 
     eventBus.on('shape.create.end', (event) => {
-      console.log('shape.create.end, event = ', event);
-      if (event.elements) {
-        for (const element of event.elements) {
-          if (element.cpnElement) {
-            this.modelService.addElementJsonOnPage(element.cpnElement, this.pageId, element.type);
+      // console.log('shape.create.end, event = ', event);
 
+      if (event.elements) {
+       // let allPagesId = this.modelService.getAllPages().map(p => {return p._id});
+        for (const element of event.elements) {
+          if (element.cpnElement ) { //if (element.cpnElement && allPagesId.includes(this.pageId)) {
+            this.modelService.addElementJsonOnPage(element.cpnElement, this.pageId, element.type, this.modeling);
+
+            // Check if transition is subpage and create subpage
             if (element.type === CPN_TRANSITION && element.cpnElement.subst) {
-              element.cpnElement.subst._subpage = 'id' + new Date().getTime();
+              if (!element.cpnElement.subst._subpage) {
+                element.cpnElement.subst._subpage = getNextId();
+              }
 
               this.eventService.send(Message.SUBPAGE_TRANS_CREATE, {
                 currentPageId: this.pageId,
-                id: element.cpnElement.subst._subpage,
-                cpnElement: element.cpnElement
+                subPageName: element.cpnElement.subst.subpageinfo._name,
+                subPageId: element.cpnElement.subst._subpage,
+                cpnElement: element.cpnElement,
               });
             }
           }
@@ -204,17 +239,93 @@ export class ModelEditorComponent implements OnInit {
       }
     });
 
+    eventBus.on('extract.subpage', (event) => {
+      const transCpnElement = event.transCpnElement;
+      const places = event.places;
+      const transitions = event.transitions;
+
+      self.modelService.addElementJsonOnPage(transCpnElement, self.pageId, CPN_TRANSITION, this.modeling);
+
+      console.log(self.constructor.name, 'extract.subpage, places, transitions = ', places, transitions);
+
+      let selectedElements = [];
+      selectedElements = selectedElements.concat(places).concat(transitions);
+      if (selectedElements.length < 1) {
+        return;
+      }
+
+      console.log(self.constructor.name, 'extract.subpage, selectedElements = ', selectedElements);
+
+      self.eventService.send(Message.SUBPAGE_TRANS_CREATE,
+        {
+          currentPageId: self.pageId,
+          subPageName: transCpnElement.subst.subpageinfo._name,
+          subPageId: transCpnElement.subst._subpage,
+          cpnElement: transCpnElement
+        },
+        true // wait event handlers finish
+      );
+
+      const subPageId = transCpnElement.subst._subpage;
+      const subpage = self.modelService.getPageById(subPageId);
+      if (!subpage) {
+        return;
+      }
+
+      console.log(self.constructor.name, 'extract.subpage, subpage = ', subpage);
+
+      // console.log(self.constructor.name, 'extract.subpage, getAllArcs() = ', self.modelService.getAllArcs());
+
+      const arcs = self.modelService.getArcsForElements(selectedElements);
+      const arcsToDelete = self.modelService.getExternalArcsForElements(selectedElements);
+
+      console.log(self.constructor.name, 'extract.subpage, arcs = ', arcs);
+      console.log(self.constructor.name, 'extract.subpage, arcsToDelete = ', arcsToDelete);
+
+      selectedElements = selectedElements.concat(arcs);
+
+      self.modelService.moveElements(self.pageId, subPageId, selectedElements);
+
+      // delete not used arcs
+      if (arcsToDelete) {
+        for (const a of arcsToDelete) {
+          self.modelService.deleteElementFromPageJson(self.pageId, a, CPN_CONNECTION);
+        }
+      }
+
+      self.reloadPage();
+    });
+
+
     eventBus.on('shape.delete', (event) => {
       if (event.elements) {
+
+        let reloadTree = false;
+
         for (const elem of event.elements) {
-          this.modelService.deleteElementFromPageJson(this.pageId, elem.id, elem.type);
+          if (elem.cpnElement) {
+            // console.log(self.constructor.name, 'shape.delete, elem.cpnElement = ', elem.cpnElement);
+            if (elem.cpnElement.subst) {
+              reloadTree = true;
+            }
+            self.modelService.deleteElementFromPageJson(self.pageId, elem.cpnElement, elem.type);
+          }
+        }
+
+        self.reloadPage();
+
+        if (reloadTree) {
+          // console.log(self.constructor.name, 'shape.delete, UPDATE_TREE_PAGES, self.pageId = ', self.pageId);
+          this.eventService.send(Message.UPDATE_TREE_PAGES, {
+            currentPageId: self.pageId
+          });
         }
       }
     });
 
     eventBus.on('portMenuProvider.open', (event) => {
       if (event.trans && event.trans.cpnElement && event.trans.cpnElement.subst) {
-        const pageObj = this.modelService.getPageById(event.trans.cpnElement.subst._subpage);
+        const pageObj = self.modelService.getPageById(event.trans.cpnElement.subst._subpage);
         if (pageObj) {
           const list = [];
           for (const place of pageObj.place) {
@@ -226,42 +337,98 @@ export class ModelEditorComponent implements OnInit {
               });
             }
           }
-          this.portMenuProvider.open({ trans: event.trans, place: event.place, arc: event.arc, list: list }, event.position, this.modeling);
+          self.portMenuProvider.open({ trans: event.trans, place: event.place, arc: event.arc, list: list }, event.position, self.modeling);
+        }
+      }
+    });
+
+
+    eventBus.on('element.hover', (event) => {
+      const element = event.element;
+
+      // console.log(self.constructor.name, 'element.hover, event = ', event);
+
+      if (event.originalEvent) {
+        const position = { x: event.originalEvent.offsetX, y: event.originalEvent.offsetY };
+
+        let errorText, warningText, readyText;
+        if (isCpn(element)) {
+          errorText = this.stateProvider.getErrorText(element.cpnElement._id);
+          warningText = this.stateProvider.getWarningText(element.cpnElement._id);
+          readyText = this.stateProvider.getReadyText(element.cpnElement._id);
+        }
+        let popupVisible = false;
+        popupVisible = popupVisible || this.showPopup(position, element, errorText, 'errorPopup');
+        popupVisible = popupVisible || this.showPopup(position, element, warningText, 'warningPopup');
+        popupVisible = popupVisible || this.showPopup(position, element, readyText, 'readyPopup');
+        if (!popupVisible) {
+          this.hidePopup();
         }
       }
     });
 
 
     // this._eventBus.fire('bind.port.cancel', {connection: this._createdArc});
+  }
 
+  showPopup(position, element, popupText, popupClass) {
+    const popup: HTMLElement = this.popupElementRef.nativeElement; // document.getElementById('popup');
+    if (popupText) {
+      popup.style.left = (position.x) + 'px';
+      popup.style.top = (position.y + 20) + 'px';
+      popup.style.display = 'block';
+      popup.className = 'popup ' + popupClass;
+      popup.innerText = popupText;
+      return true;
+    }
+    return false;
+  }
+
+  hidePopup() {
+    const popup: HTMLElement = this.popupElementRef.nativeElement; // document.getElementById('popup');
+    popup.style.display = 'none';
+    popup.innerText = '';
+  }
+
+  reloadPage() {
+    if (this.pageId) {
+      const pageObject = this.modelService.getPageById(this.pageId);
+      if (pageObject) {
+        this.jsonPageObject = pageObject;
+        this.loadPageDiagram(pageObject, false);
+      }
+    }
+  }
+
+  checkPorts() {
+    this.eventBus.fire('model.check.ports');
   }
 
   /**
    * Update element status
    */
   updateElementStatus() {
-    this.eventBus.fire('model.update.cpn.status', { data: { clear: '*' } });
+    this.stateProvider.clear();
 
     // console.log('updateElementStatus(), tokenData = ', this.accessCpnService.getTokenData());
     // console.log('updateElementStatus(), readyData = ', this.accessCpnService.getReadyData());
     // console.log('updateElementStatus(), errorData = ', this.accessCpnService.getErrorData());
 
-    if (this.accessCpnService.getTokenData().length > 0) {
+    if (Object.keys(this.accessCpnService.getTokenData()).length > 0) {
       this.eventBus.fire('model.update.tokens', { data: this.accessCpnService.getTokenData() });
     }
 
-    if (this.accessCpnService.getReadyData().length > 0) {
-      this.eventBus.fire('model.update.cpn.status', { data: { ready: this.accessCpnService.getReadyData() } });
+    if (Object.keys(this.accessCpnService.getReadyData()).length > 0) {
+      this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
     }
 
     if (Object.keys(this.accessCpnService.getErrorData()).length > 0) {
-      const errorIds = [];
-      for (const id of Object.keys(this.accessCpnService.getErrorData())) {
-        errorIds.push(id);
-      }
-      console.log('SET ERRORS, errorIds = ', errorIds);
-      this.eventBus.fire('model.update.cpn.status', { data: { error: errorIds } });
+      this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
     }
+
+    this.checkPorts();
+
+    this.modeling.repaintElements();
   }
 
   subscripeToAppMessage() {
@@ -276,24 +443,46 @@ export class ModelEditorComponent implements OnInit {
         let cpnElement = this.modeling.createShapeCpnElement(position, CPN_TRANSITION);
         cpnElement = this.modeling.declareSubPage(cpnElement, data.name, data.id);
         const element = this.cpnFactory.createShape(undefined, cpnElement, CPN_TRANSITION, position, true);
-        this.modelService.addElementJsonOnPage(cpnElement, this.pageId, CPN_TRANSITION);
+        this.modelService.addElementJsonOnPage(cpnElement, this.pageId, CPN_TRANSITION, this.modeling);
       }
     });
 
-    // Subscribe on property update event
-    this.eventService.on(Message.PROPERTY_UPDATE, (data) => {
+    this.eventService.on(Message.SUBPAGE_UPDATE_TRANSITION, (event) => {
 
-      console.log('PROPERTY_UPDATE, data = ', data);
+      const element = this.modeling.getElementByCpnElement(event.cpnElement);
 
-      const element = this.modeling.getElementByCpnElement(data.cpnElement);
-      console.log('PROPERTY_UPDATE, element = ', element);
+      if (event.subpageName && event.cpnElement.subst && event.cpnElement.subst.subpageinfo) {
+        event.cpnElement.subst.subpageinfo._name = event.subpageName;
+      }
 
       this.modeling.updateElement(element, true);
-      // this.selectedElement = element;
-
       this.modelUpdate();
-      // this.openPropPanel(element);
     });
+
+    this.eventService.on(Message.MODEL_UPDATE_DIAGRAM, (event) => {
+      console.log(this.constructor.name, 'MODEL_UPDATE_DIAGRAM, event = ', event);
+
+      if (event.cpnElement) {
+        const element = this.modeling.getElementByCpnElement(event.cpnElement);
+
+        // console.log(this.constructor.name, 'MODEL_UPDATE_DIAGRAM, element = ', JSON.stringify(element));
+
+        // if (element && element.type === CPN_TRANSITION) {
+        //   if (element.cpnElement.subst && (element.labels.length <= 5)) {
+        //     this.modelService.addInstanceInJson(
+        //       this.modelService.instaceForTransition(element.cpnElement._id, false),
+        //       this.pageId,
+        //       element.cpnElement);
+        //   } else if (!element.cpnElement.subst && element.labels.length === 5) {
+        //     this.modelService.deleteInstance(element.id);
+        //   }
+        // }
+
+        this.modeling.updateElement(element, true);
+        this.modelUpdate();
+      }
+    });
+
   }
 
   openPropPanel(element) {
@@ -314,12 +503,7 @@ export class ModelEditorComponent implements OnInit {
   }
 
   modelUpdate() {
-    const page = this.jsonPageObject;
-
-    // set status 'process' for all shapes on diagram
-    // this.eventBus.fire('model.update.cpn.status', { data: { process: '*' } });
-
-    this.eventService.send(Message.MODEL_UPDATE, { pageObject: page });
+    this.eventService.send(Message.MODEL_UPDATE, { pageObject: this.jsonPageObject });
   }
 
   changeSubPageName(subpage) {
@@ -338,8 +522,8 @@ export class ModelEditorComponent implements OnInit {
     }
   }
 
-  log(text) {
-    console.log('ModelEditorComponent. log(), text = ' + text);
+  log(obj) {
+    console.log(this.constructor.name, 'log(), text = ' + JSON.stringify(obj));
   }
 
   load(pageObject, subPages) {
@@ -382,5 +566,6 @@ export class ModelEditorComponent implements OnInit {
 
     return text;
   }
+
 
 }

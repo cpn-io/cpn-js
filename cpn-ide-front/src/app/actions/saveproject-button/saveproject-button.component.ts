@@ -26,6 +26,7 @@ export class SaveprojectButtonComponent implements OnInit {
   }
 
   open(modalName) {
+    console.log('app-saveproject-button', modalName)
     let idx = this.modelService.projectName.lastIndexOf('.');
     if (idx > 0) {
       this.fileNameModel = this.modelService.projectName.substr(0, idx);

@@ -62,7 +62,14 @@ public class PetriNetContainer {
     private ConcurrentHashMap<String, Checker> usersCheckers = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, HighLevelSimulator> usersSimulator = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, NetInfo> netInf = new ConcurrentHashMap<>();
+    HighLevelSimulator _sim;
     private final static Object lock = new Object();
+
+    @PostConstruct
+    void Init() throws Exception
+    {
+            _sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
+    }
 
     public void CreateNewNet(String sessionId, String xml) throws Exception {
         synchronized (lock) {
@@ -71,7 +78,7 @@ public class PetriNetContainer {
 //
             HighLevelSimulator sim = usersSimulator.get(sessionId);
             if (sim == null)
-                sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
+                sim = _sim;
 
             Checker checker = new Checker(net, null, sim);
             usersCheckers.put(sessionId, checker);
@@ -119,28 +126,43 @@ public class PetriNetContainer {
 
 
             HighLevelSimulator sim = usersSimulator.get(sessionId);
-            if (sim != null)
-                sim.destroy();
-            sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
-            usersSimulator.put(sessionId, sim);
+//            if (sim != null) {
+//                sim.destroy();
+//            }
+////
+//            sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
 
-            Checker checker = new Checker(net, new File("C:\\tmp\\cpn.file"), sim);
+            //usersSimulator.put(sessionId, sim);
+
+
+
+            Checker checker = new Checker(net,null, sim);
             sim.setTarget((org.cpntools.accesscpn.model.impl.PetriNetImpl) net);
+
+
+
 
             //checker.checkEntireModel();
 
-           // checker.localCheck();
+            // checker.localCheck();
             checker.checkInitializing("", "");
             checker.checkDeclarations();
             checker.generateSerializers();
             checker.checkPages();
             checker.generatePlaceInstances();
-            checker.checkMonitors();
+            //  checker.checkMonitors();
             checker.generateNonPlaceInstances();
             checker.initialiseSimulationScheduler();
-            checker.instantiateSMLInterface();
 
-            usersSimulator.put(sessionId, sim);
+
+            sim.refreshViews();
+
+//            checker.instantiateSMLInterface();
+
+
+            //usersSimulator.put(sessionId, sim);
+
+
 
         }
 
@@ -200,47 +222,48 @@ public class PetriNetContainer {
     public Map<String, List<IssueDescription>> PerfomEntireChecking(String sessionId) throws Exception {
         Checker checker = usersCheckers.get(sessionId);
         PetriNet net = usersNets.get(sessionId);
-        if (net == null || checker == null)
+        HighLevelSimulator sim = usersSimulator.get(sessionId);
+        if (net == null || checker == null || sim == null)
             throw new NotFoundException("Session object not found");
 
         Map<String, List<IssueDescription>> issues = new HashMap<>();
 
         try {
-           // checker.checkEntireModel();
+            sim.setTarget((org.cpntools.accesscpn.model.impl.PetriNetImpl) net);
+            //checker.checkEntireModel();
             checker.checkInitializing("", "");
             checker.checkDeclarations();
             checker.generateSerializers();
             checker.checkPages();
             checker.generatePlaceInstances();
-            checker.checkMonitors();
+            //  checker.checkMonitors();
             checker.generateNonPlaceInstances();
             checker.initialiseSimulationScheduler();
-            checker.instantiateSMLInterface();
+
+            sim.refreshViews();
+
+            //     checker.instantiateSMLInterface();
+        } catch (CheckerException ex) {
+            SplitMessageForIssues(ex, issues);
         }
-        catch (DeclarationCheckerException ex) {
-            List<IssueDescription> issList = getOrCreateIssueList(ex.getId(), issues);
-            issList.add(IssueDescription.builder().id(ex.getId()).type(IssueTypes.DECLARATION.getType()).description(ex.getMessage()).build());
-        }
-        catch (SyntaxCheckerException ex) {
-            List<IssueDescription> issList = getOrCreateIssueList(ex.getId(), issues);
-            issList.add(IssueDescription.builder().type(IssueTypes.MONITOR.getType()).id(ex.getId()).description(ex.getMessage()).build());
-        }
-        catch (CheckerException ex) {
-            String[] lines = ex.getMessage().split("\\n");
-            for (String ll : lines) {
-                String[] pair = ll.split(":");
-                if (pair.length == 2) {
-                    List<IssueDescription> issList = getOrCreateIssueList(pair[0], issues);
-                    issList.add(IssueDescription.builder().type(IssueTypes.PAGE.getType()).id(pair[0]).description(pair[1]).build());
-                } else {
-                    List<IssueDescription> issList = getOrCreateIssueList(ex.getId(), issues);
-                    issList.add(IssueDescription.builder().type(IssueTypes.PAGE.getType()).id(ex.getId()).description(ll).build());
-                }
+
+
+        return issues;
+    }
+
+
+    void SplitMessageForIssues(CheckerException ex, Map<String, List<IssueDescription>> issues) {
+        String[] lines = ex.getMessage().split("\\n");
+        for (String ll : lines) {
+            String[] pair = ll.split(":");
+            if (pair.length == 2) {
+                List<IssueDescription> issList = getOrCreateIssueList(pair[0], issues);
+                issList.add(IssueDescription.builder().type(IssueTypes.PAGE.getType()).id(pair[0]).description(pair[1]).build());
+            } else {
+                List<IssueDescription> issList = getOrCreateIssueList(ex.getId(), issues);
+                issList.add(IssueDescription.builder().type(IssueTypes.PAGE.getType()).id(ex.getId()).description(ll).build());
             }
         }
-
-
-        return  issues;
     }
 
     public Map<String, List<IssueDescription>> PerfomEntireCheckingFast(String sessionId) throws Exception {
@@ -251,7 +274,7 @@ public class PetriNetContainer {
             if (net == null || checker == null)
                 throw new NotFoundException("Session object not found");
 
-           // checker.generateSerializers();
+            // checker.generateSerializers();
 //            checker.generatePlaceInstances();
 //            checker.generateNonPlaceInstances();
 //            checker.initialiseSimulationScheduler();
@@ -267,8 +290,8 @@ public class PetriNetContainer {
             for (final Page page : ps)
                 CheckPage(checker, page, ps.isPrime(page), issues);
 
-            for (final Monitor m : net.getMonitors())
-                CheckMonitor(checker, m, issues);
+//            for (final Monitor m : net.getMonitors())
+//                CheckMonitor(checker, m, issues);
 
             return issues;
 

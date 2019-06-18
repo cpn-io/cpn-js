@@ -32,7 +32,7 @@ public class SimulatorController {
                     @ApiResponse(code = 400, message = "Incorrect Request", response = ErrorDescription.class),
                     @ApiResponse(code = 500, message = "Internal error. Object with description", response = ErrorDescription.class)
             })
-    public ResponseEntity deleteDeclaration(@RequestHeader(value = "X-SessionId") String sessionId) {
+    public ResponseEntity simInit(@RequestHeader(value = "X-SessionId") String sessionId) {
         return RequestBaseLogic.HandleRequest(sessionId, () -> {
             _netConatiner.InitSimulator(sessionId);
             PetriNetContainer.NetInfo netInf = new PetriNetContainer.NetInfo(_netConatiner.getEnableTransitions(sessionId), _netConatiner.getTokensAndMarking(sessionId));

@@ -1477,7 +1477,7 @@ export class ModelService {
 
   getRootPages() {
     const subpageIdList = this.getSubPageIds();
-    return this.getAllPages().filter(p => !subpageIdList.includes(p._id));
+    return this.getAllPages().filter(p => p && !subpageIdList.includes(p._id));
   }
 
   getSubPageIds() {

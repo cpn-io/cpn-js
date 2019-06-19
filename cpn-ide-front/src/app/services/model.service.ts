@@ -1858,6 +1858,9 @@ export class ModelService {
     } else {
       cpnParentElement[cpnType] = cpnElement;
     }
+
+    console.log(this.constructor.name, 'addCpnElement(), cpnParentElement, cpnElement = ', cpnParentElement, cpnElement);
+
     return cpnParentElement;
   }
 

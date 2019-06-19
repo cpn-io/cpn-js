@@ -167,7 +167,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     this.eventService.on(Message.DECLARATION_CHANGED, (event) => {
       if (event.cpnElement && event.newTextValue) {
-        this.updateTreeByCpnElement(event.cpnElement, event.newTextValue);
+        this.updateTreeNodeByCpnElement(event.cpnElement, event.newTextValue);
       }
     });
 
@@ -384,15 +384,26 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * Find tree node by cpn element and update it's name
    * @param cpnElement
    */
-  updateTreeByCpnElement(cpnElement, newTextValue) {
-    console.log(this.constructor.name, 'updateTreeByCpnElement(), cpnElement, newTextValue = ', cpnElement, newTextValue);
+  updateTreeNodeByCpnElement(cpnElement, newTextValue) {
+    console.log(this.constructor.name, 'updateTreeNodeByCpnElement(), cpnElement, newTextValue = ', cpnElement, newTextValue);
 
     const nodeForUpdate = this.getNodeByCpnElement(cpnElement);
 
-    console.log(this.constructor.name, 'updateTreeByCpnElement(), nodeForUpdate = ', nodeForUpdate);
+    console.log(this.constructor.name, 'updateTreeNodeByCpnElement(), nodeForUpdate = ', nodeForUpdate);
 
     if (nodeForUpdate && nodeForUpdate.data) {
-      this.updateDeclarationNodeText(nodeForUpdate, newTextValue);
+      switch (nodeForUpdate.data.type) {
+        case 'block':
+          this.updateBlockNodeText(nodeForUpdate, newTextValue);
+          break;
+        case 'declaration':
+          this.updateDeclarationNodeText(nodeForUpdate, newTextValue);
+          break;
+        case 'page':
+          this.updatePageNodeText(nodeForUpdate, newTextValue);
+          break;
+      }
+
       this.updateTree();
     }
   }
@@ -2241,6 +2252,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         break;
       case 'declaration':
         this.updateDeclarationNodeText(node, value);
+
+        this.eventService.send(Message.DECLARATION_CHANGED, {
+          cpnElement: node.data.cpnElement,
+          newTextValue: htmlElement.textContent
+        });
         break;
       case 'page':
         this.updatePageNodeText(node, value);
@@ -2248,11 +2264,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
 
     this.updateTree();
-
-    this.eventService.send(Message.DECLARATION_CHANGED, {
-      cpnElement: node.data.cpnElement,
-      newTextValue: htmlElement.textContent
-    });
 
     this.eventService.send(Message.MODEL_CHANGED);
 

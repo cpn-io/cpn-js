@@ -139,7 +139,7 @@ export class ValidationService {
     } else {
 
       // if objects are simple values
-      if (obj1 !== obj2) {
+      if (!obj1 || !obj2 || obj1 !== obj2) {
         pathHistory.push('DIFF VALUES: ' + path);
         isDifferent = true;
       }

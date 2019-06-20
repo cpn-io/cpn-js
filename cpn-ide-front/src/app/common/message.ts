@@ -1,34 +1,28 @@
 export class Message {
-  public static PROJECT_LOAD = 'project.load';
-  public static PAGE_OPEN = 'page.open';
+  static PROJECT_LOAD = 'project.load';
+
+  static MODEL_CHANGED = 'model.changed';
+  static MODEL_CHANGED_DETAILS = 'model.changed.details';
+  static MODEL_RELOAD = 'model.reload';
+  static MODEL_UPDATE_DIAGRAM = 'model.update.diagram';
+  static MODEL_SAVE_BACKUP = 'model.save.backup';
+  static MODEL_EDITOR_FULLSCREEN = 'model.editor.fullscreen';
 
   static SHAPE_SELECT = 'shape.select';
   static SHAPE_HOVER = 'shape.hover';
   static SHAPE_OUT = 'shape.out';
 
-  static MODEL_UPDATE = 'model.update';
-  static MODEL_UPDATE_DIAGRAM = 'model.update.diagram';
-  static MODEL_CHANGED = 'model.changed';
-  static MODEL_CHANGED_DETAILS = 'model.changed.details';
-  static MODEL_RELOAD = 'model.reload';
-  static MODEL_SAVE_BACKUP = 'model.save.backup';
-  
-  static XML_UPDATE = 'xml.update';
-  static DELETE_PAGE = 'delete.page;';
-  static CHANGE_NAME_PAGE = 'change.name';
-  static UPDATE_GLOBBOX = 'update.globbox';
-  static UPDATE_TREE_PAGES = 'update.tree.pages';
-  static SUBPAGE_TRANS_CREATE = 'subpage.trans.create';
-  static OPEN_DECLARATION_BLOCK = 'open.declaration.block';
-  static CHANGE_EXPLORER_TREE = 'change.explorer.tree';
-  static SELECT_DECLARATION_NODE = 'select.declaration.node';
-  static SELECT_TREE_NODE = 'select.tree.node';
+  static PAGE_OPEN = 'page.open';
+  static PAGE_DELETE = 'page.delete';
+  static PAGE_CHANGE_NAME = 'page.change.name';
+  static PAGE_CREATE_SUBST = 'page.create.subst';
+  static PAGE_UPDATE_SUBST = 'page.update.subst';
+
+  static TREE_UPDATE_PAGES = 'tree.update.pages';
+  static TREE_OPEN_DECLARATION_NODE = 'tree.open.declaration.node';
+  static TREE_SELECT_DECLARATION_NODE = 'tree.select.declaration.node';
+
   static DECLARATION_CHANGED = 'declaration.changed';
-
-  static SUBPAGE_CREATE = 'subpage.create';
-  static SUBPAGE_UPDATE_TRANSITION = 'subpage.update.transition';
-
-  static MODEL_EDITOR_FULLSCREEN = 'model.editor.fullscreen';
 
   static SERVER_INIT_NET = 'server.init.net';
   static SERVER_INIT_NET_START = 'server.init.net.start';
@@ -42,8 +36,7 @@ export class Message {
 
   static SERVER_GET_TOKEN_MARKS = 'server.get.token.mark';
   static SERVER_GET_TRANSITIONS = 'server.get.transitions';
-  static MODEL_STEP = 'model.step';
-  static DELETE_TREE_NODE = 'model.tree.node';
+
   id: string;
   data: object;
 }

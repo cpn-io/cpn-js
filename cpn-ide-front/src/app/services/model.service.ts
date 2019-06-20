@@ -77,10 +77,6 @@ export class ModelService {
       this.pageId = data.pageObject._id;
     });
 
-    this.eventService.on(Message.MODEL_UPDATE, (data) => {
-      this.updateModel(data);
-    });
-
     // MODEL SAVE BACKUP
     this.eventService.on(Message.MODEL_SAVE_BACKUP, (event) => {
       if (event && event.lastProjectData) {
@@ -102,6 +98,9 @@ export class ModelService {
     return this.isLoaded;
   }
 
+  /**
+   * Load project
+   */
   public loadProject(project) {
     console.log('ModelService.loadProject(), project = ', project);
 
@@ -128,16 +127,11 @@ export class ModelService {
     return this.redoHistory.length;
   }
 
-  saveBackupBak(_model, _pageId = undefined) {
-  }
-
   saveBackup(model) {
     if (this.backupBusy) {
       return;
     }
     this.backupBusy = true;
-
-    // console.log('BACKUP, saveBackup(), model, this.skipBackup = ', model, this.skipBackup);
 
     if (Object.keys(model).length > 0) {
       // if (!this.skipBackup) {
@@ -147,8 +141,6 @@ export class ModelService {
       if (this.undoHistory.length > 100) {
         this.undoHistory.splice(0, 1);
       }
-
-      console.log('BACKUP, saveBackup2(), this.modelHistory.length = ', this.undoHistory.length);
       // }
     }
     this.skipBackup = false;
@@ -239,30 +231,6 @@ export class ModelService {
     return cpnet;
   }
 
-
-  //// ChangeModelActions
-
-  public deleteSubPageTrans(pageId) {
-    const allTrans = this.getAllTrans();
-
-    // console.log(this.constructor.name, 'deleteSubPageTrans(), pageId = ', pageId);
-
-    if (allTrans) {
-      for (const trans of allTrans) {
-        // console.log(this.constructor.name, 'deleteSubPageTrans(), trans (0) = ', trans);
-
-        if (trans && trans.subst && trans.subst._subpage === pageId) {
-          // console.log(this.constructor.name, 'deleteSubPageTrans(), trans (1) = ', trans);
-
-          this.deleteInstance(trans._id);
-          delete trans.subst;
-
-          // console.log(this.constructor.name, 'deleteSubPageTrans(), trans (1) = ', trans);
-        }
-      }
-    }
-  }
-
   /**
    * Delete any cpn element from model json
    *
@@ -346,8 +314,6 @@ export class ModelService {
 
   addElementJsonOnPage(cpnElement, pageId, type, _modeling) {
     console.log('addElementJsonOnPage()', cpnElement, pageId, type);
-
-    this.saveBackupBak(this.projectData, pageId);
 
     const jsonPageObject = this.getPageById(pageId);
     console.log('addElementJsonOnPage(), jsonPageObject = ', jsonPageObject);
@@ -470,6 +436,9 @@ export class ModelService {
     // this.updateBinders(rootInstanceId);
   }
 
+  /**
+   * Find sub instances for page
+   */
   getSubInstances(page) {
     console.log(this.constructor.name, 'getSubInstances(), page = ', page);
 
@@ -510,49 +479,8 @@ export class ModelService {
     return instances;
   }
 
-  searchPageForInstace(instance, objId, self, parent) {
-    if (instance._trans === objId || instance._page === objId) {
-      return { inst: instance, parent: parent };
-    } else if (instance.instance) {
-      if (instance.instance instanceof Array) {
-        return instance.instance.map(function (e) {
-          if (self) { return self.searchPageForInstace(e, objId, self, instance); } else { return undefined; }
-        }).filter(function (element) {
-          return element !== undefined;
-        })[0];
-      } else { return self.searchPageForInstace(instance.instance, objId, self, instance); }
-    }
-  }
-
-  deleteInstance(objId) {
-    const cpn = this.getCpn();
-    const self = this;
-    const entry = this.searchPageForInstace(cpn.instances, objId, self, undefined);
-    if (entry && entry.inst) {
-      let forDelete;
-      if (entry.parent) {
-        forDelete = entry.parent;
-      } else {
-        if (cpn.instances && cpn.instances.instance) {
-          forDelete = cpn.instances;
-        }
-      }
-      if ((forDelete.instance instanceof Array) && forDelete.instance.length > 1) {
-        forDelete.instance = forDelete.instance.filter(e => e._id !== entry.inst._id);
-      } else {
-        delete forDelete.instance;
-      }
-    }
-  }
-
-  // send changes
-
-  changeSubPageTransitionName(subpage) {
-    this.eventService.send(Message.CHANGE_NAME_PAGE, { id: subpage.subpageid, name: subpage.name, changedElement: 'tran' });
-  }
-
-
   moveNonModelJsonElement(element, parent, target, index, type) {
+    // console.log(this.constructor.name, 'moveNonModelJsonElement(), element = ', element);
 
     const addelemToEntry = (entry) => {
       if (target[entry]) {
@@ -572,46 +500,8 @@ export class ModelService {
         target[type] = [element];
       }
     };
+
     if (type === 'page') {
-      const swapSubPageTrans = (tran, subPageTrans) => {
-        if (tran.subst && tran.subst._subpage === element._id) {
-          subPageTrans = Object.assign({}, tran);
-          delete tran['subst'];
-          if (target.trans) {
-            if (target.trans instanceof Array) {
-              subPageTrans._id = getNextId();
-              target.trans.push(subPageTrans);
-            } else {
-              target.trans = [subPageTrans, target.trans];
-            }
-          } else {
-            target.trans = [subPageTrans];
-          }
-        }
-      };
-      const subPageTrans = {};
-      if (parent) {
-        if (parent.trans instanceof Array) {
-          for (let i = 0; i < parent.trans.length; i++) {
-            swapSubPageTrans(parent.trans[i], subPageTrans);
-            if (subPageTrans) {
-              break;
-            }
-          }
-        } else {
-          swapSubPageTrans(parent.trans, subPageTrans);
-        }
-      }
-
-      this.eventService.send(Message.SUBPAGE_CREATE, {
-        name: element.pageattr._name,
-        id: element._id,
-        parentid: target._id,
-        event: event,
-        state: undefined, // this.treeComponent.treeModel.getState(),
-        object: subPageTrans
-      });
-
     } else if (!type) {
       if (target.block) {
         if (target.block instanceof Array) {
@@ -658,30 +548,16 @@ export class ModelService {
         parent.block = [];
       }
       addelemToEntry('block');
-
     }
   }
 
-
-  applyPageChanges(pageId, _placeShapes, _textRenderer, _transShapes, _arcShapes) {
-    this.saveBackupBak(this.projectData, pageId);
-
-    const page = this.getPageById(pageId);
-
-    // this.eventService.send(Message.MODEL_UPDATE, {pageObject: page});
-    return page;
-  }
-
-
   changeLabelText(label, text, pageId) {
-    this.saveBackupBak(this.projectData, pageId);
     if (label && label.text) {
       label.text.__text = text;
     }
   }
 
   changePageName(pageId, name) {
-    this.saveBackupBak(this.projectData, pageId);
     const changedPage = this.getPageById(pageId);
     if (changedPage) {
       changedPage.pageattr._name = name;
@@ -689,8 +565,6 @@ export class ModelService {
   }
 
   createNewPage(page) {
-    this.saveBackupBak(this.projectData, page._id);
-
     const cpnet = this.getCpn();
 
     if (cpnet.page instanceof Array) {
@@ -702,96 +576,7 @@ export class ModelService {
     this.updateInstances();
   }
 
-  deletePage(pageId) {
-    this.saveBackupBak(this.projectData, pageId);
-    if (this.projectData.workspaceElements.cpnet.page) {
-      if (!(this.projectData.workspaceElements.cpnet.page instanceof Array)) {
-        this.projectData.workspaceElements.cpnet.page = [this.projectData.workspaceElements.cpnet.page];
-      }
-      this.projectData.workspaceElements.cpnet.page = this.projectData.workspaceElements.cpnet.page.filter(x => x._id !== pageId);
-    }
-
-    this.updateInstances();
-  }
-
-  updateModel(updatedData) {
-    this.saveBackupBak(this.projectData, undefined);
-    const project = this.projectData;
-    if (project.workspaceElements.cpnet.page.length) {
-      for (let page of project.workspaceElements.cpnet.page) {
-        if (page.pageattr._name === updatedData.pageObject.pageattr._name) {
-          page = updatedData.pageObject;
-
-          this.eventService.send(Message.XML_UPDATE, { project: { data: project, name: this.projectName } });
-        }
-      }
-    } else {
-      let page = project.workspaceElements.cpnet.page;
-      if (page.pageattr._name === updatedData.pageObject.pageattr._name) {
-        page = updatedData.pageObject;
-
-        this.eventService.send(Message.XML_UPDATE, { project: { data: project, name: this.projectName } });
-      }
-    }
-  }
-
-
-  createNewBlock(block, targetBlock) {
-    this.saveBackupBak(this.projectData, undefined);
-    if (targetBlock) {
-      if (targetBlock.block && targetBlock.block instanceof Array) {
-        targetBlock.block.push(block);
-      } else {
-        if (targetBlock.block) {
-          targetBlock.block = [targetBlock.block];
-        } else {
-          targetBlock.block = [];
-        }
-        targetBlock.block.push(block);
-      }
-    } else {
-      this.getCpn().globbox.block.push(block);
-    }
-  }
-
-
-  clearDefaultLabelValues(pageId) {
-    const page = this.getPageById(pageId);
-    for (const entry of ['place', 'trans', 'arc']) {
-      if (page[entry] instanceof Array) {
-        for (const jsonElem of page[entry]) {
-          for (const labelType of this.labelsEntry[entry]) {
-            if (jsonElem[labelType]
-              && jsonElem[labelType].text
-              && jsonElem[labelType].text.__text
-              && Object.values(this.settings.getAppSettings()).includes(jsonElem[labelType].text.__text)) {
-              jsonElem[labelType].text.__text = null;
-            }
-          }
-        }
-      } else {
-        for (const labelType of this.labelsEntry[entry]) {
-          if (page[entry]
-            && page[entry][labelType]
-            && page[entry][labelType].text
-            && page[entry][labelType].text.__text
-            && Object.values(this.settings.getAppSettings()).includes(page[entry][labelType].text.__text)) {
-            page[entry][labelType].text.__text = null;
-          }
-        }
-      }
-    }
-  }
-
-
-  deleteBlock(id) {
-    this.saveBackupBak(this.projectData, undefined);
-    const cpnet = this.getCpn();
-    cpnet.globbox.block = cpnet.globbox.block.filter(e => e.id !== id);
-  }
-
   deleteElementInBlock(block, elementType, id) {
-    this.saveBackupBak(this.projectData, undefined);
     // blcok[elementType] = blcok[elementType].filter(elem => elem._id !== id);
     if (!(block[elementType] instanceof Array)) {
       block[elementType] = [block[elementType]];
@@ -807,174 +592,6 @@ export class ModelService {
   }
 
   deleteMonitorInBlock(_block, _id) {
-    // this.saveBackup(this.projectData, undefined);
-    // //blcok[elementType] = blcok[elementType].filter(elem => elem._id !== id);
-    // if (!(block[elementType] instanceof Array)){
-    //   block[elementType] = [block[elementType]];
-    // }
-    // for (var i = 0; i < block[elementType].length; i++) {
-    //   if (block[elementType][i]._id === id) {
-    //     block[elementType].splice(i, 1);
-    //     if(block[elementType].length === 0) delete block[elementType];
-    //   }
-    // }
-  }
-
-  deleteMonitorBlock(id) {
-    this.saveBackupBak(this.projectData, undefined);
-    const cpnet = this.getCpn();
-    cpnet.monitorblock.monitor = cpnet.monitorblock.monitor.filter(e => e._id !== id);
-  }
-
-  addItemToBlock(block, elementGroup): any {
-    this.saveBackupBak(this.projectData, undefined);
-    let newNode;
-    if (!block[elementGroup]) {
-      newNode = this.newElemetn(elementGroup);
-      block[elementGroup] = [newNode];
-      ////// create new elemenetType with
-    } else {
-      newNode = this.newElemetn(elementGroup);
-      block[elementGroup].push(newNode);
-    }
-    return newNode;
-  }
-
-  newElemetn(elementType): any {
-    this.saveBackupBak(this.projectData, undefined);
-    switch (elementType) {
-      case 'var':
-        return {
-          id: this.settings.getAppSettings()[elementType] + (++this.countNewItems),
-          type: { id: this.settings.getAppSettings()[elementType] },
-          _id: getNextId()
-        };
-        break;
-      case 'color':
-        return {
-          id: this.settings.getAppSettings()[elementType] + (++this.countNewItems),
-          timed: '',
-          name: this.settings.getAppSettings()[elementType],
-          _id: getNextId()
-        };
-        break;
-      case 'ml':
-        return {
-          _id: getNextId(),
-          __text: this.settings.getAppSettings()[elementType], toString() {
-            return (this.__text != null ? this.__text : '');
-          }
-        };
-        break;
-      case 'globref':
-        return {
-          id: this.settings.getAppSettings()[elementType] + (++this.countNewItems),
-          ml: this.settings.getAppSettings()[elementType],
-          _id: getNextId()
-        };
-        break;
-      default:
-
-    }
-  }
-
-
-  /**
-   * Parse variables Layout string and create object this variable
-   * @param layoutStr - declaration string
-   * @param cpnElement - changing variable object
-   * @param blockType - type variable (color, var, ml, gkobref)
-   */
-  parseVariableLayout(layoutStr, cpnElement, blockType) {
-    this.saveBackupBak(this.projectData, undefined);
-    switch (blockType) {
-      case 'var':
-        let splitLayoutArray;
-        cpnElement.layout = blockType + ' ' + layoutStr;
-        layoutStr = layoutStr.replace('var', '');
-        splitLayoutArray = layoutStr.trim().split(':');
-        for (let i = 0; i < splitLayoutArray.length; i++) {
-          splitLayoutArray[i] = splitLayoutArray[i].replace(/\s+/g, '').split(',');
-        }
-        cpnElement.id = splitLayoutArray[0];
-        cpnElement.type.id = splitLayoutArray[1][0];
-        break;
-      case 'ml':
-        cpnElement.layout = layoutStr;
-        cpnElement.__text = layoutStr;
-        break;
-      case 'color':   // *****отрефакторить*****
-        cpnElement.layout = layoutStr;
-        layoutStr = layoutStr.replace('colset', '');
-        splitLayoutArray = layoutStr.split('=');
-        splitLayoutArray[1] = splitLayoutArray[1].split(' ').filter(e => e.trim() !== '');
-        let testElem = splitLayoutArray[1][0].replace(/\s+/g, '');
-        for (const key of Object.keys(cpnElement)) {
-          if (key !== '_id' && key !== 'layout') {
-            delete cpnElement[key];
-          }
-        }
-        if (splitLayoutArray[1][splitLayoutArray[1].length - 1].replace(';', '') === 'timed') {
-          cpnElement.timed = '';
-          splitLayoutArray[1].length = splitLayoutArray[1].length - 1;
-        }
-        if (testElem === 'product') {
-          const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
-          cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
-          cpnElement.product = { id: productList };
-        } else if (testElem === 'list') {
-          const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
-          cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
-          cpnElement.list = { id: productList };
-        } else {
-          testElem = testElem.replace(/\s+/g, '').replace(';', '');
-          splitLayoutArray[0] = splitLayoutArray[0].replace(/\s+/g, '').replace(';', '');
-          if (testElem.toLowerCase() === splitLayoutArray[0].toLowerCase()) {
-            cpnElement.id = splitLayoutArray[0];
-            cpnElement[testElem.toLowerCase()] = '';
-          } else {
-            cpnElement.id = splitLayoutArray[0];
-            cpnElement.alias = { id: testElem };
-          }
-        }
-        break;
-      case 'globref':
-        splitLayoutArray = layoutStr.split(' ').filter(e => e.trim() !== '' && e.trim() !== '=');
-        cpnElement.id = splitLayoutArray[1].replace(/\s+/g, '').replace(';', '');
-        cpnElement.ml = splitLayoutArray[2].replace(/\s+/g, '').replace(';', '');
-        cpnElement.layout = blockType + ' ' + layoutStr;
-        break;
-      default:
-
-    }
-
-    // return result;
-  }
-
-
-  setDescendantProp(obj, desc, value) {
-    if (desc) {
-      const arr = desc.split('.');
-      while (arr.length > 1) {
-        obj = obj[arr.shift()];
-      }
-      obj[arr[0]] = value;
-    }
-  }
-
-  getRelations(_id: string, elem: string): Array<string> {
-    const result = [];
-    switch (elem) {
-      case 'Place': {
-        this.getProjectData();
-        break;
-      }
-      case 'Transition': {
-        break;
-      }
-    }
-    return result;
-
   }
 
   /**
@@ -991,17 +608,11 @@ export class ModelService {
       pageattr: {
         _name: name
       },
-      // place: [],
-      // trans: [],
-      // arc: [],
       constraints: '',
       _id: id ? id : getNextId()
     };
 
-    // this.addInstanceInJson(this.instaceForTransition(newPage._id, true), undefined, newPage);
-
     this.updateInstances();
-
     return newPage;
   }
 
@@ -1465,9 +1076,9 @@ export class ModelService {
         break;
     }
 
-    console.log('stringToCpnDeclarationElement(), cpnType = ', cpnType);
-    console.log('stringToCpnDeclarationElement(), declarationType = ', declarationType);
-    console.log('stringToCpnDeclarationElement(), cpnElement = ', cpnElement);
+    // console.log('stringToCpnDeclarationElement(), cpnType = ', cpnType);
+    // console.log('stringToCpnDeclarationElement(), declarationType = ', declarationType);
+    // console.log('stringToCpnDeclarationElement(), cpnElement = ', cpnElement);
 
     return { cpnType: cpnType, declarationType: declarationType, cpnElement: cpnElement };
   }
@@ -1694,6 +1305,9 @@ export class ModelService {
 
 
 
+  /**
+   * Get next page name
+   */
   getNextPageName(pageName) {
     let n = 1;
     let newPageName = pageName ? pageName : this.settings.getAppSettings()['page'] + ' ' + n;
@@ -1711,6 +1325,12 @@ export class ModelService {
     return newPageName;
   }
 
+  /**
+   * Create subpage for transition
+   * @param transCpnElement
+   * @param newPageName
+   * @param newPageId
+   */
   createSubpage(transCpnElement, newPageName, newPageId) {
     const pageName = this.getNextPageName(newPageName);
     const pageId = newPageId ? newPageId : getNextId();
@@ -1782,6 +1402,9 @@ export class ModelService {
     };
   }
 
+  /**
+   * Find end place and transition for arc
+   */
   getArcEnds(cpnElement) {
     const allPlaces = this.getAllPlaces();
     const allTrans = this.getAllTrans();
@@ -1791,7 +1414,6 @@ export class ModelService {
 
     return { place: placeEnd, trans: transEnd, orient: cpnElement._orientation };
   }
-
 
   /**
    * Getting all port places for transition
@@ -1821,6 +1443,9 @@ export class ModelService {
     return ports;
   }
 
+  /**
+   * Get place name by id
+   */
   getPortNameById(pageId, id) {
     const page = this.getPageById(pageId);
     if (page) {
@@ -1829,6 +1454,12 @@ export class ModelService {
     }
   }
 
+  /**
+   * Get port place id by name
+   * @param pageId
+   * @param text
+   * @param orient
+   */
   getPortIdByName(pageId, text, orient) {
     const page = this.getPageById(pageId);
     if (page && text !== '') {
@@ -1938,22 +1569,6 @@ export class ModelService {
       }
     }
     return cpnParentElement;
-  }
-
-
-
-
-  getParentPageForTrans(cpnElement) {
-    const page = this.getAllPages().find(p => {
-      let trans;
-      if (!(p.trans instanceof Array)) {
-        trans = [p.trans];
-      } else {
-        trans = p.trans;
-      }
-      return trans.includes(cpnElement);
-    });
-    return page;
   }
 
 }

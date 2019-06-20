@@ -39,7 +39,7 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.eventService.on(Message.SELECT_DECLARATION_NODE, (event) => {
+    this.eventService.on(Message.TREE_SELECT_DECLARATION_NODE, (event) => {
       if (event && event.openEditorTab) {
         this.openMlEditor();
       }
@@ -49,7 +49,7 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
       this.openModelEditor(event.pageObject, event.subPages);
     });
 
-    this.eventService.on(Message.DELETE_PAGE, (event) => {
+    this.eventService.on(Message.PAGE_DELETE, (event) => {
       this.deleteTab(event.id);
 
       // const filteredList = this.modelEditorList.filter(e => e.pageId !== event.id);
@@ -60,7 +60,7 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
       // console.log('editor-panel delete page --- ', this.modelEditorList);
     });
 
-    this.eventService.on(Message.CHANGE_NAME_PAGE, (event) => {
+    this.eventService.on(Message.PAGE_CHANGE_NAME, (event) => {
       this.changeName(event.id, event.name);
     });
 

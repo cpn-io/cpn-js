@@ -160,23 +160,13 @@ export class ModelEditorComponent implements OnInit {
       this.updateElementStatus();
     });
 
-    this.eventService.on(Message.DELETE_PAGE, (data) => {
+    this.eventService.on(Message.PAGE_DELETE, (data) => {
       if (data.id === this.pageId) {
-        // this.modeling.deleteSubPageTrans(data.id);
-       // this.modelService.deleteSubPageTrans(data.id);
-      //  this.modelService.deleteInstance(data.id);
-      //   this.eventService.send(Message.UPDATE_TREE_PAGES, {
-      //     currentPageId: self.pageId
-      //   });
-
-        // this.reloadPage();
-       // this.canvas._clear();
-        //this.diagram.destroy();
         this.diagram.clear();
       }
     });
 
-    this.eventService.on(Message.CHANGE_NAME_PAGE, (data) => {
+    this.eventService.on(Message.PAGE_CHANGE_NAME, (data) => {
       if (this.pageId === data.parent)
         this.modeling.changeTransitionSubPageLabel(data.id, data.name);
     })
@@ -227,7 +217,7 @@ export class ModelEditorComponent implements OnInit {
                 element.cpnElement.subst._subpage = getNextId();
               }
 
-              this.eventService.send(Message.SUBPAGE_TRANS_CREATE, {
+              this.eventService.send(Message.PAGE_CREATE_SUBST, {
                 currentPageId: this.pageId,
                 subPageName: element.cpnElement.subst.subpageinfo._name,
                 subPageId: element.cpnElement.subst._subpage,
@@ -256,7 +246,7 @@ export class ModelEditorComponent implements OnInit {
 
       console.log(self.constructor.name, 'extract.subpage, selectedElements = ', selectedElements);
 
-      self.eventService.send(Message.SUBPAGE_TRANS_CREATE,
+      self.eventService.send(Message.PAGE_CREATE_SUBST,
         {
           currentPageId: self.pageId,
           subPageName: transCpnElement.subst.subpageinfo._name,
@@ -315,8 +305,7 @@ export class ModelEditorComponent implements OnInit {
         self.reloadPage();
 
         if (reloadTree) {
-          // console.log(self.constructor.name, 'shape.delete, UPDATE_TREE_PAGES, self.pageId = ', self.pageId);
-          this.eventService.send(Message.UPDATE_TREE_PAGES, {
+          this.eventService.send(Message.TREE_UPDATE_PAGES, {
             currentPageId: self.pageId
           });
         }
@@ -432,22 +421,7 @@ export class ModelEditorComponent implements OnInit {
   }
 
   subscripeToAppMessage() {
-
-    this.eventService.on(Message.SUBPAGE_CREATE, (data) => {
-      if (data.parentid === this.pageId) {
-        const bounds = this.canvas.viewbox();
-        const x = bounds.x + bounds.width / 2;
-        const y = bounds.y + bounds.height / 2;
-
-        const position = { x: x, y: y };
-        let cpnElement = this.modeling.createShapeCpnElement(position, CPN_TRANSITION);
-        cpnElement = this.modeling.declareSubPage(cpnElement, data.name, data.id);
-        const element = this.cpnFactory.createShape(undefined, cpnElement, CPN_TRANSITION, position, true);
-        this.modelService.addElementJsonOnPage(cpnElement, this.pageId, CPN_TRANSITION, this.modeling);
-      }
-    });
-
-    this.eventService.on(Message.SUBPAGE_UPDATE_TRANSITION, (event) => {
+    this.eventService.on(Message.PAGE_UPDATE_SUBST, (event) => {
 
       const element = this.modeling.getElementByCpnElement(event.cpnElement);
 
@@ -456,30 +430,15 @@ export class ModelEditorComponent implements OnInit {
       }
 
       this.modeling.updateElement(element, true);
-      this.modelUpdate();
     });
 
     this.eventService.on(Message.MODEL_UPDATE_DIAGRAM, (event) => {
       console.log(this.constructor.name, 'MODEL_UPDATE_DIAGRAM, event = ', event);
 
       if (event.cpnElement) {
-        const element = this.modeling.getElementByCpnElement(event.cpnElement);
+        const e = this.modeling.getElementByCpnElement(event.cpnElement);
 
-        // console.log(this.constructor.name, 'MODEL_UPDATE_DIAGRAM, element = ', JSON.stringify(element));
-
-        // if (element && element.type === CPN_TRANSITION) {
-        //   if (element.cpnElement.subst && (element.labels.length <= 5)) {
-        //     this.modelService.addInstanceInJson(
-        //       this.modelService.instaceForTransition(element.cpnElement._id, false),
-        //       this.pageId,
-        //       element.cpnElement);
-        //   } else if (!element.cpnElement.subst && element.labels.length === 5) {
-        //     this.modelService.deleteInstance(element.id);
-        //   }
-        // }
-
-        this.modeling.updateElement(element, true);
-        this.modelUpdate();
+        this.modeling.updateElement(e, true);
       }
     });
 
@@ -502,12 +461,8 @@ export class ModelEditorComponent implements OnInit {
     }
   }
 
-  modelUpdate() {
-    this.eventService.send(Message.MODEL_UPDATE, { pageObject: this.jsonPageObject });
-  }
-
   changeSubPageName(subpage) {
-    this.eventService.send(Message.CHANGE_NAME_PAGE, { id: subpage.subpageid, name: subpage.name, changedElement: 'tran' });
+    this.eventService.send(Message.PAGE_CHANGE_NAME, { id: subpage.subpageid, name: subpage.name, changedElement: 'tran' });
   }
 
   /**

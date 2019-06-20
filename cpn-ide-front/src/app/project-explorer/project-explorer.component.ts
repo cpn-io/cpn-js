@@ -894,38 +894,62 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
       const parentChildren = treeNode.parent.data.children;
       if (parentChildren) {
+
         const indexElem = parentChildren.indexOf(treeNode.data);
-        parentChildren.splice(indexElem, 1);
-        this.treeComponent.treeModel.update();
+        let deleted = false;
 
         if (treeNode.data) {
           if (treeNode.data.type === 'declaration') {
+
             this.modelService.deleteElementInBlock(treeNode.parent.data.cpnElement, treeNode.data.cpnType, treeNode.id);
+            deleted = true;
+
           } else if (treeNode.data.type === 'page') {
-            let upperPage;
-            if (treeNode.parent.id !== 'Pages') {
-              upperPage = treeNode.parent.data.cpnElement;
-            } else {
-              if (indexElem !== 0) {
-                upperPage = treeNode.parent.children[indexElem - 1].data.cpnElement;
+
+            const allPages = this.modelService.getAllPages();
+            if (allPages.length > 1) {
+
+              let upperPage;
+              if (treeNode.parent.id !== 'Pages') {
+                upperPage = treeNode.parent.data.cpnElement;
               } else {
-                if (treeNode.parent.data.children.length > 1) {
-                  upperPage = treeNode.parent.children[indexElem + 1].data.cpnElement;
+                if (indexElem !== 0) {
+                  upperPage = treeNode.parent.children[indexElem - 1].data.cpnElement;
+                } else {
+                  if (treeNode.parent.data.children.length > 1) {
+                    upperPage = treeNode.parent.children[indexElem + 1].data.cpnElement;
+                  }
                 }
               }
+              if (upperPage) {
+                this.eventService.send(Message.PAGE_OPEN, { pageObject: upperPage });
+              }
+              this.modelService.deleteInstance(treeNode.id);
+              this.modelService.deletePage(treeNode.id);
+              this.eventService.send(Message.DELETE_PAGE, { id: treeNode.id, parent: treeNode.parent.id });
+              this.eventService.send(Message.MODEL_RELOAD);
+
+              deleted = true;
             }
-            if (upperPage) {
-              this.eventService.send(Message.PAGE_OPEN, { pageObject: upperPage });
-            }
-            this.modelService.deleteInstance(treeNode.id);
-            this.modelService.deletePage(treeNode.id);
-            this.eventService.send(Message.DELETE_PAGE, { id: treeNode.id, parent: treeNode.parent.id });
+
           } else if (treeNode.data.type === 'block') {
+
             this.modelService.deleteBlock(treeNode.id);
+            deleted = true;
+
           } else if (treeNode.data.type === 'monitor') {
+
             this.modelService.deleteMonitorBlock(treeNode.id);
+            deleted = true;
+
           }
         }
+
+        if (deleted) {
+          parentChildren.splice(indexElem, 1);
+          this.treeComponent.treeModel.update();
+        }
+
       }
 
       this.eventService.send(Message.MODEL_CHANGED);

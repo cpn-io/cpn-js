@@ -67,9 +67,10 @@ export class ModelService {
         this.loadProject(event.project);
       }
     });
-    this.eventService.on(Message.MODEL_RELOAD, () => {
-      this.loadProject(this.getProject());
-    });
+
+    // this.eventService.on(Message.MODEL_RELOAD, () => {
+    //   // this.loadProject(this.getProject());
+    // });
 
     this.eventService.on(Message.PAGE_OPEN, (data) => {
       this.subPages = data.subPages;
@@ -264,8 +265,8 @@ export class ModelService {
 
   /**
    * Delete any cpn element from model json
-   * 
-   * @param cpnElement 
+   *
+   * @param cpnElement
    */
   deleteFromModel(cpnElement) {
     const id = cpnElement._id;
@@ -295,9 +296,9 @@ export class ModelService {
 
   /**
    * Delete object from it's parent
-   * 
-   * @param cpnParentElement 
-   * @param cpnElement 
+   *
+   * @param cpnParentElement
+   * @param cpnElement
    */
   deleteFromObject(cpnParentElement, cpnElement) {
     if (cpnParentElement instanceof Object) {
@@ -311,31 +312,31 @@ export class ModelService {
 
   /**
    * Find cpn object in json object tree
-   * 
-   * @param cpnGrandParentElement 
-   * @param cpnParentElement 
-   * @param cpnElement 
-   * @param id 
+   *
+   * @param cpnGrandParentElement
+   * @param cpnParentElement
+   * @param cpnElement
+   * @param id
    */
   findCpnElementById(cpnGrandParentElement, cpnParentElement, cpnElement, id) {
     if (cpnElement instanceof Object || cpnElement instanceof Array) {
       // console.log('getCpnElementById(), cpnElement = ', cpnElement);
 
       if (cpnElement._id === id) {
-        return { 
-          cpnGrandParentElement: cpnGrandParentElement, 
-          cpnParentElement: cpnParentElement, 
-          cpnElement: cpnElement 
+        return {
+          cpnGrandParentElement: cpnGrandParentElement,
+          cpnParentElement: cpnParentElement,
+          cpnElement: cpnElement
         };
       }
 
       for (const k of Object.keys(cpnElement)) {
         const e = this.findCpnElementById(cpnParentElement, cpnElement, cpnElement[k], id);
         if (e) {
-          return { 
-            cpnGrandParentElement: e.cpnGrandParentElement, 
-            cpnParentElement: e.cpnParentElement, 
-            cpnElement: e.cpnElement 
+          return {
+            cpnGrandParentElement: e.cpnGrandParentElement,
+            cpnParentElement: e.cpnParentElement,
+            cpnElement: e.cpnElement
           };
         }
       }
@@ -459,9 +460,9 @@ export class ModelService {
     }
 
     if (instances.length > 1) {
-      cpnet.instances = { instance: instances };  
+      cpnet.instances = { instance: instances };
     } else if (instances.length === 1) {
-      cpnet.instances = { instance: instances[0] };  
+      cpnet.instances = { instance: instances[0] };
     } else if (cpnet.instances) {
       delete cpnet.instances;
     }
@@ -1477,6 +1478,9 @@ export class ModelService {
    */
   getAllPages() {
     const page = this.getCpn().page;
+    if (!page) {
+      return [];
+    }
     return page instanceof Array ? page : [page];
   }
 
@@ -1500,7 +1504,7 @@ export class ModelService {
    * @param id
    */
   getPageById(id) {
-    return this.getAllPages().find(page => page._id === id);
+    return this.getAllPages().find(page => page && page._id === id);
   }
 
   /**

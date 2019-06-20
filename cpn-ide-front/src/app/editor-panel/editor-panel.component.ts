@@ -26,8 +26,6 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
 
   @ViewChildren(ModelEditorComponent) modelEditorList: QueryList<ModelEditorComponent>;
 
-  // subscription: Subscription;
-
   modelTabArray = [];
   mlTabArray = [];
   constructor(private eventService: EventService, private modelService: ModelService) {
@@ -53,16 +51,13 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
 
     this.eventService.on(Message.DELETE_PAGE, (event) => {
       this.deleteTab(event.id);
-      // this.modelEditorList.forEach(editor => {
-      //   console.log('editor-panel delete page --- ', editor.pageId);
-      // });
-     // const newFilterdQueryList = new QueryList<ModelEditorComponent>();
-     // (this.modelEditorList.find(e => { return   e.pageId === event.id})).diagram._clear();
-      const filteredList = this.modelEditorList.filter(e => { return e.pageId !== event.id})
-      this.modelEditorList.reset(filteredList);
-      if (filteredList.length === 0 )
-        this.loadProject(this.modelService.project);
-      console.log('editor-panel delete page --- ', this.modelEditorList);
+
+      // const filteredList = this.modelEditorList.filter(e => e.pageId !== event.id);
+      // this.modelEditorList.reset(filteredList);
+      // if (filteredList.length === 0) {
+      //   this.loadProject(this.modelService.project);
+      // }
+      // console.log('editor-panel delete page --- ', this.modelEditorList);
     });
 
     this.eventService.on(Message.CHANGE_NAME_PAGE, (event) => {
@@ -87,6 +82,17 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
   }
 
   deleteTab(id) {
+    console.log('deleteTab(), modelTabArray = ', this.modelTabArray);
+    console.log('deleteTab(), mlTabArray = ', this.mlTabArray);
+
+    for (const i in this.modelTabArray) {
+      if (this.modelTabArray[i].id === id) {
+        console.log('deleteTab(), i, this.modelTabArray[i] = ', i, this.modelTabArray[i]);
+        this.modelTabArray.splice(parseInt(i, 0), 1);
+        break;
+      }
+    }
+
     this.tabsComponent.deleteTabById(id);
   }
 
@@ -148,6 +154,7 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
           }
         }
       }, 0);
+
     }
   }
 

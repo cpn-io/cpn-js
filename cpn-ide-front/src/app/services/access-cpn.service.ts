@@ -86,6 +86,9 @@ export class AccessCpnService {
 
     this.errorData = [];
 
+    // complexVerify = true;
+    localStorage.setItem('cpnXml', cpnXml);
+
     this.http.post('/api/v2/cpn/init', { xml: cpnXml, complex_verify: complexVerify }, { headers: { 'X-SessionId': this.sessionId } })
       .subscribe(
         (data: any) => {

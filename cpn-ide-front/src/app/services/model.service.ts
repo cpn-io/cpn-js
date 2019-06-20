@@ -262,60 +262,43 @@ export class ModelService {
     }
   }
 
-
-  deleteElementFromPageJson(pageId, cpnElement, type) {
-    this.saveBackupBak(this.projectData, pageId);
-
-    const jsonPageObject = this.getPageById(pageId);
-    const id = cpnElement._id;
-
-    console.log(this.constructor.name, 'deleteElementFromPageJson(), cpnElement = ', cpnElement);
-
-    if (cpnElement.subst) {
-      // delete instance
-      this.deleteInstance(cpnElement._id);
-    }
-
-    if (!jsonPageObject[this.modelCase[type]] ||
-      !jsonPageObject[this.modelCase[type]].length ||
-      jsonPageObject[this.modelCase[type]].length === 1) {
-
-      jsonPageObject[this.modelCase[type]] = [];
-    } else {
-      jsonPageObject[this.modelCase[type]] = jsonPageObject[this.modelCase[type]].filter(elem => elem._id !== id);
-    }
-  }
-
-  deleteLabelJsonByCPNElem(CPNElem, index, typeElem, pageId) {
-    this.saveBackupBak(this.projectData, pageId);
-    const jsonPageObject = this.getPageById(pageId);
-    try {
-      if (jsonPageObject[typeElem] instanceof Array) {
-        jsonPageObject[typeElem].find(elem => elem._id === CPNElem.id)[CPNElem.labels[index].labelType].text.__text = undefined;
-      } else {
-        jsonPageObject[typeElem][CPNElem.labels[index].labelType].text.__text = undefined;
-      }
-    } catch (err) {
-      console.error(`deleteLabelJsonByCPNElem() - an exeption occured: ${err}`);
-    }
-  }
-
+  /**
+   * Delete any cpn element from model json
+   * 
+   * @param cpnElement 
+   */
   deleteFromModel(cpnElement) {
     const id = cpnElement._id;
 
-    const e = this.getCpnElementById(undefined, this.projectData, id);
+    const e = this.findCpnElementById(undefined, undefined, this.projectData, id);
 
     console.log('deleteFromModel(), e = ', e);
 
     if (e) {
       if (e.cpnParentElement instanceof Array) {
         e.cpnParentElement.splice(e.cpnParentElement.indexOf(e.cpnElement), 1);
+        if (e.cpnParentElement.length === 0) {
+          // console.log('deleteFromModel(), delete e = ', e);
+          if (e.cpnGrandParentElement) {
+            this.deleteFromObject(e.cpnGrandParentElement, e.cpnParentElement);
+          }
+        }
       } else if (e.cpnParentElement instanceof Object) {
         this.deleteFromObject(e.cpnParentElement, e.cpnElement);
       }
     }
+
+    if (cpnElement.subst) {
+      this.updateInstances();
+    }
   }
 
+  /**
+   * Delete object from it's parent
+   * 
+   * @param cpnParentElement 
+   * @param cpnElement 
+   */
   deleteFromObject(cpnParentElement, cpnElement) {
     if (cpnParentElement instanceof Object) {
       for (const key of Object.keys(cpnParentElement)) {
@@ -326,18 +309,34 @@ export class ModelService {
     }
   }
 
-  getCpnElementById(cpnParentElement, cpnElement, id) {
+  /**
+   * Find cpn object in json object tree
+   * 
+   * @param cpnGrandParentElement 
+   * @param cpnParentElement 
+   * @param cpnElement 
+   * @param id 
+   */
+  findCpnElementById(cpnGrandParentElement, cpnParentElement, cpnElement, id) {
     if (cpnElement instanceof Object || cpnElement instanceof Array) {
-      console.log('getCpnElementById(), cpnElement = ', cpnElement);
+      // console.log('getCpnElementById(), cpnElement = ', cpnElement);
 
       if (cpnElement._id === id) {
-        return { cpnParentElement: cpnParentElement, cpnElement: cpnElement };
+        return { 
+          cpnGrandParentElement: cpnGrandParentElement, 
+          cpnParentElement: cpnParentElement, 
+          cpnElement: cpnElement 
+        };
       }
 
-      for (const key of Object.keys(cpnElement)) {
-        const e = this.getCpnElementById(cpnElement, cpnElement[key], id);
+      for (const k of Object.keys(cpnElement)) {
+        const e = this.findCpnElementById(cpnParentElement, cpnElement, cpnElement[k], id);
         if (e) {
-          return { cpnParentElement: e.cpnParentElement, cpnElement: e.cpnElement };
+          return { 
+            cpnGrandParentElement: e.cpnGrandParentElement, 
+            cpnParentElement: e.cpnParentElement, 
+            cpnElement: e.cpnElement 
+          };
         }
       }
     }
@@ -459,7 +458,13 @@ export class ModelService {
       instances.push(instance);
     }
 
-    cpnet.instances = instances.length === 1 ? { instance: instances[0] } : { instance: instances };
+    if (instances.length > 1) {
+      cpnet.instances = { instance: instances };  
+    } else if (instances.length === 1) {
+      cpnet.instances = { instance: instances[0] };  
+    } else if (cpnet.instances) {
+      delete cpnet.instances;
+    }
 
     // this.updateBinders(rootInstanceId);
   }

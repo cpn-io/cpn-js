@@ -644,8 +644,8 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
 
   console.log('Modeling.prototype.getLabelAttrs(), labelType, defaultValue, text = ', labelType, defaultValue, text);
 
-  // fix empty value for colset label
-  if (labelType === 'type' && text === '') {
+  // fix empty value for colset and annot label
+  if ((labelType === 'type' || labelType === 'annot') && text === '') {
     cpnLabelElement.text = getDefText(defaultValue);
     text = cpnLabelElement.text.__text;
   }

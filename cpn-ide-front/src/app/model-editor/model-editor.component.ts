@@ -289,7 +289,7 @@ export class ModelEditorComponent implements OnInit {
       // delete not used arcs
       if (arcsToDelete) {
         for (const a of arcsToDelete) {
-          self.modelService.deleteElementFromPageJson(self.pageId, a, CPN_CONNECTION);
+          self.modelService.deleteFromModel(a);
         }
       }
 
@@ -308,7 +308,7 @@ export class ModelEditorComponent implements OnInit {
             if (elem.cpnElement.subst) {
               reloadTree = true;
             }
-            self.modelService.deleteElementFromPageJson(self.pageId, elem.cpnElement, elem.type);
+            self.modelService.deleteFromModel(elem.cpnElement);
           }
         }
 

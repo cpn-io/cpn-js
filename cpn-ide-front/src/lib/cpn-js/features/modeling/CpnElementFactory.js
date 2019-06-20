@@ -70,8 +70,8 @@ export function getDefTextattr() {
 
 export function getDefText(text = '') {
   return {
-    // _tool: "CPN Tools",
-    // _version: "4.0.1",
+    _tool: "CPN Tools",
+    _version: "4.0.1",
     __text: (text || '')
   };
 }

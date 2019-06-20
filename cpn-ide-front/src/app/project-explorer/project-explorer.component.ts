@@ -907,7 +907,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           } else if (treeNode.data.type === 'page') {
 
             const allPages = this.modelService.getAllPages();
-            if (allPages.length > 1) {
+
+            // if (allPages.length > 1) {
 
               let upperPage;
               if (treeNode.parent.id !== 'Pages') {
@@ -930,7 +931,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
               this.eventService.send(Message.MODEL_RELOAD);
 
               deleted = true;
-            }
+
+            // }
 
           } else if (treeNode.data.type === 'block') {
 

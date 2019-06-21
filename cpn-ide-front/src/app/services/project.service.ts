@@ -6,6 +6,7 @@ import { Message } from '../common/message';
 
 import { AccessCpnService } from './access-cpn.service';
 import { ModelService } from './model.service';
+import { CpnServerUrl } from 'src/cpn-server-url.js';
 
 /**
  * Common service for getting access to project data from all application

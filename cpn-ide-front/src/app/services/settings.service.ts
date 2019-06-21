@@ -24,7 +24,7 @@ export class SettingsService {
     this.appSettings['cond'] = '[]';
     this.appSettings['time'] = '@+';
     this.appSettings['priority'] = 'P_NORMAL';
-    this.appSettings['annot'] = 'empty';
+    this.appSettings['annot'] = '1`()';
 
     this.appSettings['block'] = 'New block';
     this.appSettings['declaration'] = '(* Empty declaration *)';

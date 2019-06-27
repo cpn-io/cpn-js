@@ -1,36 +1,50 @@
 import { Injectable } from '@angular/core';
+import { HttpHeaders, HttpClient } from '@angular/common/http';
+import { getDefaultSettings } from '../common/default-settings';
 
 @Injectable()
 export class SettingsService {
-  public appSettings = [];
+  public appSettings;
 
-  constructor() {
-    this.setDefaultAppSettings();
+  constructor(private http: HttpClient) {
+    const localSettings = localStorage.getItem('applicationSettings');
+
+    console.log(this.constructor.name, 'constructor(), localSettings = ', localSettings);
+
+    if (localSettings) {
+      this.appSettings = localSettings;
+    } else {
+      this.appSettings = getDefaultSettings();
+      // this.loadDefaultSettings();
+    }
+
+    console.log(this.constructor.name, 'constructor(), this.appSettings = ', this.appSettings);
   }
 
   public getAppSettings() {
     return this.appSettings;
   }
 
-  setDefaultAppSettings() {
-    this.appSettings['color'] = 'newColor';
-    this.appSettings['var'] = 'newVar';
-    this.appSettings['ml'] = 'newMl';
-    this.appSettings['globref'] = 'newGlobref';
-    this.appSettings['block'] = 'newblock';
-    this.appSettings['type'] = 'UNIT';
-    this.appSettings['initmark'] = 'empty';
-    this.appSettings['code'] = 'input();\noutput();\naction();';
-    this.appSettings['cond'] = '[]';
-    this.appSettings['time'] = '@+';
-    this.appSettings['priority'] = 'P_NORMAL';
-    this.appSettings['annot'] = '1`()';
-
-    this.appSettings['block'] = 'New block';
-    this.appSettings['declaration'] = '(* Empty declaration *)';
-    this.appSettings['page'] = 'New page';
-
-    this.appSettings['ellipse'] = { h: 40, w: 70 };
-    this.appSettings['box'] = { h: 40, w: 70 };
+  public saveLocalSettings() {
+    localStorage.setItem('applicationSettings', this.appSettings);
   }
+
+  loadDefaultSettings() {
+    const headers = new HttpHeaders()
+      .set('Access-Control-Allow-Origin', '*')
+      .set('Accept', 'application/json');
+
+    const url = './assets/app/default_settings.json';
+    this.http.get(url, { headers: headers, responseType: 'text' })
+      .subscribe(
+        (response: any) => {
+          this.appSettings = JSON.parse(response);
+          console.log(this.constructor.name, 'loadDefaultSettings(), this.appSettings = ', this.appSettings);
+        },
+        (error) => {
+          console.error(this.constructor.name, 'loadDefaultSettings(), url, error = ', url, error);
+        }
+      );
+  }
+
 }

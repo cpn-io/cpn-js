@@ -1,7 +1,6 @@
 import { Component, HostListener } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
-
-import { Place } from '../lib/cpn-model/cpn-model.js';
+import { SettingsService } from './services/settings.service';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +10,9 @@ import { Place } from '../lib/cpn-model/cpn-model.js';
 export class AppComponent {
   title = 'CPN-IDE';
 
-  constructor(private electronService: ElectronService) {
+  constructor(
+    private electronService: ElectronService,
+    private settings: SettingsService) {
 
     // const p = new Place({ x: 1, y: 2 });
     // p._z = 234;

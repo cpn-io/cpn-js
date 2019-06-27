@@ -48,6 +48,7 @@ import { OptionsNamePipePipe } from './pipes/options-name.pipe';
 import { SettingsService } from './services/settings.service';
 import { ValidationService } from './services/validation.service';
 import { ScrollPaneComponent } from './scroll-pane/scroll-pane.component';
+import { ApplicationSettingsComponent } from './application-settings/application-settings.component';
 
 require('typeface-droid-sans-mono');
 
@@ -79,7 +80,8 @@ require('typeface-droid-sans-mono');
 
     BlockHeaderComponent,
     TextEditRowComponent,
-    ScrollPaneComponent
+    ScrollPaneComponent,
+    ApplicationSettingsComponent
   ],
   imports: [
     BrowserModule,
@@ -103,7 +105,14 @@ require('typeface-droid-sans-mono');
     NgbModule,
   ],
   entryComponents: [],
-  providers: [AccessCpnService, ProjectService, EventService, ModelService, SettingsService, ValidationService],
+  providers: [
+    SettingsService,
+    AccessCpnService,
+    ProjectService,
+    EventService,
+    ModelService,
+    ValidationService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

@@ -57,7 +57,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   idNodeCounter = 0;
   newPageCount = 0;
 
-  showTable = 'not';
   lastContextMenuId;
 
   treeState;
@@ -69,8 +68,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   reservedWords = ['project', 'Declarations', 'Monitors', 'Options', 'Default', 'Pages', 'globbox'];
   paramsTypes = ['ml', 'colset', 'var', 'globref'];
-  appSettingsKeys;
-  appSettings;
 
   // subscription: Subscription;
   modelName;
@@ -145,9 +142,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const self = this;
-
-    this.appSettings = this.settings.getAppSettings();
-    this.appSettingsKeys = Object.keys(this.appSettings);
 
     this.eventService.on(Message.PROJECT_LOAD, (event) => {
       if (event.project) {
@@ -1161,21 +1155,21 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         if (htmlElement.offsetParent) {
           const htmlTableElement: HTMLTableElement = <HTMLTableElement>document.getElementById(htmlElement.offsetParent.id);
 
-          if (htmlTableElement.id === 'application-settings-table') {
-            const rows = htmlTableElement.rows.length;
+          // if (htmlTableElement.id === 'application-settings-table') {
+          //   const rows = htmlTableElement.rows.length;
 
-            for (let i = 0; i < rows; i += 1) {
-              const value = htmlTableElement.rows[i].cells[1].textContent;
-              const name = htmlTableElement.rows[i].cells[0].textContent;
-              this.appSettings[name] = value;
-            }
+          //   for (let i = 0; i < rows; i += 1) {
+          //     const value = htmlTableElement.rows[i].cells[1].textContent;
+          //     const name = htmlTableElement.rows[i].cells[0].textContent;
+          //     this.appSettings[name] = value;
+          //   }
 
-          }
+          // }
 
-          this.showTable = 'application-settings-table';
-          setTimeout(() => {
-            this.showTable = 'not';
-          }, 0);
+          // this.showTable = 'application-settings-table';
+          // setTimeout(() => {
+          //   this.showTable = 'not';
+          // }, 0);
 
         }
 

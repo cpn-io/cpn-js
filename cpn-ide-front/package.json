@@ -11,16 +11,21 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "electron": "ng build --base-href ./ && tsc --p electron && electron .",
+    "electron": "ng build --base-href ./ && tsc --p electron && electron . > electron-app.log",
     "electronBuilder": "electron-builder",
     "docs": "typedoc --options typedoc.json ./src/app/"
   },
   "build": {
     "appId": "cpn-ide",
+    "extends": null,
     "win": {
       "sign": "./customSign.js",
       "target": "msi"
-    }
+    },
+    "files": [
+      "./dist/**/*",
+      "./electron/dist/main.js"
+    ]
   },
   "private": true,
   "devDependencies": {

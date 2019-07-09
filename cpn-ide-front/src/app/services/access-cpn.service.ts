@@ -242,13 +242,13 @@ export class AccessCpnService {
   }
 
 
-  doStep() {
+  doStep(transId) {
     if (!this.simInitialized || !this.sessionId) {
       return;
     }
 
 
-    const url = CpnServerUrl.get() + '/api/v2/cpn/sim/step';
+    const url = CpnServerUrl.get() + '/api/v2/cpn/sim/step/' + transId; // ID1412328496
     this.http.get(url, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
       (data: any) => {
         console.log('AccessCpnService, getTransitions(), SUCCESS, data = ', data);
@@ -269,6 +269,9 @@ export class AccessCpnService {
     this.isSimulation = state;
   }
 
+  public getIsSimulation() {
+    return this.isSimulation;
+  }
 
   /**
    * Get token/marking state from simulator

@@ -113,13 +113,13 @@
     <!-- Start/Stop simulation -->
     <li class="nav-item">
       <div *ngIf="accessCpnService.isSimulation; else notSim">
-        <div (click)="onStopSimulation()" class="nav-link mb-0">
+        <div (click)="onStopSimulation()" class="nav-link mb-0" style="color: red">
           <i class="fas fa-stop"></i>
           <span>Stop</span>
         </div>
       </div>
       <ng-template #notSim>
-        <div (click)="onStartSimulation()" class="nav-link mb-0">
+        <div (click)="onStartSimulation()" class="nav-link mb-0" style="color: green">
           <i class="fas fa-play"></i>
           <span>Start</span>
         </div>

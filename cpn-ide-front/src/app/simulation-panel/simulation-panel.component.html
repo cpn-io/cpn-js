@@ -1,0 +1,101 @@
+<div class="blockHeader">
+  Simulation
+</div>
+
+<div class="panel">
+
+  <button type="button" class="btn btn-primary">
+    <i class="fas fa-backward"></i>
+    <span>Rewind</span>
+  </button>
+  <br>
+
+  <button type="button" class="btn btn-light" (click)="mode = this.SINGLE_STEP"
+    [ngClass]="{'enabled': mode === this.SINGLE_STEP }">
+    <i class="fas fa-step-forward"></i>
+    <span>Single Step</span>
+  </button>
+  <br>
+  <div *ngIf="mode === this.SINGLE_STEP" class="note">
+    Click on a marked (enabled) transition
+  </div>
+
+  <button type="button" class="btn btn-light" (click)="mode = this.SINGLE_STEP_CHOOSE_BINDING"
+    [ngClass]="{'enabled': mode === this.SINGLE_STEP_CHOOSE_BINDING }">
+    <i class="fas fa-step-forward"></i>
+    <span>Single Step Choose Binding</span>
+  </button>
+  <br>
+  <div *ngIf="mode === this.SINGLE_STEP_CHOOSE_BINDING" class="note">
+    Click on a marked (enabled) transition and select one binding
+  </div>
+
+  <button type="button" class="btn btn-light" (click)="mode = this.MULTI_STEP"
+    [ngClass]="{'enabled': mode === this.MULTI_STEP }">
+    <i class="fas fa-fast-forward"></i>
+    <span>Multi-Step (Animated)</span>
+  </button>
+  <br>
+  <div *ngIf="mode === this.MULTI_STEP" class="note">
+    <table>
+      <tr>
+        <td>Steps</td>
+        <td><input type="number" value="50"></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Delay</td>
+        <td><input type="number" value="1000"></td>
+        <td>ms</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>
+          <button type="button" class="btn btn-primary">
+            <i class="fas fa-play"></i>
+            <span>Run</span>
+          </button>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+
+  <button type="button" class="btn btn-light" (click)="mode = this.MULTI_STEP_FF"
+    [ngClass]="{'enabled': mode === this.MULTI_STEP_FF }">
+    <i class="fas fa-fast-forward"></i>
+    <span>Multi-Step (Fast Forward)</span>
+  </button>
+  <br>
+  <div *ngIf="mode === this.MULTI_STEP_FF" class="note">
+    <table *ngIf="mode === this.MULTI_STEP_FF">
+      <tr>
+        <td>Steps</td>
+        <td><input type="number" value="50"></td>
+      </tr>
+      <tr>
+        <td>Max Step</td>
+        <td><input type="number" value="0"></td>
+      </tr>
+      <tr>
+        <td>Time Step</td>
+        <td><input type="number" value="0"></td>
+      </tr>
+      <tr>
+        <td>Max Time</td>
+        <td><input type="number" value="0"></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>
+          <button type="button" class="btn btn-primary">
+            <i class="fas fa-play"></i>
+            <span>Run</span>
+          </button>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+
+</div>

@@ -6,6 +6,7 @@ import { Message } from '../common/message';
 import { EventService } from '../services/event.service';
 import { ModelService } from '../services/model.service';
 import { element } from 'protractor';
+import { AccessCpnService } from '../services/access-cpn.service';
 
 
 @Component({
@@ -80,7 +81,8 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   private layoutPartOpened: boolean[] = [];
 
   constructor(private eventService: EventService,
-    private modelService: ModelService) {
+    private modelService: ModelService,
+    public accessCpnService: AccessCpnService) {
 
   }
 

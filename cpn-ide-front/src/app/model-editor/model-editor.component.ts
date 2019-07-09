@@ -167,15 +167,16 @@ export class ModelEditorComponent implements OnInit {
     });
 
     this.eventService.on(Message.PAGE_CHANGE_NAME, (data) => {
-      if (this.pageId === data.parent)
+      if (this.pageId === data.parent) {
         this.modeling.changeTransitionSubPageLabel(data.id, data.name);
+      }
     })
 
     eventBus.on('element.hover', (event) => {
       if (event.element.type === 'cpn:Transition' || event.element.type === 'cpn:Place') {
         this.eventService.send(Message.SHAPE_HOVER, { element: event.element });
       }
-      console.log('element.hover', event.element);
+      // console.log('element.hover', event.element);
     });
     eventBus.on('element.out', (event) => {
       if (event.element.type === 'cpn:Transition' || event.element.type === 'cpn:Place') {

@@ -8,10 +8,11 @@
     "start": "node ./version.build.js && ng serve --proxy-config proxy.conf.json",
     "updateBuild": "node ./replace.build.js",
     "build": "node ./version.build.js && ng build",
+    "buildProd": "node ./version.build.js && ng build --prod --build-optimizer=false",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "electron": "ng build --base-href ./ && tsc --p electron && electron . > electron-app.log",
+    "electron": "ng build --prod --build-optimizer=false --base-href ./ && tsc --p electron && electron . > electron-app.log",
     "electronBuilder": "electron-builder",
     "docs": "typedoc --options typedoc.json ./src/app/"
   },

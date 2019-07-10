@@ -36,6 +36,8 @@ export default function LabelEditingProvider(
 
   directEditing.registerProvider(this);
 
+  const self = this;
+
   // listen to edit event
   eventBus.on('element.edit', function (event) {
     activateDirectEdit(event.element, true);
@@ -142,6 +144,10 @@ export default function LabelEditingProvider(
 
 
   function activateDirectEdit(element, force) {
+    if (!self._modeling.isEditable()) {
+      return;
+    }
+
     // console.log('LabelEditingProvider, activateDirectEdit(), element = ', element);
     if (force || isCpn(element)) {
       directEditing.activate(element);

@@ -1370,7 +1370,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * @returns - tree node
    */
   createBlockNode(cpnElement) {
-    console.log('createBlockNode(), cpnElement = ', cpnElement);
+    // console.log('createBlockNode(), cpnElement = ', cpnElement);
 
     const blockNode = this.createTreeNode(cpnElement._id, cpnElement.id);
     blockNode.cpnElement = cpnElement;
@@ -2366,6 +2366,10 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   canEdit(node): boolean {
+    if (this.accessCpnService.isSimulation) {
+      return false;
+    }
+
     // return node &&
     //   !this.reservedWords.includes(node.data.name) &&
     //   !this.modelService.paramsTypes.includes(node.data.name);

@@ -1,5 +1,6 @@
 export function getDefaultSettings() {
   return {
+    'serverAddress': 'http://95.161.178.222:42020',
     'color': 'newColor',
     'var': 'newVar',
     'ml': 'newMl',

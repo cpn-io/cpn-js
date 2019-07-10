@@ -37,6 +37,9 @@ export class Message {
   static SERVER_GET_TOKEN_MARKS = 'server.get.token.mark';
   static SERVER_GET_TRANSITIONS = 'server.get.transitions';
 
+  static SIMULATION_STARTED = 'simulation.started';
+  static SIMULATION_STOPED = 'simulation.stoped';
+
   id: string;
   data: object;
 }

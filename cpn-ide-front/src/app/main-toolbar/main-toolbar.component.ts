@@ -39,6 +39,7 @@ export class MainToolbarComponent implements OnInit {
     this.eventService.on(Message.SERVER_INIT_SIM_DONE, (data) => {
       if (this.isStart) {
         this.accessCpnService.setIsSimulation(true);
+        this.eventService.send(Message.SIMULATION_STARTED);
       }
       this.isStart = false;
     });
@@ -46,6 +47,7 @@ export class MainToolbarComponent implements OnInit {
 
   onStopSimulation() {
     this.accessCpnService.setIsSimulation(false);
+    this.eventService.send(Message.SIMULATION_STOPED);
   }
 
   onValidate() {

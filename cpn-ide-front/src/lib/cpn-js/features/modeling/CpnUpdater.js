@@ -203,15 +203,17 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
       // console.log('CpnUpdater(), domEvent, mousedown, popup menu, x,y = ', event.x, event.y);
 
-      if (element) {
-        // console.log('CpnUpdater(), domEvent, mousedown, popup menu, element = ', element);
+      if (modeling.isEditable()) {
+        if (element) {
+          // console.log('CpnUpdater(), domEvent, mousedown, popup menu, element = ', element);
 
-        if (isAny(element, [CPN_PLACE, CPN_TRANSITION, CPN_CONNECTION])) {
-          popupMenuProvider.close();
-          contextPad.open(element);
-        } else {
-          contextPad.close();
-          popupMenuProvider.open(element, { cursor: { x: position.x, y: position.y + 90 } });
+          if (isAny(element, [CPN_PLACE, CPN_TRANSITION, CPN_CONNECTION])) {
+            popupMenuProvider.close();
+            contextPad.open(element);
+          } else {
+            contextPad.close();
+            popupMenuProvider.open(element, { cursor: { x: position.x, y: position.y + 90 } });
+          }
         }
       }
     }
@@ -225,6 +227,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
       return;
 
     tokenElement.label.hidden = !tokenElement.label.hidden;
+    // tokenElement.label.hidden = false;
     modeling.updateElement(tokenElement.label, true);
 
     if (!tokenElement.label.hidden) {

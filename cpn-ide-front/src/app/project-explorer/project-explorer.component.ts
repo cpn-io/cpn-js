@@ -2366,6 +2366,10 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   canEdit(node): boolean {
+    if (this.accessCpnService.isSimulation) {
+      return false;
+    }
+
     // return node &&
     //   !this.reservedWords.includes(node.data.name) &&
     //   !this.modelService.paramsTypes.includes(node.data.name);

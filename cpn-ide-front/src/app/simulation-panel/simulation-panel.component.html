@@ -10,7 +10,7 @@
   </button>
   <br>
 
-  <button type="button" class="btn btn-light" (click)="mode = this.SINGLE_STEP"
+  <button type="button" class="btn btn-light" (click)="setMode(this.SINGLE_STEP)"
     [ngClass]="{'enabled': mode === this.SINGLE_STEP }">
     <i class="fas fa-step-forward"></i>
     <span>Single Step</span>
@@ -20,7 +20,7 @@
     Click on a marked (enabled) transition
   </div>
 
-  <button type="button" class="btn btn-light" (click)="mode = this.SINGLE_STEP_CHOOSE_BINDING"
+  <button type="button" class="btn btn-light" (click)="setMode(this.SINGLE_STEP_CHOOSE_BINDING)"
     [ngClass]="{'enabled': mode === this.SINGLE_STEP_CHOOSE_BINDING }">
     <i class="fas fa-step-forward"></i>
     <span>Single Step Choose Binding</span>
@@ -30,7 +30,7 @@
     Click on a marked (enabled) transition and select one binding
   </div>
 
-  <button type="button" class="btn btn-light" (click)="mode = this.MULTI_STEP"
+  <button type="button" class="btn btn-light" (click)="setMode(this.MULTI_STEP)"
     [ngClass]="{'enabled': mode === this.MULTI_STEP }">
     <i class="fas fa-fast-forward"></i>
     <span>Multi-Step (Animated)</span>
@@ -61,7 +61,7 @@
     </table>
   </div>
 
-  <button type="button" class="btn btn-light" (click)="mode = this.MULTI_STEP_FF"
+  <button type="button" class="btn btn-light" (click)="setMode(this.MULTI_STEP_FF)"
     [ngClass]="{'enabled': mode === this.MULTI_STEP_FF }">
     <i class="fas fa-fast-forward"></i>
     <span>Multi-Step (Fast Forward)</span>

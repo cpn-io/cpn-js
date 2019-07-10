@@ -44,6 +44,8 @@ export class ApplicationSettingsComponent implements OnInit {
               const name = htmlTableElement.rows[i].cells[0].textContent;
               this.appSettings[name] = value;
             }
+
+            localStorage.setItem('applicationSettings', JSON.stringify(this.appSettings));
           }
 
           this.showTable = 'application-settings-table';
@@ -56,6 +58,33 @@ export class ApplicationSettingsComponent implements OnInit {
       }
     }
 
+  }
+
+  saveEditedData(event, item) {
+    console.log('saveEditedData(), event, item = ', event, item);
+
+    const htmlElement = event.srcElement || event.target;
+    if (!htmlElement) {
+      console.error('saveEditedData(), Error: fail to get html element, event = ', event);
+      return;
+    }
+
+    let value = htmlElement.textContent;
+  }
+
+  getServerAddress() {
+  }
+
+  updateServerAddress(event) {
+    console.log('updateServerAddress(), event = ', event);
+  }
+
+  getServerAddressList() {
+    const addressList = [''];
+    addressList.push('');
+    addressList.push('http://localhost:8080');
+    addressList.push('http://95.161.178.222:42020');
+    return addressList;
   }
 
 }

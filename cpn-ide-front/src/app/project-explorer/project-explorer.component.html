@@ -264,22 +264,6 @@
 
       <ng-container *ngIf="tab.id === 'applicationSettings'">
         <app-application-settings></app-application-settings>
-
-        <!-- <div class="workspace-container">
-          <div class="inner">
-            <div class="scroll-y">
-
-              <table [id]="'application-settings-table'" class="table table-bordered table-hover table-small"
-                *ngIf="showTable !== 'application-settings-table'">
-                <tr *ngFor="let item of appSettingsKeys">
-                  <td width="50%" class="valueName">{{ item }}</td>
-                  <td width="50%" contenteditable='true'>{{ appSettings[item] }}</td>
-                </tr>
-              </table>
-
-            </div>
-          </div>
-        </div> -->
       </ng-container>
 
     </tab>

@@ -172,6 +172,16 @@ export class ModelEditorComponent implements OnInit {
       }
     })
 
+    this.eventService.on(Message.SIMULATION_STARTED, (data) => {
+      this.modeling.setEditable(false);
+    });
+
+    this.eventService.on(Message.SIMULATION_STOPED, (data) => {
+      this.modeling.setEditable(true);
+    });
+
+    // Diagram events
+
     eventBus.on('element.hover', (event) => {
       if (event.element.type === 'cpn:Transition' || event.element.type === 'cpn:Place') {
         this.eventService.send(Message.SHAPE_HOVER, { element: event.element });

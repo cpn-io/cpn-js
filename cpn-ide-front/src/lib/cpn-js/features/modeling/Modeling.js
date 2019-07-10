@@ -64,7 +64,7 @@ export default function Modeling(eventBus, elementFactory, elementRegistry, comm
   this._canvas = canvas;
   this._portMenuProvider = portMenuProvider;
 
-  this._isEditable = false;
+  this._isEditable = true;
 }
 
 inherits(Modeling, BaseModeling);
@@ -737,7 +737,8 @@ Modeling.prototype.getMarkingLabelAttrs = function (labelTarget, cpnMarkingLabel
   x += 1 * (labelTarget.x + labelTarget.width * 3);
   y += 1 * (labelTarget.y + labelTarget.height / 2);
 
-  var hidden = text === '' || !(cpnMarkingLabelElement._hidden === 'false');
+  // var hidden = text === '' || text === 'empty' || !(cpnMarkingLabelElement._hidden === 'false');
+  var hidden = text === '' || text === 'empty';
 
   var attrs = {
     type: CPN_MARKING_LABEL,

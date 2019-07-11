@@ -18,7 +18,16 @@ function initCpnServerUrl() {
 }
 
 function createWindow() {
-  win = new BrowserWindow({ width: 800, height: 600 })
+  const isDev = () => process.env.NODE_ENV === 'development';
+  const directory = isDev() ? process.cwd().concat('/app') : process.env.APP_PATH;
+
+  win = new BrowserWindow({ width: 800, height: 600 });
+  win.setMenuBarVisibility(false);
+
+  // console.log('isDev() = ', isDev());
+  // console.log('directory = ', directory);
+  // console.log('process.cwd() = ', process.cwd());
+  // console.log('__dirname = ', __dirname);
 
   win.loadURL(
     url.format({

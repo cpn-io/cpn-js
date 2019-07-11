@@ -103,23 +103,23 @@
     </li>
 
     <!-- Step -->
-    <li *ngIf="accessCpnService.isSimulation" class="nav-item">
+    <!-- <li *ngIf="accessCpnService.isSimulation" class="nav-item">
       <div (click)="onDoStep()" class="nav-link mb-0">
         <i class="fas fa-step-forward"></i>
         <span>Step</span>
       </div>
-    </li>
+    </li> -->
 
     <!-- Start/Stop simulation -->
     <li class="nav-item">
       <div *ngIf="accessCpnService.isSimulation; else notSim">
-        <div (click)="onStopSimulation()" class="nav-link mb-0">
+        <div (click)="onStopSimulation()" class="nav-link mb-0" style="color: red">
           <i class="fas fa-stop"></i>
           <span>Stop</span>
         </div>
       </div>
       <ng-template #notSim>
-        <div (click)="onStartSimulation()" class="nav-link mb-0">
+        <div (click)="onStartSimulation()" class="nav-link mb-0" style="color: green">
           <i class="fas fa-play"></i>
           <span>Start</span>
         </div>

@@ -48,7 +48,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     private settings: SettingsService,
     private projectService: ProjectService,
     private modelService: ModelService,
-    private accessCpnService: AccessCpnService
+    public accessCpnService: AccessCpnService
   ) {
   }
 

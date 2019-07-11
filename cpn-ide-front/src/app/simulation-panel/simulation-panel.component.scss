@@ -1,0 +1,36 @@
+.panel {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+}
+
+.panel span {
+  padding-left: 10px;
+}
+
+.panel button.enabled {
+  background: lightgreen;
+}
+
+.panel table {
+  margin-top: 0px;
+}
+
+.panel td {
+  padding: 5px;
+}
+
+.panel input {
+  padding: 5px;
+}
+
+.panel .btn-light {
+  width: 100%;
+  text-align: left;
+  margin-top: 10px;
+}
+
+.panel .note {
+  padding: 10px;
+  background: #eeffee;
+}

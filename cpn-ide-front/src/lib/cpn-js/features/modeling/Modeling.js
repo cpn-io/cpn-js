@@ -45,9 +45,8 @@ import {
  * @param {EventBus} eventBus
  * @param {ElementFactory} elementFactory
  * @param {CommandStack} commandStack
- * @param {CpnRules} cpnRules
  */
-export default function Modeling(eventBus, elementFactory, elementRegistry, commandStack, cpnRules, textRenderer, canvas, portMenuProvider) {
+export default function Modeling(eventBus, elementFactory, elementRegistry, commandStack, textRenderer, canvas, portMenuProvider) {
   // console.log('Modeling()');
 
   BaseModeling.call(this, eventBus, elementFactory, commandStack);
@@ -61,10 +60,11 @@ export default function Modeling(eventBus, elementFactory, elementRegistry, comm
   this._eventBus = eventBus;
   this._elementFactory = elementFactory;
   this._elementRegistry = elementRegistry;
-  this._cpnRules = cpnRules;
   this._textRenderer = textRenderer;
   this._canvas = canvas;
   this._portMenuProvider = portMenuProvider;
+
+  this._isEditable = true;
 }
 
 inherits(Modeling, BaseModeling);
@@ -74,7 +74,6 @@ Modeling.$inject = [
   'elementFactory',
   'elementRegistry',
   'commandStack',
-  'cpnRules',
   'textRenderer',
   'canvas',
   'portMenuProvider'
@@ -367,11 +366,6 @@ Modeling.prototype.updateShapeByCpnElement = function (element, canvas, eventBus
 
 Modeling.prototype.connect = function (source, target, attrs, hints) {
 
-  // var cpnRules = this._cpnRules;
-  // if (!attrs) {
-  //   attrs = cpnRules.canConnect(source, target);
-  // }
-
   if (attrs) {
     return this.createConnection(source, target, attrs, source.parent, hints);
   } else {
@@ -642,7 +636,7 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
     // console.log('Modeling.prototype.getLabelAttrs(), defualt text = ', defaultValue);
   }
 
-  console.log('Modeling.prototype.getLabelAttrs(), labelType, defaultValue, text = ', labelType, defaultValue, text);
+  // console.log('Modeling.prototype.getLabelAttrs(), labelType, defaultValue, text = ', labelType, defaultValue, text);
 
   // fix empty value for colset and annot label
   if ((labelType === 'type' || labelType === 'annot') && text === '') {
@@ -650,7 +644,7 @@ Modeling.prototype.getLabelAttrs = function (labelTarget, cpnLabelElement, label
     text = cpnLabelElement.text.__text;
   }
 
-  console.log('Modeling.prototype.getLabelAttrs(), cpnLabelElement.text = ', cpnLabelElement.text);
+  // console.log('Modeling.prototype.getLabelAttrs(), cpnLabelElement.text = ', cpnLabelElement.text);
 
   var bounds = { x: x, y: y, width: 200, height: 20 };
   bounds = this._textRenderer.getExternalLabelBounds(bounds, defaultValue && text.trim() === '' ? defaultValue : text);
@@ -743,7 +737,8 @@ Modeling.prototype.getMarkingLabelAttrs = function (labelTarget, cpnMarkingLabel
   x += 1 * (labelTarget.x + labelTarget.width * 3);
   y += 1 * (labelTarget.y + labelTarget.height / 2);
 
-  var hidden = text === '' || !(cpnMarkingLabelElement._hidden === 'false');
+  // var hidden = text === '' || text === 'empty' || !(cpnMarkingLabelElement._hidden === 'false');
+  var hidden = text === '' || text === 'empty';
 
   var attrs = {
     type: CPN_MARKING_LABEL,
@@ -1049,3 +1044,11 @@ Modeling.prototype.getShapeArcs = function (shape) {
   }
   return arcs;
 }
+
+Modeling.prototype.isEditable = function () {
+  return this._isEditable;
+};
+
+Modeling.prototype.setEditable = function (editable) {
+  this._isEditable = editable;
+};

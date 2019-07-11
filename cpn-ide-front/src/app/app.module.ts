@@ -49,6 +49,7 @@ import { SettingsService } from './services/settings.service';
 import { ValidationService } from './services/validation.service';
 import { ScrollPaneComponent } from './scroll-pane/scroll-pane.component';
 import { ApplicationSettingsComponent } from './application-settings/application-settings.component';
+import { SimulationPanelComponent } from './simulation-panel/simulation-panel.component';
 
 require('typeface-droid-sans-mono');
 
@@ -81,7 +82,8 @@ require('typeface-droid-sans-mono');
     BlockHeaderComponent,
     TextEditRowComponent,
     ScrollPaneComponent,
-    ApplicationSettingsComponent
+    ApplicationSettingsComponent,
+    SimulationPanelComponent
   ],
   imports: [
     BrowserModule,

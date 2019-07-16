@@ -18,10 +18,12 @@
 
 .panel td {
   padding: 5px;
+  white-space: nowrap;
 }
 
 .panel input {
   padding: 5px;
+  text-align: left;
 }
 
 .panel .btn-light {
@@ -33,4 +35,12 @@
 .panel .note {
   padding: 10px;
   background: #eeffee;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.text-right {
+  text-align: right;
 }

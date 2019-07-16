@@ -25,6 +25,7 @@ import CpnResizeModule from '../features/resize';
 
 import CpnPopupMenuProvider from '../features/popup-menu/CpnPopupMenuProvider';
 import CpnPortMenuProvider from '../features/port-menu/CpnPortMenuProvider';
+import CpnBindingsMenuProvider from '../features/bindings-menu/CpnBindingsMenuProvider';
 import CpnOrderingProvider from '../features/ordering/CpnOrderingProvider';
 
 import CpnSnappingModule from '../features/snapping';
@@ -82,6 +83,7 @@ export default {
 
     'popupMenuProvider',
     'portMenuProvider',
+    'bindingsMenuProvider',
     'paletteProvider',
     'cpnOrderingProvider'
   ],
@@ -89,6 +91,7 @@ export default {
   connectionDocking: ['type', CroppingConnectionDocking],
   popupMenuProvider: ['type', CpnPopupMenuProvider],
   portMenuProvider: ['type', CpnPortMenuProvider],
+  bindingsMenuProvider: ['type', CpnBindingsMenuProvider],
   paletteProvider: ['type', CpnPaletteProvider],
   cpnOrderingProvider: [ 'type', CpnOrderingProvider ]
 };

@@ -25,7 +25,7 @@ import {
 
 import { AccessCpnService } from '../services/access-cpn.service';
 import { isComponent } from '@angular/core/src/render3/util';
-import {element} from 'protractor';
+import { element } from 'protractor';
 
 
 @Component({
@@ -160,6 +160,11 @@ export class ModelEditorComponent implements OnInit {
       this.updateElementStatus();
     });
 
+    // BINDINGS
+    this.eventService.on(Message.SERVER_GET_BINDINGS, (event) => {
+      eventBus.fire('bindingsMenu.open', { data: event.data });
+    });
+
     this.eventService.on(Message.PAGE_DELETE, (data) => {
       if (data.id === this.pageId) {
         this.diagram.clear();
@@ -217,9 +222,9 @@ export class ModelEditorComponent implements OnInit {
       // console.log('shape.create.end, event = ', event);
 
       if (event.elements) {
-       // let allPagesId = this.modelService.getAllPages().map(p => {return p._id});
+        // let allPagesId = this.modelService.getAllPages().map(p => {return p._id});
         for (const element of event.elements) {
-          if (element.cpnElement ) { //if (element.cpnElement && allPagesId.includes(this.pageId)) {
+          if (element.cpnElement) { //if (element.cpnElement && allPagesId.includes(this.pageId)) {
             this.modelService.addElementJsonOnPage(element.cpnElement, this.pageId, element.type, this.modeling);
 
             // Check if transition is subpage and create subpage
@@ -367,6 +372,10 @@ export class ModelEditorComponent implements OnInit {
       }
     });
 
+
+    eventBus.on('bindingsMenu.select', (event) => {
+      self.eventService.send(Message.SIMULATION_SELECT_BINDING, event);
+    });
 
     // this._eventBus.fire('bind.port.cancel', {connection: this._createdArc});
   }

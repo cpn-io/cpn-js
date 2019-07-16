@@ -14,6 +14,7 @@ export class SimulationPanelComponent implements OnInit {
   SINGLE_STEP_CHOOSE_BINDING = 2;
   MULTI_STEP = 3;
   MULTI_STEP_FF = 4;
+  REPLICATION = 5;
 
   mode = this.SINGLE_STEP;
 
@@ -49,19 +50,48 @@ export class SimulationPanelComponent implements OnInit {
     //   document.body.style.cursor = setCursor ? 'crosshair' : 'defualt';
     // });
 
-    this.eventService.on(Message.SHAPE_SELECT, (data) => {
-      const element = data.element;
+    this.eventService.on(Message.SHAPE_SELECT, (event) => {
 
+      if (!this.accessCpnService.isSimulation) {
+        return;
+      }
+
+      const element = event.element;
       console.log(this.constructor.name, 'Message.SHAPE_SELECT, element = ', element);
 
       if (element && element.type && element.type === 'cpn:Transition') {
-
         switch (this.mode) {
           case this.SINGLE_STEP:
             this.accessCpnService.doStep(element.cpnElement._id);
             break;
+          case this.SINGLE_STEP_CHOOSE_BINDING:
+            this.accessCpnService.getBindings(element.cpnElement._id);
+            break;
         }
+      }
 
+    });
+
+
+    this.eventService.on(Message.SIMULATION_SELECT_BINDING, (event) => {
+      if (!this.accessCpnService.isSimulation) {
+        return;
+      }
+
+      console.log(this.constructor.name, 'Message.SIMULATION_SELECT_BINDING, event = ', event);
+
+      const element = event.element;
+
+      if (element &&
+        element.type &&
+        element.type === 'cpn:Transition' &&
+        event.binding) {
+
+        switch (this.mode) {
+          case this.SINGLE_STEP_CHOOSE_BINDING:
+            this.accessCpnService.doStepWithBinding(element.cpnElement._id, event.binding.bind_id);
+            break;
+        }
       }
     });
 

@@ -18,6 +18,7 @@ export class AccessCpnService {
   errorData = [];
   tokenData = [];
   readyData = [];
+  stateData;
 
   constructor(private http: HttpClient,
     private eventService: EventService) {
@@ -33,15 +34,32 @@ export class AccessCpnService {
   getErrorData() {
     return this.errorData;
   }
+
   getTokenData() {
+    if (!this.isSimulation) {
+      return [];
+    }
+
     return this.tokenData;
   }
+
   getReadyData() {
+    if (!this.isSimulation) {
+      return [];
+    }
+
     const readyData = {};
     for (const id of this.readyData) {
       readyData[id] = 'Transition is ready.';
     }
     return readyData;
+  }
+
+  getStateData() {
+    if (!this.isSimulation) {
+      return undefined;
+    }
+    return this.stateData;
   }
 
   /**
@@ -148,6 +166,10 @@ export class AccessCpnService {
 
     this.simInitialized = false;
 
+    this.tokenData = [];
+    this.readyData = [];
+    this.stateData = undefined;
+
     if (!this.sessionId) {
       this.sessionId = 'CPN-IDE-SESSION-' + new Date().getTime();
     }
@@ -242,31 +264,145 @@ export class AccessCpnService {
   }
 
 
+  /**
+   * Do simulation step for transition
+   * @param transId - transition id
+   */
   doStep(transId) {
     if (!this.simInitialized || !this.sessionId) {
       return;
     }
 
-
     const url = CpnServerUrl.get() + '/api/v2/cpn/sim/step/' + transId; // ID1412328496
     this.http.get(url, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
       (data: any) => {
-        console.log('AccessCpnService, getTransitions(), SUCCESS, data = ', data);
+        console.log('AccessCpnService, doStep(), SUCCESS, data = ', data);
         if (data) {
           this.tokenData = data.tokensAndMark;
           this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
           this.readyData = data.enableTrans;
           this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
         }
+
+        this.getSimState();
       },
       (error) => {
-        console.error('AccessCpnService, getTransitions(), ERROR, data = ', error);
+        console.error('AccessCpnService, doStep(), ERROR, data = ', error);
       }
     );
   }
 
+  doStepWithBinding(transId, bindId) {
+    if (!this.simInitialized || !this.sessionId) {
+      return;
+    }
+
+    const postData = {
+      bind_id: bindId
+    };
+
+    console.log('AccessCpnService, doStepWithBinding(), postData = ', postData);
+
+    // POST /api/v2/cpn/sim/step_with_binding/{transId}
+    const url = CpnServerUrl.get() + '/api/v2/cpn/sim/step_with_binding/' + transId;
+    this.http.post(url, postData, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
+      (data: any) => {
+        console.log('AccessCpnService, doStepWithBinding(), SUCCESS, data = ', data);
+        if (data) {
+          this.tokenData = data.tokensAndMark;
+          this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
+          this.readyData = data.enableTrans;
+          this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
+
+          this.getSimState();
+        }
+      },
+      (error) => {
+        console.error('AccessCpnService, doStepWithBinding(), ERROR, data = ', error);
+      }
+    );
+  }
+
+
+  doMultiStepFF(options) {
+    if (!this.simInitialized || !this.sessionId) {
+      return;
+    }
+
+    const postData = options;
+
+    console.log('AccessCpnService, doMultiStepFF(), postData = ', postData);
+
+    // POST /api/v2/cpn/sim/step_with_binding/{transId}
+    const url = CpnServerUrl.get() + '/api/v2/cpn/sim/step_fast_forward';
+    this.http.post(url, postData, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
+      (data: any) => {
+        console.log('AccessCpnService, doStepWithBinding(), SUCCESS, data = ', data);
+        if (data) {
+          this.tokenData = data.tokensAndMark;
+          this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
+          this.readyData = data.enableTrans;
+          this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
+
+          this.getSimState();
+        }
+      },
+      (error) => {
+        console.error('AccessCpnService, doStepWithBinding(), ERROR, data = ', error);
+      }
+    );
+  }
+
+
+  /**
+   * Get bindings for transition
+   * @param transId - transition id
+   */
+  getBindings(transId) {
+    if (!this.simInitialized || !this.sessionId) {
+      return;
+    }
+
+    const url = CpnServerUrl.get() + '/api/v2/cpn/sim/bindings/' + transId; // ID1412328496
+    this.http.get(url, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
+      (data: any) => {
+        console.log('AccessCpnService, getBindings(), SUCCESS, data = ', data);
+        if (data) {
+          this.eventService.send(Message.SERVER_GET_BINDINGS, { data: data });
+        }
+      },
+      (error) => {
+        console.error('AccessCpnService, getBindings(), ERROR, data = ', error);
+      }
+    );
+  }
+
+  getSimState() {
+    if (!this.simInitialized || !this.sessionId) {
+      return;
+    }
+
+    this.stateData = undefined;
+
+    const url = CpnServerUrl.get() + '/api/v2/cpn/sim/state';
+    this.http.get(url, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
+      (data: any) => {
+        console.log('AccessCpnService, getSimState(), SUCCESS, data = ', data);
+        if (data) {
+          this.stateData = data;
+          this.eventService.send(Message.SIMULATION_UPDATE_STATE);
+        }
+      },
+      (error) => {
+        console.error('AccessCpnService, getSimState(), ERROR, data = ', error);
+      }
+    );
+  }
+
+
   public setIsSimulation(state) {
     this.isSimulation = state;
+    this.eventService.send(Message.SIMULATION_UPDATE_STATE);
   }
 
   public getIsSimulation() {

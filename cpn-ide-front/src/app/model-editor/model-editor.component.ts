@@ -25,7 +25,7 @@ import {
 
 import { AccessCpnService } from '../services/access-cpn.service';
 import { isComponent } from '@angular/core/src/render3/util';
-import {element} from 'protractor';
+import { element } from 'protractor';
 
 
 @Component({
@@ -160,6 +160,19 @@ export class ModelEditorComponent implements OnInit {
       this.updateElementStatus();
     });
 
+    // BINDINGS
+    this.eventService.on(Message.SERVER_GET_BINDINGS, (event) => {
+      eventBus.fire('bindingsMenu.open', { data: event.data });
+    });
+
+    // SIM STATUS
+    this.eventService.on(Message.SIMULATION_STARTED, (data) => {
+      this.updateElementStatus();
+    });
+    this.eventService.on(Message.SIMULATION_STOPED, (data) => {
+      this.updateElementStatus();
+    });
+
     this.eventService.on(Message.PAGE_DELETE, (data) => {
       if (data.id === this.pageId) {
         this.diagram.clear();
@@ -217,9 +230,9 @@ export class ModelEditorComponent implements OnInit {
       // console.log('shape.create.end, event = ', event);
 
       if (event.elements) {
-       // let allPagesId = this.modelService.getAllPages().map(p => {return p._id});
+        // let allPagesId = this.modelService.getAllPages().map(p => {return p._id});
         for (const element of event.elements) {
-          if (element.cpnElement ) { //if (element.cpnElement && allPagesId.includes(this.pageId)) {
+          if (element.cpnElement) { //if (element.cpnElement && allPagesId.includes(this.pageId)) {
             this.modelService.addElementJsonOnPage(element.cpnElement, this.pageId, element.type, this.modeling);
 
             // Check if transition is subpage and create subpage
@@ -368,6 +381,10 @@ export class ModelEditorComponent implements OnInit {
     });
 
 
+    eventBus.on('bindingsMenu.select', (event) => {
+      self.eventService.send(Message.SIMULATION_SELECT_BINDING, event);
+    });
+
     // this._eventBus.fire('bind.port.cancel', {connection: this._createdArc});
   }
 
@@ -410,21 +427,21 @@ export class ModelEditorComponent implements OnInit {
   updateElementStatus() {
     this.stateProvider.clear();
 
-    // console.log('updateElementStatus(), tokenData = ', this.accessCpnService.getTokenData());
-    // console.log('updateElementStatus(), readyData = ', this.accessCpnService.getReadyData());
-    // console.log('updateElementStatus(), errorData = ', this.accessCpnService.getErrorData());
+    console.log('updateElementStatus(), tokenData = ', this.accessCpnService.getTokenData());
+    console.log('updateElementStatus(), readyData = ', this.accessCpnService.getReadyData());
+    console.log('updateElementStatus(), errorData = ', this.accessCpnService.getErrorData());
 
-    if (Object.keys(this.accessCpnService.getTokenData()).length > 0) {
-      this.eventBus.fire('model.update.tokens', { data: this.accessCpnService.getTokenData() });
-    }
+    // if (Object.keys(this.accessCpnService.getTokenData()).length > 0) {
+    this.eventBus.fire('model.update.tokens', { data: this.accessCpnService.getTokenData() });
+    // }
 
-    if (Object.keys(this.accessCpnService.getReadyData()).length > 0) {
-      this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
-    }
+    // if (Object.keys(this.accessCpnService.getReadyData()).length > 0) {
+    this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
+    // }
 
-    if (Object.keys(this.accessCpnService.getErrorData()).length > 0) {
-      this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
-    }
+    // if (Object.keys(this.accessCpnService.getErrorData()).length > 0) {
+    this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
+    // }
 
     this.checkPorts();
 
@@ -466,8 +483,8 @@ export class ModelEditorComponent implements OnInit {
           labels[lab.labelType] = lab.cpnElement;
         }
 
-        this.eventService.send(Message.SHAPE_SELECT,
-          { element: element, labels: labels, cpnElement: element.cpnElement, type: element.type });
+        // this.eventService.send(Message.SHAPE_SELECT,
+        //   { element: element, labels: labels, cpnElement: element.cpnElement, type: element.type });
       }
     }
   }
@@ -486,6 +503,8 @@ export class ModelEditorComponent implements OnInit {
     if (event.element) {
       this.openPropPanel(event.element);
     }
+
+    this.eventService.send(Message.SHAPE_SELECT, { element: event.element });
   }
 
   log(obj) {

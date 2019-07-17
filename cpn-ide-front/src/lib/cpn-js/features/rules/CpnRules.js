@@ -14,11 +14,13 @@ import {
   isAny
 } from '../../util/ModelUtil';
 
-export default function CpnRules(eventBus) {
+export default function CpnRules(eventBus, modeling) {
   RuleProvider.call(this, eventBus);
+
+  this._modeling = modeling;
 }
 
-CpnRules.$inject = ['eventBus'];
+CpnRules.$inject = ['eventBus', 'modeling'];
 
 inherits(CpnRules, RuleProvider);
 
@@ -28,11 +30,18 @@ CpnRules.prototype.init = function () {
 
   this.addRule('shape.create', function (context) {
     // console.log('RULE shape.create, context = ', context);
+    if (!self._modeling.isEditable()) {
+      return false;
+    }
+
     return canCreate(context.target, context.shape);
   });
 
   this.addRule('shape.resize', function (context) {
     // console.log('RULE shape.resize, context = ', context);
+    if (!self._modeling.isEditable()) {
+      return false;
+    }
 
     if (context.shape && context.newBounds &&
       (is(context.shape, CPN_PLACE) || is(context.shape, CPN_TRANSITION))) {
@@ -49,20 +58,50 @@ CpnRules.prototype.init = function () {
 
   this.addRule('connection.start', function (context) {
     // console.log('RULE connection.start, context = ', context);
+    if (!self._modeling.isEditable()) {
+      return false;
+    }
     return self.canStartConnect(context.source);
   });
 
   this.addRule('connection.create', function (context) {
     // console.log('RULE connection.create, context = ', context);
+    if (!self._modeling.isEditable()) {
+      return false;
+    }
     return self.canConnect(context.source, context.target);
   });
 
-  // this.addRule('elements.move', function (context) {
-  //   console.log('RULE elements.move, context = ', context);
-  //   var shapes = context.shapes,
-  //     target = context.target;
-  //   return canAttach(target, shapes[0]);
-  // });
+  this.addRule(
+    ['connection.updateWaypoints',
+      'connection.reconnectEnd',
+      'connection.reconnectStart'], function (context) {
+        if (!self._modeling.isEditable()) {
+          return false;
+        }
+        return true;
+      });
+
+  this.addRule('elements.move', function (context) {
+    // console.log('RULE elements.move, context = ', context);
+
+    if (context.shapes) {
+      const element = context.shapes[0];
+      if (isAny(element, [CPN_TOKEN_LABEL, CPN_MARKING_LABEL])) {
+        return true;
+      }
+    }
+
+    if (!self._modeling.isEditable()) {
+      return false;
+    }
+    return true;
+
+    // var shapes = context.shapes,
+    //   target = context.target;
+    // return canAttach(target, shapes[0]);
+  });
+
 };
 
 function canAttach(target, shape) {
@@ -73,7 +112,7 @@ function canCreate(target, shape) {
   return !isCpn(target);
 }
 
-CpnRules.prototype.canConnect = function(source, target) {
+CpnRules.prototype.canConnect = function (source, target) {
 
   if (!isAny(source, [CPN_PLACE, CPN_TRANSITION])) return false;
   if (!isAny(target, [CPN_PLACE, CPN_TRANSITION])) return false;
@@ -83,7 +122,7 @@ CpnRules.prototype.canConnect = function(source, target) {
     is(target, CPN_PLACE) && is(source, CPN_TRANSITION));
 }
 
-CpnRules.prototype.canStartConnect = function(source) {
+CpnRules.prototype.canStartConnect = function (source) {
   return is(source, CPN_PLACE) || is(source, CPN_TRANSITION);
 }
 

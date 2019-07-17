@@ -1,64 +1,8 @@
-<tabs #tabsComponent class="cpn-tabs">
+<app-simulation-panel *ngIf="accessCpnService.isSimulation"></app-simulation-panel>
+
+<tabs *ngIf="!accessCpnService.isSimulation" #tabsComponent class="cpn-tabs">
   <ng-template ngFor let-tab [ngForOf]="tabList">
     <tab *ngIf="tab" [id]="tab.id" [tabTitle]="tab.name">
-
-      <!-- Project details toolbar -->
-      <!------------------------------>
-      <!-- <nav class="navbar navbar-sm navbar-expand shadow-sm">
-
-        <ul class="navbar-nav mr-auto">
-
-          // Action buttons
-          <div style="display: contents">
-
-            // New action with dropdown menu
-            <div *ngIf="selectedNode.type !== 'block'">
-              <li class="dropdown nav-item">
-                <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle nav-link" data-toggle="dropdown"
-                  href="#" id="navbarDropdown">
-                  <i class="fas fa-plus"></i>
-                  <span>New</span>
-                </a>
-                <div aria-labelledby="navbarDropdown" class="dropdown-menu shadow">
-                  <a *ngIf="selectedNode.actions && selectedNode.actions.includes('declaration')"
-                    (click)="onAddNode(selectedNode, 'declaration')" class="dropdown-item" href="#">New declaration</a>
-                  <a *ngIf="selectedNode.actions && selectedNode.actions.includes('block')"
-                    (click)="onAddNode(selectedNode, 'block')" class="dropdown-item" href="#">New block</a>
-                </div>
-              </li>
-
-              <div class="divider"></div>
-            </div>
-
-            // Delete action
-            <li *ngIf="selectedNode.actions && selectedNode.actions.includes('delete')" class="nav-item">
-              <a (click)="onDeleteNode(selectedNode)" class="nav-link" href="#">
-                <i class="fas fa-minus"></i>
-                <span>Delete</span>
-              </a>
-            </li>
-
-            <div class="divider"></div>
-
-            // Up/down actions
-            <li class="nav-item">
-              <a (click)="onUpNode(selectedNode)" class="nav-link" href="#">
-                <i class="fas fa-arrow-up"></i>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a (click)="onDownNode(selectedNode)" class="nav-link" href="#">
-                <i class="fas fa-arrow-down"></i>
-              </a>
-            </li>
-
-            <div class="divider"></div>
-
-          </div>
-        </ul>
-
-      </nav> -->
-
 
       <!-- Project details table -->
       <!--------------------------->
@@ -73,7 +17,8 @@
                 <table class="table table-bordered table-hover table-small">
                   <tr *ngFor="let node of getNodes(tab.id)">
 
-                    <td [ngClass]="{'blockHeader': node.type === 'block', 'editablenode': node.type !== 'block', 'node-highlight-error': isError(node.id)}">
+                    <td
+                      [ngClass]="{'blockHeader': node.type === 'block', 'editablenode': node.type !== 'block', 'node-highlight-error': isError(node.id)}">
                       <!-- <div *ngIf="node.type === 'block'">
                           {{ node.text }}
                         </div> -->

@@ -48,7 +48,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     private settings: SettingsService,
     private projectService: ProjectService,
     private modelService: ModelService,
-    private accessCpnService: AccessCpnService
+    public accessCpnService: AccessCpnService
   ) {
   }
 
@@ -72,7 +72,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.eventService.on(Message.OPEN_DECLARATION_BLOCK, (data) => {
+    this.eventService.on(Message.TREE_OPEN_DECLARATION_NODE, (data) => {
       const tab = this.tabsComponent.tabs.find(e => e.id === data.id);
       if (tab) {
         const oldSelectedTab = this.tabsComponent.getSelectedTab();
@@ -86,7 +86,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.eventService.on(Message.SELECT_DECLARATION_NODE, (event) => {
+    this.eventService.on(Message.TREE_SELECT_DECLARATION_NODE, (event) => {
       if (event && event.sender !== self) {
         this.selectDeclarationNode(event);
       }
@@ -348,7 +348,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
 
 
   sendSelectDeclarationNode(node, openEditor) {
-    this.eventService.send(Message.SELECT_DECLARATION_NODE, {
+    this.eventService.send(Message.TREE_SELECT_DECLARATION_NODE, {
       sender: this,
       openEditorTab: openEditor,
       cpnType: node.cpnType,
@@ -499,7 +499,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   updatePageNodeText(node, newValue) {
     node.name = newValue; // update tree node text
     node.cpnElement.pageattr._name = newValue; // update cpnElement
-    this.eventService.send(Message.CHANGE_NAME_PAGE, { id: node.cpnElement._id, name: newValue });
+    this.eventService.send(Message.PAGE_CHANGE_NAME, { id: node.cpnElement._id, name: newValue });
   }
 
   /**

@@ -1,0 +1,26 @@
+<div class="blockHeader">
+  Application settings
+</div>
+
+<!-- Server address -->
+<!-- <app-text-edit-row type="select"
+  name="Server address" [object]="getServerAddress()" field="value" (changed)="updateServerAddress($event)"
+  [options]="getServerAddressList()">
+</app-text-edit-row> -->
+
+
+<div class="workspace-container">
+  <div class="inner">
+    <div class="scroll-y">
+
+      <table [id]="'application-settings-table'" class="table table-bordered table-hover table-small"
+        *ngIf="showTable !== 'application-settings-table'">
+        <tr *ngFor="let item of appSettingsKeys">
+          <td width="50%" class="valueName">{{ item }}</td>
+          <td width="50%" contenteditable='true' (focusout)="saveEditedData($event, item)">{{ appSettings[item] }}</td>
+        </tr>
+      </table>
+
+    </div>
+  </div>
+</div>

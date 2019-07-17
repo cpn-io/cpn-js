@@ -1,5 +1,6 @@
 import { Component, HostListener } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
+import { SettingsService } from './services/settings.service';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +10,14 @@ import { ElectronService } from 'ngx-electron';
 export class AppComponent {
   title = 'CPN-IDE';
 
-  constructor(private electronService: ElectronService) {
+  constructor(
+    private electronService: ElectronService,
+    private settings: SettingsService) {
+
+    // const p = new Place({ x: 1, y: 2 });
+    // p._z = 234;
+    // console.log('TEST, p = ', p);
+    // console.log('TEST, p = ', JSON.stringify(p));
   }
 
   launchWindow() {

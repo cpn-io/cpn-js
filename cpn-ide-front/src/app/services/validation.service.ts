@@ -109,7 +109,13 @@ export class ValidationService {
       path = path + key + '.';
     }
 
-    if (!obj1 || !obj2) {
+    if (!obj1 && !obj2) {
+      return isDifferent;
+    }
+
+    if (obj1 && !obj2 || !obj1 && obj2) {
+      pathHistory.push('DIFF VALUES: ' + path);
+      isDifferent = true;
       return isDifferent;
     }
 
@@ -137,7 +143,6 @@ export class ValidationService {
       }
 
     } else {
-
       // if objects are simple values
       if (obj1 !== obj2) {
         pathHistory.push('DIFF VALUES: ' + path);
@@ -191,13 +196,13 @@ export class ValidationService {
 
       this.detectChanges(lastModel, currentModel, undefined, path, changeList);
 
-      console.log('END detectChanges(), changeList = ', changeList);
+      // console.log('END detectChanges(), changeList = ', changeList);
 
       const noGeometryChangeList = this.filterChangeList(changeList, this.geometryKeyList);
       const backupChangeList = this.filterChangeList(changeList, this.nobackupKeyList);
 
-      console.log('END detectChanges(), changeList = ', changeList);
-      console.log('END detectChanges(), noGeometryChangeList = ', noGeometryChangeList);
+      // console.log('END detectChanges(), changeList = ', changeList);
+      // console.log('END detectChanges(), noGeometryChangeList = ', noGeometryChangeList);
 
       if (changeList.length > 0) {
         // console.log('detectChanges(), CHANGE DETECTED, A = ', JSON.stringify(currentModel));

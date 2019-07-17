@@ -73,6 +73,7 @@ export default function ChangeSupporter(eventBus, modeling, textRenderer, elemen
 
                 const markingElement = modeling.getMarkingLabelElement(tokenElement);
                 // console.log('ChangeSupporter(), updateTokens(), markingElement = ', markingElement);
+                // console.log('ChangeSupporter(), updateTokens(), item = ', item);
 
                 if (tokenElement && markingElement) {
 
@@ -87,7 +88,8 @@ export default function ChangeSupporter(eventBus, modeling, textRenderer, elemen
                   }
 
                   // update marking element
-                  if (item.marking && item.marking != '' && item.marking != 'empty') {
+                  if (item.marking && item.marking !== '' && item.marking !== 'empty') {
+                    markingElement.hidden = false;
                     markingElement.text = item.marking;
                     updateElementSize(markingElement);
                     markingElement.x = parseInt(markingElement.cpnElement._x) + Math.round(markingElement.labelTarget.x + markingElement.labelTarget.width * 3);
@@ -95,6 +97,7 @@ export default function ChangeSupporter(eventBus, modeling, textRenderer, elemen
                   } else {
                     markingElement.text = item.marking;
                     updateElementSize(markingElement);
+                    markingElement.hidden = true;
                     tokenElement.hidden = true;
                   }
 
@@ -108,6 +111,24 @@ export default function ChangeSupporter(eventBus, modeling, textRenderer, elemen
         }
 
       }
+    }
+    else {
+      // hide token and marking elements
+
+      var markingElements = modeling.getTokenElements();
+      // console.log('ChangeSupporter(), updateTokens(), tokenElements = ', tokenElements);
+      for (const e of markingElements) {
+        e.hidden = true;
+        modeling.updateElement(e, true);
+      }
+
+      var markingElements = modeling.getMarkingElements();
+      // console.log('ChangeSupporter(), updateTokens(), markingElements = ', markingElements);
+      for (const e of markingElements) {
+        e.hidden = true;
+        modeling.updateElement(e, true);
+      }
+
     }
 
     const t = new Date().getTime() - startTime;
@@ -123,6 +144,8 @@ export default function ChangeSupporter(eventBus, modeling, textRenderer, elemen
 
     // console.log('ChangeSupporter(), updateTokens(), updateElementSize(), newBounds = ', newBounds);
     modeling.resizeShape(element, newBounds);
+
+    modeling.moveShape(element, { x: 0, y: 0 }, element.parent, undefined, undefined);
   }
 
   /**
@@ -142,7 +165,7 @@ export default function ChangeSupporter(eventBus, modeling, textRenderer, elemen
               && !e.cpnElement.subst._portsock.includes(c.cpnElement.placeend._idref);
           });
           for (const a of arcs) {
-              errors[a.cpnElement._id] = 'Port not defined!';
+            errors[a.cpnElement._id] = 'Port not defined!';
           }
         }
 

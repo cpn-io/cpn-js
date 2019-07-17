@@ -6,6 +6,7 @@ import { Message } from '../common/message';
 import { EventService } from '../services/event.service';
 import { ModelService } from '../services/model.service';
 import { element } from 'protractor';
+import { AccessCpnService } from '../services/access-cpn.service';
 
 
 @Component({
@@ -80,7 +81,8 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   private layoutPartOpened: boolean[] = [];
 
   constructor(private eventService: EventService,
-    private modelService: ModelService) {
+    private modelService: ModelService,
+    public accessCpnService: AccessCpnService) {
 
   }
 
@@ -197,8 +199,6 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
    */
   getSubstPages(cpnElement) {
     // console.log('getSubstPages()');
-    const curentPage = this.modelService.getParentPageForTrans(cpnElement);
-    // console.log('getSubstPages(cpnElement)  ---- ', curentPage);
     const pageList = this.modelService.getAllPages();
 
     const subPageIdList = [];
@@ -223,7 +223,8 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
     const pageNames = ['-- empty --'];
     for (const page of pageList) {
-      if (page._id !== this.pageId && ((!subPageIdList.includes(page._id) && !parentPageIdList.includes(page._id)) || subPageIdList.includes(page._id))) {
+      if (page._id !== this.pageId &&
+        ((!subPageIdList.includes(page._id) && !parentPageIdList.includes(page._id)) || subPageIdList.includes(page._id))) {
         pageNames.push(page.pageattr._name);
       }
     }
@@ -373,9 +374,6 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
     if (pageName === '' || pageName === '-- empty --') {
 
-      // delete instance
-      this.modelService.deleteInstance(this.cpnElement._id);
-      // delete subst
       delete this.cpnElement.subst;
 
     } else {
@@ -390,17 +388,15 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
       this.cpnElement.subst.subpageinfo._name = pageName;
       this.cpnElement.subst._subpage = pageId;
 
-      // create instance
-      this.modelService.addInstanceInJson(
-        this.modelService.instaceForTransition(this.cpnElement._id, false),
-        this.pageId,
-        this.cpnElement);
-
       // console.log(this.constructor.name, 'updateSubst(), this.cpnElement = ', this.cpnElement);
     }
 
+    // update instances
+    this.modelService.updateInstances();
+
     this.updateChanges();
-    this.eventService.send(Message.UPDATE_TREE_PAGES, {
+
+    this.eventService.send(Message.TREE_UPDATE_PAGES, {
       currentPageId: this.pageId
     });
   }

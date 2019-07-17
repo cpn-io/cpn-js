@@ -1,0 +1,126 @@
+<div class="blockHeader">
+  Simulation
+</div>
+
+<div class="panel">
+
+  <button type="button" class="btn btn-primary" (click)="onRewind()">
+    <i class="fas fa-backward"></i>
+    <span>Rewind</span>
+  </button>
+  <br>
+
+  <button type="button" class="btn btn-light" (click)="setMode(this.SINGLE_STEP)"
+    [ngClass]="{'enabled': mode === this.SINGLE_STEP }">
+    <i class="fas fa-step-forward"></i>
+    <span>Single Step</span>
+  </button>
+  <br>
+  <div *ngIf="mode === this.SINGLE_STEP" class="note">
+    Click on a marked (enabled) transition
+  </div>
+
+  <button type="button" class="btn btn-light" (click)="setMode(this.SINGLE_STEP_CHOOSE_BINDING)"
+    [ngClass]="{'enabled': mode === this.SINGLE_STEP_CHOOSE_BINDING }">
+    <i class="fas fa-step-forward"></i>
+    <span>Single Step Choose Binding</span>
+  </button>
+  <br>
+  <div *ngIf="mode === this.SINGLE_STEP_CHOOSE_BINDING" class="note">
+    Click on a marked (enabled) transition and select one binding
+  </div>
+
+  <button type="button" class="btn btn-light" (click)="setMode(this.MULTI_STEP)"
+    [ngClass]="{'enabled': mode === this.MULTI_STEP }">
+    <i class="fas fa-fast-forward"></i>
+    <span>Multi-Step (Animated)</span>
+  </button>
+  <br>
+  <div *ngIf="mode === this.MULTI_STEP" class="note">
+    <table>
+      <tr>
+        <td>Steps</td>
+        <td><input class="full-width" type="number" [(ngModel)]="simulationConfig.multi_step.steps"></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Delay</td>
+        <td><input class="full-width" type="number" [(ngModel)]="simulationConfig.multi_step.delay"></td>
+        <td>ms</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="full-width text-right">
+          <button type="button" class="btn btn-primary" (click)="onRunMultiStep()">
+            <i class="fas fa-play"></i>
+            <span>Run</span>
+          </button>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+
+  <button type="button" class="btn btn-light" (click)="setMode(this.MULTI_STEP_FF)"
+    [ngClass]="{'enabled': mode === this.MULTI_STEP_FF }">
+    <i class="fas fa-fast-forward"></i>
+    <span>Multi-Step (Fast Forward)</span>
+  </button>
+  <br>
+  <div *ngIf="mode === this.MULTI_STEP_FF" class="note">
+    <table *ngIf="mode === this.MULTI_STEP_FF">
+      <tr>
+        <td>Steps</td>
+        <td><input type="number" class="full-width" [(ngModel)]="simulationConfig.multi_step_ff.steps"></td>
+      </tr>
+      <tr>
+        <td>Max Step</td>
+        <td><input type="number" class="full-width" [(ngModel)]="simulationConfig.multi_step_ff.max_step"></td>
+      </tr>
+      <tr>
+        <td>Time Step</td>
+        <td><input type="number" class="full-width" [(ngModel)]="simulationConfig.multi_step_ff.time_step"></td>
+      </tr>
+      <tr>
+        <td>Max Time</td>
+        <td><input type="number" class="full-width" [(ngModel)]="simulationConfig.multi_step_ff.max_time"></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="full-width text-right">
+          <button type="button" class="btn btn-primary" (click)="onRunMultiStepFF()">
+            <i class="fas fa-play"></i>
+            <span>Run</span>
+          </button>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+
+  <button type="button" class="btn btn-light" (click)="setMode(this.REPLICATION)"
+    [ngClass]="{'enabled': mode === this.REPLICATION }">
+    <i class="fas fa-copy"></i>
+    <span>Replication</span>
+  </button>
+  <br>
+  <div *ngIf="mode === this.REPLICATION" class="note">
+    <table>
+      <tr>
+        <td>Repeat</td>
+        <td><input type="number" value="30" class="full-width"></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="full-width text-right">
+          <button type="button" class="btn btn-primary">
+            <i class="fas fa-play"></i>
+            <span>Run</span>
+          </button>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+
+</div>

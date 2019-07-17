@@ -6,6 +6,7 @@ import { Message } from '../common/message';
 
 import { AccessCpnService } from './access-cpn.service';
 import { ModelService } from './model.service';
+import { CpnServerUrl } from 'src/cpn-server-url.js';
 
 /**
  * Common service for getting access to project data from all application
@@ -130,9 +131,11 @@ export class ProjectService {
     // const modelFile = 'test-1.cpn';
     // const modelFile = 'test-2.cpn';
 
-    const modelFile = 'mynet.cpn';
+    // const modelFile = 'mynet.cpn';
     // const modelFile = 'mynet2.cpn';
     // const modelFile = 'mynet-sub-1.cpn';
+
+    const modelFile = 'mynet-for-sim.cpn';
 
     // const modelFile = 'fuelstation.cpn';
 

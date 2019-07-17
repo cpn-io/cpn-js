@@ -29,27 +29,30 @@
                   </app-text-edit-row>
 
                   <!-- Name (if no arc) -->
-                  <app-text-edit-row *ngIf="!cpnElement._orientation" type="text" name="Name" [object]="cpnElement" field="text"
-                    (changed)="updateChanges()">
+                  <app-text-edit-row *ngIf="!cpnElement._orientation" type="text" name="Name" [object]="cpnElement"
+                    field="text" [readonly]="accessCpnService.isSimulation" (changed)="updateChanges()">
                   </app-text-edit-row>
 
                   <!-- Shape Labels -->
                   <div *ngFor="let labelKey of ['initmark', 'type', 'cond', 'time', 'code', 'priority', 'annot']">
                     <!-- {{ JSON.stringify(cpnElement[labelKey]) }}<br> -->
                     <app-text-edit-row *ngIf="cpnElement[labelKey]" type="text" [name]="names[labelKey] || labelKey"
-                      [object]="cpnElement[labelKey].text" field="__text" (changed)="updateLabel($event)">
+                      [object]="cpnElement[labelKey].text" field="__text" (changed)="updateLabel($event)"
+                      [readonly]="accessCpnService.isSimulation">
                     </app-text-edit-row>
                   </div>
 
                   <!-- Port Labels -->
                   <app-text-edit-row *ngIf="cpnElement.ellipse" type="select" name="Port type"
                     [object]="getPort(cpnElement)" field="value" (changed)="updatePortType($event)"
-                    [options]="portTypes">
+                    [options]="portTypes"
+                    [readonly]="accessCpnService.isSimulation">
                   </app-text-edit-row>
 
                   <!-- Subst Labels -->
                   <app-text-edit-row *ngIf="cpnElement.box" type="select" name="Suppage" [object]="getSubst(cpnElement)"
-                    field="value" (changed)="updateSubst($event)" [options]="getSubstPages(cpnElement)">
+                    field="value" (changed)="updateSubst($event)" [options]="getSubstPages(cpnElement)"
+                    [readonly]="accessCpnService.isSimulation">
                   </app-text-edit-row>
 
                   <!-- PortSock -->
@@ -59,14 +62,16 @@
 
                   <!-- Direction (only for acrs) -->
                   <app-text-edit-row *ngIf="cpnElement._orientation" type="select" name="Direction"
-                    [object]="cpnElement" field="_orientation" (changed)="updateChanges()" [options]="orientations">
+                    [object]="cpnElement" field="_orientation" (changed)="updateChanges()" [options]="orientations"
+                    [readonly]="accessCpnService.isSimulation">
                   </app-text-edit-row>
 
 
                   <!-- Port binds -->
                   <app-text-edit-row *ngIf="cpnElement._orientation && getBindTransElementSubst(cpnElement)"
                     type="select" name="Port bind" [object]="getPortBind(cpnElement)" field="value"
-                    (changed)="updatePortBind($event)" [options]="getSubPagesPorts(cpnElement)">
+                    (changed)="updatePortBind($event)" [options]="getSubPagesPorts(cpnElement)"
+                    [readonly]="accessCpnService.isSimulation">
                   </app-text-edit-row>
 
                 </div>
@@ -101,17 +106,20 @@
 
                   <!-- Stroke thick -->
                   <app-text-edit-row type="int" name="Stroke thick" [object]="cpnElement.lineattr" field="_thick"
-                    (changed)="updateChanges()">
+                    (changed)="updateChanges()"
+                    [readonly]="accessCpnService.isSimulation">
                   </app-text-edit-row>
 
                   <!-- Stroke color -->
                   <app-text-edit-row type="color" name="Stroke color" [object]="cpnElement.lineattr" field="_colour"
-                    (changed)="updateChanges()" [colors]="colors">
+                    (changed)="updateChanges()" [colors]="colors"
+                    [readonly]="accessCpnService.isSimulation">
                   </app-text-edit-row>
 
                   <!-- Fill color -->
                   <app-text-edit-row *ngIf="!cpnElement._orientation" type="color" name="Fill color"
-                    [object]="cpnElement.fillattr" field="_colour" (changed)="updateChanges()" [colors]="colors">
+                    [object]="cpnElement.fillattr" field="_colour" (changed)="updateChanges()" [colors]="colors"
+                    [readonly]="accessCpnService.isSimulation">
                   </app-text-edit-row>
 
                 </div>

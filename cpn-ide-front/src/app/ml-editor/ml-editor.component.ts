@@ -21,7 +21,7 @@ export class MlEditorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.eventService.on(Message.SELECT_DECLARATION_NODE, (event) => {
+    this.eventService.on(Message.TREE_SELECT_DECLARATION_NODE, (event) => {
       this.selectDeclarationNode(event);
     });
   }

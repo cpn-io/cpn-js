@@ -988,6 +988,14 @@ Modeling.prototype.getShapeCount = function (type) {
   return elements.length || 0;
 }
 
+Modeling.prototype.getTokenElements = function (type) {
+  return this._elementRegistry.filter(function (element) { return is(element, CPN_TOKEN_LABEL); });
+}
+
+Modeling.prototype.getMarkingElements = function (type) {
+  return this._elementRegistry.filter(function (element) { return is(element, CPN_MARKING_LABEL); });
+}
+
 
 Modeling.prototype.createArcCpnElement = function (placeCpnElement, transCpnElement, orientation) {
   return getDefArc(placeCpnElement, transCpnElement, orientation);

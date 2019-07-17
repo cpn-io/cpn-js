@@ -30,7 +30,7 @@ export class MainToolbarComponent implements OnInit {
   }
 
   onDoStep() {
-    this.accessCpnService.doStep('ID1412328496');
+    // this.accessCpnService.doStep('ID1412328496');
   }
 
   onStartSimulation() {

@@ -40,17 +40,17 @@
     <table>
       <tr>
         <td>Steps</td>
-        <td><input type="number" value="50"></td>
+        <td><input class="full-width" type="number" value="50"></td>
         <td></td>
       </tr>
       <tr>
         <td>Delay</td>
-        <td><input type="number" value="1000"></td>
+        <td><input class="full-width" type="number" value="1000"></td>
         <td>ms</td>
       </tr>
       <tr>
         <td></td>
-        <td>
+        <td class="full-width text-right">
           <button type="button" class="btn btn-primary">
             <i class="fas fa-play"></i>
             <span>Run</span>
@@ -71,23 +71,48 @@
     <table *ngIf="mode === this.MULTI_STEP_FF">
       <tr>
         <td>Steps</td>
-        <td><input type="number" value="50"></td>
+        <td><input type="number" class="full-width" value="50"></td>
       </tr>
       <tr>
         <td>Max Step</td>
-        <td><input type="number" value="0"></td>
+        <td><input type="number" class="full-width" value="0"></td>
       </tr>
       <tr>
         <td>Time Step</td>
-        <td><input type="number" value="0"></td>
+        <td><input type="number" class="full-width" value="0"></td>
       </tr>
       <tr>
         <td>Max Time</td>
-        <td><input type="number" value="0"></td>
+        <td><input type="number" class="full-width" value="0"></td>
       </tr>
       <tr>
         <td></td>
-        <td>
+        <td class="full-width text-right">
+          <button type="button" class="btn btn-primary">
+            <i class="fas fa-play"></i>
+            <span>Run</span>
+          </button>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+
+  <button type="button" class="btn btn-light" (click)="setMode(this.REPLICATION)"
+    [ngClass]="{'enabled': mode === this.REPLICATION }">
+    <i class="fas fa-copy"></i>
+    <span>Replication</span>
+  </button>
+  <br>
+  <div *ngIf="mode === this.REPLICATION" class="note">
+    <table>
+      <tr>
+        <td>Repeat</td>
+        <td><input type="number" value="30" class="full-width"></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="full-width text-right">
           <button type="button" class="btn btn-primary">
             <i class="fas fa-play"></i>
             <span>Run</span>

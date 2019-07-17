@@ -33,6 +33,7 @@ CpnUpdater.$inject = [
   'contextPad',
   'canvas',
   'portMenuProvider',
+  'bindingsMenuProvider',
   'layouter'
 ];
 
@@ -59,7 +60,8 @@ import { getDistance } from '../../draw/CpnRenderUtil';
  * once changes on the diagram happen
  */
 export default function CpnUpdater(eventBus, modeling, elementRegistry,
-  connectionDocking, selection, popupMenuProvider, contextPad, canvas, portMenuProvider, layouter) {
+  connectionDocking, selection, popupMenuProvider, contextPad, canvas,
+  portMenuProvider, bindingsMenuProvider, layouter) {
 
   this._modeling = modeling;
   this._elementRegistry = elementRegistry;
@@ -158,8 +160,18 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   eventBus.on('element.click', function (event) {
     console.log('CpnUpdater(), element.click, event = ', event);
 
-    if (event.element && is(event.element, CPN_TOKEN_LABEL))
+    const element = event.element;
+
+    if (element && is(element, CPN_TOKEN_LABEL)) {
       showHideMarking(event.element);
+    }
+
+    // test bindings menu
+    // if (element && is(element, CPN_TRANSITION)) {
+    //   const position = { x: element.x - 2, y: element.y - 5 };
+
+    //   bindingsMenuProvider.open(element, { cursor: { x: position.x, y: position.y } });
+    // }
   });
 
   eventBus.on('popupMenu.open', function (event) {
@@ -188,10 +200,13 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     // console.log('CpnUpdater(), domEvent, mousedown, target = ', target);
     // console.log('CpnUpdater(), domEvent, mousedown, gfx = ', gfx);
 
+    console.log('CpnUpdater(), mousedown, element = ', element);
+
     if (element === canvas.getRootElement()) {
       popupMenuProvider.close();
       contextPad.close();
       portMenuProvider.close();
+      bindingsMenuProvider.close();
     }
 
     if (event.button === 2) {
@@ -200,6 +215,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
       popupMenuProvider.close();
       portMenuProvider.close();
+      bindingsMenuProvider.close();
 
       // console.log('CpnUpdater(), domEvent, mousedown, popup menu, x,y = ', event.x, event.y);
 

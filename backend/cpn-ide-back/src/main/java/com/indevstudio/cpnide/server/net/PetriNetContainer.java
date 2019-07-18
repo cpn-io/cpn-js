@@ -141,35 +141,36 @@ public class PetriNetContainer {
 
     }
 
-    List<String> getEnableTransitionsImpl(String sessionId, boolean second) throws Exception {
+    List<String> getEnableTransitionsImpl(String sessionId) throws Exception {
         synchronized (lock) {
             HighLevelSimulator s = usersSimulator.get(sessionId);
             if (s == null)
                 throw new NotFoundException("Session object not found");
             //Checker checker = new Checker(net, new File("C:\\tmp\\cpn.file"), sim);
-            List<Instance<Transition>> tis = s.getAllTransitionInstances();
             List<String> arr = new ArrayList<>();
+            while(true) {
+                List<Instance<Transition>> tis = s.getAllTransitionInstances();
 
-            for (Instance<Transition> ti : tis) {
+                for (Instance<Transition> ti : tis) {
 
-                if (s.isEnabled(ti))
-                    arr.add(ti.getNode().getId());
+                    if (s.isEnabled(ti))
+                        arr.add(ti.getNode().getId());
+                }
+                if (arr.isEmpty()) {
+                    String res = s.increaseTime();
+                    if (res != null) //sim ended
+                        return arr;
+                }
+                else break;
             }
-            if(arr.isEmpty() && !second)
-            {
-                String res = s.increaseTime();
-                if(res != null) //sim ended
-                    return arr;
 
-                return getEnableTransitionsImpl(sessionId, true);
-            }
             return arr;
         }
     }
 
 
     public List<String> getEnableTransitions(String sessionId) throws Exception {
-        return getEnableTransitionsImpl(sessionId, false);
+        return getEnableTransitionsImpl(sessionId);
     }
 
     public List<String> returnEnableTrans(String sessionId) throws Exception {

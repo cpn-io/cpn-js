@@ -1,15 +1,14 @@
 package com.indevstudio.cpnide.server.net;
 
-import com.indevstudio.cpnide.server.model.IssueDescription;
-import com.indevstudio.cpnide.server.model.PlaceMark;
+import com.indevstudio.cpnide.server.model.*;
 import javassist.NotFoundException;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.cpntools.accesscpn.engine.SimulatorService;
 import org.cpntools.accesscpn.engine.highlevel.*;
 import org.cpntools.accesscpn.engine.highlevel.checker.Checker;
 import org.cpntools.accesscpn.engine.highlevel.instance.Binding;
 import org.cpntools.accesscpn.engine.highlevel.instance.Instance;
+import org.cpntools.accesscpn.engine.highlevel.instance.ValueAssignment;
 import org.cpntools.accesscpn.model.*;
 import org.cpntools.accesscpn.model.exporter.DOMGenerator;
 import org.cpntools.accesscpn.model.importer.DOMParser;
@@ -27,36 +26,10 @@ import java.lang.Object;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 
 @Component
 @Slf4j
 public class PetriNetContainer {
-    public static class NetInfo {
-        List<String> enableTrans;
-        List<PlaceMark> tokensAndMark;
-
-        public List<String> getEnableTrans() {
-            return enableTrans;
-        }
-
-        public void setEnableTrans(List<String> enableTrans) {
-            this.enableTrans = enableTrans;
-        }
-
-        public List<PlaceMark> getTokensAndMark() {
-            return tokensAndMark;
-        }
-
-        public void setTokensAndMark(List<PlaceMark> tokensAndMark) {
-            this.tokensAndMark = tokensAndMark;
-        }
-
-        public NetInfo(List<String> enableTrans, List<PlaceMark> tokensAndMark) {
-            this.enableTrans = enableTrans;
-            this.tokensAndMark = tokensAndMark;
-        }
-    }
 
     private ConcurrentHashMap<String, PetriNet> usersNets = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, Checker> usersCheckers = new ConcurrentHashMap<>();
@@ -168,8 +141,7 @@ public class PetriNetContainer {
 
     }
 
-
-    public List<String> getEnableTransitions(String sessionId) throws Exception {
+    List<String> getEnableTransitionsImpl(String sessionId, boolean second) throws Exception {
         synchronized (lock) {
             HighLevelSimulator s = usersSimulator.get(sessionId);
             if (s == null)
@@ -183,8 +155,21 @@ public class PetriNetContainer {
                 if (s.isEnabled(ti))
                     arr.add(ti.getNode().getId());
             }
+            if(arr.isEmpty() && !second)
+            {
+                String res = s.increaseTime();
+                if(res != null) //sim ended
+                    return arr;
+
+                return getEnableTransitionsImpl(sessionId, true);
+            }
             return arr;
         }
+    }
+
+
+    public List<String> getEnableTransitions(String sessionId) throws Exception {
+        return getEnableTransitionsImpl(sessionId, false);
     }
 
     public List<String> returnEnableTrans(String sessionId) throws Exception {
@@ -435,24 +420,80 @@ public class PetriNetContainer {
         }
     }
 
-
-    public void makeStep(String sessionId) {
-        //String type = requestBody.get(0).get("type").toString();
-        try {
-            HighLevelSimulator s = usersSimulator.get(sessionId);
-            List<List<Binding>> bindings = new LinkedList<>();
-            List<Instance<Transition>> tis = s.getAllTransitionInstances();
-            for (Instance<Transition> ti : tis) {
-                if (s.isEnabled(ti))
-                    bindings.add(s.getBindings(ti));
+    Instance<Transition> getTargetTransition(HighLevelSimulator s, String transId) throws Exception
+    {
+        Instance<Transition> targetTransition = null;
+        List<Instance<Transition>> tis = s.getAllTransitionInstances();
+        for (Instance<Transition> ti : tis) {
+            if (ti.getNode().getId().equals(transId)) {
+                targetTransition = ti;
+                break;
             }
-            for (List<Binding> bind : bindings) {
-                s.execute(bind.get(0));
-            }
-        } catch (Exception e) {
-
         }
+        if(targetTransition == null)
+            throw new Exception("Can't find transiton");
+        return targetTransition;
+    }
 
+    Map<String, Binding> getBindingForTransiton(HighLevelSimulator s, String transId) throws Exception{
+        List<Binding> bs = s.getBindings(getTargetTransition(s, transId));
+        Map<String, Binding> res = new HashMap<>();
+        for (Binding b:bs) {
+            StringBuilder sb = new StringBuilder();
+            boolean second = false;
+            for (ValueAssignment va: b.getAllAssignments()) {
+                if(second)
+                    sb.append(",");
+
+                sb.append(va.getName());
+                sb.append("=");
+                sb.append(va.getValue());
+
+                second = true;
+            }
+            res.put(sb.toString(), b);
+        }
+        return res;
+    }
+
+    public BindingMark[] getBindings(String sessionId, String transId) throws Exception {
+        HighLevelSimulator s = usersSimulator.get(sessionId);
+
+        List<Binding> bs = s.getBindings(getTargetTransition(s, transId));
+        Map<String, Binding> binds = getBindingForTransiton(s, transId);
+        return binds.keySet().stream().map(k ->  new BindingMark(k)).toArray(BindingMark[]::new);
+    }
+
+    public void makeStep(String sessionId, String transId) throws Exception {
+        //String type = requestBody.get(0).get("type").toString();
+        if(transId.equals("multistep"))
+        {
+            HighLevelSimulator s = usersSimulator.get(sessionId);
+            s.executeAndGet();
+        }
+        else {
+            HighLevelSimulator s = usersSimulator.get(sessionId);
+            s.executeAndGet(getTargetTransition(s, transId));
+        }
+    }
+
+    public SimInfo getState(String sessionId) throws Exception {
+        //String type = requestBody.get(0).get("type").toString();
+        HighLevelSimulator s = usersSimulator.get(sessionId);
+        return SimInfo.builder().step(s.getStep().longValueExact()).time(s.getTime()).build();
+    }
+
+    public void makeStepWithBinding(String sessionId, String bindingId, String transId) throws Exception {
+        //String type = requestBody.get(0).get("type").toString();
+        HighLevelSimulator s = usersSimulator.get(sessionId);
+        Map<String, Binding> binds = getBindingForTransiton(s, transId);
+        s.execute(binds.get(bindingId));
+    }
+    public void makeStepFastForward(String sessionId, MultiStep stepParam) throws Exception {
+        //String type = requestBody.get(0).get("type").toString();
+        HighLevelSimulator s = usersSimulator.get(sessionId);
+        s.setStopOptions(stepParam.getUntilStep(), stepParam.getAddStep(), stepParam.getUntilTime(), stepParam.getAddTime());
+        s.execute(stepParam.getAmount());
     }
 
 

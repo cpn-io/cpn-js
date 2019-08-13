@@ -84,6 +84,14 @@ CpnRules.prototype.init = function () {
 
   this.addRule('elements.move', function (context) {
     // console.log('RULE elements.move, context = ', context);
+
+    if (context.shapes) {
+      const element = context.shapes[0];
+      if (isAny(element, [CPN_TOKEN_LABEL, CPN_MARKING_LABEL])) {
+        return true;
+      }
+    }
+
     if (!self._modeling.isEditable()) {
       return false;
     }

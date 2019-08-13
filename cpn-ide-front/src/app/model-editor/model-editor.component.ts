@@ -165,6 +165,14 @@ export class ModelEditorComponent implements OnInit {
       eventBus.fire('bindingsMenu.open', { data: event.data });
     });
 
+    // SIM STATUS
+    this.eventService.on(Message.SIMULATION_STARTED, (data) => {
+      this.updateElementStatus();
+    });
+    this.eventService.on(Message.SIMULATION_STOPED, (data) => {
+      this.updateElementStatus();
+    });
+
     this.eventService.on(Message.PAGE_DELETE, (data) => {
       if (data.id === this.pageId) {
         this.diagram.clear();
@@ -419,21 +427,21 @@ export class ModelEditorComponent implements OnInit {
   updateElementStatus() {
     this.stateProvider.clear();
 
-    // console.log('updateElementStatus(), tokenData = ', this.accessCpnService.getTokenData());
-    // console.log('updateElementStatus(), readyData = ', this.accessCpnService.getReadyData());
-    // console.log('updateElementStatus(), errorData = ', this.accessCpnService.getErrorData());
+    console.log('updateElementStatus(), tokenData = ', this.accessCpnService.getTokenData());
+    console.log('updateElementStatus(), readyData = ', this.accessCpnService.getReadyData());
+    console.log('updateElementStatus(), errorData = ', this.accessCpnService.getErrorData());
 
-    if (Object.keys(this.accessCpnService.getTokenData()).length > 0) {
-      this.eventBus.fire('model.update.tokens', { data: this.accessCpnService.getTokenData() });
-    }
+    // if (Object.keys(this.accessCpnService.getTokenData()).length > 0) {
+    this.eventBus.fire('model.update.tokens', { data: this.accessCpnService.getTokenData() });
+    // }
 
-    if (Object.keys(this.accessCpnService.getReadyData()).length > 0) {
-      this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
-    }
+    // if (Object.keys(this.accessCpnService.getReadyData()).length > 0) {
+    this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
+    // }
 
-    if (Object.keys(this.accessCpnService.getErrorData()).length > 0) {
-      this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
-    }
+    // if (Object.keys(this.accessCpnService.getErrorData()).length > 0) {
+    this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
+    // }
 
     this.checkPorts();
 
@@ -475,8 +483,8 @@ export class ModelEditorComponent implements OnInit {
           labels[lab.labelType] = lab.cpnElement;
         }
 
-        this.eventService.send(Message.SHAPE_SELECT,
-          { element: element, labels: labels, cpnElement: element.cpnElement, type: element.type });
+        // this.eventService.send(Message.SHAPE_SELECT,
+        //   { element: element, labels: labels, cpnElement: element.cpnElement, type: element.type });
       }
     }
   }
@@ -495,6 +503,8 @@ export class ModelEditorComponent implements OnInit {
     if (event.element) {
       this.openPropPanel(event.element);
     }
+
+    this.eventService.send(Message.SHAPE_SELECT, { element: event.element });
   }
 
   log(obj) {

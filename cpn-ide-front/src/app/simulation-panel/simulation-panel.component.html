@@ -4,7 +4,7 @@
 
 <div class="panel">
 
-  <button type="button" class="btn btn-primary">
+  <button type="button" class="btn btn-primary" (click)="onRewind()">
     <i class="fas fa-backward"></i>
     <span>Rewind</span>
   </button>
@@ -40,18 +40,18 @@
     <table>
       <tr>
         <td>Steps</td>
-        <td><input class="full-width" type="number" value="50"></td>
+        <td><input class="full-width" type="number" [(ngModel)]="simulationConfig.multi_step.steps"></td>
         <td></td>
       </tr>
       <tr>
         <td>Delay</td>
-        <td><input class="full-width" type="number" value="1000"></td>
+        <td><input class="full-width" type="number" [(ngModel)]="simulationConfig.multi_step.delay"></td>
         <td>ms</td>
       </tr>
       <tr>
         <td></td>
         <td class="full-width text-right">
-          <button type="button" class="btn btn-primary">
+          <button type="button" class="btn btn-primary" (click)="onRunMultiStep()">
             <i class="fas fa-play"></i>
             <span>Run</span>
           </button>
@@ -71,24 +71,24 @@
     <table *ngIf="mode === this.MULTI_STEP_FF">
       <tr>
         <td>Steps</td>
-        <td><input type="number" class="full-width" value="50"></td>
+        <td><input type="number" class="full-width" [(ngModel)]="simulationConfig.multi_step_ff.steps"></td>
       </tr>
       <tr>
         <td>Max Step</td>
-        <td><input type="number" class="full-width" value="0"></td>
+        <td><input type="number" class="full-width" [(ngModel)]="simulationConfig.multi_step_ff.max_step"></td>
       </tr>
       <tr>
         <td>Time Step</td>
-        <td><input type="number" class="full-width" value="0"></td>
+        <td><input type="number" class="full-width" [(ngModel)]="simulationConfig.multi_step_ff.time_step"></td>
       </tr>
       <tr>
         <td>Max Time</td>
-        <td><input type="number" class="full-width" value="0"></td>
+        <td><input type="number" class="full-width" [(ngModel)]="simulationConfig.multi_step_ff.max_time"></td>
       </tr>
       <tr>
         <td></td>
         <td class="full-width text-right">
-          <button type="button" class="btn btn-primary">
+          <button type="button" class="btn btn-primary" (click)="onRunMultiStepFF()">
             <i class="fas fa-play"></i>
             <span>Run</span>
           </button>

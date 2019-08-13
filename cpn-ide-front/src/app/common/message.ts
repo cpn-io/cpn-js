@@ -42,6 +42,7 @@ export class Message {
   static SIMULATION_STARTED = 'simulation.started';
   static SIMULATION_STOPED = 'simulation.stoped';
   static SIMULATION_SELECT_BINDING = 'simulation.select.binding';
+  static SIMULATION_UPDATE_STATE = 'simulation.update.state';
 
   id: string;
   data: object;

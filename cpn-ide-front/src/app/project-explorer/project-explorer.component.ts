@@ -84,6 +84,10 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   nodes = [];
 
+  // Step and Time nodes
+  stepNode;
+  timeNode;
+
   // Множество идентификаторов узлов, которые должны быть подсвечены снизу в даный момент
   underlineNodeSet = new Set();
 
@@ -264,8 +268,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
               break;
             }
           }
-          // TODO дописать эту функция для добавления мониторов
-          //this.addCreatedNode(monitorsRootNode, newNode, newCpnElement, cpnType, monitorsRootNode.cpnElement, false);
+          // TODO: дописать эту функция для добавления мониторов
+          // this.addCreatedNode(monitorsRootNode, newNode, newCpnElement, cpnType, monitorsRootNode.cpnElement, false);
         }
       }
     });
@@ -281,6 +285,18 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       for (const id of this.errorIds) {
         this.expandParentNode(id);
       }
+    });
+
+    this.eventService.on(Message.SIMULATION_UPDATE_STATE, (event) => {
+      const stateData = this.accessCpnService.getStateData();
+      if (stateData) {
+        this.stepNode.name = 'Step: ' + stateData.step;
+        this.timeNode.name = 'Time: ' + stateData.time;
+      } else {
+        this.stepNode.name = 'Step: 0';
+        this.timeNode.name = 'Time: 0';
+      }
+      this.updateTree();
     });
 
     this.eventService.on(Message.TREE_SELECT_DECLARATION_NODE, (event) => {
@@ -319,7 +335,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     const element = data.from;
     const parent = data.from.parent;
-    const index = data.to.index
+    const index = data.to.index;
     const prevNode = parent.data.children[index - 1];
     const currNode = parent.data.children[index];
 
@@ -800,7 +816,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   onDownNode() {
-    const direction = 'down'
+    const direction = 'down';
     this.moveDeclUpDown(this.getDataForMoving(direction), direction);
   }
 
@@ -829,7 +845,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       from: treeNode,
       type: treeNode.data.cpnType ? treeNode.data.cpnType : treeNode.data.declarationType || treeNode.data.type,
       to: { index: direction === 'down' ? treeNode.parent.data.children.indexOf(treeNode.data) + 2 : treeNode.parent.data.children.indexOf(treeNode.data) - 1, parent: treeNode.parent }
-    }
+    };
 
     this.eventService.send(Message.MODEL_CHANGED);
   }
@@ -1932,10 +1948,10 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     const projectNode = this.createProjectNode(projectName, cpnet);
 
     // Simulation step nodes
-    const stepNode = this.createTreeNode('simulation-step-node', 'Step: 0');
-    const timeNode = this.createTreeNode('simulation-time-node', 'Time: 0');
-    projectNode.children.push(stepNode);
-    projectNode.children.push(timeNode);
+    this.stepNode = this.createTreeNode('simulation-step-node', 'Step: 0');
+    this.timeNode = this.createTreeNode('simulation-time-node', 'Time: 0');
+    projectNode.children.push(this.stepNode);
+    projectNode.children.push(this.timeNode);
 
     // Create project options node
     if (cpnet.options) {

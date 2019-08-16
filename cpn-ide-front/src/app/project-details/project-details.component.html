@@ -7,36 +7,33 @@
       <!-- Project details table -->
       <!--------------------------->
 
-      <div class="workspace-container">
-        <div class="inner">
-          <div class="scroll-y">
-            <div class="pane">
+      <div class="tab-container">
 
-              <div style="margin:-1px">
+        <div class="pane">
 
-                <table class="table table-bordered table-hover table-small">
-                  <tr *ngFor="let node of getNodes(tab.id)">
+          <div style="margin:-1px">
 
-                    <td
-                      [ngClass]="{'blockHeader': node.type === 'block', 'editablenode': node.type !== 'block', 'node-highlight-error': isError(node.id)}">
-                      <!-- <div *ngIf="node.type === 'block'">
+            <table class="table table-bordered table-hover table-small">
+              <tr *ngFor="let node of getNodes(tab.id)">
+
+                <td
+                  [ngClass]="{'blockHeader': node.type === 'block', 'editablenode': node.type !== 'block', 'node-highlight-error': isError(node.id)}">
+                  <!-- <div *ngIf="node.type === 'block'">
                           {{ node.text }}
                         </div> -->
 
-                      <div [id]="'textinpfield_' + node.id" class="editablenode" [contentEditable]="true"
-                        (focusin)="onNodeClick($event, node)" (click)="onNodeClick($event, node)"
-                        (dblclick)="onNodeDblClick($event, node)" (focusout)="saveEditedData($event, node)"
-                        [innerHTML]="node.text | colorDeclarations | safeHtml">
-                      </div>
-                    </td>
+                  <div [id]="'textinpfield_' + node.id" class="editablenode" [contentEditable]="true"
+                    (focusin)="onNodeClick($event, node)" (click)="onNodeClick($event, node)"
+                    (dblclick)="onNodeDblClick($event, node)" (focusout)="saveEditedData($event, node)"
+                    [innerHTML]="node.text | colorDeclarations | safeHtml">
+                  </div>
+                </td>
 
-                  </tr>
-                </table>
+              </tr>
+            </table>
 
-              </div>
-
-            </div>
           </div>
+
         </div>
       </div>
 

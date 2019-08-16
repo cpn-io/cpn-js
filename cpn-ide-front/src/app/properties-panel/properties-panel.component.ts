@@ -91,7 +91,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.eventService.on(Message.PAGE_OPEN, (data) => {
-      console.log(this.constructor.name, 'Message.PAGE_OPEN, data = ', data);
+      // console.log(this.constructor.name, 'Message.PAGE_OPEN, data = ', data);
 
       this.showPageAttrs(data.pageObject);
     });

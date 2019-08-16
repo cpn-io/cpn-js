@@ -955,6 +955,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   onNodeClick(event, node) {
+    console.log(this.constructor.name, 'onNodeClick(), node = ', node);
+
+
     if (!this.openedLabel[node.id]) {
       this.onNodeArrowClick(event, node);
     } else {
@@ -2191,10 +2194,12 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     console.log(event.node);
 
-    if (event && event.node && event.node.data && event.node.data.type === 'page') {
-      // const pageObject = event.node.data.cpnElement;
-      const pageObject = event.node.data.cpnElement;
-      this.eventService.send(Message.PAGE_OPEN, { pageObject: pageObject, subPages: this.subpages });
+    if (event && event.node && this.isPage(event.node)) {
+      this.eventService.send(Message.PAGE_OPEN, { pageObject: event.node.data.cpnElement, subPages: this.subpages });
+    }
+
+    if (event && event.node && this.isMonitor(event.node)) {
+      this.eventService.send(Message.MONITOR_OPEN, { monitorObject: event.node.data.cpnElement });
     }
 
     if (this.selectedNode.data.type === 'declaration') {

@@ -27,15 +27,8 @@ export class ModelService {
   private backupModel = [];
   private redoBackupModel;
   private modelCase = [];
-  subPages;
-  pageId;
+
   countNewItems = 0;
-  labelsEntry = {
-    trans: ['time', 'code', 'priority', 'edit', 'cond'],
-    place: ['initmark', 'edit', 'type'],
-    arc: ['annot'],
-    label: ['edit']
-  };
   paramsTypes = ['ml', 'color', 'var', 'globref'];
 
 
@@ -71,11 +64,6 @@ export class ModelService {
     // this.eventService.on(Message.MODEL_RELOAD, () => {
     //   // this.loadProject(this.getProject());
     // });
-
-    this.eventService.on(Message.PAGE_OPEN, (data) => {
-      this.subPages = data.subPages;
-      this.pageId = data.pageObject._id;
-    });
 
     // MODEL SAVE BACKUP
     this.eventService.on(Message.MODEL_SAVE_BACKUP, (event) => {
@@ -190,14 +178,6 @@ export class ModelService {
     this.undoRedoBusy = false;
 
     this.eventService.send(Message.MODEL_CHANGED);
-  }
-
-  getLabelEntry() {
-    return this.labelsEntry;
-  }
-
-  getModelCase(labelType) {
-    return this.modelCase[labelType];
   }
 
   public getProject() {

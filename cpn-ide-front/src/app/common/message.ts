@@ -18,6 +18,8 @@ export class Message {
   static PAGE_CREATE_SUBST = 'page.create.subst';
   static PAGE_UPDATE_SUBST = 'page.update.subst';
 
+  static MONITOR_OPEN = 'monitor.open';
+
   static TREE_UPDATE_PAGES = 'tree.update.pages';
   static TREE_OPEN_DECLARATION_NODE = 'tree.open.declaration.node';
   static TREE_SELECT_DECLARATION_NODE = 'tree.select.declaration.node';

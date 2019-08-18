@@ -3,6 +3,7 @@ import { EventService } from '../services/event.service';
 import { Message } from '../common/message';
 import { ModelService } from '../services/model.service';
 import { AccessCpnService } from '../services/access-cpn.service';
+import { nodeToArray } from '../common/utils';
 
 @Component({
   selector: 'app-project-monitors',
@@ -14,11 +15,14 @@ export class ProjectMonitorsComponent implements OnInit {
   JSON = JSON;
 
   cpnElement;
+  nodeList = [];
 
   boolValues = [
     'true',
     'false'
   ];
+
+  createNodeIntent = false;
 
   constructor(private eventService: EventService,
     private modelService: ModelService,
@@ -26,6 +30,7 @@ export class ProjectMonitorsComponent implements OnInit {
 
   ngOnInit() {
     this.eventService.on(Message.MONITOR_OPEN, (event) => this.onLoadMonitor(event.monitorObject));
+    this.eventService.on(Message.SHAPE_SELECT, (event) => { if (this.createNodeIntent) { this.onCreateNode(event) } });
   }
 
   getOption(name) {
@@ -54,30 +59,64 @@ export class ProjectMonitorsComponent implements OnInit {
       return undefined;
     }
 
-    const nodes = this.cpnElement.node instanceof Array ? this.cpnElement.node : [this.cpnElement.node];
+    const nodes = nodeToArray(this.cpnElement.node);
 
-    console.log('getNodes(), nodes = ', nodes);
+    // console.log('getNodes(), nodes = ', nodes);
 
     const nodeList = [];
     for (const node of nodes) {
+      const page = this.modelService.getPageByElementId(node._idref);
+      const element = this.modelService.getPlaceOrTransitionById(node._idref);
       nodeList.push({
-        page: {
-          id: node._pageinstanceidref,
-          name: node._pageinstanceidref
-        },
-        element: {
-          id: node._idref,
-          name: node._idref
-        }
+        page: page,
+        element: element.element,
+        elementType: element.type
       });
     }
-    console.log('getNodes(), nodeList = ', nodeList);
+    // console.log('getNodes(), nodeList = ', nodeList);
 
     return nodeList;
   }
 
+  setCreateNodeIntent(enable) {
+    this.createNodeIntent = enable;
+    document.body.style.cursor = enable ? 'crosshair' : 'default';
+  }
+
   onLoadMonitor(cpnElement) {
     this.cpnElement = cpnElement;
+    this.nodeList = this.getNodes();
+  }
+
+  onCreateNode(event) {
+    const element = event.element.labelTarget ?
+      event.element.labelTarget.labelTarget || event.element.labelTarget :
+      event.element;
+
+    if (element && element.cpnElement) {
+      console.log('onCreateNode(), element.cpnElement = ', element.cpnElement);
+
+      const pages = this.modelService.getAllPages();
+      for (const page of pages) {
+        const instances = this.modelService.getSubInstances(page);
+        if (instances) {
+          for (const instance of instances) {
+            console.log('onCreateNode(), instance = ', instance);
+          }
+        }
+      }
+
+      const monitorNodeList = nodeToArray(this.cpnElement.node) || [];
+      monitorNodeList.push({
+        _idref: element.cpnElement._id,
+        _pageinstanceidref: 'id251437332ia'
+      });
+      this.cpnElement.node = monitorNodeList.length === 1 ? monitorNodeList[0] : monitorNodeList;
+      this.onLoadMonitor(this.cpnElement);
+      this.updateChanges();
+    }
+
+    this.setCreateNodeIntent(false);
   }
 
   onDeclarationClick(event, declaration) {
@@ -102,6 +141,27 @@ export class ProjectMonitorsComponent implements OnInit {
 
   onSaveDeclaration(event, declaration) {
     this.updateChanges();
+  }
+
+  onNewNode() {
+    console.log('onNewNode()');
+    this.setCreateNodeIntent(true);
+  }
+
+  onDeleteNode(node) {
+    // console.log('onDeleteNode(), node = ', node);
+
+    let monitorNodeList = nodeToArray(this.cpnElement.node);
+    const monitorNode = monitorNodeList.find(n => n._idref === node.element._id);
+
+    // console.log('onDeleteNode(), monitorNode = ', monitorNode);
+
+    if (monitorNode) {
+      monitorNodeList = monitorNodeList.filter(n => n !== monitorNode);
+      this.cpnElement.node = monitorNodeList.length === 1 ? monitorNodeList[0] : monitorNodeList;
+      this.onLoadMonitor(this.cpnElement);
+      this.updateChanges();
+    }
   }
 
   updateChanges() {

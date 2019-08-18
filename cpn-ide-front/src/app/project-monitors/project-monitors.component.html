@@ -36,14 +36,41 @@
     <!--
       Nodes
     -->
-    <div class="blockHeader">Nodes</div>
-    <!-- <div style="width:100%">
-      {{ JSON.stringify(cpnElement.node) }}
-    </div> -->
+    <!-- <div class="blockHeader">Nodes</div> -->
+    <nav class="navbar navbar-sm navbar-expand shadow-sm">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <span class="header">Nodes</span>
+        </li>
+      </ul>
+
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a (click)="onNewNode()" class="nav-link" href="#" title="New node">
+            <i class="fas fa-plus"></i>
+            <span>New node</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
     <table class="table table-bordered table-hover table-small">
-      <tr *ngFor="let node of getNodes()">
-        <td>{{ node.page.name }}</td>
-        <td>{{ node.element.name }}</td>
+      <!-- <tr>
+        <th>Page</th>
+        <th>Element</th>
+      </tr> -->
+
+      <tr *ngFor="let node of nodeList">
+        <td *ngIf="node.page">{{ node.page.pageattr._name }}</td>
+        <td *ngIf="node.element">{{ node.element.text }} ({{ node.elementType }})</td>
+
+        <ng-container>
+          <td class="tableButton">
+            <a (click)="onDeleteNode(node)" href="#" title="Delete node" class="tableButton">
+              <i class="far fa-trash-alt"></i>
+            </a>
+          </td>
+        </ng-container>
       </tr>
     </table>
     <!------------------------->
@@ -66,14 +93,6 @@
             <div style="position: relative; display: grid">
               <div style="max-width:100%; overflow-x:auto;">
 
-                <!-- <div [id]="'textinpfield_' + declaration.ml._id" class="editablenode" [contentEditable]="true"
-                    (focusin)="onDeclarationClick($event, declaration)"
-                    (click)="onDeclarationClick($event, declaration)"
-                    (dblclick)="onDeclarationDblClick($event, declaration)"
-                    (focusout)="onSaveDeclaration($event, declaration)"
-                    [innerHTML]="declaration.ml.__text | colorDeclarations | safeHtml">
-                  </div> -->
-
                 <app-text-edit-row type="ml" name="declaration._name" [object]="declaration.ml" field="__text"
                   [readonly]="accessCpnService.isSimulation" (changed)="updateChanges()">
                 </app-text-edit-row>
@@ -88,7 +107,9 @@
     </div>
     <!------------------------->
 
-
+    <!-- <div style="width:100%">
+      {{ JSON.stringify(cpnElement) }}
+    </div> -->
 
   </div>
 

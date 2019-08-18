@@ -11,6 +11,7 @@ import { Constants } from '../common/constants';
 import { AccessCpnService } from '../services/access-cpn.service';
 import { SettingsService } from '../services/settings.service';
 import { ValidationService } from '../services/validation.service';
+import { nodeToArray } from '../common/utils';
 
 // import {TreeComponent} from 'angular-tree-component';
 @Component({
@@ -1787,32 +1788,20 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   findElementOnPageByID(page, idref): any {
     let name = null;
     if (page.trans) {
-      if (page.trans instanceof Array) {
-        for (const trans of page.trans) {
-          if (trans._id === idref) {
-            name = trans.text + ' (transition)';
-            break;
-          }
-        }
-      } else {
-        if (page.trans._id === idref) {
-          name = page.trans.text + ' (transition)';
+      for (const trans of nodeToArray(page.trans)) {
+        if (trans._id === idref) {
+          name = trans.text + ' (Transition)';
+          break;
         }
       }
     }
 
     if (name === null) {
       if (page.place) {
-        if (page.place instanceof Array) {
-          for (const place of page.place) {
-            if (place._id === idref) {
-              name = place.text + ' (place)';
-              break;
-            }
-          }
-        } else {
-          if (page.place._id === idref) {
-            name = page.place.text + ' (place)';
+        for (const place of nodeToArray(page.place)) {
+          if (place._id === idref) {
+            name = place.text + ' (Place)';
+            break;
           }
         }
       }

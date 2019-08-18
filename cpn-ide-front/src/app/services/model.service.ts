@@ -10,6 +10,7 @@ import {
   getNextId,
   getDefText
 } from '../../lib/cpn-js/features/modeling/CpnElementFactory';
+import { nodeToArray } from '../common/utils';
 
 
 /**
@@ -1094,8 +1095,58 @@ export class ModelService {
    * Get page object from model by id
    * @param id
    */
-  getPageById(id) {
+  public getPageById(id) {
     return this.getAllPages().find(page => page && page._id === id);
+  }
+
+  /**
+   * Find page by place or transitions id
+   * @param id - place or transition id
+   */
+  public getPageByElementId(id) {
+    const pages = this.getAllPages();
+
+    for (const page of pages) {
+      // search in transitions
+      for (const t of nodeToArray(page.trans)) {
+        if (t._id === id) {
+          return page;
+        }
+      }
+      // search in places
+      for (const p of nodeToArray(page.place)) {
+        if (p._id === id) {
+          return page;
+        }
+      }
+    }
+
+    return undefined;
+  }
+
+  /**
+   * Find place or transitions by id
+   * @param id - place or transition id
+   */
+  public getPlaceOrTransitionById(id) {
+    const pages = this.getAllPages();
+
+    for (const page of pages) {
+      // search in transitions
+      for (const t of nodeToArray(page.trans)) {
+        if (t._id === id) {
+          return { element: t, type: 'Transition' };
+        }
+      }
+      // search in places
+      for (const p of nodeToArray(page.place)) {
+        if (p._id === id) {
+          return { element: p, type: 'Place' };
+        }
+      }
+    }
+
+    return undefined;
   }
 
   /**

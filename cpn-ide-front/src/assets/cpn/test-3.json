@@ -1,51 +1,29 @@
 {
-  "node": {
-    "_idref": "id156777527",
-    "_pageinstanceidref": "id251437332ia"
+  "node": [
+    {
+      "_idref": "id256993966",
+      "_pageinstanceidref": "id251437332ia"
+    },
+    {
+      "_idref": "id156777527",
+      "_pageinstanceidref": "id251437332ia"
+    },
+    {
+      "_idref": "id63119805",
+      "_pageinstanceidref": "id251437332ia"
+    },
+    {
+      "_idref": "id151452889",
+      "_pageinstanceidref": "id251437332ia"
+    }
+  ],
+  "option": {
+    "_name": "Logging",
+    "_value": "false"
   },
-  "declaration": [
-    {
-      "ml": {
-        "_id": "ID1437502549c",
-        "__text": "fun pred (bindelem) =\nlet\n fun predBindElem (Customer'consume (1, {its,oid,s})) = (length its = 1)\n | predBindElem _ = false\nin\n predBindElem bindelem\nend"
-      },
-      "_name": "Predicate"
-    },
-    {
-      "ml": {
-        "_id": "ID1437502549d",
-        "__text": "fun obs (bindelem) =\nlet\n fun obsBindElem (Customer'consume (1, {its,oid,s})) = time()-Option.valOf(ModelTime.fromString s)\n | obsBindElem _ = 0.0\nin\n obsBindElem bindelem\nend"
-      },
-      "_name": "Observer"
-    },
-    {
-      "ml": {
-        "_id": "ID1437502549a",
-        "__text": "fun init () =\n NONE"
-      },
-      "_name": "Init function"
-    },
-    {
-      "ml": {
-        "_id": "ID1437502549b",
-        "__text": "fun stop () =\n NONE"
-      },
-      "_name": "Stop"
-    }
-  ],
-  "option": [
-    {
-      "_name": "Timed",
-      "_value": "false"
-    },
-    {
-      "_name": "Logging",
-      "_value": "false"
-    }
-  ],
-  "_id": "ID1437502549",
-  "_name": "Throughput times order size 1",
-  "_type": "3",
-  "_typedescription": "Data collection",
+  "_id": "ID1437493105",
+  "_name": "Avg Pending orders",
+  "_type": "0",
+  "_typedescription": "Marking size",
   "_disabled": "false"
 }

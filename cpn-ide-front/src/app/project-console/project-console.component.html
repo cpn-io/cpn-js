@@ -15,18 +15,14 @@
       </ul>
     </nav>
 
-    <div class="workspace-container-with-tab">
-      <div class="inner">
-        <div class="scroll-y" id="logScrollPane">
+    <div class="tab-container-with-toolbar" id="logScrollPane">
 
-          <div class="logConsole">
-            <div *ngFor="let item of logHtml" [ngClass]="item.class">
-              {{ item.date | date: 'yyyy-MM-dd HH:mm:ss' }} : {{ item.text }}
-            </div>
-          </div>
-
+      <div class="logConsole">
+        <div *ngFor="let item of logHtml" [ngClass]="item.class">
+          {{ item.date | date: 'yyyy-MM-dd HH:mm:ss' }} : {{ item.text }}
         </div>
       </div>
+
     </div>
 
   </tab>
@@ -45,18 +41,14 @@
       </ul>
     </nav>
 
-    <div class="workspace-container-with-tab">
-      <div class="inner">
-        <div class="scroll-y" id="changesScrollPane">
+    <div class="tab-container-with-toolbar" id="changesScrollPane">
 
-          <div class="logConsole">
-            <div *ngFor="let item of changesHtml" [ngClass]="item.class">
-              {{ item.date | date: 'yyyy-MM-dd HH:mm:ss' }} : {{ item.text }}
-            </div>
-          </div>
-
+      <div class="logConsole">
+        <div *ngFor="let item of changesHtml" [ngClass]="item.class">
+          {{ item.date | date: 'yyyy-MM-dd HH:mm:ss' }} : {{ item.text }}
         </div>
       </div>
+
     </div>
 
   </tab>

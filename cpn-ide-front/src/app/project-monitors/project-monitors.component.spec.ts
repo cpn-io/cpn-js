@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ScrollPaneComponent } from './scroll-pane.component';
+import { ProjectMonitorsComponent } from './project-monitors.component';
 
-describe('ScrollPaneComponent', () => {
-  let component: ScrollPaneComponent;
-  let fixture: ComponentFixture<ScrollPaneComponent>;
+describe('ProjectMonitorsComponent', () => {
+  let component: ProjectMonitorsComponent;
+  let fixture: ComponentFixture<ProjectMonitorsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ScrollPaneComponent ]
+      declarations: [ ProjectMonitorsComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ScrollPaneComponent);
+    fixture = TestBed.createComponent(ProjectMonitorsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

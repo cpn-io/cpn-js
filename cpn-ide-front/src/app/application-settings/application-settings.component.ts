@@ -8,7 +8,7 @@ import { SettingsService } from '../services/settings.service';
 })
 export class ApplicationSettingsComponent implements OnInit {
 
-  showTable = 'not';
+  public showTable = 'not';
   appSettingsKeys;
   appSettings;
 

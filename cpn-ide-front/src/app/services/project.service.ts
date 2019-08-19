@@ -121,7 +121,8 @@ export class ProjectService {
       .set('Accept', 'application/xml');
 
     // const modelFile = 'baseModel_ID1008016.cpn';
-    const modelFile = 'discretemodel_task1.cpn';
+    // const modelFile = 'discretemodel_task1.cpn';
+
     // const modelFile = 'erdp.cpn';
     // const modelFile = 'hoponhopoff-color.cpn';
     // const modelFile = 'mscProtocol.cpn'
@@ -135,7 +136,7 @@ export class ProjectService {
     // const modelFile = 'mynet2.cpn';
     // const modelFile = 'mynet-sub-1.cpn';
 
-    // const modelFile = 'mynet-for-sim.cpn';
+    const modelFile = 'mynet-for-sim.cpn';
 
     // const modelFile = 'fuelstation.cpn';
 

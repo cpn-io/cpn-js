@@ -16,6 +16,7 @@ export class TextEditRowComponent {
   @Input() pre = true;
 
   @Output() changed = new EventEmitter();
+  // @Output() dblclick = new EventEmitter();
 
   private colorNames = {
     'Fucia': '#ff00ff',
@@ -90,6 +91,10 @@ export class TextEditRowComponent {
     }
     this.changed.emit(this.object[this.field]);
   }
+
+  // onDblClick(event) {
+  //   this.dblclick.emit(this.object[this.field]);
+  // }
 
   parseInt(x, base) {
     const parsed = parseInt(x, base);

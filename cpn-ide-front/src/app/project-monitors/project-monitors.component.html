@@ -94,7 +94,8 @@
               <div style="max-width:100%; overflow-x:auto;">
 
                 <app-text-edit-row type="ml" name="declaration._name" [object]="declaration.ml" field="__text"
-                  [readonly]="accessCpnService.isSimulation" (changed)="updateChanges()">
+                  [readonly]="accessCpnService.isSimulation" (changed)="updateChanges()"
+                  (dblclick)="onDeclarationDblClick($event, declaration)">
                 </app-text-edit-row>
 
               </div>

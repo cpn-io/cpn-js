@@ -41,5 +41,6 @@
   <div class="value" [ngClass]="{'value-readonly': readonly, 'pre': pre}" [contentEditable]="!readonly"
     [innerHTML]="object[field] | colorDeclarations | safeHtml" (keydown)="onKeyDown($event);"
     (focusout)="onChange($event);">
+    <!-- (dblclick)="onDblClick($event)"     -->
   </div>
 </div>

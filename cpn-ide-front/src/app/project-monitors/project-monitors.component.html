@@ -1,0 +1,117 @@
+<div class="tab-container">
+
+  <div *ngIf="cpnElement" style="width: 100%">
+
+    <div class="blockHeader">
+      {{ cpnElement._typedescription }}
+    </div>
+
+    <!--
+      Monitor description
+    -->
+
+    <!-- ID -->
+    <app-text-edit-row name="Id" [object]="cpnElement" field="_id" [readonly]="true">
+    </app-text-edit-row>
+
+    <!-- Name -->
+    <app-text-edit-row type="text" [pre]="false" name="Name" [object]="cpnElement" field="_name"
+      [readonly]="accessCpnService.isSimulation" (changed)="updateChanges()">
+    </app-text-edit-row>
+
+    <!-- Timed -->
+    <app-text-edit-row *ngIf="getOption('Timed')" type="select" name="Timed" [object]="getOption('Timed')"
+      field="_value" (changed)="updateOptionValue($event, 'Timed')" [options]="boolValues"
+      [readonly]="accessCpnService.isSimulation">
+    </app-text-edit-row>
+
+    <!-- Logging -->
+    <app-text-edit-row *ngIf="getOption('Logging')" type="select" name="Logging" [object]="getOption('Logging')"
+      field="_value" (changed)="updateOptionValue($event, 'Logging')" [options]="boolValues"
+      [readonly]="accessCpnService.isSimulation">
+    </app-text-edit-row>
+
+    <!------------------------->
+
+    <!--
+      Nodes
+    -->
+    <!-- <div class="blockHeader">Nodes</div> -->
+    <nav class="navbar navbar-sm navbar-expand shadow-sm">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <span class="header">Nodes</span>
+        </li>
+      </ul>
+
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a (click)="onNewNode()" class="nav-link" href="#" title="New node">
+            <i class="fas fa-plus"></i>
+            <span>New node</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <table class="table table-bordered table-hover table-small">
+      <!-- <tr>
+        <th>Page</th>
+        <th>Element</th>
+      </tr> -->
+
+      <tr *ngFor="let node of nodeList">
+        <td *ngIf="node.page">{{ node.page.pageattr._name }}</td>
+        <td *ngIf="node.element">{{ node.element.text }} ({{ node.elementType }})</td>
+
+        <ng-container>
+          <td class="tableButton">
+            <a (click)="onDeleteNode(node)" href="#" title="Delete node" class="tableButton">
+              <i class="far fa-trash-alt"></i>
+            </a>
+          </td>
+        </ng-container>
+      </tr>
+    </table>
+    <!------------------------->
+
+    <!--
+      Declarations
+    -->
+    <div *ngFor="let declaration of cpnElement.declaration">
+
+      <table *ngIf="declaration && declaration.ml" class="table table-bordered table-hover table-small">
+
+        <tr>
+          <td class="blockHeader">
+            {{ declaration._name }}
+          </td>
+        </tr>
+
+        <tr>
+          <td class="ml">
+            <div style="position: relative; display: grid">
+              <div style="max-width:100%; overflow-x:auto;">
+
+                <app-text-edit-row type="ml" name="declaration._name" [object]="declaration.ml" field="__text"
+                  [readonly]="accessCpnService.isSimulation" (changed)="updateChanges()"
+                  (dblclick)="onDeclarationDblClick($event, declaration)">
+                </app-text-edit-row>
+
+              </div>
+            </div>
+          </td>
+        </tr>
+
+      </table>
+
+    </div>
+    <!------------------------->
+
+    <!-- <div style="width:100%">
+      {{ JSON.stringify(cpnElement) }}
+    </div> -->
+
+  </div>
+
+</div>

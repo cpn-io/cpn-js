@@ -11,6 +11,7 @@ import { Constants } from '../common/constants';
 import { AccessCpnService } from '../services/access-cpn.service';
 import { SettingsService } from '../services/settings.service';
 import { ValidationService } from '../services/validation.service';
+import { nodeToArray } from '../common/utils';
 
 // import {TreeComponent} from 'angular-tree-component';
 @Component({
@@ -87,6 +88,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   // Step and Time nodes
   stepNode;
   timeNode;
+  monitorsNode;
 
   // Множество идентификаторов узлов, которые должны быть подсвечены снизу в даный момент
   underlineNodeSet = new Set();
@@ -256,20 +258,33 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           }
         }
         if (newCpnElement) {
-          console.log(newCpnElement);
+          console.log('Monitor: newCpnElement = ', newCpnElement);
           newNode = this.createMonitorNode(newCpnElement);
-          console.log('newNode = ', newNode);
+          console.log('Monitor: newNode = ', newNode);
           cpnType = newNode.type;
           this.clearCreateMonitorIntent();
           let monitorsRootNode;
+          // console.log('Monitor: this.nodes[0].children = ', this.nodes[0].children);
           for (const monitors of this.nodes[0].children) {
             if (monitors.id === 'Monitors') {
               monitorsRootNode = monitors;
               break;
             }
           }
-          // TODO: дописать эту функция для добавления мониторов
-          // this.addCreatedNode(monitorsRootNode, newNode, newCpnElement, cpnType, monitorsRootNode.cpnElement, false);
+          if (monitorsRootNode) {
+            console.log('Monitor: monitorsRootNode = ', monitorsRootNode);
+
+            if (monitorsRootNode.cpnElement) {
+              const monitorList = nodeToArray(monitorsRootNode.cpnElement.monitor);
+              monitorList.push(newCpnElement);
+              monitorsRootNode.cpnElement.monitor = monitorList.length === 1 ? monitorList[0] : monitorList;
+            }
+
+            // TODO: дописать эту функция для добавления мониторов
+            // this.addCreatedNode(monitorsRootNode, newNode, newCpnElement, cpnType, monitorsRootNode.cpnElement, false);
+            monitorsRootNode.children.push(newNode);
+            this.updateTree();
+          }
         }
       }
     });
@@ -955,6 +970,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   onNodeClick(event, node) {
+    console.log(this.constructor.name, 'onNodeClick(), node = ', node);
+
+
     if (!this.openedLabel[node.id]) {
       this.onNodeArrowClick(event, node);
     } else {
@@ -1634,12 +1652,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     const monitorsNodeList = [];
 
     // Monitor nodes, create and save it to monitorsNodeList
-    if (cpnElement.monitor instanceof Array) {
-      for (const monitor of cpnElement.monitor) {
-        const monitorNode = this.createMonitorNode(monitor);
-        monitorsNodeList[monitorNode.id] = monitorNode;
-      }
+    for (const monitor of nodeToArray(cpnElement.monitor)) {
+      const monitorNode = this.createMonitorNode(monitor);
+      monitorsNodeList[monitorNode.id] = monitorNode;
     }
+
     // Move monitors to it's parent page
     for (const monitorId of Object.keys(monitorsNodeList)) {
       const monitorNode = monitorsNodeList[monitorId];
@@ -1784,32 +1801,20 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   findElementOnPageByID(page, idref): any {
     let name = null;
     if (page.trans) {
-      if (page.trans instanceof Array) {
-        for (const trans of page.trans) {
-          if (trans._id === idref) {
-            name = trans.text + ' (transition)';
-            break;
-          }
-        }
-      } else {
-        if (page.trans._id === idref) {
-          name = page.trans.text + ' (transition)';
+      for (const trans of nodeToArray(page.trans)) {
+        if (trans._id === idref) {
+          name = trans.text + ' (Transition)';
+          break;
         }
       }
     }
 
     if (name === null) {
       if (page.place) {
-        if (page.place instanceof Array) {
-          for (const place of page.place) {
-            if (place._id === idref) {
-              name = place.text + ' (place)';
-              break;
-            }
-          }
-        } else {
-          if (page.place._id === idref) {
-            name = page.place.text + ' (place)';
+        for (const place of nodeToArray(page.place)) {
+          if (place._id === idref) {
+            name = place.text + ' (Place)';
+            break;
           }
         }
       }
@@ -1963,9 +1968,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     // historyNode.classes = ['tree-project'];
     // historyNode.children = [this.createTreeNode('* empty *')];
 
-    let monitors;
+    this.monitorsNode = null;
     if (cpnet.monitorblock) {
-      monitors = this.createMonitorsRootNode('Monitors', cpnet.monitorblock);
+      this.monitorsNode = this.createMonitorsRootNode('Monitors', cpnet.monitorblock);
     }
 
     // Create project Declarations node
@@ -1984,8 +1989,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     // projectNode.children.push(historyNode);
     projectNode.children.push(declarationsNode);
-    if (monitors) {
-      projectNode.children.push(monitors);
+    if (this.monitorsNode) {
+      projectNode.children.push(this.monitorsNode);
     }
     projectNode.children.push(pagesNode);
 
@@ -2191,10 +2196,12 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     console.log(event.node);
 
-    if (event && event.node && event.node.data && event.node.data.type === 'page') {
-      // const pageObject = event.node.data.cpnElement;
-      const pageObject = event.node.data.cpnElement;
-      this.eventService.send(Message.PAGE_OPEN, { pageObject: pageObject, subPages: this.subpages });
+    if (event && event.node && this.isPage(event.node)) {
+      this.eventService.send(Message.PAGE_OPEN, { pageObject: event.node.data.cpnElement, subPages: this.subpages });
+    }
+
+    if (event && event.node && this.isMonitor(event.node)) {
+      this.eventService.send(Message.MONITOR_OPEN, { monitorObject: event.node.data.cpnElement });
     }
 
     if (this.selectedNode.data.type === 'declaration') {

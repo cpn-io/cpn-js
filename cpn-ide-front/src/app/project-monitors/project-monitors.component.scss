@@ -1,0 +1,26 @@
+td.ml {
+  padding: 0 1px;
+}
+
+div.editablenode {
+  padding: 5px 10px;
+  white-space: pre;
+}
+
+td.node-highlight-error {
+  background: #ffcccc;
+  border-bottom: solid red 2px;
+}
+
+.nav-item .header {
+  padding: 0 7px;
+  padding-top: 5px;
+  font-weight: bold;
+}
+
+td.tableButton {
+  width: 1px;
+}
+a.tableButton {
+  color: gray;
+}

@@ -10,6 +10,8 @@ import {
   getNextId,
   getDefText
 } from '../../lib/cpn-js/features/modeling/CpnElementFactory';
+import { nodeToArray } from '../common/utils';
+import { DataCollectionMonitorTemplate, BreakpointMonitorTemplate, UserDefinedMonitorTemplate, WriteInFileMonitorTemplate, MarkingSizeMonitorTemplate, ListLengthDataCollectionMonitorTemplate, CountTransitionOccurrencesMonitorTemplate, PlaceContentBreakPointMonitorTemplate, TransitionEnabledBreakPointMonitorTemplate } from '../common/monitor-template';
 
 
 /**
@@ -27,15 +29,8 @@ export class ModelService {
   private backupModel = [];
   private redoBackupModel;
   private modelCase = [];
-  subPages;
-  pageId;
+
   countNewItems = 0;
-  labelsEntry = {
-    trans: ['time', 'code', 'priority', 'edit', 'cond'],
-    place: ['initmark', 'edit', 'type'],
-    arc: ['annot'],
-    label: ['edit']
-  };
   paramsTypes = ['ml', 'color', 'var', 'globref'];
 
 
@@ -71,11 +66,6 @@ export class ModelService {
     // this.eventService.on(Message.MODEL_RELOAD, () => {
     //   // this.loadProject(this.getProject());
     // });
-
-    this.eventService.on(Message.PAGE_OPEN, (data) => {
-      this.subPages = data.subPages;
-      this.pageId = data.pageObject._id;
-    });
 
     // MODEL SAVE BACKUP
     this.eventService.on(Message.MODEL_SAVE_BACKUP, (event) => {
@@ -190,14 +180,6 @@ export class ModelService {
     this.undoRedoBusy = false;
 
     this.eventService.send(Message.MODEL_CHANGED);
-  }
-
-  getLabelEntry() {
-    return this.labelsEntry;
-  }
-
-  getModelCase(labelType) {
-    return this.modelCase[labelType];
   }
 
   public getProject() {
@@ -642,238 +624,231 @@ export class ModelService {
     };
   }
 
-  createCpnMonitorBP(_cpnElement) {
+  // ------------------------------------------------
+  // DC: 'Data collection',
+  // MS: 'Marking size',
+  // BP: 'Break point',
+  // UD: 'User defined',
+  // WIF: 'Write in file',
+  // LLDC: 'List length data collection',
+  // CTODC: 'Count transition occurence data collector',
+  // PCBP: 'Place content break point',
+  // TEBP: 'Transition enabled break point'
+  // ------------------------------------------------
 
-  }
-
-  // <monitor id="ID1438426776"
-  //   name="Count_trans_occur_Customer&apos;place_                    order_1"
-  //   type="6"
-  //   typedescription="Count transition occurrence data collection"
-  //   disabled="false">
-  //   <node idref="ID1437019464"
-  //   pageinstanceidref="ID1437019576"/>
-  //   <option name="Logging"
-  //   value="true"/>
-  // </monitor>
-  createMonitorCTODC(cpnElement: any): any {
-    console.log('createMonitorCTODC(), cpnElement = ', cpnElement);
-    return {
-      _id: getNextId(),
-      _name: 'Count_trans_occur_PAGENAME_' + cpnElement.text, // TODO add page name: 'Count_trans_occur_' + PAGENAME + '_' + cpnElement.text
-      _type: '6',
-      _typedescription: 'Count transition occurrence data collection',
-      _disabled: 'false',
-      node: {
-        _idref: cpnElement.id,
-        _pageinstanceidref: 'PAGEINSTANCEID' // TODO add page instance ID
-      },
-      option: {
-        _name: 'Logging',
-        _value: 'false'
-      }
-    };
-  }
-
-  // <monitor id="ID1437510504"
-  //   name="Throughput times order size 3"
-  //   type="3"
-  //   typedescription="Data collection"
-  //   disabled="true">
-  //   <node idref="ID1437019470"
-  //   pageinstanceidref="ID1437019576"/>
-  //   <declaration name="Predicate">
-  //   <ml id="ID1437510512">fun pred (bindelem) =
-  //   let
-  //   fun predBindElem (Customer&apos;consume (1, {its,oid,s})) = true
-  //   | predBindElem _ = false
-  //   in
-  //   predBindElem bindelem
-  // end
-  // <layout>fun pred (bindelem) =
-  //   let
-  // fun predBindElem (Customer&apos;consume (1, {its,oid,s})) = true
-  //   | predBindElem _ = false
-  //   in
-  //   predBindElem bindelem
-  // end</layout>
-  // </ml>
-  // </declaration>
-  // <declaration name="Observer">
-  // <ml id="ID1437510516">fun obs (bindelem) =
-  //   let
-  // fun obsBindElem (Customer&apos;consume (1, {its,oid,s})) = 0
-  //   | obsBindElem _ = ~1
-  //   in
-  //   obsBindElem bindelem
-  // end
-  // <layout>fun obs (bindelem) =
-  //   let
-  // fun obsBindElem (Customer&apos;consume (1, {its,oid,s})) = 0
-  //   | obsBindElem _ = ~1
-  //   in
-  //   obsBindElem bindelem
-  // end</layout>
-  // </ml>
-  // </declaration>
-  // <declaration name="Init function">
-  // <ml id="ID1437510520">fun init () =
-  //   NONE
-  //   <layout>fun init () =
-  //   NONE</layout>
-  //   </ml>
-  //   </declaration>
-  //   <declaration name="Stop">
-  // <ml id="ID1437510524">fun stop () =
-  //   NONE
-  //   <layout>fun stop () =
-  //   NONE</layout>
-  //   </ml>
-  //   </declaration>
-  //   <option name="Timed"
-  // value="false"/>
-  // <option name="Logging"
-  // value="false"/>
-  // </monitor>
   createCpnMonitorDC(cpnElement) {
+    console.log('createCpnMonitorDC(), cpnElement = ', cpnElement);
+    const monitorTemplate = new DataCollectionMonitorTemplate();
 
-    let predicate: string;
-    if (cpnElement.cpnType === 'cpn:Place') {
-      predicate =
-        'fun pred (PAGENAME&apos;SHAPETEXT_1_mark : U ms) = ' +
-        '  true';
-    } else {
-      predicate =
-        'fun pred (bindelem) =\n' +
-        '  let\n' +
-        '  fun predBindElem (PAGENAME&apos;SHAPETEXT (1, {x,y})) = true\n' + // TODO here
-        '    | predBindElem _ = false\n' +
-        'in\n' +
-        '  predBindElem bindelem\n' +
-        'end';
-    }
     return {
       _id: getNextId(),
-      _name: '',
+      _name: 'Data collection monitor',
       _type: '3',
-      _typedescription: 'Data collection',
+      _typedescription: monitorTemplate.typeDescription(),
       _disabled: 'false',
       node: {
-        _idref: cpnElement.id,
+        _idref: cpnElement._id,
         _pageinstanceidref: 'PAGEINSTANCEID' // TODO add page instance ID
       },
       declaration: [
-        {
-          _name: 'Predicate',
-          ml: {
-            _id: 'ID' + new Date().getTime(),
-            layout: predicate
-          }
-        },
-        {
-          _name: 'Observer',
-          ml: {
-            _id: 'ID' + new Date().getTime(),
-            layout:
-              'fun obs (bindelem) =\n' +
-              '  let\n' +
-              'fun obsBindElem (PAGENAME&apos;SHAPETEXT (1, {x,y})) = 0\n' + // TODO here
-              '  | obsBindElem _ = ~1\n' +
-              ' in\n' +
-              '  obsBindElem bindelem\n' +
-              'end'
-          }
-        },
-        {
-          _name: 'Init function',
-          ml: {
-            _id: 'ID' + new Date().getTime(),
-            layout: 'fun init () =\n' +
-              'NONE'
-          }
-        },
-        {
-          _name: 'Stop',
-          ml: {
-            _id: 'ID' + new Date().getTime(),
-            layout: 'fun stop () =' +
-              'NONE'
-          }
-        },
+        { _name: 'Predicate', ml: { _id: getNextId(), __text: monitorTemplate.defaultPredicate() } },
+        { _name: 'Observer', ml: { _id: getNextId(), __text: monitorTemplate.defaultObserver() } },
+        { _name: 'Init function', ml: { _id: getNextId(), __text: monitorTemplate.defaultInit() } },
+        { _name: 'Stop', ml: { _id: getNextId(), __text: monitorTemplate.defaultStop() } },
       ],
       option: [
-        {
-          _name: 'Timed',
-          _value: 'false'
-        },
-        {
-          _name: 'Logging',
-          _value: 'false'
-        }
+        { _name: 'Timed', _value: monitorTemplate.defaultTimed() },
+        { _name: 'Logging', _value: monitorTemplate.defaultLogging() }
       ]
     };
   }
 
-  createCpnMonitorLLDC(_cpnElement) {
+  createCpnMonitorBP(cpnElement) {
+    console.log('createCpnMonitorBP(), cpnElement = ', cpnElement);
+    const monitorTemplate = new BreakpointMonitorTemplate();
 
-  }
-
-  // <monitor id="ID1438122141"
-  //   name="Marking_size_BurgerHeaven&apos;C busy_1"
-  //   type="0"
-  //   typedescription="Marking size"
-  //   disabled="true">
-  //   <node idref="ID1438112416"
-  //   pageinstanceidref="ID1437053129"/>
-  //   <node idref="ID1438118761"
-  //   pageinstanceidref="ID1437053129"/>
-  //   <node idref="ID1437052949"
-  //   pageinstanceidref="ID1437053129"/>
-  //   <option name="Logging"
-  //   value="true"/>
-  // </monitor>
-  createCpnMonitorMS(cpnElement) {
     return {
-      _id: 'ID' + new Date().getTime(),
-      _name: 'Marking_size_PAGENAME_' + cpnElement.text, // TODO add page name: 'Count_trans_occur_' + PAGENAME + '_' + cpnElement.text
-      _type: '0',
-      _typedescription: 'Marking size',
+      _id: getNextId(),
+      _name: 'Breakpoint monitor',
+      _type: '3',
+      _typedescription: monitorTemplate.typeDescription(),
       _disabled: 'false',
-      node: [
-        {
-          _idref: 'IDREF', // TODO
-          _pageinstanceidref: 'PAGEINSTANCEID' // TODO
-        },
-        {
-          _idref: 'IDREF', // TODO
-          _pageinstanceidref: 'PAGEINSTANCEID' // TODO
-        },
-        {
-          _idref: 'IDREF', // TODO
-          _pageinstanceidref: 'PAGEINSTANCEID' // TODO
-        }
+      node: {
+        _idref: cpnElement._id,
+        _pageinstanceidref: 'PAGEINSTANCEID' // TODO add page instance ID
+      },
+      declaration: [
+        { _name: 'Predicate', ml: { _id: getNextId(), __text: monitorTemplate.defaultPredicate() } },
+        { _name: 'Observer', ml: { _id: getNextId(), __text: monitorTemplate.defaultObserver() } },
+        { _name: 'Init function', ml: { _id: getNextId(), __text: monitorTemplate.defaultInit() } },
+        { _name: 'Stop', ml: { _id: getNextId(), __text: monitorTemplate.defaultStop() } },
       ],
-      option: {
-        _name: 'Logging',
-        _value: 'true'
-      }
+      option: [
+        { _name: 'Timed', _value: monitorTemplate.defaultTimed() },
+        { _name: 'Logging', _value: monitorTemplate.defaultLogging() }
+      ]
     };
   }
 
-  createCpnMonitorPCBP(_cpnElement) {
+  createCpnMonitorUD(cpnElement) {
+    console.log('createCpnMonitorUD(), cpnElement = ', cpnElement);
+    const monitorTemplate = new UserDefinedMonitorTemplate();
 
+    return {
+      _id: getNextId(),
+      _name: 'User-defined monitor',
+      _type: '3',
+      _typedescription: monitorTemplate.typeDescription(),
+      _disabled: 'false',
+      node: {
+        _idref: cpnElement._id,
+        _pageinstanceidref: 'PAGEINSTANCEID' // TODO add page instance ID
+      },
+      declaration: [
+        { _name: 'Predicate', ml: { _id: getNextId(), __text: monitorTemplate.defaultPredicate() } },
+        { _name: 'Observer', ml: { _id: getNextId(), __text: monitorTemplate.defaultObserver() } },
+        { _name: 'Init function', ml: { _id: getNextId(), __text: monitorTemplate.defaultInit() } },
+        { _name: 'Stop', ml: { _id: getNextId(), __text: monitorTemplate.defaultStop() } },
+      ],
+      option: [
+        { _name: 'Timed', _value: monitorTemplate.defaultTimed() },
+        { _name: 'Logging', _value: monitorTemplate.defaultLogging() }
+      ]
+    };
   }
 
-  createCpnMonitorTEBP(_cpnElement) {
+  createCpnMonitorWIF(cpnElement) {
+    console.log('createCpnMonitorWIF(), cpnElement = ', cpnElement);
+    const monitorTemplate = new WriteInFileMonitorTemplate();
 
+    return {
+      _id: getNextId(),
+      _name: 'Write in file monitor',
+      _type: '3',
+      _typedescription: monitorTemplate.typeDescription(),
+      _disabled: 'false',
+      node: {
+        _idref: cpnElement._id,
+        _pageinstanceidref: 'PAGEINSTANCEID' // TODO add page instance ID
+      },
+      declaration: [
+        { _name: 'Predicate', ml: { _id: getNextId(), __text: monitorTemplate.defaultPredicate() } },
+        { _name: 'Observer', ml: { _id: getNextId(), __text: monitorTemplate.defaultObserver() } },
+        { _name: 'Init function', ml: { _id: getNextId(), __text: monitorTemplate.defaultInit() } },
+        { _name: 'Stop', ml: { _id: getNextId(), __text: monitorTemplate.defaultStop() } },
+      ],
+      option: [
+        { _name: 'Timed', _value: monitorTemplate.defaultTimed() },
+        { _name: 'Logging', _value: monitorTemplate.defaultLogging() }
+      ]
+    };
   }
 
-  createCpnMonitorUD(_cpnElement) {
 
+  createCpnMonitorMS(cpnElement) {
+    console.log('createCpnMonitorMS(), cpnElement = ', cpnElement);
+    const monitorTemplate = new MarkingSizeMonitorTemplate();
+
+    return {
+      _id: getNextId(),
+      _name: 'Marking size monitor (' + cpnElement.text + ')',
+      _type: '0',
+      _typedescription: monitorTemplate.typeDescription(),
+      _disabled: 'false',
+      node: {
+        _idref: cpnElement._id,
+        _pageinstanceidref: 'PAGEINSTANCEID' // TODO add page instance ID
+      },
+      option: [
+        { _name: 'Timed', _value: monitorTemplate.defaultTimed() },
+        { _name: 'Logging', _value: monitorTemplate.defaultLogging() }
+      ]
+    };
   }
 
-  createCpnMonitorWIF(_cpnElement) {
+  createCpnMonitorLLDC(cpnElement) {
+    console.log('createCpnMonitorLLDC(), cpnElement = ', cpnElement);
+    const monitorTemplate = new ListLengthDataCollectionMonitorTemplate();
 
+    return {
+      _id: getNextId(),
+      _name: 'List length data collection (' + cpnElement.text + ')',
+      _type: '0',
+      _typedescription: monitorTemplate.typeDescription(),
+      _disabled: 'false',
+      node: {
+        _idref: cpnElement._id,
+        _pageinstanceidref: 'PAGEINSTANCEID' // TODO add page instance ID
+      },
+      option: [
+        { _name: 'Timed', _value: monitorTemplate.defaultTimed() },
+        { _name: 'Logging', _value: monitorTemplate.defaultLogging() }
+      ]
+    };
+  }
+
+
+  createMonitorCTODC(cpnElement: any): any {
+    console.log('createMonitorCTODC(), cpnElement = ', cpnElement);
+    const monitorTemplate = new CountTransitionOccurrencesMonitorTemplate();
+
+    return {
+      _id: getNextId(),
+      _name: 'Count transition occurrences (' + cpnElement.text + ')',
+      _type: '0',
+      _typedescription: monitorTemplate.typeDescription(),
+      _disabled: 'false',
+      node: {
+        _idref: cpnElement._id,
+        _pageinstanceidref: 'PAGEINSTANCEID' // TODO add page instance ID
+      },
+      option: [
+        { _name: 'Timed', _value: monitorTemplate.defaultTimed() },
+        { _name: 'Logging', _value: monitorTemplate.defaultLogging() }
+      ]
+    };
+  }
+
+  createCpnMonitorPCBP(cpnElement) {
+    console.log('createCpnMonitorPCBP(), cpnElement = ', cpnElement);
+    const monitorTemplate = new PlaceContentBreakPointMonitorTemplate();
+
+    return {
+      _id: getNextId(),
+      _name: 'Place content break point (' + cpnElement.text + ')',
+      _type: '0',
+      _typedescription: monitorTemplate.typeDescription(),
+      _disabled: 'false',
+      node: {
+        _idref: cpnElement._id,
+        _pageinstanceidref: 'PAGEINSTANCEID' // TODO add page instance ID
+      },
+      option: [
+        { _name: 'Timed', _value: monitorTemplate.defaultTimed() },
+        { _name: 'Logging', _value: monitorTemplate.defaultLogging() }
+      ]
+    };
+  }
+
+  createCpnMonitorTEBP(cpnElement) {
+    console.log('createCpnMonitorTEBP(), cpnElement = ', cpnElement);
+    const monitorTemplate = new TransitionEnabledBreakPointMonitorTemplate();
+
+    return {
+      _id: getNextId(),
+      _name: 'Transition enabled (' + cpnElement.text + ')',
+      _type: '0',
+      _typedescription: monitorTemplate.typeDescription(),
+      _disabled: 'false',
+      node: {
+        _idref: cpnElement._id,
+        _pageinstanceidref: 'PAGEINSTANCEID' // TODO add page instance ID
+      },
+      option: [
+        { _name: 'Timed', _value: monitorTemplate.defaultTimed() },
+        { _name: 'Logging', _value: monitorTemplate.defaultLogging() }
+      ]
+    };
   }
 
   /**
@@ -1114,8 +1089,58 @@ export class ModelService {
    * Get page object from model by id
    * @param id
    */
-  getPageById(id) {
+  public getPageById(id) {
     return this.getAllPages().find(page => page && page._id === id);
+  }
+
+  /**
+   * Find page by place or transitions id
+   * @param id - place or transition id
+   */
+  public getPageByElementId(id) {
+    const pages = this.getAllPages();
+
+    for (const page of pages) {
+      // search in transitions
+      for (const t of nodeToArray(page.trans)) {
+        if (t._id === id) {
+          return page;
+        }
+      }
+      // search in places
+      for (const p of nodeToArray(page.place)) {
+        if (p._id === id) {
+          return page;
+        }
+      }
+    }
+
+    return undefined;
+  }
+
+  /**
+   * Find place or transitions by id
+   * @param id - place or transition id
+   */
+  public getPlaceOrTransitionById(id) {
+    const pages = this.getAllPages();
+
+    for (const page of pages) {
+      // search in transitions
+      for (const t of nodeToArray(page.trans)) {
+        if (t._id === id) {
+          return { element: t, type: 'Transition' };
+        }
+      }
+      // search in places
+      for (const p of nodeToArray(page.place)) {
+        if (p._id === id) {
+          return { element: p, type: 'Place' };
+        }
+      }
+    }
+
+    return undefined;
   }
 
   /**

@@ -23,6 +23,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
   tabList = [
     { id: 'propertiesPanel', name: 'Properties' },
+    { id: 'monitorPanel', name: 'Monitor' },
     // { id: 'modelPanel', name: 'Model' },
   ];
 
@@ -78,7 +79,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
   pages = [];
 
-  private layoutPartOpened: boolean[] = [];
+  public layoutPartOpened: boolean[] = [];
 
   constructor(private eventService: EventService,
     private modelService: ModelService,
@@ -90,7 +91,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.eventService.on(Message.PAGE_OPEN, (data) => {
-      console.log(this.constructor.name, 'Message.PAGE_OPEN, data = ', data);
+      // console.log(this.constructor.name, 'Message.PAGE_OPEN, data = ', data);
 
       this.showPageAttrs(data.pageObject);
     });

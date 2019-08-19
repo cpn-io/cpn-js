@@ -168,9 +168,11 @@ export class ModelEditorComponent implements OnInit {
     // SIM STATUS
     this.eventService.on(Message.SIMULATION_STARTED, (data) => {
       this.updateElementStatus();
+      this.modeling.setEditable(false);
     });
     this.eventService.on(Message.SIMULATION_STOPED, (data) => {
       this.updateElementStatus();
+      this.modeling.setEditable(true);
     });
 
     this.eventService.on(Message.PAGE_DELETE, (data) => {
@@ -184,14 +186,6 @@ export class ModelEditorComponent implements OnInit {
         this.modeling.changeTransitionSubPageLabel(data.id, data.name);
       }
     })
-
-    this.eventService.on(Message.SIMULATION_STARTED, (data) => {
-      this.modeling.setEditable(false);
-    });
-
-    this.eventService.on(Message.SIMULATION_STOPED, (data) => {
-      this.modeling.setEditable(true);
-    });
 
     // Diagram events
 
@@ -427,9 +421,9 @@ export class ModelEditorComponent implements OnInit {
   updateElementStatus() {
     this.stateProvider.clear();
 
-    console.log('updateElementStatus(), tokenData = ', this.accessCpnService.getTokenData());
-    console.log('updateElementStatus(), readyData = ', this.accessCpnService.getReadyData());
-    console.log('updateElementStatus(), errorData = ', this.accessCpnService.getErrorData());
+    // console.log('updateElementStatus(), tokenData = ', this.accessCpnService.getTokenData());
+    // console.log('updateElementStatus(), readyData = ', this.accessCpnService.getReadyData());
+    // console.log('updateElementStatus(), errorData = ', this.accessCpnService.getErrorData());
 
     // if (Object.keys(this.accessCpnService.getTokenData()).length > 0) {
     this.eventBus.fire('model.update.tokens', { data: this.accessCpnService.getTokenData() });

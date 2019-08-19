@@ -1,5 +1,5 @@
 <<<<<<< HEAD
-export class AppVersion { public static readonly buildVersion = '1.1.20190717'; }
+export class AppVersion { public static readonly buildVersion = '1.1.20190813'; }
 =======
-export class AppVersion { public static readonly buildVersion = '1.1.20190716'; }
->>>>>>> 22ebadf15b59102211fb22dffb83bbe13c589ead
+export class AppVersion { public static readonly buildVersion = '1.1.20190819'; }
+>>>>>>> 468529ca8e216ea358619eb817005842e5102dbb

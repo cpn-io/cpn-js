@@ -9,7 +9,7 @@ interface MonitorTemplate {
 }
 
 export class DataCollectionMonitorTemplate implements MonitorTemplate {
-  public typeDescription(): string { return 'Data collection'; }
+  public typeDescription(): string { return 'Generic data collector'; }
   public defaultTimed(): boolean { return false; }
   public defaultLogging(): boolean { return true; }
 
@@ -31,7 +31,7 @@ export class DataCollectionMonitorTemplate implements MonitorTemplate {
 }
 
 export class BreakpointMonitorTemplate implements MonitorTemplate {
-  public typeDescription(): string { return 'Breakpoint'; }
+  public typeDescription(): string { return 'Generic breakpoint monitor'; }
   public defaultTimed(): boolean { return false; }
   public defaultLogging(): boolean { return true; }
 
@@ -53,7 +53,7 @@ export class BreakpointMonitorTemplate implements MonitorTemplate {
 }
 
 export class UserDefinedMonitorTemplate implements MonitorTemplate {
-  public typeDescription(): string { return 'User-defined'; }
+  public typeDescription(): string { return 'User-defined monitor'; }
   public defaultTimed(): boolean { return false; }
   public defaultLogging(): boolean { return true; }
 
@@ -75,7 +75,7 @@ export class UserDefinedMonitorTemplate implements MonitorTemplate {
 }
 
 export class WriteInFileMonitorTemplate implements MonitorTemplate {
-  public typeDescription(): string { return 'Write-in-file'; }
+  public typeDescription(): string { return 'Write-in-file monitor'; }
   public defaultTimed(): boolean { return false; }
   public defaultLogging(): boolean { return true; }
 

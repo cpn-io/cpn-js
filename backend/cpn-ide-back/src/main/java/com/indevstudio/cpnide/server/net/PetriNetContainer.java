@@ -123,11 +123,12 @@ public class PetriNetContainer {
             checker.generateSerializers();
             checker.checkPages();
             checker.generatePlaceInstances();
-            //  checker.checkMonitors();
+            checker.checkMonitors();
             checker.generateNonPlaceInstances();
             checker.initialiseSimulationScheduler();
 
 
+            sim.initialState();
             sim.refreshViews();
 
 //            checker.instantiateSMLInterface();

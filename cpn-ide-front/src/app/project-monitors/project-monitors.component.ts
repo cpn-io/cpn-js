@@ -31,6 +31,9 @@ export class ProjectMonitorsComponent implements OnInit {
   ngOnInit() {
     this.eventService.on(Message.MONITOR_OPEN, (event) => this.onLoadMonitor(event.monitorObject));
     this.eventService.on(Message.SHAPE_SELECT, (event) => { if (this.createNodeIntent) { this.onCreateNode(event) } });
+
+    this.eventService.on(Message.DECLARATION_CHANGED, (event) => this.onUpdateDeclaration(event));
+
   }
 
   getOption(name) {
@@ -67,11 +70,13 @@ export class ProjectMonitorsComponent implements OnInit {
     for (const node of nodes) {
       const page = this.modelService.getPageByElementId(node._idref);
       const element = this.modelService.getPlaceOrTransitionById(node._idref);
-      nodeList.push({
-        page: page,
-        element: element.element,
-        elementType: element.type
-      });
+      if (element) {
+        nodeList.push({
+          page: page,
+          element: element.element,
+          elementType: element.type
+        });
+      }
     }
     // console.log('getNodes(), nodeList = ', nodeList);
 
@@ -119,6 +124,22 @@ export class ProjectMonitorsComponent implements OnInit {
     this.setCreateNodeIntent(false);
   }
 
+  onUpdateDeclaration(event) {
+    if (event.cpnElement && event.newTextValue) {
+      const result = this.modelService.stringToCpnDeclarationElement(
+        event.cpnElement,
+        event.newTextValue);
+      console.log('Message.DECLARATION_CHANGED, event.cpnElement = ', event.cpnElement);
+      console.log('Message.DECLARATION_CHANGED, result = ', result);
+
+      event.cpnElement.__text = result.cpnElement.__text;
+
+      this.onLoadMonitor(this.cpnElement);
+      this.updateChanges();
+    }
+  }
+
+
   onDeclarationClick(event, declaration) {
     // if (this.selectedNode !== node) {
     //   this.selectedNode = node;
@@ -132,11 +153,20 @@ export class ProjectMonitorsComponent implements OnInit {
   }
 
   onDeclarationDblClick(event, declaration) {
+    console.log('onDeclarationDblClick(), declaration = ', declaration);
+
     this.onDeclarationClick(event, declaration);
 
     // if (node.type === 'declaration') {
     //   this.sendSelectDeclarationNode(node, true);
     // }
+
+    this.eventService.send(Message.TREE_SELECT_DECLARATION_NODE, {
+      sender: this,
+      openEditorTab: true,
+      cpnType: 'ml',
+      cpnElement: declaration.ml
+    });
   }
 
   onSaveDeclaration(event, declaration) {

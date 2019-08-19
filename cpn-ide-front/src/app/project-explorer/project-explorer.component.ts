@@ -88,6 +88,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   // Step and Time nodes
   stepNode;
   timeNode;
+  monitorsNode;
 
   // Множество идентификаторов узлов, которые должны быть подсвечены снизу в даный момент
   underlineNodeSet = new Set();
@@ -257,20 +258,33 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           }
         }
         if (newCpnElement) {
-          console.log(newCpnElement);
+          console.log('Monitor: newCpnElement = ', newCpnElement);
           newNode = this.createMonitorNode(newCpnElement);
-          console.log('newNode = ', newNode);
+          console.log('Monitor: newNode = ', newNode);
           cpnType = newNode.type;
           this.clearCreateMonitorIntent();
           let monitorsRootNode;
+          // console.log('Monitor: this.nodes[0].children = ', this.nodes[0].children);
           for (const monitors of this.nodes[0].children) {
             if (monitors.id === 'Monitors') {
               monitorsRootNode = monitors;
               break;
             }
           }
-          // TODO: дописать эту функция для добавления мониторов
-          // this.addCreatedNode(monitorsRootNode, newNode, newCpnElement, cpnType, monitorsRootNode.cpnElement, false);
+          if (monitorsRootNode) {
+            console.log('Monitor: monitorsRootNode = ', monitorsRootNode);
+
+            if (monitorsRootNode.cpnElement) {
+              const monitorList = nodeToArray(monitorsRootNode.cpnElement.monitor);
+              monitorList.push(newCpnElement);
+              monitorsRootNode.cpnElement.monitor = monitorList.length === 1 ? monitorList[0] : monitorList;
+            }
+
+            // TODO: дописать эту функция для добавления мониторов
+            // this.addCreatedNode(monitorsRootNode, newNode, newCpnElement, cpnType, monitorsRootNode.cpnElement, false);
+            monitorsRootNode.children.push(newNode);
+            this.updateTree();
+          }
         }
       }
     });
@@ -1638,12 +1652,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     const monitorsNodeList = [];
 
     // Monitor nodes, create and save it to monitorsNodeList
-    if (cpnElement.monitor instanceof Array) {
-      for (const monitor of cpnElement.monitor) {
-        const monitorNode = this.createMonitorNode(monitor);
-        monitorsNodeList[monitorNode.id] = monitorNode;
-      }
+    for (const monitor of nodeToArray(cpnElement.monitor)) {
+      const monitorNode = this.createMonitorNode(monitor);
+      monitorsNodeList[monitorNode.id] = monitorNode;
     }
+
     // Move monitors to it's parent page
     for (const monitorId of Object.keys(monitorsNodeList)) {
       const monitorNode = monitorsNodeList[monitorId];
@@ -1955,9 +1968,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     // historyNode.classes = ['tree-project'];
     // historyNode.children = [this.createTreeNode('* empty *')];
 
-    let monitors;
+    this.monitorsNode = null;
     if (cpnet.monitorblock) {
-      monitors = this.createMonitorsRootNode('Monitors', cpnet.monitorblock);
+      this.monitorsNode = this.createMonitorsRootNode('Monitors', cpnet.monitorblock);
     }
 
     // Create project Declarations node
@@ -1976,8 +1989,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     // projectNode.children.push(historyNode);
     projectNode.children.push(declarationsNode);
-    if (monitors) {
-      projectNode.children.push(monitors);
+    if (this.monitorsNode) {
+      projectNode.children.push(this.monitorsNode);
     }
     projectNode.children.push(pagesNode);
 

@@ -1,4 +1,4 @@
-import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Constants } from '../common/constants';
 import TextRenderer from '../../lib/cpn-js/draw/TextRenderer';
 
@@ -7,6 +7,7 @@ import { EventService } from '../services/event.service';
 import { ModelService } from '../services/model.service';
 import { element } from 'protractor';
 import { AccessCpnService } from '../services/access-cpn.service';
+import { TabsContainer } from 'src/lib/tabs/tabs-container/tabs.container';
 
 
 @Component({
@@ -15,6 +16,8 @@ import { AccessCpnService } from '../services/access-cpn.service';
   styleUrls: ['./properties-panel.component.scss']
 })
 export class PropertiesPanelComponent implements OnInit, OnDestroy {
+
+  @ViewChild('tabsComponent') tabsComponent: TabsContainer;
 
   console = console;
   JSON = JSON;
@@ -99,6 +102,8 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     this.eventService.on(Message.SHAPE_SELECT, (data) => {
       console.log(this.constructor.name, 'Message.SHAPE_SELECT, data = ', data);
 
+      this.selectTab('propertiesPanel');
+
       const element = data.element.labelTarget ?
         data.element.labelTarget.labelTarget || data.element.labelTarget :
         data.element;
@@ -123,9 +128,20 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
       //   }, 1000);
       // }
     });
+
+    this.eventService.on(Message.MONITOR_OPEN, () => { this.selectTab('monitorPanel'); });
   }
 
   ngOnDestroy() {
+  }
+
+  selectTab(tabId) {
+    setTimeout(() => {
+      const tab = this.tabsComponent.getTabByID(tabId);
+      if (tab) {
+        this.tabsComponent.selectTab(tab);
+      }
+    }, 0);
   }
 
   // getCpnElement() {

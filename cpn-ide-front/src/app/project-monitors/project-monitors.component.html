@@ -20,13 +20,13 @@
     </app-text-edit-row>
 
     <!-- Timed -->
-    <app-text-edit-row *ngIf="getOption('Timed')" type="select" name="Timed" [object]="getOption('Timed')"
+    <app-text-edit-row *ngIf="optionTimed" type="select" name="Timed" [object]="optionTimed"
       field="_value" (changed)="updateOptionValue($event, 'Timed')" [options]="boolValues"
       [readonly]="accessCpnService.isSimulation">
     </app-text-edit-row>
 
     <!-- Logging -->
-    <app-text-edit-row *ngIf="getOption('Logging')" type="select" name="Logging" [object]="getOption('Logging')"
+    <app-text-edit-row *ngIf="optionLogging" type="select" name="Logging" [object]="optionLogging"
       field="_value" (changed)="updateOptionValue($event, 'Logging')" [options]="boolValues"
       [readonly]="accessCpnService.isSimulation">
     </app-text-edit-row>
@@ -54,13 +54,18 @@
       </ul>
     </nav>
 
+    <!-- <div>
+      {{ nodeList.length }}
+    </div> -->
+
     <table class="table table-bordered table-hover table-small">
       <!-- <tr>
         <th>Page</th>
         <th>Element</th>
       </tr> -->
 
-      <tr *ngFor="let node of nodeList">
+      <ng-container *ngFor="let node of nodeList">
+      <tr>
         <td *ngIf="node.page">{{ node.page.pageattr._name }}</td>
         <td *ngIf="node.element">{{ node.element.text }} ({{ node.elementType }})</td>
 
@@ -72,13 +77,14 @@
           </td>
         </ng-container>
       </tr>
+    </ng-container>
     </table>
     <!------------------------->
 
     <!--
       Declarations
     -->
-    <div *ngFor="let declaration of cpnElement.declaration">
+    <div *ngFor="let declaration of nodeToArray(cpnElement.declaration)">
 
       <table *ngIf="declaration && declaration.ml" class="table table-bordered table-hover table-small">
 
@@ -94,7 +100,7 @@
               <div style="max-width:100%; overflow-x:auto;">
 
                 <app-text-edit-row type="ml" name="declaration._name" [object]="declaration.ml" field="__text"
-                  [readonly]="accessCpnService.isSimulation" (changed)="updateChanges()"
+                  [readonly]="accessCpnService.isSimulation" [bordered]="false" (changed)="updateChanges()"
                   (dblclick)="onDeclarationDblClick($event, declaration)">
                 </app-text-edit-row>
 

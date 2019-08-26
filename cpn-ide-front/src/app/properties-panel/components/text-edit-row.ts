@@ -14,6 +14,7 @@ export class TextEditRowComponent {
   @Input() options = [];
   @Input() readonly = false;
   @Input() pre = true;
+  @Input() bordered = true;
 
   @Output() changed = new EventEmitter();
   // @Output() dblclick = new EventEmitter();

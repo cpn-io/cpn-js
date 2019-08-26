@@ -24,3 +24,22 @@ td.tableButton {
 a.tableButton {
   color: gray;
 }
+
+[contenteditable] {
+  border: none !important;
+  overflow: auto !important;
+  outline: none !important;
+
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  box-shadow: none ;
+  resize: none ;
+
+  padding: 0;
+  -webkit-padding: 0;
+}
+
+[contenteditable]:focus {
+  // outline: 0px solid transparent;
+  outline: none !important;
+}

@@ -1,0 +1,1472 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE workspaceElements PUBLIC "-//CPN//DTD CPNXML 1.0//EN" "http://cpntools.org/DTD/6/cpn.dtd">
+
+<workspaceElements>
+  <generator tool="CPN Tools"
+             version="4.0.1"
+             format="6"/>
+  <cpnet>
+    <globbox>
+      <block id="ID1412310166">
+        <id>Standard priorities</id>
+        <ml id="ID1412310255">val P_HIGH = 100;
+          <layout>val P_HIGH = 100;</layout>
+        </ml>
+        <ml id="ID1412310292">val P_NORMAL = 1000;
+          <layout>val P_NORMAL = 1000;</layout>
+        </ml>
+        <ml id="ID1412310322">val P_LOW = 10000;
+          <layout>val P_LOW = 10000;</layout>
+        </ml>
+      </block>
+      <block id="ID1">
+        <id>Standard declarations</id>
+        <color id="ID85042">
+          <id>UNIT</id>
+          <unit/>
+          <layout>colset UNIT = unit;</layout>
+        </color>
+        <color id="ID4">
+          <id>BOOL</id>
+          <bool/>
+        </color>
+        <color id="ID3">
+          <id>INT</id>
+          <int/>
+        </color>
+        <color id="ID1412312409">
+          <id>INTINF</id>
+          <intinf/>
+          <layout>colset INTINF = intinf;</layout>
+        </color>
+        <color id="ID1412312425">
+          <id>TIME</id>
+          <time/>
+          <layout>colset TIME = time;</layout>
+        </color>
+        <color id="ID1412322990">
+          <id>REAL</id>
+          <real/>
+          <layout>colset REAL = real;</layout>
+        </color>
+        <color id="ID5">
+          <id>STRING</id>
+          <string/>
+        </color>
+        <color id="ID1450991134">
+          <id>S</id>
+          <list>
+            <id>STRING</id>
+          </list>
+          <layout>colset S = list STRING;</layout>
+        </color>
+      </block>
+    </globbox>
+    <page id="ID6">
+      <pageattr name="Main"/>
+      <place id="ID1450990580">
+        <posattr x="-84.000000"
+                 y="84.000000"/>
+        <fillattr colour="White"
+                  pattern=""
+                  filled="false"/>
+        <lineattr colour="Black"
+                  thick="1"
+                  type="Solid"/>
+        <textattr colour="Black"
+                  bold="false"/>
+        <text>p1</text>
+        <ellipse w="60.000000"
+                 h="40.000000"/>
+        <token x="-39.000000"
+               y="39.000000"/>
+        <marking x="0.000000"
+                 y="0.000000"
+                 hidden="true">
+          <snap snap_id="0"
+                anchor.horizontal="0"
+                anchor.vertical="0"/>
+        </marking>
+        <type id="ID1450990581">
+          <posattr x="-44.000000"
+                   y="60.000000"/>
+          <fillattr colour="White"
+                    pattern="Solid"
+                    filled="false"/>
+          <lineattr colour="Black"
+                    thick="0"
+                    type="Solid"/>
+          <textattr colour="Black"
+                    bold="false"/>
+          <text tool="CPN Tools"
+                version="4.0.1">UNIT</text>
+        </type>
+        <initmark id="ID1450990582">
+          <posattr x="-55.000000"
+                   y="107.000000"/>
+          <fillattr colour="White"
+                    pattern="Solid"
+                    filled="false"/>
+          <lineattr colour="Black"
+                    thick="0"
+                    type="Solid"/>
+          <textattr colour="Black"
+                    bold="false"/>
+          <text tool="CPN Tools"
+                version="4.0.1">1`()</text>
+        </initmark>
+      </place>
+      <place id="ID1450990705">
+        <posattr x="168.000000"
+                 y="84.000000"/>
+        <fillattr colour="White"
+                  pattern=""
+                  filled="false"/>
+        <lineattr colour="Black"
+                  thick="1"
+                  type="Solid"/>
+        <textattr colour="Black"
+                  bold="false"/>
+        <text>p2</text>
+        <ellipse w="60.000000"
+                 h="40.000000"/>
+        <token x="-10.000000"
+               y="0.000000"/>
+        <marking x="0.000000"
+                 y="0.000000"
+                 hidden="false">
+          <snap snap_id="0"
+                anchor.horizontal="0"
+                anchor.vertical="0"/>
+        </marking>
+        <type id="ID1450990706">
+          <posattr x="207.000000"
+                   y="60.000000"/>
+          <fillattr colour="White"
+                    pattern="Solid"
+                    filled="false"/>
+          <lineattr colour="Black"
+                    thick="0"
+                    type="Solid"/>
+          <textattr colour="Black"
+                    bold="false"/>
+          <text tool="CPN Tools"
+                version="4.0.1">UNIT</text>
+        </type>
+        <initmark id="ID1450990707">
+          <posattr x="224.000000"
+                   y="107.000000"/>
+          <fillattr colour="White"
+                    pattern="Solid"
+                    filled="false"/>
+          <lineattr colour="Black"
+                    thick="0"
+                    type="Solid"/>
+          <textattr colour="Black"
+                    bold="false"/>
+          <text tool="CPN Tools"
+                version="4.0.1"/>
+        </initmark>
+      </place>
+      <place id="ID1450991012">
+        <posattr x="-84.000000"
+                 y="0.000000"/>
+        <fillattr colour="White"
+                  pattern=""
+                  filled="false"/>
+        <lineattr colour="Black"
+                  thick="1"
+                  type="Solid"/>
+        <textattr colour="Black"
+                  bold="false"/>
+        <text>p3</text>
+        <ellipse w="60.000000"
+                 h="40.000000"/>
+        <token x="-10.000000"
+               y="0.000000"/>
+        <marking x="0.000000"
+                 y="0.000000"
+                 hidden="true">
+          <snap snap_id="0"
+                anchor.horizontal="0"
+                anchor.vertical="0"/>
+        </marking>
+        <type id="ID1450991013">
+          <posattr x="-55.000000"
+                   y="-23.000000"/>
+          <fillattr colour="White"
+                    pattern="Solid"
+                    filled="false"/>
+          <lineattr colour="Black"
+                    thick="0"
+                    type="Solid"/>
+          <textattr colour="Black"
+                    bold="false"/>
+          <text tool="CPN Tools"
+                version="4.0.1">S</text>
+        </type>
+        <initmark id="ID1450991014">
+          <posattr x="-54.000000"
+                   y="23.000000"/>
+          <fillattr colour="White"
+                    pattern="Solid"
+                    filled="false"/>
+          <lineattr colour="Black"
+                    thick="0"
+                    type="Solid"/>
+          <textattr colour="Black"
+                    bold="false"/>
+          <text tool="CPN Tools"
+                version="4.0.1">[]</text>
+        </initmark>
+      </place>
+      <place id="ID1450992435">
+        <posattr x="168.000000"
+                 y="0.000000"/>
+        <fillattr colour="White"
+                  pattern=""
+                  filled="false"/>
+        <lineattr colour="Black"
+                  thick="1"
+                  type="Solid"/>
+        <textattr colour="Black"
+                  bold="false"/>
+        <text>p4</text>
+        <ellipse w="60.000000"
+                 h="40.000000"/>
+        <token x="-10.000000"
+               y="0.000000"/>
+        <marking x="0.000000"
+                 y="0.000000"
+                 hidden="false">
+          <snap snap_id="0"
+                anchor.horizontal="0"
+                anchor.vertical="0"/>
+        </marking>
+        <type id="ID1450992436">
+          <posattr x="207.000000"
+                   y="-23.000000"/>
+          <fillattr colour="White"
+                    pattern="Solid"
+                    filled="false"/>
+          <lineattr colour="Black"
+                    thick="0"
+                    type="Solid"/>
+          <textattr colour="Black"
+                    bold="false"/>
+          <text tool="CPN Tools"
+                version="4.0.1">UNIT</text>
+        </type>
+        <initmark id="ID1450992437">
+          <posattr x="224.000000"
+                   y="23.000000"/>
+          <fillattr colour="White"
+                    pattern="Solid"
+                    filled="false"/>
+          <lineattr colour="Black"
+                    thick="0"
+                    type="Solid"/>
+          <textattr colour="Black"
+                    bold="false"/>
+          <text tool="CPN Tools"
+                version="4.0.1"/>
+        </initmark>
+      </place>
+      <trans id="ID1450990626"
+             explicit="false">
+        <posattr x="42.000000"
+                 y="84.000000"/>
+        <fillattr colour="White"
+                  pattern=""
+                  filled="false"/>
+        <lineattr colour="Black"
+                  thick="1"
+                  type="Solid"/>
+        <textattr colour="Black"
+                  bold="false"/>
+        <text>t1</text>
+        <box w="60.000000"
+             h="40.000000"/>
+        <binding x="7.200000"
+                 y="-3.000000"/>
+        <cond id="ID1450990627">
+          <posattr x="3.000000"
+                   y="115.000000"/>
+          <fillattr colour="White"
+                    pattern="Solid"
+                    filled="false"/>
+          <lineattr colour="Black"
+                    thick="0"
+                    type="Solid"/>
+          <textattr colour="Black"
+                    bold="false"/>
+          <text tool="CPN Tools"
+                version="4.0.1"/>
+        </cond>
+        <time id="ID1450990628">
+          <posattr x="86.500000"
+                   y="115.000000"/>
+          <fillattr colour="White"
+                    pattern="Solid"
+                    filled="false"/>
+          <lineattr colour="Black"
+                    thick="0"
+                    type="Solid"/>
+          <textattr colour="Black"
+                    bold="false"/>
+          <text tool="CPN Tools"
+                version="4.0.1"/>
+        </time>
+        <code id="ID1450990629">
+          <posattr x="106.500000"
+                   y="32.000000"/>
+          <fillattr colour="White"
+                    pattern="Solid"
+                    filled="false"/>
+          <lineattr colour="Black"
+                    thick="0"
+                    type="Solid"/>
+          <textattr colour="Black"
+                    bold="false"/>
+          <text tool="CPN Tools"
+                version="4.0.1"/>
+        </code>
+        <priority id="ID1450990631">
+          <posattr x="-26.000000"
+                   y="53.000000"/>
+          <fillattr colour="White"
+                    pattern="Solid"
+                    filled="false"/>
+          <lineattr colour="Black"
+                    thick="0"
+                    type="Solid"/>
+          <textattr colour="Black"
+                    bold="false"/>
+          <text tool="CPN Tools"
+                version="4.0.1"/>
+        </priority>
+      </trans>
+      <trans id="ID1450992128"
+             explicit="false">
+        <posattr x="42.000000"
+                 y="0.000000"/>
+        <fillattr colour="White"
+                  pattern=""
+                  filled="false"/>
+        <lineattr colour="Black"
+                  thick="1"
+                  type="Solid"/>
+        <textattr colour="Black"
+                  bold="false"/>
+        <text>t2</text>
+        <box w="60.000000"
+             h="40.000000"/>
+        <binding x="7.200000"
+                 y="-3.000000"/>
+        <cond id="ID1450992129">
+          <posattr x="3.000000"
+                   y="31.000000"/>
+          <fillattr colour="White"
+                    pattern="Solid"
+                    filled="false"/>
+          <lineattr colour="Black"
+                    thick="0"
+                    type="Solid"/>
+          <textattr colour="Black"
+                    bold="false"/>
+          <text tool="CPN Tools"
+                version="4.0.1"/>
+        </cond>
+        <time id="ID1450992130">
+          <posattr x="86.500000"
+                   y="31.000000"/>
+          <fillattr colour="White"
+                    pattern="Solid"
+                    filled="false"/>
+          <lineattr colour="Black"
+                    thick="0"
+                    type="Solid"/>
+          <textattr colour="Black"
+                    bold="false"/>
+          <text tool="CPN Tools"
+                version="4.0.1"/>
+        </time>
+        <code id="ID1450992131">
+          <posattr x="106.500000"
+                   y="-52.000000"/>
+          <fillattr colour="White"
+                    pattern="Solid"
+                    filled="false"/>
+          <lineattr colour="Black"
+                    thick="0"
+                    type="Solid"/>
+          <textattr colour="Black"
+                    bold="false"/>
+          <text tool="CPN Tools"
+                version="4.0.1"/>
+        </code>
+        <priority id="ID1450992133">
+          <posattr x="-26.000000"
+                   y="-31.000000"/>
+          <fillattr colour="White"
+                    pattern="Solid"
+                    filled="false"/>
+          <lineattr colour="Black"
+                    thick="0"
+                    type="Solid"/>
+          <textattr colour="Black"
+                    bold="false"/>
+          <text tool="CPN Tools"
+                version="4.0.1"/>
+        </priority>
+      </trans>
+      <arc id="ID1450990650"
+           orientation="PtoT"
+           order="1">
+        <posattr x="0.000000"
+                 y="0.000000"/>
+        <fillattr colour="White"
+                  pattern=""
+                  filled="false"/>
+        <lineattr colour="Black"
+                  thick="1"
+                  type="Solid"/>
+        <textattr colour="Black"
+                  bold="false"/>
+        <arrowattr headsize="1.200000"
+                   currentcyckle="2"/>
+        <transend idref="ID1450990626"/>
+        <placeend idref="ID1450990580"/>
+        <annot id="ID1450990651">
+          <posattr x="-21.000000"
+                   y="95.000000"/>
+          <fillattr colour="White"
+                    pattern="Solid"
+                    filled="false"/>
+          <lineattr colour="Black"
+                    thick="0"
+                    type="Solid"/>
+          <textattr colour="Black"
+                    bold="false"/>
+          <text tool="CPN Tools"
+                version="4.0.1">1`()</text>
+        </annot>
+      </arc>
+      <arc id="ID1450990737"
+           orientation="TtoP"
+           order="1">
+        <posattr x="0.000000"
+                 y="0.000000"/>
+        <fillattr colour="White"
+                  pattern=""
+                  filled="false"/>
+        <lineattr colour="Black"
+                  thick="1"
+                  type="Solid"/>
+        <textattr colour="Black"
+                  bold="false"/>
+        <arrowattr headsize="1.200000"
+                   currentcyckle="2"/>
+        <transend idref="ID1450990626"/>
+        <placeend idref="ID1450990705"/>
+        <annot id="ID1450990738">
+          <posattr x="105.000000"
+                   y="95.000000"/>
+          <fillattr colour="White"
+                    pattern="Solid"
+                    filled="false"/>
+          <lineattr colour="Black"
+                    thick="0"
+                    type="Solid"/>
+          <textattr colour="Black"
+                    bold="false"/>
+          <text tool="CPN Tools"
+                version="4.0.1">1`()</text>
+        </annot>
+      </arc>
+      <arc id="ID1450992328"
+           orientation="PtoT"
+           order="1">
+        <posattr x="0.000000"
+                 y="0.000000"/>
+        <fillattr colour="White"
+                  pattern=""
+                  filled="false"/>
+        <lineattr colour="Black"
+                  thick="1"
+                  type="Solid"/>
+        <textattr colour="Black"
+                  bold="false"/>
+        <arrowattr headsize="1.200000"
+                   currentcyckle="2"/>
+        <transend idref="ID1450992128"/>
+        <placeend idref="ID1450991012"/>
+        <annot id="ID1450992329">
+          <posattr x="-21.000000"
+                   y="11.000000"/>
+          <fillattr colour="White"
+                    pattern="Solid"
+                    filled="false"/>
+          <lineattr colour="Black"
+                    thick="0"
+                    type="Solid"/>
+          <textattr colour="Black"
+                    bold="false"/>
+          <text tool="CPN Tools"
+                version="4.0.1">[&quot;a&quot;]</text>
+        </annot>
+      </arc>
+      <arc id="ID1450992539"
+           orientation="TtoP"
+           order="1">
+        <posattr x="0.000000"
+                 y="0.000000"/>
+        <fillattr colour="White"
+                  pattern=""
+                  filled="false"/>
+        <lineattr colour="Black"
+                  thick="1"
+                  type="Solid"/>
+        <textattr colour="Black"
+                  bold="false"/>
+        <arrowattr headsize="1.200000"
+                   currentcyckle="2"/>
+        <transend idref="ID1450992128"/>
+        <placeend idref="ID1450992435"/>
+        <annot id="ID1450992540">
+          <posattr x="105.000000"
+                   y="11.000000"/>
+          <fillattr colour="White"
+                    pattern="Solid"
+                    filled="false"/>
+          <lineattr colour="Black"
+                    thick="0"
+                    type="Solid"/>
+          <textattr colour="Black"
+                    bold="false"/>
+          <text tool="CPN Tools"
+                version="4.0.1">1`()</text>
+        </annot>
+      </arc>
+      <constraints/>
+      <group id="ID1451001756"
+             name="Group 1">
+        <group_elm idref="ID1450990580"/>
+        <group_elm idref="ID1450990581"/>
+        <group_elm idref="ID1450990582"/>
+        <group_elm idref="ID1450991012"/>
+        <group_elm idref="ID1450991013"/>
+        <group_elm idref="ID1450991014"/>
+      </group>
+    </page>
+    <group id="ID1451000713"
+           name="Marking_size_Main&apos;p1_1 nodes">
+      <group_elm idref="ID1450990580"/>
+      <group_elm idref="ID1450991012"/>
+      <group_elm idref="ID1450991013"/>
+      <group_elm idref="ID1450991014"/>
+    </group>
+    <instances>
+      <instance id="ID2149"
+                page="ID6"/>
+    </instances>
+    <options>
+      <option name="realtimestamp">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="fair_be">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="global_fairness">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="outputdirectory">
+        <value>
+          <text>&lt;same as model&gt;</text>
+        </value>
+      </option>
+      <option name="repavg">
+        <value>
+          <boolean>true</boolean>
+        </value>
+      </option>
+      <option name="repciavg">
+        <value>
+          <boolean>true</boolean>
+        </value>
+      </option>
+      <option name="repcount">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="repfirstval">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="replastval">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="repmax">
+        <value>
+          <boolean>true</boolean>
+        </value>
+      </option>
+      <option name="repmin">
+        <value>
+          <boolean>true</boolean>
+        </value>
+      </option>
+      <option name="repssquare">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="repssqdev">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="repstddev">
+        <value>
+          <boolean>true</boolean>
+        </value>
+      </option>
+      <option name="repsum">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="repvariance">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="avg">
+        <value>
+          <boolean>true</boolean>
+        </value>
+      </option>
+      <option name="ciavg">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="count">
+        <value>
+          <boolean>true</boolean>
+        </value>
+      </option>
+      <option name="firstval">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="lastval">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="max">
+        <value>
+          <boolean>true</boolean>
+        </value>
+      </option>
+      <option name="min">
+        <value>
+          <boolean>true</boolean>
+        </value>
+      </option>
+      <option name="ssquare">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="ssqdev">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="stddev">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="sum">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="variance">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="firstupdate">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="interval">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="lastupdate">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="untimedavg">
+        <value>
+          <boolean>true</boolean>
+        </value>
+      </option>
+      <option name="untimedciavg">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="untimedcount">
+        <value>
+          <boolean>true</boolean>
+        </value>
+      </option>
+      <option name="untimedfirstval">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="untimedlastval">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="untimedmax">
+        <value>
+          <boolean>true</boolean>
+        </value>
+      </option>
+      <option name="untimedmin">
+        <value>
+          <boolean>true</boolean>
+        </value>
+      </option>
+      <option name="untimedssquare">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="untimedssqdev">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="untimedstddev">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+      <option name="untimedsum">
+        <value>
+          <boolean>true</boolean>
+        </value>
+      </option>
+      <option name="untimedvariance">
+        <value>
+          <boolean>false</boolean>
+        </value>
+      </option>
+    </options>
+    <binders>
+      <cpnbinder id="ID2222"
+                 x="355"
+                 y="487"
+                 width="600"
+                 height="400">
+        <sheets>
+          <cpnsheet id="ID2215"
+                    panx="-10.000000"
+                    pany="-4.000000"
+                    zoom="1.000000"
+                    instance="ID2149">
+            <zorder>
+              <position value="0"/>
+              <position value="2"/>
+              <position value="1"/>
+            </zorder>
+          </cpnsheet>
+        </sheets>
+        <zorder>
+          <position value="0"/>
+        </zorder>
+      </cpnbinder>
+    </binders>
+    <monitorblock name="Monitors">
+      <monitor id="ID1450991517"
+               name="Marking_size_Main&apos;p1_1"
+               type="0"
+               typedescription="Marking size"
+               disabled="false">
+        <node idref="ID1450990580"
+              pageinstanceidref="ID2149"/>
+        <option name="Logging"
+                value="true"/>
+      </monitor>
+      <monitor id="ID1450991617"
+               name="List_length_dc_Main&apos;p3_1"
+               type="5"
+               typedescription="List length data collection"
+               disabled="false">
+        <node idref="ID1450991012"
+              pageinstanceidref="ID2149"/>
+        <option name="Logging"
+                value="true"/>
+      </monitor>
+      <monitor id="ID1450991738"
+               name="Count_trans_occur_Main&apos;t1_1"
+               type="6"
+               typedescription="Count transition occurrence data collection"
+               disabled="false">
+        <node idref="ID1450990626"
+              pageinstanceidref="ID2149"/>
+        <option name="Logging"
+                value="true"/>
+      </monitor>
+      <monitor id="ID1450995000"
+               name="Place_content_bp_Main&apos;p4_1"
+               type="7"
+               typedescription="Place content break point"
+               disabled="false">
+        <node idref="ID1450992435"
+              pageinstanceidref="ID2149"/>
+        <option name="If is empty"
+                value="true"/>
+      </monitor>
+      <monitor id="ID1450991880"
+               name="Transition_enabled_bp_Main&apos;t1_1"
+               type="8"
+               typedescription="Transition enabled break point"
+               disabled="false">
+        <node idref="ID1450990626"
+              pageinstanceidref="ID2149"/>
+        <option name="If is enabled"
+                value="true"/>
+      </monitor>
+      <monitor id="ID1450993992"
+               name="Break_point_monitor_1"
+               type="1"
+               typedescription="Breakpoint"
+               disabled="false">
+        <node idref="ID1450992128"
+              pageinstanceidref="ID2149"/>
+        <declaration name="Predicate">
+          <ml id="ID1450994237">fun pred (bindelem) = 
+let
+  fun predBindElem (Main&apos;t2 (1, {})) = true
+      | predBindElem _ = false
+in
+  predBindElem bindelem  
+end
+            <layout>fun pred (bindelem) = 
+let
+  fun predBindElem (Main&apos;t2 (1, {})) = true
+      | predBindElem _ = false
+in
+  predBindElem bindelem  
+end</layout>
+          </ml>
+        </declaration>
+      </monitor>
+      <monitor id="ID1450994514"
+               name="Data_collection_monitor_1"
+               type="3"
+               typedescription="Data collection"
+               disabled="false">
+        <node idref="ID1450990626"
+              pageinstanceidref="ID2149"/>
+        <declaration name="Predicate">
+          <ml id="ID1450994840">fun pred (bindelem) = 
+let
+  fun predBindElem (Main&apos;t1 (1, {})) = true
+      | predBindElem _ = false
+in
+  predBindElem bindelem  
+end
+            <layout>fun pred (bindelem) = 
+let
+  fun predBindElem (Main&apos;t1 (1, {})) = true
+      | predBindElem _ = false
+in
+  predBindElem bindelem  
+end</layout>
+          </ml>
+        </declaration>
+        <declaration name="Observer">
+          <ml id="ID1450994844">fun obs (bindelem) = 
+let
+  fun obsBindElem (Main&apos;t1 (1, {})) = 0
+      | obsBindElem _ = ~1
+in
+  obsBindElem bindelem  
+end
+            <layout>fun obs (bindelem) = 
+let
+  fun obsBindElem (Main&apos;t1 (1, {})) = 0
+      | obsBindElem _ = ~1
+in
+  obsBindElem bindelem  
+end</layout>
+          </ml>
+        </declaration>
+        <declaration name="Init function">
+          <ml id="ID1450994848">fun init () = 
+  NONE
+            <layout>fun init () = 
+  NONE</layout>
+          </ml>
+        </declaration>
+        <declaration name="Stop">
+          <ml id="ID1450994852">fun stop () = 
+  NONE
+            <layout>fun stop () = 
+  NONE</layout>
+          </ml>
+        </declaration>
+        <option name="Timed"
+                value="false"/>
+        <option name="Logging"
+                value="true"/>
+      </monitor>
+      <monitor id="ID1450996704"
+               name="User Defined Monitor on t1"
+               type="2"
+               typedescription="User defined"
+               disabled="false">
+        <node idref="ID1450990626"
+              pageinstanceidref="ID2149"/>
+        <declaration name="Init">
+          <ml id="ID1450997145">fun init () =
+            <layout>fun init () =</layout>
+          </ml>
+        </declaration>
+        <declaration name="Predicate">
+          <ml id="ID1450997149">fun pred (bindelem) = 
+let
+  fun predBindElem (Main&apos;t1 (1, {})) = true
+      | predBindElem _ = false
+in
+  predBindElem bindelem  
+end
+            <layout>fun pred (bindelem) = 
+let
+  fun predBindElem (Main&apos;t1 (1, {})) = true
+      | predBindElem _ = false
+in
+  predBindElem bindelem  
+end</layout>
+          </ml>
+        </declaration>
+        <declaration name="Observer">
+          <ml id="ID1450997153">fun obs (bindelem) = 
+let
+  fun obsBindElem (Main&apos;t1 (1, {})) = 
+      | obsBindElem _ = 
+in
+  obsBindElem bindelem  
+end
+            <layout>fun obs (bindelem) = 
+let
+  fun obsBindElem (Main&apos;t1 (1, {})) = 
+      | obsBindElem _ = 
+in
+  obsBindElem bindelem  
+end</layout>
+          </ml>
+        </declaration>
+        <declaration name="Action">
+          <ml id="ID1450997157">fun action (observedval) =
+            <layout>fun action (observedval) =</layout>
+          </ml>
+        </declaration>
+        <declaration name="Stop">
+          <ml id="ID1450997161">fun stop () =
+            <layout>fun stop () =</layout>
+          </ml>
+        </declaration>
+      </monitor>
+      <monitor id="ID1450997338"
+               name="User Defined Monitor on p2"
+               type="2"
+               typedescription="User defined"
+               disabled="false">
+        <node idref="ID1450990705"
+              pageinstanceidref="ID2149"/>
+        <declaration name="Init">
+          <ml id="ID1450997860">fun init (Main&apos;p2_1_mark : UNIT ms) =
+            <layout>fun init (Main&apos;p2_1_mark : UNIT ms) =</layout>
+          </ml>
+        </declaration>
+        <declaration name="Predicate">
+          <ml id="ID1450997864">fun pred (Main&apos;p2_1_mark : UNIT ms) = 
+  true
+            <layout>fun pred (Main&apos;p2_1_mark : UNIT ms) = 
+  true</layout>
+          </ml>
+        </declaration>
+        <declaration name="Observer">
+          <ml id="ID1450997868">fun obs (Main&apos;p2_1_mark : UNIT ms) =
+            <layout>fun obs (Main&apos;p2_1_mark : UNIT ms) =</layout>
+          </ml>
+        </declaration>
+        <declaration name="Action">
+          <ml id="ID1450997872">fun action (observedval) =
+            <layout>fun action (observedval) =</layout>
+          </ml>
+        </declaration>
+        <declaration name="Stop">
+          <ml id="ID1450997876">fun stop (Main&apos;p2_1_mark : UNIT ms) =
+            <layout>fun stop (Main&apos;p2_1_mark : UNIT ms) =</layout>
+          </ml>
+        </declaration>
+      </monitor>
+      <monitor id="ID1450998600"
+               name="write in file on p1"
+               type="4"
+               typedescription="Write in file"
+               disabled="false">
+        <node idref="ID1450990580"
+              pageinstanceidref="ID2149"/>
+        <declaration name="Init">
+          <ml id="ID1450999202">fun init (Main&apos;p1_1_mark : UNIT ms) = 
+  &quot;&quot;
+            <layout>fun init (Main&apos;p1_1_mark : UNIT ms) = 
+  &quot;&quot;</layout>
+          </ml>
+        </declaration>
+        <declaration name="Predicate">
+          <ml id="ID1450999206">fun pred (Main&apos;p1_1_mark : UNIT ms) = 
+  true
+            <layout>fun pred (Main&apos;p1_1_mark : UNIT ms) = 
+  true</layout>
+          </ml>
+        </declaration>
+        <declaration name="Observer">
+          <ml id="ID1450999210">fun obs (Main&apos;p1_1_mark : UNIT ms) = 
+  &quot;&quot;
+            <layout>fun obs (Main&apos;p1_1_mark : UNIT ms) = 
+  &quot;&quot;</layout>
+          </ml>
+        </declaration>
+        <declaration name="Stop">
+          <ml id="ID1450999214">fun stop (Main&apos;p1_1_mark : UNIT ms) = 
+  &quot;&quot;
+            <layout>fun stop (Main&apos;p1_1_mark : UNIT ms) = 
+  &quot;&quot;</layout>
+          </ml>
+        </declaration>
+        <option name="File extension"
+                value="txt"/>
+      </monitor>
+      <monitor id="ID1450999419"
+               name="write in file on t1"
+               type="4"
+               typedescription="Write in file"
+               disabled="false">
+        <node idref="ID1450990626"
+              pageinstanceidref="ID2149"/>
+        <declaration name="Init">
+          <ml id="ID1451000093">fun init () = 
+  &quot;&quot;
+            <layout>fun init () = 
+  &quot;&quot;</layout>
+          </ml>
+        </declaration>
+        <declaration name="Predicate">
+          <ml id="ID1451000097">fun pred (bindelem) = 
+let
+  fun predBindElem (Main&apos;t1 (1, {})) = true
+      | predBindElem _ = false
+in
+  predBindElem bindelem  
+end
+            <layout>fun pred (bindelem) = 
+let
+  fun predBindElem (Main&apos;t1 (1, {})) = true
+      | predBindElem _ = false
+in
+  predBindElem bindelem  
+end</layout>
+          </ml>
+        </declaration>
+        <declaration name="Observer">
+          <ml id="ID1451000101">fun obs (bindelem) = 
+let
+  fun obsBindElem (Main&apos;t1 (1, {})) = &quot;&quot;
+      | obsBindElem _ = &quot;&quot;
+in
+  obsBindElem bindelem  
+end
+            <layout>fun obs (bindelem) = 
+let
+  fun obsBindElem (Main&apos;t1 (1, {})) = &quot;&quot;
+      | obsBindElem _ = &quot;&quot;
+in
+  obsBindElem bindelem  
+end</layout>
+          </ml>
+        </declaration>
+        <declaration name="Stop">
+          <ml id="ID1451000105">fun stop () = 
+  &quot;&quot;
+            <layout>fun stop () = 
+  &quot;&quot;</layout>
+          </ml>
+        </declaration>
+        <option name="File extension"
+                value="txt"/>
+      </monitor>
+      <monitor id="ID1451003876"
+               name="Group 1"
+               type="3"
+               typedescription="Data collection"
+               disabled="false">
+        <node idref="ID1450990580"
+              pageinstanceidref="ID2149"/>
+        <node idref="ID1450991012"
+              pageinstanceidref="ID2149"/>
+        <declaration name="Predicate">
+          <ml id="ID1451004703">fun pred (Main&apos;p1_1_mark : UNIT ms,
+              Main&apos;p3_1_mark : S ms) = 
+  true
+            <layout>fun pred (Main&apos;p1_1_mark : UNIT ms,
+              Main&apos;p3_1_mark : S ms) = 
+  true</layout>
+          </ml>
+        </declaration>
+        <declaration name="Observer">
+          <ml id="ID1451004707">fun obs (Main&apos;p1_1_mark : UNIT ms,
+              Main&apos;p3_1_mark : S ms) = 
+  0
+            <layout>fun obs (Main&apos;p1_1_mark : UNIT ms,
+              Main&apos;p3_1_mark : S ms) = 
+  0</layout>
+          </ml>
+        </declaration>
+        <declaration name="Init function">
+          <ml id="ID1451004711">fun init (Main&apos;p1_1_mark : UNIT ms,
+              Main&apos;p3_1_mark : S ms) = 
+  NONE
+            <layout>fun init (Main&apos;p1_1_mark : UNIT ms,
+              Main&apos;p3_1_mark : S ms) = 
+  NONE</layout>
+          </ml>
+        </declaration>
+        <declaration name="Stop">
+          <ml id="ID1451004715">fun stop (Main&apos;p1_1_mark : UNIT ms,
+              Main&apos;p3_1_mark : S ms) = 
+  NONE
+            <layout>fun stop (Main&apos;p1_1_mark : UNIT ms,
+              Main&apos;p3_1_mark : S ms) = 
+  NONE</layout>
+          </ml>
+        </declaration>
+        <option name="Timed"
+                value="false"/>
+        <option name="Logging"
+                value="true"/>
+      </monitor>
+      <monitorblock name="Monitor block"/>
+    </monitorblock>
+    <IndexNode expanded="true">
+      <IndexNode expanded="false"/>
+      <IndexNode expanded="false"/>
+      <IndexNode expanded="false">
+        <IndexNode expanded="false"/>
+        <IndexNode expanded="false"/>
+        <IndexNode expanded="false"/>
+        <IndexNode expanded="false"/>
+        <IndexNode expanded="false">
+          <IndexNode expanded="false">
+            <IndexNode expanded="false">
+              <IndexNode expanded="false"/>
+              <IndexNode expanded="false"/>
+              <IndexNode expanded="false"/>
+              <IndexNode expanded="false"/>
+              <IndexNode expanded="false"/>
+              <IndexNode expanded="false"/>
+              <IndexNode expanded="false"/>
+              <IndexNode expanded="false"/>
+              <IndexNode expanded="false"/>
+              <IndexNode expanded="false"/>
+              <IndexNode expanded="false"/>
+              <IndexNode expanded="false"/>
+              <IndexNode expanded="false"/>
+              <IndexNode expanded="false"/>
+              <IndexNode expanded="false"/>
+            </IndexNode>
+            <IndexNode expanded="false">
+              <IndexNode expanded="false"/>
+              <IndexNode expanded="false"/>
+              <IndexNode expanded="false"/>
+              <IndexNode expanded="false"/>
+              <IndexNode expanded="false"/>
+              <IndexNode expanded="false"/>
+              <IndexNode expanded="false"/>
+              <IndexNode expanded="false"/>
+              <IndexNode expanded="false"/>
+              <IndexNode expanded="false"/>
+              <IndexNode expanded="false"/>
+              <IndexNode expanded="false"/>
+            </IndexNode>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="false"/>
+            <IndexNode expanded="false"/>
+            <IndexNode expanded="false"/>
+            <IndexNode expanded="false"/>
+            <IndexNode expanded="false"/>
+            <IndexNode expanded="false"/>
+            <IndexNode expanded="false"/>
+            <IndexNode expanded="false"/>
+            <IndexNode expanded="false"/>
+            <IndexNode expanded="false"/>
+            <IndexNode expanded="false"/>
+            <IndexNode expanded="false"/>
+          </IndexNode>
+        </IndexNode>
+      </IndexNode>
+      <IndexNode expanded="false">
+        <IndexNode expanded="false"/>
+      </IndexNode>
+      <IndexNode expanded="false">
+        <IndexNode expanded="false">
+          <IndexNode expanded="true"/>
+          <IndexNode expanded="true"/>
+          <IndexNode expanded="true"/>
+        </IndexNode>
+        <IndexNode expanded="true">
+          <IndexNode expanded="false"/>
+          <IndexNode expanded="false"/>
+          <IndexNode expanded="false"/>
+          <IndexNode expanded="false"/>
+          <IndexNode expanded="false"/>
+          <IndexNode expanded="false"/>
+          <IndexNode expanded="false"/>
+          <IndexNode expanded="true"/>
+        </IndexNode>
+      </IndexNode>
+      <IndexNode expanded="true">
+        <IndexNode expanded="false">
+          <IndexNode expanded="false">
+            <IndexNode expanded="false"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="false">
+              <IndexNode expanded="false"/>
+            </IndexNode>
+          </IndexNode>
+        </IndexNode>
+        <IndexNode expanded="false">
+          <IndexNode expanded="false">
+            <IndexNode expanded="false"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="false">
+              <IndexNode expanded="false"/>
+            </IndexNode>
+          </IndexNode>
+        </IndexNode>
+        <IndexNode expanded="false">
+          <IndexNode expanded="false">
+            <IndexNode expanded="false"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="false">
+              <IndexNode expanded="false"/>
+            </IndexNode>
+          </IndexNode>
+        </IndexNode>
+        <IndexNode expanded="false">
+          <IndexNode expanded="false">
+            <IndexNode expanded="false"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="false">
+              <IndexNode expanded="false"/>
+            </IndexNode>
+          </IndexNode>
+        </IndexNode>
+        <IndexNode expanded="false">
+          <IndexNode expanded="false">
+            <IndexNode expanded="false"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="false">
+              <IndexNode expanded="false"/>
+            </IndexNode>
+          </IndexNode>
+        </IndexNode>
+        <IndexNode expanded="false">
+          <IndexNode expanded="false"/>
+          <IndexNode expanded="false">
+            <IndexNode expanded="false">
+              <IndexNode expanded="false"/>
+            </IndexNode>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+        </IndexNode>
+        <IndexNode expanded="false">
+          <IndexNode expanded="false">
+            <IndexNode expanded="false"/>
+            <IndexNode expanded="false"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="false">
+              <IndexNode expanded="false"/>
+            </IndexNode>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+        </IndexNode>
+        <IndexNode expanded="false">
+          <IndexNode expanded="false"/>
+          <IndexNode expanded="false">
+            <IndexNode expanded="false">
+              <IndexNode expanded="false"/>
+            </IndexNode>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+        </IndexNode>
+        <IndexNode expanded="false">
+          <IndexNode expanded="false"/>
+          <IndexNode expanded="false">
+            <IndexNode expanded="false">
+              <IndexNode expanded="false"/>
+            </IndexNode>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+        </IndexNode>
+        <IndexNode expanded="false">
+          <IndexNode expanded="false">
+            <IndexNode expanded="false"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="false">
+              <IndexNode expanded="false"/>
+            </IndexNode>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+        </IndexNode>
+        <IndexNode expanded="false">
+          <IndexNode expanded="false">
+            <IndexNode expanded="false"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="false">
+              <IndexNode expanded="false"/>
+            </IndexNode>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+        </IndexNode>
+        <IndexNode expanded="false">
+          <IndexNode expanded="false">
+            <IndexNode expanded="false"/>
+            <IndexNode expanded="false"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="false">
+              <IndexNode expanded="false"/>
+              <IndexNode expanded="false"/>
+            </IndexNode>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+          <IndexNode expanded="false">
+            <IndexNode expanded="true"/>
+          </IndexNode>
+        </IndexNode>
+        <IndexNode expanded="false"/>
+      </IndexNode>
+      <IndexNode expanded="true"/>
+    </IndexNode>
+  </cpnet>
+</workspaceElements>

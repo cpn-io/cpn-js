@@ -1,5 +1,6 @@
 interface MonitorTemplate {
   typeDescription(): string;
+  type(): number;
   defaultTimed(): boolean;
   defaultLogging(): boolean;
   defaultPredicate(): string;
@@ -9,7 +10,8 @@ interface MonitorTemplate {
 }
 
 export class DataCollectionMonitorTemplate implements MonitorTemplate {
-  public typeDescription(): string { return 'Generic data collector'; }
+  public type(): number { return 3; }
+  public typeDescription(): string { return 'Data collection'; }
   public defaultTimed(): boolean { return false; }
   public defaultLogging(): boolean { return true; }
 
@@ -31,7 +33,8 @@ export class DataCollectionMonitorTemplate implements MonitorTemplate {
 }
 
 export class BreakpointMonitorTemplate implements MonitorTemplate {
-  public typeDescription(): string { return 'Generic breakpoint monitor'; }
+  public type(): number { return 1; }
+  public typeDescription(): string { return 'Breakpoint'; }
   public defaultTimed(): boolean { return false; }
   public defaultLogging(): boolean { return true; }
 
@@ -53,7 +56,8 @@ export class BreakpointMonitorTemplate implements MonitorTemplate {
 }
 
 export class UserDefinedMonitorTemplate implements MonitorTemplate {
-  public typeDescription(): string { return 'User-defined monitor'; }
+  public type(): number { return 2; }
+  public typeDescription(): string { return 'User-defined'; }
   public defaultTimed(): boolean { return false; }
   public defaultLogging(): boolean { return true; }
 
@@ -75,7 +79,8 @@ export class UserDefinedMonitorTemplate implements MonitorTemplate {
 }
 
 export class WriteInFileMonitorTemplate implements MonitorTemplate {
-  public typeDescription(): string { return 'Write-in-file monitor'; }
+  public type(): number { return 4; }
+  public typeDescription(): string { return 'Write-in-file'; }
   public defaultTimed(): boolean { return false; }
   public defaultLogging(): boolean { return true; }
 
@@ -97,7 +102,8 @@ export class WriteInFileMonitorTemplate implements MonitorTemplate {
 }
 
 export class MarkingSizeMonitorTemplate implements MonitorTemplate {
-  public typeDescription(): string { return 'Marking size'; }
+  public type(): number { return 0; }
+  public typeDescription(): string { return 'Marking Size'; }
   public defaultTimed(): boolean { return false; }
   public defaultLogging(): boolean { return true; }
   public defaultPredicate(): string { return ''; }
@@ -107,6 +113,7 @@ export class MarkingSizeMonitorTemplate implements MonitorTemplate {
 }
 
 export class ListLengthDataCollectionMonitorTemplate implements MonitorTemplate {
+  public type(): number { return 5; }
   public typeDescription(): string { return 'List length data collection'; }
   public defaultTimed(): boolean { return false; }
   public defaultLogging(): boolean { return true; }
@@ -117,6 +124,7 @@ export class ListLengthDataCollectionMonitorTemplate implements MonitorTemplate 
 }
 
 export class CountTransitionOccurrencesMonitorTemplate implements MonitorTemplate {
+  public type(): number { return 6; }
   public typeDescription(): string { return 'Count transition occurrences'; }
   public defaultTimed(): boolean { return false; }
   public defaultLogging(): boolean { return true; }
@@ -127,6 +135,7 @@ export class CountTransitionOccurrencesMonitorTemplate implements MonitorTemplat
 }
 
 export class PlaceContentBreakPointMonitorTemplate implements MonitorTemplate {
+  public type(): number { return 7; }
   public typeDescription(): string { return 'Place content break point'; }
   public defaultTimed(): boolean { return false; }
   public defaultLogging(): boolean { return true; }
@@ -137,6 +146,7 @@ export class PlaceContentBreakPointMonitorTemplate implements MonitorTemplate {
 }
 
 export class TransitionEnabledBreakPointMonitorTemplate implements MonitorTemplate {
+  public type(): number { return 8; }
   public typeDescription(): string { return 'Transition enabled'; }
   public defaultTimed(): boolean { return false; }
   public defaultLogging(): boolean { return true; }

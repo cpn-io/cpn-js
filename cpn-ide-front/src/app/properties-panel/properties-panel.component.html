@@ -1,4 +1,4 @@
-<tabs class="cpn-tabs">
+<tabs #tabsComponent class="cpn-tabs">
   <ng-template ngFor let-tab [ngForOf]="tabList">
     <tab *ngIf="tab" [id]="tab.id" [tabTitle]="tab.name">
 

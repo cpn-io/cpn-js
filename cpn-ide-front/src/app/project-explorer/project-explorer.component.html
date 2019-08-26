@@ -1,5 +1,8 @@
 <tabs class="cpn-tabs">
-  <ng-template ngFor let-tab [ngForOf]="tabList">
+
+  <!-- <ng-template ngFor let-tab [ngForOf]="tabList"> -->
+  <ng-container *ngFor="let tab of tabList">
+
     <tab *ngIf="tab" [id]="tab.id" [tabTitle]="tab.name">
 
       <!-------------------------->
@@ -265,5 +268,8 @@
       </ng-container>
 
     </tab>
-  </ng-template>
+
+  </ng-container>
+
+  <!-- </ng-template> -->
 </tabs>

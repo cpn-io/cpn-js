@@ -642,8 +642,8 @@ export class ModelService {
 
     return {
       _id: getNextId(),
-      _name: 'Data collection monitor',
-      _type: '3',
+      _name: monitorTemplate.typeDescription() + ' monitor',
+      _type: monitorTemplate.type(),
       _typedescription: monitorTemplate.typeDescription(),
       _disabled: 'false',
       node: {
@@ -669,8 +669,8 @@ export class ModelService {
 
     return {
       _id: getNextId(),
-      _name: 'Breakpoint monitor',
-      _type: '3',
+      _name: monitorTemplate.typeDescription() + ' monitor',
+      _type: monitorTemplate.type(),
       _typedescription: monitorTemplate.typeDescription(),
       _disabled: 'false',
       node: {
@@ -696,8 +696,8 @@ export class ModelService {
 
     return {
       _id: getNextId(),
-      _name: 'User-defined monitor',
-      _type: '3',
+      _name: monitorTemplate.typeDescription() + ' monitor',
+      _type: monitorTemplate.type(),
       _typedescription: monitorTemplate.typeDescription(),
       _disabled: 'false',
       node: {
@@ -723,8 +723,8 @@ export class ModelService {
 
     return {
       _id: getNextId(),
-      _name: 'Write in file monitor',
-      _type: '3',
+      _name: monitorTemplate.typeDescription() + ' monitor',
+      _type: monitorTemplate.type(),
       _typedescription: monitorTemplate.typeDescription(),
       _disabled: 'false',
       node: {
@@ -751,8 +751,8 @@ export class ModelService {
 
     return {
       _id: getNextId(),
-      _name: 'Marking size monitor (' + cpnElement.text + ')',
-      _type: '0',
+      _name: monitorTemplate.typeDescription() + ' monitor (' + cpnElement.text + ')',
+      _type: monitorTemplate.type(),
       _typedescription: monitorTemplate.typeDescription(),
       _disabled: 'false',
       node: {
@@ -772,8 +772,8 @@ export class ModelService {
 
     return {
       _id: getNextId(),
-      _name: 'List length data collection (' + cpnElement.text + ')',
-      _type: '0',
+      _name: monitorTemplate.typeDescription() + ' monitor (' + cpnElement.text + ')',
+      _type: monitorTemplate.type(),
       _typedescription: monitorTemplate.typeDescription(),
       _disabled: 'false',
       node: {
@@ -794,8 +794,8 @@ export class ModelService {
 
     return {
       _id: getNextId(),
-      _name: 'Count transition occurrences (' + cpnElement.text + ')',
-      _type: '0',
+      _name: monitorTemplate.typeDescription() + ' monitor (' + cpnElement.text + ')',
+      _type: monitorTemplate.type(),
       _typedescription: monitorTemplate.typeDescription(),
       _disabled: 'false',
       node: {
@@ -815,8 +815,8 @@ export class ModelService {
 
     return {
       _id: getNextId(),
-      _name: 'Place content break point (' + cpnElement.text + ')',
-      _type: '0',
+      _name: monitorTemplate.typeDescription() + ' monitor (' + cpnElement.text + ')',
+      _type: monitorTemplate.type(),
       _typedescription: monitorTemplate.typeDescription(),
       _disabled: 'false',
       node: {
@@ -836,8 +836,8 @@ export class ModelService {
 
     return {
       _id: getNextId(),
-      _name: 'Transition enabled (' + cpnElement.text + ')',
-      _type: '0',
+      _name: monitorTemplate.typeDescription() + ' monitor (' + cpnElement.text + ')',
+      _type: monitorTemplate.type(),
       _typedescription: monitorTemplate.typeDescription(),
       _disabled: 'false',
       node: {

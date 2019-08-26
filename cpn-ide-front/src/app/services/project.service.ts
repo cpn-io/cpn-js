@@ -136,9 +136,11 @@ export class ProjectService {
     // const modelFile = 'mynet2.cpn';
     // const modelFile = 'mynet-sub-1.cpn';
 
-    const modelFile = 'mynet-for-sim.cpn';
+    // const modelFile = 'mynet-for-sim.cpn';
 
     // const modelFile = 'fuelstation.cpn';
+
+    const modelFile = 'monitors.cpn';
 
     const url = './assets/cpn/' + modelFile;
     this.http.get(url, { headers: headers, responseType: 'text' })

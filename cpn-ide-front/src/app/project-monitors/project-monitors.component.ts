@@ -13,9 +13,12 @@ import { nodeToArray } from '../common/utils';
 export class ProjectMonitorsComponent implements OnInit {
 
   JSON = JSON;
+  nodeToArray = nodeToArray;
 
   cpnElement;
   nodeList = [];
+  optionTimed = false;
+  optionLogging = false;
 
   boolValues = [
     'true',
@@ -30,7 +33,7 @@ export class ProjectMonitorsComponent implements OnInit {
 
   ngOnInit() {
     this.eventService.on(Message.MONITOR_OPEN, (event) => this.onLoadMonitor(event.monitorObject));
-    this.eventService.on(Message.SHAPE_SELECT, (event) => { if (this.createNodeIntent) { this.onCreateNode(event) } });
+    this.eventService.on(Message.SHAPE_SELECT, (event) => { if (this.createNodeIntent) { this.onCreateNode(event); } });
 
     this.eventService.on(Message.DECLARATION_CHANGED, (event) => this.onUpdateDeclaration(event));
 
@@ -91,6 +94,12 @@ export class ProjectMonitorsComponent implements OnInit {
   onLoadMonitor(cpnElement) {
     this.cpnElement = cpnElement;
     this.nodeList = this.getNodes();
+
+    this.optionTimed = this.getOption('Timed');
+    this.optionLogging = this.getOption('Logging');
+
+    console.log('onLoadMonitor(), this.cpnElement = ', this.cpnElement);
+    console.log('onLoadMonitor(), this.nodeList = ', this.nodeList);
   }
 
   onCreateNode(event) {

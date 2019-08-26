@@ -1,7 +1,10 @@
 <app-simulation-panel *ngIf="accessCpnService.isSimulation"></app-simulation-panel>
 
 <tabs *ngIf="!accessCpnService.isSimulation" #tabsComponent class="cpn-tabs">
-  <ng-template ngFor let-tab [ngForOf]="tabList">
+  <!-- <ng-template ngFor let-tab [ngForOf]="tabList"> -->
+
+  <ng-container *ngFor="let tab of tabList">
+
     <tab *ngIf="tab" [id]="tab.id" [tabTitle]="tab.name">
 
       <!-- Project details table -->
@@ -38,5 +41,7 @@
       </div>
 
     </tab>
-  </ng-template>
+
+  </ng-container>
+  <!-- </ng-template> -->
 </tabs>

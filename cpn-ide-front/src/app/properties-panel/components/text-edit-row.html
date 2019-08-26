@@ -1,5 +1,5 @@
 <!-- Text input -->
-<div class="valueRow" *ngIf="object && type === 'text'">
+<div class="valueRow" [ngClass]="{'bordered': bordered}" *ngIf="object && type === 'text'">
   <div class="valueName">{{name}}</div>
   <div class="value" [ngClass]="{'value-readonly': readonly, 'pre': pre}" [contentEditable]="!readonly"
     [textContent]="object[field]" (keydown)="onKeyDown($event);" (focusout)="onChange($event);">
@@ -7,7 +7,7 @@
 </div>
 
 <!-- Integer value input -->
-<div class="valueRow" *ngIf="object && type === 'int'">
+<div class="valueRow" [ngClass]="{'bordered': bordered}" *ngIf="object && type === 'int'">
   <div class="valueName">{{name}}</div>
   <div class="value" [ngClass]="{'value-readonly': readonly, 'pre': pre}" [contentEditable]="!readonly"
     [textContent]="parseInt(object[field], 0)" (keydown)="onKeyDown($event);" (focusout)="onChange($event);">
@@ -15,7 +15,7 @@
 </div>
 
 <!-- Color input -->
-<div class="valueRow" *ngIf="object && type === 'color'">
+<div class="valueRow" [ngClass]="{'bordered': bordered}" *ngIf="object && type === 'color'">
   <div class="valueName">{{name}}</div>
   <div class="value">
     <input type="color" list="color" class="colorSelector" [value]="name2color(object[field])"
@@ -27,7 +27,7 @@
 </div>
 
 <!-- Select input -->
-<div class="valueRow" *ngIf="object && type === 'select'">
+<div class="valueRow" [ngClass]="{'bordered': bordered}" *ngIf="object && type === 'select'">
   <div class="valueName">{{name}}</div>
   <div class="value">
     <select class="typeSelector" required [(ngModel)]='object[field]' (ngModelChange)='onChange($event);'>
@@ -37,7 +37,7 @@
 </div>
 
 <!-- ML input -->
-<div class="valueRow" *ngIf="object && type === 'ml'">
+<div class="valueRow" [ngClass]="{'bordered': bordered}" *ngIf="object && type === 'ml'">
   <div class="value" [ngClass]="{'value-readonly': readonly, 'pre': pre}" [contentEditable]="!readonly"
     [innerHTML]="object[field] | colorDeclarations | safeHtml" (keydown)="onKeyDown($event);"
     (focusout)="onChange($event);">

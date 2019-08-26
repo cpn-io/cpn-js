@@ -123,11 +123,12 @@ public class PetriNetContainer {
             checker.generateSerializers();
             checker.checkPages();
             checker.generatePlaceInstances();
-            //  checker.checkMonitors();
+            checker.checkMonitors();
             checker.generateNonPlaceInstances();
             checker.initialiseSimulationScheduler();
 
 
+            sim.initialState();
             sim.refreshViews();
 
 //            checker.instantiateSMLInterface();
@@ -141,35 +142,36 @@ public class PetriNetContainer {
 
     }
 
-    List<String> getEnableTransitionsImpl(String sessionId, boolean second) throws Exception {
+    List<String> getEnableTransitionsImpl(String sessionId) throws Exception {
         synchronized (lock) {
             HighLevelSimulator s = usersSimulator.get(sessionId);
             if (s == null)
                 throw new NotFoundException("Session object not found");
             //Checker checker = new Checker(net, new File("C:\\tmp\\cpn.file"), sim);
-            List<Instance<Transition>> tis = s.getAllTransitionInstances();
             List<String> arr = new ArrayList<>();
+            while(true) {
+                List<Instance<Transition>> tis = s.getAllTransitionInstances();
 
-            for (Instance<Transition> ti : tis) {
+                for (Instance<Transition> ti : tis) {
 
-                if (s.isEnabled(ti))
-                    arr.add(ti.getNode().getId());
+                    if (s.isEnabled(ti))
+                        arr.add(ti.getNode().getId());
+                }
+                if (arr.isEmpty()) {
+                    String res = s.increaseTime();
+                    if (res != null) //sim ended
+                        return arr;
+                }
+                else break;
             }
-            if(arr.isEmpty() && !second)
-            {
-                String res = s.increaseTime();
-                if(res != null) //sim ended
-                    return arr;
 
-                return getEnableTransitionsImpl(sessionId, true);
-            }
             return arr;
         }
     }
 
 
     public List<String> getEnableTransitions(String sessionId) throws Exception {
-        return getEnableTransitionsImpl(sessionId, false);
+        return getEnableTransitionsImpl(sessionId);
     }
 
     public List<String> returnEnableTrans(String sessionId) throws Exception {
@@ -491,9 +493,28 @@ public class PetriNetContainer {
     }
     public void makeStepFastForward(String sessionId, MultiStep stepParam) throws Exception {
         //String type = requestBody.get(0).get("type").toString();
-        HighLevelSimulator s = usersSimulator.get(sessionId);
-        s.setStopOptions(stepParam.getUntilStep(), stepParam.getAddStep(), stepParam.getUntilTime(), stepParam.getAddTime());
-        s.execute(stepParam.getAmount());
+        HighLevelSimulator sim = usersSimulator.get(sessionId);
+        int i = 0;
+        String simulationEnded = "";
+        int maxSteps = stepParam.getAmount();
+        while (i < maxSteps) {
+            List<Instance<Transition>> enabled = sim.getAllTransitionInstances();
+
+            if (enabled.isEmpty()) {
+                String result = sim.increaseTime();
+                if (result == null) {
+                    continue; // --> go back and check for enabled transitions
+                } else {
+                    simulationEnded = result;
+                    break; // end/stop simulation, report result to user
+                }
+            }
+
+            // fire the first enabled transition
+            Instance<Transition> ti = enabled.get(0);
+            sim.execute(ti);
+            i++;
+        }
     }
 
 

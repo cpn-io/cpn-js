@@ -10,8 +10,8 @@ import {
   getNextId,
   getDefText
 } from '../../lib/cpn-js/features/modeling/CpnElementFactory';
-import { nodeToArray } from '../common/utils';
-import { DataCollectionMonitorTemplate, BreakpointMonitorTemplate, UserDefinedMonitorTemplate, WriteInFileMonitorTemplate, MarkingSizeMonitorTemplate, ListLengthDataCollectionMonitorTemplate, CountTransitionOccurrencesMonitorTemplate, PlaceContentBreakPointMonitorTemplate, TransitionEnabledBreakPointMonitorTemplate } from '../common/monitor-template';
+import { nodeToArray, addNode } from '../common/utils';
+import { DataCollectionMonitorTemplate, BreakpointMonitorTemplate, UserDefinedMonitorTemplate, WriteInFileMonitorTemplate, MarkingSizeMonitorTemplate, ListLengthDataCollectionMonitorTemplate, CountTransitionOccurrencesMonitorTemplate, PlaceContentBreakPointMonitorTemplate, TransitionEnabledBreakPointMonitorTemplate, MonitorType } from '../common/monitors';
 
 
 /**
@@ -19,6 +19,8 @@ import { DataCollectionMonitorTemplate, BreakpointMonitorTemplate, UserDefinedMo
  */
 @Injectable()
 export class ModelService {
+
+  monitorType = MonitorType;
 
   private isLoaded = false;
 
@@ -211,6 +213,17 @@ export class ModelService {
       }
     }
     return cpnet;
+  }
+
+  getMonitorsRoot() {
+    const cpnet = this.getCpn();
+    if (cpnet) {
+      if (!cpnet.monitorblock) {
+        cpnet.monitorblock = {};
+      }
+      return cpnet.monitorblock;
+    }
+    return undefined;
   }
 
   /**
@@ -636,6 +649,48 @@ export class ModelService {
   // TEBP: 'Transition enabled break point'
   // ------------------------------------------------
 
+  getShapeNames(cpnElement) {
+    let s = '';
+    for (const e of nodeToArray(cpnElement)) {
+      if (s.length > 0) {
+        s += ', ';
+      }
+      s += e.text;
+    }
+    return s;
+  }
+
+  getMonitorNodeList(cpnElement) {
+    const cpnElementList = cpnElement instanceof Array ? cpnElement : [cpnElement];
+    const nodeList = [];
+    for (const e of cpnElementList) {
+      nodeList.push({
+        _idref: e._id,
+        _pageinstanceidref: 'PAGEINSTANCEID' // TODO: add page instance ID
+      });
+    }
+    if (nodeList.length === 0) {
+      return undefined;
+    }
+    return nodeList.length === 1 ? nodeList[0] : nodeList;
+  }
+
+  createCpnMonitor(monitorType: string, cpnElementList) {
+    let newMonitorCpnElement;
+    switch (monitorType) {
+      case this.monitorType.BP: newMonitorCpnElement = this.createCpnMonitorBP(cpnElementList); break;
+      case this.monitorType.CTODC: newMonitorCpnElement = this.createMonitorCTODC(cpnElementList); break;
+      case this.monitorType.DC: newMonitorCpnElement = this.createCpnMonitorDC(cpnElementList); break;
+      case this.monitorType.LLDC: newMonitorCpnElement = this.createCpnMonitorLLDC(cpnElementList); break;
+      case this.monitorType.MS: newMonitorCpnElement = this.createCpnMonitorMS(cpnElementList); break;
+      case this.monitorType.PCBP: newMonitorCpnElement = this.createCpnMonitorPCBP(cpnElementList); break;
+      case this.monitorType.TEBP: newMonitorCpnElement = this.createCpnMonitorTEBP(cpnElementList); break;
+      case this.monitorType.UD: newMonitorCpnElement = this.createCpnMonitorUD(cpnElementList); break;
+      case this.monitorType.WIF: newMonitorCpnElement = this.createCpnMonitorWIF(cpnElementList); break;
+    }
+    return newMonitorCpnElement;
+  }
+
   createCpnMonitorDC(cpnElement) {
     console.log('createCpnMonitorDC(), cpnElement = ', cpnElement);
     const monitorTemplate = new DataCollectionMonitorTemplate();
@@ -646,10 +701,7 @@ export class ModelService {
       _type: monitorTemplate.type(),
       _typedescription: monitorTemplate.typeDescription(),
       _disabled: 'false',
-      node: {
-        _idref: cpnElement._id,
-        _pageinstanceidref: 'PAGEINSTANCEID' // TODO add page instance ID
-      },
+      node: this.getMonitorNodeList(cpnElement),
       declaration: [
         { _name: 'Predicate', ml: { _id: getNextId(), __text: monitorTemplate.defaultPredicate() } },
         { _name: 'Observer', ml: { _id: getNextId(), __text: monitorTemplate.defaultObserver() } },
@@ -673,10 +725,7 @@ export class ModelService {
       _type: monitorTemplate.type(),
       _typedescription: monitorTemplate.typeDescription(),
       _disabled: 'false',
-      node: {
-        _idref: cpnElement._id,
-        _pageinstanceidref: 'PAGEINSTANCEID' // TODO add page instance ID
-      },
+      node: this.getMonitorNodeList(cpnElement),
       declaration: [
         { _name: 'Predicate', ml: { _id: getNextId(), __text: monitorTemplate.defaultPredicate() } },
         { _name: 'Observer', ml: { _id: getNextId(), __text: monitorTemplate.defaultObserver() } },
@@ -700,10 +749,7 @@ export class ModelService {
       _type: monitorTemplate.type(),
       _typedescription: monitorTemplate.typeDescription(),
       _disabled: 'false',
-      node: {
-        _idref: cpnElement._id,
-        _pageinstanceidref: 'PAGEINSTANCEID' // TODO add page instance ID
-      },
+      node: this.getMonitorNodeList(cpnElement),
       declaration: [
         { _name: 'Predicate', ml: { _id: getNextId(), __text: monitorTemplate.defaultPredicate() } },
         { _name: 'Observer', ml: { _id: getNextId(), __text: monitorTemplate.defaultObserver() } },
@@ -727,10 +773,7 @@ export class ModelService {
       _type: monitorTemplate.type(),
       _typedescription: monitorTemplate.typeDescription(),
       _disabled: 'false',
-      node: {
-        _idref: cpnElement._id,
-        _pageinstanceidref: 'PAGEINSTANCEID' // TODO add page instance ID
-      },
+      node: this.getMonitorNodeList(cpnElement),
       declaration: [
         { _name: 'Predicate', ml: { _id: getNextId(), __text: monitorTemplate.defaultPredicate() } },
         { _name: 'Observer', ml: { _id: getNextId(), __text: monitorTemplate.defaultObserver() } },
@@ -744,21 +787,17 @@ export class ModelService {
     };
   }
 
-
   createCpnMonitorMS(cpnElement) {
     console.log('createCpnMonitorMS(), cpnElement = ', cpnElement);
     const monitorTemplate = new MarkingSizeMonitorTemplate();
 
     return {
       _id: getNextId(),
-      _name: monitorTemplate.typeDescription() + ' monitor (' + cpnElement.text + ')',
+      _name: monitorTemplate.typeDescription() + ' monitor (' + this.getShapeNames(cpnElement) + ')',
       _type: monitorTemplate.type(),
       _typedescription: monitorTemplate.typeDescription(),
       _disabled: 'false',
-      node: {
-        _idref: cpnElement._id,
-        _pageinstanceidref: 'PAGEINSTANCEID' // TODO add page instance ID
-      },
+      node: this.getMonitorNodeList(cpnElement),
       option: [
         { _name: 'Timed', _value: monitorTemplate.defaultTimed() },
         { _name: 'Logging', _value: monitorTemplate.defaultLogging() }
@@ -772,14 +811,11 @@ export class ModelService {
 
     return {
       _id: getNextId(),
-      _name: monitorTemplate.typeDescription() + ' monitor (' + cpnElement.text + ')',
+      _name: monitorTemplate.typeDescription() + ' monitor (' + this.getShapeNames(cpnElement) + ')',
       _type: monitorTemplate.type(),
       _typedescription: monitorTemplate.typeDescription(),
       _disabled: 'false',
-      node: {
-        _idref: cpnElement._id,
-        _pageinstanceidref: 'PAGEINSTANCEID' // TODO add page instance ID
-      },
+      node: this.getMonitorNodeList(cpnElement),
       option: [
         { _name: 'Timed', _value: monitorTemplate.defaultTimed() },
         { _name: 'Logging', _value: monitorTemplate.defaultLogging() }
@@ -794,14 +830,11 @@ export class ModelService {
 
     return {
       _id: getNextId(),
-      _name: monitorTemplate.typeDescription() + ' monitor (' + cpnElement.text + ')',
+      _name: monitorTemplate.typeDescription() + ' monitor (' + this.getShapeNames(cpnElement) + ')',
       _type: monitorTemplate.type(),
       _typedescription: monitorTemplate.typeDescription(),
       _disabled: 'false',
-      node: {
-        _idref: cpnElement._id,
-        _pageinstanceidref: 'PAGEINSTANCEID' // TODO add page instance ID
-      },
+      node: this.getMonitorNodeList(cpnElement),
       option: [
         { _name: 'Timed', _value: monitorTemplate.defaultTimed() },
         { _name: 'Logging', _value: monitorTemplate.defaultLogging() }
@@ -815,14 +848,11 @@ export class ModelService {
 
     return {
       _id: getNextId(),
-      _name: monitorTemplate.typeDescription() + ' monitor (' + cpnElement.text + ')',
+      _name: monitorTemplate.typeDescription() + ' monitor (' + this.getShapeNames(cpnElement) + ')',
       _type: monitorTemplate.type(),
       _typedescription: monitorTemplate.typeDescription(),
       _disabled: 'false',
-      node: {
-        _idref: cpnElement._id,
-        _pageinstanceidref: 'PAGEINSTANCEID' // TODO add page instance ID
-      },
+      node: this.getMonitorNodeList(cpnElement),
       option: [
         { _name: 'Timed', _value: monitorTemplate.defaultTimed() },
         { _name: 'Logging', _value: monitorTemplate.defaultLogging() }
@@ -836,14 +866,11 @@ export class ModelService {
 
     return {
       _id: getNextId(),
-      _name: monitorTemplate.typeDescription() + ' monitor (' + cpnElement.text + ')',
+      _name: monitorTemplate.typeDescription() + ' monitor (' + this.getShapeNames(cpnElement) + ')',
       _type: monitorTemplate.type(),
       _typedescription: monitorTemplate.typeDescription(),
       _disabled: 'false',
-      node: {
-        _idref: cpnElement._id,
-        _pageinstanceidref: 'PAGEINSTANCEID' // TODO add page instance ID
-      },
+      node: this.getMonitorNodeList(cpnElement),
       option: [
         { _name: 'Timed', _value: monitorTemplate.defaultTimed() },
         { _name: 'Logging', _value: monitorTemplate.defaultLogging() }

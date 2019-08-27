@@ -223,5 +223,23 @@ export class ProjectMonitorsComponent implements OnInit {
     this.updateChanges();
   }
 
+  onCloneMonitor() {
+  }
 
+  onDisableMonitor(disable: boolean) {
+    this.cpnElement._disabled = disable.toString();
+    this.eventService.send(Message.MONITOR_CHANGED, { monitorCpnElement: this.cpnElement });
+  }
+
+  onDeleteMonitor() {
+    if (this.cpnElement) {
+      this.modelService.deleteFromModel(this.cpnElement);
+      this.onLoadMonitor(undefined);
+      this.eventService.send(Message.MONITOR_DELETED, { monitorCpnElement: this.cpnElement });
+    }
+  }
+
+  isMonitorsSubnode() {
+    return false;
+  }
 }

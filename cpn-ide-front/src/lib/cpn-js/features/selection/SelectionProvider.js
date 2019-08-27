@@ -65,8 +65,11 @@ SelectionProvider.$inject = [
 
 SelectionProvider.prototype.selectElement = function (element, selected) {
   if (isAny(element, [CPN_PLACE, CPN_TRANSITION])) {
-    element.selected = selected;
-    this._eventBus.fire('element.changed', { element: element });
+    if (element.selected !== selected) {
+      element.selected = selected;
+      this._eventBus.fire('element.changed', { element: element });
+      this._eventBus.fire('element.selection.changed', {});
+    }
   }
 }
 
@@ -82,6 +85,10 @@ SelectionProvider.prototype.selectElements = function (elements, selected) {
   for (const e of elements) {
     this.selectElement(e, selected);
   }
-};
+}
 
+SelectionProvider.prototype.getSelectedElements = function () {
+  var selectedElements = this._elementRegistry.filter(function (e) { return e.selected; });
+  return selectedElements || [];
+}
 

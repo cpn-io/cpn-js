@@ -46,6 +46,10 @@ export class Message {
   static SIMULATION_SELECT_BINDING = 'simulation.select.binding';
   static SIMULATION_UPDATE_STATE = 'simulation.update.state';
 
+  static MONITOR_CREATED = 'monitor.created';
+  static MONITOR_CHANGED = 'monitor.changed';
+  static MONITOR_DELETED = 'monitor.deleted';
+
   id: string;
   data: object;
 }

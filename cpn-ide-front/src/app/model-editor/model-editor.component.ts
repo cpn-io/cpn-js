@@ -17,6 +17,7 @@ import {
 
 import {
   CPN_LABEL,
+  CPN_PLACE,
   CPN_TRANSITION,
   CPN_CONNECTION,
   is,
@@ -24,9 +25,8 @@ import {
 } from '../../lib/cpn-js/util/ModelUtil';
 
 import { AccessCpnService } from '../services/access-cpn.service';
-import { isComponent } from '@angular/core/src/render3/util';
-import { element } from 'protractor';
-
+import { MonitorType, getMonitorTypeList } from '../common/monitors';
+import { addNode } from '../common/utils';
 
 @Component({
   selector: 'app-model-editor',
@@ -35,18 +35,12 @@ import { element } from 'protractor';
 })
 export class ModelEditorComponent implements OnInit {
 
-  constructor(private eventService: EventService,
-    private settings: SettingsService,
-    private modelService: ModelService,
-    private validationService: ValidationService,
-    private accessCpnService: AccessCpnService) {
-  }
-
   @ViewChild('container') containerElementRef: ElementRef;
   @ViewChild('popup') popupElementRef: ElementRef;
 
   @Input() id: string;
 
+  monitorType = MonitorType;
 
   diagram: Diagram;
   elementFactory;
@@ -61,6 +55,7 @@ export class ModelEditorComponent implements OnInit {
   jsonPageObject;
   portMenuProvider;
   stateProvider;
+  selectionProvider;
 
   // subscription: Subscription;
   subpages = [];
@@ -72,6 +67,15 @@ export class ModelEditorComponent implements OnInit {
   transCount = 0;
 
   loading = false;
+
+  availableMonitorList = [];
+
+  constructor(private eventService: EventService,
+    private settings: SettingsService,
+    private modelService: ModelService,
+    private validationService: ValidationService,
+    private accessCpnService: AccessCpnService) {
+  }
 
   ngOnInit() {
 
@@ -103,6 +107,7 @@ export class ModelEditorComponent implements OnInit {
     this.cpnFactory = this.diagram.get('cpnFactory');
     this.portMenuProvider = this.diagram.get('portMenuProvider');
     this.stateProvider = this.diagram.get('stateProvider');
+    this.selectionProvider = this.diagram.get('selectionProvider');
 
     const eventBus = this.eventBus;
 
@@ -380,6 +385,36 @@ export class ModelEditorComponent implements OnInit {
     });
 
     // this._eventBus.fire('bind.port.cancel', {connection: this._createdArc});
+
+    eventBus.on('element.selection.changed', function () {
+      const selectedElements = self.selectionProvider.getSelectedElements();
+      console.log('model-editor element.selection.changed, selectedElements = ', selectedElements);
+
+      self.updateAvailableMonitorList(selectedElements);
+    });
+  }
+
+  updateAvailableMonitorList(selectedElements) {
+
+    this.availableMonitorList = [];
+
+    let type;
+
+    if (selectedElements.length > 0) {
+      if (selectedElements.length > 1) {
+        type = 'group';
+      } else if (is(selectedElements[0], CPN_PLACE)) {
+        type = 'place';
+      } else if (is(selectedElements[0], CPN_TRANSITION)) {
+        type = 'transition';
+      }
+    }
+
+    if (type) {
+      const monitorTypes = getMonitorTypeList(type);
+      this.availableMonitorList = monitorTypes;
+    }
+    console.log('model-editor updateAvailableMonitorList(), this.availableMonitorList = ', this.availableMonitorList);
   }
 
   showPopup(position, element, popupText, popupClass) {
@@ -546,5 +581,28 @@ export class ModelEditorComponent implements OnInit {
     return text;
   }
 
+  onCreateNewMonitor(monitorType: string) {
+    const selectedElements = this.selectionProvider.getSelectedElements();
+    console.log('model-editor onCreateNewMonitor(), monitorType, selectedElements = ', monitorType, selectedElements);
 
+    if (selectedElements.length < 1) {
+      return;
+    }
+
+    const cpnElementList = [];
+    for (const e of selectedElements) {
+      if (e.cpnElement) {
+        cpnElementList.push(e.cpnElement);
+      }
+    }
+
+    const monitorsCpnParentElement = this.modelService.getMonitorsRoot();
+    const newMonitorCpnElement = this.modelService.createCpnMonitor(monitorType, cpnElementList);
+    if (newMonitorCpnElement) {
+      addNode(monitorsCpnParentElement, 'monitor', newMonitorCpnElement);
+      this.eventService.send(Message.MONITOR_CREATED, { newMonitorCpnElement: newMonitorCpnElement });
+    }
+
+    console.log('model-editor onCreateNewMonitor(), monitorsCpnParentElement = ', monitorsCpnParentElement);
+  }
 }

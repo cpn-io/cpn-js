@@ -102,7 +102,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     this.eventService.on(Message.SHAPE_SELECT, (data) => {
       console.log(this.constructor.name, 'Message.SHAPE_SELECT, data = ', data);
 
-      this.selectTab('propertiesPanel');
+      // this.selectTab('propertiesPanel');
 
       const element = data.element.labelTarget ?
         data.element.labelTarget.labelTarget || data.element.labelTarget :

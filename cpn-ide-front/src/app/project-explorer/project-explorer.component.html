@@ -38,7 +38,7 @@
 
               </li>
 
-              <div *ngIf="(selectedNode && selectedNode.data && selectedNode.data.actions ? true : false)"
+              <!-- <div *ngIf="(selectedNode && selectedNode.data && selectedNode.data.actions ? true : false)"
                 class="divider"></div>
 
               <li class="dropdown nav-item">
@@ -64,7 +64,7 @@
                     href="#">{{monitorType.TEBP}}</a>
                 </div>
 
-              </li>
+              </li> -->
 
               <div class="divider"></div>
               <!-- Clone action -->
@@ -77,26 +77,26 @@
               <!-- Disable action -->
               <li *ngIf="canDoEditAction(selectedNode, 'disable')" class="nav-item">
                 <a (click)="onDisableMonitor(selectedNode)" class="nav-link" href="#" title="Disable monitor">
-                  <i class="fas fa-toggle-off"></i>
+                  <i class="fas fa-toggle-on"></i>
                 </a>
               </li>
 
               <li *ngIf="canDoEditAction(selectedNode, 'disable_all')" class="nav-item">
                 <a (click)="onDisableMonitor(selectedNode)" class="nav-link" href="#" title="Disable all">
-                  <i class="fas fa-toggle-off"></i>
+                  <i class="fas fa-toggle-on"></i>
                 </a>
               </li>
 
               <!-- Enable action -->
               <li *ngIf="canDoEditAction(selectedNode, 'enable')" class="nav-item">
                 <a (click)="onEnableMonitor(selectedNode)" class="nav-link" href="#" title="Enable monitor">
-                  <i class="fas fa-toggle-on"></i>
+                  <i class="fas fa-toggle-off"></i>
                 </a>
               </li>
 
               <li *ngIf="canDoEditAction(selectedNode, 'enable_all')" class="nav-item">
                 <a (click)="onEnableMonitor(selectedNode)" class="nav-link" href="#" title="Enable all">
-                  <i class="fas fa-toggle-on"></i>
+                  <i class="fas fa-toggle-off"></i>
                 </a>
               </li>
 

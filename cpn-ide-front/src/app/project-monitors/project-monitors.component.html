@@ -1,4 +1,43 @@
-<div class="tab-container">
+<nav class="navbar navbar-sm navbar-expand shadow-sm">
+
+  <ul *ngIf="cpnElement" class="navbar-nav mr-auto">
+    <!-- <li class="nav-item">
+      <div class="header">Monitor</div>
+    </li>
+    <div class="divider"></div> -->
+
+    <!-- Clone action -->
+    <li class="nav-item">
+      <a (click)="onCloneMonitor()" class="nav-link" href="#" title="Clone monitor">
+        <i class="far fa-clone"></i>
+      </a>
+    </li>
+
+    <!-- Disable action -->
+    <li *ngIf="cpnElement && cpnElement._disabled === 'false'" class="nav-item">
+      <a (click)="onDisableMonitor(true)" class="nav-link" href="#" title="Disable monitor">
+        <i class="fas fa-toggle-on"></i>
+      </a>
+    </li>
+
+    <!-- Enable action -->
+    <li *ngIf="cpnElement && cpnElement._disabled === 'true'" class="nav-item">
+      <a (click)="onDisableMonitor(false)" class="nav-link" href="#" title="Enable monitor">
+        <i class="fas fa-toggle-off"></i>
+      </a>
+    </li>
+
+    <!-- Delete action -->
+    <li class="nav-item">
+      <a (click)="onDeleteMonitor()" class="nav-link" href="#" title="Delete">
+        <i class="fas fa-minus"></i>
+        <span *ngIf="!isMonitorsSubnode()">Delete</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<div class="tab-container-with-toolbar">
 
   <div *ngIf="cpnElement" style="width: 100%">
 
@@ -20,15 +59,18 @@
     </app-text-edit-row>
 
     <!-- Timed -->
-    <app-text-edit-row *ngIf="optionTimed" type="select" name="Timed" [object]="optionTimed"
-      field="_value" (changed)="updateOptionValue($event, 'Timed')" [options]="boolValues"
-      [readonly]="accessCpnService.isSimulation">
+    <app-text-edit-row *ngIf="optionTimed" type="select" name="Timed" [object]="optionTimed" field="_value"
+      (changed)="updateOptionValue($event, 'Timed')" [options]="boolValues" [readonly]="accessCpnService.isSimulation">
     </app-text-edit-row>
 
     <!-- Logging -->
-    <app-text-edit-row *ngIf="optionLogging" type="select" name="Logging" [object]="optionLogging"
-      field="_value" (changed)="updateOptionValue($event, 'Logging')" [options]="boolValues"
+    <app-text-edit-row *ngIf="optionLogging" type="select" name="Logging" [object]="optionLogging" field="_value"
+      (changed)="updateOptionValue($event, 'Logging')" [options]="boolValues"
       [readonly]="accessCpnService.isSimulation">
+    </app-text-edit-row>
+
+    <!-- Disabled -->
+    <app-text-edit-row name="Disabled" [object]="cpnElement" field="_disabled" [readonly]="true">
     </app-text-edit-row>
 
     <!------------------------->
@@ -65,19 +107,19 @@
       </tr> -->
 
       <ng-container *ngFor="let node of nodeList">
-      <tr>
-        <td *ngIf="node.page">{{ node.page.pageattr._name }}</td>
-        <td *ngIf="node.element">{{ node.element.text }} ({{ node.elementType }})</td>
+        <tr>
+          <td *ngIf="node.page">{{ node.page.pageattr._name }}</td>
+          <td *ngIf="node.element">{{ node.element.text }} ({{ node.elementType }})</td>
 
-        <ng-container>
-          <td class="tableButton">
-            <a (click)="onDeleteNode(node)" href="#" title="Delete node" class="tableButton">
-              <i class="far fa-trash-alt"></i>
-            </a>
-          </td>
-        </ng-container>
-      </tr>
-    </ng-container>
+          <ng-container>
+            <td class="tableButton">
+              <a (click)="onDeleteNode(node)" href="#" title="Delete node" class="tableButton">
+                <i class="far fa-trash-alt"></i>
+              </a>
+            </td>
+          </ng-container>
+        </tr>
+      </ng-container>
     </table>
     <!------------------------->
 

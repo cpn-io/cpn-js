@@ -7,11 +7,11 @@ import { TreeComponent, TREE_ACTIONS } from 'angular-tree-component';
 import { ModelService } from '../services/model.service';
 import { ColorDeclarationsPipe } from '../pipes/color-declarations.pipe';
 import { OptionsNamePipePipe } from '../pipes/options-name.pipe';
-import { Constants } from '../common/constants';
 import { AccessCpnService } from '../services/access-cpn.service';
 import { SettingsService } from '../services/settings.service';
 import { ValidationService } from '../services/validation.service';
 import { nodeToArray } from '../common/utils';
+import { MonitorType } from '../common/monitors';
 
 // import {TreeComponent} from 'angular-tree-component';
 @Component({
@@ -31,17 +31,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    */
   @ViewChild('tree') treeComponent: TreeComponent;
 
-  monitorType = {
-    DC: 'Data collection',
-    MS: 'Marking size',
-    BP: 'Break point',
-    UD: 'User defined',
-    WIF: 'Write in file',
-    LLDC: 'List length data collection',
-    CTODC: 'Count transition occurence data collector',
-    PCBP: 'Place content break point',
-    TEBP: 'Transition enabled break point'
-  };
+  monitorType = MonitorType;
 
   cpnElementType = {
     place: 'cpn:Place',
@@ -271,6 +261,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
               break;
             }
           }
+
           if (monitorsRootNode) {
             console.log('Monitor: monitorsRootNode = ', monitorsRootNode);
 
@@ -287,6 +278,47 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
           }
         }
       }
+    });
+
+    // Update monitors
+    this.eventService.on(Message.MONITOR_CREATED, (event) => {
+      if (event.newMonitorCpnElement) {
+
+        // let monitorsRootNode;
+        // for (const monitors of this.nodes[0].children) {
+        //   if (monitors.id === 'Monitors') {
+        //     monitorsRootNode = monitors;
+        //     break;
+        //   }
+        // }
+        // if (monitorsRootNode) {
+        //   this.createMonitorsRootNode('Monitors', cpnet.monitorblock);
+        // }
+
+        this.loadProject(this.modelService.getProject());
+
+        const nodeId = event.newMonitorCpnElement._id;
+        this.expandNode(nodeId);
+        this.gotoNode(nodeId);
+      }
+    });
+
+    // Update monitors
+    this.eventService.on(Message.MONITOR_CHANGED, (event) => {
+      if (event.monitorCpnElement) {
+        this.loadProject(this.modelService.getProject());
+        const nodeId = event.monitorCpnElement._id;
+        this.expandNode(nodeId);
+        this.gotoNode(nodeId);
+      }
+    });
+
+    // Update monitors
+    this.eventService.on(Message.MONITOR_DELETED, (event) => {
+      this.loadProject(this.modelService.getProject());
+      const nodeId = 'Monitors';
+      this.expandNode(nodeId);
+      this.gotoNode(nodeId);
     });
 
     // Get error identificators
@@ -1217,16 +1249,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
   }
 
-  focusedNode(node) {
-    if (node) {
-      const newfocusedBlock = this.getCurrentBlock(node);
-      this.eventService.send(Message.TREE_OPEN_DECLARATION_NODE, { id: newfocusedBlock.id });
-      this.treeComponent.treeModel.setFocusedNode(newfocusedBlock);
-      this.treeComponent.treeModel.setActiveNode(newfocusedBlock, true, false);
-      this.treeComponent.treeModel.setSelectedNode(newfocusedBlock, true);
-    }
-  }
-
   /**
    * delete page node from model
    */
@@ -1920,7 +1942,21 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   isDisabledNode(nodeId): boolean {
-    return this.disabledNodeSet.has(nodeId);
+    let disabled = undefined;
+
+    const treeNode = this.treeComponent.treeModel.getNodeById(nodeId);
+    if (treeNode) {
+      if (treeNode.data && treeNode.data.cpnElement && treeNode.data.cpnElement._disabled) {
+        disabled = treeNode.data.cpnElement._disabled === 'true';
+      }
+    }
+
+    if (disabled === undefined) {
+      disabled = this.disabledNodeSet.has(nodeId);
+    }
+
+    return disabled;
+    // return this.disabledNodeSet.has(nodeId);
   }
 
   // </editor-fold desc="Monitors">

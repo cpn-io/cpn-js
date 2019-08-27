@@ -16,6 +16,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
 
   declarations = [];
   declarationNodes = [];
+  monitorNodes = [];
   selectedNode: any = {};
   editableNode;
 
@@ -40,6 +41,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     { id: 'var', name: 'Var' },
     { id: 'val', name: 'Val' },
     { id: 'fun', name: 'Fun' },
+    { id: 'monitor', name: 'Monitors' },
   ];
 
 
@@ -255,6 +257,9 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     switch (tabId) {
       case 'all':
         nodes = this.declarationNodes;
+        break;
+      case 'monitor':
+        nodes = this.monitorNodes;
         break;
       default:
         nodes = this.declarationNodes.filter(node => node.type === 'block' || node.declarationType === tabId);

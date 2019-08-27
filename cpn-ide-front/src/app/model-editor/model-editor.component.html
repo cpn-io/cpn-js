@@ -2,13 +2,39 @@
 <!--<div style="width: 100%; height:100%; margin-top:-68px; border: 0px solid blue">-->
 <!--<div style="padding-top:68px; height:100%; border:0px solid red">-->
 
+<nav class="navbar navbar-sm navbar-expand shadow-sm">
+
+  <ul class="navbar-nav mr-auto">
+    <li class="nav-item">
+      <div class="header">Model diagram</div>
+    </li>
+    <div class="divider"></div>
+
+    <ng-container *ngIf="availableMonitorList.length > 0">
+      <li class="dropdown nav-item">
+        <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle nav-link" data-toggle="dropdown" href="#"
+          id="navbarMonitorsDD">
+          <i class="fas fa-plus"></i>
+          <span>Monitor</span>
+        </a>
+        <div aria-labelledby="navbarDropdown" class="dropdown-menu shadow">
+          <ng-container *ngFor="let mt of availableMonitorList">
+            <a (click)="onCreateNewMonitor(mt)" class="dropdown-item" href="#">{{ mt }}</a>
+          </ng-container>
+        </div>
+      </li>
+      <div class="divider"></div>
+    </ng-container>
+  </ul>
+</nav>
+
 <div style="width: 100%; height:100%; margin-top:-26px; border: 0px solid blue">
   <div style="padding-top:26px; height:100%; border:0px solid red">
-
     <div style="width: 100%; height:100%; padding-bottom:0px; border: 0px solid green">
-      <div id="container" #container style="width:100%; height:100%; border: 0px solid red; background: #ebebeb"></div>
-    </div>
 
+      <div id="container" #container style="width:100%; height:100%; border: 0px solid red; background: #ebebeb"></div>
+
+    </div>
   </div>
 </div>
 

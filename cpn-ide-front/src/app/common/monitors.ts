@@ -1,3 +1,38 @@
+export const MonitorType = {
+  DC: 'Data collection',
+  MS: 'Marking size',
+  BP: 'Breakpoint',
+  UD: 'User-defined',
+  WIF: 'Write-in-file',
+  LLDC: 'List length data collection',
+  CTODC: 'Count transition occurence',
+  PCBP: 'Place content break point',
+  TEBP: 'Transition enabled'
+};
+
+/**
+ * Returns monitor type list for given element type
+ * @param elementType - one of string values:
+ *    - 'transition' :          element is a transition
+ *    - 'place' :               element is a place
+ *    - 'placeWithListColor' :  element is a place with List colorset
+ *    - 'group' :               element is group of elements
+ */
+export function getMonitorTypeList(elementType) {
+  switch (elementType) {
+    case 'transition':
+      return [MonitorType.CTODC, MonitorType.TEBP, MonitorType.DC, MonitorType.BP, MonitorType.UD, MonitorType.WIF];
+    case 'place':
+      return [MonitorType.MS, MonitorType.PCBP, MonitorType.DC, MonitorType.BP, MonitorType.UD, MonitorType.WIF];
+    case 'placeWithListColor':
+      return [MonitorType.LLDC];
+    case 'group':
+      return [MonitorType.DC, MonitorType.BP, MonitorType.UD, MonitorType.WIF];
+  }
+  return [];
+}
+
+
 interface MonitorTemplate {
   typeDescription(): string;
   type(): number;
@@ -155,3 +190,4 @@ export class TransitionEnabledBreakPointMonitorTemplate implements MonitorTempla
   public defaultInit(): string { return ''; }
   public defaultStop(): string { return ''; }
 }
+

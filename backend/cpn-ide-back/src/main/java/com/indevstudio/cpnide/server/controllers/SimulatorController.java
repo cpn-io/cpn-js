@@ -134,5 +134,19 @@ public class SimulatorController {
         });
     }
 
+    @PostMapping(value = "/sim/monitor/new")
+    @ApiOperation(nickname = "create monitor", value = "Create monitor")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Create success", response = NewMonitorDescr.class),
+                    @ApiResponse(code = 400, message = "Incorrect Request", response = ErrorDescription.class),
+                    @ApiResponse(code = 500, message = "Internal error. Object with description", response = ErrorDescription.class)
+            })
+    public ResponseEntity doStepWithBinding(@RequestHeader(value = "X-SessionId") String sessionId, @RequestBody MonitorDescr monitorDescr) {
+        return RequestBaseLogic.HandleRequest(sessionId, () -> {
+            return RequestBaseLogic.HandleRequest(sessionId, () -> ResponseEntity.status(HttpStatus.OK).body(_netConatiner.getNewMonitor(sessionId, monitorDescr)));
+        });
+    }
+
 
 }

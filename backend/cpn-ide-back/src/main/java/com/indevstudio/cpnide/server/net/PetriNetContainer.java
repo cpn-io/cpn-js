@@ -1,6 +1,9 @@
 package com.indevstudio.cpnide.server.net;
 
 import com.indevstudio.cpnide.server.model.*;
+import com.indevstudio.cpnide.server.model.monitors.MonitorTemplate;
+import com.indevstudio.cpnide.server.model.monitors.MonitorTemplateFactory;
+import com.indevstudio.cpnide.server.model.monitors.MonitorTypes;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.cpntools.accesscpn.engine.SimulatorService;
@@ -13,6 +16,7 @@ import org.cpntools.accesscpn.model.*;
 import org.cpntools.accesscpn.model.exporter.DOMGenerator;
 import org.cpntools.accesscpn.model.importer.DOMParser;
 import org.cpntools.accesscpn.model.monitors.Monitor;
+import org.cpntools.accesscpn.model.monitors.MonitorsFactory;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 
@@ -88,6 +92,36 @@ public class PetriNetContainer {
             }
         }
 
+    }
+
+    public NewMonitorDescr getNewMonitor(String sessionId, MonitorDescr descr) throws Exception
+    {
+        HighLevelSimulator sim = usersSimulator.get(sessionId);
+        PetriNet net = usersNets.get(sessionId);
+        List<Node> nodes = new ArrayList<>();
+
+        Set<String> ids = new HashSet<>(Arrays.asList(descr.getNodes()));
+
+        for(Instance<Transition> tis : sim.getAllTransitionInstances())
+        {
+            if(ids.contains(tis.getNode().getId()))
+                nodes.add(tis.getNode());
+
+        }
+
+        for (Instance<PlaceNode> p : sim.getAllPlaceInstances()) {
+            if(ids.contains(p.getNode().getId()))
+                nodes.add(p.getNode());
+        }
+
+        MonitorTemplate template = MonitorTemplateFactory.createMonitorTemplate(MonitorTypes.valueOf(descr.getType()));
+        return NewMonitorDescr.builder()
+                .defaultInit(template.defaultInit(sim, net, nodes))
+                .defaultObserver(template.defaultObserver(sim,net,nodes))
+                .defaultPredicate(template.defaultPredicate(sim,net,nodes))
+                .defaultStop(template.defaultStop(sim,net,nodes))
+                .defaultTimed(template.defaultTimed(sim,net,nodes))
+                .build();
     }
 
 
@@ -223,7 +257,7 @@ public class PetriNetContainer {
             checker.generateSerializers();
             checker.checkPages();
             checker.generatePlaceInstances();
-            //  checker.checkMonitors();
+            checker.checkMonitors();
             checker.generateNonPlaceInstances();
             checker.initialiseSimulationScheduler();
 

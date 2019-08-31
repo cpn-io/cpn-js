@@ -189,27 +189,32 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   domEvent.bind(document, 'mousedown', function (event) {
     // console.log('CpnUpdater(), domEvent, mousedown, event = ', event);
 
-    const position = toPoint(event);
-    const target = document.elementFromPoint(position.x, position.y);
-    const gfx = getGfx(target);
-    var element;
-    if (gfx) {
-      element = elementRegistry.get(gfx);
-    }
+    // TODO: not process if click another window
 
-    // console.log('CpnUpdater(), domEvent, mousedown, target = ', target);
-    // console.log('CpnUpdater(), domEvent, mousedown, gfx = ', gfx);
-
-    console.log('CpnUpdater(), mousedown, element = ', element);
-
-    if (element === canvas.getRootElement()) {
-      popupMenuProvider.close();
-      contextPad.close();
-      portMenuProvider.close();
-      bindingsMenuProvider.close();
-    }
+    console.log('CpnUpdater(), mousedown');
 
     if (event.button === 2) {
+
+      const position = toPoint(event);
+      const target = document.elementFromPoint(position.x, position.y);
+      const gfx = getGfx(target);
+      var element;
+      if (gfx) {
+        element = elementRegistry.get(gfx);
+      }
+
+      // console.log('CpnUpdater(), domEvent, mousedown, target = ', target);
+      // console.log('CpnUpdater(), domEvent, mousedown, gfx = ', gfx);
+
+      console.log('CpnUpdater(), mousedown, element = ', element);
+
+      if (element && element === canvas.getRootElement()) {
+        popupMenuProvider.close();
+        contextPad.close();
+        portMenuProvider.close();
+        bindingsMenuProvider.close();
+      }
+
       event.stopPropagation();
       event.preventDefault();
 

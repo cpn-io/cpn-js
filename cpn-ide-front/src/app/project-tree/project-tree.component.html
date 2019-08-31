@@ -1,0 +1,36 @@
+<div class="tab-container">
+  <ng-container *ngIf="cpnet">
+
+    <div class="tree">
+
+      <!-- Declarations -->
+
+      <div>
+        <b>Declarations</b>
+        <div class="child">
+          <ng-container *ngFor="let globbox of nodeToArray(cpnet.globbox)">
+            <ng-container *ngFor="let block of nodeToArray(globbox.block)">
+              <app-project-tree-block [block]="block"></app-project-tree-block>
+            </ng-container>
+          </ng-container>
+        </div>
+      </div>
+
+
+      <!-- Pages -->
+
+      <div>
+        <b>Pages</b>
+
+        <div class="child">
+          <ng-container *ngFor="let page of nodeToArray(cpnet.page)">
+            <div contenteditable="true" [textContent]="page.pageattr._name"
+              (input)="page.pageattr._name=$event.target.textContent"></div>
+          </ng-container>
+        </div>
+      </div>
+
+    </div>
+
+  </ng-container>
+</div>

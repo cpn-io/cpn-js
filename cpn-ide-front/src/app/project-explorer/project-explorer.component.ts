@@ -43,6 +43,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   tabList = [
     { id: 'explorerPanel', name: 'Project explorer' },
     { id: 'applicationSettings', name: 'Application settings' },
+    { id: 'projectTree', name: 'Project tree' },
   ];
 
   idNodeCounter = 0;

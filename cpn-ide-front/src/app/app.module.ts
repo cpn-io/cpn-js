@@ -1,3 +1,4 @@
+import { RegexPipe } from './pipes/regex.pipe';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ScrollViewModule } from '@progress/kendo-angular-scrollview';
@@ -50,6 +51,8 @@ import { ValidationService } from './services/validation.service';
 import { ApplicationSettingsComponent } from './application-settings/application-settings.component';
 import { SimulationPanelComponent } from './simulation-panel/simulation-panel.component';
 import { ProjectMonitorsComponent } from './project-monitors/project-monitors.component';
+import { ProjectTreeComponent } from './project-tree/project-tree.component';
+import { ProjectTreeBlockComponent } from './project-tree-block/project-tree-block.component';
 
 require('typeface-droid-sans-mono');
 
@@ -64,6 +67,7 @@ require('typeface-droid-sans-mono');
     OptionsNamePipePipe,
     ReplaceSpacesPipe,
     SafeHtmlPipe,
+    RegexPipe,
 
     // Components
     MainFrameComponent,
@@ -83,7 +87,9 @@ require('typeface-droid-sans-mono');
     TextEditRowComponent,
     ApplicationSettingsComponent,
     SimulationPanelComponent,
-    ProjectMonitorsComponent
+    ProjectMonitorsComponent,
+    ProjectTreeComponent,
+    ProjectTreeBlockComponent
   ],
   imports: [
     BrowserModule,

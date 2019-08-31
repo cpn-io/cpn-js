@@ -267,6 +267,10 @@
         <app-application-settings></app-application-settings>
       </ng-container>
 
+      <ng-container *ngIf="tab.id === 'projectTree'">
+        <app-project-tree></app-project-tree>
+      </ng-container>
+
     </tab>
 
   </ng-container>

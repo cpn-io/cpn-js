@@ -4,35 +4,37 @@
     <div class="tree">
 
       <!-- Declarations -->
-
       <div>
         <app-tree-node title="Declarations" [expanded]="expanded['declarations']"
-          (click)="expanded['declarations'] = !expanded['declarations']"></app-tree-node>
+          [selected]="selected.id === 'declarations'"
+          (click)="expanded['declarations'] = !expanded['declarations']; selected.type = 'root'; selected.id = 'declarations'"></app-tree-node>
 
-        <ng-container *ngIf="expanded['declarations']">
+        <div [style.display]="expanded['declarations'] ? 'block' : 'none'">
           <ng-container *ngFor="let globbox of nodeToArray(cpnet.globbox)">
             <ng-container *ngFor="let block of nodeToArray(globbox.block)">
-              <app-project-tree-block [block]="block" [expanded]="expanded"></app-project-tree-block>
+              <app-project-tree-block-node [block]="block" [expanded]="expanded" [selected]="selected">
+              </app-project-tree-block-node>
             </ng-container>
           </ng-container>
-        </ng-container>
+        </div>
       </div>
 
 
       <!-- Pages -->
-
       <div>
-        <app-tree-node title="Pages" [expanded]="expanded['pages']" (click)="expanded['pages'] = !expanded['pages']">
+        <app-tree-node title="Pages" [expanded]="expanded['pages']" [selected]="selected.id === 'pages'"
+          (click)="expanded['pages'] = !expanded['pages']; selected.type = 'root'; selected.id = 'pages'">
         </app-tree-node>
 
-        <ng-container *ngIf="expanded['pages']">
-          <div class="child">
-            <ng-container *ngFor="let page of nodeToArray(cpnet.page)">
-              <div contenteditable="true" [textContent]="page.pageattr._name"
-                (input)="page.pageattr._name=$event.target.textContent"></div>
+        <div class="child" [style.display]="expanded['pages'] ? 'block' : 'none'">
+          <ng-container *ngFor="let page of pages">
+            <ng-container *ngIf="!subpages.includes(page._id)">
+              <app-project-tree-page-node [page]="page" [subpages]="subpages" [expanded]="expanded"
+                [selected]="selected">
+              </app-project-tree-page-node>
             </ng-container>
-          </div>
-        </ng-container>
+          </ng-container>
+        </div>
       </div>
 
     </div>

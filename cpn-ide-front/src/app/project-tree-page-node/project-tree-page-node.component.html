@@ -1,0 +1,24 @@
+<ng-container *ngIf="hasSubpages(); else elseBlock">
+  <app-tree-node [title]="page.pageattr._name" [expanded]="expanded[page._id]" [selected]="selected.id === page._id"
+    (click)="expanded[page._id] = !expanded[page._id]; selected.type = 'page'; selected.id = page._id">
+  </app-tree-node>
+</ng-container>
+<ng-template #elseBlock>
+  <div class="node" contenteditable="true" [ngClass]="selected.id === page._id ? 'selected' : ''" [textContent]="page.pageattr._name"
+    (click)="selected.type = 'page'; selected.id = page._id"
+    (input)="page.pageattr._name=$event.target.textContent"></div>
+</ng-template>
+
+<div class="child" [style.display]="expanded[page._id] ? 'block' : 'none'">
+  <ng-container *ngFor="let trans of nodeToArray(page.trans)">
+    <ng-container *ngIf="trans.subst && trans.subst._subpage">
+      <ng-container *ngFor="let subpage of [modelService.getPageById(trans.subst._subpage)]">
+
+        <app-project-tree-page-node [page]="subpage" [isSubpage]="true" [subpages]="subpages" [expanded]="expanded"
+          [selected]="selected">
+        </app-project-tree-page-node>
+
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</div>

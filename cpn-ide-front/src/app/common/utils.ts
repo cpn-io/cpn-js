@@ -15,3 +15,4 @@ export function addNode(parent, type, node) {
   parent[type] = list.length === 1 ? list[0] : list;
   return parent;
 }
+

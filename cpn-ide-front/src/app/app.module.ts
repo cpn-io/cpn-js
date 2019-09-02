@@ -1,4 +1,4 @@
-import { TreeNodeComponent } from './common/tree-node';
+import { TreeNodeComponent } from './project-tree/tree-node/tree-node';
 import { RegexPipe } from './pipes/regex.pipe';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -53,7 +53,8 @@ import { ApplicationSettingsComponent } from './application-settings/application
 import { SimulationPanelComponent } from './simulation-panel/simulation-panel.component';
 import { ProjectMonitorsComponent } from './project-monitors/project-monitors.component';
 import { ProjectTreeComponent } from './project-tree/project-tree.component';
-import { ProjectTreeBlockComponent } from './project-tree-block/project-tree-block.component';
+import { ProjectTreeBlockNodeComponent } from './project-tree-block-node/project-tree-block-node.component';
+import { ProjectTreePageNodeComponent } from './project-tree-page-node/project-tree-page-node.component';
 
 require('typeface-droid-sans-mono');
 
@@ -90,8 +91,9 @@ require('typeface-droid-sans-mono');
     SimulationPanelComponent,
     ProjectMonitorsComponent,
     ProjectTreeComponent,
-    ProjectTreeBlockComponent,
+    ProjectTreeBlockNodeComponent,
     TreeNodeComponent,
+    ProjectTreePageNodeComponent,
   ],
   imports: [
     BrowserModule,

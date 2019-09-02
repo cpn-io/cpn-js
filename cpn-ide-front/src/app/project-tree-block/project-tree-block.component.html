@@ -1,32 +1,39 @@
 <div class="child">
-  <div contenteditable="true" [textContent]="block.id" (input)="block.id=$event.target.textContent"></div>
+  <!-- <div contenteditable="true" [textContent]="block.id" (input)="block.id=$event.target.textContent"></div> -->
 
-  <ng-container *ngFor="let block of nodeToArray(block.block)">
-    <app-project-tree-block [block]="block"></app-project-tree-block>
+  <app-tree-node [title]="block.id" [expanded]="expanded[block._id]" (click)="expanded[block._id] = !expanded[block._id]">
+  </app-tree-node>
+
+  <ng-container *ngIf="expanded[block._id]">
+
+    <ng-container *ngFor="let block of nodeToArray(block.block)">
+      <app-project-tree-block [block]="block" [expanded]="expanded"></app-project-tree-block>
+    </ng-container>
+
+    <div class="child">
+
+      <ng-container *ngFor="let globref of nodeToArray(block.globref)">
+        <div contenteditable="true"
+          [innerHTML]="'globref ' + globref.id + ' = ' + globref.ml + ';' | colorDeclarations | safeHtml"
+          (input)="onUpdateGlobref($event.target.textContent)"></div>
+      </ng-container>
+
+      <ng-container *ngFor="let color of nodeToArray(block.color)">
+        <div contenteditable="true" [innerHTML]="'colset ' + color.id | colorDeclarations | safeHtml"
+          (input)="onUpdateColor($event.target.textContent)"></div>
+      </ng-container>
+
+      <ng-container *ngFor="let v of nodeToArray(block.var)">
+        <div contenteditable="true" [innerHTML]="'var ' + v.id | colorDeclarations | safeHtml"
+          (input)="onUpdateVar($event.target.textContent)"></div>
+      </ng-container>
+
+      <ng-container *ngFor="let ml of nodeToArray(block.ml)">
+        <div contenteditable="true" [innerHTML]="ml.__text | regex | colorDeclarations | safeHtml"
+          (input)="onUpdateMl($event.target.textContent)"></div>
+      </ng-container>
+
+    </div>
+
   </ng-container>
-
-  <div class="child">
-
-    <ng-container *ngFor="let globref of nodeToArray(block.globref)">
-      <div contenteditable="true"
-        [innerHTML]="'globref ' + globref.id + ' = ' + globref.ml + ';' | colorDeclarations | safeHtml"
-        (input)="onUpdateGlobref($event.target.textContent)"></div>
-    </ng-container>
-
-    <ng-container *ngFor="let color of nodeToArray(block.color)">
-      <div contenteditable="true" [innerHTML]="'colset ' + color.id | colorDeclarations | safeHtml"
-        (input)="onUpdateColor($event.target.textContent)"></div>
-    </ng-container>
-
-    <ng-container *ngFor="let v of nodeToArray(block.var)">
-      <div contenteditable="true" [innerHTML]="'var ' + v.id | colorDeclarations | safeHtml"
-        (input)="onUpdateVar($event.target.textContent)"></div>
-    </ng-container>
-
-    <ng-container *ngFor="let ml of nodeToArray(block.ml)">
-      <div contenteditable="true" [innerHTML]="ml.__text | regex | colorDeclarations | safeHtml"
-        (input)="onUpdateMl($event.target.textContent)"></div>
-    </ng-container>
-
-  </div>
 </div>

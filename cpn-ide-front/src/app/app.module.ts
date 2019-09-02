@@ -1,3 +1,4 @@
+import { TreeNodeComponent } from './common/tree-node';
 import { RegexPipe } from './pipes/regex.pipe';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -89,7 +90,8 @@ require('typeface-droid-sans-mono');
     SimulationPanelComponent,
     ProjectMonitorsComponent,
     ProjectTreeComponent,
-    ProjectTreeBlockComponent
+    ProjectTreeBlockComponent,
+    TreeNodeComponent,
   ],
   imports: [
     BrowserModule,

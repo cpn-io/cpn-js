@@ -1287,9 +1287,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * Clear tree component
    */
   clearTree() {
-    this.treeComponent.treeModel.collapseAll();
-    this.nodes = [];
-    this.updateTree();
+    if (this.treeComponent) {
+      this.treeComponent.treeModel.collapseAll();
+      this.nodes = [];
+      this.updateTree();
+    }
   }
 
   /**
@@ -2054,35 +2056,41 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   expandParentNode(nodeId) {
     setTimeout(() => {
-      const treeNode = this.treeComponent.treeModel.getNodeById(nodeId);
-      if (treeNode && treeNode.parent) {
-        treeNode.parent.expand();
+      if (this.treeComponent) {
+        const treeNode = this.treeComponent.treeModel.getNodeById(nodeId);
+        if (treeNode && treeNode.parent) {
+          treeNode.parent.expand();
+        }
       }
     }, 100);
   }
 
   expandNode(nodeId) {
     setTimeout(() => {
-      const treeNode = this.treeComponent.treeModel.getNodeById(nodeId);
-      if (treeNode) {
-        treeNode.expand();
+      if (this.treeComponent) {
+        const treeNode = this.treeComponent.treeModel.getNodeById(nodeId);
+        if (treeNode) {
+          treeNode.expand();
+        }
       }
     }, 100);
   }
 
   gotoNode(nodeId) {
     setTimeout(() => {
-      const treeNode = this.treeComponent.treeModel.getNodeById(nodeId);
-      if (treeNode) {
-        treeNode.setActiveAndVisible();
+      if (this.treeComponent) {
+        const treeNode = this.treeComponent.treeModel.getNodeById(nodeId);
+        if (treeNode) {
+          treeNode.setActiveAndVisible();
 
-        const scrollHtmlElement = document.getElementById('tree-scroll-pane');
-        const nodeHtmlElement = document.getElementById('node-table-' + treeNode.id);
-        if (scrollHtmlElement && nodeHtmlElement) {
-          console.log('TREE COTO NODE, nodeHtmlElement = ', nodeHtmlElement.offsetTop);
-          scrollHtmlElement.scrollTop = nodeHtmlElement.offsetTop;
+          const scrollHtmlElement = document.getElementById('tree-scroll-pane');
+          const nodeHtmlElement = document.getElementById('node-table-' + treeNode.id);
+          if (scrollHtmlElement && nodeHtmlElement) {
+            console.log('TREE COTO NODE, nodeHtmlElement = ', nodeHtmlElement.offsetTop);
+            scrollHtmlElement.scrollTop = nodeHtmlElement.offsetTop;
+          }
+
         }
-
       }
     }, 100);
   }

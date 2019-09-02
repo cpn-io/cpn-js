@@ -11,6 +11,7 @@ export class ProjectTreeBlockComponent implements OnInit {
   public nodeToArray = nodeToArray;
 
   @Input() block: object;
+  @Input() expanded: object;
 
   constructor() { }
 

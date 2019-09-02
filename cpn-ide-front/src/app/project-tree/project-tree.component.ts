@@ -12,11 +12,14 @@ import { nodeToArray } from '../common/utils';
 export class ProjectTreeComponent implements OnInit {
 
   public nodeToArray = nodeToArray;
-
-  cpnet;
+  public cpnet;
+  public expanded = [];
 
   constructor(private eventService: EventService,
-    private modelService: ModelService) { }
+    private modelService: ModelService) {
+
+    this.expanded['pages'] = true;
+  }
 
   ngOnInit() {
     this.eventService.on(Message.PROJECT_LOAD, (event) => {

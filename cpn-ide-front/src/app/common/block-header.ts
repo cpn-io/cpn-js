@@ -10,6 +10,6 @@ import { Component, Input } from "@angular/core";
     </div>`
 })
 export class BlockHeaderComponent {
-    @Input('opened') opened: boolean = false;
-    @Input('title') title: string = '';
+    @Input() opened: boolean = false;
+    @Input() title: string = '';
 }

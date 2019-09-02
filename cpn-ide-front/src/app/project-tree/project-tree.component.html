@@ -6,28 +6,33 @@
       <!-- Declarations -->
 
       <div>
-        <b>Declarations</b>
-        <div class="child">
+        <app-tree-node title="Declarations" [expanded]="expanded['declarations']"
+          (click)="expanded['declarations'] = !expanded['declarations']"></app-tree-node>
+
+        <ng-container *ngIf="expanded['declarations']">
           <ng-container *ngFor="let globbox of nodeToArray(cpnet.globbox)">
             <ng-container *ngFor="let block of nodeToArray(globbox.block)">
-              <app-project-tree-block [block]="block"></app-project-tree-block>
+              <app-project-tree-block [block]="block" [expanded]="expanded"></app-project-tree-block>
             </ng-container>
           </ng-container>
-        </div>
+        </ng-container>
       </div>
 
 
       <!-- Pages -->
 
       <div>
-        <b>Pages</b>
+        <app-tree-node title="Pages" [expanded]="expanded['pages']" (click)="expanded['pages'] = !expanded['pages']">
+        </app-tree-node>
 
-        <div class="child">
-          <ng-container *ngFor="let page of nodeToArray(cpnet.page)">
-            <div contenteditable="true" [textContent]="page.pageattr._name"
-              (input)="page.pageattr._name=$event.target.textContent"></div>
-          </ng-container>
-        </div>
+        <ng-container *ngIf="expanded['pages']">
+          <div class="child">
+            <ng-container *ngFor="let page of nodeToArray(cpnet.page)">
+              <div contenteditable="true" [textContent]="page.pageattr._name"
+                (input)="page.pageattr._name=$event.target.textContent"></div>
+            </ng-container>
+          </div>
+        </ng-container>
       </div>
 
     </div>

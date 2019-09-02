@@ -2,7 +2,7 @@
   <!-- <div contenteditable="true" [textContent]="block.id" (input)="block.id=$event.target.textContent"></div> -->
 
   <app-tree-node [title]="block.id" [expanded]="expanded[block._id]" [selected]="selected.id === block._id"
-    (click)="expanded[block._id] = !expanded[block._id]; selected.type = 'block'; selected.id = block._id">
+    (click)="expanded[block._id] = !expanded[block._id]; selected.type = 'block'; selected.id = block._id; selected.cpnElement = block">
   </app-tree-node>
 
   <div [style.display]="expanded[block._id] ? 'block' : 'none'">

@@ -1,3 +1,4 @@
+import { MonitorNamePipe } from './pipes/monitor-name.pipe';
 import { TreeNodeComponent } from './project-tree/tree-node/tree-node';
 import { RegexPipe } from './pipes/regex.pipe';
 import { BrowserModule } from '@angular/platform-browser';
@@ -70,6 +71,7 @@ require('typeface-droid-sans-mono');
     ReplaceSpacesPipe,
     SafeHtmlPipe,
     RegexPipe,
+    MonitorNamePipe,
 
     // Components
     MainFrameComponent,

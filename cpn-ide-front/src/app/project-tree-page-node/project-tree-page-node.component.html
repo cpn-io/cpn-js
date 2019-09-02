@@ -1,11 +1,11 @@
 <ng-container *ngIf="hasSubpages(); else elseBlock">
   <app-tree-node [title]="page.pageattr._name" [expanded]="expanded[page._id]" [selected]="selected.id === page._id"
-    (click)="expanded[page._id] = !expanded[page._id]; selected.type = 'page'; selected.id = page._id">
+    (click)="expanded[page._id] = !expanded[page._id]; selected.type = 'page'; selected.id = page._id; selected.cpnElement = page">
   </app-tree-node>
 </ng-container>
 <ng-template #elseBlock>
   <div class="node" contenteditable="true" [ngClass]="selected.id === page._id ? 'selected' : ''" [textContent]="page.pageattr._name"
-    (click)="selected.type = 'page'; selected.id = page._id"
+    (click)="selected.type = 'page'; selected.id = page._id; selected.cpnElement = page"
     (input)="page.pageattr._name=$event.target.textContent"></div>
 </ng-template>
 

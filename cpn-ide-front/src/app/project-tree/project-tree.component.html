@@ -3,11 +3,30 @@
 
     <div class="tree">
 
+
+      <!-- Options -->
+      <div>
+        <app-tree-node title="Options" [expanded]="expanded['options']" [selected]="selected.id === 'options'"
+          (click)="expanded['options'] = !expanded['options']; selected.type = 'root'; selected.id = 'options'; selected.cpnElement = undefined">
+        </app-tree-node>
+
+        <div [style.display]="expanded['options'] ? 'block' : 'none'">
+          <div class="child">
+            <ng-container *ngFor="let option of nodeToArray(cpnet.options.option)">
+              <div class="node" contenteditable="true"
+                [innerHTML]="option._name + ' = ' + JSON.stringify(option.value) | safeHtml"></div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
+
       <!-- Declarations -->
       <div>
         <app-tree-node title="Declarations" [expanded]="expanded['declarations']"
           [selected]="selected.id === 'declarations'"
-          (click)="expanded['declarations'] = !expanded['declarations']; selected.type = 'root'; selected.id = 'declarations'"></app-tree-node>
+          (click)="expanded['declarations'] = !expanded['declarations']; selected.type = 'root'; selected.id = 'declarations'; selected.cpnElement = undefined">
+        </app-tree-node>
 
         <div [style.display]="expanded['declarations'] ? 'block' : 'none'">
           <ng-container *ngFor="let globbox of nodeToArray(cpnet.globbox)">
@@ -19,11 +38,29 @@
         </div>
       </div>
 
+      <!-- Monitors -->
+      <div>
+        <app-tree-node title="Monitors" [expanded]="expanded['monitors']" [selected]="selected.id === 'monitors'"
+          (click)="expanded['monitors'] = !expanded['monitors']; selected.type = 'root'; selected.id = 'monitors'; selected.cpnElement = undefined">
+        </app-tree-node>
+
+        <div [style.display]="expanded['monitors'] ? 'block' : 'none'">
+          <div class="child">
+            <ng-container *ngFor="let monitor of nodeToArray(cpnet.monitorblock.monitor)">
+              <div class="node" contenteditable="true" [ngClass]="selected.id === monitor._id ? 'selected' : ''"
+                (click)="selected.type = 'monitor'; selected.id = monitor._id; selected.cpnElement = monitor"
+                [textContent]="monitor._name" (input)="monitor._name=$event.target.textContent">
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
 
       <!-- Pages -->
       <div>
         <app-tree-node title="Pages" [expanded]="expanded['pages']" [selected]="selected.id === 'pages'"
-          (click)="expanded['pages'] = !expanded['pages']; selected.type = 'root'; selected.id = 'pages'">
+          (click)="expanded['pages'] = !expanded['pages']; selected.type = 'root'; selected.id = 'pages'; selected.cpnElement = undefined">
         </app-tree-node>
 
         <div class="child" [style.display]="expanded['pages'] ? 'block' : 'none'">

@@ -19,7 +19,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   public subpages = [];
   public pages = [];
 
-  public selected = { type: undefined, id: undefined };
+  public selected = { type: undefined, id: undefined, cpnElement: undefined };
   public selectedOld = { id: undefined };
 
   constructor(public eventService: EventService,
@@ -51,8 +51,13 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   onSelectedChange() {
     console.log(this.constructor.name, 'onSelectedChange(), this.selected = ', JSON.stringify(this.selected));
 
-    if (this.selected.type === 'page') {
-      this.eventService.send(Message.PAGE_OPEN, { pageObject: this.modelService.getPageById(this.selected.id), subPages: undefined });
+    switch (this.selected.type) {
+      case 'page':
+        this.eventService.send(Message.PAGE_OPEN, { pageObject: this.selected.cpnElement, subPages: undefined });
+        break;
+      case 'monitor':
+        this.eventService.send(Message.MONITOR_OPEN, { monitorObject: this.selected.cpnElement });
+        break;
     }
   }
 

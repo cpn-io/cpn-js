@@ -10,6 +10,18 @@ export const MonitorType = {
   TEBP: 'Transition enabled'
 };
 
+export const MonitorTypeId = {
+  DC: '3',
+  MS: '0',
+  BP: '1',
+  UD: '2',
+  WIF: '4',
+  LLDC: '5',
+  CTODC: '6',
+  PCBP: '7',
+  TEBP: '8'
+};
+
 /**
  * Returns monitor type list for given element type
  * @param elementType - one of string values:
@@ -30,6 +42,25 @@ export function getMonitorTypeList(elementType) {
       return [MonitorType.DC, MonitorType.BP, MonitorType.UD, MonitorType.WIF];
   }
   return [];
+}
+
+export function getMonitorNodeTypeList(monitorTypeId) {
+  const shapeTypeList = [];
+
+  if ([MonitorTypeId.CTODC, MonitorTypeId.TEBP, MonitorTypeId.DC, MonitorTypeId.BP, MonitorTypeId.UD, MonitorTypeId.WIF].includes(monitorTypeId)) {
+    shapeTypeList.push('transition');
+  }
+  if ([MonitorTypeId.MS, MonitorTypeId.PCBP, MonitorTypeId.DC, MonitorTypeId.BP, MonitorTypeId.UD, MonitorTypeId.WIF].includes(monitorTypeId)) {
+    shapeTypeList.push('place');
+  }
+  if ([MonitorTypeId.LLDC].includes(monitorTypeId)) {
+    shapeTypeList.push('placeWithListColor');
+  }
+  if ([MonitorTypeId.DC, MonitorTypeId.BP, MonitorTypeId.UD, MonitorTypeId.WIF].includes(monitorTypeId)) {
+    shapeTypeList.push('group');
+  }
+
+  return shapeTypeList;
 }
 
 

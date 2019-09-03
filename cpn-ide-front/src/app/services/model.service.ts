@@ -1623,4 +1623,38 @@ export class ModelService {
     return cpnParentElement;
   }
 
+
+  /**
+   * Returns monitor node list with names of elements and pages
+   * @param cpnElement = monitor cpn element
+   */
+  getMonitorNodeNamesList(cpnElement) {
+    console.log('getMonitorNodeNamesList(), cpnElement = ', cpnElement);
+
+    if (!cpnElement || !cpnElement.node) {
+      return [];
+    }
+
+    const nodes = nodeToArray(cpnElement.node);
+
+    const nodeList = [];
+    for (const node of nodes) {
+      const page = this.getPageByElementId(node._idref);
+      const element = this.getPlaceOrTransitionById(node._idref);
+      if (element) {
+        nodeList.push({
+          page: page,
+          element: element.element,
+          elementType: element.type
+        });
+      }
+    }
+    return nodeList;
+  }
+
+
+
 }
+
+
+

@@ -2,7 +2,7 @@ import { Component, Input } from "@angular/core";
 
 @Component({
     selector: 'app-tree-node',
-    template: `<div class="node" [ngClass]="selected ? 'selected' : ''">
+    template: `<div [ngClass]="{'selected': selected, 'node': true}" [style.color]="color">
                     <div class="caret">
                         <i [ngClass]="expanded ? 'fas fa-caret-down' : 'fas fa-caret-right'"></i>
                     </div>
@@ -17,4 +17,5 @@ export class TreeNodeComponent {
     @Input() selected = false;
     @Input() title = '';
     @Input() bold = true;
+    @Input() color = 'black';
 }

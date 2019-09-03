@@ -4,6 +4,14 @@ import { Message } from '../common/message';
 import { ModelService } from '../services/model.service';
 import { AccessCpnService } from '../services/access-cpn.service';
 import { nodeToArray } from '../common/utils';
+import { getMonitorNodeTypeList } from '../common/monitors';
+
+import {
+  CPN_LABEL,
+  CPN_PLACE,
+  CPN_TRANSITION,
+  is,
+} from '../../lib/cpn-js/util/ModelUtil';
 
 @Component({
   selector: 'app-project-monitors',
@@ -16,9 +24,11 @@ export class ProjectMonitorsComponent implements OnInit {
   nodeToArray = nodeToArray;
 
   cpnElement;
-  nodeList = [];
   optionTimed = false;
   optionLogging = false;
+
+  nodeList = [];
+  nodeTypeList = [];
 
   boolValues = [
     'true',
@@ -32,6 +42,9 @@ export class ProjectMonitorsComponent implements OnInit {
     public accessCpnService: AccessCpnService) { }
 
   ngOnInit() {
+    this.eventService.on(Message.PROJECT_LOAD, () => this.onLoadMonitor(undefined));
+    this.eventService.on(Message.MODEL_RELOAD, () => this.onLoadMonitor(undefined));
+
     this.eventService.on(Message.MONITOR_OPEN, (event) => this.onLoadMonitor(event.monitorObject));
     this.eventService.on(Message.SHAPE_SELECT, (event) => { if (this.createNodeIntent) { this.onCreateNode(event); } });
 
@@ -60,32 +73,6 @@ export class ProjectMonitorsComponent implements OnInit {
     return undefined;
   }
 
-  getNodes() {
-    if (!this.cpnElement || !this.cpnElement.node) {
-      return undefined;
-    }
-
-    const nodes = nodeToArray(this.cpnElement.node);
-
-    // console.log('getNodes(), nodes = ', nodes);
-
-    const nodeList = [];
-    for (const node of nodes) {
-      const page = this.modelService.getPageByElementId(node._idref);
-      const element = this.modelService.getPlaceOrTransitionById(node._idref);
-      if (element) {
-        nodeList.push({
-          page: page,
-          element: element.element,
-          elementType: element.type
-        });
-      }
-    }
-    // console.log('getNodes(), nodeList = ', nodeList);
-
-    return nodeList;
-  }
-
   setCreateNodeIntent(enable) {
     this.createNodeIntent = enable;
     document.body.style.cursor = enable ? 'crosshair' : 'default';
@@ -93,16 +80,20 @@ export class ProjectMonitorsComponent implements OnInit {
 
   onLoadMonitor(cpnElement) {
     this.cpnElement = cpnElement;
-    this.nodeList = this.getNodes();
+    this.nodeList = this.modelService.getMonitorNodeNamesList(this.cpnElement);
 
     this.optionTimed = this.getOption('Timed');
     this.optionLogging = this.getOption('Logging');
+
+    this.nodeTypeList = this.cpnElement ? getMonitorNodeTypeList(this.cpnElement._type) : [];
 
     console.log('onLoadMonitor(), this.cpnElement = ', this.cpnElement);
     console.log('onLoadMonitor(), this.nodeList = ', this.nodeList);
   }
 
   onCreateNode(event) {
+    this.setCreateNodeIntent(false);
+
     const element = event.element.labelTarget ?
       event.element.labelTarget.labelTarget || event.element.labelTarget :
       event.element;
@@ -110,15 +101,27 @@ export class ProjectMonitorsComponent implements OnInit {
     if (element && element.cpnElement) {
       console.log('onCreateNode(), element.cpnElement = ', element.cpnElement);
 
-      const pages = this.modelService.getAllPages();
-      for (const page of pages) {
-        const instances = this.modelService.getSubInstances(page);
-        if (instances) {
-          for (const instance of instances) {
-            console.log('onCreateNode(), instance = ', instance);
-          }
+      if (is(element, CPN_PLACE)) {
+        if (!this.nodeTypeList.includes('place')) {
+          return;
         }
       }
+
+      if (is(element, CPN_TRANSITION)) {
+        if (!this.nodeTypeList.includes('transition')) {
+          return;
+        }
+      }
+
+      // const pages = this.modelService.getAllPages();
+      // for (const page of pages) {
+      //   const instances = this.modelService.getSubInstances(page);
+      //   if (instances) {
+      //     for (const instance of instances) {
+      //       console.log('onCreateNode(), instance = ', instance);
+      //     }
+      //   }
+      // }
 
       const monitorNodeList = nodeToArray(this.cpnElement.node) || [];
       monitorNodeList.push({
@@ -129,8 +132,6 @@ export class ProjectMonitorsComponent implements OnInit {
       this.onLoadMonitor(this.cpnElement);
       this.updateChanges();
     }
-
-    this.setCreateNodeIntent(false);
   }
 
   onUpdateDeclaration(event) {
@@ -183,8 +184,23 @@ export class ProjectMonitorsComponent implements OnInit {
   }
 
   onNewNode() {
-    console.log('onNewNode()');
+    console.log('onNewNode(), this.cpnElement = ', this.cpnElement);
+    console.log('onNewNode(), this.nodeTypeList = ', this.nodeTypeList);
     this.setCreateNodeIntent(true);
+
+    const availableNodeIds = [];
+
+    if (this.nodeTypeList.includes('place')) {
+      for (const p of this.modelService.getAllPlaces()) {
+        availableNodeIds.push(p._id);
+      }
+    }
+    if (this.nodeTypeList.includes('transition')) {
+      for (const t of this.modelService.getAllTrans()) {
+        availableNodeIds.push(t._id);
+      }
+    }
+    this.eventService.send(Message.MONITOR_SET_AVAILABLE_NODES, { availableNodeIds: availableNodeIds });
   }
 
   onDeleteNode(node) {
@@ -206,6 +222,7 @@ export class ProjectMonitorsComponent implements OnInit {
   updateChanges() {
     // this.eventService.send(Message.MODEL_UPDATE_DIAGRAM, { cpnElement: this.cpnElement });
     this.eventService.send(Message.MODEL_CHANGED);
+    this.eventService.send(Message.MONITOR_SET_AVAILABLE_NODES, { availableNodeIds: [] });
   }
 
   updateOptionValue(event, name) {

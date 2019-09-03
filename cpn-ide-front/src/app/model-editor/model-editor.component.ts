@@ -190,7 +190,9 @@ export class ModelEditorComponent implements OnInit {
       if (this.pageId === data.parent) {
         this.modeling.changeTransitionSubPageLabel(data.id, data.name);
       }
-    })
+    });
+
+    this.eventService.on(Message.MONITOR_SET_AVAILABLE_NODES, (event) => this.updateAlailableStatus(event.availableNodeIds));
 
     // Diagram events
 
@@ -473,6 +475,14 @@ export class ModelEditorComponent implements OnInit {
     // }
 
     this.checkPorts();
+
+    this.modeling.repaintElements();
+  }
+
+  updateAlailableStatus(availableIds) {
+    console.log('updateAlailableStatus(), availableIds = ', availableIds);
+
+    this.stateProvider.setReadyState(availableIds);
 
     this.modeling.repaintElements();
   }

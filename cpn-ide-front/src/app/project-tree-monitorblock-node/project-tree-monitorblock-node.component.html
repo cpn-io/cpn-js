@@ -1,0 +1,20 @@
+<app-tree-node [title]="monitorblock._name" [expanded]="expanded[monitorblock._name]"
+  [selected]="selected.id === monitorblock._name"
+  (click)="expanded[monitorblock._name] = !expanded[monitorblock._name]; selected.type = 'monitorblock'; selected.id = monitorblock._name; selected.cpnElement = monitorblock">
+</app-tree-node>
+
+<div [style.display]="expanded[monitorblock._name] ? 'block' : 'none'">
+  <div class="child">
+
+    <ng-container *ngIf="monitorblock.monitorblock">
+      <app-project-tree-monitorblock-node [monitorblock]="monitorblock.monitorblock" [expanded]="expanded"
+        [selected]="selected"> </app-project-tree-monitorblock-node>
+    </ng-container>
+
+    <ng-container *ngFor="let monitor of nodeToArray(monitorblock.monitor)">
+      <app-project-tree-monitor-node [monitor]="monitor" [expanded]="expanded" [selected]="selected">
+      </app-project-tree-monitor-node>
+    </ng-container>
+
+  </div>
+</div>

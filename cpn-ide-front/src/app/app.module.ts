@@ -56,6 +56,8 @@ import { ProjectMonitorsComponent } from './project-monitors/project-monitors.co
 import { ProjectTreeComponent } from './project-tree/project-tree.component';
 import { ProjectTreeBlockNodeComponent } from './project-tree-block-node/project-tree-block-node.component';
 import { ProjectTreePageNodeComponent } from './project-tree-page-node/project-tree-page-node.component';
+import { ProjectTreeMonitorNodeComponent } from './project-tree-monitor-node/project-tree-monitor-node.component';
+import { ProjectTreeMonitorblockNodeComponent } from './project-tree-monitorblock-node/project-tree-monitorblock-node.component';
 
 require('typeface-droid-sans-mono');
 
@@ -96,6 +98,8 @@ require('typeface-droid-sans-mono');
     ProjectTreeBlockNodeComponent,
     TreeNodeComponent,
     ProjectTreePageNodeComponent,
+    ProjectTreeMonitorNodeComponent,
+    ProjectTreeMonitorblockNodeComponent,
   ],
   imports: [
     BrowserModule,

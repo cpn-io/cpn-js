@@ -10,9 +10,9 @@ export class ProjectTreeBlockNodeComponent implements OnInit {
 
   public nodeToArray = nodeToArray;
 
-  @Input() block: object;
-  @Input() expanded: object;
-  @Input() selected: object;
+  @Input() public block: any;
+  @Input() public expanded: any;
+  @Input() public selected: any;
 
   constructor() { }
 

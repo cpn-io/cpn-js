@@ -1,0 +1,7 @@
+<app-tree-node [title]="monitor._name" [bold]="false" [expanded]="expanded[monitor._id]"
+  [selected]="selected.id === monitor._id"
+  (click)="expanded[monitor._id] = !expanded[monitor._id]; selected.type = 'monitor'; selected.id = monitor._id; selected.cpnElement = monitor">
+</app-tree-node>
+
+<div [style.display]="expanded[monitor._id] ? 'block' : 'none'">
+</div>

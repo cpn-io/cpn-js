@@ -7,8 +7,10 @@
 
   <div [style.display]="expanded[block._id] ? 'block' : 'none'">
 
-    <ng-container *ngFor="let block of nodeToArray(block.block)">
-      <app-project-tree-block-node [block]="block" [expanded]="expanded"></app-project-tree-block-node>
+    <ng-container *ngIf="block.block">
+      <ng-container *ngFor="let subblock of nodeToArray(block.block)">
+        <app-project-tree-block-node [block]="subblock" [expanded]="expanded" [selected]="selected"></app-project-tree-block-node>
+      </ng-container>
     </ng-container>
 
     <div class="child">

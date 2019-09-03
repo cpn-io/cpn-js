@@ -121,7 +121,7 @@ export class ProjectService {
       .set('Accept', 'application/xml');
 
     // const modelFile = 'baseModel_ID1008016.cpn';
-    const modelFile = 'discretemodel_task1.cpn';
+    // const modelFile = 'discretemodel_task1.cpn';
 
     // const modelFile = 'erdp.cpn';
     // const modelFile = 'hoponhopoff-color.cpn';
@@ -140,7 +140,7 @@ export class ProjectService {
 
     // const modelFile = 'fuelstation.cpn';
 
-    // const modelFile = 'monitors.cpn';
+    const modelFile = 'monitors.cpn';
 
     const url = './assets/cpn/' + modelFile;
     this.http.get(url, { headers: headers, responseType: 'text' })

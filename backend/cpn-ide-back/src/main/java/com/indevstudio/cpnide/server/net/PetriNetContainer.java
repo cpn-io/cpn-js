@@ -39,7 +39,7 @@ public class PetriNetContainer {
     private ConcurrentHashMap<String, Checker> usersCheckers = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, HighLevelSimulator> usersSimulator = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, NetInfo> netInf = new ConcurrentHashMap<>();
-    // HighLevelSimulator _sim;
+    HighLevelSimulator _sim;
     private final static Object lock = new Object();
 
     @PostConstruct
@@ -56,15 +56,15 @@ public class PetriNetContainer {
             // HighLevelSimulator sim = usersSimulator.get(sessionId);
             // if (sim == null)
             //    sim = _sim;
-            HighLevelSimulator sim = usersSimulator.get(sessionId);
-            if (sim != null)
-                sim.release();
+            //HighLevelSimulator sim = usersSimulator.get(sessionId);
+            if (_sim != null)
+                _sim.release();
 
-            sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
+            _sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
 
-            Checker checker = new Checker(net, null, sim);
+            Checker checker = new Checker(net, null, _sim);
             usersCheckers.put(sessionId, checker);
-            usersSimulator.put(sessionId, sim);
+            usersSimulator.put(sessionId, _sim);
             checker.checkInitializing();
         }
     }
@@ -165,6 +165,7 @@ public class PetriNetContainer {
             checker.checkMonitors();
             checker.generateNonPlaceInstances();
             checker.initialiseSimulationScheduler();
+            checker.instantiateSMLInterface();
 
 
             sim.initialState();

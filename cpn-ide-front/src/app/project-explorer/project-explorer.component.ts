@@ -41,8 +41,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   JSON = JSON;
 
   tabList = [
-    { id: 'projectTree', name: 'Project tree' },
-    // { id: 'explorerPanel', name: 'Project explorer' },
+    { id: 'explorerPanel', name: 'Project explorer' },
+    { id: 'projectTree', name: 'Project explorer (New)' },
     { id: 'applicationSettings', name: 'Application settings' },
   ];
 
@@ -2238,6 +2238,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     this.selectedNode = event.node;
     this.openedLabel[this.selectedNode.id] = true;
+
+    this.expandNode(this.selectedNode.id);
 
     console.log(event.node);
 

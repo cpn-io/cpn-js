@@ -4,46 +4,65 @@
     <div class="tree">
 
 
-      <!-- Options -->
-      <div>
-        <app-tree-node title="Options" [expanded]="expanded['options']" [selected]="selected.id === 'options'"
-          (click)="expanded['options'] = !expanded['options']; selected.type = 'root'; selected.id = 'options'; selected.cpnElement = undefined">
-        </app-tree-node>
+      <!-- Project root -->
+      <app-tree-node [title]="'Project: ' + project.name" [expanded]="true">
+      </app-tree-node>
 
-        <div [style.display]="expanded['options'] ? 'block' : 'none'">
-          <div class="child">
-            <ng-container *ngFor="let option of nodeToArray(cpnet.options.option)">
-              <div class="node" contenteditable="true"
-                [innerHTML]="option._name + ' = ' + JSON.stringify(option.value) | safeHtml"></div>
+      <div class="child">
+
+        <div class="node" [textContent]="'Step: 0'"></div>
+        <div class="node" [textContent]="'Time: 0'"></div>
+
+        <!-- Options -->
+        <div>
+          <app-tree-node title="Options" [expanded]="expanded['options']" [selected]="selected.id === 'options'"
+            (click)="expanded['options'] = !expanded['options']; selected.type = 'root'; selected.id = 'options'; selected.cpnElement = undefined">
+          </app-tree-node>
+
+          <div [style.display]="expanded['options'] ? 'block' : 'none'">
+            <div class="child">
+
+              <ng-container *ngFor="let option of nodeToArray(cpnet.options.option)">
+                <!-- <div class="node" contenteditable="true"
+                  [innerHTML]="option._name + ' = ' + JSON.stringify(option.value) | safeHtml">
+                </div> -->
+
+                <div *ngIf="option.value && option.value.boolean">
+                  <input type="checkbox" [checked]="option.value.boolean === 'true'" style="margin-top: 3px; margin-right: 5px"
+                    (change)="option.value.boolean = $event.target.checked ? 'true' : 'false'">
+                  <span>{{ option._name | optionName }}</span>
+                </div>
+
+              </ng-container>
+
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Declarations -->
+        <div>
+          <app-tree-node title="Declarations" [expanded]="expanded['declarations']"
+            [selected]="selected.id === 'declarations'"
+            (click)="expanded['declarations'] = !expanded['declarations']; selected.type = 'root'; selected.id = 'declarations'; selected.cpnElement = undefined">
+          </app-tree-node>
+
+          <div [style.display]="expanded['declarations'] ? 'block' : 'none'">
+            <ng-container *ngFor="let globbox of nodeToArray(cpnet.globbox)">
+              <ng-container *ngFor="let block of nodeToArray(globbox.block)">
+                <app-project-tree-block-node [block]="block" [expanded]="expanded" [selected]="selected">
+                </app-project-tree-block-node>
+              </ng-container>
             </ng-container>
           </div>
         </div>
-      </div>
 
+        <!-- Monitors -->
+        <div>
+          <app-project-tree-monitorblock-node [monitorblock]="cpnet.monitorblock" [expanded]="expanded"
+            [selected]="selected"> </app-project-tree-monitorblock-node>
 
-      <!-- Declarations -->
-      <div>
-        <app-tree-node title="Declarations" [expanded]="expanded['declarations']"
-          [selected]="selected.id === 'declarations'"
-          (click)="expanded['declarations'] = !expanded['declarations']; selected.type = 'root'; selected.id = 'declarations'; selected.cpnElement = undefined">
-        </app-tree-node>
-
-        <div [style.display]="expanded['declarations'] ? 'block' : 'none'">
-          <ng-container *ngFor="let globbox of nodeToArray(cpnet.globbox)">
-            <ng-container *ngFor="let block of nodeToArray(globbox.block)">
-              <app-project-tree-block-node [block]="block" [expanded]="expanded" [selected]="selected">
-              </app-project-tree-block-node>
-            </ng-container>
-          </ng-container>
-        </div>
-      </div>
-
-      <!-- Monitors -->
-      <div>
-        <app-project-tree-monitorblock-node [monitorblock]="cpnet.monitorblock" [expanded]="expanded"
-          [selected]="selected"> </app-project-tree-monitorblock-node>
-          
-        <!-- <app-tree-node title="Monitors" [expanded]="expanded['monitors']" [selected]="selected.id === 'monitors'"
+          <!-- <app-tree-node title="Monitors" [expanded]="expanded['monitors']" [selected]="selected.id === 'monitors'"
           (click)="expanded['monitors'] = !expanded['monitors']; selected.type = 'root'; selected.id = 'monitors'; selected.cpnElement = undefined">
         </app-tree-node>
 
@@ -57,24 +76,26 @@
             </ng-container>
           </div>
         </div> -->
-      </div>
-
-
-      <!-- Pages -->
-      <div>
-        <app-tree-node title="Pages" [expanded]="expanded['pages']" [selected]="selected.id === 'pages'"
-          (click)="expanded['pages'] = !expanded['pages']; selected.type = 'root'; selected.id = 'pages'; selected.cpnElement = undefined">
-        </app-tree-node>
-
-        <div class="child" [style.display]="expanded['pages'] ? 'block' : 'none'">
-          <ng-container *ngFor="let page of pages">
-            <ng-container *ngIf="!subpages.includes(page._id)">
-              <app-project-tree-page-node [page]="page" [subpages]="subpages" [expanded]="expanded"
-                [selected]="selected">
-              </app-project-tree-page-node>
-            </ng-container>
-          </ng-container>
         </div>
+
+
+        <!-- Pages -->
+        <div>
+          <app-tree-node title="Pages" [expanded]="expanded['pages']" [selected]="selected.id === 'pages'"
+            (click)="expanded['pages'] = !expanded['pages']; selected.type = 'root'; selected.id = 'pages'; selected.cpnElement = undefined">
+          </app-tree-node>
+
+          <div class="child" [style.display]="expanded['pages'] ? 'block' : 'none'">
+            <ng-container *ngFor="let page of pages">
+              <ng-container *ngIf="!subpages.includes(page._id)">
+                <app-project-tree-page-node [page]="page" [subpages]="subpages" [expanded]="expanded"
+                  [selected]="selected">
+                </app-project-tree-page-node>
+              </ng-container>
+            </ng-container>
+          </div>
+        </div>
+
       </div>
 
     </div>

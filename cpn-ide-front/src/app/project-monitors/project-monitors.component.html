@@ -58,6 +58,10 @@
       [readonly]="accessCpnService.isSimulation" (changed)="updateChanges()">
     </app-text-edit-row>
 
+    <!-- TypeID -->
+    <app-text-edit-row name="Type" [object]="cpnElement" field="_type" [readonly]="true">
+    </app-text-edit-row>
+
     <!-- Timed -->
     <app-text-edit-row *ngIf="optionTimed" type="select" name="Timed" [object]="optionTimed" field="_value"
       (changed)="updateOptionValue($event, 'Timed')" [options]="boolValues" [readonly]="accessCpnService.isSimulation">
@@ -87,7 +91,7 @@
       </ul>
 
       <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
+        <li class="nav-item" *ngIf="nodeList.length === 0 || this.nodeTypeList.includes('group')">
           <a (click)="onNewNode()" class="nav-link" href="#" title="New node">
             <i class="fas fa-plus"></i>
             <span>New node</span>

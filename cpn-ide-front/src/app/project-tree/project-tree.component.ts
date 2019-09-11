@@ -14,6 +14,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   public nodeToArray = nodeToArray;
   public JSON = JSON;
 
+  public project;
   public cpnet;
   public expanded = [];
   public subpages = [];
@@ -30,6 +31,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
   ngOnInit() {
     this.eventService.on(Message.PROJECT_LOAD, () => this.loadProject());
+    this.eventService.on(Message.MODEL_RELOAD, () => this.loadProject());
   }
 
   ngDoCheck() {
@@ -41,6 +43,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
   loadProject() {
     this.cpnet = this.modelService.getCpn();
+    this.project = this.modelService.getProject();
     this.loadPages();
   }
 

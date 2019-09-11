@@ -39,13 +39,13 @@ public class PetriNetContainer {
     private ConcurrentHashMap<String, Checker> usersCheckers = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, HighLevelSimulator> usersSimulator = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, NetInfo> netInf = new ConcurrentHashMap<>();
-    HighLevelSimulator _sim;
+    // HighLevelSimulator _sim;
     private final static Object lock = new Object();
 
     @PostConstruct
     void Init() throws Exception
     {
-            _sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
+            //_sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
     }
 
     public void CreateNewNet(String sessionId, String xml) throws Exception {
@@ -53,9 +53,14 @@ public class PetriNetContainer {
             PetriNet net = DOMParser.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)), sessionId);
             usersNets.put(sessionId, net);
 //
+            // HighLevelSimulator sim = usersSimulator.get(sessionId);
+            // if (sim == null)
+            //    sim = _sim;
             HighLevelSimulator sim = usersSimulator.get(sessionId);
-            if (sim == null)
-                sim = _sim;
+            if (sim != null)
+                sim.release();
+
+            sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
 
             Checker checker = new Checker(net, null, sim);
             usersCheckers.put(sessionId, checker);

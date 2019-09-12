@@ -58,7 +58,7 @@ public class PetriNetContainer {
             //    sim = _sim;
             //HighLevelSimulator sim = usersSimulator.get(sessionId);
             if (_sim != null)
-                _sim.release();
+                _sim.destroy();
 
             _sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
 

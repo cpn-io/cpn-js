@@ -22,18 +22,8 @@
           <div [style.display]="expanded['options'] ? 'block' : 'none'">
             <div class="child">
 
-              <ng-container *ngFor="let option of nodeToArray(cpnet.options.option)">
-                <!-- <div class="node" contenteditable="true"
-                  [innerHTML]="option._name + ' = ' + JSON.stringify(option.value) | safeHtml">
-                </div> -->
-
-                <div *ngIf="option.value && option.value.boolean">
-                  <input type="checkbox" [checked]="option.value.boolean === 'true'" style="margin-top: 3px; margin-right: 5px"
-                    (change)="option.value.boolean = $event.target.checked ? 'true' : 'false'">
-                  <span>{{ option._name | optionName }}</span>
-                </div>
-
-              </ng-container>
+              <app-project-tree-options-node [optionList]="nodeToArray(cpnet.options.option)" [expanded]="expanded"
+                [selected]="selected"></app-project-tree-options-node>
 
             </div>
           </div>

@@ -1,0 +1,33 @@
+<ng-container *ngFor="let option of optionList">
+
+  <ng-container *ngIf="['realtimestamp', 'fair_be', 'global_fairness', 'outputdirectory'].includes(option._name)">
+    <div *ngIf="option.value && option.value.boolean">
+      <input type="checkbox" [checked]="option.value.boolean === 'true'" style="margin-top: 3px; margin-right: 5px"
+        (change)="option.value.boolean = $event.target.checked ? 'true' : 'false'">
+      <span>{{ option._name | optionName }}</span>
+    </div>
+
+    <div *ngIf="option.value && option.value.text">
+      <span>{{ option._name | optionName }}</span>
+      &nbsp;
+      <span contenteditable="true" [textContent]="option.value.text"
+        (input)="option.value.text=$event.target.textContent"></span>
+    </div>
+  </ng-container>
+
+</ng-container>
+
+<!-- Performance report statistics -->
+<app-tree-node title="Performance report statistics" [expanded]="expanded[title]" [selected]="selected.id === title"
+  (click)="expanded[title] = !expanded[title]; selected.type = 'root'; selected.id = title; selected.cpnElement = undefined; console.log('title = ', title);">
+</app-tree-node>
+
+<div [style.display]="expanded['Performance report statistics'] ? 'block' : 'none'">
+  <div class="child">
+
+  <div>
+    ddddddddddddddddd
+  </div>
+
+  </div>
+</div>

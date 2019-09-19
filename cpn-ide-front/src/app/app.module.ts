@@ -59,6 +59,7 @@ import { ProjectTreePageNodeComponent } from './project-tree-page-node/project-t
 import { ProjectTreeMonitorNodeComponent } from './project-tree-monitor-node/project-tree-monitor-node.component';
 import { ProjectTreeMonitorblockNodeComponent } from './project-tree-monitorblock-node/project-tree-monitorblock-node.component';
 import { ProjectTreeOptionsNodeComponent } from './project-tree-options-node/project-tree-options-node.component';
+import { ProjectTreeOptionNodeComponent } from './project-tree-option-node/project-tree-option-node.component';
 
 require('typeface-droid-sans-mono');
 
@@ -102,6 +103,7 @@ require('typeface-droid-sans-mono');
     ProjectTreeMonitorNodeComponent,
     ProjectTreeMonitorblockNodeComponent,
     ProjectTreeOptionsNodeComponent,
+    ProjectTreeOptionNodeComponent,
   ],
   imports: [
     BrowserModule,

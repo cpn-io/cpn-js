@@ -1,0 +1,12 @@
+<div *ngIf="option.value && option.value.boolean">
+  <input type="checkbox" [checked]="option.value.boolean === 'true'" style="margin-top: 3px; margin-right: 5px"
+    (change)="option.value.boolean = $event.target.checked ? 'true' : 'false'">
+  <span>{{ option._name | optionName }}</span>
+</div>
+
+<div *ngIf="option.value && option.value.text">
+  <span>{{ option._name | optionName }}</span>
+  &nbsp;
+  <span contenteditable="true" [textContent]="option.value.text"
+    (input)="option.value.text=$event.target.textContent"></span>
+</div>

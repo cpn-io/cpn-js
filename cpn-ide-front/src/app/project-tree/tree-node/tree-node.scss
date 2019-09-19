@@ -1,21 +1,38 @@
 .node {
-    cursor: pointer;
-    padding: 1px 2px;
+  cursor: pointer;
+  padding: 1px 2px;
 }
 
 .caret {
-    width: 12px;
-    float: left;
+  width: 12px;
+  float: left;
+  margin-left: -15px;
 }
 
 .title {
-    float: none;
+  float: none;
 }
 
 .bold {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .selected {
   background-color: rgb(217, 242, 250);
+}
+
+div.child {
+  padding-left: 20px;
+
+  // display: none;
+  transition: opacity 0.3s ease-out;
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+// display: block;
+div.child.expanded {
+  opacity: 1;
+  height: auto;
 }

@@ -16,20 +16,20 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
   public project;
   public cpnet;
-  public expanded = [];
-  public subpages = [];
-  public pages = [];
+  public expanded;
+  public subpages;
+  public pages;
 
-  public selected = { type: undefined, id: undefined, cpnElement: undefined };
-  public selectedOld = { id: undefined };
+  public selected;
+  public selectedOld;
 
   constructor(public eventService: EventService,
     public modelService: ModelService) {
-
-    this.expanded['pages'] = true;
   }
 
   ngOnInit() {
+    this.reset();
+
     this.eventService.on(Message.PROJECT_LOAD, () => this.loadProject());
     this.eventService.on(Message.MODEL_RELOAD, () => this.loadProject());
   }
@@ -41,7 +41,21 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     }
   }
 
+  reset() {
+    this.expanded = [];
+    this.subpages = [];
+    this.pages = [];
+
+    this.selected = { type: undefined, id: undefined, cpnElement: undefined };
+    this.selectedOld = { id: undefined };
+
+    this.expanded['pages'] = true;
+    this.expanded['project'] = true;
+  }
+
   loadProject() {
+    this.reset();
+
     this.cpnet = this.modelService.getCpn();
     this.project = this.modelService.getProject();
     this.loadPages();

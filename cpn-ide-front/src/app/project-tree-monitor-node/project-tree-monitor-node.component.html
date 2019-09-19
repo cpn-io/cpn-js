@@ -1,14 +1,8 @@
 <app-tree-node [id]="monitor._id" [title]="monitor._name" [bold]="false" color="darkblue" [expanded]="expanded"
   [selected]="selected" [type]="'monitor'" [cpnElement]="monitor">
-</app-tree-node>
-
-<div class="child" [style.display]="expanded[monitor._id] ? 'block' : 'none'">
 
   <!-- Type -->
   <app-tree-node [id]="'type_' + monitor._id" [title]="'Type: ' + monitor._typedescription" [bold]="false">
-  </app-tree-node>
-
-  <div class="child">
     <ng-container *ngFor="let option of nodeToArray(monitor.option)">
       <div class="node">
         <span class="option">{{option._name}}</span>:
@@ -17,19 +11,16 @@
         </span>
       </div>
     </ng-container>
-  </div>
+  </app-tree-node>
 
   <!-- Nodes -->
   <app-tree-node [title]="'Nodes '" [bold]="false">
-  </app-tree-node>
-
-  <div class="child">
     <ng-container *ngFor="let node of nodeList">
       <div class="node">
         <span class="option"> {{ node.page.pageattr._name }} </span>:
         <span> {{ node.element.text }} ({{ node.elementType }}) </span>
       </div>
     </ng-container>
-  </div>
+  </app-tree-node>
 
-</div>
+</app-tree-node>

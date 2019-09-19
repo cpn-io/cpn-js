@@ -1,8 +1,12 @@
-<div [ngClass]="{'selected': selected[id], 'node': true}" [style.color]="color" (click)="onClick()">
-    <div class="caret">
+<div [ngClass]="{'selected': selected.id === id, 'node': true}" [style.color]="color" (click)="onClick()">
+    <div class="caret" *ngIf="showBullet">
         <i [ngClass]="expanded[id] ? 'fas fa-caret-down' : 'fas fa-caret-right'"></i>
     </div>
     <div class="title" [ngClass]="{ 'active' : expanded[id], 'bold': bold }">
         {{ title }}
     </div>
+</div>
+
+<div class="child" [ngClass]="{ 'expanded' : expanded[id] }">
+    <ng-content></ng-content>
 </div>

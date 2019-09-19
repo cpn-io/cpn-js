@@ -11,11 +11,11 @@ export class ProjectTreePageNodeComponent implements OnInit {
 
   public nodeToArray = nodeToArray;
 
-  @Input() page: any;
+  @Input() page: any = {};
   @Input() isSubpage = false;
-  @Input() subpages: any;
-  @Input() expanded: object;
-  @Input() selected: object;
+  @Input() subpages: any = [];
+  @Input() expanded: any = [];
+  @Input() selected: any = {};
 
   constructor(public modelService: ModelService) { }
 

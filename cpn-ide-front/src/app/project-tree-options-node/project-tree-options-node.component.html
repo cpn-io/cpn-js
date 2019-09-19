@@ -18,16 +18,16 @@
 </ng-container>
 
 <!-- Performance report statistics -->
-<app-tree-node title="Performance report statistics" [expanded]="expanded[title]" [selected]="selected.id === title"
-  (click)="expanded[title] = !expanded[title]; selected.type = 'root'; selected.id = title; selected.cpnElement = undefined; console.log('title = ', title);">
+<app-tree-node id="options-performance" title="Performance report statistics" [expanded]="expanded"
+  [selected]="selected" [type]="'options-performance'" [cpnElement]="undefined">
 </app-tree-node>
 
 <div [style.display]="expanded['Performance report statistics'] ? 'block' : 'none'">
   <div class="child">
 
-  <div>
-    ddddddddddddddddd
-  </div>
+    <div>
+      ddddddddddddddddd
+    </div>
 
   </div>
 </div>

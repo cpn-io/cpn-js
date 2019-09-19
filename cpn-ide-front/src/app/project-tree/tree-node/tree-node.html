@@ -1,0 +1,8 @@
+<div [ngClass]="{'selected': selected[id], 'node': true}" [style.color]="color" (click)="onClick()">
+    <div class="caret">
+        <i [ngClass]="expanded[id] ? 'fas fa-caret-down' : 'fas fa-caret-right'"></i>
+    </div>
+    <div class="title" [ngClass]="{ 'active' : expanded[id], 'bold': bold }">
+        {{ title }}
+    </div>
+</div>

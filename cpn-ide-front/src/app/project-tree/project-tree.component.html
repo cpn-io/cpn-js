@@ -5,7 +5,7 @@
 
 
       <!-- Project root -->
-      <app-tree-node [title]="'Project: ' + project.name" [expanded]="true">
+      <app-tree-node [title]="'Project: ' + project.name">
       </app-tree-node>
 
       <div class="child">
@@ -15,8 +15,8 @@
 
         <!-- Options -->
         <div>
-          <app-tree-node title="Options" [expanded]="expanded['options']" [selected]="selected.id === 'options'"
-            (click)="expanded['options'] = !expanded['options']; selected.type = 'root'; selected.id = 'options'; selected.cpnElement = undefined">
+          <app-tree-node id="options" title="Options" [expanded]="expanded" [selected]="selected" [type]="'options'"
+            [cpnElement]="undefined">
           </app-tree-node>
 
           <div [style.display]="expanded['options'] ? 'block' : 'none'">
@@ -32,9 +32,8 @@
 
         <!-- Declarations -->
         <div>
-          <app-tree-node title="Declarations" [expanded]="expanded['declarations']"
-            [selected]="selected.id === 'declarations'"
-            (click)="expanded['declarations'] = !expanded['declarations']; selected.type = 'root'; selected.id = 'declarations'; selected.cpnElement = undefined">
+          <app-tree-node id="declarations" title="Declarations" [expanded]="expanded" [selected]="selected"
+            [type]="'root'" [cpnElement]="undefined">
           </app-tree-node>
 
           <div [style.display]="expanded['declarations'] ? 'block' : 'none'">
@@ -51,28 +50,12 @@
         <div>
           <app-project-tree-monitorblock-node [monitorblock]="cpnet.monitorblock" [expanded]="expanded"
             [selected]="selected"> </app-project-tree-monitorblock-node>
-
-          <!-- <app-tree-node title="Monitors" [expanded]="expanded['monitors']" [selected]="selected.id === 'monitors'"
-          (click)="expanded['monitors'] = !expanded['monitors']; selected.type = 'root'; selected.id = 'monitors'; selected.cpnElement = undefined">
-        </app-tree-node>
-
-        <div [style.display]="expanded['monitors'] ? 'block' : 'none'">
-          <div class="child">
-            <ng-container *ngFor="let monitor of nodeToArray(cpnet.monitorblock.monitor)">
-              <div class="node" contenteditable="true" [ngClass]="selected.id === monitor._id ? 'selected' : ''"
-                (click)="selected.type = 'monitor'; selected.id = monitor._id; selected.cpnElement = monitor"
-                [textContent]="monitor._name" (input)="monitor._name=$event.target.textContent">
-              </div>
-            </ng-container>
-          </div>
-        </div> -->
         </div>
-
 
         <!-- Pages -->
         <div>
-          <app-tree-node title="Pages" [expanded]="expanded['pages']" [selected]="selected.id === 'pages'"
-            (click)="expanded['pages'] = !expanded['pages']; selected.type = 'root'; selected.id = 'pages'; selected.cpnElement = undefined">
+          <app-tree-node id="pages" title="Pages" [expanded]="expanded" [selected]="selected" [type]="'root'"
+            [cpnElement]="undefined">
           </app-tree-node>
 
           <div class="child" [style.display]="expanded['pages'] ? 'block' : 'none'">

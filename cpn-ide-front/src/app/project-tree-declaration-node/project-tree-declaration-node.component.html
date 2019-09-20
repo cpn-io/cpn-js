@@ -1,0 +1,23 @@
+<ng-container *ngIf="globref">
+  <div contenteditable="true" [ngClass]="{'selected': selected.id === globref._id, 'node': true}"
+    [innerHTML]="'globref ' + globref.id + ' = ' + globref.ml + ';' | colorDeclarations | safeHtml"
+    (input)="onUpdate($event.target.textContent)" (click)="onSelected()"></div>
+</ng-container>
+
+<ng-container *ngIf="color">
+  <div contenteditable="true" [ngClass]="{'selected': selected.id === color._id, 'node': true}"
+    [innerHTML]="'colset ' + color.id | colorDeclarations | safeHtml" (input)="onUpdate($event.target.textContent)"
+    (click)="onSelected()"></div>
+</ng-container>
+
+<ng-container *ngIf="variable">
+  <div contenteditable="true" [ngClass]="{'selected': selected.id === variable._id, 'node': true}"
+    [innerHTML]="'var ' + variable.id | colorDeclarations | safeHtml" (input)="onUpdate($event.target.textContent)"
+    (click)="onSelected()"></div>
+</ng-container>
+
+<ng-container *ngIf="ml">
+  <div contenteditable="true" [ngClass]="{'selected': selected.id === ml._id, 'node': true}"
+    [innerHTML]="ml.__text | regex | colorDeclarations | safeHtml" (input)="onUpdate($event.target.textContent)"
+    (click)="onSelected()"></div>
+</ng-container>

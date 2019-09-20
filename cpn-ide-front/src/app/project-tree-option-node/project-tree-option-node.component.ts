@@ -16,4 +16,10 @@ export class ProjectTreeOptionNodeComponent implements OnInit {
   ngOnInit() {
   }
 
+  onSelected() {
+    this.selected.id = this.option._name;
+    this.selected.type = 'option';
+    this.selected.cpnElement = this.option;
+  }
+
 }

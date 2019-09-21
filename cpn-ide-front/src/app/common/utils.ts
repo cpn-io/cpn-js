@@ -16,3 +16,10 @@ export function addNode(parent, type, node) {
   return parent;
 }
 
+export function cloneObject(object) {
+  return JSON.parse(JSON.stringify(object || {}));
+}
+
+export function objectsEqual(a, b) {
+  return JSON.stringify(a) === JSON.stringify(b);
+}

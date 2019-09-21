@@ -62,7 +62,7 @@ export class MlEditorComponent implements OnInit, OnDestroy {
         newTextValue: event.target.textContent
       });
 
-      this.eventService.send(Message.MODEL_CHANGED);
+      // this.eventService.send(Message.MODEL_CHANGED);
     }
   }
 

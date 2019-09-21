@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { nodeToArray } from '../common/utils';
+import { nodeToArray } from '../../common/utils';
 
 @Component({
   selector: 'app-project-tree-block-node',

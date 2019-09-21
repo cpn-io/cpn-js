@@ -159,7 +159,7 @@ export class ModelService {
 
     this.undoRedoBusy = false;
 
-    this.eventService.send(Message.MODEL_CHANGED);
+    // this.eventService.send(Message.MODEL_CHANGED);
   }
 
   redoChanges() {
@@ -181,7 +181,7 @@ export class ModelService {
 
     this.undoRedoBusy = false;
 
-    this.eventService.send(Message.MODEL_CHANGED);
+    // this.eventService.send(Message.MODEL_CHANGED);
   }
 
   public getProject() {
@@ -198,17 +198,19 @@ export class ModelService {
    */
   getCpn() {
     let cpnet;
-    if (this.projectData.workspaceElements) {
-      if (this.projectData.workspaceElements instanceof Array) {
-        for (const workspaceElement of this.projectData.workspaceElements) {
-          if (workspaceElement.cpnet) {
-            cpnet = workspaceElement.cpnet;
-            break;
+    if (this.projectData) {
+      if (this.projectData.workspaceElements) {
+        if (this.projectData.workspaceElements instanceof Array) {
+          for (const workspaceElement of this.projectData.workspaceElements) {
+            if (workspaceElement.cpnet) {
+              cpnet = workspaceElement.cpnet;
+              break;
+            }
           }
-        }
-      } else {
-        if (this.projectData.workspaceElements.cpnet) {
-          cpnet = this.projectData.workspaceElements.cpnet;
+        } else {
+          if (this.projectData.workspaceElements.cpnet) {
+            cpnet = this.projectData.workspaceElements.cpnet;
+          }
         }
       }
     }
@@ -328,7 +330,7 @@ export class ModelService {
       this.updateInstances();
     }
 
-    this.eventService.send(Message.MODEL_CHANGED);
+    // this.eventService.send(Message.MODEL_CHANGED);
   }
 
   instaceForTransition(id, isRoot) {
@@ -1090,6 +1092,10 @@ export class ModelService {
    * Get all pages list
    */
   getAllPages() {
+    const cpn = this.getCpn();
+    if (!cpn) {
+      return [];
+    }
     const page = this.getCpn().page;
     if (!page) {
       return [];

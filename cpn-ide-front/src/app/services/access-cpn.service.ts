@@ -5,6 +5,7 @@ import { EventService } from './event.service';
 import { Message } from '../common/message';
 import { xmlBeautify } from '../../lib/xml-beautifier/xml-beautifier.js';
 import { CpnServerUrl } from 'src/cpn-server-url';
+import { cloneObject } from '../common/utils';
 
 @Injectable()
 export class AccessCpnService {
@@ -93,7 +94,7 @@ export class AccessCpnService {
     console.log('AccessCpnService, initNet(), START, this.sessionId = ', this.sessionId);
 
     const x2js = new X2JS();
-    let cpnXml = x2js.json2xml_str(JSON.parse(JSON.stringify(cpnJson)));
+    let cpnXml = x2js.json2xml_str(cloneObject(cpnJson));
 
     cpnXml = cpnXml.toString('iso-8859-1');
     cpnXml = xmlBeautify(cpnXml);

@@ -122,7 +122,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
       //     if (this.modelService.projectData
       //       && this.modelService.projectData.workspaceElements
       //       && this.modelService.projectData.workspaceElements.cpnet) {
-      //       this.projectData = JSON.parse(JSON.stringify(this.modelService.projectData.workspaceElements.cpnet));
+      //       this.projectData = cloneObject(this.modelService.projectData.workspaceElements.cpnet);
       //       this.updateJsonScheduled = false;
       //     }
       //   }, 1000);
@@ -156,7 +156,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     console.log('updateChanges(), this = ', this);
 
     this.eventService.send(Message.MODEL_UPDATE_DIAGRAM, { cpnElement: this.cpnElement });
-    this.eventService.send(Message.MODEL_CHANGED);
+    // this.eventService.send(Message.MODEL_CHANGED);
   }
 
   updateLabel(event) {

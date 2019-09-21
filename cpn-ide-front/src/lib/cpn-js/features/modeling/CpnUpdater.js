@@ -68,7 +68,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
   const self = this;
 
-  console.log('CpnUpdater()');
+  // console.log('CpnUpdater()');
 
   CommandInterceptor.call(this, eventBus);
 
@@ -133,7 +133,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
 
   eventBus.on('shape.create.end', (event) => {
-    console.log('CpnUpdater(), shape.create.end, event = ', event);
+    // console.log('CpnUpdater(), shape.create.end, event = ', event);
 
     // updateCpnElement(event.element);
     // layouter.layoutConnections();
@@ -141,7 +141,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     modeling.updateElement(event.element, true);
   });
   eventBus.on('connection.create', (event) => {
-    console.log('CpnUpdater(), connection.create, event = ', event);
+    // console.log('CpnUpdater(), connection.create, event = ', event);
     // updateCpnElement(event.element);
   });
 
@@ -158,7 +158,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   });
 
   eventBus.on('element.click', function (event) {
-    console.log('CpnUpdater(), element.click, event = ', event);
+    // console.log('CpnUpdater(), element.click, event = ', event);
 
     const element = event.element;
 
@@ -191,7 +191,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
     // TODO: not process if click another window
 
-    console.log('CpnUpdater(), mousedown');
+    // console.log('CpnUpdater(), mousedown');
 
     if (event.button === 2) {
 
@@ -206,7 +206,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
       // console.log('CpnUpdater(), domEvent, mousedown, target = ', target);
       // console.log('CpnUpdater(), domEvent, mousedown, gfx = ', gfx);
 
-      console.log('CpnUpdater(), mousedown, element = ', element);
+      // console.log('CpnUpdater(), mousedown, element = ', element);
 
       if (element && element === canvas.getRootElement()) {
         popupMenuProvider.close();
@@ -336,18 +336,18 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
       if (shape.x && shape.y && shape.width && shape.height) {
         // if element is any shape object
         if (cpnElement.posattr) {
-          cpnElement.posattr._x = (shape.x + shape.width / 2).toString();
-          cpnElement.posattr._y = ((shape.y + shape.height / 2) * -1).toString();
+          cpnElement.posattr._x = Math.round((shape.x + shape.width / 2)).toFixed(6); // .toString();
+          cpnElement.posattr._y = Math.round((shape.y + shape.height / 2) * -1).toFixed(6); // .toString();
         }
         // if element is Place object
         if (cpnElement.ellipse) {
-          cpnElement.ellipse._w = (shape.width).toString();
-          cpnElement.ellipse._h = (shape.height).toString();
+          cpnElement.ellipse._w = Math.round(shape.width).toFixed(6); // .toString();
+          cpnElement.ellipse._h = Math.round(shape.height).toFixed(6); // .toString();
         }
         // if element is Transition object
         if (cpnElement.box) {
-          cpnElement.box._w = (shape.width).toString();
-          cpnElement.box._h = (shape.height).toString();
+          cpnElement.box._w = Math.round(shape.width).toFixed(6); // .toString();
+          cpnElement.box._h = Math.round(shape.height).toFixed(6); // .toString();
         }
       }
 
@@ -363,8 +363,8 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
           // if (!updateBendpoints(cpnElement, wp)) {
           // create new bendpoint item for cpnElement
           const position = {
-            x: (wp.x).toString(),
-            y: (wp.y).toString(),
+            x: Math.round(wp.x).toFixed(6), // .toString(),
+            y: Math.round(wp.y).toFixed(6), // .toString(),
           };
 
           bendpoints.push({
@@ -430,8 +430,8 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
       for (const bp of cpnElement.bendpoints) {
         if (bp._id === shapeWaypoint.id) {
           const position = {
-            x: (shapeWaypoint.x).toString(),
-            y: (shapeWaypoint.y).toString(),
+            x: Math.round(shapeWaypoint.x).toFixed(6), // .toString(),
+            y: Math.round(shapeWaypoint.y).toFixed(6), // .toString(),
           };
           bp.posattr = getDefPosattr(position);
           updated = true;

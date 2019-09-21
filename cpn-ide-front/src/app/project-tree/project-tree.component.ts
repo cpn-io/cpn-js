@@ -2,7 +2,7 @@ import { Message } from './../common/message';
 import { ModelService } from './../services/model.service';
 import { EventService } from './../services/event.service';
 import { Component, OnInit, OnChanges, SimpleChanges, DoCheck } from '@angular/core';
-import { nodeToArray } from '../common/utils';
+import { nodeToArray, cloneObject } from '../common/utils';
 
 @Component({
   selector: 'app-project-tree',
@@ -36,7 +36,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
   ngDoCheck() {
     if (this.selectedOld.id !== this.selected.id) {
-      this.selectedOld = JSON.parse(JSON.stringify(this.selected));
+      this.selectedOld = cloneObject(this.selected);
       this.onSelectedChange();
     }
   }

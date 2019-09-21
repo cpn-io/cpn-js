@@ -1,7 +1,7 @@
 import { Input, OnChanges, SimpleChanges, DoCheck, KeyValueDiffers } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
-import { nodeToArray } from '../common/utils';
-import { ModelService } from '../services/model.service';
+import { nodeToArray } from '../../common/utils';
+import { ModelService } from '../../services/model.service';
 
 @Component({
   selector: 'app-project-tree-monitor-node',
@@ -35,5 +35,17 @@ export class ProjectTreeMonitorNodeComponent implements OnInit, DoCheck {
       console.log('ngDoCheck(), change = ', change);
       this.nodeList = this.modelService.getMonitorNodeNamesList(this.monitor);
     }
+  }
+
+  onSelectedOption(option) {
+    this.selected.id = 'monitorOption_' + option._name;
+    this.selected.type = 'monitorOption';
+    this.selected.cpnElement = option;
+  }
+
+  onSelectedNode(node) {
+    this.selected.id = 'monitorNode_' + node.element._id;
+    this.selected.type = 'monitorNode';
+    this.selected.cpnElement = node;
   }
 }

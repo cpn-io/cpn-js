@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { nodeToArray } from '../common/utils';
-import { ModelService } from '../services/model.service';
+import { nodeToArray } from '../../common/utils';
+import { ModelService } from '../../services/model.service';
 
 @Component({
   selector: 'app-project-tree-page-node',

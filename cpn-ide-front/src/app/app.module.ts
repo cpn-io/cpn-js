@@ -54,13 +54,13 @@ import { ApplicationSettingsComponent } from './application-settings/application
 import { SimulationPanelComponent } from './simulation-panel/simulation-panel.component';
 import { ProjectMonitorsComponent } from './project-monitors/project-monitors.component';
 import { ProjectTreeComponent } from './project-tree/project-tree.component';
-import { ProjectTreeBlockNodeComponent } from './project-tree-block-node/project-tree-block-node.component';
-import { ProjectTreePageNodeComponent } from './project-tree-page-node/project-tree-page-node.component';
-import { ProjectTreeMonitorNodeComponent } from './project-tree-monitor-node/project-tree-monitor-node.component';
-import { ProjectTreeMonitorblockNodeComponent } from './project-tree-monitorblock-node/project-tree-monitorblock-node.component';
-import { ProjectTreeOptionsNodeComponent } from './project-tree-options-node/project-tree-options-node.component';
-import { ProjectTreeOptionNodeComponent } from './project-tree-option-node/project-tree-option-node.component';
-import { ProjectTreeDeclarationNodeComponent } from './project-tree-declaration-node/project-tree-declaration-node.component';
+import { ProjectTreeBlockNodeComponent } from './project-tree/project-tree-block-node/project-tree-block-node.component';
+import { ProjectTreePageNodeComponent } from './project-tree/project-tree-page-node/project-tree-page-node.component';
+import { ProjectTreeMonitorNodeComponent } from './project-tree/project-tree-monitor-node/project-tree-monitor-node.component';
+import { ProjectTreeMonitorblockNodeComponent } from './project-tree/project-tree-monitorblock-node/project-tree-monitorblock-node.component';
+import { ProjectTreeOptionsNodeComponent } from './project-tree/project-tree-options-node/project-tree-options-node.component';
+import { ProjectTreeOptionNodeComponent } from './project-tree/project-tree-option-node/project-tree-option-node.component';
+import { ProjectTreeDeclarationNodeComponent } from './project-tree/project-tree-declaration-node/project-tree-declaration-node.component';
 
 require('typeface-droid-sans-mono');
 

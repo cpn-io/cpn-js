@@ -59,7 +59,6 @@
   },
   "dependencies": {
     "@angular/animations": "^7.2.15",
-    "@angular/cdk": "^7.3.7",
     "@angular/common": "~7.0.0",
     "@angular/compiler": "~7.0.0",
     "@angular/core": "~7.0.0",
@@ -96,7 +95,6 @@
     "ng-bootstrap": "^1.6.3",
     "ng2-json-editor": "^0.25.5",
     "ng2-json-view": "^4.0.2",
-    "ngx-contextmenu": "^5.1.1",
     "ngx-electron": "^1.0.4",
     "ngx-json-viewer-scrolling": "^2.3.1",
     "ngx-xml2json": "^1.0.2",

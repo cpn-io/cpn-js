@@ -21,16 +21,16 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit {
 
   onUpdate(value) {
     if (this.globref) {
-      console.log(this.constructor.name, 'onUpdate(), this.globref = ', this.globref);
+      console.log(this.constructor.name, 'onUpdate(), value, this.globref = ', value, this.globref);
     }
     if (this.color) {
-      console.log(this.constructor.name, 'onUpdate(), this.color = ', this.color);
+      console.log(this.constructor.name, 'onUpdate(), value, this.color = ', value, this.color);
     }
     if (this.variable) {
-      console.log(this.constructor.name, 'onUpdate(), this.variable = ', this.variable);
+      console.log(this.constructor.name, 'onUpdate(), value, this.variable = ', value, this.variable);
     }
     if (this.ml) {
-      console.log(this.constructor.name, 'onUpdate(), this.ml = ', this.ml);
+      console.log(this.constructor.name, 'onUpdate(), value, this.ml = ', value, this.ml);
     }
   }
 

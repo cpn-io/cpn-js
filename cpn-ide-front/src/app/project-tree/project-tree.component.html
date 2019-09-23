@@ -1,10 +1,11 @@
 <div class="tab-container">
   <ng-container *ngIf="cpnet">
 
-    <div class="tree">
+    <div class="tree" (contextmenu)="contextMenu($event)">
 
       <!-- Project root -->
-      <app-tree-node id="project" [title]="'Project: ' + project.name" [expanded]="expanded" [selected]="selected" [showBullet]="false">
+      <app-tree-node id="project" [title]="'Project: ' + project.name" [expanded]="expanded" [selected]="selected"
+        [showBullet]="false">
 
         <div class="node" [textContent]="'Step: 0'"></div>
         <div class="node" [textContent]="'Time: 0'"></div>
@@ -55,6 +56,29 @@
       </app-tree-node>
 
     </div>
+
+
+    <!-- Tree node context menu -->
+    <div class="dropdown-menu dropdown-menu-fixed shadow" id="contextMenu">
+      <a class="dropdown-item" href="#">New declaration</a>
+      <a class="dropdown-item" href="#">New block</a>
+      <div class="dropdown-divider" href="#"></div>
+      <a class="dropdown-item" href="#">New page</a>
+    </div>
+
+    <!-- <context-menu #treeMenu>
+      <ng-template contextMenuItem (execute)="alert('Hi, ' + $event.item.name)">
+        Say hi!
+      </ng-template>
+      <ng-template contextMenuItem divider="true"></ng-template>
+      <ng-template contextMenuItem let-item
+        (execute)="alert($event.item.name + ' said: ' + $event.item.otherProperty)">
+        Bye, {{item?.name}}
+      </ng-template>
+      <ng-template contextMenuItem passive="true">
+        Input something: <input type="text">
+      </ng-template>
+    </context-menu> -->
 
   </ng-container>
 </div>

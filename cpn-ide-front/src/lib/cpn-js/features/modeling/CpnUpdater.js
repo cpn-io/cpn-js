@@ -63,10 +63,12 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   connectionDocking, selection, popupMenuProvider, contextPad, canvas,
   portMenuProvider, bindingsMenuProvider, layouter) {
 
+  this._canvas = canvas;
   this._modeling = modeling;
   this._elementRegistry = elementRegistry;
 
   const self = this;
+  const container = self._canvas.getContainer();
 
   // console.log('CpnUpdater()');
 
@@ -186,15 +188,14 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   //   console.log('CpnUpdater(), domEvent, mouseup, event = ', event);
   // });
 
-  domEvent.bind(document, 'mousedown', function (event) {
+  // object.addEventListener("click", myScript);
+
+  domEvent.bind(container, 'mousedown', function (event) {
+    console.log('CpnUpdater()', event);
     // console.log('CpnUpdater(), domEvent, mousedown, event = ', event);
-
-    // TODO: not process if click another window
-
-    // console.log('CpnUpdater(), mousedown');
+    // console.log('CpnUpdater(), mousedown, container = ', container);
 
     if (event.button === 2) {
-
       const position = toPoint(event);
       const target = document.elementFromPoint(position.x, position.y);
       const gfx = getGfx(target);
@@ -205,7 +206,6 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
       // console.log('CpnUpdater(), domEvent, mousedown, target = ', target);
       // console.log('CpnUpdater(), domEvent, mousedown, gfx = ', gfx);
-
       // console.log('CpnUpdater(), mousedown, element = ', element);
 
       if (element && element === canvas.getRootElement()) {

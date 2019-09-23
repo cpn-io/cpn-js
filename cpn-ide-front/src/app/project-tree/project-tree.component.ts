@@ -13,6 +13,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
   public nodeToArray = nodeToArray;
   public JSON = JSON;
+  public alert = alert;
 
   public project;
   public cpnet;
@@ -59,6 +60,8 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     this.cpnet = this.modelService.getCpn();
     this.project = this.modelService.getProject();
     this.loadPages();
+
+    setTimeout(() => this.goToDeclaration('id89457845'), 1);
   }
 
   loadPages() {
@@ -80,5 +83,42 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
   onChange(event) {
     console.log(this.constructor.name, 'onChange(), event = ', event);
+  }
+
+  goToDeclaration(id) {
+    if (this.cpnet && this.cpnet.globbox) {
+      console.log(this.constructor.name, 'goToDeclaration()');
+      const blocksToExpand = [];
+      const blocks = nodeToArray(this.cpnet.globbox.block);
+      for (const block of blocks) {
+        let isBlockExpanded = false;
+        for (const globref of nodeToArray(block.globref)) {
+          if (globref._id === id) {
+            this.selected.id = globref._id;
+            this.selected.type = 'globref';
+            this.selected.cpnElement = globref;
+            isBlockExpanded = true;
+            console.log(this.constructor.name, 'goToDeclaration(), id = ', id);
+          }
+        }
+        if (isBlockExpanded) {
+          this.expanded['declarations'] = true;
+          this.expanded[block._id] = true;
+        }
+      }
+    }
+  }
+
+  contextMenu(event:MouseEvent) {
+    console.log(this.constructor.name, 'contextMenu(), event = ', event);
+
+    const menuElement:HTMLElement = document.getElementById('contextMenu');
+
+    console.log(this.constructor.name, 'contextMenu(), menuElement = ', menuElement);
+
+    menuElement.style.display = 'block';
+    menuElement.style.position = 'absolute';
+    menuElement.style.left = event.x + 'px';
+    menuElement.style.top = (event.pageY) + 'px';
   }
 }

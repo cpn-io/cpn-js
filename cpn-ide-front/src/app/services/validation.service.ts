@@ -18,7 +18,6 @@ export class ValidationService implements OnDestroy {
   timeTimerSubscribtion;
 
   geometryKeyList = [
-    'cpnet',
     'aux',
     'token',
     'marking',
@@ -118,7 +117,7 @@ export class ValidationService implements OnDestroy {
 
     if (!deepEqualResult) {
       const differences = diff(this.lastProjectData, projectData);
-      // console.log(this.constructor.name, 'differences = ', differences);
+      console.log(this.constructor.name, 'differences = ', differences);
 
       if (differences && differences.length > 0) {
         const noGeometryChangeList = this.filterDifferences(differences, this.geometryKeyList);

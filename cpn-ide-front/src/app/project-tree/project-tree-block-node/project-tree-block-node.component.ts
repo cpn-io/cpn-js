@@ -10,6 +10,7 @@ export class ProjectTreeBlockNodeComponent implements OnInit {
 
   public nodeToArray = nodeToArray;
 
+  @Input() public parentBlock: any;
   @Input() public block: any;
   @Input() public expanded: any;
   @Input() public selected: any;
@@ -18,4 +19,14 @@ export class ProjectTreeBlockNodeComponent implements OnInit {
 
   ngOnInit() {
   }
+
+  onSelected() {
+    this.selected.parentCpnElement = this.parentBlock;
+    if (this.block) {
+      this.selected.id = this.block._id;
+      this.selected.type = 'block';
+      this.selected.cpnElement = this.block;
+    }
+  }
+
 }

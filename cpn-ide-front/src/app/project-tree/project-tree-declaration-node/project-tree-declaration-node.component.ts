@@ -7,6 +7,7 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class ProjectTreeDeclarationNodeComponent implements OnInit {
 
+  @Input() public parentBlock: any;
   @Input() public globref: any;
   @Input() public color: any;
   @Input() public variable: any;
@@ -35,6 +36,7 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit {
   }
 
   onSelected() {
+    this.selected.parentCpnElement = this.parentBlock;
     if (this.globref) {
       this.selected.id = this.globref._id;
       this.selected.type = 'globref';

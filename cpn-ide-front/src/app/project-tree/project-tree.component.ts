@@ -119,6 +119,11 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     menuElement.style.display = 'block';
     menuElement.style.position = 'absolute';
     menuElement.style.left = event.x + 'px';
-    menuElement.style.top = (event.pageY) + 'px';
+    menuElement.style.top = (event.y - 60) + 'px';
+  }
+
+  hideContextMenu() {
+    const menuElement:HTMLElement = document.getElementById('contextMenu');
+    menuElement.style.display = 'none';
   }
 }

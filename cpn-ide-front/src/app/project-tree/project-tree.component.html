@@ -1,7 +1,7 @@
 <div class="tab-container">
   <ng-container *ngIf="cpnet">
 
-    <div class="tree" (contextmenu)="contextMenu($event)">
+    <div id="tree" class="tree" (contextmenu)="contextMenu($event)" (click)="hideContextMenu()">
 
       <!-- Project root -->
       <app-tree-node id="project" [title]="'Project: ' + project.name" [expanded]="expanded" [selected]="selected"

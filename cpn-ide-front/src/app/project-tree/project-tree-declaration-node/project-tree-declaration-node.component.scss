@@ -1,1 +1,7 @@
 @import "../project-tree.component.scss";
+
+.editablenode {
+  white-space: pre;
+  overflow-x: visible;
+  font-family: 'Courier New', Courier, monospace;
+}

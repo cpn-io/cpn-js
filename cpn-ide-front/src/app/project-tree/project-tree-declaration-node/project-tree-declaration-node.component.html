@@ -1,23 +1,7 @@
-<ng-container *ngIf="globref">
-  <div id="globref._id" contenteditable="true" [ngClass]="{'selected': selected.id === globref._id, 'node': true}"
-    [innerHTML]="'globref ' + globref.id + ' = ' + globref.ml + ';' | colorDeclarations | safeHtml"
-    (focusout)="onUpdate($event.target.textContent)" (click)="onSelected()"></div>
-</ng-container>
-
-<ng-container *ngIf="color">
-  <div id="color._id" contenteditable="true" [ngClass]="{'selected': selected.id === color._id, 'node': true}"
-    [innerHTML]="'colset ' + color.id | colorDeclarations | safeHtml" (focusout)="onUpdate($event.target.textContent)"
-    (click)="onSelected()"></div>
-</ng-container>
-
-<ng-container *ngIf="variable">
-  <div id="variable._id" contenteditable="true" [ngClass]="{'selected': selected.id === variable._id, 'node': true}"
-    [innerHTML]="'var ' + variable.id | colorDeclarations | safeHtml" (focusout)="onUpdate($event.target.textContent)"
-    (click)="onSelected()"></div>
-</ng-container>
-
-<ng-container *ngIf="ml">
-  <div id="ml._id" contenteditable="true" [ngClass]="{'selected': selected.id === ml._id, 'node': true}"
-    [innerHTML]="ml.__text | regex | colorDeclarations | safeHtml" (focusout)="onUpdate($event.target.textContent)"
-    (click)="onSelected()"></div>
+<ng-container *ngIf="declaration">
+  <div id="declaration._id" contenteditable="true"
+    [ngClass]="{'selected': selected.id === declaration._id, 'node': true, 'editablenode': true}"
+    [innerHTML]="getText() | colorDeclarations | safeHtml" (focus)="focused = true; onSelected();"
+    (focusout)="focused = false; onUpdate($event.target.textContent)">
+  </div>
 </ng-container>

@@ -1,4 +1,8 @@
 <div class="tab-container">
+
+  <!-- Project tree toolbar -->
+  <app-project-tree-toolbar></app-project-tree-toolbar>
+
   <ng-container *ngIf="cpnet">
 
     <div id="tree" class="tree" (contextmenu)="contextMenu($event)" (click)="hideContextMenu()">
@@ -26,7 +30,7 @@
 
           <ng-container *ngFor="let globbox of nodeToArray(cpnet.globbox)">
             <ng-container *ngFor="let block of nodeToArray(globbox.block)">
-              <app-project-tree-block-node [block]="block" [expanded]="expanded" [selected]="selected">
+              <app-project-tree-block-node [block]="block" [expanded]="expanded" [selected]="selected" [mouseover]="mouseover">
               </app-project-tree-block-node>
             </ng-container>
           </ng-container>

@@ -24,6 +24,8 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   public selected;
   public selectedOld;
 
+  public mouseover = { id: undefined };
+
   constructor(public eventService: EventService,
     public modelService: ModelService) {
   }

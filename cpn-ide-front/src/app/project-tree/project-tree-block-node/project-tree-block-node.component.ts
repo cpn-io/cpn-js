@@ -14,6 +14,7 @@ export class ProjectTreeBlockNodeComponent implements OnInit {
   @Input() public block: any;
   @Input() public expanded: any;
   @Input() public selected: any;
+  @Input() public mouseover: any;
 
   constructor() { }
 

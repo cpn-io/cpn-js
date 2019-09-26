@@ -2,7 +2,7 @@ import { Message } from './../common/message';
 import { ModelService } from './../services/model.service';
 import { EventService } from './../services/event.service';
 import { Component, OnInit, OnChanges, SimpleChanges, DoCheck } from '@angular/core';
-import { nodeToArray, cloneObject } from '../common/utils';
+import { nodeToArray, cloneObject, getNextId, arrayToNode } from '../common/utils';
 
 @Component({
   selector: 'app-project-tree',
@@ -63,7 +63,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     this.project = this.modelService.getProject();
     this.loadPages();
 
-    setTimeout(() => this.goToDeclaration('id89457845'), 1);
+    setTimeout(() => this.goToDeclaration('id89457845'), 100);
   }
 
   loadPages() {
@@ -111,10 +111,10 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     }
   }
 
-  contextMenu(event:MouseEvent) {
+  contextMenu(event: MouseEvent) {
     console.log(this.constructor.name, 'contextMenu(), event = ', event);
 
-    const menuElement:HTMLElement = document.getElementById('contextMenu');
+    const menuElement: HTMLElement = document.getElementById('contextMenu');
 
     console.log(this.constructor.name, 'contextMenu(), menuElement = ', menuElement);
 
@@ -125,7 +125,55 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   }
 
   hideContextMenu() {
-    const menuElement:HTMLElement = document.getElementById('contextMenu');
+    const menuElement: HTMLElement = document.getElementById('contextMenu');
     menuElement.style.display = 'none';
+  }
+
+  onKeyDown(event: KeyboardEvent) {
+    // console.log(this.constructor.name, 'onKeyDown(), event = ', event);
+    // console.log(this.constructor.name, 'onKeyDown(), Key.INSERT = ', Key.INSERT);
+    if (event.code === 'Insert') {
+      event.preventDefault();
+
+      console.log(this.constructor.name, 'onKeyDown(), INSERT PRESSED');
+      console.log(this.constructor.name, 'onKeyDown(), this.selected = ', this.selected);
+
+      if (this.selected && this.selected.parentCpnElement) {
+        let newValue;
+        switch (this.selected.type) {
+          case 'globref':
+            newValue = 'globref GLOBREF = 1;';
+            break;
+          case 'color':
+            newValue = 'colset TYPE = int;';
+            break;
+          case 'var':
+            newValue = 'var v:int;';
+            break;
+          case 'ml':
+            newValue = 'fun Function';
+            break;
+        }
+        
+        if (newValue) {
+          const blockCpnElement = this.selected.parentCpnElement;
+          const oldCpnType = this.selected.type;
+          // node.parent.data.cpnElement = this.modelService.removeCpnElement(cpnParentElement, cpnElement, oldCpnType);
+
+          const newCpnElement = { _id: getNextId() };
+          const result = this.modelService.stringToCpnDeclarationElement(newCpnElement, newValue);
+
+          const newCpnType = result.cpnType;
+
+          console.log(this.constructor.name, 'onKeyDown(), result = ', result);
+
+          const declList = nodeToArray(this.selected.parentCpnElement[newCpnType]);
+          declList.push(result.cpnElement);
+          this.selected.parentCpnElement[newCpnType] = arrayToNode(declList);
+
+          setTimeout(() => this.goToDeclaration(newCpnElement._id), 1000);
+        }
+      }
+    }
   }
 }

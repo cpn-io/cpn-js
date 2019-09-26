@@ -5,7 +5,7 @@
 
   <ng-container *ngIf="cpnet">
 
-    <div id="tree" class="tree" (contextmenu)="contextMenu($event)" (click)="hideContextMenu()">
+    <div id="tree" class="tree" (contextmenu)="contextMenu($event)" (click)="hideContextMenu()" (keydown)="onKeyDown($event)">
 
       <!-- Project root -->
       <app-tree-node id="project" [title]="'Project: ' + project.name" [expanded]="expanded" [selected]="selected"

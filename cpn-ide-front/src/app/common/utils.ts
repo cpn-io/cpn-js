@@ -1,3 +1,14 @@
+
+let lastId = 0;
+export function getNextId() {
+  let id = new Date().getTime();
+  if (id <= lastId) {
+    id++;
+  }
+  lastId = id;
+  return "ID" + (id).toString().substr((id).toString().length - 10);
+}
+
 /**
  * Convert json node to array
  * @param node - json node
@@ -7,6 +18,13 @@ export function nodeToArray(node) {
     return [];
   }
   return node instanceof Array ? node : [node];
+}
+
+export function arrayToNode(array) {
+  if (!array) {
+    return undefined;
+  }
+  return array.length === 1 ? array[0] : array;
 }
 
 export function addNode(parent, type, node) {

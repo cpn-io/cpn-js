@@ -995,7 +995,7 @@ export class ModelService {
    */
   stringToCpnDeclarationElement(cpnElement, str) {
 
-    let resultCpnType = '';
+    let resultCpnType = 'ml';
     let resultCpnElement: any = { _id: cpnElement._id };
 
     // const parser = str.match('^\\S+');
@@ -1007,7 +1007,7 @@ export class ModelService {
     let resultDeclarationType = this.parseDeclarationTypeFromString(str);
 
     if (!resultDeclarationType) {
-      resultCpnType = '';
+      resultCpnType = 'ml';
       resultCpnElement.layout = str;
       return { cpnType: '', declarationType: '', cpnElement: resultCpnElement };
     }
@@ -1105,7 +1105,7 @@ export class ModelService {
         break;
 
       default:
-        resultCpnType = '';
+        resultCpnType = 'ml';
         resultDeclarationType = '';
         resultCpnElement.layout = str;
     }

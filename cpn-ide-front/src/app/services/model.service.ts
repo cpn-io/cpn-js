@@ -974,12 +974,13 @@ export class ModelService {
    */
   parseDeclarationTypeFromString(str) {
     const parser = str.match('^\\S+');
+    let declarationType = '';
 
     if (parser) {
-      return parser[0];
+      declarationType = parser[0];
     }
 
-    return undefined;
+    return ['var', 'colset', 'globref', 'ml', 'val', 'fun', 'local'].includes(declarationType) ? declarationType : 'ml';
   }
 
   trimChars(str, c) {
@@ -1005,11 +1006,8 @@ export class ModelService {
     // str = this.trimChars(str, ';');
 
     let resultDeclarationType = this.parseDeclarationTypeFromString(str);
-
     if (!resultDeclarationType) {
-      resultCpnType = 'ml';
-      resultCpnElement.layout = str;
-      return { cpnType: '', declarationType: '', cpnElement: resultCpnElement };
+      resultDeclarationType = 'ml';
     }
 
     switch (resultDeclarationType) {
@@ -1031,15 +1029,6 @@ export class ModelService {
         if (splitLayoutArray[1]) {
           resultCpnElement.type.id = splitLayoutArray[1][0];
         }
-        break;
-
-      case 'ml':
-      case 'val':
-      case 'fun':
-      case 'local':
-        resultCpnType = 'ml';
-        resultCpnElement.layout = str;
-        resultCpnElement.__text = str;
         break;
 
       case 'colset':   // TODO: отрефакторить
@@ -1104,10 +1093,17 @@ export class ModelService {
         // cpnElement.layout = str;
         break;
 
+      // case 'ml':
+      // case 'val':
+      // case 'fun':
+      // case 'local':
       default:
         resultCpnType = 'ml';
-        resultDeclarationType = '';
+        resultDeclarationType = 'ml';
         resultCpnElement.layout = str;
+        resultCpnElement.__text = str;
+        break;
+
     }
 
     // console.log('stringToCpnDeclarationElement(), cpnType = ', cpnType);

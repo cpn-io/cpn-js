@@ -57,6 +57,18 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit {
 
     console.log('onUpdate(), value = ', value);
 
+    
+    // remove line break
+    value = value.replace(/\n/g, '');
+
+    // remove multiple spaces
+    value = value.replace(/\s{2,}/g, ' ');
+
+    // remove comments
+    value = value.replace(/(\(\*\s*)[^\*]+(\s*\*\))/g, '');
+
+    console.log('onUpdate(), value (no comments) = ', value);
+
     let parser = value.match(/^\w+/g);
     console.log('onUpdate(), parser = ', parser);
 
@@ -69,13 +81,19 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit {
           console.log('onUpdate(), colset, parser = ', parser);
           if (parser.length === 2) {
 
-            const colsetLeft = parser[0].trim().match(/\w+/g);
-            const colsetName = colsetLeft[1].trim();
-            console.log('onUpdate(), colset, colsetName = ', colsetName);
+            const leftPart = parser[0].trim();
+            const rightPart = parser[1].trim();
+            console.log('onUpdate(), leftPart = ', leftPart);
+            console.log('onUpdate(), rightPart = ', rightPart);
 
-            // for () {
+            // try to parse list, product, record, etc...
+            parser = rightPart.match(/(\w+){1}\s+((((\w+\s*\:\s*\w+)|(\w+))((\s*[\*\+]\s*)((\w+\s*\:\s*\w+)|(\w+)))+)|(\w+))/g);
+            if (parser) {
+              console.log('onUpdate(), try to parse list, product, record, etc..., parser = ', parser);
 
-            // }
+              const colsetType = parser[0].match(/^\w+/g);
+              console.log('onUpdate(), colsetType = ', colsetType);
+            }
           }
         } catch (error) {
           console.error('onUpdate(), error = ', error);

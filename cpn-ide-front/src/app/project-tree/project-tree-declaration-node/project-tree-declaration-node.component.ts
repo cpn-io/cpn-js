@@ -128,4 +128,75 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit {
     this.selected.type = this.type;
     this.selected.cpnElement = this.declaration;
   }
+
+
+  onParse(value) {
+
+    if (this.declaration.layout) {
+      value = this.declaration.layout;
+    }
+
+    console.log('onParse(), value = ', value);
+
+    // remove line break
+    value = value.replace(/\n/g, '');
+
+    // remove multiple spaces
+    value = value.replace(/\s{2,}/g, ' ');
+
+    // remove comments
+    value = value.replace(/(\(\*\s*)[^\*]+(\s*\*\))/g, '');
+
+    console.log('onParse(), value (no comments) = ', value);
+
+    let unitTypeResult = new RegExp(/colset\s+(?<name>\w+)\s*=\s*unit(\s+with\s+(?<new>\w+))*(\s+(?<timed>timed))*/g).exec(value);
+    console.log('onParse(), unitTypeResult = ', unitTypeResult);
+
+    let result = new RegExp(/(?<record>record)\s+(?<recordfield>[^;]+)/g).exec(value);
+
+    if (result && result.groups) {
+      if (result.groups.record && result.groups.recordfield) {
+        console.log('onParse(), result.groups.record = ', result.groups.record);
+        console.log('onParse(), result.groups.recordfield = ', result.groups.recordfield);
+
+        let s = result.groups.recordfield;
+        let recordfieldList = s.match(/\w+\s*\:\s*\w+/g);
+        console.log('onParse(), recordfieldList = ', recordfieldList);
+      }
+    }
+    
+
+    // let parser = value.match(/^\w+/g);
+    // console.log('onParse(), parser = ', parser);
+
+    // let declarationType = parser && parser[0] ? parser[0] : undefined;
+
+    // switch (declarationType) {
+    //   case 'colset':
+    //     try {
+    //       parser = value.match(/[^=]+/g);
+    //       console.log('onParse(), colset, parser = ', parser);
+    //       if (parser.length === 2) {
+
+    //         const leftPart = parser[0].trim();
+    //         const rightPart = parser[1].trim();
+    //         console.log('onParse(), leftPart = ', leftPart);
+    //         console.log('onParse(), rightPart = ', rightPart);
+
+    //         // try to parse list, product, record, etc...
+    //         parser = rightPart.match(/(\w+){1}\s+((((\w+\s*\:\s*\w+)|(\w+))((\s*[\*\+]\s*)((\w+\s*\:\s*\w+)|(\w+)))+)|(\w+))/g);
+    //         if (parser) {
+    //           console.log('onParse(), try to parse list, product, record, etc..., parser = ', parser);
+
+    //           const colsetType = parser[0].match(/^\w+/g);
+    //           console.log('onParse(), colsetType = ', colsetType);
+    //         }
+    //       }
+    //     } catch (error) {
+    //       console.error('onParse(), error = ', error);
+    //     }
+    //     break;
+    // }
+  }
+
 }

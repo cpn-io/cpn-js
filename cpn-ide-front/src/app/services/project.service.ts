@@ -123,7 +123,7 @@ export class ProjectService {
     // const modelFile = 'baseModel_ID1008016.cpn';
     // const modelFile = 'discretemodel_task1.cpn';
 
-    const modelFile = 'erdp.cpn';
+    // const modelFile = 'erdp.cpn';
     // const modelFile = 'hoponhopoff-color.cpn';
     // const modelFile = 'mscProtocol.cpn'
 
@@ -135,6 +135,7 @@ export class ProjectService {
     // const modelFile = 'mynet.cpn';
     // const modelFile = 'mynet2.cpn';
     // const modelFile = 'mynet-sub-1.cpn';
+    const modelFile = 'mynet-colset.cpn';
 
     // const modelFile = 'mynet-for-sim.cpn';
 

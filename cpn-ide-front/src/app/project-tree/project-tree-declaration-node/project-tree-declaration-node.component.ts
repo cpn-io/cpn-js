@@ -1,5 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ModelService } from '../../services/model.service';
+import { EventService } from '../../services/event.service';
+import { Message } from '../../common/message';
+import { cloneObject } from 'src/app/common/utils';
+import { clearDeclarationLayout, parseColsetDeclaration, parseDeclarartion } from './declaration-parser';
 
 @Component({
   selector: 'app-project-tree-declaration-node',
@@ -17,7 +21,7 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit {
 
   public focused = false;
 
-  constructor(private modelService: ModelService) { }
+  constructor(private eventService: EventService, private modelService: ModelService) { }
 
   ngOnInit() {
   }
@@ -57,7 +61,7 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit {
 
     console.log('onUpdate(), value = ', value);
 
-    
+
     // remove line break
     value = value.replace(/\n/g, '');
 
@@ -130,73 +134,67 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit {
   }
 
 
-  onParse(value) {
+  onParse(layout) {
 
+    const parserRegexList = {
+      parseType: /colset\s+(?<name>\w+)\s*=\s*(?<type>\w+)/g
+      // unitType:   /colset\s+(?<name>\w+)\s*=\s*(?<type>unit)\s*(?<with>with)*\s*(?<newUnit>\w+)*\s*(?<timed>timed)*/g,
+      // stringType: /colset\s+(?<name>\w+)\s*=\s*(?<type>string)\s*(?<with>with)*\s*(?<range>\S+\.\.\S+)*\s*(?<and>and)*\s*(?<timed>timed)*/g
+    }
+
+    layout = this.getText();
     if (this.declaration.layout) {
-      value = this.declaration.layout;
+      layout = this.declaration.layout;
     }
 
-    console.log('onParse(), value = ', value);
+    console.log('onParse(), value = ', layout);
 
-    // remove line break
-    value = value.replace(/\n/g, '');
+    // clear declaration layout
+    layout = clearDeclarationLayout(layout);
 
-    // remove multiple spaces
-    value = value.replace(/\s{2,}/g, ' ');
+    let result = parseDeclarartion(layout);
+    console.log('onParse(), result = ', result);
 
-    // remove comments
-    value = value.replace(/(\(\*\s*)[^\*]+(\s*\*\))/g, '');
+    // result = parseColsetDeclarartion(layout);
+    // console.log('onParse(), result = ', result);
 
-    console.log('onParse(), value (no comments) = ', value);
+    // for (const parserKey in parserRegexList) {
+    //   const regex = parserRegexList[parserKey];
 
-    let unitTypeResult = new RegExp(/colset\s+(?<name>\w+)\s*=\s*unit(\s+with\s+(?<new>\w+))*(\s+(?<timed>timed))*/g).exec(value);
-    console.log('onParse(), unitTypeResult = ', unitTypeResult);
+    //   const str = layout;
+    //   let m;
 
-    let result = new RegExp(/(?<record>record)\s+(?<recordfield>[^;]+)/g).exec(value);
-
-    if (result && result.groups) {
-      if (result.groups.record && result.groups.recordfield) {
-        console.log('onParse(), result.groups.record = ', result.groups.record);
-        console.log('onParse(), result.groups.recordfield = ', result.groups.recordfield);
-
-        let s = result.groups.recordfield;
-        let recordfieldList = s.match(/\w+\s*\:\s*\w+/g);
-        console.log('onParse(), recordfieldList = ', recordfieldList);
-      }
-    }
-    
-
-    // let parser = value.match(/^\w+/g);
-    // console.log('onParse(), parser = ', parser);
-
-    // let declarationType = parser && parser[0] ? parser[0] : undefined;
-
-    // switch (declarationType) {
-    //   case 'colset':
-    //     try {
-    //       parser = value.match(/[^=]+/g);
-    //       console.log('onParse(), colset, parser = ', parser);
-    //       if (parser.length === 2) {
-
-    //         const leftPart = parser[0].trim();
-    //         const rightPart = parser[1].trim();
-    //         console.log('onParse(), leftPart = ', leftPart);
-    //         console.log('onParse(), rightPart = ', rightPart);
-
-    //         // try to parse list, product, record, etc...
-    //         parser = rightPart.match(/(\w+){1}\s+((((\w+\s*\:\s*\w+)|(\w+))((\s*[\*\+]\s*)((\w+\s*\:\s*\w+)|(\w+)))+)|(\w+))/g);
-    //         if (parser) {
-    //           console.log('onParse(), try to parse list, product, record, etc..., parser = ', parser);
-
-    //           const colsetType = parser[0].match(/^\w+/g);
-    //           console.log('onParse(), colsetType = ', colsetType);
+    //   console.log('onParse(), --------------------------------------------------------------------');
+    //   console.log('onParse(), str, regex = ', str, regex);
+    //   while ((m = regex.exec(str)) !== null) {
+    //     console.log('onParse(), m.groups = ', m.groups);
+    //     if (m.groups) {
+    //       for (const key in m.groups) {
+    //         if (m.groups[key]) {
+    //           console.log(`onParse(), ${key} = ${m.groups[key]}`);
     //         }
     //       }
-    //     } catch (error) {
-    //       console.error('onParse(), error = ', error);
     //     }
-    //     break;
+
+    //     // // This is necessary to avoid infinite loops with zero-width matches
+    //     // if (m.index === regex.lastIndex) {
+    //     //   regex.lastIndex++;
+    //     // }
+    //   }
+    //   console.log('onParse(), --------------------------------------------------------------------');
     // }
+
+    let newDeclaration = this.declaration;
+
+    if (result && result.cpnElement) {
+      newDeclaration = result.cpnElement;
+      newDeclaration._id = this.declaration._id;
+    }
+
+    this.eventService.send(Message.TREE_SELECT_DECLARATION_NODE_NEW, {
+      cpnType: 'ml',
+      cpnElement: newDeclaration
+    });
   }
 
 }

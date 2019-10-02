@@ -21,6 +21,7 @@ export class Message {
   static TREE_UPDATE_PAGES = 'tree.update.pages';
   static TREE_OPEN_DECLARATION_NODE = 'tree.open.declaration.node';
   static TREE_SELECT_DECLARATION_NODE = 'tree.select.declaration.node';
+  static TREE_SELECT_DECLARATION_NODE_NEW = 'tree.select.declaration.node.new';
 
   static DECLARATION_CHANGED = 'declaration.changed';
 

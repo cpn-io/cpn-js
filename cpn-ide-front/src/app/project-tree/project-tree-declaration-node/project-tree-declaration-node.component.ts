@@ -3,7 +3,7 @@ import { ModelService } from '../../services/model.service';
 import { EventService } from '../../services/event.service';
 import { Message } from '../../common/message';
 import { cloneObject } from 'src/app/common/utils';
-import { clearDeclarationLayout, parseColsetDeclaration, parseDeclarartion } from './declaration-parser';
+import { clearDeclarationLayout, parseDeclarartion } from './declaration-parser';
 
 @Component({
   selector: 'app-project-tree-declaration-node',

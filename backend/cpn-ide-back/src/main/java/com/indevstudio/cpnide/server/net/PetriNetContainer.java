@@ -165,7 +165,7 @@ public class PetriNetContainer {
             checker.checkMonitors();
             checker.generateNonPlaceInstances();
             checker.initialiseSimulationScheduler();
-            checker.instantiateSMLInterface();
+            // checker.instantiateSMLInterface();
 
 
             sim.initialState();

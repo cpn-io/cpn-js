@@ -2,20 +2,26 @@ import { Component, Input } from "@angular/core";
 
 @Component({
     selector: 'app-tree-node',
-    template: `<div [ngClass]="{'selected': selected, 'node': true}" [style.color]="color">
-                    <div class="caret">
-                        <i [ngClass]="expanded ? 'fas fa-caret-down' : 'fas fa-caret-right'"></i>
-                    </div>
-                    <div class="title" [ngClass]="{ 'active' : expanded, 'bold': bold }">
-                        {{ title }}
-                    </div>
-                </div>`,
+    templateUrl: './tree-node.html',
     styleUrls: ['./tree-node.scss']
 })
 export class TreeNodeComponent {
-    @Input() expanded = false;
-    @Input() selected = false;
+    @Input() public expanded = [];
+    @Input() public selected:any = {};
+    @Input() id = '';
     @Input() title = '';
+    @Input() type = '';
+    @Input() cpnElement: any;
     @Input() bold = true;
     @Input() color = 'black';
+    @Input() showBullet = true;
+
+    onClick() {
+        this.expanded[this.id] = !this.expanded[this.id];
+        this.selected.type = this.type;
+        this.selected.id = this.id;
+        this.selected.cpnElement = this.cpnElement;
+
+        console.log(this.constructor.name, 'onClick(), this.selected = ', this.selected);
+    }
 }

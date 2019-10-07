@@ -221,7 +221,7 @@ export class ProjectMonitorsComponent implements OnInit {
 
   updateChanges() {
     // this.eventService.send(Message.MODEL_UPDATE_DIAGRAM, { cpnElement: this.cpnElement });
-    this.eventService.send(Message.MODEL_CHANGED);
+    // this.eventService.send(Message.MODEL_CHANGED);
     this.eventService.send(Message.MONITOR_SET_AVAILABLE_NODES, { availableNodeIds: [] });
   }
 

@@ -1,16 +1,8 @@
-@import "../project-tree/tree-node/tree-node.scss";
+@import "./tree-node/tree-node.scss";
 
 .tree {
     padding: 5pt;
     margin: 0;
     width: 100%;
     height: auto;
-}
-
-.bold {
-  font-weight: bold;
-}
-
-.child {
-  padding-left: 20px;
 }

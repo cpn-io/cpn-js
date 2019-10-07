@@ -35,12 +35,266 @@
                 "id": "orderSize",
                 "ml": "3",
                 "_id": "id31127128"
+              },
+              {
+                "id": "UNIT2",
+                "_id": "ID9497038628"
               }
             ],
             "_id": "idblock104"
           },
           {
             "id": "Types",
+            "block": {
+              "id": "New Block",
+              "ml": {
+                "layout": "fun even i = (i mod 2)=0;",
+                "_id": "ID1438192686",
+                "__text": "fun even i = (i mod 2)=0;"
+              },
+              "color": [
+                {
+                  "id": "EE",
+                  "unit": {
+                    "with": {
+                      "id": "S"
+                    }
+                  },
+                  "layout": "colset EE = unit with S;",
+                  "_id": "ID1438188963"
+                },
+                {
+                  "id": "U",
+                  "unit": "",
+                  "layout": "colset U = unit;",
+                  "_id": "ID1438184261"
+                },
+                {
+                  "id": "B",
+                  "bool": "",
+                  "layout": "colset B = bool;",
+                  "_id": "ID1438189011"
+                },
+                {
+                  "id": "Answer",
+                  "bool": {
+                    "with": {
+                      "id": [
+                        "no",
+                        "yes"
+                      ]
+                    }
+                  },
+                  "layout": "colset Answer = bool with (no, yes);",
+                  "_id": "ID1438189071"
+                },
+                {
+                  "id": "PH",
+                  "index": {
+                    "ml": [
+                      "1",
+                      "5"
+                    ],
+                    "id": "ph"
+                  },
+                  "layout": "colset PH = index ph with 1..5;",
+                  "_id": "ID1438189143"
+                },
+                {
+                  "id": "Day",
+                  "enum": {
+                    "id": [
+                      "Mon",
+                      "Tues",
+                      "Wed",
+                      "Thurs",
+                      "Fri",
+                      "Sat",
+                      "Sun"
+                    ]
+                  },
+                  "layout": "colset Day = with Mon | Tues | Wed | Thurs | Fri | Sat | Sun ;",
+                  "_id": "ID1438189227"
+                },
+                {
+                  "id": "INT2",
+                  "int": "",
+                  "layout": "colset INT2 = int;",
+                  "_id": "ID1438189323"
+                },
+                {
+                  "id": "SmallInt",
+                  "int": {
+                    "with": {
+                      "ml": [
+                        "1",
+                        "10"
+                      ]
+                    }
+                  },
+                  "layout": "colset SmallInt = int with 1..10;",
+                  "_id": "ID1438189487"
+                },
+                {
+                  "id": "S",
+                  "string": "",
+                  "layout": "colset S = string;",
+                  "_id": "ID1438189671"
+                },
+                {
+                  "id": "LowerString",
+                  "string": {
+                    "with": {
+                      "ml": [
+                        "\"a\"",
+                        "\"z\""
+                      ]
+                    }
+                  },
+                  "layout": "colset LowerString = string with \"a\"..\"z\";",
+                  "_id": "ID1438190113"
+                },
+                {
+                  "id": "SmallString",
+                  "string": {
+                    "with": {
+                      "ml": [
+                        "\"a\"",
+                        "\"d\""
+                      ],
+                      "and": {
+                        "ml": [
+                          "3",
+                          "9"
+                        ]
+                      }
+                    }
+                  },
+                  "layout": "colset SmallString = string with \"a\"..\"d\" and 3..9;",
+                  "_id": "ID1438190116"
+                },
+                {
+                  "id": "P",
+                  "product": {
+                    "id": [
+                      "U",
+                      "INT2"
+                    ]
+                  },
+                  "layout": "colset P = product U * INT2;",
+                  "_id": "ID1438191853"
+                },
+                {
+                  "id": "PACK",
+                  "record": {
+                    "recordfield": [
+                      {
+                        "id": [
+                          "se",
+                          "S"
+                        ]
+                      },
+                      {
+                        "id": [
+                          "re",
+                          "S"
+                        ]
+                      },
+                      {
+                        "id": [
+                          "no",
+                          "INT2"
+                        ]
+                      }
+                    ]
+                  },
+                  "layout": "colset PACK = record se:S * re:S * no:INT2;",
+                  "_id": "ID1438191902"
+                },
+                {
+                  "id": "Data",
+                  "string": {
+                    "with": {
+                      "ml": [
+                        "\"A\"",
+                        "\"z\""
+                      ],
+                      "and": {
+                        "ml": [
+                          "0",
+                          "8"
+                        ]
+                      }
+                    }
+                  },
+                  "layout": "colset Data = string with \"A\"..\"z\" and 0..8;",
+                  "_id": "ID1438191964"
+                },
+                {
+                  "id": "Packet",
+                  "union": {
+                    "unionfield": [
+                      {
+                        "id": "DATA",
+                        "type": {
+                          "id": "Data"
+                        }
+                      },
+                      {
+                        "id": "ACK"
+                      }
+                    ]
+                  },
+                  "layout": "colset Packet = union DATA:Data + ACK;",
+                  "_id": "ID1438192039"
+                },
+                {
+                  "id": "INTlist",
+                  "list": {
+                    "id": "INT2"
+                  },
+                  "layout": "colset INTlist = list INT2;",
+                  "_id": "ID1438192127"
+                },
+                {
+                  "id": "ShortBoolList",
+                  "list": {
+                    "with": {
+                      "ml": [
+                        "2",
+                        "4"
+                      ]
+                    },
+                    "id": "B"
+                  },
+                  "layout": "colset ShortBoolList = list B with 2..4;",
+                  "_id": "ID1438192228"
+                },
+                {
+                  "id": "EvenInt",
+                  "subset": {
+                    "id": "INT2",
+                    "by": {
+                      "ml": "even"
+                    }
+                  },
+                  "layout": "colset EvenInt = subset INT2 by even;",
+                  "_id": "ID1438192342"
+                },
+                {
+                  "id": "Weekend",
+                  "subset": {
+                    "id": "Day",
+                    "with": {
+                      "ml": "[Sat,Sun]"
+                    }
+                  },
+                  "layout": "colset Weekend = subset Day with [Sat,Sun];",
+                  "_id": "ID1438192469"
+                }
+              ],
+              "_id": "ID1438182757"
+            },
             "color": [
               {
                 "id": "UNIT",
@@ -178,7 +432,6 @@
                     "MenuItems"
                   ]
                 },
-                "layout": "colset Ability = product Employee * MenuItems;",
                 "_id": "ID1437920759"
               }
             ],
@@ -1217,14 +1470,14 @@
                 },
                 "lineattr": {
                   "_colour": "Black",
-                  "_thick": "0",
+                  "_thick": "1",
                   "_type": "Solid"
                 },
                 "textattr": {
                   "_colour": "Black",
                   "_bold": "false"
                 },
-                "_id": "ID1437545016",
+                "_id": "ID9497036274",
                 "_serial": "1"
               },
               "annot": {
@@ -1248,7 +1501,8 @@
                 },
                 "text": {
                   "_tool": "CPN Tools",
-                  "_version": "4.0.1"
+                  "_version": "4.0.1",
+                  "__text": "1`()"
                 },
                 "_id": "id260197204a"
               },
@@ -1297,14 +1551,14 @@
                 },
                 "lineattr": {
                   "_colour": "Black",
-                  "_thick": "0",
+                  "_thick": "1",
                   "_type": "Solid"
                 },
                 "textattr": {
                   "_colour": "Black",
                   "_bold": "false"
                 },
-                "_id": "ID1437545017",
+                "_id": "ID9497036275",
                 "_serial": "1"
               },
               "annot": {
@@ -1328,7 +1582,8 @@
                 },
                 "text": {
                   "_tool": "CPN Tools",
-                  "_version": "4.0.1"
+                  "_version": "4.0.1",
+                  "__text": "1`()"
                 },
                 "_id": "id56374658a"
               },
@@ -1377,14 +1632,14 @@
                 },
                 "lineattr": {
                   "_colour": "Black",
-                  "_thick": "0",
+                  "_thick": "1",
                   "_type": "Solid"
                 },
                 "textattr": {
                   "_colour": "Black",
                   "_bold": "false"
                 },
-                "_id": "ID1437545018",
+                "_id": "ID9497036276",
                 "_serial": "1"
               },
               "annot": {
@@ -1408,7 +1663,8 @@
                 },
                 "text": {
                   "_tool": "CPN Tools",
-                  "_version": "4.0.1"
+                  "_version": "4.0.1",
+                  "__text": "1`()"
                 },
                 "_id": "id41809607a"
               },
@@ -1457,14 +1713,14 @@
                 },
                 "lineattr": {
                   "_colour": "Black",
-                  "_thick": "0",
+                  "_thick": "1",
                   "_type": "Solid"
                 },
                 "textattr": {
                   "_colour": "Black",
                   "_bold": "false"
                 },
-                "_id": "ID1437545019",
+                "_id": "ID9497036277",
                 "_serial": "1"
               },
               "annot": {
@@ -1488,7 +1744,8 @@
                 },
                 "text": {
                   "_tool": "CPN Tools",
-                  "_version": "4.0.1"
+                  "_version": "4.0.1",
+                  "__text": "1`()"
                 },
                 "_id": "id80625655a"
               },
@@ -1537,14 +1794,14 @@
                 },
                 "lineattr": {
                   "_colour": "Black",
-                  "_thick": "0",
+                  "_thick": "1",
                   "_type": "Solid"
                 },
                 "textattr": {
                   "_colour": "Black",
                   "_bold": "false"
                 },
-                "_id": "ID1437545020",
+                "_id": "ID9497036279",
                 "_serial": "1"
               },
               "annot": {
@@ -1568,7 +1825,8 @@
                 },
                 "text": {
                   "_tool": "CPN Tools",
-                  "_version": "4.0.1"
+                  "_version": "4.0.1",
+                  "__text": "1`()"
                 },
                 "_id": "id142810031a"
               },
@@ -1617,14 +1875,14 @@
                 },
                 "lineattr": {
                   "_colour": "Black",
-                  "_thick": "0",
+                  "_thick": "1",
                   "_type": "Solid"
                 },
                 "textattr": {
                   "_colour": "Black",
                   "_bold": "false"
                 },
-                "_id": "ID1437545021",
+                "_id": "ID9497036282",
                 "_serial": "1"
               },
               "annot": {
@@ -1648,7 +1906,8 @@
                 },
                 "text": {
                   "_tool": "CPN Tools",
-                  "_version": "4.0.1"
+                  "_version": "4.0.1",
+                  "__text": "1`()"
                 },
                 "_id": "id77104713a"
               },
@@ -1697,14 +1956,14 @@
                 },
                 "lineattr": {
                   "_colour": "Black",
-                  "_thick": "0",
+                  "_thick": "1",
                   "_type": "Solid"
                 },
                 "textattr": {
                   "_colour": "Black",
                   "_bold": "false"
                 },
-                "_id": "ID1437545022",
+                "_id": "ID9497036283",
                 "_serial": "1"
               },
               "annot": {
@@ -1728,7 +1987,8 @@
                 },
                 "text": {
                   "_tool": "CPN Tools",
-                  "_version": "4.0.1"
+                  "_version": "4.0.1",
+                  "__text": "1`()"
                 },
                 "_id": "id172185272a"
               },
@@ -1777,14 +2037,14 @@
                 },
                 "lineattr": {
                   "_colour": "Black",
-                  "_thick": "0",
+                  "_thick": "1",
                   "_type": "Solid"
                 },
                 "textattr": {
                   "_colour": "Black",
                   "_bold": "false"
                 },
-                "_id": "ID1437545023",
+                "_id": "ID9497036285",
                 "_serial": "1"
               },
               "annot": {
@@ -1808,7 +2068,8 @@
                 },
                 "text": {
                   "_tool": "CPN Tools",
-                  "_version": "4.0.1"
+                  "_version": "4.0.1",
+                  "__text": "1`()"
                 },
                 "_id": "id229571706a"
               },
@@ -8384,7 +8645,7 @@
                   "_version": "4.0.1",
                   "__text": "1`()"
                 },
-                "_id": "ID1438181234"
+                "_id": "ID1438190217"
               },
               "_id": "ID1437590929",
               "_orientation": "PtoT",
@@ -8489,7 +8750,7 @@
                   "_version": "4.0.1",
                   "__text": "1`()"
                 },
-                "_id": "ID1438181235"
+                "_id": "ID1438190218"
               },
               "_id": "ID1437591441",
               "_orientation": "TtoP",
@@ -8732,7 +8993,7 @@
                   "_version": "4.0.1",
                   "__text": "1`()"
                 },
-                "_id": "ID1438181236"
+                "_id": "ID1438190219"
               },
               "_id": "ID1437598898",
               "_orientation": "PtoT",
@@ -8813,7 +9074,7 @@
                   "_version": "4.0.1",
                   "__text": "1`()"
                 },
-                "_id": "ID1438181237"
+                "_id": "ID1438190220"
               },
               "_id": "ID1437604000",
               "_orientation": "TtoP",
@@ -9257,7 +9518,7 @@
                   "_version": "4.0.1",
                   "__text": "1`()"
                 },
-                "_id": "ID1438181238"
+                "_id": "ID1438190221"
               },
               "_id": "ID1437632466",
               "_orientation": "PtoT",
@@ -9362,7 +9623,7 @@
                   "_version": "4.0.1",
                   "__text": "1`()"
                 },
-                "_id": "ID1438181239"
+                "_id": "ID1438190222"
               },
               "_id": "ID1437633184",
               "_orientation": "TtoP",
@@ -9443,7 +9704,7 @@
                   "_version": "4.0.1",
                   "__text": "1`()"
                 },
-                "_id": "ID1438181240"
+                "_id": "ID1438190223"
               },
               "_id": "ID1437635346",
               "_orientation": "TtoP",
@@ -9524,7 +9785,7 @@
                   "_version": "4.0.1",
                   "__text": "1`()"
                 },
-                "_id": "ID1438181241"
+                "_id": "ID1438190224"
               },
               "_id": "ID1437636078",
               "_orientation": "PtoT",
@@ -14996,6 +15257,18 @@
             "value": {
               "boolean": "true"
             },
+            "_name": "extensions.10005.enable"
+          },
+          {
+            "value": {
+              "boolean": "true"
+            },
+            "_name": "extensions.10003.enable"
+          },
+          {
+            "value": {
+              "boolean": "true"
+            },
             "_name": "extensions.10002.enable"
           },
           {
@@ -15009,18 +15282,6 @@
               "boolean": "true"
             },
             "_name": "extensions.10001.enable"
-          },
-          {
-            "value": {
-              "boolean": "true"
-            },
-            "_name": "extensions.10005.enable"
-          },
-          {
-            "value": {
-              "boolean": "true"
-            },
-            "_name": "extensions.10003.enable"
           },
           {
             "value": {
@@ -15825,6 +16086,9 @@
                   },
                   {
                     "_expanded": "false"
+                  },
+                  {
+                    "_expanded": "false"
                   }
                 ],
                 "_expanded": "false"
@@ -15832,6 +16096,74 @@
               {
                 "IndexNode": [
                   {
+                    "IndexNode": [
+                      {
+                        "_expanded": "true"
+                      },
+                      {
+                        "_expanded": "true"
+                      },
+                      {
+                        "_expanded": "true"
+                      },
+                      {
+                        "_expanded": "true"
+                      },
+                      {
+                        "_expanded": "true"
+                      },
+                      {
+                        "_expanded": "true"
+                      },
+                      {
+                        "_expanded": "true"
+                      },
+                      {
+                        "_expanded": "true"
+                      },
+                      {
+                        "_expanded": "true"
+                      },
+                      {
+                        "_expanded": "true"
+                      },
+                      {
+                        "_expanded": "true"
+                      },
+                      {
+                        "_expanded": "true"
+                      },
+                      {
+                        "_expanded": "true"
+                      },
+                      {
+                        "_expanded": "true"
+                      },
+                      {
+                        "_expanded": "true"
+                      },
+                      {
+                        "_expanded": "true"
+                      },
+                      {
+                        "_expanded": "true"
+                      },
+                      {
+                        "_expanded": "true"
+                      },
+                      {
+                        "_expanded": "true"
+                      },
+                      {
+                        "_expanded": "true"
+                      }
+                    ],
+                    "_expanded": "true"
+                  },
+                  {
+                    "_expanded": "true"
+                  },
+                  {
                     "_expanded": "false"
                   },
                   {
@@ -15881,12 +16213,9 @@
                   },
                   {
                     "_expanded": "false"
-                  },
-                  {
-                    "_expanded": "true"
                   }
                 ],
-                "_expanded": "false"
+                "_expanded": "true"
               },
               {
                 "IndexNode": [
@@ -15900,6 +16229,9 @@
                     "_expanded": "false"
                   },
                   {
+                    "_expanded": "true"
+                  },
+                  {
                     "_expanded": "false"
                   },
                   {
@@ -15919,9 +16251,6 @@
                   },
                   {
                     "_expanded": "true"
-                  },
-                  {
-                    "_expanded": "false"
                   },
                   {
                     "_expanded": "false"

@@ -1,0 +1,2980 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>cpn-ide documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	      <link rel="stylesheet" href="../styles/style.css">
+    </head>
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top visible-xs">
+            <a href="../" class="navbar-brand">cpn-ide documentation</a>
+            <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="hidden-xs menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li>Components</li>
+  <li>ModelEditorComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="active">
+            <a href="#info" role="tab" id="info-tab" data-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li >
+            <a href="#source" role="tab" id="source-tab" data-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li >
+            <a href="#templateData" role="tab" id="templateData-tab" data-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li >
+            <a href="#styleData" role="tab" id="styleData-tab" data-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li >
+            <a href="#tree" role="tab" id="tree-tab" data-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="c-info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/model-editor/model-editor.component.ts</code>
+</p>
+
+
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                    <code><a href="https://angular.io/api/core/OnInit" target="_blank" >OnInit</a></code>
+    </p>
+
+
+<section>
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>app-model-editor</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./model-editor.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./model-editor.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section>
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#arcShapes">arcShapes</a>
+                            </li>
+                            <li>
+                                <a href="#availableMonitorList">availableMonitorList</a>
+                            </li>
+                            <li>
+                                <a href="#canvas">canvas</a>
+                            </li>
+                            <li>
+                                <a href="#containerElementRef">containerElementRef</a>
+                            </li>
+                            <li>
+                                <a href="#cpnFactory">cpnFactory</a>
+                            </li>
+                            <li>
+                                <a href="#curentElement">curentElement</a>
+                            </li>
+                            <li>
+                                <a href="#diagram">diagram</a>
+                            </li>
+                            <li>
+                                <a href="#dragging">dragging</a>
+                            </li>
+                            <li>
+                                <a href="#elementFactory">elementFactory</a>
+                            </li>
+                            <li>
+                                <a href="#eventBus">eventBus</a>
+                            </li>
+                            <li>
+                                <a href="#jsonPageObject">jsonPageObject</a>
+                            </li>
+                            <li>
+                                <a href="#labelEditingProvider">labelEditingProvider</a>
+                            </li>
+                            <li>
+                                <a href="#loading">loading</a>
+                            </li>
+                            <li>
+                                <a href="#modeling">modeling</a>
+                            </li>
+                            <li>
+                                <a href="#monitorType">monitorType</a>
+                            </li>
+                            <li>
+                                <a href="#pageId">pageId</a>
+                            </li>
+                            <li>
+                                <a href="#placeShapes">placeShapes</a>
+                            </li>
+                            <li>
+                                <a href="#popupElementRef">popupElementRef</a>
+                            </li>
+                            <li>
+                                <a href="#portMenuProvider">portMenuProvider</a>
+                            </li>
+                            <li>
+                                <a href="#selectedElement">selectedElement</a>
+                            </li>
+                            <li>
+                                <a href="#selectionProvider">selectionProvider</a>
+                            </li>
+                            <li>
+                                <a href="#stateProvider">stateProvider</a>
+                            </li>
+                            <li>
+                                <a href="#subpages">subpages</a>
+                            </li>
+                            <li>
+                                <a href="#textRenderer">textRenderer</a>
+                            </li>
+                            <li>
+                                <a href="#transCount">transCount</a>
+                            </li>
+                            <li>
+                                <a href="#transShapes">transShapes</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#changeSubPageName">changeSubPageName</a>
+                            </li>
+                            <li>
+                                <a href="#checkPorts">checkPorts</a>
+                            </li>
+                            <li>
+                                <a href="#clearPage">clearPage</a>
+                            </li>
+                            <li>
+                                <a href="#fireSelectionEvent">fireSelectionEvent</a>
+                            </li>
+                            <li>
+                                <a href="#hidePopup">hidePopup</a>
+                            </li>
+                            <li>
+                                <a href="#load">load</a>
+                            </li>
+                            <li>
+                                <a href="#loadPageDiagram">loadPageDiagram</a>
+                            </li>
+                            <li>
+                                <a href="#log">log</a>
+                            </li>
+                            <li>
+                                <a href="#makeid">makeid</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnInit">ngOnInit</a>
+                            </li>
+                            <li>
+                                <a href="#onCreateNewMonitor">onCreateNewMonitor</a>
+                            </li>
+                            <li>
+                                <a href="#openPropPanel">openPropPanel</a>
+                            </li>
+                            <li>
+                                <a href="#reloadPage">reloadPage</a>
+                            </li>
+                            <li>
+                                <a href="#showPopup">showPopup</a>
+                            </li>
+                            <li>
+                                <a href="#subscripeToAppMessage">subscripeToAppMessage</a>
+                            </li>
+                            <li>
+                                <a href="#updateAlailableStatus">updateAlailableStatus</a>
+                            </li>
+                            <li>
+                                <a href="#updateAvailableMonitorList">updateAvailableMonitorList</a>
+                            </li>
+                            <li>
+                                <a href="#updateElementStatus">updateElementStatus</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Inputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#id">id</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section>
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(eventService: <a href="../injectables/EventService.html">EventService</a>, settings: <a href="../injectables/SettingsService.html">SettingsService</a>, modelService: <a href="../injectables/ModelService.html">ModelService</a>, validationService: <a href="../injectables/ValidationService.html">ValidationService</a>, accessCpnService: <a href="../injectables/AccessCpnService.html">AccessCpnService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="71" class="link-to-prism">src/app/model-editor/model-editor.component.ts:71</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>eventService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/EventService.html" target="_self" >EventService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>settings</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/SettingsService.html" target="_self" >SettingsService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>modelService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ModelService.html" target="_self" >ModelService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>validationService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ValidationService.html" target="_self" >ValidationService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>accessCpnService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/AccessCpnService.html" target="_self" >AccessCpnService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+    <section>
+    <h3 id="inputs">Inputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="id"></a>
+                        <b>id</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/model-editor/model-editor.component.ts:41</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+    <section>
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="changeSubPageName"></a>
+                    <span class="name">
+                        <b>
+                            changeSubPageName
+                        </b>
+                        <a href="#changeSubPageName"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>changeSubPageName(subpage)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="531"
+                            class="link-to-prism">src/app/model-editor/model-editor.component.ts:531</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>subpage</td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="checkPorts"></a>
+                    <span class="name">
+                        <b>
+                            checkPorts
+                        </b>
+                        <a href="#checkPorts"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>checkPorts()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="451"
+                            class="link-to-prism">src/app/model-editor/model-editor.component.ts:451</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="clearPage"></a>
+                    <span class="name">
+                        <b>
+                            clearPage
+                        </b>
+                        <a href="#clearPage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>clearPage()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="572"
+                            class="link-to-prism">src/app/model-editor/model-editor.component.ts:572</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="fireSelectionEvent"></a>
+                    <span class="name">
+                        <b>
+                            fireSelectionEvent
+                        </b>
+                        <a href="#fireSelectionEvent"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>fireSelectionEvent(event)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="539"
+                            class="link-to-prism">src/app/model-editor/model-editor.component.ts:539</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>open elemen property panel after klick on it</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>event</td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="hidePopup"></a>
+                    <span class="name">
+                        <b>
+                            hidePopup
+                        </b>
+                        <a href="#hidePopup"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>hidePopup()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="435"
+                            class="link-to-prism">src/app/model-editor/model-editor.component.ts:435</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="load"></a>
+                    <span class="name">
+                        <b>
+                            load
+                        </b>
+                        <a href="#load"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>load(pageObject, subPages)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="553"
+                            class="link-to-prism">src/app/model-editor/model-editor.component.ts:553</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>pageObject</td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>subPages</td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadPageDiagram"></a>
+                    <span class="name">
+                        <b>
+                            loadPageDiagram
+                        </b>
+                        <a href="#loadPageDiagram"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>loadPageDiagram(pageObject, alignToCenter)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="575"
+                            class="link-to-prism">src/app/model-editor/model-editor.component.ts:575</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Optional</td>
+                                    <td>Default value</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>pageObject</td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+                                    <td>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>alignToCenter</td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+                                    <td>
+                                        <code>true</code>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="log"></a>
+                    <span class="name">
+                        <b>
+                            log
+                        </b>
+                        <a href="#log"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>log(obj)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="549"
+                            class="link-to-prism">src/app/model-editor/model-editor.component.ts:549</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>obj</td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="makeid"></a>
+                    <span class="name">
+                        <b>
+                            makeid
+                        </b>
+                        <a href="#makeid"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>makeid(length)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="583"
+                            class="link-to-prism">src/app/model-editor/model-editor.component.ts:583</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>length</td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnInit"></a>
+                    <span class="name">
+                        <b>
+                            ngOnInit
+                        </b>
+                        <a href="#ngOnInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnInit()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="80"
+                            class="link-to-prism">src/app/model-editor/model-editor.component.ts:80</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onCreateNewMonitor"></a>
+                    <span class="name">
+                        <b>
+                            onCreateNewMonitor
+                        </b>
+                        <a href="#onCreateNewMonitor"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onCreateNewMonitor(monitorType: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="594"
+                            class="link-to-prism">src/app/model-editor/model-editor.component.ts:594</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>monitorType</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="openPropPanel"></a>
+                    <span class="name">
+                        <b>
+                            openPropPanel
+                        </b>
+                        <a href="#openPropPanel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>openPropPanel(element)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="514"
+                            class="link-to-prism">src/app/model-editor/model-editor.component.ts:514</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>element</td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="reloadPage"></a>
+                    <span class="name">
+                        <b>
+                            reloadPage
+                        </b>
+                        <a href="#reloadPage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>reloadPage()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="441"
+                            class="link-to-prism">src/app/model-editor/model-editor.component.ts:441</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="showPopup"></a>
+                    <span class="name">
+                        <b>
+                            showPopup
+                        </b>
+                        <a href="#showPopup"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>showPopup(position, element, popupText, popupClass)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="422"
+                            class="link-to-prism">src/app/model-editor/model-editor.component.ts:422</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>position</td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>element</td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>popupText</td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>popupClass</td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="subscripeToAppMessage"></a>
+                    <span class="name">
+                        <b>
+                            subscripeToAppMessage
+                        </b>
+                        <a href="#subscripeToAppMessage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>subscripeToAppMessage()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="490"
+                            class="link-to-prism">src/app/model-editor/model-editor.component.ts:490</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateAlailableStatus"></a>
+                    <span class="name">
+                        <b>
+                            updateAlailableStatus
+                        </b>
+                        <a href="#updateAlailableStatus"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>updateAlailableStatus(availableIds)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="482"
+                            class="link-to-prism">src/app/model-editor/model-editor.component.ts:482</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>availableIds</td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateAvailableMonitorList"></a>
+                    <span class="name">
+                        <b>
+                            updateAvailableMonitorList
+                        </b>
+                        <a href="#updateAvailableMonitorList"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>updateAvailableMonitorList(selectedElements)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="399"
+                            class="link-to-prism">src/app/model-editor/model-editor.component.ts:399</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>selectedElements</td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateElementStatus"></a>
+                    <span class="name">
+                        <b>
+                            updateElementStatus
+                        </b>
+                        <a href="#updateElementStatus"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>updateElementStatus()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="458"
+                            class="link-to-prism">src/app/model-editor/model-editor.component.ts:458</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Update element status</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section>
+    
+        <h3 id="inputs">
+            Properties
+        </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="arcShapes"></a>
+                        <span class="name">
+                            <b>
+                            arcShapes</b>
+                            <a href="#arcShapes"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>[]</code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>[]</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="64" class="link-to-prism">src/app/model-editor/model-editor.component.ts:64</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="availableMonitorList"></a>
+                        <span class="name">
+                            <b>
+                            availableMonitorList</b>
+                            <a href="#availableMonitorList"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>[]</code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>[]</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="71" class="link-to-prism">src/app/model-editor/model-editor.component.ts:71</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="canvas"></a>
+                        <span class="name">
+                            <b>
+                            canvas</b>
+                            <a href="#canvas"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="48" class="link-to-prism">src/app/model-editor/model-editor.component.ts:48</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="containerElementRef"></a>
+                        <span class="name">
+                            <b>
+                            containerElementRef</b>
+                            <a href="#containerElementRef"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://angular.io/api/core/ElementRef" target="_blank" >ElementRef</a></code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Decorators : </b>
+                            <br />
+                            <code>
+                                @ViewChild(&#x27;container&#x27;)<br />
+                            </code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/model-editor/model-editor.component.ts:38</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="cpnFactory"></a>
+                        <span class="name">
+                            <b>
+                            cpnFactory</b>
+                            <a href="#cpnFactory"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/model-editor/model-editor.component.ts:47</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="curentElement"></a>
+                        <span class="name">
+                            <b>
+                            curentElement</b>
+                            <a href="#curentElement"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="65" class="link-to-prism">src/app/model-editor/model-editor.component.ts:65</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="diagram"></a>
+                        <span class="name">
+                            <b>
+                            diagram</b>
+                            <a href="#diagram"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>Diagram</code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/model-editor/model-editor.component.ts:45</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="dragging"></a>
+                        <span class="name">
+                            <b>
+                            dragging</b>
+                            <a href="#dragging"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/model-editor/model-editor.component.ts:49</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="elementFactory"></a>
+                        <span class="name">
+                            <b>
+                            elementFactory</b>
+                            <a href="#elementFactory"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/model-editor/model-editor.component.ts:46</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="eventBus"></a>
+                        <span class="name">
+                            <b>
+                            eventBus</b>
+                            <a href="#eventBus"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/model-editor/model-editor.component.ts:51</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="jsonPageObject"></a>
+                        <span class="name">
+                            <b>
+                            jsonPageObject</b>
+                            <a href="#jsonPageObject"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/model-editor/model-editor.component.ts:55</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="labelEditingProvider"></a>
+                        <span class="name">
+                            <b>
+                            labelEditingProvider</b>
+                            <a href="#labelEditingProvider"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="52" class="link-to-prism">src/app/model-editor/model-editor.component.ts:52</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="loading"></a>
+                        <span class="name">
+                            <b>
+                            loading</b>
+                            <a href="#loading"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>false</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/model-editor/model-editor.component.ts:69</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="modeling"></a>
+                        <span class="name">
+                            <b>
+                            modeling</b>
+                            <a href="#modeling"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/model-editor/model-editor.component.ts:50</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="monitorType"></a>
+                        <span class="name">
+                            <b>
+                            monitorType</b>
+                            <a href="#monitorType"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>MonitorType</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/model-editor/model-editor.component.ts:43</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="pageId"></a>
+                        <span class="name">
+                            <b>
+                            pageId</b>
+                            <a href="#pageId"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/model-editor/model-editor.component.ts:66</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="placeShapes"></a>
+                        <span class="name">
+                            <b>
+                            placeShapes</b>
+                            <a href="#placeShapes"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>[]</code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>[]</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="62" class="link-to-prism">src/app/model-editor/model-editor.component.ts:62</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="popupElementRef"></a>
+                        <span class="name">
+                            <b>
+                            popupElementRef</b>
+                            <a href="#popupElementRef"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://angular.io/api/core/ElementRef" target="_blank" >ElementRef</a></code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Decorators : </b>
+                            <br />
+                            <code>
+                                @ViewChild(&#x27;popup&#x27;)<br />
+                            </code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/model-editor/model-editor.component.ts:39</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="portMenuProvider"></a>
+                        <span class="name">
+                            <b>
+                            portMenuProvider</b>
+                            <a href="#portMenuProvider"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/model-editor/model-editor.component.ts:56</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="selectedElement"></a>
+                        <span class="name">
+                            <b>
+                            selectedElement</b>
+                            <a href="#selectedElement"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/model-editor/model-editor.component.ts:54</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="selectionProvider"></a>
+                        <span class="name">
+                            <b>
+                            selectionProvider</b>
+                            <a href="#selectionProvider"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/model-editor/model-editor.component.ts:58</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="stateProvider"></a>
+                        <span class="name">
+                            <b>
+                            stateProvider</b>
+                            <a href="#stateProvider"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="57" class="link-to-prism">src/app/model-editor/model-editor.component.ts:57</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="subpages"></a>
+                        <span class="name">
+                            <b>
+                            subpages</b>
+                            <a href="#subpages"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>[]</code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>[]</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="61" class="link-to-prism">src/app/model-editor/model-editor.component.ts:61</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="textRenderer"></a>
+                        <span class="name">
+                            <b>
+                            textRenderer</b>
+                            <a href="#textRenderer"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/model-editor/model-editor.component.ts:53</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="transCount"></a>
+                        <span class="name">
+                            <b>
+                            transCount</b>
+                            <a href="#transCount"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>0</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/model-editor/model-editor.component.ts:67</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="transShapes"></a>
+                        <span class="name">
+                            <b>
+                            transShapes</b>
+                            <a href="#transShapes"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>[]</code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>[]</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/model-editor/model-editor.component.ts:63</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="c-source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, ElementRef, Input, OnInit, ViewChild } from &#x27;@angular/core&#x27;;
+
+import Diagram from &#x27;diagram-js&#x27;;
+import CpnDiagramModule from &#x27;../../lib/cpn-js/core&#x27;;
+
+import { Message } from &#x27;../common/message&#x27;;
+import { EventService } from &#x27;../services/event.service&#x27;;
+import { ModelService } from &#x27;../services/model.service&#x27;;
+import { SettingsService } from &#x27;../services/settings.service&#x27;;
+import { ValidationService } from &#x27;../services/validation.service&#x27;;
+
+import { importCpnPage } from &#x27;../../lib/cpn-js/import/Importer&#x27;;
+
+import {
+  getNextId,
+} from &#x27;../../lib/cpn-js/features/modeling/CpnElementFactory&#x27;;
+
+import {
+  CPN_LABEL,
+  CPN_PLACE,
+  CPN_TRANSITION,
+  CPN_CONNECTION,
+  is,
+  isCpn,
+} from &#x27;../../lib/cpn-js/util/ModelUtil&#x27;;
+
+import { AccessCpnService } from &#x27;../services/access-cpn.service&#x27;;
+import { MonitorType, getMonitorTypeList } from &#x27;../common/monitors&#x27;;
+import { addNode } from &#x27;../common/utils&#x27;;
+
+@Component({
+  selector: &#x27;app-model-editor&#x27;,
+  templateUrl: &#x27;./model-editor.component.html&#x27;,
+  styleUrls: [&#x27;./model-editor.component.scss&#x27;]
+})
+export class ModelEditorComponent implements OnInit {
+
+  @ViewChild(&#x27;container&#x27;) containerElementRef: ElementRef;
+  @ViewChild(&#x27;popup&#x27;) popupElementRef: ElementRef;
+
+  @Input() id: string;
+
+  monitorType &#x3D; MonitorType;
+
+  diagram: Diagram;
+  elementFactory;
+  cpnFactory;
+  canvas;
+  dragging;
+  modeling;
+  eventBus;
+  labelEditingProvider;
+  textRenderer;
+  selectedElement;
+  jsonPageObject;
+  portMenuProvider;
+  stateProvider;
+  selectionProvider;
+
+  // subscription: Subscription;
+  subpages &#x3D; [];
+  placeShapes &#x3D; [];
+  transShapes &#x3D; [];
+  arcShapes &#x3D; [];
+  curentElement;
+  pageId;
+  transCount &#x3D; 0;
+
+  loading &#x3D; false;
+
+  availableMonitorList &#x3D; [];
+
+  constructor(private eventService: EventService,
+    private settings: SettingsService,
+    private modelService: ModelService,
+    private validationService: ValidationService,
+    private accessCpnService: AccessCpnService) {
+  }
+
+  ngOnInit() {
+
+    const self &#x3D; this;
+
+    this.subscripeToAppMessage();
+
+
+    // this.diagram &#x3D; new Diagram({
+    //   container: this.containerElementRef.nativeElement
+    // });
+
+    this.diagram &#x3D; new Diagram({
+      canvas: {
+        container: this.containerElementRef.nativeElement
+      },
+      modules: [
+        CpnDiagramModule,
+      ]
+    });
+
+    this.elementFactory &#x3D; this.diagram.get(&#x27;elementFactory&#x27;);
+    this.dragging &#x3D; this.diagram.get(&#x27;dragging&#x27;);
+    this.canvas &#x3D; this.diagram.get(&#x27;canvas&#x27;);
+    this.modeling &#x3D; this.diagram.get(&#x27;modeling&#x27;);
+    this.eventBus &#x3D; this.diagram.get(&#x27;eventBus&#x27;);
+    this.labelEditingProvider &#x3D; this.diagram.get(&#x27;labelEditingProvider&#x27;);
+    this.textRenderer &#x3D; this.diagram.get(&#x27;textRenderer&#x27;);
+    this.cpnFactory &#x3D; this.diagram.get(&#x27;cpnFactory&#x27;);
+    this.portMenuProvider &#x3D; this.diagram.get(&#x27;portMenuProvider&#x27;);
+    this.stateProvider &#x3D; this.diagram.get(&#x27;stateProvider&#x27;);
+    this.selectionProvider &#x3D; this.diagram.get(&#x27;selectionProvider&#x27;);
+
+    const eventBus &#x3D; this.eventBus;
+
+    // set defualt values to diagram
+    // -----------------------------------------------------
+    for (const key of [&#x27;type&#x27;, &#x27;initmark&#x27;, &#x27;cond&#x27;, &#x27;time&#x27;, &#x27;code&#x27;, &#x27;priority&#x27;, &#x27;annot&#x27;, &#x27;ellipse&#x27;, &#x27;box&#x27;]) {
+      this.modeling.setDefaultValue(key, this.settings.getAppSettings()[key]);
+    }
+
+    eventBus.on(&#x27;import.render.complete&#x27;, (event) &#x3D;&gt; {
+      this.loading &#x3D; false;
+      // console.log(&#x27;import.render.complete, event &#x3D; &#x27;, event);
+
+      this.updateElementStatus();
+    });
+
+    // eventBus.on(&#x27;element.changed&#x27;, (event) &#x3D;&gt; {
+    eventBus.on([
+      &#x27;shape.move.end&#x27;,
+      &#x27;create.end&#x27;,
+      &#x27;connect.end&#x27;,
+      &#x27;resize.end&#x27;,
+      &#x27;bendpoint.move.end&#x27;,
+      &#x27;connectionSegment.move.end&#x27;,
+      &#x27;directEditing.complete&#x27;,
+      &#x27;shape.delete&#x27;
+    ],
+      (event) &#x3D;&gt; {
+        console.log(self.constructor.name, &#x27;MODEL_CHANGED event &#x3D; &#x27;, event);
+
+        // this.eventService.send(Message.MODEL_CHANGED);
+      });
+
+    this.eventService.on(Message.MODEL_RELOAD, () &#x3D;&gt; {
+      this.log(&#x27;Reload page diagram...&#x27;);
+      this.reloadPage();
+    });
+
+    this.eventService.on(Message.SERVER_INIT_NET_START, () &#x3D;&gt; {
+      this.log(&#x27;Validation process...&#x27;);
+    });
+
+    // VALIDATION RESULT
+    this.eventService.on(Message.SERVER_INIT_NET_DONE, (event) &#x3D;&gt; {
+      this.updateElementStatus();
+    });
+
+    // TOKENS
+    this.eventService.on(Message.SERVER_GET_TOKEN_MARKS, (event) &#x3D;&gt; {
+      this.updateElementStatus();
+    });
+
+    // TRANSITIONS
+    this.eventService.on(Message.SERVER_GET_TRANSITIONS, (data) &#x3D;&gt; {
+      this.updateElementStatus();
+    });
+
+    // BINDINGS
+    this.eventService.on(Message.SERVER_GET_BINDINGS, (event) &#x3D;&gt; {
+      eventBus.fire(&#x27;bindingsMenu.open&#x27;, { data: event.data });
+    });
+
+    // SIM STATUS
+    this.eventService.on(Message.SIMULATION_STARTED, (data) &#x3D;&gt; {
+      this.updateElementStatus();
+      this.modeling.setEditable(false);
+    });
+    this.eventService.on(Message.SIMULATION_STOPED, (data) &#x3D;&gt; {
+      this.updateElementStatus();
+      this.modeling.setEditable(true);
+    });
+
+    this.eventService.on(Message.PAGE_DELETE, (data) &#x3D;&gt; {
+      if (data.id &#x3D;&#x3D;&#x3D; this.pageId) {
+        this.diagram.clear();
+      }
+    });
+
+    this.eventService.on(Message.PAGE_CHANGE_NAME, (data) &#x3D;&gt; {
+      if (this.pageId &#x3D;&#x3D;&#x3D; data.parent) {
+        this.modeling.changeTransitionSubPageLabel(data.id, data.name);
+      }
+    });
+
+    this.eventService.on(Message.MONITOR_SET_AVAILABLE_NODES, (event) &#x3D;&gt; this.updateAlailableStatus(event.availableNodeIds));
+
+    // Diagram events
+
+    eventBus.on(&#x27;element.hover&#x27;, (event) &#x3D;&gt; {
+      if (event.element.type &#x3D;&#x3D;&#x3D; &#x27;cpn:Transition&#x27; || event.element.type &#x3D;&#x3D;&#x3D; &#x27;cpn:Place&#x27;) {
+        this.eventService.send(Message.SHAPE_HOVER, { element: event.element });
+      }
+      // console.log(&#x27;element.hover&#x27;, event.element);
+    });
+    eventBus.on(&#x27;element.out&#x27;, (event) &#x3D;&gt; {
+      if (event.element.type &#x3D;&#x3D;&#x3D; &#x27;cpn:Transition&#x27; || event.element.type &#x3D;&#x3D;&#x3D; &#x27;cpn:Place&#x27;) {
+        this.eventService.send(Message.SHAPE_OUT, { element: event.element });
+      }
+    });
+
+    eventBus.on(&#x27;directEditing.cancel&#x27;, function (e) {
+      // console.log(&#x27;model-editor directEditing.cancel - event&#x27;, e);
+
+      self.openPropPanel(e.active.element);
+      self.selectedElement &#x3D; undefined;
+    });
+
+    eventBus.on(&#x27;directEditing.complete&#x27;, function (e) {
+      // console.log(&#x27;model-editor directEditing.complete - event&#x27;, e);
+
+      if (e.active &amp;&amp; e.active.element) {
+        self.openPropPanel(e.active.element);
+      }
+    });
+
+    eventBus.on(&#x27;element.click&#x27;, (event) &#x3D;&gt; {
+      this.fireSelectionEvent(event);
+    });
+
+    eventBus.on(&#x27;shape.create.end&#x27;, (event) &#x3D;&gt; {
+      // console.log(&#x27;shape.create.end, event &#x3D; &#x27;, event);
+
+      if (event.elements) {
+        // let allPagesId &#x3D; this.modelService.getAllPages().map(p &#x3D;&gt; {return p._id});
+        for (const element of event.elements) {
+          if (element.cpnElement) { //if (element.cpnElement &amp;&amp; allPagesId.includes(this.pageId)) {
+            this.modelService.addElementJsonOnPage(element.cpnElement, this.pageId, element.type, this.modeling);
+
+            // Check if transition is subpage and create subpage
+            if (element.type &#x3D;&#x3D;&#x3D; CPN_TRANSITION &amp;&amp; element.cpnElement.subst) {
+              if (!element.cpnElement.subst._subpage) {
+                element.cpnElement.subst._subpage &#x3D; getNextId();
+              }
+
+              this.eventService.send(Message.PAGE_CREATE_SUBST, {
+                currentPageId: this.pageId,
+                subPageName: element.cpnElement.subst.subpageinfo._name,
+                subPageId: element.cpnElement.subst._subpage,
+                cpnElement: element.cpnElement,
+              });
+            }
+          }
+        }
+      }
+    });
+
+    eventBus.on(&#x27;extract.subpage&#x27;, (event) &#x3D;&gt; {
+      const transCpnElement &#x3D; event.transCpnElement;
+      const places &#x3D; event.places;
+      const transitions &#x3D; event.transitions;
+
+      self.modelService.addElementJsonOnPage(transCpnElement, self.pageId, CPN_TRANSITION, this.modeling);
+
+      console.log(self.constructor.name, &#x27;extract.subpage, places, transitions &#x3D; &#x27;, places, transitions);
+
+      let selectedElements &#x3D; [];
+      selectedElements &#x3D; selectedElements.concat(places).concat(transitions);
+      if (selectedElements.length &lt; 1) {
+        return;
+      }
+
+      console.log(self.constructor.name, &#x27;extract.subpage, selectedElements &#x3D; &#x27;, selectedElements);
+
+      self.eventService.send(Message.PAGE_CREATE_SUBST,
+        {
+          currentPageId: self.pageId,
+          subPageName: transCpnElement.subst.subpageinfo._name,
+          subPageId: transCpnElement.subst._subpage,
+          cpnElement: transCpnElement
+        },
+        true // wait event handlers finish
+      );
+
+      const subPageId &#x3D; transCpnElement.subst._subpage;
+      const subpage &#x3D; self.modelService.getPageById(subPageId);
+      if (!subpage) {
+        return;
+      }
+
+      console.log(self.constructor.name, &#x27;extract.subpage, subpage &#x3D; &#x27;, subpage);
+
+      // console.log(self.constructor.name, &#x27;extract.subpage, getAllArcs() &#x3D; &#x27;, self.modelService.getAllArcs());
+
+      const arcs &#x3D; self.modelService.getArcsForElements(selectedElements);
+      const arcsToDelete &#x3D; self.modelService.getExternalArcsForElements(selectedElements);
+
+      console.log(self.constructor.name, &#x27;extract.subpage, arcs &#x3D; &#x27;, arcs);
+      console.log(self.constructor.name, &#x27;extract.subpage, arcsToDelete &#x3D; &#x27;, arcsToDelete);
+
+      selectedElements &#x3D; selectedElements.concat(arcs);
+
+      self.modelService.moveElements(self.pageId, subPageId, selectedElements);
+
+      // delete not used arcs
+      if (arcsToDelete) {
+        for (const a of arcsToDelete) {
+          self.modelService.deleteFromModel(a);
+        }
+      }
+
+      self.reloadPage();
+    });
+
+
+    eventBus.on(&#x27;shape.delete&#x27;, (event) &#x3D;&gt; {
+      if (event.elements) {
+
+        let reloadTree &#x3D; false;
+
+        for (const elem of event.elements) {
+          if (elem.cpnElement) {
+            // console.log(self.constructor.name, &#x27;shape.delete, elem.cpnElement &#x3D; &#x27;, elem.cpnElement);
+            if (elem.cpnElement.subst) {
+              reloadTree &#x3D; true;
+            }
+            self.modelService.deleteFromModel(elem.cpnElement);
+          }
+        }
+
+        self.reloadPage();
+
+        if (reloadTree) {
+          this.eventService.send(Message.TREE_UPDATE_PAGES, {
+            currentPageId: self.pageId
+          });
+        }
+      }
+    });
+
+    eventBus.on(&#x27;portMenuProvider.open&#x27;, (event) &#x3D;&gt; {
+      if (event.trans &amp;&amp; event.trans.cpnElement &amp;&amp; event.trans.cpnElement.subst) {
+        const pageObj &#x3D; self.modelService.getPageById(event.trans.cpnElement.subst._subpage);
+        if (pageObj) {
+          const list &#x3D; [];
+          for (const place of pageObj.place) {
+            if (place.port &amp;&amp; (place.port._type &#x3D;&#x3D;&#x3D; &#x27;I/O&#x27; || place.port._type &#x3D;&#x3D;&#x3D; event.portType)) {
+              list.push({
+                id: place._id,
+                name: place.text,
+                type: place.port._type
+              });
+            }
+          }
+          self.portMenuProvider.open({ trans: event.trans, place: event.place, arc: event.arc, list: list }, event.position, self.modeling);
+        }
+      }
+    });
+
+
+    eventBus.on(&#x27;element.hover&#x27;, (event) &#x3D;&gt; {
+      const element &#x3D; event.element;
+
+      // console.log(self.constructor.name, &#x27;element.hover, event &#x3D; &#x27;, event);
+
+      if (event.originalEvent) {
+        const position &#x3D; { x: event.originalEvent.offsetX, y: event.originalEvent.offsetY };
+
+        let errorText, warningText, readyText;
+        if (isCpn(element)) {
+          errorText &#x3D; this.stateProvider.getErrorText(element.cpnElement._id);
+          warningText &#x3D; this.stateProvider.getWarningText(element.cpnElement._id);
+          readyText &#x3D; this.stateProvider.getReadyText(element.cpnElement._id);
+        }
+        let popupVisible &#x3D; false;
+        popupVisible &#x3D; popupVisible || this.showPopup(position, element, errorText, &#x27;errorPopup&#x27;);
+        popupVisible &#x3D; popupVisible || this.showPopup(position, element, warningText, &#x27;warningPopup&#x27;);
+        popupVisible &#x3D; popupVisible || this.showPopup(position, element, readyText, &#x27;readyPopup&#x27;);
+        if (!popupVisible) {
+          this.hidePopup();
+        }
+      }
+    });
+
+
+    eventBus.on(&#x27;bindingsMenu.select&#x27;, (event) &#x3D;&gt; {
+      self.eventService.send(Message.SIMULATION_SELECT_BINDING, event);
+    });
+
+    // this._eventBus.fire(&#x27;bind.port.cancel&#x27;, {connection: this._createdArc});
+
+    eventBus.on(&#x27;element.selection.changed&#x27;, function () {
+      const selectedElements &#x3D; self.selectionProvider.getSelectedElements();
+      console.log(&#x27;model-editor element.selection.changed, selectedElements &#x3D; &#x27;, selectedElements);
+
+      self.updateAvailableMonitorList(selectedElements);
+    });
+  }
+
+  updateAvailableMonitorList(selectedElements) {
+
+    this.availableMonitorList &#x3D; [];
+
+    let type;
+
+    if (selectedElements.length &gt; 0) {
+      if (selectedElements.length &gt; 1) {
+        type &#x3D; &#x27;group&#x27;;
+      } else if (is(selectedElements[0], CPN_PLACE)) {
+        type &#x3D; &#x27;place&#x27;;
+      } else if (is(selectedElements[0], CPN_TRANSITION)) {
+        type &#x3D; &#x27;transition&#x27;;
+      }
+    }
+
+    if (type) {
+      const monitorTypes &#x3D; getMonitorTypeList(type);
+      this.availableMonitorList &#x3D; monitorTypes;
+    }
+    console.log(&#x27;model-editor updateAvailableMonitorList(), this.availableMonitorList &#x3D; &#x27;, this.availableMonitorList);
+  }
+
+  showPopup(position, element, popupText, popupClass) {
+    const popup: HTMLElement &#x3D; this.popupElementRef.nativeElement; // document.getElementById(&#x27;popup&#x27;);
+    if (popupText) {
+      popup.style.left &#x3D; (position.x) + &#x27;px&#x27;;
+      popup.style.top &#x3D; (position.y + 20) + &#x27;px&#x27;;
+      popup.style.display &#x3D; &#x27;block&#x27;;
+      popup.className &#x3D; &#x27;popup &#x27; + popupClass;
+      popup.innerText &#x3D; popupText;
+      return true;
+    }
+    return false;
+  }
+
+  hidePopup() {
+    const popup: HTMLElement &#x3D; this.popupElementRef.nativeElement; // document.getElementById(&#x27;popup&#x27;);
+    popup.style.display &#x3D; &#x27;none&#x27;;
+    popup.innerText &#x3D; &#x27;&#x27;;
+  }
+
+  reloadPage() {
+    if (this.pageId) {
+      const pageObject &#x3D; this.modelService.getPageById(this.pageId);
+      if (pageObject) {
+        this.jsonPageObject &#x3D; pageObject;
+        this.loadPageDiagram(pageObject, false);
+      }
+    }
+  }
+
+  checkPorts() {
+    this.eventBus.fire(&#x27;model.check.ports&#x27;);
+  }
+
+  /**
+   * Update element status
+   */
+  updateElementStatus() {
+    this.stateProvider.clear();
+
+    // console.log(&#x27;updateElementStatus(), tokenData &#x3D; &#x27;, this.accessCpnService.getTokenData());
+    // console.log(&#x27;updateElementStatus(), readyData &#x3D; &#x27;, this.accessCpnService.getReadyData());
+    // console.log(&#x27;updateElementStatus(), errorData &#x3D; &#x27;, this.accessCpnService.getErrorData());
+
+    // if (Object.keys(this.accessCpnService.getTokenData()).length &gt; 0) {
+    this.eventBus.fire(&#x27;model.update.tokens&#x27;, { data: this.accessCpnService.getTokenData() });
+    // }
+
+    // if (Object.keys(this.accessCpnService.getReadyData()).length &gt; 0) {
+    this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
+    // }
+
+    // if (Object.keys(this.accessCpnService.getErrorData()).length &gt; 0) {
+    this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
+    // }
+
+    this.checkPorts();
+
+    this.modeling.repaintElements();
+  }
+
+  updateAlailableStatus(availableIds) {
+    console.log(&#x27;updateAlailableStatus(), availableIds &#x3D; &#x27;, availableIds);
+
+    this.stateProvider.setReadyState(availableIds);
+
+    this.modeling.repaintElements();
+  }
+
+  subscripeToAppMessage() {
+    this.eventService.on(Message.PAGE_UPDATE_SUBST, (event) &#x3D;&gt; {
+
+      const element &#x3D; this.modeling.getElementByCpnElement(event.cpnElement);
+
+      if (event.subpageName &amp;&amp; event.cpnElement.subst &amp;&amp; event.cpnElement.subst.subpageinfo) {
+        event.cpnElement.subst.subpageinfo._name &#x3D; event.subpageName;
+      }
+
+      this.modeling.updateElement(element, true);
+    });
+
+    this.eventService.on(Message.MODEL_UPDATE_DIAGRAM, (event) &#x3D;&gt; {
+      console.log(this.constructor.name, &#x27;MODEL_UPDATE_DIAGRAM, event &#x3D; &#x27;, event);
+
+      if (event.cpnElement) {
+        const e &#x3D; this.modeling.getElementByCpnElement(event.cpnElement);
+
+        this.modeling.updateElement(e, true);
+      }
+    });
+
+  }
+
+  openPropPanel(element) {
+    if (element) {
+      if (element.type &#x3D;&#x3D;&#x3D; CPN_LABEL) {
+        element &#x3D; element.labelTarget || element;
+      }
+      if (element.labels) {
+        const labels &#x3D; [];
+        for (const lab of element.labels) {
+          labels[lab.labelType] &#x3D; lab.cpnElement;
+        }
+
+        // this.eventService.send(Message.SHAPE_SELECT,
+        //   { element: element, labels: labels, cpnElement: element.cpnElement, type: element.type });
+      }
+    }
+  }
+
+  changeSubPageName(subpage) {
+    this.eventService.send(Message.PAGE_CHANGE_NAME, { id: subpage.subpageid, name: subpage.name, changedElement: &#x27;tran&#x27; });
+  }
+
+  /**
+   * open elemen property panel after klick on it
+   * @param event
+   */
+  fireSelectionEvent(event) {
+    this.curentElement &#x3D; event.element;
+    //  console.log(&#x27;fireSelectionEvent(), event &#x3D; &#x27;, event);
+    if (event.element) {
+      this.openPropPanel(event.element);
+    }
+
+    this.eventService.send(Message.SHAPE_SELECT, { element: event.element });
+  }
+
+  log(obj) {
+    console.log(this.constructor.name, &#x27;log(), text &#x3D; &#x27; + JSON.stringify(obj));
+  }
+
+  load(pageObject, subPages) {
+    this.loading &#x3D; true;
+
+    this.subpages &#x3D; subPages;
+    this.jsonPageObject &#x3D; pageObject;
+    this.pageId &#x3D; pageObject._id;
+    const that &#x3D; this;
+    if (pageObject) {
+      // this.diagram.createDiagram(function () {
+      setTimeout(() &#x3D;&gt; {
+        that.loadPageDiagram(pageObject);
+      },
+        100);
+      // });
+    } else {
+      this.canvas._clear();
+    }
+  }
+
+  clearPage() {
+  }
+
+  loadPageDiagram(pageObject, alignToCenter &#x3D; true) {
+    // console.log(&#x27;loadPageDiagram(), import, pageObject &#x3D; &#x27;, pageObject);
+
+    this.clearPage();
+
+    importCpnPage(this.diagram, pageObject, alignToCenter);
+  }
+
+  makeid(length) {
+    let text &#x3D; &#x27;&#x27;;
+    const possible &#x3D; &#x27;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789&#x27;;
+
+    for (let i &#x3D; 0; i &lt; length; i++) {
+      text +&#x3D; possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+
+    return text;
+  }
+
+  onCreateNewMonitor(monitorType: string) {
+    const selectedElements &#x3D; this.selectionProvider.getSelectedElements();
+    console.log(&#x27;model-editor onCreateNewMonitor(), monitorType, selectedElements &#x3D; &#x27;, monitorType, selectedElements);
+
+    if (selectedElements.length &lt; 1) {
+      return;
+    }
+
+    const cpnElementList &#x3D; [];
+    for (const e of selectedElements) {
+      if (e.cpnElement) {
+        cpnElementList.push(e.cpnElement);
+      }
+    }
+
+    const monitorsCpnParentElement &#x3D; this.modelService.getMonitorsRoot();
+    const newMonitorCpnElement &#x3D; this.modelService.createCpnMonitor(monitorType, cpnElementList);
+    if (newMonitorCpnElement) {
+      addNode(monitorsCpnParentElement, &#x27;monitor&#x27;, newMonitorCpnElement);
+      this.eventService.send(Message.MONITOR_CREATED, { newMonitorCpnElement: newMonitorCpnElement });
+    }
+
+    console.log(&#x27;model-editor onCreateNewMonitor(), monitorsCpnParentElement &#x3D; &#x27;, monitorsCpnParentElement);
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;!--&lt;app-model-editor-toolbar [editorRef]&#x3D;&quot;this&quot;&gt;&lt;/app-model-editor-toolbar&gt;--&gt;
+&lt;!--&lt;div style&#x3D;&quot;width: 100%; height:100%; margin-top:-68px; border: 0px solid blue&quot;&gt;--&gt;
+&lt;!--&lt;div style&#x3D;&quot;padding-top:68px; height:100%; border:0px solid red&quot;&gt;--&gt;
+
+&lt;nav class&#x3D;&quot;navbar navbar-sm navbar-expand shadow-sm&quot;&gt;
+
+  &lt;ul class&#x3D;&quot;navbar-nav mr-auto&quot;&gt;
+    &lt;li class&#x3D;&quot;nav-item&quot;&gt;
+      &lt;div class&#x3D;&quot;header&quot;&gt;Model diagram&lt;/div&gt;
+    &lt;/li&gt;
+    &lt;div class&#x3D;&quot;divider&quot;&gt;&lt;/div&gt;
+
+    &lt;ng-container *ngIf&#x3D;&quot;availableMonitorList.length &gt; 0&quot;&gt;
+      &lt;li class&#x3D;&quot;dropdown nav-item&quot;&gt;
+        &lt;a aria-expanded&#x3D;&quot;false&quot; aria-haspopup&#x3D;&quot;true&quot; class&#x3D;&quot;dropdown-toggle nav-link&quot; data-toggle&#x3D;&quot;dropdown&quot; href&#x3D;&quot;#&quot;
+          id&#x3D;&quot;navbarMonitorsDD&quot;&gt;
+          &lt;i class&#x3D;&quot;fas fa-plus&quot;&gt;&lt;/i&gt;
+          &lt;span&gt;Monitor&lt;/span&gt;
+        &lt;/a&gt;
+        &lt;div aria-labelledby&#x3D;&quot;navbarDropdown&quot; class&#x3D;&quot;dropdown-menu shadow&quot;&gt;
+          &lt;ng-container *ngFor&#x3D;&quot;let mt of availableMonitorList&quot;&gt;
+            &lt;a (click)&#x3D;&quot;onCreateNewMonitor(mt)&quot; class&#x3D;&quot;dropdown-item&quot; href&#x3D;&quot;#&quot;&gt;{{ mt }}&lt;/a&gt;
+          &lt;/ng-container&gt;
+        &lt;/div&gt;
+      &lt;/li&gt;
+      &lt;div class&#x3D;&quot;divider&quot;&gt;&lt;/div&gt;
+    &lt;/ng-container&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;
+
+&lt;div style&#x3D;&quot;width: 100%; height:100%; margin-top:-26px; border: 0px solid blue&quot;&gt;
+  &lt;div style&#x3D;&quot;padding-top:26px; height:100%; border:0px solid red&quot;&gt;
+    &lt;div style&#x3D;&quot;width: 100%; height:100%; padding-bottom:0px; border: 0px solid green&quot;&gt;
+
+      &lt;div id&#x3D;&quot;container&quot; #container style&#x3D;&quot;width:100%; height:100%; border: 0px solid red; background: #ebebeb&quot;&gt;&lt;/div&gt;
+
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class&#x3D;&quot;loading&quot; *ngIf&#x3D;&quot;loading&quot;&gt;
+  &lt;div class&#x3D;&quot;loading-text&quot;&gt;
+    Loading CPN diagram...
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div #popup class&#x3D;&quot;popup errorPopup&quot;&gt;
+&lt;/div&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-styleData">
+                <p class="comment">
+                    <code>./model-editor.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">.nav-item .header {
+  padding: 2px 7px;
+  font-weight: bold;
+}
+
+.loading {
+    position: absolute;
+    left:0;
+    top:0;
+    width: 100%;
+    height:100%;
+    background: #eeeeff99;
+    text-align: center;
+}
+
+.loading-text {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5em;
+}
+
+.popup {
+  position: absolute;
+  left: 500px;
+  top: 300px;
+  padding: 5px 10px;
+  display: none
+}
+
+.readyPopup {
+  background: #ddffdd;
+  border: darkgreen 1px solid;
+  color: darkgreen;
+}
+
+.warningPopup {
+  background: #ffdd99;
+  border: darkorange 1px solid;
+  color: darkorange;
+}
+
+.errorPopup {
+  background: #ffdddd;
+  border: darkred 1px solid;
+  color: darkred;
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><!--<app-model-editor-toolbar [editorRef]="this"></app-model-editor-toolbar>--><!--<div style="width: 100%; height:100%; margin-top:-68px; border: 0px solid blue">--><!--<div style="padding-top:68px; height:100%; border:0px solid red">--><nav class="navbar navbar-sm navbar-expand shadow-sm">  <ul class="navbar-nav mr-auto">    <li class="nav-item">      <div class="header">Model diagram</div>    </li>    <div class="divider"></div>    <ng-container *ngIf="availableMonitorList.length > 0">      <li class="dropdown nav-item">        <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle nav-link" data-toggle="dropdown" href="#"          id="navbarMonitorsDD">          <i class="fas fa-plus"></i>          <span>Monitor</span>        </a>        <div aria-labelledby="navbarDropdown" class="dropdown-menu shadow">          <ng-container *ngFor="let mt of availableMonitorList">            <a (click)="onCreateNewMonitor(mt)" class="dropdown-item" href="#">{{ mt }}</a>          </ng-container>        </div>      </li>      <div class="divider"></div>    </ng-container>  </ul></nav><div style="width: 100%; height:100%; margin-top:-26px; border: 0px solid blue">  <div style="padding-top:26px; height:100%; border:0px solid red">    <div style="width: 100%; height:100%; padding-bottom:0px; border: 0px solid green">      <div id="container" #container style="width:100%; height:100%; border: 0px solid red; background: #ebebeb"></div>    </div>  </div></div><div class="loading" *ngIf="loading">  <div class="loading-text">    Loading CPN diagram...  </div></div><div #popup class="popup errorPopup"></div></div>'
+    var COMPONENTS = [{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ApplicationSettingsComponent', 'selector': 'app-application-settings'},{'name': 'BlockHeaderComponent', 'selector': 'app-block-header'},{'name': 'EditorPanelComponent', 'selector': 'app-editor-panel'},{'name': 'MainFrameComponent', 'selector': 'app-main-frame'},{'name': 'MainToolbarComponent', 'selector': 'app-main-toolbar'},{'name': 'MlEditorComponent', 'selector': 'app-ml-editor'},{'name': 'ModelEditorComponent', 'selector': 'app-model-editor'},{'name': 'ModelEditorToolbarComponent', 'selector': 'app-model-editor-toolbar'},{'name': 'OpenprojectButtonComponent', 'selector': 'app-openproject-button'},{'name': 'ProjectConsoleComponent', 'selector': 'app-project-console'},{'name': 'ProjectDetailsComponent', 'selector': 'app-project-details'},{'name': 'ProjectExplorerComponent', 'selector': 'app-project-explorer'},{'name': 'ProjectMonitorsComponent', 'selector': 'app-project-monitors'},{'name': 'ProjectTreeBlockNodeComponent', 'selector': 'app-project-tree-block-node'},{'name': 'ProjectTreeComponent', 'selector': 'app-project-tree'},{'name': 'ProjectTreeDeclarationNodeComponent', 'selector': 'app-project-tree-declaration-node'},{'name': 'ProjectTreeMonitorblockNodeComponent', 'selector': 'app-project-tree-monitorblock-node'},{'name': 'ProjectTreeMonitorNodeComponent', 'selector': 'app-project-tree-monitor-node'},{'name': 'ProjectTreeOptionNodeComponent', 'selector': 'app-project-tree-option-node'},{'name': 'ProjectTreeOptionsNodeComponent', 'selector': 'app-project-tree-options-node'},{'name': 'ProjectTreePageNodeComponent', 'selector': 'app-project-tree-page-node'},{'name': 'ProjectTreeToolbarComponent', 'selector': 'app-project-tree-toolbar'},{'name': 'PropertiesPanelComponent', 'selector': 'app-properties-panel'},{'name': 'SaveprojectButtonComponent', 'selector': 'app-saveproject-button'},{'name': 'SimulationPanelComponent', 'selector': 'app-simulation-panel'},{'name': 'TabComponent', 'selector': 'tab'},{'name': 'TabsContainer', 'selector': 'tabs'},{'name': 'TextEditRowComponent', 'selector': 'app-text-edit-row'},{'name': 'TreeNodeComponent', 'selector': 'app-tree-node'}];
+    var DIRECTIVES = [];
+    var ACTUAL_COMPONENT = {'name': 'ModelEditorComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+                   
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> result-matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'ModelEditorComponent.html';
+       </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+       <!-- Required to polyfill modern browsers as code is ES5 for IE... -->
+       <script src="../js/libs/custom-elements-es5-adapter.js" charset="utf-8" defer></script>
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+       <script src="../js/libs/zepto.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

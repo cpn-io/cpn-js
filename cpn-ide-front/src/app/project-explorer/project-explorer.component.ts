@@ -41,8 +41,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   JSON = JSON;
 
   tabList = [
-    { id: 'explorerPanel', name: 'Project explorer' },
     { id: 'projectTree', name: 'Project explorer (New)' },
+    { id: 'explorerPanel', name: 'Project explorer' },
     { id: 'applicationSettings', name: 'Application settings' },
   ];
 
@@ -438,7 +438,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     TREE_ACTIONS.MOVE_NODE(tree, node, $event, { from, to });
 
-    this.eventService.send(Message.MODEL_CHANGED);
+    // this.eventService.send(Message.MODEL_CHANGED);
   }
 
   getNodeByCpnElement(cpnElement) {
@@ -820,7 +820,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     this.addCreatedNode(treeNode, newNode, cpnElement, cpnType, cpnParentElement, true);
 
-    this.eventService.send(Message.MODEL_CHANGED);
+    // this.eventService.send(Message.MODEL_CHANGED);
 
     if (type === 'page') {
       // update instances
@@ -854,10 +854,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
   }
 
-  cloneObject(obj) {
-    return JSON.parse(JSON.stringify(obj));
-  }
-
   onUpNode() {
     const direction = 'up';
     this.moveDeclUpDown(this.getDataForMoving(direction), direction);
@@ -879,7 +875,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         data.type);
     }
 
-    this.eventService.send(Message.MODEL_CHANGED);
+    // this.eventService.send(Message.MODEL_CHANGED);
     //  this.moveNodeInTree(this.treeComponent, treeNode.parent, undefined, {from, to});
   }
 
@@ -895,7 +891,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       to: { index: direction === 'down' ? treeNode.parent.data.children.indexOf(treeNode.data) + 2 : treeNode.parent.data.children.indexOf(treeNode.data) - 1, parent: treeNode.parent }
     };
 
-    this.eventService.send(Message.MODEL_CHANGED);
+    // this.eventService.send(Message.MODEL_CHANGED);
   }
 
 
@@ -988,7 +984,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
       }
 
-      this.eventService.send(Message.MODEL_CHANGED);
+      // this.eventService.send(Message.MODEL_CHANGED);
     }
   }
 
@@ -2331,7 +2327,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     this.updateTree();
 
-    this.eventService.send(Message.MODEL_CHANGED);
+    // this.eventService.send(Message.MODEL_CHANGED);
 
     this.sendSelectDeclarationNode(node, false);
   }

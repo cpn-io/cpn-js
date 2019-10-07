@@ -325,10 +325,6 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
-  cloneObject(obj) {
-    return JSON.parse(JSON.stringify(obj));
-  }
-
   onUpNode(treeNode) {
   }
 
@@ -460,7 +456,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       newTextValue: value
     });
 
-    this.eventService.send(Message.MODEL_CHANGED);
+    // this.eventService.send(Message.MODEL_CHANGED);
 
     this.sendSelectDeclarationNode(node, false);
   }

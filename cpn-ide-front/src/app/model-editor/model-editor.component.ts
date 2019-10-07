@@ -138,7 +138,7 @@ export class ModelEditorComponent implements OnInit {
       (event) => {
         console.log(self.constructor.name, 'MODEL_CHANGED event = ', event);
 
-        this.eventService.send(Message.MODEL_CHANGED);
+        // this.eventService.send(Message.MODEL_CHANGED);
       });
 
     this.eventService.on(Message.MODEL_RELOAD, () => {

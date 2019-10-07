@@ -1,104 +1,88 @@
 <div class="tab-container">
+
+  <!-- Project tree toolbar -->
+  <app-project-tree-toolbar></app-project-tree-toolbar>
+
   <ng-container *ngIf="cpnet">
 
-    <div class="tree">
-
+    <div id="tree" class="tree" (contextmenu)="contextMenu($event)" (click)="hideContextMenu()" (keydown)="onKeyDown($event)">
 
       <!-- Project root -->
-      <app-tree-node [title]="'Project: ' + project.name" [expanded]="true">
-      </app-tree-node>
-
-      <div class="child">
+      <app-tree-node id="project" [title]="'Project: ' + project.name" [expanded]="expanded" [selected]="selected"
+        [showBullet]="false">
 
         <div class="node" [textContent]="'Step: 0'"></div>
         <div class="node" [textContent]="'Time: 0'"></div>
 
         <!-- Options -->
-        <div>
-          <app-tree-node title="Options" [expanded]="expanded['options']" [selected]="selected.id === 'options'"
-            (click)="expanded['options'] = !expanded['options']; selected.type = 'root'; selected.id = 'options'; selected.cpnElement = undefined">
-          </app-tree-node>
+        <app-tree-node id="options" title="Options" [expanded]="expanded" [selected]="selected" [type]="'options'"
+          [cpnElement]="undefined">
 
-          <div [style.display]="expanded['options'] ? 'block' : 'none'">
-            <div class="child">
+          <app-project-tree-options-node [optionList]="nodeToArray(cpnet.options.option)" [expanded]="expanded"
+            [selected]="selected"></app-project-tree-options-node>
 
-              <ng-container *ngFor="let option of nodeToArray(cpnet.options.option)">
-                <!-- <div class="node" contenteditable="true"
-                  [innerHTML]="option._name + ' = ' + JSON.stringify(option.value) | safeHtml">
-                </div> -->
-
-                <div *ngIf="option.value && option.value.boolean">
-                  <input type="checkbox" [checked]="option.value.boolean === 'true'" style="margin-top: 3px; margin-right: 5px"
-                    (change)="option.value.boolean = $event.target.checked ? 'true' : 'false'">
-                  <span>{{ option._name | optionName }}</span>
-                </div>
-
-              </ng-container>
-
-            </div>
-          </div>
-        </div>
+        </app-tree-node>
 
 
         <!-- Declarations -->
-        <div>
-          <app-tree-node title="Declarations" [expanded]="expanded['declarations']"
-            [selected]="selected.id === 'declarations'"
-            (click)="expanded['declarations'] = !expanded['declarations']; selected.type = 'root'; selected.id = 'declarations'; selected.cpnElement = undefined">
-          </app-tree-node>
+        <app-tree-node id="declarations" title="Declarations" [expanded]="expanded" [selected]="selected"
+          [type]="'root'" [cpnElement]="undefined">
 
-          <div [style.display]="expanded['declarations'] ? 'block' : 'none'">
-            <ng-container *ngFor="let globbox of nodeToArray(cpnet.globbox)">
-              <ng-container *ngFor="let block of nodeToArray(globbox.block)">
-                <app-project-tree-block-node [block]="block" [expanded]="expanded" [selected]="selected">
-                </app-project-tree-block-node>
-              </ng-container>
+          <ng-container *ngFor="let globbox of nodeToArray(cpnet.globbox)">
+            <ng-container *ngFor="let block of nodeToArray(globbox.block)">
+              <app-project-tree-block-node [block]="block" [expanded]="expanded" [selected]="selected" [mouseover]="mouseover">
+              </app-project-tree-block-node>
             </ng-container>
-          </div>
-        </div>
+          </ng-container>
 
-        <!-- Monitors -->
-        <div>
-          <app-project-tree-monitorblock-node [monitorblock]="cpnet.monitorblock" [expanded]="expanded"
-            [selected]="selected"> </app-project-tree-monitorblock-node>
-
-          <!-- <app-tree-node title="Monitors" [expanded]="expanded['monitors']" [selected]="selected.id === 'monitors'"
-          (click)="expanded['monitors'] = !expanded['monitors']; selected.type = 'root'; selected.id = 'monitors'; selected.cpnElement = undefined">
         </app-tree-node>
 
-        <div [style.display]="expanded['monitors'] ? 'block' : 'none'">
-          <div class="child">
-            <ng-container *ngFor="let monitor of nodeToArray(cpnet.monitorblock.monitor)">
-              <div class="node" contenteditable="true" [ngClass]="selected.id === monitor._id ? 'selected' : ''"
-                (click)="selected.type = 'monitor'; selected.id = monitor._id; selected.cpnElement = monitor"
-                [textContent]="monitor._name" (input)="monitor._name=$event.target.textContent">
-              </div>
-            </ng-container>
-          </div>
-        </div> -->
-        </div>
 
+        <!-- Monitors -->
+        <app-project-tree-monitorblock-node [monitorblock]="cpnet.monitorblock" [expanded]="expanded"
+          [selected]="selected">
+        </app-project-tree-monitorblock-node>
 
         <!-- Pages -->
-        <div>
-          <app-tree-node title="Pages" [expanded]="expanded['pages']" [selected]="selected.id === 'pages'"
-            (click)="expanded['pages'] = !expanded['pages']; selected.type = 'root'; selected.id = 'pages'; selected.cpnElement = undefined">
-          </app-tree-node>
+        <app-tree-node id="pages" title="Pages" [expanded]="expanded" [selected]="selected" [type]="'root'"
+          [cpnElement]="undefined">
 
-          <div class="child" [style.display]="expanded['pages'] ? 'block' : 'none'">
-            <ng-container *ngFor="let page of pages">
-              <ng-container *ngIf="!subpages.includes(page._id)">
-                <app-project-tree-page-node [page]="page" [subpages]="subpages" [expanded]="expanded"
-                  [selected]="selected">
-                </app-project-tree-page-node>
-              </ng-container>
+          <ng-container *ngFor="let page of pages">
+            <ng-container *ngIf="!subpages.includes(page._id)">
+              <app-project-tree-page-node [page]="page" [subpages]="subpages" [expanded]="expanded"
+                [selected]="selected">
+              </app-project-tree-page-node>
             </ng-container>
-          </div>
-        </div>
+          </ng-container>
 
-      </div>
+        </app-tree-node>
+
+      </app-tree-node>
 
     </div>
+
+
+    <!-- Tree node context menu -->
+    <div class="dropdown-menu dropdown-menu-fixed shadow" id="contextMenu">
+      <a class="dropdown-item" href="#">New declaration</a>
+      <a class="dropdown-item" href="#">New block</a>
+      <div class="dropdown-divider" href="#"></div>
+      <a class="dropdown-item" href="#">New page</a>
+    </div>
+
+    <!-- <context-menu #treeMenu>
+      <ng-template contextMenuItem (execute)="alert('Hi, ' + $event.item.name)">
+        Say hi!
+      </ng-template>
+      <ng-template contextMenuItem divider="true"></ng-template>
+      <ng-template contextMenuItem let-item
+        (execute)="alert($event.item.name + ' said: ' + $event.item.otherProperty)">
+        Bye, {{item?.name}}
+      </ng-template>
+      <ng-template contextMenuItem passive="true">
+        Input something: <input type="text">
+      </ng-template>
+    </context-menu> -->
 
   </ng-container>
 </div>

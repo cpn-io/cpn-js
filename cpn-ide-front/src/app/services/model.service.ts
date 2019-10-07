@@ -159,7 +159,7 @@ export class ModelService {
 
     this.undoRedoBusy = false;
 
-    this.eventService.send(Message.MODEL_CHANGED);
+    // this.eventService.send(Message.MODEL_CHANGED);
   }
 
   redoChanges() {
@@ -181,7 +181,7 @@ export class ModelService {
 
     this.undoRedoBusy = false;
 
-    this.eventService.send(Message.MODEL_CHANGED);
+    // this.eventService.send(Message.MODEL_CHANGED);
   }
 
   public getProject() {
@@ -198,17 +198,19 @@ export class ModelService {
    */
   getCpn() {
     let cpnet;
-    if (this.projectData.workspaceElements) {
-      if (this.projectData.workspaceElements instanceof Array) {
-        for (const workspaceElement of this.projectData.workspaceElements) {
-          if (workspaceElement.cpnet) {
-            cpnet = workspaceElement.cpnet;
-            break;
+    if (this.projectData) {
+      if (this.projectData.workspaceElements) {
+        if (this.projectData.workspaceElements instanceof Array) {
+          for (const workspaceElement of this.projectData.workspaceElements) {
+            if (workspaceElement.cpnet) {
+              cpnet = workspaceElement.cpnet;
+              break;
+            }
           }
-        }
-      } else {
-        if (this.projectData.workspaceElements.cpnet) {
-          cpnet = this.projectData.workspaceElements.cpnet;
+        } else {
+          if (this.projectData.workspaceElements.cpnet) {
+            cpnet = this.projectData.workspaceElements.cpnet;
+          }
         }
       }
     }
@@ -328,7 +330,7 @@ export class ModelService {
       this.updateInstances();
     }
 
-    this.eventService.send(Message.MODEL_CHANGED);
+    // this.eventService.send(Message.MODEL_CHANGED);
   }
 
   instaceForTransition(id, isRoot) {
@@ -906,7 +908,7 @@ export class ModelService {
         str += ' = product ';
         if (color.product.id instanceof Array) {
           for (let i = 0; i < color.product.id.length; i++) {
-            str += i === 0 ? color.product.id[i] + ' ' : '* ' + color.product.id[i];
+            str += i === 0 ? color.product.id[i] : ' * ' + color.product.id[i];
           }
         } else {
           str += color.product.id;
@@ -972,12 +974,19 @@ export class ModelService {
    */
   parseDeclarationTypeFromString(str) {
     const parser = str.match('^\\S+');
+    let declarationType = '';
 
     if (parser) {
-      return parser[0];
+      declarationType = parser[0];
     }
 
-    return undefined;
+    return ['var', 'colset', 'globref', 'ml', 'val', 'fun', 'local'].includes(declarationType) ? declarationType : 'ml';
+  }
+
+  trimChars(str, c) {
+    str = str.trim();
+    var re = new RegExp("^[" + c + "]+|[" + c + "]+$", "g");
+    return str.replace(re, "");
   }
 
   /**
@@ -987,71 +996,77 @@ export class ModelService {
    */
   stringToCpnDeclarationElement(cpnElement, str) {
 
-    cpnElement = { _id: cpnElement._id };
+    let resultCpnType = 'ml';
+    let resultCpnElement: any = { _id: cpnElement._id };
 
-    const parser = str.match('^\\S+');
+    // const parser = str.match('^\\S+');
     // console.log('stringToCpnDeclarationElement(), parser = ', parser);
 
-    const declarationType = this.parseDeclarationTypeFromString(str);
+    // str = str.trim();
+    // str = this.trimChars(str, ';');
 
-    if (!declarationType) {
-      return;
+    let resultDeclarationType = this.parseDeclarationTypeFromString(str);
+    if (!resultDeclarationType) {
+      resultDeclarationType = 'ml';
     }
 
-    let cpnType;
-
-    switch (declarationType) {
+    switch (resultDeclarationType) {
       case 'var':
-        cpnType = 'var';
+        resultCpnType = 'var';
         let splitLayoutArray;
-        cpnElement.layout = str;
+        resultCpnElement.layout = str;
+
+        str = this.trimChars(str, ';');
         str = str.replace('var', '');
         splitLayoutArray = str.trim().split(':');
         for (let i = 0; i < splitLayoutArray.length; i++) {
           splitLayoutArray[i] = splitLayoutArray[i].replace(/\s+/g, '').split(',');
         }
-        cpnElement.id = splitLayoutArray[0];
-        if (!cpnElement.type) {
-          cpnElement.type = {};
+        resultCpnElement.id = splitLayoutArray[0];
+        if (!resultCpnElement.type) {
+          resultCpnElement.type = {};
         }
         if (splitLayoutArray[1]) {
-          cpnElement.type.id = splitLayoutArray[1][0];
+          resultCpnElement.type.id = splitLayoutArray[1][0];
         }
         break;
-      case 'ml':
-      case 'val':
-      case 'fun':
-      case 'local':
-        cpnType = 'ml';
-        cpnElement.layout = str;
-        cpnElement.__text = str;
-        break;
-      case 'colset':   // ***** отрефакторить *****
-        cpnType = 'color';
-        cpnElement.layout = str;
+
+      case 'colset':   // TODO: отрефакторить
+        resultCpnType = 'color';
+        // cpnElement.layout = str;
         str = str.replace('colset', '');
         splitLayoutArray = str.split('=');
 
         if (splitLayoutArray[1]) {
           splitLayoutArray[1] = splitLayoutArray[1].split(' ').filter(e => e.trim() !== '');
           let testElem = splitLayoutArray[1][0].replace(/\s+/g, '');
-          for (const key of Object.keys(cpnElement)) {
+          for (const key of Object.keys(resultCpnElement)) {
             if (key !== '_id' && key !== 'layout') {
-              delete cpnElement[key];
+              delete resultCpnElement[key];
             }
           }
           if (splitLayoutArray[1][splitLayoutArray[1].length - 1].replace(';', '') === 'timed') {
-            cpnElement.timed = '';
+            resultCpnElement.timed = '';
             splitLayoutArray[1].length = splitLayoutArray[1].length - 1;
           }
           if (testElem === 'product') {
             const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
-            cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
-            cpnElement.product = { id: productList };
+            for (const i in productList) {
+              productList[i] = this.trimChars(productList[i], ';');
+              productList[i] = this.trimChars(productList[i], '*');
+            }
+
+            resultCpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
+            resultCpnElement.product = { id: productList.length === 1 ? productList[0] : productList };
           } else if (testElem === 'list') {
             const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
-            cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
-            cpnElement.list = { id: productList };
+            for (const i in productList) {
+              productList[i] = this.trimChars(productList[i], ';');
+              productList[i] = this.trimChars(productList[i], '*');
+            }
+
+            resultCpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
+            resultCpnElement.list = { id: productList.length === 1 ? productList[0] : productList };
           } else {
             testElem = testElem.replace(/\s+/g, '').replace(';', '');
             splitLayoutArray[1][0] = splitLayoutArray[1][0].replace(/\s+/g, '').replace(';', '');
@@ -1060,29 +1075,42 @@ export class ModelService {
             // console.log('stringToCpnDeclarationElement(), splitLayoutArray = ', splitLayoutArray);
 
             if (testElem.toLowerCase() === splitLayoutArray[1][0].toLowerCase()) {
-              cpnElement.id = splitLayoutArray[0].trim();
-              cpnElement[testElem.toLowerCase()] = '';
+              resultCpnElement.id = splitLayoutArray[0].trim();
+              resultCpnElement[testElem.toLowerCase()] = '';
             } else {
-              cpnElement.id = splitLayoutArray[0].trim();
-              cpnElement.alias = { id: testElem };
+              resultCpnElement.id = splitLayoutArray[0].trim();
+              resultCpnElement.alias = { id: testElem };
             }
           }
         }
         break;
+
       case 'globref':
-        cpnType = 'globref';
+        resultCpnType = 'globref';
         splitLayoutArray = str.split(' ').filter(e => e.trim() !== '' && e.trim() !== '=');
-        cpnElement.id = splitLayoutArray[1].replace(/\s+/g, '').replace(';', '');
-        cpnElement.ml = splitLayoutArray[2].replace(/\s+/g, '').replace(';', '');
-        cpnElement.layout = str;
+        resultCpnElement.id = splitLayoutArray[1].replace(/\s+/g, '').replace(';', '');
+        resultCpnElement.ml = splitLayoutArray[2].replace(/\s+/g, '').replace(';', '');
+        // cpnElement.layout = str;
         break;
+
+      // case 'ml':
+      // case 'val':
+      // case 'fun':
+      // case 'local':
+      default:
+        resultCpnType = 'ml';
+        resultDeclarationType = 'ml';
+        resultCpnElement.layout = str;
+        resultCpnElement.__text = str;
+        break;
+
     }
 
     // console.log('stringToCpnDeclarationElement(), cpnType = ', cpnType);
     // console.log('stringToCpnDeclarationElement(), declarationType = ', declarationType);
     // console.log('stringToCpnDeclarationElement(), cpnElement = ', cpnElement);
 
-    return { cpnType: cpnType, declarationType: declarationType, cpnElement: cpnElement };
+    return { cpnType: resultCpnType, declarationType: resultDeclarationType, cpnElement: resultCpnElement };
   }
 
 
@@ -1090,6 +1118,10 @@ export class ModelService {
    * Get all pages list
    */
   getAllPages() {
+    const cpn = this.getCpn();
+    if (!cpn) {
+      return [];
+    }
     const page = this.getCpn().page;
     if (!page) {
       return [];

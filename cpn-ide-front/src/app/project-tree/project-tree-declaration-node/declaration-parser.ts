@@ -6,8 +6,10 @@
 export function clearDeclarationLayout(layout) {
     // remove line break
     layout = layout.replace(/\n/g, '');
+
     // remove multiple spaces
     layout = layout.replace(/\s{2,}/g, ' ');
+
     // remove comments
     layout = layout.replace(/(\(\*\s*)[^\*]+(\s*\*\))/g, '');
 
@@ -54,7 +56,7 @@ function parseColsetDeclaration(layout) {
 
     if (m && m.groups && m.groups.name && m.groups.type) {
 
-        let type: any = "";
+        let type: any;
         let typeName = m.groups.type;
 
         console.log('onParse(), parseColsetDeclaration(), m = ', m);
@@ -69,6 +71,7 @@ function parseColsetDeclaration(layout) {
             case 'int':
             case 'intinf':
             case 'real':
+            case 'time':
                 type = parseNumericDeclarartion(layout);
                 break;
             case 'time':
@@ -96,19 +99,36 @@ function parseColsetDeclaration(layout) {
             case 'list':
                 type = parseListDeclarartion(layout);
                 break;
-
+            case 'subset':
+                type = parseSubsetDeclarartion(layout);
+                break;
         }
 
         result = {
             id: m.groups.name
         };
-        result[typeName] = type;
+        if (layout.includes("timed")) {
+            result.timed = "";
+        }
+        if (type !== undefined) {
+            // typed declaration
+            result[typeName] = type;
+        } else {
+            // alias declaration
+            result.alias = { id: typeName };
+        }
+
         result.layout = layout;
     }
 
     return result;
 }
 
+/**
+ * Parse unit declaration
+ * 
+ * @param layout 
+ */
 function parseUnitDeclarartion(layout) {
     let type: any = "";
 
@@ -125,6 +145,11 @@ function parseUnitDeclarartion(layout) {
     return type;
 }
 
+/**
+ * Parse boolean declaration
+ * 
+ * @param layout 
+ */
 function parseBoolDeclarartion(layout) {
     let type: any = "";
 
@@ -141,6 +166,11 @@ function parseBoolDeclarartion(layout) {
     return type;
 }
 
+/**
+ * Parse numeric and time declaration
+ * 
+ * @param layout 
+ */
 function parseNumericDeclarartion(layout) {
     let type: any = "";
 
@@ -157,6 +187,11 @@ function parseNumericDeclarartion(layout) {
     return type;
 }
 
+/**
+ * Parse string declaration
+ * 
+ * @param layout 
+ */
 function parseStringDeclarartion(layout) {
     let type: any = "";
 
@@ -196,6 +231,11 @@ function parseStringDeclarartion(layout) {
     return type;
 }
 
+/**
+ * Parse index declaration
+ * 
+ * @param layout 
+ */
 function parseIndexDeclarartion(layout) {
     let type: any = "";
 
@@ -211,6 +251,11 @@ function parseIndexDeclarartion(layout) {
     return type;
 }
 
+/**
+ * Parse enum declaration
+ * 
+ * @param layout 
+ */
 function parseEnumDeclarartion(layout) {
     let type: any = "";
 
@@ -226,17 +271,13 @@ function parseEnumDeclarartion(layout) {
 
         if (m && m.groups) {
             if (m.groups.id) {
-                // console.log('onParse(), parseEnumDeclarartion(), m.groups.id = ', m.groups.id);
                 idList.push(m.groups.id);
             }
             if (m.groups.id2 && idList.length > 0) {
-                // console.log('onParse(), parseEnumDeclarartion(), m.groups.id2 = ', m.groups.id2);
                 idList.push(m.groups.id2);
             }
         }
     }
-
-    // console.log('onParse(), parseEnumDeclarartion(), layout = ', layout);
 
     if (idList.length > 0) {
         type = {
@@ -246,6 +287,11 @@ function parseEnumDeclarartion(layout) {
     return type;
 }
 
+/**
+ * Parse product declaration
+ * 
+ * @param layout 
+ */
 function parseProductDeclarartion(layout) {
     let type: any = "";
 
@@ -277,6 +323,11 @@ function parseProductDeclarartion(layout) {
     return type;
 }
 
+/**
+ * Parse record declaration
+ * 
+ * @param layout 
+ */
 function parseRecordDeclarartion(layout) {
     let type: any = "";
 
@@ -308,6 +359,11 @@ function parseRecordDeclarartion(layout) {
     return type;
 }
 
+/**
+ * Parse union declaration
+ * 
+ * @param layout 
+ */
 function parseUnionDeclarartion(layout) {
     let type: any = "";
 
@@ -347,6 +403,11 @@ function parseUnionDeclarartion(layout) {
     return type;
 }
 
+/**
+ * Parse list declaration
+ * 
+ * @param layout 
+ */
 function parseListDeclarartion(layout) {
     let type: any = "";
 
@@ -364,20 +425,54 @@ function parseListDeclarartion(layout) {
     return type;
 }
 
+/**
+ * Parse subset declaration
+ * 
+ * @param layout 
+ */
 function parseSubsetDeclarartion(layout) {
     let type: any = "";
 
-    // (\[|\,)\s*(?<item>\w*)|(by\s+(?<function>\w*))
-
     const regex = /(subset\s+(?<id>\w+))|(by\s+(?<subset_function>\w+))|(with\s+(?<subset_list>\[.+\]))/g;
-    const m = regex.exec(layout);
+    let m;
 
-    if (m && m.groups && m.groups.new_false && m.groups.new_true) {
-        type = {
-            with: {
-                id: [m.groups.new_false, m.groups.new_true]
+    let id;
+    let subset_function;
+    let subset_list;
+
+    while ((m = regex.exec(layout)) !== null) {
+        if (m.index === regex.lastIndex) {
+            regex.lastIndex++;
+        }
+
+        if (m && m.groups) {
+            if (m.groups.id) {
+                id = m.groups.id;
             }
-        };
+            if (m.groups.subset_function) {
+                subset_function = m.groups.subset_function;
+            }
+            if (m.groups.subset_list) {
+                subset_list = m.groups.subset_list;
+            }
+        }
     }
+
+    if (id) {
+        type = {
+            id: id
+        };
+        if (subset_function) {
+            type.by = {
+                ml: subset_function
+            }
+        }
+        if (subset_list) {
+            type.with = {
+                ml: subset_list
+            }
+        }
+    }
+
     return type;
 }

@@ -1,18 +1,11 @@
 {
-  "id": "Packet",
-  "union": {
-    "unionfield": [
-      {
-        "id": "DATA",
-        "type": {
-          "id": "Data"
-        }
-      },
-      {
-        "id": "ACK"
-      }
-    ]
+  "id": "Weekend",
+  "subset": {
+    "id": "Day",
+    "with": {
+      "ml": "[Sat,Sun]"
+    }
   },
-  "layout": "colset Packet = union DATA:Data + ACK;",
-  "_id": "ID1438192039"
+  "layout": "colset Weekend = subset Day with [Sat,Sun];",
+  "_id": "ID1438192469"
 }

@@ -90,6 +90,12 @@ function parseColsetDeclaration(layout) {
             case 'record':
                 type = parseRecordDeclarartion(layout);
                 break;
+            case 'union':
+                type = parseUnionDeclarartion(layout);
+                break;
+            case 'list':
+                type = parseListDeclarartion(layout);
+                break;
 
         }
 
@@ -297,6 +303,80 @@ function parseRecordDeclarartion(layout) {
     if (fieldList.length > 0) {
         type = {
             recordfield: fieldList
+        };
+    }
+    return type;
+}
+
+function parseUnionDeclarartion(layout) {
+    let type: any = "";
+
+    const regex = /(union\s+(?<id>\w+)\s*(:\s*(?<name>\w+))*)|(\+\s*(?<id2>\w+)\s*(:\s*(?<name2>\w+))*)/g;
+    let m;
+
+    const fieldList = [];
+
+    while ((m = regex.exec(layout)) !== null) {
+        if (m.index === regex.lastIndex) {
+            regex.lastIndex++;
+        }
+
+        if (m && m.groups) {
+            if (m.groups.id) {
+                const item: any = { id: m.groups.id };
+                if (m.groups.name) {
+                    item.type = { id: m.groups.name };
+                }
+                fieldList.push(item);
+            }
+            if (m.groups.id2 && fieldList.length > 0) {
+                const item: any = { id: m.groups.id2 };
+                if (m.groups.name2) {
+                    item.type = { id: m.groups.name2 };
+                }
+                fieldList.push(item);
+            }
+        }
+    }
+
+    if (fieldList.length > 0) {
+        type = {
+            unionfield: fieldList
+        };
+    }
+    return type;
+}
+
+function parseListDeclarartion(layout) {
+    let type: any = "";
+
+    const regex = /list\s+(?<id>\w+)(\s+with\s+(?<int_exp1>\w+)\s*\.\.\s*(?<int_exp2>\w+))*/g;
+    const m = regex.exec(layout);
+
+    if (m && m.groups && m.groups.id) {
+        type = {
+            id: m.groups.id
+        };
+        if (m.groups.int_exp1 && m.groups.int_exp2) {
+            type.ml = [m.groups.int_exp1, m.groups.int_exp2];
+        }
+    }
+    return type;
+}
+
+function parseSubsetDeclarartion(layout) {
+    let type: any = "";
+
+    // (\[|\,)\s*(?<item>\w*)|(by\s+(?<function>\w*))
+
+    const regex = /(subset\s+(?<id>\w+))|(by\s+(?<subset_function>\w+))|(with\s+(?<subset_list>\[.+\]))/g;
+    const m = regex.exec(layout);
+
+    if (m && m.groups && m.groups.new_false && m.groups.new_true) {
+        type = {
+            with: {
+                id: [m.groups.new_false, m.groups.new_true]
+            }
         };
     }
     return type;

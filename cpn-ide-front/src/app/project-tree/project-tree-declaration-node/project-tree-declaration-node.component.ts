@@ -57,8 +57,31 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit {
     return transformed && transformed.length > 0 ? transformed[0] : value;
   }
 
-  onUpdate(value) {
-    console.log('onUpdate(), value = ', value);
+  onUpdate(layout) {
+    console.log('onUpdate(), layout = ', layout);
+
+    // parse declaration layout
+    let result = this.onParseDeclaration(layout);
+
+    if (result && result.cpnElement) {
+      let newDeclaration = result.cpnElement;
+
+      for (const key in this.declaration) {
+        if (key !== '_id') {
+          delete this.declaration[key];
+        }
+      }
+      for (const key in newDeclaration) {
+        if (key !== '_id') {
+          this.declaration[key] = newDeclaration[key];
+        }
+      }
+
+      this.eventService.send(Message.TREE_SELECT_DECLARATION_NODE_NEW, {
+        cpnType: 'ml',
+        cpnElement: this.declaration
+      });
+    }
   }
 
   onSelected() {
@@ -74,26 +97,30 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit {
       layout = this.declaration.layout;
     }
 
-    console.log('onParse(), value = ', layout);
+    // parse declaration layout
+    let result = this.onParseDeclaration(layout);
+
+    if (result && result.cpnElement) {
+      let newDeclaration = result.cpnElement;
+      newDeclaration._id = this.declaration._id;
+      this.eventService.send(Message.TREE_SELECT_DECLARATION_NODE_NEW, {
+        cpnType: 'ml',
+        cpnElement: newDeclaration
+      });
+    }
+  }
+
+  onParseDeclaration(layout) {
+    console.log('parseDeclaration(), layout = ', layout);
 
     // clear declaration layout
     layout = clearDeclarationLayout(layout);
 
     // parse declaration layout
     let result = parseDeclarartion(layout);
-    console.log('onParse(), result = ', result);
+    console.log('parseDeclaration(), result = ', result);
 
-    let newDeclaration = cloneObject(this.declaration);
-
-    if (result && result.cpnElement) {
-      newDeclaration = result.cpnElement;
-      newDeclaration._id = this.declaration._id;
-    }
-
-    this.eventService.send(Message.TREE_SELECT_DECLARATION_NODE_NEW, {
-      cpnType: 'ml',
-      cpnElement: newDeclaration
-    });
+    return result;
   }
 
 }

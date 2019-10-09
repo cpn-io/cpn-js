@@ -32,13 +32,89 @@ export function parseDeclarartion(layout) {
         result.declarationType = m.groups.declarationType;
 
         switch (m.groups.declarationType) {
+            case 'globref':
+                result.cpnElement = parseGlobrefDeclaration(layout);
+                break;
             case 'colset':
                 result.cpnElement = parseColsetDeclaration(layout);
                 break;
+            case 'var':
+                result.cpnElement = parseVarDeclaration(layout);
+                break;
+            default:
+                result.cpnElement = parseMlDeclaration(layout);
         }
     }
     return result;
 }
+
+
+function parseGlobrefDeclaration(layout) {
+    let result = undefined;
+
+    let regex = /globref\s+(?<id>\w+)\s*=\s*(?<exp>[^;]+)/g;
+    let m = regex.exec(layout);
+
+    console.log('onParse(), parseGlobrefDeclaration(), layout = ', layout);
+
+    if (m && m.groups && m.groups.id && m.groups.exp) {
+
+        console.log('onParse(), parseGlobrefDeclaration(), m = ', m);
+
+        result = {
+            id: m.groups.id,
+            ml: m.groups.exp
+        };
+        if (layout.includes("timed")) {
+            result.timed = "";
+        }
+    }
+
+    return result;
+}
+
+function parseVarDeclaration(layout) {
+    let result = undefined;
+
+    let regex = /var\s+(?<id>[^:]+)\s*:\s*(?<name>\w+)/g;
+    let m = regex.exec(layout);
+
+    console.log('onParse(), parseVarDeclaration(), layout = ', layout);
+
+    if (m && m.groups && m.groups.id && m.groups.name) {
+        console.log('onParse(), parseVarDeclaration(), m = ', m);
+
+        const idList: any = m.groups.id.split(',');
+        for (const key in idList) {
+            idList[key] = idList[key].trim();
+        }
+
+        console.log('onParse(), parseVarDeclaration(), idList = ', idList);
+
+        result = {
+            type: { id: m.groups.name },
+            id: idList && idList.length === 1 ? idList[0] : idList
+        };
+        if (layout.includes("timed")) {
+            result.timed = "";
+        }
+    }
+
+    return result;
+}
+
+function parseMlDeclaration(layout) {
+    let result = undefined;
+
+    console.log('onParse(), parseMlDeclaration(), layout = ', layout);
+
+    result = {
+        __text: layout,
+    };
+
+    return result;
+}
+
 
 /**
  * Parse colset declaration: extract name, type and extentions (with, and, timed)

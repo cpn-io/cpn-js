@@ -16,6 +16,49 @@ export function clearDeclarationLayout(layout) {
     return layout;
 }
 
+export function parseUiDeclarartionType(layout) {
+    const regex = /^(?<declarationType>\w+)/g;
+    let m = regex.exec(layout);
+
+    if (m && m.groups && m.groups.declarationType) {
+        return m.groups.declarationType;
+    }
+    return undefined;
+}
+
+export function detectCpnDeclarartionType(cpnElement) {
+    if (cpnElement.id !== undefined &&
+        (cpnElement.unit !== undefined
+            || cpnElement.bool !== undefined
+            || cpnElement.int !== undefined
+            || cpnElement.intinf !== undefined
+            || cpnElement.time !== undefined
+            || cpnElement.real !== undefined
+            || cpnElement.string !== undefined
+            || cpnElement.alias !== undefined
+            || cpnElement.list !== undefined
+            || cpnElement.product !== undefined
+            || cpnElement.index !== undefined
+            || cpnElement.enum !== undefined
+            || cpnElement.record !== undefined
+            || cpnElement.union !== undefined
+            || cpnElement.subset !== undefined
+        )) {
+        return 'color';
+    }
+    if (cpnElement.__text) {
+        return 'ml';
+    }
+    if (cpnElement.id && cpnElement.type) {
+        return 'var';
+    }
+    if (cpnElement.id && cpnElement.ml) {
+        return 'globref';
+    }
+
+    return 'ml';
+}
+
 /**
  * Parse declaration layout: extract declaration type
  * 
@@ -27,22 +70,27 @@ export function parseDeclarartion(layout) {
     const regex = /^(?<declarationType>\w+)/g;
     let m = regex.exec(layout);
 
-    if (m && m.groups && m.groups.declarationType) {
-        result = {};
-        result.declarationType = m.groups.declarationType;
+    const declarationType = parseUiDeclarartionType(layout);
 
-        switch (m.groups.declarationType) {
+    if (declarationType) {
+        result = {};
+
+        switch (declarationType) {
             case 'globref':
                 result.cpnElement = parseGlobrefDeclaration(layout);
+                result.cpnDeclarationType = 'globref';
                 break;
             case 'colset':
                 result.cpnElement = parseColsetDeclaration(layout);
+                result.cpnDeclarationType = 'color';
                 break;
             case 'var':
                 result.cpnElement = parseVarDeclaration(layout);
+                result.cpnDeclarationType = 'var';
                 break;
             default:
                 result.cpnElement = parseMlDeclaration(layout);
+                result.cpnDeclarationType = 'ml';
         }
     }
     return result;

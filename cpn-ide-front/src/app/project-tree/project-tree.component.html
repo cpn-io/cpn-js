@@ -5,7 +5,8 @@
 
   <ng-container *ngIf="cpnet">
 
-    <div id="tree" class="tree" (contextmenu)="contextMenu($event)" (click)="hideContextMenu()" (keydown)="onKeyDown($event)">
+    <div id="tree" class="tree" (contextmenu)="contextMenu($event)" (click)="hideContextMenu()"
+      (keydown)="onKeyDown($event)">
 
       <!-- Project root -->
       <app-tree-node id="project" [title]="'Project: ' + project.name" [expanded]="expanded" [selected]="selected"
@@ -30,7 +31,8 @@
 
           <ng-container *ngFor="let globbox of nodeToArray(cpnet.globbox)">
             <ng-container *ngFor="let block of nodeToArray(globbox.block)">
-              <app-project-tree-block-node [block]="block" [expanded]="expanded" [selected]="selected" [mouseover]="mouseover">
+              <app-project-tree-block-node [block]="block" [expanded]="expanded" [selected]="selected"
+                [mouseover]="mouseover">
               </app-project-tree-block-node>
             </ng-container>
           </ng-container>
@@ -61,28 +63,14 @@
 
     </div>
 
-
-    <!-- Tree node context menu -->
-    <div class="dropdown-menu dropdown-menu-fixed shadow" id="contextMenu">
-      <a class="dropdown-item" href="#">New declaration</a>
-      <a class="dropdown-item" href="#">New block</a>
-      <div class="dropdown-divider" href="#"></div>
-      <a class="dropdown-item" href="#">New page</a>
-    </div>
-
-    <!-- <context-menu #treeMenu>
-      <ng-template contextMenuItem (execute)="alert('Hi, ' + $event.item.name)">
-        Say hi!
-      </ng-template>
-      <ng-template contextMenuItem divider="true"></ng-template>
-      <ng-template contextMenuItem let-item
-        (execute)="alert($event.item.name + ' said: ' + $event.item.otherProperty)">
-        Bye, {{item?.name}}
-      </ng-template>
-      <ng-template contextMenuItem passive="true">
-        Input something: <input type="text">
-      </ng-template>
-    </context-menu> -->
-
   </ng-container>
+</div>
+
+
+<!-- Tree node context menu -->
+<div class="dropdown-menu dropdown-menu-fixed shadow" id="contextMenu">
+  <a class="dropdown-item" href="#">New declaration</a>
+  <a class="dropdown-item" href="#">New block</a>
+  <div class="dropdown-divider" href="#"></div>
+  <a class="dropdown-item" href="#">New page</a>
 </div>

@@ -3,6 +3,7 @@ import { ModelService } from './../services/model.service';
 import { EventService } from './../services/event.service';
 import { Component, OnInit, OnChanges, SimpleChanges, DoCheck } from '@angular/core';
 import { nodeToArray, cloneObject, getNextId, arrayToNode } from '../common/utils';
+import { clearDeclarationLayout, parseDeclarartion } from './project-tree-declaration-node/declaration-parser';
 
 @Component({
   selector: 'app-project-tree',
@@ -130,50 +131,77 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   }
 
   onKeyDown(event: KeyboardEvent) {
-    // console.log(this.constructor.name, 'onKeyDown(), event = ', event);
-    // console.log(this.constructor.name, 'onKeyDown(), Key.INSERT = ', Key.INSERT);
+    console.log(this.constructor.name, 'onKeyDown(), event = ', event);
+
     if (event.code === 'Insert') {
       event.preventDefault();
 
       console.log(this.constructor.name, 'onKeyDown(), INSERT PRESSED');
       console.log(this.constructor.name, 'onKeyDown(), this.selected = ', this.selected);
 
-      if (this.selected && this.selected.parentCpnElement) {
-        let newValue;
+      if (this.selected && this.selected.parentCpnElement && this.selected.type) {
+
+        let newLayout;
         switch (this.selected.type) {
           case 'globref':
-            newValue = 'globref GLOBREF = 1;';
+            newLayout = 'globref CONST = 1;';
             break;
           case 'color':
-            newValue = 'colset TYPE = int;';
+            newLayout = 'colset TYPE = int;';
             break;
           case 'var':
-            newValue = 'var v:int;';
+            newLayout = 'var v:int;';
             break;
           case 'ml':
-            newValue = 'fun Function';
+            newLayout = 'fun Function';
             break;
         }
-        
-        if (newValue) {
-          const blockCpnElement = this.selected.parentCpnElement;
-          const oldCpnType = this.selected.type;
-          // node.parent.data.cpnElement = this.modelService.removeCpnElement(cpnParentElement, cpnElement, oldCpnType);
 
-          const newCpnElement = { _id: getNextId() };
-          const result = this.modelService.stringToCpnDeclarationElement(newCpnElement, newValue);
+        if (newLayout) {
+          // const blockCpnElement = this.selected.parentCpnElement;
+          // const oldCpnType = this.selected.type;
+          // // node.parent.data.cpnElement = this.modelService.removeCpnElement(cpnParentElement, cpnElement, oldCpnType);
 
-          const newCpnType = result.cpnType;
+          // const newCpnElement = { _id: getNextId() };
+          // const result = this.modelService.stringToCpnDeclarationElement(newCpnElement, newLayout);
+
+          // const newCpnType = result.cpnType;
+
+          // console.log(this.constructor.name, 'onKeyDown(), result = ', result);
+
+          // const declList = nodeToArray(this.selected.parentCpnElement[newCpnType]);
+          // declList.push(result.cpnElement);
+          // this.selected.parentCpnElement[newCpnType] = arrayToNode(declList);
+
+          // clear declaration layout
+          newLayout = clearDeclarationLayout(newLayout);
+          // parse declaration layout
+          let result = parseDeclarartion(newLayout);
 
           console.log(this.constructor.name, 'onKeyDown(), result = ', result);
 
-          const declList = nodeToArray(this.selected.parentCpnElement[newCpnType]);
-          declList.push(result.cpnElement);
-          this.selected.parentCpnElement[newCpnType] = arrayToNode(declList);
+          if (result && result.cpnElement) {
+            let newDeclaration = result.cpnElement;
+            let newCpnDeclarartionType = result.cpnDeclarationType;
 
-          setTimeout(() => this.goToDeclaration(newCpnElement._id), 1000);
+            // set new id value
+            newDeclaration._id = getNextId();
+
+            // add declaration cpn element to declaration group
+            this.selected.parentCpnElement =
+              this.modelService.addCpnElement(
+                this.selected.parentCpnElement,
+                newDeclaration,
+                newCpnDeclarartionType);
+
+            console.log(this.constructor.name, 'onKeyDown(), this.selected.parentCpnElement[newCpnDeclarartionType] =',
+              this.selected.parentCpnElement[newCpnDeclarartionType]);
+
+            setTimeout(() => this.goToDeclaration(newDeclaration._id), 1000);
+          }
         }
       }
     }
   }
+
 }

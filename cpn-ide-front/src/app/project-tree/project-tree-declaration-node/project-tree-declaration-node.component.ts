@@ -4,6 +4,7 @@ import { EventService } from '../../services/event.service';
 import { Message } from '../../common/message';
 import { cloneObject } from 'src/app/common/utils';
 import { clearDeclarationLayout, parseDeclarartion, detectCpnDeclarartionType, parseUiDeclarartionType } from './declaration-parser';
+import { getNextId, nodeToArray, arrayToNode } from '../../common/utils';
 
 @Component({
   selector: 'app-project-tree-declaration-node',
@@ -63,8 +64,10 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit {
 
     const oldCpnDeclarartionType = this.type;
 
+    // clear declaration layout
+    layout = clearDeclarationLayout(layout);
     // parse declaration layout
-    let result = this.onParseDeclaration(layout);
+    let result = parseDeclarartion(layout);
 
     if (result && result.cpnElement) {
       let newDeclaration = result.cpnElement;
@@ -104,7 +107,7 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit {
   onSelected() {
     this.selected.parentCpnElement = this.parentBlock;
     this.selected.id = this.declaration._id;
-    this.selected.type = 'declaration';
+    this.selected.type = this.type;
     this.selected.cpnElement = this.declaration;
   }
 
@@ -114,8 +117,10 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit {
     //   layout = this.declaration.layout;
     // }
 
+    // // clear declaration layout
+    // layout = clearDeclarationLayout(layout);
     // // parse declaration layout
-    // let result = this.onParseDeclaration(layout);
+    // let result = parseDeclarartion(layout);
 
     // if (result && result.cpnElement) {
     //   let newDeclaration = result.cpnElement;
@@ -125,19 +130,6 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit {
     //     cpnElement: newDeclaration
     //   });
     // }
-  }
-
-  onParseDeclaration(layout) {
-    console.log('parseDeclaration(), layout = ', layout);
-
-    // clear declaration layout
-    layout = clearDeclarationLayout(layout);
-
-    // parse declaration layout
-    let result = parseDeclarartion(layout);
-    console.log('parseDeclaration(), result = ', result);
-
-    return result;
   }
 
 }

@@ -1,5 +1,5 @@
 <ng-container *ngIf="declaration">
-  <div id="declaration._id" contenteditable="true"
+  <div [id]="declaration._id" contenteditable="true"
     [ngClass]="{'selected': selected.id === declaration._id, 'node': true, 'editablenode': true}"
     [innerHTML]="getText() | colorDeclarations | safeHtml"
     (focus)="focused = true; onSelected(); onParse($event.target.textContent)"

@@ -1,7 +1,7 @@
 import { Message } from './../common/message';
 import { ModelService } from './../services/model.service';
 import { EventService } from './../services/event.service';
-import { Component, OnInit, OnChanges, SimpleChanges, DoCheck } from '@angular/core';
+import { Component, OnInit, OnChanges, SimpleChanges, DoCheck, HostListener } from '@angular/core';
 import { nodeToArray, cloneObject, getNextId, arrayToNode } from '../common/utils';
 import { clearDeclarationLayout, parseDeclarartion } from './project-tree-declaration-node/declaration-parser';
 
@@ -26,6 +26,10 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   public selectedOld;
 
   public mouseover = { id: undefined };
+
+  public contextmenu = false;
+  public contextmenuX = 0;
+  public contextmenuY = 0;
 
   constructor(public eventService: EventService,
     public modelService: ModelService) {
@@ -90,7 +94,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
   goToDeclaration(id) {
     if (this.cpnet && this.cpnet.globbox) {
-      console.log(this.constructor.name, 'goToDeclaration()');
+      console.log(this.constructor.name, 'goToDeclaration(), id = ', id);
       const blocksToExpand = [];
       const blocks = nodeToArray(this.cpnet.globbox.block);
       for (const block of blocks) {
@@ -108,6 +112,12 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
           this.expanded['declarations'] = true;
           this.expanded[block._id] = true;
         }
+      }
+
+      const inputElem = document.getElementById(id);
+      console.log(this.constructor.name, 'goToDeclaration(), inputElem = ', inputElem);
+      if (inputElem) {
+        inputElem.focus();
       }
     }
   }
@@ -127,8 +137,35 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
   hideContextMenu() {
     const menuElement: HTMLElement = document.getElementById('contextMenu');
-    menuElement.style.display = 'none';
+
+    if (menuElement.style.display !== 'none') {
+      menuElement.style.display = 'none';
+      return true;
+    }
+    return false;
   }
+
+  //activates the menu with the coordinates
+  onrightClick(event) {
+    this.contextmenuX = event.clientX;
+    this.contextmenuY = event.clientY - 50;
+    this.contextmenu = true;
+    console.log(this.constructor.name, 'onrightClick, event = ', event);
+  }
+  //disables the menu
+  disableContextMenu() {
+    this.contextmenu = false;
+  }
+
+
+  // @HostListener('document:contextmenu', ['$event'])
+  // onContextMenu(e) {
+  //   console.log(this.constructor.name, 'onContextMenu, e = ', e);
+
+  //   if (this.hideContextMenu()) {
+  //     // e.preventDefault();
+  //   }
+  // }
 
   onKeyDown(event: KeyboardEvent) {
     console.log(this.constructor.name, 'onKeyDown(), event = ', event);
@@ -197,7 +234,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
             console.log(this.constructor.name, 'onKeyDown(), this.selected.parentCpnElement[newCpnDeclarartionType] =',
               this.selected.parentCpnElement[newCpnDeclarartionType]);
 
-            setTimeout(() => this.goToDeclaration(newDeclaration._id), 1000);
+            setTimeout(() => this.goToDeclaration(newDeclaration._id), 100);
           }
         }
       }

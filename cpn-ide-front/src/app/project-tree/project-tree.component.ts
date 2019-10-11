@@ -74,7 +74,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     this.project = this.modelService.getProject();
     this.loadPages();
 
-    setTimeout(() => this.goToDeclaration('id89457845'), 100);
+    // setTimeout(() => this.goToDeclaration('id89457845'), 100);
   }
 
   updateErrors() {

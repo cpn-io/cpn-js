@@ -63,6 +63,8 @@ import { ProjectTreeOptionNodeComponent } from './project-tree/project-tree-opti
 import { ProjectTreeDeclarationNodeComponent } from './project-tree/project-tree-declaration-node/project-tree-declaration-node.component';
 import { ProjectTreeToolbarComponent } from './project-tree/project-tree-toolbar/project-tree-toolbar.component';
 import { ContextMenuComponent } from './context-menu/context-menu.component';
+import { ProjectDeclarationsOldComponent } from './project-declarations-old/project-declarations-old.component';
+import { ProjectDeclarationsComponent } from './project-declarations/project-declarations.component';
 
 require('typeface-droid-sans-mono');
 
@@ -110,6 +112,8 @@ require('typeface-droid-sans-mono');
     ProjectTreeDeclarationNodeComponent,
     ProjectTreeToolbarComponent,
     ContextMenuComponent,
+    ProjectDeclarationsOldComponent,
+    ProjectDeclarationsComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,11 @@
+<div class="tab-container">
+
+<ng-container *ngFor="let globbox of nodeToArray(cpnet.globbox)">
+  <ng-container *ngFor="let block of nodeToArray(globbox.block)">
+    <app-project-tree-block-node [block]="block" [expanded]="expanded" [selected]="selected"
+      [mouseover]="mouseover">
+    </app-project-tree-block-node>
+  </ng-container>
+</ng-container>
+
+</div>

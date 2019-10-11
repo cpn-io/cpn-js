@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, DoCheck, SimpleChanges, OnChanges } from '@angular/core';
 import { ModelService } from '../../services/model.service';
 import { EventService } from '../../services/event.service';
 import { Message } from '../../common/message';
@@ -11,104 +11,105 @@ import { getNextId, nodeToArray, arrayToNode } from '../../common/utils';
   templateUrl: './project-tree-declaration-node.component.html',
   styleUrls: ['./project-tree-declaration-node.component.scss']
 })
-export class ProjectTreeDeclarationNodeComponent implements OnInit {
+export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges {
 
   @Input() public parentBlock: any;
   @Input() public declaration: any;
   @Input() public type: any;
 
   @Input() public selected: any;
+  @Input() public errors: any;
+
   @Input() public mouseover: any = { id: undefined };
 
   public focused = false;
 
+  public errorIds = [];
+
   constructor(private eventService: EventService, private modelService: ModelService) { }
 
   ngOnInit() {
+    this.updateErrors();
   }
 
-  getText() {
-    let layout = '';
-
-    switch (this.type) {
-      case 'globref':
-        layout = this.modelService.cpnGlobrefToString(this.declaration);
-        break;
-      case 'color':
-        layout = this.modelService.cpnColorToString(this.declaration);
-        break;
-      case 'var':
-        layout = this.modelService.cpnVarToString(this.declaration);
-        break;
-      case 'ml':
-        layout = this.modelService.cpnMlToString(this.declaration);
-        break;
-      default:
-        return this.declaration.layout || JSON.stringify(this.declaration);
+  ngOnChanges(changes: SimpleChanges) {
+    for (let propName in changes) {
+      // let chng = changes[propName];
+      // let cur  = JSON.stringify(chng.currentValue);
+      // let prev = JSON.stringify(chng.previousValue);
+      // console.log(this.constructor.name, `ngOnChanges(), ${propName}: currentValue = ${cur}, previousValue = ${prev}`);
+      if (propName === 'errors') {
+        this.updateErrors();
+      }
     }
+  }
+
+  updateErrors() {
+    this.errorIds = [];
+    if (this.errors)
+      for (const id in this.errors) {
+        this.errorIds.push(id);
+      }
+    console.log(this.constructor.name, 'updateErrors(), this.errors = ', this.errors);
+  }
+
+
+  getText() {
+    let layout = this.modelService.cpnDeclarationToString(this.type, this.declaration);
 
     let declarationType = parseUiDeclarartionType(layout);
 
-    if (this.focused || declarationType === 'ml') {
+    if (this.focused || declarationType === 'ml' || this.errorIds.includes(this.declaration._id)) {
       return layout;
     }
 
-    let regex = new RegExp(/[^\s]+\s+[^\s^\(^\:]+/);
+    let regex = /[^\s]+\s+[^\s^\(^\:]+/;
     let transformed = regex.exec(layout);
     return transformed && transformed.length > 0 ? transformed[0] : layout;
   }
 
   onUpdate(layout) {
-    console.log('onUpdate(), layout = ', layout);
-    console.log('onUpdate(), this.declaration = ', JSON.stringify(this.declaration));
+    this.modelService.updateDeclaration(this.declaration, this.type, this.parentBlock, layout);
 
-    const oldCpnDeclarartionType = this.type;
+    // const originalLayout = layout;
 
-    // clear declaration layout
-    layout = clearDeclarationLayout(layout);
-    // parse declaration layout
-    let result = parseDeclarartion(layout);
+    // console.log('onUpdate(), layout = ', layout);
+    // console.log('onUpdate(), this.declaration = ', JSON.stringify(this.declaration));
 
-    if (result && result.cpnElement) {
-      let newDeclaration = result.cpnElement;
-      const newCpnDeclarartionType = result.cpnDeclarationType;
+    // const oldCpnDeclarartionType = this.type;
 
-      console.log('onUpdate(), oldCpnDeclarartionType = ', oldCpnDeclarartionType);
-      console.log('onUpdate(), newCpnDeclarartionType = ', newCpnDeclarartionType);
+    // // parse declaration layout
+    // let result = parseDeclarartion(layout);
 
-      this.copyDeclaration(newDeclaration, this.declaration)
+    // if (result && result.cpnElement) {
+    //   let newDeclaration = result.cpnElement;
+    //   const newCpnDeclarartionType = result.cpnDeclarationType;
 
-      // move declaration cpn element from old declaration group to new, if needed
-      if (newCpnDeclarartionType !== oldCpnDeclarartionType) {
-        this.parentBlock = this.modelService.removeCpnElement(this.parentBlock, this.declaration, oldCpnDeclarartionType);
-        this.parentBlock = this.modelService.addCpnElement(this.parentBlock, this.declaration, newCpnDeclarartionType);
-      }
+    //   console.log('onUpdate(), oldCpnDeclarartionType = ', oldCpnDeclarartionType);
+    //   console.log('onUpdate(), newCpnDeclarartionType = ', newCpnDeclarartionType);
 
-      this.eventService.send(Message.TREE_SELECT_DECLARATION_NODE_NEW, {
-        cpnType: 'ml',
-        cpnElement: this.declaration
-      });
-    }
+    //   this.copyDeclaration(newDeclaration, this.declaration)
+
+    //   // move declaration cpn element from old declaration group to new, if needed
+    //   if (newCpnDeclarartionType !== oldCpnDeclarartionType) {
+    //     this.parentBlock = this.modelService.removeCpnElement(this.parentBlock, this.declaration, oldCpnDeclarartionType);
+    //     this.parentBlock = this.modelService.addCpnElement(this.parentBlock, this.declaration, newCpnDeclarartionType);
+    //   }
+    // }
   }
 
-  copyDeclaration(fromDeclaration, toDeclaration) {
-    for (const key in toDeclaration) {
-      if (key !== '_id') {
-        delete toDeclaration[key];
-      }
-    }
-    for (const key in fromDeclaration) {
-      if (key !== '_id') {
-        toDeclaration[key] = fromDeclaration[key];
-      }
-    }
-  }
 
   onSelected() {
     this.selected.parentCpnElement = this.parentBlock;
     this.selected.id = this.declaration._id;
     this.selected.type = this.type;
     this.selected.cpnElement = this.declaration;
+
+    this.eventService.send(Message.TREE_SELECT_DECLARATION_NODE_NEW, {
+      cpnType: this.type,
+      cpnElement: this.declaration,
+      cpnParentElement: this.parentBlock
+    });
   }
 
   onParse(layout) {

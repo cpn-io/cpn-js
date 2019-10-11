@@ -12,6 +12,7 @@ import {
 } from '../../lib/cpn-js/features/modeling/CpnElementFactory';
 import { nodeToArray, addNode } from '../common/utils';
 import { DataCollectionMonitorTemplate, BreakpointMonitorTemplate, UserDefinedMonitorTemplate, WriteInFileMonitorTemplate, MarkingSizeMonitorTemplate, ListLengthDataCollectionMonitorTemplate, CountTransitionOccurrencesMonitorTemplate, PlaceContentBreakPointMonitorTemplate, TransitionEnabledBreakPointMonitorTemplate, MonitorType } from '../common/monitors';
+import { parseDeclarartion } from '../project-tree/project-tree-declaration-node/declaration-parser';
 
 
 /**
@@ -881,6 +882,33 @@ export class ModelService {
   }
 
   /**
+   * Convert cpn declaration element to string
+   * @param cpnElement - declaration element
+   */
+  cpnDeclarationToString(cpnDeclarationType, cpnElement) {
+    let layout = '';
+
+    switch (cpnDeclarationType) {
+      case 'globref':
+        layout = this.cpnGlobrefToString(cpnElement);
+        break;
+      case 'color':
+        layout = this.cpnColorToString(cpnElement);
+        break;
+      case 'var':
+        layout = this.cpnVarToString(cpnElement);
+        break;
+      case 'ml':
+        layout = this.cpnMlToString(cpnElement);
+        break;
+      default:
+        return cpnElement.layout || JSON.stringify(cpnElement);
+    }
+
+    return layout;
+  }
+
+  /**
    * Convert cpn globref element to string
    * @param cpnElement - color(colset) cpn element
    */
@@ -1112,6 +1140,48 @@ export class ModelService {
 
     return { cpnType: resultCpnType, declarationType: resultDeclarationType, cpnElement: resultCpnElement };
   }
+
+  updateDeclaration(declarationCpnElement, declarationCpnType, parentBlockCpnElement, layout) {
+    const originalLayout = layout;
+
+    console.log('updateDeclaration(), layout = ', layout);
+    console.log('updateDeclaration(), declarationCpnElement = ', JSON.stringify(declarationCpnElement));
+
+    const oldCpnDeclarartionType = declarationCpnType;
+
+    // parse declaration layout
+    let result = parseDeclarartion(layout);
+
+    if (result && result.cpnElement) {
+      let newDeclaration = result.cpnElement;
+      const newCpnDeclarartionType = result.cpnDeclarationType;
+
+      console.log('onUpdate(), oldCpnDeclarartionType = ', oldCpnDeclarartionType);
+      console.log('onUpdate(), newCpnDeclarartionType = ', newCpnDeclarartionType);
+
+      this.copyDeclaration(newDeclaration, declarationCpnElement)
+
+      // move declaration cpn element from old declaration group to new, if needed
+      if (newCpnDeclarartionType !== oldCpnDeclarartionType) {
+        this.removeCpnElement(parentBlockCpnElement, declarationCpnElement, oldCpnDeclarartionType);
+        this.addCpnElement(parentBlockCpnElement, declarationCpnElement, newCpnDeclarartionType);
+      }
+    }
+  }
+
+  copyDeclaration(fromDeclaration, toDeclaration) {
+    for (const key in toDeclaration) {
+      if (key !== '_id') {
+        delete toDeclaration[key];
+      }
+    }
+    for (const key in fromDeclaration) {
+      if (key !== '_id') {
+        toDeclaration[key] = fromDeclaration[key];
+      }
+    }
+  }
+
 
 
   /**

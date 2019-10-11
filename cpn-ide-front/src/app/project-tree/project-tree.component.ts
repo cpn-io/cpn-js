@@ -4,6 +4,7 @@ import { EventService } from './../services/event.service';
 import { Component, OnInit, OnChanges, SimpleChanges, DoCheck, HostListener } from '@angular/core';
 import { nodeToArray, cloneObject, getNextId, arrayToNode } from '../common/utils';
 import { clearDeclarationLayout, parseDeclarartion } from './project-tree-declaration-node/declaration-parser';
+import { AccessCpnService } from '../services/access-cpn.service';
 
 @Component({
   selector: 'app-project-tree',
@@ -25,6 +26,8 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   public selected;
   public selectedOld;
 
+  public errors = [];
+
   public mouseover = { id: undefined };
 
   public contextmenu = false;
@@ -32,7 +35,8 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   public contextmenuY = 0;
 
   constructor(public eventService: EventService,
-    public modelService: ModelService) {
+    public modelService: ModelService,
+    private accessCpnService: AccessCpnService) {
   }
 
   ngOnInit() {
@@ -40,6 +44,8 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
     this.eventService.on(Message.PROJECT_LOAD, () => this.loadProject());
     this.eventService.on(Message.MODEL_RELOAD, () => this.loadProject());
+
+    this.eventService.on(Message.SERVER_INIT_NET_DONE, () => this.updateErrors());
   }
 
   ngDoCheck() {
@@ -71,12 +77,21 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     setTimeout(() => this.goToDeclaration('id89457845'), 100);
   }
 
+  updateErrors() {
+    this.errors = this.accessCpnService.getErrorData() || [];
+    // for (const id in this.accessCpnService.getErrorData()) {
+    //   this.errors.push(id);
+    // }
+
+    console.log(this.constructor.name, 'updateErrors(), this.errors = ', this.errors);
+  }
+
   loadPages() {
     this.pages = nodeToArray(this.cpnet.page);
   }
 
   onSelectedChange() {
-    console.log(this.constructor.name, 'onSelectedChange(), this.selected = ', JSON.stringify(this.selected));
+    // console.log(this.constructor.name, 'onSelectedChange(), this.selected = ', JSON.stringify(this.selected));
 
     switch (this.selected.type) {
       case 'page':
@@ -211,7 +226,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
           // this.selected.parentCpnElement[newCpnType] = arrayToNode(declList);
 
           // clear declaration layout
-          newLayout = clearDeclarationLayout(newLayout);
+          // newLayout = clearDeclarationLayout(newLayout);
           // parse declaration layout
           let result = parseDeclarartion(newLayout);
 

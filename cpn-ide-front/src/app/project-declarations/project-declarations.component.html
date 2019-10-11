@@ -1,11 +1,20 @@
-<div class="tab-container">
+<tabs class="cpn-tabs">
+  <ng-container *ngFor="let tab of tabList">
+    <tab *ngIf="tab" [id]="tab.id" [tabTitle]="tab.name">
 
-<ng-container *ngFor="let globbox of nodeToArray(cpnet.globbox)">
-  <ng-container *ngFor="let block of nodeToArray(globbox.block)">
-    <app-project-tree-block-node [block]="block" [expanded]="expanded" [selected]="selected"
-      [mouseover]="mouseover">
-    </app-project-tree-block-node>
+      <div class="tab-container" style="padding: 10px">
+
+        <ng-container *ngIf="tab.id === 'all'">
+          <ng-container *ngFor="let globbox of nodeToArray(cpnet.globbox)">
+            <ng-container *ngFor="let block of nodeToArray(globbox.block)">
+              <app-project-tree-block-node [block]="block" [expanded]="expanded" [selected]="selected" [showBullet]="false">
+              </app-project-tree-block-node>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+
+      </div>
+
+    </tab>
   </ng-container>
-</ng-container>
-
-</div>
+</tabs>

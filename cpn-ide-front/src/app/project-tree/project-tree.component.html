@@ -1,7 +1,7 @@
 <!-- Project tree toolbar -->
 <app-project-tree-toolbar></app-project-tree-toolbar>
 
-<div class="tab-container">
+<div class="tab-container-with-toolbar">
 
   <ng-container *ngIf="cpnet">
 
@@ -34,7 +34,7 @@
           <ng-container *ngFor="let globbox of nodeToArray(cpnet.globbox)">
             <ng-container *ngFor="let block of nodeToArray(globbox.block)">
               <app-project-tree-block-node [block]="block" [expanded]="expanded" [selected]="selected"
-                [mouseover]="mouseover">
+                [mouseover]="mouseover" [errors]="errors">
               </app-project-tree-block-node>
             </ng-container>
           </ng-container>

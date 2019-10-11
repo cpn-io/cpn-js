@@ -20,6 +20,16 @@ export class ProjectDeclarationsComponent implements OnInit {
   public expanded;
   public selected;
 
+  tabList = [
+    { id: 'all', name: 'BatchOrdering' },
+    { id: 'globref', name: 'Globref' },
+    { id: 'colset', name: 'Color' },
+    { id: 'var', name: 'Var' },
+    { id: 'val', name: 'Val' },
+    { id: 'fun', name: 'Fun' },
+    { id: 'monitor', name: 'Monitors' },
+  ];
+
   constructor(public eventService: EventService,
     public modelService: ModelService) { }
 

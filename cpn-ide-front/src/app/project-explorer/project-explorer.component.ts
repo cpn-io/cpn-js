@@ -41,8 +41,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   JSON = JSON;
 
   tabList = [
-    { id: 'projectTree', name: 'Project explorer (New)' },
-    { id: 'explorerPanel', name: 'Project explorer' },
+    { id: 'projectTree', name: 'Project explorer' },
+//    { id: 'explorerPanel', name: 'Project explorer (Old)' },
     { id: 'applicationSettings', name: 'Application settings' },
   ];
 

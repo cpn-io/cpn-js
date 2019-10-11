@@ -172,6 +172,10 @@ function parseMlDeclaration(layout) {
 function parseColsetDeclaration(layout) {
     let result = undefined;
 
+    const originalLayout = layout;
+
+    layout = clearDeclarationLayout(layout);
+
     let regex = /colset\s+(?<name>\w+)\s*=\s*(?<type>\w+)/g;
     let m = regex.exec(layout);
     let m2;
@@ -242,7 +246,7 @@ function parseColsetDeclaration(layout) {
             result.alias = { id: typeName };
         }
 
-        result.layout = layout;
+        result.layout = originalLayout;
     }
 
     return result;

@@ -834,7 +834,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     // console.log('onAddNode(), cpnElement = ', cpnElement);
     // console.log('onAddNode(), treeNode = ', treeNode);
 
-    const result = this.modelService.addCpnElement(cpnParentElement, cpnElement, cpnType);
+    this.modelService.addCpnElement(cpnParentElement, cpnElement, cpnType);
 
     if (newNode) {
       if (treeNode.data.children && !(['declaration', 'page'].includes(treeNode.data.type))) {
@@ -2387,7 +2387,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       console.log('updateDeclarationNodeText(). node.parent.data.cpnElement = ', node.parent.data.cpnElement);
 
       cpnParentElement = node.parent.data.cpnElement;
-      node.parent.data.cpnElement = this.modelService.addCpnElement(cpnParentElement, cpnElement, cpnType);
+      this.modelService.addCpnElement(cpnParentElement, cpnElement, cpnType);
     } else {
       this.modelService.updateCpnElement(cpnParentElement, cpnElement, cpnType);
     }

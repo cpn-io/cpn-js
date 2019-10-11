@@ -363,7 +363,8 @@ export class ModelEditorComponent implements OnInit {
       // console.log(self.constructor.name, 'element.hover, event = ', event);
 
       if (event.originalEvent) {
-        const position = { x: event.originalEvent.offsetX, y: event.originalEvent.offsetY };
+        // const position = { x: event.originalEvent.offsetX, y: event.originalEvent.offsetY };
+        const position = { x: event.originalEvent.clientX, y: event.originalEvent.clientY };
 
         let errorText, warningText, readyText;
         if (isCpn(element)) {

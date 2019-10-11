@@ -1631,31 +1631,35 @@ export class ModelService {
    * @param cpnElement
    * @param cpnType - new cpn type where cpn element should be placed
    */
-  addCpnElement(cpnParentElement, cpnElement, cpnType) {
-    if (!cpnParentElement) {
-      console.error(this.constructor.name, 'addCpnElement(). ERROR: Undefined cpnParentElement element.');
-      return cpnParentElement;
-    }
-    if (!cpnElement) {
-      console.error(this.constructor.name, 'addCpnElement(). ERROR: Undefined cpnElement element.');
-      return cpnParentElement;
-    }
-    if (!cpnType) {
-      console.error(this.constructor.name, 'addCpnElement(). ERROR: Undefined cpnType.');
-      return cpnParentElement;
-    }
+  addCpnElement(cpnParentElement, cpnElement, cpnType, insertAfterElement = undefined) {
+    try {
+      if (!cpnParentElement) {
+        throw 'Undefined cpnParentElement element';
+      }
+      if (!cpnElement) {
+        throw 'Undefined cpnElement element';
+      }
+      if (!cpnType) {
+        throw 'Undefined cpnType';
+      }
 
-    if (cpnParentElement[cpnType] instanceof Array) {
-      cpnParentElement[cpnType].push(cpnElement);
-    } else if (cpnParentElement[cpnType]) {
-      cpnParentElement[cpnType] = [cpnParentElement[cpnType], cpnElement];
-    } else {
-      cpnParentElement[cpnType] = cpnElement;
+      const nodeList = nodeToArray(cpnParentElement[cpnType]);
+      nodeList.push(cpnElement);
+
+      // if (cpnParentElement[cpnType] instanceof Array) {
+      //   cpnParentElement[cpnType].push(cpnElement);
+      // } else if (cpnParentElement[cpnType]) {
+      //   cpnParentElement[cpnType] = [cpnParentElement[cpnType], cpnElement];
+      // } else {
+      //   cpnParentElement[cpnType] = cpnElement;
+      // }
+
+      cpnParentElement[cpnType] = nodeList.length === 1 ? nodeList[0] : nodeList;
+    } catch (ex) {
+      console.error(this.constructor.name, 'addCpnElement(). ERROR: ', ex);
     }
 
     console.log(this.constructor.name, 'addCpnElement(), cpnParentElement, cpnElement = ', cpnParentElement, cpnElement);
-
-    return cpnParentElement;
   }
 
   /**

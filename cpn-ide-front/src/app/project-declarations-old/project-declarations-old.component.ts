@@ -533,7 +533,7 @@ export class ProjectDeclarationsOldComponent implements OnInit, OnDestroy {
       console.log('updateDeclarationNodeText(). node.cpnParentElement = ', node.cpnParentElement);
 
       cpnParentElement = node.cpnParentElement;
-      node.cpnParentElement = this.modelService.addCpnElement(cpnParentElement, cpnElement, cpnType);
+      this.modelService.addCpnElement(cpnParentElement, cpnElement, cpnType);
     } else {
       this.modelService.updateCpnElement(cpnParentElement, cpnElement, cpnType);
     }

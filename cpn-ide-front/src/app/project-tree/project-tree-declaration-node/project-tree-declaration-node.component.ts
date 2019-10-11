@@ -92,8 +92,8 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges {
 
     //   // move declaration cpn element from old declaration group to new, if needed
     //   if (newCpnDeclarartionType !== oldCpnDeclarartionType) {
-    //     this.parentBlock = this.modelService.removeCpnElement(this.parentBlock, this.declaration, oldCpnDeclarartionType);
-    //     this.parentBlock = this.modelService.addCpnElement(this.parentBlock, this.declaration, newCpnDeclarartionType);
+    //     this.modelService.removeCpnElement(this.parentBlock, this.declaration, oldCpnDeclarartionType);
+    //     this.modelService.addCpnElement(this.parentBlock, this.declaration, newCpnDeclarartionType);
     //   }
     // }
   }

@@ -42,7 +42,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   tabList = [
     { id: 'projectTree', name: 'Project explorer' },
-//    { id: 'explorerPanel', name: 'Project explorer (Old)' },
+    //    { id: 'explorerPanel', name: 'Project explorer (Old)' },
     { id: 'applicationSettings', name: 'Application settings' },
   ];
 
@@ -2216,7 +2216,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   updateTree() {
-    this.treeComponent.treeModel.update();
+    if (this.treeComponent && this.treeComponent.treeModel) {
+      this.treeComponent.treeModel.update();
+    }
   }
 
 

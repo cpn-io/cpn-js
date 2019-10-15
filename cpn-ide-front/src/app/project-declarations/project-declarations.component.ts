@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { EventService } from '../services/event.service';
 import { ModelService } from '../services/model.service';
 
@@ -10,7 +10,7 @@ import { Message } from '../common/message';
   templateUrl: './project-declarations.component.html',
   styleUrls: ['./project-declarations.component.scss']
 })
-export class ProjectDeclarationsComponent implements OnInit {
+export class ProjectDeclarationsComponent implements OnInit, AfterViewInit {
 
   public nodeToArray = nodeToArray;
   public JSON = JSON;
@@ -21,23 +21,24 @@ export class ProjectDeclarationsComponent implements OnInit {
   public selected;
 
   tabList = [
-    { id: 'all', name: 'BatchOrdering' },
-    { id: 'globref', name: 'Globref' },
-    { id: 'colset', name: 'Color' },
-    { id: 'var', name: 'Var' },
-    { id: 'val', name: 'Val' },
-    { id: 'fun', name: 'Fun' },
-    { id: 'monitor', name: 'Monitors' },
+    { id: 'all', name: 'BatchOrdering', declarationType: 'all' },
+    { id: 'globref', name: 'Globref', declarationType: 'globref' },
+    { id: 'color', name: 'Color', declarationType: 'color' },
+    { id: 'var', name: 'Var', declarationType: 'var' },
+    { id: 'ml', name: 'ML', declarationType: 'ml' },
+    { id: 'monitor', name: 'Monitors', declarationType: '' },
   ];
 
   constructor(public eventService: EventService,
     public modelService: ModelService) { }
 
   ngOnInit() {
-    this.reset();
-
     this.eventService.on(Message.PROJECT_LOAD, () => this.loadProject());
     this.eventService.on(Message.MODEL_RELOAD, () => this.loadProject());
+  }
+
+  ngAfterViewInit() {
+    this.reset();
   }
 
   reset() {

@@ -65,6 +65,7 @@ import { ProjectTreeToolbarComponent } from './project-tree/project-tree-toolbar
 import { ContextMenuComponent } from './context-menu/context-menu.component';
 import { ProjectDeclarationsOldComponent } from './project-declarations-old/project-declarations-old.component';
 import { ProjectDeclarationsComponent } from './project-declarations/project-declarations.component';
+import { ProjectDeclarationsBlockNodeComponent } from './project-declarations/project-declarations-block-node/project-declarations-block-node.component';
 
 require('typeface-droid-sans-mono');
 
@@ -114,6 +115,7 @@ require('typeface-droid-sans-mono');
     ContextMenuComponent,
     ProjectDeclarationsOldComponent,
     ProjectDeclarationsComponent,
+    ProjectDeclarationsBlockNodeComponent,
   ],
   imports: [
     BrowserModule,

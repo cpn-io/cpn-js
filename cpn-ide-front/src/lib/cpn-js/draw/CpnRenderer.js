@@ -55,12 +55,14 @@ import {
 
 var RENDERER_IDS = new Ids();
 
-var ERROR_STROKE_COLOR = '#ff999966';
-var ERROR_STROKE_THICK = 5;
+var STATUS_STROKE_THICK = 5;
+var STATUS_STROKE_COLOR_ERROR = '#ff666699';
+var STATUS_STROKE_COLOR_WARNING = '#cccc3399';
+var STATUS_STROKE_COLOR_READY = '#33cc3399';
 
 var SELECT_STROKE_COLOR = '#00cc00';
 var SELECT_FILL_COLOR = '#00ff0011';
-var SELECT_STROKE_THICK = 2;
+var SELECT_STROKE_THICK = 3;
 
 var DEFAULT_LABEL_FILL_COLOR = '#ebebeb00';
 
@@ -568,7 +570,7 @@ export default function CpnRenderer(
    * @param {*} element
    * @param {*} svgElement
    */
-  function drawCpnStatus(element, svgElement) {
+  function drawCpnStatus_Blured(element, svgElement) {
     // if (element.cpnStatus) {
     //   if (element.cpnStatus === 'process') {
     //     svgAttr(svgElement, { filter: shadow('shape', PROCESS_FILL_COLOR), });
@@ -623,7 +625,7 @@ export default function CpnRenderer(
     });
 
     // Add CPN status shadow
-    drawCpnStatus(element, ellipse);
+    // drawCpnStatus(element, ellipse);
 
     svgAppend(parentGfx, ellipse);
 
@@ -646,6 +648,9 @@ export default function CpnRenderer(
 
     // Draw selected state
     drawSelectedStatus(parentGfx, element);
+
+    // Draw cpn status (error, warning, ready)
+    drawCpnStatus(parentGfx, element, 'ellipse');
 
     return ellipse;
   }
@@ -678,7 +683,7 @@ export default function CpnRenderer(
     });
 
     // Add CPN status shadow
-    drawCpnStatus(element, rect);
+    // drawCpnStatus_Blured(element, rect);
 
     svgAppend(parentGfx, rect);
 
@@ -702,6 +707,9 @@ export default function CpnRenderer(
     // Draw selected state
     drawSelectedStatus(parentGfx, element);
 
+    // Draw cpn status (error, warning, ready)
+    drawCpnStatus(parentGfx, element, 'rect');
+
     return rect;
   }
 
@@ -712,12 +720,14 @@ export default function CpnRenderer(
       const cx = parseFloat(box.width / 2);
       const cy = parseFloat(box.height / 2);
 
+      const d = 16;
+
       const sel = svgCreate('rect');
       svgAttr(sel, {
-        x: -5,
-        y: -5,
-        width: cx * 2 + 10,
-        height: cy * 2 + 10
+        x: -d / 2,
+        y: -d / 2,
+        width: cx * 2 + d,
+        height: cy * 2 + d
       });
       svgAttr(sel, {
         fill: SELECT_FILL_COLOR,
@@ -729,24 +739,69 @@ export default function CpnRenderer(
     }
   }
 
-  function drawErrorStatus(parentGfx, element, type) {
-    if (type === 'rect') {
-      var rect = svgCreate('rect');
-      const b = {
-        x: -(ERROR_STROKE_THICK + strokeWidth) / 2,
-        y: -(ERROR_STROKE_THICK + strokeWidth) / 2,
-        width: box.width + (ERROR_STROKE_THICK + strokeWidth),
-        height: box.height + (ERROR_STROKE_THICK + strokeWidth)
-      };
+  function drawCpnStatus(parentGfx, element, type) {
+    const strokeWidth = getStrokeWidth(element) + 1;
+    var box = getBox(element);
+    const cx = parseFloat(box.width / 2);
+    const cy = parseFloat(box.height / 2);
+    var strokeColor = undefined;
 
-      svgAttr(rect, b);
-      svgAttr(rect, {
-        fill: 'transparent',
-        stroke: ERROR_STROKE_COLOR,
-        strokeWidth: ERROR_STROKE_THICK
-      });
-      svgAppend(parentGfx, rect);
+    if (element.cpnElement) {
+      if (self._stateProvider.getReadyState(element.cpnElement._id)) {
+        strokeColor = STATUS_STROKE_COLOR_READY;
+      }
+      if (self._stateProvider.getWarningState(element.cpnElement._id)) {
+        strokeColor = STATUS_STROKE_COLOR_WARNING;
+      }
+      if (self._stateProvider.getErrorState(element.cpnElement._id)) {
+        strokeColor = STATUS_STROKE_COLOR_ERROR;
+      }
+
+      if (strokeColor) {
+        switch (type) {
+          case 'rect': {
+            var rect = svgCreate('rect');
+            const b = {
+              x: -(STATUS_STROKE_THICK + strokeWidth) / 2,
+              y: -(STATUS_STROKE_THICK + strokeWidth) / 2,
+              width: box.width + (STATUS_STROKE_THICK + strokeWidth),
+              height: box.height + (STATUS_STROKE_THICK + strokeWidth)
+            };
+
+            svgAttr(rect, b);
+            svgAttr(rect, {
+              fill: 'transparent',
+              stroke: strokeColor,
+              strokeWidth: STATUS_STROKE_THICK
+            });
+            svgAppend(parentGfx, rect);
+          } break;
+
+          case 'ellipse':
+            {
+              let ellipse = svgCreate('ellipse');
+              const b = {
+                cx: cx,
+                cy: cy,
+                rx: cx + (strokeWidth + STATUS_STROKE_THICK) / 2,
+                ry: cy + (strokeWidth + STATUS_STROKE_THICK) / 2
+              };
+              svgAttr(ellipse, b);
+
+              svgAttr(ellipse, {
+                fill: 'transparent',
+                stroke: strokeColor,
+                strokeWidth: STATUS_STROKE_THICK
+              });
+              svgAppend(parentGfx, ellipse);
+
+            } break;
+
+        }
+      }
+
     }
+
   }
 
   function drawArc(parentGfx, element, d) {

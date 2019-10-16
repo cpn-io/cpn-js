@@ -5,6 +5,7 @@ import { Message } from '../../common/message';
 import { cloneObject } from 'src/app/common/utils';
 import { clearDeclarationLayout, parseDeclarartion, detectCpnDeclarartionType, parseUiDeclarartionType } from './declaration-parser';
 import { getNextId, nodeToArray, arrayToNode } from '../../common/utils';
+import { ErrorService } from 'src/app/services/error.service';
 
 @Component({
   selector: 'app-project-tree-declaration-node',
@@ -18,15 +19,14 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges {
   @Input() public type: any;
 
   @Input() public selected: any;
-  @Input() public errors: any;
 
   @Input() public mouseover: any = { id: undefined };
 
   public focused = false;
 
-  public errorIds = [];
-
-  constructor(private eventService: EventService, private modelService: ModelService) { }
+  constructor(private eventService: EventService, 
+    private modelService: ModelService,
+    public errorService: ErrorService) { }
 
   ngOnInit() {
     this.updateErrors();
@@ -38,28 +38,22 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges {
       // let cur  = JSON.stringify(chng.currentValue);
       // let prev = JSON.stringify(chng.previousValue);
       // console.log(this.constructor.name, `ngOnChanges(), ${propName}: currentValue = ${cur}, previousValue = ${prev}`);
-      if (propName === 'errors') {
+      if (propName === 'errorData') {
         this.updateErrors();
       }
     }
   }
 
   updateErrors() {
-    this.errorIds = [];
-    if (this.errors)
-      for (const id in this.errors) {
-        this.errorIds.push(id);
-      }
-    console.log(this.constructor.name, 'updateErrors(), this.errors = ', this.errors);
+    console.log(this.constructor.name, 'updateErrors()');
   }
-
 
   getText() {
     let layout = this.modelService.cpnDeclarationToString(this.type, this.declaration);
 
     let declarationType = parseUiDeclarartionType(layout);
 
-    if (this.focused || declarationType === 'ml' || this.errorIds.includes(this.declaration._id)) {
+    if (this.focused || declarationType === 'ml' || this.errorService.errorIds.includes(this.declaration._id)) {
       return layout;
     }
 

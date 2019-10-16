@@ -1,12 +1,12 @@
 <ng-container *ngIf="declaration">
   <div [id]="declaration._id" contenteditable="true"
-    [ngClass]="{'selected': selected.id === declaration._id, 'error': errorIds.includes(declaration._id), 'node': true, 'editablenode': true}"
+    [ngClass]="{'selected': selected.id === declaration._id, 'error': errorService.errorIds.includes(declaration._id), 'node': true, 'editablenode': true}"
     [innerHTML]="getText() | colorDeclarations | safeHtml"
     (focus)="focused = true; onSelected(); onParse($event.target.textContent)"
     (focusout)="focused = false; onUpdate($event.target.textContent)">
   </div>
-  <div *ngIf="errorIds.includes(declaration._id)" class="errorText">
-    {{ errors[declaration._id] }}
+  <div *ngIf="errorService.errorIds.includes(declaration._id)" class="errorText">
+    {{ errorService.errorData[declaration._id] }}
   </div>
 </ng-container>
 

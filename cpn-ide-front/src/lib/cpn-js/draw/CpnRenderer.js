@@ -56,9 +56,12 @@ import {
 var RENDERER_IDS = new Ids();
 
 var STATUS_STROKE_THICK = 5;
-var STATUS_STROKE_COLOR_ERROR = '#ff666699';
-var STATUS_STROKE_COLOR_WARNING = '#cccc3399';
-var STATUS_STROKE_COLOR_READY = '#33cc3399';
+var STATUS_STROKE_COLOR_ERROR = '#ff666666';
+var STATUS_STROKE_COLOR_WARNING = '#cccc3366';
+var STATUS_STROKE_COLOR_READY = '#33cc3366';
+var STATUS_TEXT_COLOR_ERROR = '#ff6666';
+var STATUS_TEXT_COLOR_WARNING = '#cccc33';
+var STATUS_TEXT_COLOR_READY = '#33cc33';
 
 var SELECT_STROKE_COLOR = '#00cc00';
 var SELECT_FILL_COLOR = '#00ff0011';
@@ -71,11 +74,6 @@ var PORT_STROKE_COLOR = '#4c66cc';
 
 var TOKEN_FILL_COLOR = '#6fe117';
 var MARKING_FILL_COLOR = '#bcfd8b';
-
-var ERROR_FILL_COLOR = '#cc0000';
-var WARNING_FILL_COLOR = '#996600';
-var PROCESS_FILL_COLOR = '#999900';
-var READY_FILL_COLOR = '#009900';
 
 inherits(CpnRenderer, BaseRenderer);
 
@@ -571,27 +569,15 @@ export default function CpnRenderer(
    * @param {*} svgElement
    */
   function drawCpnStatus_Blured(element, svgElement) {
-    // if (element.cpnStatus) {
-    //   if (element.cpnStatus === 'process') {
-    //     svgAttr(svgElement, { filter: shadow('shape', PROCESS_FILL_COLOR), });
-    //   }
-    //   if (element.cpnStatus === 'error') {
-    //     svgAttr(svgElement, { filter: shadow('shape', ERROR_FILL_COLOR), });
-    //   }
-    //   if (element.cpnStatus === 'ready') {
-    //     svgAttr(svgElement, { filter: shadow('shape', READY_FILL_COLOR), });
-    //   }
-    // }
-
     if (element.cpnElement) {
       if (self._stateProvider.getReadyState(element.cpnElement._id)) {
-        svgAttr(svgElement, { filter: shadow('shape', READY_FILL_COLOR), });
+        svgAttr(svgElement, { filter: shadow('shape', STATUS_STROKE_COLOR_READY), });
       }
       if (self._stateProvider.getWarningState(element.cpnElement._id)) {
-        svgAttr(svgElement, { filter: shadow('shape', WARNING_FILL_COLOR), });
+        svgAttr(svgElement, { filter: shadow('shape', STATUS_STROKE_COLOR_WARNING), });
       }
       if (self._stateProvider.getErrorState(element.cpnElement._id)) {
-        svgAttr(svgElement, { filter: shadow('shape', ERROR_FILL_COLOR), });
+        svgAttr(svgElement, { filter: shadow('shape', STATUS_STROKE_COLOR_ERROR), });
       }
     }
   }
@@ -745,16 +731,27 @@ export default function CpnRenderer(
     const cx = parseFloat(box.width / 2);
     const cy = parseFloat(box.height / 2);
     var strokeColor = undefined;
+    var textColor = undefined;
 
     if (element.cpnElement) {
-      if (self._stateProvider.getReadyState(element.cpnElement._id)) {
+      const readyState = self._stateProvider.getReadyState(element.cpnElement._id);
+      const warningState = self._stateProvider.getWarningState(element.cpnElement._id);
+      const errorState = self._stateProvider.getErrorState(element.cpnElement._id);
+      let stateText;
+      if (readyState) {
         strokeColor = STATUS_STROKE_COLOR_READY;
+        textColor = STATUS_TEXT_COLOR_READY;
+        stateText = self._stateProvider.getReadyText(element.cpnElement._id);;
       }
-      if (self._stateProvider.getWarningState(element.cpnElement._id)) {
+      if (warningState) {
         strokeColor = STATUS_STROKE_COLOR_WARNING;
+        textColor = STATUS_TEXT_COLOR_WARNING;
+        stateText = self._stateProvider.getWarningText(element.cpnElement._id);;
       }
-      if (self._stateProvider.getErrorState(element.cpnElement._id)) {
+      if (errorState) {
         strokeColor = STATUS_STROKE_COLOR_ERROR;
+        textColor = STATUS_TEXT_COLOR_ERROR;
+        stateText = self._stateProvider.getErrorText(element.cpnElement._id);;
       }
 
       if (strokeColor) {
@@ -798,6 +795,19 @@ export default function CpnRenderer(
             } break;
 
         }
+
+        if (stateText) {
+          var text = svgCreate('text');
+          svgAttr(text, {
+            fill: textColor,
+            // stroke: textColor,
+            x: - STATUS_STROKE_THICK,
+            y: box.height + STATUS_STROKE_THICK * 2 + 10
+          });
+          text.textContent = stateText;
+          svgAppend(parentGfx, text);
+        }
+
       }
 
     }
@@ -967,13 +977,13 @@ export default function CpnRenderer(
     var color;
 
     if (self._stateProvider.getReadyState(element.cpnElement._id)) {
-      color = READY_FILL_COLOR;
+      color = STATUS_STROKE_COLOR_READY;
     }
     if (self._stateProvider.getWarningState(element.cpnElement._id)) {
-      color = WARNING_FILL_COLOR;
+      color = STATUS_STROKE_COLOR_WARNING;
     }
     if (self._stateProvider.getErrorState(element.cpnElement._id)) {
-      color = ERROR_FILL_COLOR;
+      color = STATUS_STROKE_COLOR_ERROR;
     }
 
     if (color) {

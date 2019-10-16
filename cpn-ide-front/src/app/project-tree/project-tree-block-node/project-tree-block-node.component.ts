@@ -14,7 +14,6 @@ export class ProjectTreeBlockNodeComponent implements OnInit {
   @Input() public block: any;
   @Input() public expanded: any;
   @Input() public selected: any;
-  @Input() public errors: any;
   @Input() public mouseover: any;
 
   @Input() showBullet = true;

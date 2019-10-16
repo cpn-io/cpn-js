@@ -357,30 +357,28 @@ export class ModelEditorComponent implements OnInit {
     });
 
 
-    eventBus.on('element.hover', (event) => {
-      const element = event.element;
+    // eventBus.on('element.hover', (event) => {
+    //   const element = event.element;
+    //   // console.log(self.constructor.name, 'element.hover, event = ', event);
 
-      // console.log(self.constructor.name, 'element.hover, event = ', event);
+    //   if (event.originalEvent) {
+    //     const position = { x: event.originalEvent.clientX, y: event.originalEvent.clientY };
 
-      if (event.originalEvent) {
-        // const position = { x: event.originalEvent.offsetX, y: event.originalEvent.offsetY };
-        const position = { x: event.originalEvent.clientX, y: event.originalEvent.clientY };
-
-        let errorText, warningText, readyText;
-        if (isCpn(element)) {
-          errorText = this.stateProvider.getErrorText(element.cpnElement._id);
-          warningText = this.stateProvider.getWarningText(element.cpnElement._id);
-          readyText = this.stateProvider.getReadyText(element.cpnElement._id);
-        }
-        let popupVisible = false;
-        popupVisible = popupVisible || this.showPopup(position, element, errorText, 'errorPopup');
-        popupVisible = popupVisible || this.showPopup(position, element, warningText, 'warningPopup');
-        popupVisible = popupVisible || this.showPopup(position, element, readyText, 'readyPopup');
-        if (!popupVisible) {
-          this.hidePopup();
-        }
-      }
-    });
+    //     let errorText, warningText, readyText;
+    //     if (isCpn(element)) {
+    //       errorText = this.stateProvider.getErrorText(element.cpnElement._id);
+    //       warningText = this.stateProvider.getWarningText(element.cpnElement._id);
+    //       readyText = this.stateProvider.getReadyText(element.cpnElement._id);
+    //     }
+    //     let popupVisible = false;
+    //     popupVisible = popupVisible || this.showPopup(position, element, errorText, 'errorPopup');
+    //     popupVisible = popupVisible || this.showPopup(position, element, warningText, 'warningPopup');
+    //     popupVisible = popupVisible || this.showPopup(position, element, readyText, 'readyPopup');
+    //     if (!popupVisible) {
+    //       this.hidePopup();
+    //     }
+    //   }
+    // });
 
 
     eventBus.on('bindingsMenu.select', (event) => {

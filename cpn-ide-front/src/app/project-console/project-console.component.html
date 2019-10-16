@@ -53,7 +53,15 @@
 
   </tab>
 
-  <!-- <tab tabTitle="Model simulation console">
-  </tab> --> -->
+  <tab tabTitle="Errors">
+    <div>
+      <h4>Errors</h4>
+      {{ JSON.stringify(Errors.CPN_ERROR_DATA) }}
+      <hr>
+      <ng-container *ngFor="let item of Errors.CPN_ERROR_DATA">
+        <div>{{ JSON.stringify(item) }}</div>
+      </ng-container>
+    </div>
+  </tab>
 
 </tabs>

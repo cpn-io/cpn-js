@@ -3,9 +3,11 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import * as X2JS from 'src/lib/x2js/xml2json.js';
 import { EventService } from './event.service';
 import { Message } from '../common/message';
+import { Errors } from '../common/errors';
 import { xmlBeautify } from '../../lib/xml-beautifier/xml-beautifier.js';
 import { CpnServerUrl } from 'src/cpn-server-url';
 import { cloneObject } from '../common/utils';
+import { ErrorService } from './error.service';
 
 @Injectable()
 export class AccessCpnService {
@@ -22,7 +24,8 @@ export class AccessCpnService {
   stateData;
 
   constructor(private http: HttpClient,
-    private eventService: EventService) {
+    private eventService: EventService,
+    private errorService: ErrorService) {
 
     this.eventService.on(Message.SERVER_INIT_NET, (event) => {
       console.log('AccessCpnService(), SERVER_INIT_NET, data = ', event);
@@ -136,6 +139,8 @@ export class AccessCpnService {
   saveErrorData(data) {
     this.errorData = [];
 
+    Errors.CPN_ERROR_DATA.length = 0;
+
     if (!data.success) {
       for (const id of Object.keys(data.issues)) {
         for (const issue of data.issues[id]) {
@@ -144,9 +149,14 @@ export class AccessCpnService {
           issue.description = issue.description.replace(':', '');
           issue.description = issue.description.trim();
           this.errorData[issue.id] = issue.description;
+          Errors.CPN_ERROR_DATA[issue.id] = issue.description;
         }
       }
     }
+
+    console.log(this.constructor.name, 'saveErrorData(), Errors.CPN_ERROR_DATA = ', Errors.CPN_ERROR_DATA);
+
+    this.errorService.updateErrorData(this.errorData);
   }
 
   /**

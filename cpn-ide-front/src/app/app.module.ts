@@ -66,6 +66,7 @@ import { ContextMenuComponent } from './context-menu/context-menu.component';
 import { ProjectDeclarationsOldComponent } from './project-declarations-old/project-declarations-old.component';
 import { ProjectDeclarationsComponent } from './project-declarations/project-declarations.component';
 import { ProjectDeclarationsBlockNodeComponent } from './project-declarations/project-declarations-block-node/project-declarations-block-node.component';
+import { ErrorService } from './services/error.service';
 
 require('typeface-droid-sans-mono');
 
@@ -144,6 +145,7 @@ require('typeface-droid-sans-mono');
     AccessCpnService,
     ProjectService,
     EventService,
+    ErrorService,
     ModelService,
     ValidationService
   ],

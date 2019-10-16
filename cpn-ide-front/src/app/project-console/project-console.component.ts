@@ -1,8 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AccessCpnService } from '../services/access-cpn.service';
 import { Message } from '../common/message';
+import { Errors } from '../common/errors';
 import { EventService } from '../services/event.service';
 import { DatePipe } from '@angular/common';
+import { ErrorService } from '../services/error.service';
 
 @Component({
   selector: 'app-project-console',
@@ -11,6 +13,10 @@ import { DatePipe } from '@angular/common';
   providers: [DatePipe]
 })
 export class ProjectConsoleComponent implements OnInit {
+
+  JSON = JSON;
+
+  Errors = Errors;
 
   success = false;
 
@@ -23,7 +29,8 @@ export class ProjectConsoleComponent implements OnInit {
   timeSimStart;
 
   constructor(private eventService: EventService,
-    private accessCpnService: AccessCpnService) {
+    private accessCpnService: AccessCpnService,
+    public errorService: ErrorService) {
   }
 
   ngOnInit() {
@@ -63,6 +70,9 @@ export class ProjectConsoleComponent implements OnInit {
             }
           }
         }
+
+        this.logSuccess('Errors.CPN_ERROR_DATA = ' + JSON.stringify(Errors.CPN_ERROR_DATA));
+
       }
       // this.accessCpnService.getTokenMarks();
       // this.accessCpnService.getTransitions();

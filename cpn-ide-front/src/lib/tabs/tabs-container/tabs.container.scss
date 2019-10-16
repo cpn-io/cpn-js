@@ -98,5 +98,15 @@
     .tabs__tab.active.error {
       background-color: white !important;
     }
+
+    .tabs__tab.ready {
+      background-color: #ccffcc !important;
+      color: green !important;
+    }
+
+    .tabs__tab.active.ready {
+      background-color: white !important;
+    }
+
   }
 }

@@ -2,7 +2,7 @@
 
   <ul class="tabs__tab-bar">
     <li *ngFor="let tab of tabs" (click)="selectTab(tab)" [hidden]="tab.isHidden" class="tabs__tab"
-      [ngClass]="{'active': tab.active, 'error': tab.error}">
+      [ngClass]="{'active': tab.active, 'error': tab.error, 'ready': tab.ready}">
       {{ tab.tabTitle }}
     </li>
   </ul>

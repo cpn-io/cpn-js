@@ -3,7 +3,7 @@ import { AccessCpnService } from '../services/access-cpn.service';
 import { Message } from '../common/message';
 import { EventService } from '../services/event.service';
 import { DatePipe } from '@angular/common';
-import { ErrorService } from '../services/error.service';
+import { ElementStatusService } from '../services/element-status.service';
 
 @Component({
   selector: 'app-project-console',
@@ -27,7 +27,7 @@ export class ProjectConsoleComponent implements OnInit {
 
   constructor(private eventService: EventService,
     private accessCpnService: AccessCpnService,
-    public errorService: ErrorService) {
+    public elementStatusService: ElementStatusService) {
   }
 
   ngOnInit() {

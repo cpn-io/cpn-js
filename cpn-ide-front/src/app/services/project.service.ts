@@ -138,7 +138,10 @@ export class ProjectService {
 
     // const modelFile = 'mynet-colset.cpn';
 
-    const modelFile = 'mynet-for-sim.cpn';
+    // const modelFile = 'mynet-for-sim.cpn';
+    
+    const modelFile = 'mynet-for-sim-sub.cpn';
+    // const modelFile = 'mynet-for-sim-sub-sub.cpn';
 
     // const modelFile = 'fuelstation.cpn';
 

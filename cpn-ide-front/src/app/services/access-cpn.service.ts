@@ -6,7 +6,7 @@ import { Message } from '../common/message';
 import { xmlBeautify } from '../../lib/xml-beautifier/xml-beautifier.js';
 import { CpnServerUrl } from 'src/cpn-server-url';
 import { cloneObject } from '../common/utils';
-import { ErrorService } from './error.service';
+import { ElementStatusService } from './element-status.service';
 
 @Injectable()
 export class AccessCpnService {
@@ -17,14 +17,14 @@ export class AccessCpnService {
   initSimProcessing;
   simInitialized = false;
   isSimulation = false;
-  errorData = [];
+
   tokenData = [];
   readyData = [];
   stateData;
 
   constructor(private http: HttpClient,
     private eventService: EventService,
-    private errorService: ErrorService) {
+    private elementStatusService: ElementStatusService) {
 
     this.eventService.on(Message.SERVER_INIT_NET, (event) => {
       console.log('AccessCpnService(), SERVER_INIT_NET, data = ', event);
@@ -35,7 +35,7 @@ export class AccessCpnService {
   }
 
   getErrorData() {
-    return this.errorData;
+    return this.elementStatusService.errorData;
   }
 
   getTokenData() {
@@ -106,8 +106,6 @@ export class AccessCpnService {
 
     localStorage.setItem('cpnXml', JSON.stringify(cpnXml));
 
-    this.errorData = [];
-
     // complexVerify = true;
     localStorage.setItem('cpnXml', cpnXml);
 
@@ -118,7 +116,7 @@ export class AccessCpnService {
           console.log('AccessCpnService, initNet(), SUCCESS, data = ', data);
           this.initNetProcessing = false;
 
-          this.saveErrorData(data);
+          this.elementStatusService.updateErrorData(data);
 
           this.eventService.send(Message.SERVER_INIT_NET_DONE, { data: data, errorIssues: data.issues });
 
@@ -135,23 +133,23 @@ export class AccessCpnService {
       );
   }
 
-  saveErrorData(data) {
-    this.errorData = [];
+  // saveErrorData(data) {
+  //   this.errorData = [];
 
-    if (!data.success) {
-      for (const id of Object.keys(data.issues)) {
-        for (const issue of data.issues[id]) {
-          issue.description = issue.description.replace(issue.id + ':', '');
-          issue.description = issue.description.replace(issue.id, '');
-          issue.description = issue.description.replace(':', '');
-          issue.description = issue.description.trim();
-          this.errorData[issue.id] = issue.description;
-        }
-      }
-    }
+  //   if (!data.success) {
+  //     for (const id of Object.keys(data.issues)) {
+  //       for (const issue of data.issues[id]) {
+  //         issue.description = issue.description.replace(issue.id + ':', '');
+  //         issue.description = issue.description.replace(issue.id, '');
+  //         issue.description = issue.description.replace(':', '');
+  //         issue.description = issue.description.trim();
+  //         this.errorData[issue.id] = issue.description;
+  //       }
+  //     }
+  //   }
 
-    this.errorService.updateErrorData(this.errorData);
-  }
+  //   this.elementStatusService.updateErrorData(this.errorData);
+  // }
 
   /**
    * Reset simulator initialization flag
@@ -199,6 +197,7 @@ export class AccessCpnService {
           this.readyData = data.enableTrans;
           this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
 
+          this.elementStatusService.updateReadyData(data.enableTrans);
         }
 
         //this.getTokenMarks();
@@ -259,6 +258,7 @@ export class AccessCpnService {
         console.log('AccessCpnService, getTransitions(), SUCCESS, data = ', data);
 
         this.readyData = data;
+        this.elementStatusService.updateReadyData(data);
 
         this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: data });
       },
@@ -287,6 +287,8 @@ export class AccessCpnService {
           this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
           this.readyData = data.enableTrans;
           this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
+
+          this.elementStatusService.updateReadyData(data.enableTrans);
         }
 
         this.getSimState();
@@ -319,6 +321,8 @@ export class AccessCpnService {
           this.readyData = data.enableTrans;
           this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
 
+          this.elementStatusService.updateReadyData(data.enableTrans);
+
           this.getSimState();
         }
       },
@@ -348,6 +352,8 @@ export class AccessCpnService {
           this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
           this.readyData = data.enableTrans;
           this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
+
+          this.elementStatusService.updateReadyData(data.enableTrans);
 
           this.getSimState();
         }

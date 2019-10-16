@@ -13,6 +13,7 @@ import { ModelEditorComponent } from '../model-editor/model-editor.component';
 import { TabsContainer } from '../../lib/tabs/tabs-container/tabs.container';
 import { Message } from '../common/message';
 import { EventService } from '../services/event.service';
+import { ElementStatusService } from '../services/element-status.service';
 
 
 @Component({
@@ -26,9 +27,11 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
 
   @ViewChildren(ModelEditorComponent) modelEditorList: QueryList<ModelEditorComponent>;
 
-  modelTabArray = [];
+  pageTabArray = [];
   mlTabArray = [];
-  constructor(private eventService: EventService, private modelService: ModelService) {
+  constructor(private eventService: EventService, 
+    private modelService: ModelService,
+    public elementStatusService: ElementStatusService) {
   }
 
   ngOnInit() {
@@ -70,7 +73,7 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
   }
 
   loadProject(project) {
-    this.modelTabArray = [];
+    this.pageTabArray = [];
     this.mlTabArray = [];
     this.tabsComponent.clear();
 
@@ -82,13 +85,13 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
   }
 
   deleteTab(id) {
-    console.log('deleteTab(), modelTabArray = ', this.modelTabArray);
+    console.log('deleteTab(), modelTabArray = ', this.pageTabArray);
     console.log('deleteTab(), mlTabArray = ', this.mlTabArray);
 
-    for (const i in this.modelTabArray) {
-      if (this.modelTabArray[i].id === id) {
-        console.log('deleteTab(), i, this.modelTabArray[i] = ', i, this.modelTabArray[i]);
-        this.modelTabArray.splice(parseInt(i, 0), 1);
+    for (const i in this.pageTabArray) {
+      if (this.pageTabArray[i].id === id) {
+        console.log('deleteTab(), i, this.modelTabArray[i] = ', i, this.pageTabArray[i]);
+        this.pageTabArray.splice(parseInt(i, 0), 1);
         break;
       }
     }
@@ -103,11 +106,12 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
     }
   }
 
-  addTab(tabArray, id, name) {
-    tabArray.push({ id: id, title: name });
+  addPageTab(tabArray, pageObject) {
+    const tabAttrs = { id: pageObject._id, pageObject: pageObject };
+    tabArray.push(tabAttrs);
 
     setTimeout(() => {
-      const tab = this.tabsComponent.getTabByID(id);
+      const tab = this.tabsComponent.getTabByID(tabAttrs.id);
       if (tab) {
         this.tabsComponent.selectTab(tab);
       }
@@ -138,8 +142,7 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
     if (tab) {
       this.tabsComponent.selectTab(tab);
     } else {
-
-      this.addTab(this.modelTabArray, pageId, pageName);
+      this.addPageTab(this.pageTabArray, pageObject);
 
       setTimeout(() => {
         if (this.modelEditorList) {

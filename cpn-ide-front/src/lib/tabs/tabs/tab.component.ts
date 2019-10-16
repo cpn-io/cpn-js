@@ -15,6 +15,7 @@ export class TabComponent {
   @Input() id: string;
   @Input() isHidden: boolean = false;
   @Input() error: boolean = false;
+  @Input() ready: boolean = false;
 
   public viewContainerRef;
 

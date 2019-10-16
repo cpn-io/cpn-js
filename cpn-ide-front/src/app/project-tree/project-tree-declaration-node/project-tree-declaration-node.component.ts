@@ -5,7 +5,7 @@ import { Message } from '../../common/message';
 import { cloneObject } from 'src/app/common/utils';
 import { clearDeclarationLayout, parseDeclarartion, detectCpnDeclarartionType, parseUiDeclarartionType } from './declaration-parser';
 import { getNextId, nodeToArray, arrayToNode } from '../../common/utils';
-import { ErrorService } from 'src/app/services/error.service';
+import { ElementStatusService } from 'src/app/services/element-status.service';
 
 @Component({
   selector: 'app-project-tree-declaration-node',
@@ -26,7 +26,7 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges {
 
   constructor(private eventService: EventService, 
     private modelService: ModelService,
-    public errorService: ErrorService) { }
+    public elementStatusService: ElementStatusService) { }
 
   ngOnInit() {
     this.updateErrors();
@@ -53,7 +53,7 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges {
 
     let declarationType = parseUiDeclarartionType(layout);
 
-    if (this.focused || declarationType === 'ml' || this.errorService.errorIds.includes(this.declaration._id)) {
+    if (this.focused || declarationType === 'ml' || this.elementStatusService.errorIds.includes(this.declaration._id)) {
       return layout;
     }
 

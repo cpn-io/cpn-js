@@ -41,3 +41,13 @@ export function cloneObject(object) {
 export function objectsEqual(a, b) {
   return JSON.stringify(a) === JSON.stringify(b);
 }
+
+/**
+ * Clear array without destroy array object
+ * @param array 
+ */
+export function clearArray(array) {
+  while (array.length) {
+    array.pop();
+  }
+}

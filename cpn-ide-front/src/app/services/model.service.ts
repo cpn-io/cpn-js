@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
 import { EventService } from './event.service';
 import { Message } from '../common/message';
-import { AccessCpnService } from './access-cpn.service';
 import { SettingsService } from '../services/settings.service';
-import { ValidationService } from './validation.service';
-import { keyframes } from '@angular/animations';
 
 import {
   getNextId,
@@ -45,7 +42,6 @@ export class ModelService {
   undoRedoBusy = false;
 
   constructor(private eventService: EventService,
-    private accessCpnService: AccessCpnService,
     private settings: SettingsService,
   ) {
     console.log('ModelService instance CREATED!');
@@ -1239,6 +1235,12 @@ export class ModelService {
       // search in places
       for (const p of nodeToArray(page.place)) {
         if (p._id === id) {
+          return page;
+        }
+      }
+      // search in arcs
+      for (const a of nodeToArray(page.arc)) {
+        if (a._id === id) {
           return page;
         }
       }

@@ -53,15 +53,16 @@
 
   </tab>
 
-  <tab tabTitle="Errors">
-    <div>
-      <h4>Errors</h4>
-      {{ JSON.stringify(Errors.CPN_ERROR_DATA) }}
-      <hr>
-      <ng-container *ngFor="let item of Errors.CPN_ERROR_DATA">
-        <div>{{ JSON.stringify(item) }}</div>
-      </ng-container>
+  <tab tabTitle="Errors" [error]="errorService.errorIds.length > 0">
+
+    <div class="tab-container" id="logScrollPane">
+      <div class="logConsole">
+        <ng-container *ngFor="let id of errorService.errorIds">
+          <div class="error">{{ id }} : {{ errorService.errorData[id] }}</div>
+        </ng-container>
+      </div>
     </div>
+
   </tab>
 
 </tabs>

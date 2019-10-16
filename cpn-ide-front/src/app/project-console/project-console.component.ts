@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AccessCpnService } from '../services/access-cpn.service';
 import { Message } from '../common/message';
-import { Errors } from '../common/errors';
 import { EventService } from '../services/event.service';
 import { DatePipe } from '@angular/common';
 import { ErrorService } from '../services/error.service';
@@ -15,8 +14,6 @@ import { ErrorService } from '../services/error.service';
 export class ProjectConsoleComponent implements OnInit {
 
   JSON = JSON;
-
-  Errors = Errors;
 
   success = false;
 
@@ -70,9 +67,6 @@ export class ProjectConsoleComponent implements OnInit {
             }
           }
         }
-
-        this.logSuccess('Errors.CPN_ERROR_DATA = ' + JSON.stringify(Errors.CPN_ERROR_DATA));
-
       }
       // this.accessCpnService.getTokenMarks();
       // this.accessCpnService.getTransitions();

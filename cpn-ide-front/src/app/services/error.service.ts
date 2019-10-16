@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class ErrorService {
 
+  public errorIds = [];
   public errorData = [];
 
   constructor() { }
@@ -10,15 +11,20 @@ export class ErrorService {
   updateErrorData(errorData) {
     console.log(this.constructor.name, 'updateErrorData(), errorData = ', errorData);
 
-    // this.errorData.length = 0;
-    while (this.errorData.length) {
-      this.errorData.pop();
-    }
+    this.clearArray(this.errorIds);
+    this.clearArray(this.errorData);
 
-    for (const key in errorData) {
-      this.errorData[key] = errorData[key];
+    for (const id in errorData) {
+      this.errorIds.push(id);
+      this.errorData[id] = errorData[id];
     }
-    console.log(this.constructor.name, 'updateErrorData(), this.errorData.length = ', this.errorData.length);
+    console.log(this.constructor.name, 'updateErrorData(), this.errorIds = ', this.errorIds);
     console.log(this.constructor.name, 'updateErrorData(), this.errorData = ', this.errorData);
+  }
+
+  clearArray(array) {
+    while (array.length) {
+      array.pop();
+    }
   }
 }

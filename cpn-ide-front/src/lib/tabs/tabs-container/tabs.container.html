@@ -1,7 +1,8 @@
 <div class="tabs__tab-bar" style="width:100%">
 
   <ul class="tabs__tab-bar">
-    <li *ngFor="let tab of tabs" (click)="selectTab(tab)" [hidden] = "tab.isHidden"  class="tabs__tab" [ngClass]="{'active': tab.active == true}">
+    <li *ngFor="let tab of tabs" (click)="selectTab(tab)" [hidden]="tab.isHidden" class="tabs__tab"
+      [ngClass]="{'active': tab.active, 'error': tab.error}">
       {{ tab.tabTitle }}
     </li>
   </ul>

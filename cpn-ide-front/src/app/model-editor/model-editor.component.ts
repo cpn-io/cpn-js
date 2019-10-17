@@ -121,6 +121,7 @@ export class ModelEditorComponent implements OnInit {
       // console.log('import.render.complete, event = ', event);
 
       this.updateElementStatus();
+      this.modeling.setEditable(!this.accessCpnService.isSimulation);
     });
 
     // eventBus.on('element.changed', (event) => {
@@ -172,11 +173,11 @@ export class ModelEditorComponent implements OnInit {
     // SIM STATUS
     this.eventService.on(Message.SIMULATION_STARTED, (data) => {
       this.updateElementStatus();
-      this.modeling.setEditable(false);
+      this.modeling.setEditable(!this.accessCpnService.isSimulation);
     });
     this.eventService.on(Message.SIMULATION_STOPED, (data) => {
       this.updateElementStatus();
-      this.modeling.setEditable(true);
+      this.modeling.setEditable(!this.accessCpnService.isSimulation);
     });
 
     this.eventService.on(Message.PAGE_DELETE, (data) => {
@@ -456,9 +457,9 @@ export class ModelEditorComponent implements OnInit {
   updateElementStatus() {
     this.stateProvider.clear();
 
-    // console.log('updateElementStatus(), tokenData = ', this.accessCpnService.getTokenData());
-    // console.log('updateElementStatus(), readyData = ', this.accessCpnService.getReadyData());
-    // console.log('updateElementStatus(), errorData = ', this.accessCpnService.getErrorData());
+    console.log('updateElementStatus(), tokenData = ', this.accessCpnService.getTokenData());
+    console.log('updateElementStatus(), readyData = ', this.accessCpnService.getReadyData());
+    console.log('updateElementStatus(), errorData = ', this.accessCpnService.getErrorData());
 
     // if (Object.keys(this.accessCpnService.getTokenData()).length > 0) {
     this.eventBus.fire('model.update.tokens', { data: this.accessCpnService.getTokenData() });

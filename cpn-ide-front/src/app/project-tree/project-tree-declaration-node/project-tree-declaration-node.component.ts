@@ -2,10 +2,8 @@ import { Component, OnInit, Input, DoCheck, SimpleChanges, OnChanges } from '@an
 import { ModelService } from '../../services/model.service';
 import { EventService } from '../../services/event.service';
 import { Message } from '../../common/message';
-import { cloneObject } from 'src/app/common/utils';
-import { clearDeclarationLayout, parseDeclarartion, detectCpnDeclarartionType, parseUiDeclarartionType } from './declaration-parser';
-import { getNextId, nodeToArray, arrayToNode } from '../../common/utils';
-import { ElementStatusService } from 'src/app/services/element-status.service';
+import { parseUiDeclarartionType } from './declaration-parser';
+import { AccessCpnService } from '../../services/access-cpn.service';
 
 @Component({
   selector: 'app-project-tree-declaration-node',
@@ -26,7 +24,7 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges {
 
   constructor(private eventService: EventService, 
     private modelService: ModelService,
-    public elementStatusService: ElementStatusService) { }
+    public accessCpnService: AccessCpnService) { }
 
   ngOnInit() {
     this.updateErrors();
@@ -53,7 +51,7 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges {
 
     let declarationType = parseUiDeclarartionType(layout);
 
-    if (this.focused || declarationType === 'ml' || this.elementStatusService.errorIds.includes(this.declaration._id)) {
+    if (this.focused || declarationType === 'ml' || this.accessCpnService.errorIds.includes(this.declaration._id)) {
       return layout;
     }
 

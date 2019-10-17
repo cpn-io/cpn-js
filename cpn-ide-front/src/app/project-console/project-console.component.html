@@ -53,12 +53,12 @@
 
   </tab>
 
-  <tab tabTitle="Errors" [error]="elementStatusService.errorIds.length > 0">
+  <tab tabTitle="Errors" [error]="accessCpnService.errorIds.length > 0">
 
     <div class="tab-container" id="logScrollPane">
       <div class="logConsole">
-        <ng-container *ngFor="let id of elementStatusService.errorIds">
-          <div class="error">{{ id }} : {{ elementStatusService.errorData[id] }}</div>
+        <ng-container *ngFor="let id of accessCpnService.errorIds">
+          <div class="error">{{ id }} : {{ accessCpnService.errorData[id] }}</div>
         </ng-container>
       </div>
     </div>

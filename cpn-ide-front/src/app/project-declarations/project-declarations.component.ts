@@ -26,7 +26,7 @@ export class ProjectDeclarationsComponent implements OnInit, AfterViewInit {
     { id: 'color', name: 'Color', declarationType: 'color' },
     { id: 'var', name: 'Var', declarationType: 'var' },
     { id: 'ml', name: 'ML', declarationType: 'ml' },
-    { id: 'monitor', name: 'Monitors', declarationType: '' },
+    // { id: 'monitor', name: 'Monitors', declarationType: '' },
   ];
 
   constructor(public eventService: EventService,
@@ -35,10 +35,13 @@ export class ProjectDeclarationsComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.eventService.on(Message.PROJECT_LOAD, () => this.loadProject());
     this.eventService.on(Message.MODEL_RELOAD, () => this.loadProject());
+    this.eventService.on(Message.SERVER_INIT_NET_DONE, () => this.loadProject());
+    this.eventService.on(Message.SERVER_INIT_SIM_DONE, () => this.loadProject());
+    this.eventService.on(Message.SIMULATION_UPDATE_STATE, () => this.loadProject());
   }
 
   ngAfterViewInit() {
-    this.reset();
+    this.loadProject();
   }
 
   reset() {

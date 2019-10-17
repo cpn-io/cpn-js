@@ -27,8 +27,8 @@
 
         <!-- Editor -->
         <as-split-area style="overflow-y:hidden" [size]="editorSplitPaneSize">
-          <app-editor-panel [readyPagesIds]="elementStatusService.readyPagesIds"
-            [errorPagesIds]="elementStatusService.errorPagesIds"></app-editor-panel>
+          <app-editor-panel [readyPagesIds]="accessCpnService.readyPagesIds"
+            [errorPagesIds]="accessCpnService.errorPagesIds"></app-editor-panel>
         </as-split-area>
 
         <!-- Console -->

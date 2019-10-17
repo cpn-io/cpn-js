@@ -17,7 +17,7 @@ import { ModelEditorComponent } from '../model-editor/model-editor.component';
 import { TabsContainer } from '../../lib/tabs/tabs-container/tabs.container';
 import { Message } from '../common/message';
 import { EventService } from '../services/event.service';
-import { ElementStatusService } from '../services/element-status.service';
+import { AccessCpnService } from '../services/access-cpn.service';
 
 
 @Component({
@@ -25,7 +25,9 @@ import { ElementStatusService } from '../services/element-status.service';
   templateUrl: './editor-panel.component.html',
   styleUrls: ['./editor-panel.component.scss']
 })
-export class EditorPanelComponent implements OnInit, OnDestroy, OnChanges, DoCheck {
+export class EditorPanelComponent implements OnInit, OnDestroy
+// , OnChanges, DoCheck 
+{
 
   @ViewChild('tabsComponent') tabsComponent: TabsContainer;
   @ViewChildren(ModelEditorComponent) modelEditorList: QueryList<ModelEditorComponent>;
@@ -37,7 +39,7 @@ export class EditorPanelComponent implements OnInit, OnDestroy, OnChanges, DoChe
   mlTabArray = [];
   constructor(private eventService: EventService,
     private modelService: ModelService,
-    public elementStatusService: ElementStatusService) {
+    public accessCpnService: AccessCpnService) {
   }
 
   ngOnInit() {
@@ -78,32 +80,38 @@ export class EditorPanelComponent implements OnInit, OnDestroy, OnChanges, DoChe
   ngOnDestroy() {
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    for (let propName in changes) {
-      let chng = changes[propName];
-      let cur = JSON.stringify(chng.currentValue);
-      let prev = JSON.stringify(chng.previousValue);
-      console.log(this.constructor.name, `ngOnChanges(), ${propName}: currentValue = ${cur}, previousValue = ${prev}`);
-      // if (propName === 'errorData') {
-      //   this.updateErrors();
-      // }
-    }
-  }
+  // ngOnChanges(changes: SimpleChanges) {
+  //   for (let propName in changes) {
+  //     let chng = changes[propName];
+  //     let cur = JSON.stringify(chng.currentValue);
+  //     let prev = JSON.stringify(chng.previousValue);
+  //     console.log(this.constructor.name, `ngOnChanges(), ${propName}: currentValue = ${cur}, previousValue = ${prev}`);
+  //     // if (propName === 'errorData') {
+  //     //   this.updateErrors();
+  //     // }
+  //   }
+  // }
 
-  ngDoCheck() {
-    console.log(this.constructor.name, 'ngDoCheck(), this.elementStatusService.errorPagesIds = ', this.elementStatusService.errorPagesIds);
-    console.log(this.constructor.name, 'ngDoCheck(), this.elementStatusService.readyPagesIds = ', this.elementStatusService.readyPagesIds);
+  // ngDoCheck() {
+  //   console.log(this.constructor.name, 'ngDoCheck(), this.accessCpnService.errorPagesIds = ', this.accessCpnService.errorPagesIds);
+  //   console.log(this.constructor.name, 'ngDoCheck(), this.accessCpnService.readyPagesIds = ', this.accessCpnService.readyPagesIds);
 
-    const pageIds = this.elementStatusService.readyPagesIds
-      .concat(this.elementStatusService.errorPagesIds);
+  //   // const pageIds = this.accessCpnService.readyPagesIds
+  //   //   .concat(this.accessCpnService.errorPagesIds);
 
-    for (const pageId of pageIds) {
-      const tab = this.tabsComponent.getTabByID(pageId);
-      if (!tab) {
-        this.openModelEditor(this.modelService.getPageById(pageId));
-      }
-    }
-  }
+  //   // for (const pageId of pageIds) {
+  //   //   const tab = this.tabsComponent.getTabByID(pageId);
+  //   //   if (!tab) {
+  //   //     this.openModelEditor(this.modelService.getPageById(pageId));
+  //   //   }
+  //   // }
+
+  //   if (this.accessCpnService.isSimulation) {
+  //     if (this.accessCpnService.tokenPageId) {
+  //       this.openModelEditor(this.modelService.getPageById(this.accessCpnService.tokenPageId));
+  //     }
+  //   }
+  // }
 
   loadProject(project) {
     this.pageTabArray = [];

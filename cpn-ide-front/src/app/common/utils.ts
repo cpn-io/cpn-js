@@ -50,4 +50,7 @@ export function clearArray(array) {
   while (array.length) {
     array.pop();
   }
+  for (const id in array) {
+    delete array[id];
+  }
 }

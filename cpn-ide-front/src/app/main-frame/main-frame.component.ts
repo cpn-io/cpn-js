@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Message } from '../common/message';
 import { EventService } from '../services/event.service';
 import { ModelService } from '../services/model.service';
-import { ElementStatusService } from '../services/element-status.service';
+import { AccessCpnService } from '../services/access-cpn.service';
 
 @Component({
   selector: 'app-main-frame',
@@ -26,7 +26,7 @@ export class MainFrameComponent implements OnInit, OnDestroy {
 
   constructor(private eventService: EventService, 
     public modelService: ModelService,
-    public elementStatusService: ElementStatusService) {
+    public accessCpnService: AccessCpnService) {
   }
 
   ngOnInit() {

@@ -1,22 +1,2 @@
 @import "../project-tree.component.scss";
 
-.editablenode {
-  white-space: pre;
-  overflow-x: visible;
-  font-family: 'Courier New', Courier, monospace;
-}
-
-.error {
-  background-color: #ffeeee;
-  border-bottom: 1px solid red;
-  // border-top: 5px solid white;
-  margin-top: 5px;
-}
-
-.errorText {
-  background-color: white;
-  color: red;
-  padding: 0 2px;
-  // border-bottom: 5px solid white;
-  margin-bottom: 5px;
-}

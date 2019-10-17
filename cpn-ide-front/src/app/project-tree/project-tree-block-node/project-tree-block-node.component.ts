@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { nodeToArray } from '../../common/utils';
+import { AccessCpnService } from '../../services/access-cpn.service';
 
 @Component({
   selector: 'app-project-tree-block-node',
@@ -18,7 +19,7 @@ export class ProjectTreeBlockNodeComponent implements OnInit {
 
   @Input() showBullet = true;
 
-  constructor() { }
+  constructor(public accessCpnService: AccessCpnService) { }
 
   ngOnInit() {
   }

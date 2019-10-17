@@ -58,10 +58,10 @@ var RENDERER_IDS = new Ids();
 var STATUS_STROKE_THICK = 5;
 var STATUS_STROKE_COLOR_ERROR = '#ff666666';
 var STATUS_STROKE_COLOR_WARNING = '#cccc3366';
-var STATUS_STROKE_COLOR_READY = '#33cc3366';
+var STATUS_STROKE_COLOR_READY = '#33cc3399';
 var STATUS_TEXT_COLOR_ERROR = '#ff6666';
 var STATUS_TEXT_COLOR_WARNING = '#cccc33';
-var STATUS_TEXT_COLOR_READY = '#33cc33';
+var STATUS_TEXT_COLOR_READY = '#339933';
 
 var SELECT_STROKE_COLOR = '#00cc00';
 var SELECT_FILL_COLOR = '#00ff0011';
@@ -863,6 +863,32 @@ export default function CpnRenderer(
     return path;
   }
 
+  function drawArcAnimation(parentGfx, element, path) {
+    const l = path.getTotalLength();
+    const t = 0.5;
+    var p = path.getPointAtLength(0.5 * l);
+
+    const ellipse = svgCreate('ellipse');
+    svgAttr(ellipse, {
+      cx: p.x,
+      cy: p.y,
+      rx: 10,
+      ry: 10
+    });
+    svgAttr(ellipse, {
+      fill: '#00cc00',
+    });
+    svgAppend(parentGfx, ellipse);
+
+    // for (let i = 0; i < 10; i++) {
+    //   p = path.getPointAtLength(i * t * l);
+
+    //   svgAttr(ellipse, {
+    //     transform: "translate(" + p.x + "," + p.y + ")",
+    //   });
+    // }
+  }
+
   function drawEndMarker(parentGfx) {
     var marker = svgCreate('marker');
     svgAttr(marker, {
@@ -985,6 +1011,7 @@ export default function CpnRenderer(
 
   handlers[CPN_CONNECTION] = function (parentGfx, element) {
     var path = drawArc(parentGfx, element);
+    // drawArcAnimation(parentGfx, element, path);
     return path;
   };
 

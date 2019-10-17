@@ -1,5 +1,5 @@
 <app-tree-node [id]="block._id" [title]="block.id" [expanded]="expanded" [selected]="selected" [type]="'block'"
-  [cpnElement]="block" (onclick)="onSelected()" [showBullet]="showBullet">
+  [cpnElement]="block" (onclick)="onSelected()" [showBullet]="showBullet" [editable]="!accessCpnService.isSimulation">
 
   <ng-container *ngIf="block.block">
     <ng-container *ngFor="let subblock of nodeToArray(block.block)">

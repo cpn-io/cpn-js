@@ -6,8 +6,8 @@
 
     <ng-container *ngFor="let tab of pageTabArray">
       <tab [id]="tab.id" [tabTitle]="tab.pageObject.pageattr._name"
-        [error]="elementStatusService.errorPagesIds.includes(tab.id)"
-        [ready]="elementStatusService.readyPagesIds.includes(tab.id)">
+        [error]="accessCpnService.errorPagesIds.includes(tab.id)"
+        [ready]="accessCpnService.readyPagesIds.includes(tab.id)">
         <app-model-editor id="model_editor_{{tab.id}}"></app-model-editor>
       </tab>
     </ng-container>

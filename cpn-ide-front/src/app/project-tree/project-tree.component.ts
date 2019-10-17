@@ -245,6 +245,24 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
   onNewBlock() {
     this.disableContextMenu();
+
+    let parentElement = undefined;
+
+    console.log(this.constructor.name, 'onNewBlock(), this.selected = ', this.selected);
+
+    if (this.selected && this.selected.type === 'block') {
+      parentElement = this.selected.cpnElement;
+    }
+
+    if (this.selected && ['globref', 'color', 'var', 'ml'].includes(this.selected.type)) {
+      parentElement = this.selected.parentCpnElement;
+    }
+
+    if (parentElement) {
+      const newBlock = { id: 'New block', _id: getNextId() };
+      this.modelService.addCpnElement(parentElement, newBlock, 'block');
+      setTimeout(() => this.goToDeclaration(newBlock._id), 100);
+    }
   }
 
   onNewPage() {

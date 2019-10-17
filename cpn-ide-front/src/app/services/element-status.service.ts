@@ -12,6 +12,9 @@ export class ElementStatusService {
   public readyIds = [];
   public readyPagesIds = [];
 
+  public tokenData = [];
+  public tokenDiff = [];
+
   constructor(private modelService: ModelService) { }
 
   updateErrorData(data) {
@@ -54,8 +57,28 @@ export class ElementStatusService {
         this.readyPagesIds.push(page._id);
       }
     }
-
-    // console.log(this.constructor.name, 'updateReadyData(), this.readyIds = ', this.readyIds);
-    // console.log(this.constructor.name, 'updateReadyData(), this.readyPagesIds = ', this.readyPagesIds);
   }
+
+  updateTokenData(tokenData) {
+
+    // find token difference
+    for (const newToken of tokenData) {
+      const oldToken = this.tokenData.find((e) => e.id === newToken.id);
+      console.log('updateTokenData(), oldToken = ', oldToken);
+    }
+
+    clearArray(this.tokenData);
+    clearArray(this.tokenDiff);
+
+    for (const id of tokenData) {
+      // this.readyIds.push(id);
+
+      // const page = this.modelService.getPageByElementId(id);
+      // if (page && !this.readyPagesIds.includes(page._id)) {
+      //   this.readyPagesIds.push(page._id);
+      // }
+    }
+  }
+
+
 }

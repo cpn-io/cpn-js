@@ -1,11 +1,32 @@
-{
-  "id": "Weekend",
-  "subset": {
-    "id": "Day",
-    "with": {
-      "ml": "[Sat,Sun]"
-    }
+[
+  {
+    "id": "ID1412328424",
+    "tokens": 8,
+    "marking": "1`1++\n3`2++\n4`3"
   },
-  "layout": "colset Weekend = subset Day with [Sat,Sun];",
-  "_id": "ID1438192469"
-}
+  {
+    "id": "ID1412328454",
+    "tokens": 0,
+    "marking": "empty"
+  },
+  {
+    "id": "ID2751883738",
+    "tokens": 0,
+    "marking": "empty"
+  },
+  {
+    "id": "ID1243034562",
+    "tokens": 0,
+    "marking": "empty"
+  },
+  {
+    "id": "ID1234651517",
+    "tokens": 0,
+    "marking": "empty"
+  },
+  {
+    "id": "ID1234654839",
+    "tokens": 0,
+    "marking": "empty"
+  }
+]

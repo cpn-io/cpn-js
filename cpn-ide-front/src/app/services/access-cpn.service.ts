@@ -197,6 +197,7 @@ export class AccessCpnService {
           this.readyData = data.enableTrans;
           this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
 
+          this.elementStatusService.updateTokenData(data.tokensAndMark);
           this.elementStatusService.updateReadyData(data.enableTrans);
         }
 
@@ -288,6 +289,7 @@ export class AccessCpnService {
           this.readyData = data.enableTrans;
           this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
 
+          this.elementStatusService.updateTokenData(data.tokensAndMark);
           this.elementStatusService.updateReadyData(data.enableTrans);
         }
 
@@ -321,6 +323,7 @@ export class AccessCpnService {
           this.readyData = data.enableTrans;
           this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
 
+          this.elementStatusService.updateTokenData(data.tokensAndMark);
           this.elementStatusService.updateReadyData(data.enableTrans);
 
           this.getSimState();
@@ -353,6 +356,7 @@ export class AccessCpnService {
           this.readyData = data.enableTrans;
           this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
 
+          this.elementStatusService.updateTokenData(data.tokensAndMark);
           this.elementStatusService.updateReadyData(data.enableTrans);
 
           this.getSimState();

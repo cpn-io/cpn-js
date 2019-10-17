@@ -95,7 +95,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
     switch (this.selected.type) {
       case 'page':
-        this.eventService.send(Message.PAGE_OPEN, { pageObject: this.selected.cpnElement, subPages: undefined });
+        this.eventService.send(Message.PAGE_OPEN, { pageObject: this.selected.cpnElement });
         break;
       case 'monitor':
         this.eventService.send(Message.MONITOR_OPEN, { monitorObject: this.selected.cpnElement });

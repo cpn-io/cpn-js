@@ -2242,7 +2242,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     console.log(event.node);
 
     if (event && event.node && this.isPage(event.node)) {
-      this.eventService.send(Message.PAGE_OPEN, { pageObject: event.node.data.cpnElement, subPages: this.subpages });
+      this.eventService.send(Message.PAGE_OPEN, { pageObject: event.node.data.cpnElement });
     }
 
     if (event && event.node && this.isMonitor(event.node)) {

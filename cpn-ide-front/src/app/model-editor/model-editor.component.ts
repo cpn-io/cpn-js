@@ -58,7 +58,6 @@ export class ModelEditorComponent implements OnInit {
   selectionProvider;
 
   // subscription: Subscription;
-  subpages = [];
   placeShapes = [];
   transShapes = [];
   arcShapes = [];
@@ -549,10 +548,9 @@ export class ModelEditorComponent implements OnInit {
     console.log(this.constructor.name, 'log(), text = ' + JSON.stringify(obj));
   }
 
-  load(pageObject, subPages) {
+  load(pageObject) {
     this.loading = true;
 
-    this.subpages = subPages;
     this.jsonPageObject = pageObject;
     this.pageId = pageObject._id;
     const that = this;

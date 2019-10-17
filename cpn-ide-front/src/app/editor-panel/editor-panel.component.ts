@@ -6,7 +6,11 @@ import {
   QueryList,
   ViewChild,
   ViewChildren,
-  ViewContainerRef
+  ViewContainerRef,
+  SimpleChanges,
+  OnChanges,
+  Input,
+  DoCheck
 } from '@angular/core';
 import { ModelService } from '../services/model.service';
 import { ModelEditorComponent } from '../model-editor/model-editor.component';
@@ -21,15 +25,17 @@ import { ElementStatusService } from '../services/element-status.service';
   templateUrl: './editor-panel.component.html',
   styleUrls: ['./editor-panel.component.scss']
 })
-export class EditorPanelComponent implements OnInit, OnDestroy {
+export class EditorPanelComponent implements OnInit, OnDestroy, OnChanges, DoCheck {
 
   @ViewChild('tabsComponent') tabsComponent: TabsContainer;
-
   @ViewChildren(ModelEditorComponent) modelEditorList: QueryList<ModelEditorComponent>;
+
+  @Input() public readyPagesIds: any;
+  @Input() public errorPagesIds: any;
 
   pageTabArray = [];
   mlTabArray = [];
-  constructor(private eventService: EventService, 
+  constructor(private eventService: EventService,
     private modelService: ModelService,
     public elementStatusService: ElementStatusService) {
   }
@@ -49,7 +55,7 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
     });
 
     this.eventService.on(Message.PAGE_OPEN, (event) => {
-      this.openModelEditor(event.pageObject, event.subPages);
+      this.openModelEditor(event.pageObject);
     });
 
     this.eventService.on(Message.PAGE_DELETE, (event) => {
@@ -70,6 +76,33 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    for (let propName in changes) {
+      let chng = changes[propName];
+      let cur = JSON.stringify(chng.currentValue);
+      let prev = JSON.stringify(chng.previousValue);
+      console.log(this.constructor.name, `ngOnChanges(), ${propName}: currentValue = ${cur}, previousValue = ${prev}`);
+      // if (propName === 'errorData') {
+      //   this.updateErrors();
+      // }
+    }
+  }
+
+  ngDoCheck() {
+    console.log(this.constructor.name, 'ngDoCheck(), this.elementStatusService.errorPagesIds = ', this.elementStatusService.errorPagesIds);
+    console.log(this.constructor.name, 'ngDoCheck(), this.elementStatusService.readyPagesIds = ', this.elementStatusService.readyPagesIds);
+
+    const pageIds = this.elementStatusService.readyPagesIds
+      .concat(this.elementStatusService.errorPagesIds);
+
+    for (const pageId of pageIds) {
+      const tab = this.tabsComponent.getTabByID(pageId);
+      if (!tab) {
+        this.openModelEditor(this.modelService.getPageById(pageId));
+      }
+    }
   }
 
   loadProject(project) {
@@ -129,7 +162,7 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
     }, 0);
   }
 
-  openModelEditor(pageObject, subPage) {
+  openModelEditor(pageObject) {
     console.log('openPage(), pageObject = ', pageObject);
 
     // var pageId = pageObject['@attributes'].id;
@@ -151,7 +184,7 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
           if (tab) {
             this.modelEditorList.forEach(editor => {
               if (editor.id === 'model_editor_' + tab.id) {
-                editor.load(pageObject, subPage);
+                editor.load(pageObject);
               }
             });
           }

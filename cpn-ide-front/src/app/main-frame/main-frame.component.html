@@ -4,8 +4,8 @@
 
     <as-split-area style="overflow-y:hidden" [size]="leftSplitPaneSize">
 
-        <!-- Project explorer -->
-        <!-- <app-project-explorer></app-project-explorer> -->
+      <!-- Project explorer -->
+      <!-- <app-project-explorer></app-project-explorer> -->
 
       <as-split direction="vertical" [gutterSize]="gutterSize" useTransition=true>
 
@@ -27,7 +27,8 @@
 
         <!-- Editor -->
         <as-split-area style="overflow-y:hidden" [size]="editorSplitPaneSize">
-          <app-editor-panel></app-editor-panel>
+          <app-editor-panel [readyPagesIds]="elementStatusService.readyPagesIds"
+            [errorPagesIds]="elementStatusService.errorPagesIds"></app-editor-panel>
         </as-split-area>
 
         <!-- Console -->

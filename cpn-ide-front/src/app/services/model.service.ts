@@ -1274,6 +1274,21 @@ export class ModelService {
     return undefined;
   }
 
+  public getArcById(id) {
+    const pages = this.getAllPages();
+
+    for (const page of pages) {
+      // search in arcs
+      for (const t of nodeToArray(page.arc)) {
+        if (t._id === id) {
+          return { element: t, type: 'Connection' };
+        }
+      }
+    }
+
+    return undefined;
+  }
+
   /**
    * Get page id by name
    * @param pageName

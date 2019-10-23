@@ -55,6 +55,10 @@ export class MainToolbarComponent implements OnInit {
     this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData(), complexVerify: false });
   }
 
+  onTest() {
+    this.eventService.send(Message.TEST_MESSAGE);
+  }
+
   newCPNet() {
     this.projectService.loadEmptyProject();
   }

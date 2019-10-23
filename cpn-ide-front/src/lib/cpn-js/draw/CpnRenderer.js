@@ -31,6 +31,7 @@ import {
 
 import {
   append as svgAppend,
+  remove as svgRemove,
   attr as svgAttr,
   create as svgCreate,
   classes as svgClasses
@@ -860,33 +861,48 @@ export default function CpnRenderer(
 
     const path = drawPath(parentGfx, pathData, attrs);
 
+    drawArcAnimation(parentGfx, element, path);
+
     return path;
   }
 
   function drawArcAnimation(parentGfx, element, path) {
-    const l = path.getTotalLength();
-    const t = 0.5;
-    var p = path.getPointAtLength(0.5 * l);
+    if (element.animate) {
+      console.log('TEST ANIMATION, element.animate = ', element.animate);
 
-    const ellipse = svgCreate('ellipse');
-    svgAttr(ellipse, {
-      cx: p.x,
-      cy: p.y,
-      rx: 10,
-      ry: 10
-    });
-    svgAttr(ellipse, {
-      fill: '#00cc00',
-    });
-    svgAppend(parentGfx, ellipse);
+      const l = path.getTotalLength();
+      const t = 0.5;
+      var p = path.getPointAtLength(0.2 * l);
 
-    // for (let i = 0; i < 10; i++) {
-    //   p = path.getPointAtLength(i * t * l);
+      const circle = svgCreate('circle');
+      svgAttr(circle, {
+        r: 10,
+        fill: '#00cc00',
+        // stroke: '#000000',
+        // strokeWidth: 1
+      });
+      svgAppend(parentGfx, circle);
 
-    //   svgAttr(ellipse, {
-    //     transform: "translate(" + p.x + "," + p.y + ")",
-    //   });
-    // }
+      moveArcCircle(path, circle, 0);
+
+      delete element.animate;
+    }
+  }
+
+  function moveArcCircle(path, circle, n) {
+    const COUNT = 20;
+    if (n <= COUNT) {
+      const l = path.getTotalLength();
+      const p = path.getPointAtLength((n / COUNT) * l);
+
+      svgAttr(circle, {
+        transform: "translate(" + p.x + "," + p.y + ")",
+      });
+
+      setTimeout(() => moveArcCircle(path, circle, n + 1), 50);
+    } else {
+      svgRemove(circle);
+    }
   }
 
   function drawEndMarker(parentGfx) {
@@ -1011,7 +1027,6 @@ export default function CpnRenderer(
 
   handlers[CPN_CONNECTION] = function (parentGfx, element) {
     var path = drawArc(parentGfx, element);
-    // drawArcAnimation(parentGfx, element, path);
     return path;
   };
 

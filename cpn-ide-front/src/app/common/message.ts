@@ -51,6 +51,8 @@ export class Message {
   static MONITOR_DELETED = 'monitor.deleted';
   static MONITOR_SET_AVAILABLE_NODES = 'monitor.set.available.nodes';
 
+  static TEST_MESSAGE = 'test.message';
+
   id: string;
   data: object;
 }

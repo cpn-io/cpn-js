@@ -194,6 +194,14 @@ export class ModelEditorComponent implements OnInit {
 
     this.eventService.on(Message.MONITOR_SET_AVAILABLE_NODES, (event) => this.updateAlailableStatus(event.availableNodeIds));
 
+    this.eventService.on(Message.TEST_MESSAGE, () => {
+      console.log('TEST ANIMATION 1');
+      const result = this.modelService.getArcById('ID1243034573');
+      if (result) {
+        eventBus.fire('token.animate', { arc: result.element });
+      }
+    });
+
     // Diagram events
 
     eventBus.on('element.hover', (event) => {
@@ -393,6 +401,10 @@ export class ModelEditorComponent implements OnInit {
 
       self.updateAvailableMonitorList(selectedElements);
     });
+
+
+
+
   }
 
   updateAvailableMonitorList(selectedElements) {

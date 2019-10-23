@@ -94,6 +94,23 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   //   delete e.context.cropped;
   // });
 
+  eventBus.on('token.animate', function (event) {
+    if (event.arc) {
+      console.log('TEST ANIMATION, event = ', event);
+
+      const element = modeling.getElementByCpnElement(event.arc);
+
+      console.log('TEST ANIMATION, element = ', element);
+
+      if (element) {
+        element.animate = { tokens: 1 };
+        modeling.repaintElement(element);
+      }
+    }
+
+  });
+
+
   eventBus.on('shape.changed', function (event) {
     // updateLabels(e.element);
     // console.log('CpnUpdater(), shape.changed, event.element = ', event.element);

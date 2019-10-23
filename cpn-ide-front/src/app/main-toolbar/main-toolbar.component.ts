@@ -56,7 +56,7 @@ export class MainToolbarComponent implements OnInit {
   }
 
   onTest() {
-    this.eventService.send(Message.TEST_MESSAGE);
+    this.eventService.send(Message.SIMULATION_ANIMATE_ARC, { arcId: 'ID1243034573' });
   }
 
   newCPNet() {

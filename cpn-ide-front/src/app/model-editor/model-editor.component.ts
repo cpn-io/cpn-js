@@ -194,12 +194,9 @@ export class ModelEditorComponent implements OnInit {
 
     this.eventService.on(Message.MONITOR_SET_AVAILABLE_NODES, (event) => this.updateAlailableStatus(event.availableNodeIds));
 
-    this.eventService.on(Message.TEST_MESSAGE, () => {
+    this.eventService.on(Message.SIMULATION_ANIMATE_ARC, (event) => {
       console.log('TEST ANIMATION 1');
-      const result = this.modelService.getArcById('ID1243034573');
-      if (result) {
-        eventBus.fire('token.animate', { arc: result.element });
-      }
+      eventBus.fire('token.animate', event);
     });
 
     // Diagram events

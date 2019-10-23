@@ -44,14 +44,13 @@ export class Message {
   static SIMULATION_STOPED = 'simulation.stoped';
   static SIMULATION_SELECT_BINDING = 'simulation.select.binding';
   static SIMULATION_UPDATE_STATE = 'simulation.update.state';
+  static SIMULATION_ANIMATE_ARC = 'simulation.animate.arc';
 
   static MONITOR_OPEN = 'monitor.open';
   static MONITOR_CREATED = 'monitor.created';
   static MONITOR_CHANGED = 'monitor.changed';
   static MONITOR_DELETED = 'monitor.deleted';
   static MONITOR_SET_AVAILABLE_NODES = 'monitor.set.available.nodes';
-
-  static TEST_MESSAGE = 'test.message';
 
   id: string;
   data: object;

@@ -872,25 +872,38 @@ export default function CpnRenderer(
 
       const l = path.getTotalLength();
       const t = 0.5;
-      var p = path.getPointAtLength(0.2 * l);
+      var p = path.getPointAtLength(0 * l);
 
       const circle = svgCreate('circle');
       svgAttr(circle, {
         r: 10,
         fill: '#00cc00',
-        // stroke: '#000000',
-        // strokeWidth: 1
+        // transform: "translate(" + p.x + "," + p.y + ")",
+        // transition: 'transform 2s'
       });
       svgAppend(parentGfx, circle);
 
-      moveArcCircle(path, circle, 0);
+      // p = path.getPointAtLength(1 * l);
+      // svgAttr(circle, {
+      //   transform: "translate(" + p.x + "," + p.y + ")",
+      //   transition: 'transform 2s'
+      // });
+
+      const text = svgCreate('text');
+      svgAttr(text, {
+        fill: '#000000',
+      });
+      text.textContent = '1';
+      svgAppend(parentGfx, text);
+
+      moveArcCircle(path, circle, text, 0);
 
       delete element.animate;
     }
   }
 
-  function moveArcCircle(path, circle, n) {
-    const COUNT = 20;
+  function moveArcCircle(path, circle, text, n) {
+    const COUNT = 50;
     if (n <= COUNT) {
       const l = path.getTotalLength();
       const p = path.getPointAtLength((n / COUNT) * l);
@@ -898,10 +911,14 @@ export default function CpnRenderer(
       svgAttr(circle, {
         transform: "translate(" + p.x + "," + p.y + ")",
       });
+      svgAttr(text, {
+        transform: "translate(" + (p.x - 4) + "," + (p.y + 4) + ")",
+      });
 
-      setTimeout(() => moveArcCircle(path, circle, n + 1), 50);
+      setTimeout(() => moveArcCircle(path, circle, text, n + 1), 1);
     } else {
       svgRemove(circle);
+      svgRemove(text);
     }
   }
 

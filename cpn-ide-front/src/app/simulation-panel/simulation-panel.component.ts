@@ -1,3 +1,4 @@
+import { ModelService } from './../services/model.service';
 import { Component, OnInit } from '@angular/core';
 import { Message } from '../common/message';
 import { EventService } from '../services/event.service';
@@ -37,7 +38,8 @@ export class SimulationPanelComponent implements OnInit {
 
   constructor(
     private eventService: EventService,
-    public accessCpnService: AccessCpnService) { }
+    public accessCpnService: AccessCpnService,
+    public modelService: ModelService) { }
 
   ngOnInit() {
 
@@ -79,9 +81,11 @@ export class SimulationPanelComponent implements OnInit {
       if (element && element.type && element.type === 'cpn:Transition') {
         switch (this.mode) {
           case this.SINGLE_STEP:
+            this.animateTransition(element.cpnElement._id);
             this.accessCpnService.doStep(element.cpnElement._id);
             break;
           case this.SINGLE_STEP_CHOOSE_BINDING:
+            this.animateTransition(element.cpnElement._id);
             this.accessCpnService.getBindings(element.cpnElement._id);
             break;
         }
@@ -127,6 +131,14 @@ export class SimulationPanelComponent implements OnInit {
         break;
       default:
         document.body.style.cursor = 'default';
+    }
+  }
+
+  animateTransition(transId) {
+    const arcs = this.modelService.getTransitionIncomeArcs(transId);
+    for (const arc of arcs) {
+      this.eventService.send(Message.SIMULATION_ANIMATE_ARC, { arcId: arc._id });
+      // this.eventService.send(Message.SIMULATION_ANIMATE_ARC, { arcId: 'ID1243034573' });
     }
   }
 

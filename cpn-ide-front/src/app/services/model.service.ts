@@ -1274,19 +1274,48 @@ export class ModelService {
     return undefined;
   }
 
-  public getArcById(id) {
+  public getTransById(id) {
     const pages = this.getAllPages();
 
     for (const page of pages) {
-      // search in arcs
-      for (const t of nodeToArray(page.arc)) {
-        if (t._id === id) {
-          return { element: t, type: 'Connection' };
+      // search in trans
+      for (const trans of nodeToArray(page.trans)) {
+        if (trans._id === id) {
+          return trans;
         }
       }
     }
 
     return undefined;
+  }
+
+  public getArcById(id) {
+    const pages = this.getAllPages();
+
+    for (const page of pages) {
+      // search in arcs
+      for (const arc of nodeToArray(page.arc)) {
+        if (arc._id === id) {
+          return arc;
+        }
+      }
+    }
+
+    return undefined;
+  }
+
+  public getTransitionIncomeArcs(transId) {
+    const arcs = [];
+    const pages = this.getAllPages();
+    for (const page of pages) {
+      // search in arcs
+      for (const arc of nodeToArray(page.arc)) {
+        if (arc.transend._idref === transId) {
+          arcs.push(arc);
+        }
+      }
+    }
+    return arcs;
   }
 
   /**

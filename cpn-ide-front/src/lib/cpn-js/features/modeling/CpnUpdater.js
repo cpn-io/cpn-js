@@ -95,10 +95,10 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   // });
 
   eventBus.on('token.animate', function (event) {
-    if (event.arc) {
+    if (event.arcId) {
       console.log('TEST ANIMATION, event = ', event);
 
-      const element = modeling.getElementByCpnElement(event.arc);
+      const element = modeling.getElementById(event.arcId);
 
       console.log('TEST ANIMATION, element = ', element);
 

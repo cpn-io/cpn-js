@@ -94,22 +94,39 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   //   delete e.context.cropped;
   // });
 
+  let animateArcIdList = [];
+
   eventBus.on('token.animate', function (event) {
-    if (event.arcId) {
-      console.log('TEST ANIMATION, event = ', event);
+    animateArcIdList = [];
 
-      const element = modeling.getElementById(event.arcId);
+    if (event.arcIdList) {
+      animateArcIdList = event.arcIdList;
+    }
 
-      console.log('TEST ANIMATION, element = ', element);
+    animateArc(animateArcIdList);
+  });
 
+  eventBus.on('token.animate.complete', () => {
+    if (animateArcIdList.length > 1) {
+      animateArcIdList.shift();
+      animateArc(animateArcIdList);
+    } else {
+      self._eventBus.fire('token.animate.complete.all');
+    }
+  });
+
+  function animateArc(arcIdList) {
+    if (arcIdList.length > 0) {
+      const arcId = arcIdList[0];
+      const element = modeling.getElementById(arcId);
       if (element) {
         element.animate = { tokens: 1 };
         modeling.repaintElement(element);
+      } else {
+        self._eventBus.fire('token.animate.complete');
       }
     }
-
-  });
-
+  }
 
   eventBus.on('shape.changed', function (event) {
     // updateLabels(e.element);

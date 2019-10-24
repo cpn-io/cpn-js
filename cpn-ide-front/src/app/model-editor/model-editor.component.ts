@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 
 import Diagram from 'diagram-js';
 import CpnDiagramModule from '../../lib/cpn-js/core';
@@ -33,7 +33,7 @@ import { addNode } from '../common/utils';
   templateUrl: './model-editor.component.html',
   styleUrls: ['./model-editor.component.scss']
 })
-export class ModelEditorComponent implements OnInit {
+export class ModelEditorComponent implements OnInit, AfterViewInit {
 
   @ViewChild('container') containerElementRef: ElementRef;
   @ViewChild('popup') popupElementRef: ElementRef;
@@ -74,6 +74,10 @@ export class ModelEditorComponent implements OnInit {
     private modelService: ModelService,
     private validationService: ValidationService,
     private accessCpnService: AccessCpnService) {
+  }
+
+  ngAfterViewInit() {
+    console.log(this.constructor.name, 'ngAfterViewInit(), this = ', this);
   }
 
   ngOnInit() {
@@ -194,12 +198,15 @@ export class ModelEditorComponent implements OnInit {
 
     this.eventService.on(Message.MONITOR_SET_AVAILABLE_NODES, (event) => this.updateAlailableStatus(event.availableNodeIds));
 
-    this.eventService.on(Message.SIMULATION_ANIMATE_ARC, (event) => {
-      console.log('TEST ANIMATION 1');
+    this.eventService.on(Message.SIMULATION_TOKEN_ANIMATE, (event) => {
       eventBus.fire('token.animate', event);
     });
 
     // Diagram events
+
+    eventBus.on('token.animate.complete.all', () => {
+      this.eventService.send(Message.SIMULATION_TOKEN_ANIMATE_COMPLETE);
+    });
 
     eventBus.on('element.hover', (event) => {
       if (event.element.type === 'cpn:Transition' || event.element.type === 'cpn:Place') {

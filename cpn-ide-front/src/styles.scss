@@ -275,6 +275,16 @@ html, body {
 
 // Workspace container
 // ---------------------------------------------------------------------------------
+.scroll-container {
+  height: calc(100% - 100px);
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  .pane {
+    z-index: 1;
+  }
+}
+
 .tab-container {
   height: calc(100% - 26px);
   overflow-y: auto;

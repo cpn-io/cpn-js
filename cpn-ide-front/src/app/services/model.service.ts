@@ -1310,13 +1310,28 @@ export class ModelService {
     for (const page of pages) {
       // search in arcs
       for (const arc of nodeToArray(page.arc)) {
-        if (arc.transend._idref === transId) {
+        if (arc.transend._idref === transId && ['PtoT', 'BOTHDIR'].includes(arc._orientation)) {
           arcs.push(arc);
         }
       }
     }
     return arcs;
   }
+
+  public getTransitionOutcomeArcs(transId) {
+    const arcs = [];
+    const pages = this.getAllPages();
+    for (const page of pages) {
+      // search in arcs
+      for (const arc of nodeToArray(page.arc)) {
+        if (arc.transend._idref === transId && ['TtoP', 'BOTHDIR'].includes(arc._orientation)) {
+          arcs.push(arc);
+        }
+      }
+    }
+    return arcs;
+  }
+
 
   /**
    * Get page id by name

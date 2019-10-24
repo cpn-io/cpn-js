@@ -164,7 +164,7 @@ export class AccessCpnService {
     }
 
     if (this.tokenPageId && this.tokenPageId !== prevTokenPageId) {
-      this.eventService.send(Message.PAGE_OPEN, { pageObject: this.modelService.getPageById(this.tokenPageId) });
+      // this.eventService.send(Message.PAGE_OPEN, { pageObject: this.modelService.getPageById(this.tokenPageId) });
     }
   }
 

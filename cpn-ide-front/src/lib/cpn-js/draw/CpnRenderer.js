@@ -94,6 +94,7 @@ export default function CpnRenderer(
 
   BaseRenderer.call(this, eventBus, priority);
 
+  this._eventBus = eventBus;
   this._stateProvider = stateProvider;
 
   const self = this;
@@ -870,56 +871,77 @@ export default function CpnRenderer(
     if (element.animate) {
       console.log('TEST ANIMATION, element.animate = ', element.animate);
 
+      const R = 10;
       const l = path.getTotalLength();
-      const t = 0.5;
-      var p = path.getPointAtLength(0 * l);
+      // var p = path.getPointAtLength(0 * l);
+
+      const circleShadow = svgCreate('circle');
+      svgAttr(circleShadow, { r: R, fill: 'grey' });
+      svgAppend(parentGfx, circleShadow);
 
       const circle = svgCreate('circle');
-      svgAttr(circle, {
-        r: 10,
-        fill: '#00cc00',
-        // transform: "translate(" + p.x + "," + p.y + ")",
-        // transition: 'transform 2s'
-      });
+      svgAttr(circle, { r: R, fill: TOKEN_FILL_COLOR });
       svgAppend(parentGfx, circle);
 
-      // p = path.getPointAtLength(1 * l);
-      // svgAttr(circle, {
-      //   transform: "translate(" + p.x + "," + p.y + ")",
-      //   transition: 'transform 2s'
-      // });
+      const text = undefined; // = svgCreate('text');
+      // svgAttr(text, { fill: 'black' });
+      // text.textContent = '1';
+      // svgClasses(text).add('djs-label');
+      // svgAppend(parentGfx, text);
 
-      const text = svgCreate('text');
-      svgAttr(text, {
-        fill: '#000000',
-      });
-      text.textContent = '1';
-      svgAppend(parentGfx, text);
-
-      moveArcCircle(path, circle, text, 0);
+      moveArcCircle(path, circle, circleShadow, text, 0);
+      // setTimeout(() => moveArcCircle2(path, circle, text), 100);
 
       delete element.animate;
     }
   }
 
-  function moveArcCircle(path, circle, text, n) {
+  function moveArcCircle(path, circle, circleShadow, text, n) {
     const COUNT = 50;
     if (n <= COUNT) {
       const l = path.getTotalLength();
       const p = path.getPointAtLength((n / COUNT) * l);
 
-      svgAttr(circle, {
-        transform: "translate(" + p.x + "," + p.y + ")",
-      });
-      svgAttr(text, {
-        transform: "translate(" + (p.x - 4) + "," + (p.y + 4) + ")",
-      });
+      svgAttr(circleShadow, { transform: "translate(" + (p.x + 1) + "," + (p.y + 1) + ")" });
+      svgAttr(circle, { transform: "translate(" + p.x + "," + p.y + ")" });
+      // svgAttr(text, { transform: "translate(" + (p.x - 4) + "," + (p.y + 4) + ")" });
 
-      setTimeout(() => moveArcCircle(path, circle, text, n + 1), 1);
+      setTimeout(() => moveArcCircle(path, circle, circleShadow, text, n + 1), 0);
     } else {
+      svgRemove(circleShadow);
       svgRemove(circle);
-      svgRemove(text);
+      // svgRemove(text);
+
+      self._eventBus.fire('token.animate.complete');
     }
+  }
+
+  // function moveArcCircle2(path, circle, text) {
+  //   const COUNT = 10;
+  //   const l = path.getTotalLength();
+
+  //   for (let n = 0; n <= COUNT; n++) {
+  //     const p = path.getPointAtLength((n / COUNT) * l);
+
+  //     console.log('TEST ANIMATION, moveArcCircle2(), p = ', p);
+
+  //     setTimeout(() => {
+  //       svgAttr(circle, { transform: "translate(" + p.x + "," + p.y + ")", });
+  //       svgAttr(text, { transform: "translate(" + (p.x - 4) + "," + (p.y + 4) + ")", });
+  //     }, 1);
+
+  //     sleep(100);
+  //   }
+  //   svgRemove(circle);
+  //   svgRemove(text);
+  // }
+
+  function sleep(millis) {
+    var date = Date.now();
+    var curDate = null;
+    do {
+      curDate = Date.now();
+    } while (curDate - date < millis);
   }
 
   function drawEndMarker(parentGfx) {

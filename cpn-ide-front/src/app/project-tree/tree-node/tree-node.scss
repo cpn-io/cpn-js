@@ -1,6 +1,7 @@
 .node {
   cursor: pointer;
   padding: 1px 2px;
+  margin: 1px 0;
 }
 
 .caret {
@@ -35,4 +36,32 @@ div.child {
 div.child.expanded {
   opacity: 1;
   height: auto;
+}
+
+.editablenode {
+  white-space: pre;
+  overflow-x: visible;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.error {
+  background-color: #ffeeee;
+  border-bottom: 1px solid red;
+  // border-top: 5px solid white;
+  margin-top: 5px;
+}
+
+.errorText {
+  background-color: white;
+  color: red;
+  padding: 0 2px;
+  // border-bottom: 5px solid white;
+  margin-bottom: 5px;
+}
+
+.ready {
+  background-color: #eeffee;
+  border-bottom: 1px solid green;
+  // border-top: 5px solid white;
+  margin-top: 5px;
 }

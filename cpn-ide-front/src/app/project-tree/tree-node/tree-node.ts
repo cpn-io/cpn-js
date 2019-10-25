@@ -15,6 +15,9 @@ export class TreeNodeComponent {
     @Input() bold = true;
     @Input() color = 'black';
     @Input() showBullet = true;
+    @Input() editable = false;
+    @Input() error = false;
+    @Input() ready = false;
 
     onClick() {
         this.expanded[this.id] = !this.expanded[this.id];

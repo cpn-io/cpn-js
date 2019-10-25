@@ -6,13 +6,18 @@ import {
   QueryList,
   ViewChild,
   ViewChildren,
-  ViewContainerRef
+  ViewContainerRef,
+  SimpleChanges,
+  OnChanges,
+  Input,
+  DoCheck
 } from '@angular/core';
 import { ModelService } from '../services/model.service';
 import { ModelEditorComponent } from '../model-editor/model-editor.component';
 import { TabsContainer } from '../../lib/tabs/tabs-container/tabs.container';
 import { Message } from '../common/message';
 import { EventService } from '../services/event.service';
+import { AccessCpnService } from '../services/access-cpn.service';
 
 
 @Component({
@@ -20,15 +25,21 @@ import { EventService } from '../services/event.service';
   templateUrl: './editor-panel.component.html',
   styleUrls: ['./editor-panel.component.scss']
 })
-export class EditorPanelComponent implements OnInit, OnDestroy {
+export class EditorPanelComponent implements OnInit, OnDestroy
+// , OnChanges, DoCheck 
+{
 
   @ViewChild('tabsComponent') tabsComponent: TabsContainer;
-
   @ViewChildren(ModelEditorComponent) modelEditorList: QueryList<ModelEditorComponent>;
 
-  modelTabArray = [];
+  @Input() public readyPagesIds: any;
+  @Input() public errorPagesIds: any;
+
+  pageTabArray = [];
   mlTabArray = [];
-  constructor(private eventService: EventService, private modelService: ModelService) {
+  constructor(private eventService: EventService,
+    private modelService: ModelService,
+    public accessCpnService: AccessCpnService) {
   }
 
   ngOnInit() {
@@ -46,7 +57,7 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
     });
 
     this.eventService.on(Message.PAGE_OPEN, (event) => {
-      this.openModelEditor(event.pageObject, event.subPages);
+      this.openModelEditor(event.pageObject);
     });
 
     this.eventService.on(Message.PAGE_DELETE, (event) => {
@@ -69,8 +80,41 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
   }
 
+  // ngOnChanges(changes: SimpleChanges) {
+  //   for (let propName in changes) {
+  //     let chng = changes[propName];
+  //     let cur = JSON.stringify(chng.currentValue);
+  //     let prev = JSON.stringify(chng.previousValue);
+  //     console.log(this.constructor.name, `ngOnChanges(), ${propName}: currentValue = ${cur}, previousValue = ${prev}`);
+  //     // if (propName === 'errorData') {
+  //     //   this.updateErrors();
+  //     // }
+  //   }
+  // }
+
+  // ngDoCheck() {
+  //   console.log(this.constructor.name, 'ngDoCheck(), this.accessCpnService.errorPagesIds = ', this.accessCpnService.errorPagesIds);
+  //   console.log(this.constructor.name, 'ngDoCheck(), this.accessCpnService.readyPagesIds = ', this.accessCpnService.readyPagesIds);
+
+  //   // const pageIds = this.accessCpnService.readyPagesIds
+  //   //   .concat(this.accessCpnService.errorPagesIds);
+
+  //   // for (const pageId of pageIds) {
+  //   //   const tab = this.tabsComponent.getTabByID(pageId);
+  //   //   if (!tab) {
+  //   //     this.openModelEditor(this.modelService.getPageById(pageId));
+  //   //   }
+  //   // }
+
+  //   if (this.accessCpnService.isSimulation) {
+  //     if (this.accessCpnService.tokenPageId) {
+  //       this.openModelEditor(this.modelService.getPageById(this.accessCpnService.tokenPageId));
+  //     }
+  //   }
+  // }
+
   loadProject(project) {
-    this.modelTabArray = [];
+    this.pageTabArray = [];
     this.mlTabArray = [];
     this.tabsComponent.clear();
 
@@ -82,13 +126,13 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
   }
 
   deleteTab(id) {
-    console.log('deleteTab(), modelTabArray = ', this.modelTabArray);
+    console.log('deleteTab(), modelTabArray = ', this.pageTabArray);
     console.log('deleteTab(), mlTabArray = ', this.mlTabArray);
 
-    for (const i in this.modelTabArray) {
-      if (this.modelTabArray[i].id === id) {
-        console.log('deleteTab(), i, this.modelTabArray[i] = ', i, this.modelTabArray[i]);
-        this.modelTabArray.splice(parseInt(i, 0), 1);
+    for (const i in this.pageTabArray) {
+      if (this.pageTabArray[i].id === id) {
+        console.log('deleteTab(), i, this.modelTabArray[i] = ', i, this.pageTabArray[i]);
+        this.pageTabArray.splice(parseInt(i, 0), 1);
         break;
       }
     }
@@ -103,11 +147,12 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
     }
   }
 
-  addTab(tabArray, id, name) {
-    tabArray.push({ id: id, title: name });
+  addPageTab(tabArray, pageObject) {
+    const tabAttrs = { id: pageObject._id, pageObject: pageObject };
+    tabArray.push(tabAttrs);
 
     setTimeout(() => {
-      const tab = this.tabsComponent.getTabByID(id);
+      const tab = this.tabsComponent.getTabByID(tabAttrs.id);
       if (tab) {
         this.tabsComponent.selectTab(tab);
       }
@@ -125,7 +170,7 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
     }, 0);
   }
 
-  openModelEditor(pageObject, subPage) {
+  openModelEditor(pageObject) {
     console.log('openPage(), pageObject = ', pageObject);
 
     // var pageId = pageObject['@attributes'].id;
@@ -138,8 +183,7 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
     if (tab) {
       this.tabsComponent.selectTab(tab);
     } else {
-
-      this.addTab(this.modelTabArray, pageId, pageName);
+      this.addPageTab(this.pageTabArray, pageObject);
 
       setTimeout(() => {
         if (this.modelEditorList) {
@@ -148,7 +192,7 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
           if (tab) {
             this.modelEditorList.forEach(editor => {
               if (editor.id === 'model_editor_' + tab.id) {
-                editor.load(pageObject, subPage);
+                editor.load(pageObject);
               }
             });
           }

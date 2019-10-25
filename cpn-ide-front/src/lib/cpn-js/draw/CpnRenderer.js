@@ -31,6 +31,7 @@ import {
 
 import {
   append as svgAppend,
+  remove as svgRemove,
   attr as svgAttr,
   create as svgCreate,
   classes as svgClasses
@@ -55,12 +56,17 @@ import {
 
 var RENDERER_IDS = new Ids();
 
-var ERROR_STROKE_COLOR = '#ff999966';
-var ERROR_STROKE_THICK = 5;
+var STATUS_STROKE_THICK = 5;
+var STATUS_STROKE_COLOR_ERROR = '#ff666666';
+var STATUS_STROKE_COLOR_WARNING = '#cccc3366';
+var STATUS_STROKE_COLOR_READY = '#33cc3399';
+var STATUS_TEXT_COLOR_ERROR = '#ff6666';
+var STATUS_TEXT_COLOR_WARNING = '#cccc33';
+var STATUS_TEXT_COLOR_READY = '#339933';
 
 var SELECT_STROKE_COLOR = '#00cc00';
 var SELECT_FILL_COLOR = '#00ff0011';
-var SELECT_STROKE_THICK = 2;
+var SELECT_STROKE_THICK = 3;
 
 var DEFAULT_LABEL_FILL_COLOR = '#ebebeb00';
 
@@ -69,11 +75,6 @@ var PORT_STROKE_COLOR = '#4c66cc';
 
 var TOKEN_FILL_COLOR = '#6fe117';
 var MARKING_FILL_COLOR = '#bcfd8b';
-
-var ERROR_FILL_COLOR = '#cc0000';
-var WARNING_FILL_COLOR = '#996600';
-var PROCESS_FILL_COLOR = '#999900';
-var READY_FILL_COLOR = '#009900';
 
 inherits(CpnRenderer, BaseRenderer);
 
@@ -93,6 +94,7 @@ export default function CpnRenderer(
 
   BaseRenderer.call(this, eventBus, priority);
 
+  this._eventBus = eventBus;
   this._stateProvider = stateProvider;
 
   const self = this;
@@ -568,28 +570,16 @@ export default function CpnRenderer(
    * @param {*} element
    * @param {*} svgElement
    */
-  function drawCpnStatus(element, svgElement) {
-    // if (element.cpnStatus) {
-    //   if (element.cpnStatus === 'process') {
-    //     svgAttr(svgElement, { filter: shadow('shape', PROCESS_FILL_COLOR), });
-    //   }
-    //   if (element.cpnStatus === 'error') {
-    //     svgAttr(svgElement, { filter: shadow('shape', ERROR_FILL_COLOR), });
-    //   }
-    //   if (element.cpnStatus === 'ready') {
-    //     svgAttr(svgElement, { filter: shadow('shape', READY_FILL_COLOR), });
-    //   }
-    // }
-
+  function drawCpnStatus_Blured(element, svgElement) {
     if (element.cpnElement) {
       if (self._stateProvider.getReadyState(element.cpnElement._id)) {
-        svgAttr(svgElement, { filter: shadow('shape', READY_FILL_COLOR), });
+        svgAttr(svgElement, { filter: shadow('shape', STATUS_STROKE_COLOR_READY), });
       }
       if (self._stateProvider.getWarningState(element.cpnElement._id)) {
-        svgAttr(svgElement, { filter: shadow('shape', WARNING_FILL_COLOR), });
+        svgAttr(svgElement, { filter: shadow('shape', STATUS_STROKE_COLOR_WARNING), });
       }
       if (self._stateProvider.getErrorState(element.cpnElement._id)) {
-        svgAttr(svgElement, { filter: shadow('shape', ERROR_FILL_COLOR), });
+        svgAttr(svgElement, { filter: shadow('shape', STATUS_STROKE_COLOR_ERROR), });
       }
     }
   }
@@ -623,7 +613,7 @@ export default function CpnRenderer(
     });
 
     // Add CPN status shadow
-    drawCpnStatus(element, ellipse);
+    // drawCpnStatus(element, ellipse);
 
     svgAppend(parentGfx, ellipse);
 
@@ -646,6 +636,9 @@ export default function CpnRenderer(
 
     // Draw selected state
     drawSelectedStatus(parentGfx, element);
+
+    // Draw cpn status (error, warning, ready)
+    drawCpnStatus(parentGfx, element, 'ellipse');
 
     return ellipse;
   }
@@ -678,7 +671,7 @@ export default function CpnRenderer(
     });
 
     // Add CPN status shadow
-    drawCpnStatus(element, rect);
+    // drawCpnStatus_Blured(element, rect);
 
     svgAppend(parentGfx, rect);
 
@@ -702,6 +695,9 @@ export default function CpnRenderer(
     // Draw selected state
     drawSelectedStatus(parentGfx, element);
 
+    // Draw cpn status (error, warning, ready)
+    drawCpnStatus(parentGfx, element, 'rect');
+
     return rect;
   }
 
@@ -712,12 +708,14 @@ export default function CpnRenderer(
       const cx = parseFloat(box.width / 2);
       const cy = parseFloat(box.height / 2);
 
+      const d = 16;
+
       const sel = svgCreate('rect');
       svgAttr(sel, {
-        x: -5,
-        y: -5,
-        width: cx * 2 + 10,
-        height: cy * 2 + 10
+        x: -d / 2,
+        y: -d / 2,
+        width: cx * 2 + d,
+        height: cy * 2 + d
       });
       svgAttr(sel, {
         fill: SELECT_FILL_COLOR,
@@ -729,46 +727,221 @@ export default function CpnRenderer(
     }
   }
 
-  function drawErrorStatus(parentGfx, element, type) {
-    if (type === 'rect') {
-      var rect = svgCreate('rect');
-      const b = {
-        x: -(ERROR_STROKE_THICK + strokeWidth) / 2,
-        y: -(ERROR_STROKE_THICK + strokeWidth) / 2,
-        width: box.width + (ERROR_STROKE_THICK + strokeWidth),
-        height: box.height + (ERROR_STROKE_THICK + strokeWidth)
-      };
+  function drawCpnStatus(parentGfx, element, type) {
+    const strokeWidth = getStrokeWidth(element) + 1;
+    var box = getBox(element);
+    const cx = parseFloat(box.width / 2);
+    const cy = parseFloat(box.height / 2);
+    var strokeColor = undefined;
+    var textColor = undefined;
 
-      svgAttr(rect, b);
-      svgAttr(rect, {
-        fill: 'transparent',
-        stroke: ERROR_STROKE_COLOR,
-        strokeWidth: ERROR_STROKE_THICK
-      });
-      svgAppend(parentGfx, rect);
+    if (element.cpnElement) {
+      const readyState = self._stateProvider.getReadyState(element.cpnElement._id);
+      const warningState = self._stateProvider.getWarningState(element.cpnElement._id);
+      const errorState = self._stateProvider.getErrorState(element.cpnElement._id);
+      let stateText;
+      if (readyState) {
+        strokeColor = STATUS_STROKE_COLOR_READY;
+        textColor = STATUS_TEXT_COLOR_READY;
+        stateText = self._stateProvider.getReadyText(element.cpnElement._id);;
+      }
+      if (warningState) {
+        strokeColor = STATUS_STROKE_COLOR_WARNING;
+        textColor = STATUS_TEXT_COLOR_WARNING;
+        stateText = self._stateProvider.getWarningText(element.cpnElement._id);;
+      }
+      if (errorState) {
+        strokeColor = STATUS_STROKE_COLOR_ERROR;
+        textColor = STATUS_TEXT_COLOR_ERROR;
+        stateText = self._stateProvider.getErrorText(element.cpnElement._id);;
+      }
+
+      if (strokeColor) {
+        switch (type) {
+          case 'rect': {
+            var rect = svgCreate('rect');
+            const b = {
+              x: -(STATUS_STROKE_THICK + strokeWidth) / 2,
+              y: -(STATUS_STROKE_THICK + strokeWidth) / 2,
+              width: box.width + (STATUS_STROKE_THICK + strokeWidth),
+              height: box.height + (STATUS_STROKE_THICK + strokeWidth)
+            };
+
+            svgAttr(rect, b);
+            svgAttr(rect, {
+              fill: 'transparent',
+              stroke: strokeColor,
+              strokeWidth: STATUS_STROKE_THICK
+            });
+            svgAppend(parentGfx, rect);
+          } break;
+
+          case 'ellipse': {
+            let ellipse = svgCreate('ellipse');
+            const b = {
+              cx: cx,
+              cy: cy,
+              rx: cx + (strokeWidth + STATUS_STROKE_THICK) / 2,
+              ry: cy + (strokeWidth + STATUS_STROKE_THICK) / 2
+            };
+            svgAttr(ellipse, b);
+
+            svgAttr(ellipse, {
+              fill: 'transparent',
+              stroke: strokeColor,
+              strokeWidth: STATUS_STROKE_THICK
+            });
+            svgAppend(parentGfx, ellipse);
+          } break;
+
+          case 'connection': {
+            var pathData = createPathFromConnection(element);
+            var attrs = {
+              stroke: strokeColor,
+              strokeWidth: getStrokeWidth(element) + (3 * STATUS_STROKE_THICK / 2),
+            };
+            // connection end markers
+            drawPath(parentGfx, pathData, attrs);
+            console.log('drawCpnStatus(), element = ', element);
+            console.log('drawCpnStatus(), pathData = ', pathData);
+
+            if (element.waypoints) {
+              const p1 = element.waypoints[0];
+              const p2 = element.waypoints[element.waypoints.length - 1];
+
+              var text = svgCreate('text');
+              svgAttr(text, {
+                fill: textColor,
+                // x: p1.x + (p2.x - p1.x) / 2 + 5,
+                // y: p1.y + (p2.y - p1.y) / 2 + 15
+                x: p1.x + 5,
+                y: p1.y + 15
+              });
+              text.textContent = stateText;
+              svgAppend(parentGfx, text);
+            }
+
+          } break;
+
+        }
+
+        if (['rect', 'ellipse'].includes(type)) {
+          if (stateText) {
+            var text = svgCreate('text');
+            svgAttr(text, {
+              fill: textColor,
+              // stroke: textColor,
+              x: - STATUS_STROKE_THICK,
+              y: box.height + STATUS_STROKE_THICK * 2 + 10
+            });
+            text.textContent = stateText;
+            svgAppend(parentGfx, text);
+          }
+        }
+
+      }
+
+    }
+
+  }
+
+  function drawArc(parentGfx, element) {
+    var pathData = createPathFromConnection(element);
+    var strokeColor = getStrokeColor(element);
+
+    var attrs = {
+      stroke: strokeColor,
+      strokeWidth: getStrokeWidth(element)
+    };
+
+    // connection end markers
+    attrs = assign(attrs, getConnectionEndMarkerAttrs(element));
+
+    // spn status
+    drawCpnStatus(parentGfx, element, 'connection');
+
+    const path = drawPath(parentGfx, pathData, attrs);
+
+    drawArcAnimation(parentGfx, element, path);
+
+    return path;
+  }
+
+  function drawArcAnimation(parentGfx, element, path) {
+    if (element.animate) {
+      console.log('TEST ANIMATION, element.animate = ', element.animate);
+
+      const R = 10;
+      const l = path.getTotalLength();
+      // var p = path.getPointAtLength(0 * l);
+
+      const circleShadow = svgCreate('circle');
+      svgAttr(circleShadow, { r: R, fill: 'grey' });
+      svgAppend(parentGfx, circleShadow);
+
+      const circle = svgCreate('circle');
+      svgAttr(circle, { r: R, fill: TOKEN_FILL_COLOR });
+      svgAppend(parentGfx, circle);
+
+      const text = undefined; // = svgCreate('text');
+      // svgAttr(text, { fill: 'black' });
+      // text.textContent = '1';
+      // svgClasses(text).add('djs-label');
+      // svgAppend(parentGfx, text);
+
+      moveArcCircle(path, circle, circleShadow, text, 0);
+      // setTimeout(() => moveArcCircle2(path, circle, text), 100);
+
+      delete element.animate;
     }
   }
 
-  function drawArc(parentGfx, element, d) {
-    // console.log('drawArc(), element = ', element);
+  function moveArcCircle(path, circle, circleShadow, text, n) {
+    const COUNT = 50;
+    if (n <= COUNT) {
+      const l = path.getTotalLength();
+      const p = path.getPointAtLength((n / COUNT) * l);
 
-    var endMrker = drawEndMarker(parentGfx);
+      svgAttr(circleShadow, { transform: "translate(" + (p.x + 1) + "," + (p.y + 1) + ")" });
+      svgAttr(circle, { transform: "translate(" + p.x + "," + p.y + ")" });
+      // svgAttr(text, { transform: "translate(" + (p.x - 4) + "," + (p.y + 4) + ")" });
 
-    var path = svgCreate('path');
-    svgAttr(path, {
-      d: d,
-      'marker-start': 'url(#startMarker)',
-      'marker-end': 'url(#endMarker)'
-    });
-    svgAttr(path, {
-      stroke: getStrokeColor(element),
-      strokeWidth: getStrokeWidth(element),
-    });
-    svgAppend(parentGfx, path);
+      setTimeout(() => moveArcCircle(path, circle, circleShadow, text, n + 1), 0);
+    } else {
+      svgRemove(circleShadow);
+      svgRemove(circle);
+      // svgRemove(text);
 
-    // drawMarker(parentGfx, element);
+      self._eventBus.fire('token.animate.complete');
+    }
+  }
 
-    return path;
+  // function moveArcCircle2(path, circle, text) {
+  //   const COUNT = 10;
+  //   const l = path.getTotalLength();
+
+  //   for (let n = 0; n <= COUNT; n++) {
+  //     const p = path.getPointAtLength((n / COUNT) * l);
+
+  //     console.log('TEST ANIMATION, moveArcCircle2(), p = ', p);
+
+  //     setTimeout(() => {
+  //       svgAttr(circle, { transform: "translate(" + p.x + "," + p.y + ")", });
+  //       svgAttr(text, { transform: "translate(" + (p.x - 4) + "," + (p.y + 4) + ")", });
+  //     }, 1);
+
+  //     sleep(100);
+  //   }
+  //   svgRemove(circle);
+  //   svgRemove(text);
+  // }
+
+  function sleep(millis) {
+    var date = Date.now();
+    var curDate = null;
+    do {
+      curDate = Date.now();
+    } while (curDate - date < millis);
   }
 
   function drawEndMarker(parentGfx) {
@@ -892,50 +1065,7 @@ export default function CpnRenderer(
   };
 
   handlers[CPN_CONNECTION] = function (parentGfx, element) {
-    var pathData = createPathFromConnection(element);
-    // var path = drawArc(parentGfx, element, pathData);
-    // return path;
-
-    var pathData = createPathFromConnection(element);
-
-    var fill = getFillColor(element), strokeColor = getStrokeColor(element);
-
-    var attrs = {
-      // strokeLinejoin: 'round',
-      stroke: strokeColor,
-      strokeWidth: getStrokeWidth(element)
-    };
-
-
-    // cpn status
-    // if (element.cpnStatus) {
-    var color;
-
-    if (self._stateProvider.getReadyState(element.cpnElement._id)) {
-      color = READY_FILL_COLOR;
-    }
-    if (self._stateProvider.getWarningState(element.cpnElement._id)) {
-      color = WARNING_FILL_COLOR;
-    }
-    if (self._stateProvider.getErrorState(element.cpnElement._id)) {
-      color = ERROR_FILL_COLOR;
-    }
-
-    if (color) {
-      var attrs2 = assign({}, attrs, {
-        stroke: color + '33',
-        strokeWidth: getStrokeWidth(element) + 8,
-        // filter: shadow('blur', ERROR_FILL_COLOR),
-      });
-      drawPath(parentGfx, pathData, attrs2);
-    }
-    // }
-
-    // connection end markers
-    attrs = assign(attrs, getConnectionEndMarkerAttrs(element));
-
-    const path = drawPath(parentGfx, pathData, attrs);
-
+    var path = drawArc(parentGfx, element);
     return path;
   };
 

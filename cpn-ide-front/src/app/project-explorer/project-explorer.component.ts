@@ -41,8 +41,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   JSON = JSON;
 
   tabList = [
-    { id: 'projectTree', name: 'Project explorer (New)' },
-    { id: 'explorerPanel', name: 'Project explorer' },
+    { id: 'projectTree', name: 'Project explorer' },
+    //    { id: 'explorerPanel', name: 'Project explorer (Old)' },
     { id: 'applicationSettings', name: 'Application settings' },
   ];
 
@@ -834,7 +834,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     // console.log('onAddNode(), cpnElement = ', cpnElement);
     // console.log('onAddNode(), treeNode = ', treeNode);
 
-    const result = this.modelService.addCpnElement(cpnParentElement, cpnElement, cpnType);
+    this.modelService.addCpnElement(cpnParentElement, cpnElement, cpnType);
 
     if (newNode) {
       if (treeNode.data.children && !(['declaration', 'page'].includes(treeNode.data.type))) {
@@ -2216,7 +2216,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   updateTree() {
-    this.treeComponent.treeModel.update();
+    if (this.treeComponent && this.treeComponent.treeModel) {
+      this.treeComponent.treeModel.update();
+    }
   }
 
 
@@ -2240,7 +2242,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     console.log(event.node);
 
     if (event && event.node && this.isPage(event.node)) {
-      this.eventService.send(Message.PAGE_OPEN, { pageObject: event.node.data.cpnElement, subPages: this.subpages });
+      this.eventService.send(Message.PAGE_OPEN, { pageObject: event.node.data.cpnElement });
     }
 
     if (event && event.node && this.isMonitor(event.node)) {
@@ -2387,7 +2389,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       console.log('updateDeclarationNodeText(). node.parent.data.cpnElement = ', node.parent.data.cpnElement);
 
       cpnParentElement = node.parent.data.cpnElement;
-      node.parent.data.cpnElement = this.modelService.addCpnElement(cpnParentElement, cpnElement, cpnType);
+      this.modelService.addCpnElement(cpnParentElement, cpnElement, cpnType);
     } else {
       this.modelService.updateCpnElement(cpnParentElement, cpnElement, cpnType);
     }

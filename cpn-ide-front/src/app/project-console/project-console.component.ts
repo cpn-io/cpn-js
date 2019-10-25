@@ -12,6 +12,8 @@ import { DatePipe } from '@angular/common';
 })
 export class ProjectConsoleComponent implements OnInit {
 
+  JSON = JSON;
+
   success = false;
 
   nodes = [];
@@ -23,7 +25,7 @@ export class ProjectConsoleComponent implements OnInit {
   timeSimStart;
 
   constructor(private eventService: EventService,
-    private accessCpnService: AccessCpnService) {
+    public accessCpnService: AccessCpnService) {
   }
 
   ngOnInit() {

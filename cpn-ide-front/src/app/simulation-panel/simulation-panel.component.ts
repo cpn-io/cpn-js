@@ -1,8 +1,8 @@
+import { ModelService } from './../services/model.service';
 import { Component, OnInit } from '@angular/core';
 import { Message } from '../common/message';
 import { EventService } from '../services/event.service';
 import { AccessCpnService } from '../services/access-cpn.service';
-import { delay } from 'q';
 
 @Component({
   selector: 'app-simulation-panel',
@@ -18,6 +18,9 @@ export class SimulationPanelComponent implements OnInit {
   REPLICATION = 5;
 
   mode = this.SINGLE_STEP;
+
+  firedTransitionIdList = [];
+  firedTransitionBindId;
 
   simulationConfig = {
     multi_step: {
@@ -37,82 +40,19 @@ export class SimulationPanelComponent implements OnInit {
 
   constructor(
     private eventService: EventService,
-    public accessCpnService: AccessCpnService) { }
+    public accessCpnService: AccessCpnService,
+    public modelService: ModelService) { }
 
   ngOnInit() {
-
-    this.eventService.on(Message.SIMULATION_STARTED, (data) => {
-    });
-
-    this.eventService.on(Message.SIMULATION_STOPED, (data) => {
-      document.body.style.cursor = 'default';
-    });
-
-    // this.eventService.on(Message.SHAPE_HOVER, (data) => {
-    //   const element = data.element;
-
-    //   let setCursor = false;
-
-    //   if (element && element.type && element.type === 'cpn:Transition') {
-
-    //     switch (this.mode) {
-    //       case this.SINGLE_STEP:
-    //       case this.SINGLE_STEP_CHOOSE_BINDING:
-    //         setCursor = true;
-    //         break;
-    //     }
-
-    //   }
-
-    //   document.body.style.cursor = setCursor ? 'crosshair' : 'defualt';
-    // });
-
-    this.eventService.on(Message.SHAPE_SELECT, (event) => {
-
-      if (!this.accessCpnService.isSimulation) {
-        return;
-      }
-
-      const element = event.element;
-      console.log(this.constructor.name, 'Message.SHAPE_SELECT, element = ', element);
-
-      if (element && element.type && element.type === 'cpn:Transition') {
-        switch (this.mode) {
-          case this.SINGLE_STEP:
-            this.accessCpnService.doStep(element.cpnElement._id);
-            break;
-          case this.SINGLE_STEP_CHOOSE_BINDING:
-            this.accessCpnService.getBindings(element.cpnElement._id);
-            break;
-        }
-      }
-
-    });
-
-
-    this.eventService.on(Message.SIMULATION_SELECT_BINDING, (event) => {
-      if (!this.accessCpnService.isSimulation) {
-        return;
-      }
-
-      console.log(this.constructor.name, 'Message.SIMULATION_SELECT_BINDING, event = ', event);
-
-      const element = event.element;
-
-      if (element &&
-        element.type &&
-        element.type === 'cpn:Transition' &&
-        event.binding) {
-
-        switch (this.mode) {
-          case this.SINGLE_STEP_CHOOSE_BINDING:
-            this.accessCpnService.doStepWithBinding(element.cpnElement._id, event.binding.bind_id);
-            break;
-        }
-      }
-    });
-
     this.setMode(this.SINGLE_STEP);
+
+    this.eventService.on(Message.SIMULATION_STARTED, () => { });
+    this.eventService.on(Message.SIMULATION_STOPED, () => { document.body.style.cursor = 'default'; });
+    // this.eventService.on(Message.SHAPE_HOVER, (event) => this.onShapeHover(event));
+    this.eventService.on(Message.SHAPE_SELECT, (event) => this.onShapeSelect(event));
+    this.eventService.on(Message.SIMULATION_TOKEN_ANIMATE_COMPLETE, (event) => this.onSimulationAnimateComplete(event));
+    this.eventService.on(Message.SIMULATION_SELECT_BINDING, (event) => this.onSimulationSelectBinding(event));
+    this.eventService.on(Message.SERVER_GET_TRANSITIONS, (event) => this.onSimulationGetTransitions(event));
   }
 
   public setMode(mode) {
@@ -127,6 +67,115 @@ export class SimulationPanelComponent implements OnInit {
         break;
       default:
         document.body.style.cursor = 'default';
+    }
+  }
+
+  onShapeHover(event) {
+    if (!this.accessCpnService.isSimulation) {
+      return;
+    }
+
+    const element = event.element;
+    let setCursor = false;
+
+    if (element && element.type && element.type === 'cpn:Transition') {
+      switch (this.mode) {
+        case this.SINGLE_STEP:
+        case this.SINGLE_STEP_CHOOSE_BINDING:
+          setCursor = true;
+          break;
+      }
+    }
+    document.body.style.cursor = setCursor ? 'crosshair' : 'defualt';
+  }
+
+  onShapeSelect(event) {
+    if (!this.accessCpnService.isSimulation) {
+      return;
+    }
+
+    const element = event.element;
+    this.firedTransitionIdList = [];
+
+    if (element && element.type && element.type === 'cpn:Transition') {
+
+      // console.log(this.constructor.name, 'onShapeSelect(), this.mode = ', this.mode);
+
+      if (element.cpnElement._id in this.accessCpnService.getReadyData()) {
+        switch (this.mode) {
+          case this.SINGLE_STEP:
+            this.firedTransitionIdList.push(element.cpnElement._id);
+            this.transitionTokenAnimate(this.firedTransitionIdList);
+            break;
+          case this.SINGLE_STEP_CHOOSE_BINDING:
+            this.firedTransitionIdList.push(element.cpnElement._id);
+            this.accessCpnService.getBindings(this.firedTransitionIdList[0]);
+            break;
+        }
+      }
+    }
+  }
+
+  onSimulationSelectBinding(event) {
+    if (!this.accessCpnService.isSimulation) {
+      return;
+    }
+
+    const element = event.element;
+
+    if (element && element.type && element.type === 'cpn:Transition' && event.binding) {
+      this.firedTransitionBindId = event.binding.bind_id;
+      this.transitionTokenAnimate(this.firedTransitionIdList);
+    }
+  }
+
+  onSimulationAnimateComplete(event) {
+    switch (this.mode) {
+      case this.SINGLE_STEP:
+        if (this.firedTransitionIdList.length === 1) {
+          this.accessCpnService.doStep(this.firedTransitionIdList[0]);
+          this.firedTransitionIdList = [];
+        }
+        break;
+
+      case this.SINGLE_STEP_CHOOSE_BINDING:
+        if (this.firedTransitionIdList.length === 1 && this.firedTransitionBindId) {
+          this.accessCpnService.doStepWithBinding(this.firedTransitionIdList[0], this.firedTransitionBindId);
+          this.firedTransitionIdList = [];
+          this.firedTransitionBindId = undefined;
+        }
+        break;
+
+      case this.MULTI_STEP:
+        if (this.firedTransitionIdList.length > 0) {
+          this.accessCpnService.doStep('multistep');
+          this.multiStepCount--;
+          this.firedTransitionIdList = [];
+        }
+        break;
+    }
+  }
+
+  onSimulationGetTransitions(event) {
+    switch (this.mode) {
+      case this.MULTI_STEP:
+        setTimeout(() => { this.runMultiStep(); }, +this.simulationConfig.multi_step.delay);
+        break;
+    }
+  }
+
+  transitionTokenAnimate(transIdList) {
+    const arcIdList = [];
+    for (const transId of transIdList) {
+      for (const arc of this.modelService.getTransitionIncomeArcs(transId)) {
+        arcIdList.push(arc._id);
+      }
+      for (const arc of this.modelService.getTransitionOutcomeArcs(transId)) {
+        arcIdList.push(arc._id);
+      }
+    }
+    if (arcIdList.length > 0) {
+      this.eventService.send(Message.SIMULATION_TOKEN_ANIMATE, { arcIdList: arcIdList });
     }
   }
 
@@ -147,13 +196,16 @@ export class SimulationPanelComponent implements OnInit {
 
     if (this.multiStepCount > 0) {
       const readyData: any = this.accessCpnService.getReadyData();
-      if (readyData && Object.keys(readyData).length > 0) {
-        // const transId = Object.keys(readyData)[0];
-        // this.accessCpnService.doStep(transId);
-        this.accessCpnService.doStep('multistep');
-        this.multiStepCount--;
 
-        setTimeout(() => { this.runMultiStep(); }, +this.simulationConfig.multi_step.delay);
+      console.log(this.constructor.name, 'runMultiStep(), readyData = ', readyData);
+
+      if (readyData && Object.keys(readyData).length > 0) {
+
+        this.firedTransitionIdList = [];
+        for (const transId in readyData) {
+          this.firedTransitionIdList.push(transId);
+        }
+        this.transitionTokenAnimate(this.firedTransitionIdList);
       }
     }
   }

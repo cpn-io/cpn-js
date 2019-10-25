@@ -32,16 +32,18 @@
                 "_id": "id89457845"
               },
               {
+                "_id": "id31127128",
                 "id": "orderSize",
-                "ml": "3",
-                "_id": "id31127128"
-              },
-              {
-                "id": "UNIT2",
-                "_id": "ID9497038628"
+                "ml": "3"
               }
             ],
-            "_id": "idblock104"
+            "_id": "idblock104",
+            "color": {
+              "_id": "ID9497038628",
+              "id": "UNIT2",
+              "unit": "",
+              "layout": "colset UNIT2 = unit;"
+            }
           },
           {
             "id": "Types",
@@ -54,14 +56,14 @@
               },
               "color": [
                 {
+                  "_id": "ID1438188963",
                   "id": "EE",
                   "unit": {
                     "with": {
                       "id": "S"
                     }
                   },
-                  "layout": "colset EE = unit with S;",
-                  "_id": "ID1438188963"
+                  "layout": "colset EE = unit with S;"
                 },
                 {
                   "id": "U",
@@ -616,7 +618,8 @@
               },
               "token": {
                 "_x": "0.000000",
-                "_y": "0.000000"
+                "_y": "0.000000",
+                "text": ""
               },
               "marking": {
                 "snap": {
@@ -626,7 +629,8 @@
                 },
                 "_x": "0.000000",
                 "_y": "0.000000",
-                "_hidden": "false"
+                "_hidden": "false",
+                "text": ""
               },
               "type": {
                 "posattr": {
@@ -675,7 +679,8 @@
                 },
                 "text": {
                   "_tool": "CPN Tools",
-                  "_version": "4.0.1"
+                  "_version": "4.0.1",
+                  "__text": ""
                 },
                 "_id": "id140419121b"
               },
@@ -707,7 +712,8 @@
               },
               "token": {
                 "_x": "0.000000",
-                "_y": "0.000000"
+                "_y": "0.000000",
+                "text": ""
               },
               "marking": {
                 "snap": {
@@ -717,7 +723,8 @@
                 },
                 "_x": "0.000000",
                 "_y": "0.000000",
-                "_hidden": "false"
+                "_hidden": "false",
+                "text": ""
               },
               "type": {
                 "posattr": {
@@ -766,7 +773,8 @@
                 },
                 "text": {
                   "_tool": "CPN Tools",
-                  "_version": "4.0.1"
+                  "_version": "4.0.1",
+                  "__text": ""
                 },
                 "_id": "id1959678b"
               },
@@ -798,7 +806,8 @@
               },
               "token": {
                 "_x": "0.000000",
-                "_y": "0.000000"
+                "_y": "0.000000",
+                "text": ""
               },
               "marking": {
                 "snap": {
@@ -808,7 +817,8 @@
                 },
                 "_x": "0.000000",
                 "_y": "0.000000",
-                "_hidden": "false"
+                "_hidden": "false",
+                "text": ""
               },
               "type": {
                 "posattr": {
@@ -857,7 +867,8 @@
                 },
                 "text": {
                   "_tool": "CPN Tools",
-                  "_version": "4.0.1"
+                  "_version": "4.0.1",
+                  "__text": ""
                 },
                 "_id": "id48155609b"
               },
@@ -889,7 +900,8 @@
               },
               "token": {
                 "_x": "0.000000",
-                "_y": "0.000000"
+                "_y": "0.000000",
+                "text": ""
               },
               "marking": {
                 "snap": {
@@ -899,7 +911,8 @@
                 },
                 "_x": "0.000000",
                 "_y": "0.000000",
-                "_hidden": "false"
+                "_hidden": "false",
+                "text": ""
               },
               "type": {
                 "posattr": {
@@ -948,7 +961,8 @@
                 },
                 "text": {
                   "_tool": "CPN Tools",
-                  "_version": "4.0.1"
+                  "_version": "4.0.1",
+                  "__text": ""
                 },
                 "_id": "id145491158b"
               },
@@ -1001,7 +1015,8 @@
                     "_bold": "false"
                   },
                   "_id": "id251437332e",
-                  "_name": "Customer"
+                  "_name": "Customer",
+                  "text": "Customer"
                 },
                 "_subpage": "id25261370",
                 "_portsock": "(id178785733,id140419121)(id182789621,id1959678)"
@@ -1031,13 +1046,14 @@
                 },
                 "text": {
                   "_tool": "CPN Tools",
-                  "_version": "4.0.1"
+                  "_version": "4.0.1",
+                  "__text": ""
                 },
                 "_id": "id251437332a"
               },
               "time": {
                 "posattr": {
-                  "_x": "101.500000",
+                  "_x": "102.000000",
                   "_y": "17.000000"
                 },
                 "fillattr": {
@@ -1056,13 +1072,14 @@
                 },
                 "text": {
                   "_tool": "CPN Tools",
-                  "_version": "4.0.1"
+                  "_version": "4.0.1",
+                  "__text": ""
                 },
                 "_id": "id251437332b"
               },
               "code": {
                 "posattr": {
-                  "_x": "121.500000",
+                  "_x": "122.000000",
                   "_y": "-290.000000"
                 },
                 "fillattr": {
@@ -1081,7 +1098,8 @@
                 },
                 "text": {
                   "_tool": "CPN Tools",
-                  "_version": "4.0.1"
+                  "_version": "4.0.1",
+                  "__text": ""
                 },
                 "_id": "id251437332c"
               },
@@ -1106,7 +1124,8 @@
                 },
                 "text": {
                   "_tool": "CPN Tools",
-                  "_version": "4.0.1"
+                  "_version": "4.0.1",
+                  "__text": ""
                 },
                 "_id": "ID1437545011"
               },
@@ -1158,7 +1177,8 @@
                     "_bold": "false"
                   },
                   "_id": "id86723766e",
-                  "_name": "Supplier"
+                  "_name": "Supplier",
+                  "text": "Supplier"
                 },
                 "_subpage": "id257800848",
                 "_portsock": "(id252689818,id48155609)(id208948794,id145491158)"
@@ -1188,13 +1208,14 @@
                 },
                 "text": {
                   "_tool": "CPN Tools",
-                  "_version": "4.0.1"
+                  "_version": "4.0.1",
+                  "__text": ""
                 },
                 "_id": "id86723766a"
               },
               "time": {
                 "posattr": {
-                  "_x": "-613.500000",
+                  "_x": "-613.000000",
                   "_y": "18.000000"
                 },
                 "fillattr": {
@@ -1213,13 +1234,14 @@
                 },
                 "text": {
                   "_tool": "CPN Tools",
-                  "_version": "4.0.1"
+                  "_version": "4.0.1",
+                  "__text": ""
                 },
                 "_id": "id86723766b"
               },
               "code": {
                 "posattr": {
-                  "_x": "-593.500000",
+                  "_x": "-593.000000",
                   "_y": "-291.000000"
                 },
                 "fillattr": {
@@ -1238,7 +1260,8 @@
                 },
                 "text": {
                   "_tool": "CPN Tools",
-                  "_version": "4.0.1"
+                  "_version": "4.0.1",
+                  "__text": ""
                 },
                 "_id": "id86723766c"
               },
@@ -1263,7 +1286,8 @@
                 },
                 "text": {
                   "_tool": "CPN Tools",
-                  "_version": "4.0.1"
+                  "_version": "4.0.1",
+                  "__text": ""
                 },
                 "_id": "ID1437545013"
               },
@@ -1315,7 +1339,8 @@
                     "_bold": "false"
                   },
                   "_id": "id142010697e",
-                  "_name": "BurgerHeaven"
+                  "_name": "BurgerHeaven",
+                  "text": "BurgerHeaven"
                 },
                 "_subpage": "id128110243",
                 "_portsock": "(id104214488,id140419121)(id213978522,id48155609)(id59238174,id1959678)(id237175596,id145491158)"
@@ -1326,7 +1351,7 @@
               },
               "cond": {
                 "posattr": {
-                  "_x": "-471.500000",
+                  "_x": "-471.000000",
                   "_y": "19.000000"
                 },
                 "fillattr": {
@@ -1345,7 +1370,8 @@
                 },
                 "text": {
                   "_tool": "CPN Tools",
-                  "_version": "4.0.1"
+                  "_version": "4.0.1",
+                  "__text": ""
                 },
                 "_id": "id142010697a"
               },
@@ -1370,7 +1396,8 @@
                 },
                 "text": {
                   "_tool": "CPN Tools",
-                  "_version": "4.0.1"
+                  "_version": "4.0.1",
+                  "__text": ""
                 },
                 "_id": "id142010697b"
               },
@@ -1395,13 +1422,14 @@
                 },
                 "text": {
                   "_tool": "CPN Tools",
-                  "_version": "4.0.1"
+                  "_version": "4.0.1",
+                  "__text": ""
                 },
                 "_id": "id142010697c"
               },
               "priority": {
                 "posattr": {
-                  "_x": "-500.500000",
+                  "_x": "-500.000000",
                   "_y": "-271.000000"
                 },
                 "fillattr": {
@@ -1420,7 +1448,8 @@
                 },
                 "text": {
                   "_tool": "CPN Tools",
-                  "_version": "4.0.1"
+                  "_version": "4.0.1",
+                  "__text": ""
                 },
                 "_id": "ID1437545015"
               },
@@ -1458,28 +1487,30 @@
               "placeend": {
                 "_idref": "id140419121"
               },
-              "bendpoint": {
-                "posattr": {
-                  "_x": "-126.000000",
-                  "_y": "-42.000000"
-                },
-                "fillattr": {
-                  "_colour": "White",
-                  "_pattern": "Solid",
-                  "_filled": "false"
-                },
-                "lineattr": {
-                  "_colour": "Black",
-                  "_thick": "1",
-                  "_type": "Solid"
-                },
-                "textattr": {
-                  "_colour": "Black",
-                  "_bold": "false"
-                },
-                "_id": "ID9497036274",
-                "_serial": "1"
-              },
+              "bendpoint": [
+                {
+                  "posattr": {
+                    "_x": "-126.000000",
+                    "_y": "-42"
+                  },
+                  "fillattr": {
+                    "_colour": "White",
+                    "_pattern": "Solid",
+                    "_filled": "false"
+                  },
+                  "lineattr": {
+                    "_colour": "Black",
+                    "_thick": "1",
+                    "_type": "Solid"
+                  },
+                  "textattr": {
+                    "_colour": "Black",
+                    "_bold": "false"
+                  },
+                  "_id": "ID0633962367",
+                  "_serial": "1"
+                }
+              ],
               "annot": {
                 "posattr": {
                   "_x": "361.000000",
@@ -1508,7 +1539,8 @@
               },
               "_id": "id260197204",
               "_orientation": "BOTHDIR",
-              "_order": "1"
+              "_order": "1",
+              "text": ""
             },
             {
               "posattr": {
@@ -1539,28 +1571,30 @@
               "placeend": {
                 "_idref": "id1959678"
               },
-              "bendpoint": {
-                "posattr": {
-                  "_x": "-106.000000",
-                  "_y": "-210.000000"
-                },
-                "fillattr": {
-                  "_colour": "White",
-                  "_pattern": "Solid",
-                  "_filled": "false"
-                },
-                "lineattr": {
-                  "_colour": "Black",
-                  "_thick": "1",
-                  "_type": "Solid"
-                },
-                "textattr": {
-                  "_colour": "Black",
-                  "_bold": "false"
-                },
-                "_id": "ID9497036275",
-                "_serial": "1"
-              },
+              "bendpoint": [
+                {
+                  "posattr": {
+                    "_x": "-106.000000",
+                    "_y": "-210"
+                  },
+                  "fillattr": {
+                    "_colour": "White",
+                    "_pattern": "Solid",
+                    "_filled": "false"
+                  },
+                  "lineattr": {
+                    "_colour": "Black",
+                    "_thick": "1",
+                    "_type": "Solid"
+                  },
+                  "textattr": {
+                    "_colour": "Black",
+                    "_bold": "false"
+                  },
+                  "_id": "ID0633962368",
+                  "_serial": "1"
+                }
+              ],
               "annot": {
                 "posattr": {
                   "_x": "396.000000",
@@ -1589,7 +1623,8 @@
               },
               "_id": "id56374658",
               "_orientation": "PtoT",
-              "_order": "1"
+              "_order": "1",
+              "text": ""
             },
             {
               "posattr": {
@@ -1620,28 +1655,30 @@
               "placeend": {
                 "_idref": "id48155609"
               },
-              "bendpoint": {
-                "posattr": {
-                  "_x": "-615.000000",
-                  "_y": "-42.000000"
-                },
-                "fillattr": {
-                  "_colour": "White",
-                  "_pattern": "Solid",
-                  "_filled": "false"
-                },
-                "lineattr": {
-                  "_colour": "Black",
-                  "_thick": "1",
-                  "_type": "Solid"
-                },
-                "textattr": {
-                  "_colour": "Black",
-                  "_bold": "false"
-                },
-                "_id": "ID9497036276",
-                "_serial": "1"
-              },
+              "bendpoint": [
+                {
+                  "posattr": {
+                    "_x": "-615.000000",
+                    "_y": "-42"
+                  },
+                  "fillattr": {
+                    "_colour": "White",
+                    "_pattern": "Solid",
+                    "_filled": "false"
+                  },
+                  "lineattr": {
+                    "_colour": "Black",
+                    "_thick": "1",
+                    "_type": "Solid"
+                  },
+                  "textattr": {
+                    "_colour": "Black",
+                    "_bold": "false"
+                  },
+                  "_id": "ID0633962369",
+                  "_serial": "1"
+                }
+              ],
               "annot": {
                 "posattr": {
                   "_x": "-689.000000",
@@ -1670,7 +1707,8 @@
               },
               "_id": "id41809607",
               "_orientation": "PtoT",
-              "_order": "1"
+              "_order": "1",
+              "text": ""
             },
             {
               "posattr": {
@@ -1701,28 +1739,30 @@
               "placeend": {
                 "_idref": "id145491158"
               },
-              "bendpoint": {
-                "posattr": {
-                  "_x": "-614.000000",
-                  "_y": "-210.000000"
-                },
-                "fillattr": {
-                  "_colour": "White",
-                  "_pattern": "Solid",
-                  "_filled": "false"
-                },
-                "lineattr": {
-                  "_colour": "Black",
-                  "_thick": "1",
-                  "_type": "Solid"
-                },
-                "textattr": {
-                  "_colour": "Black",
-                  "_bold": "false"
-                },
-                "_id": "ID9497036277",
-                "_serial": "1"
-              },
+              "bendpoint": [
+                {
+                  "posattr": {
+                    "_x": "-614.000000",
+                    "_y": "-210"
+                  },
+                  "fillattr": {
+                    "_colour": "White",
+                    "_pattern": "Solid",
+                    "_filled": "false"
+                  },
+                  "lineattr": {
+                    "_colour": "Black",
+                    "_thick": "1",
+                    "_type": "Solid"
+                  },
+                  "textattr": {
+                    "_colour": "Black",
+                    "_bold": "false"
+                  },
+                  "_id": "ID0633962371",
+                  "_serial": "1"
+                }
+              ],
               "annot": {
                 "posattr": {
                   "_x": "-654.000000",
@@ -1751,7 +1791,8 @@
               },
               "_id": "id80625655",
               "_orientation": "TtoP",
-              "_order": "1"
+              "_order": "1",
+              "text": ""
             },
             {
               "posattr": {
@@ -1782,28 +1823,30 @@
               "placeend": {
                 "_idref": "id140419121"
               },
-              "bendpoint": {
-                "posattr": {
-                  "_x": "-274.000000",
-                  "_y": "-42.000000"
-                },
-                "fillattr": {
-                  "_colour": "White",
-                  "_pattern": "Solid",
-                  "_filled": "false"
-                },
-                "lineattr": {
-                  "_colour": "Black",
-                  "_thick": "1",
-                  "_type": "Solid"
-                },
-                "textattr": {
-                  "_colour": "Black",
-                  "_bold": "false"
-                },
-                "_id": "ID9497036279",
-                "_serial": "1"
-              },
+              "bendpoint": [
+                {
+                  "posattr": {
+                    "_x": "-274.000000",
+                    "_y": "-42"
+                  },
+                  "fillattr": {
+                    "_colour": "White",
+                    "_pattern": "Solid",
+                    "_filled": "false"
+                  },
+                  "lineattr": {
+                    "_colour": "Black",
+                    "_thick": "1",
+                    "_type": "Solid"
+                  },
+                  "textattr": {
+                    "_colour": "Black",
+                    "_bold": "false"
+                  },
+                  "_id": "ID0633962373",
+                  "_serial": "1"
+                }
+              ],
               "annot": {
                 "posattr": {
                   "_x": "81.000000",
@@ -1832,7 +1875,8 @@
               },
               "_id": "id142810031",
               "_orientation": "PtoT",
-              "_order": "1"
+              "_order": "1",
+              "text": ""
             },
             {
               "posattr": {
@@ -1863,28 +1907,30 @@
               "placeend": {
                 "_idref": "id48155609"
               },
-              "bendpoint": {
-                "posattr": {
-                  "_x": "-485.000000",
-                  "_y": "-42.000000"
-                },
-                "fillattr": {
-                  "_colour": "White",
-                  "_pattern": "Solid",
-                  "_filled": "false"
-                },
-                "lineattr": {
-                  "_colour": "Black",
-                  "_thick": "1",
-                  "_type": "Solid"
-                },
-                "textattr": {
-                  "_colour": "Black",
-                  "_bold": "false"
-                },
-                "_id": "ID9497036282",
-                "_serial": "1"
-              },
+              "bendpoint": [
+                {
+                  "posattr": {
+                    "_x": "-485.000000",
+                    "_y": "-42"
+                  },
+                  "fillattr": {
+                    "_colour": "White",
+                    "_pattern": "Solid",
+                    "_filled": "false"
+                  },
+                  "lineattr": {
+                    "_colour": "Black",
+                    "_thick": "1",
+                    "_type": "Solid"
+                  },
+                  "textattr": {
+                    "_colour": "Black",
+                    "_bold": "false"
+                  },
+                  "_id": "ID0633962374",
+                  "_serial": "1"
+                }
+              ],
               "annot": {
                 "posattr": {
                   "_x": "-377.000000",
@@ -1913,7 +1959,8 @@
               },
               "_id": "id77104713",
               "_orientation": "TtoP",
-              "_order": "1"
+              "_order": "1",
+              "text": ""
             },
             {
               "posattr": {
@@ -1944,28 +1991,30 @@
               "placeend": {
                 "_idref": "id1959678"
               },
-              "bendpoint": {
-                "posattr": {
-                  "_x": "-273.000000",
-                  "_y": "-210.000000"
-                },
-                "fillattr": {
-                  "_colour": "White",
-                  "_pattern": "Solid",
-                  "_filled": "false"
-                },
-                "lineattr": {
-                  "_colour": "Black",
-                  "_thick": "1",
-                  "_type": "Solid"
-                },
-                "textattr": {
-                  "_colour": "Black",
-                  "_bold": "false"
-                },
-                "_id": "ID9497036283",
-                "_serial": "1"
-              },
+              "bendpoint": [
+                {
+                  "posattr": {
+                    "_x": "-273.000000",
+                    "_y": "-210"
+                  },
+                  "fillattr": {
+                    "_colour": "White",
+                    "_pattern": "Solid",
+                    "_filled": "false"
+                  },
+                  "lineattr": {
+                    "_colour": "Black",
+                    "_thick": "1",
+                    "_type": "Solid"
+                  },
+                  "textattr": {
+                    "_colour": "Black",
+                    "_bold": "false"
+                  },
+                  "_id": "ID0633962376",
+                  "_serial": "1"
+                }
+              ],
               "annot": {
                 "posattr": {
                   "_x": "94.000000",
@@ -1994,7 +2043,8 @@
               },
               "_id": "id172185272",
               "_orientation": "TtoP",
-              "_order": "1"
+              "_order": "1",
+              "text": ""
             },
             {
               "posattr": {
@@ -2025,28 +2075,30 @@
               "placeend": {
                 "_idref": "id145491158"
               },
-              "bendpoint": {
-                "posattr": {
-                  "_x": "-482.000000",
-                  "_y": "-210.000000"
-                },
-                "fillattr": {
-                  "_colour": "White",
-                  "_pattern": "Solid",
-                  "_filled": "false"
-                },
-                "lineattr": {
-                  "_colour": "Black",
-                  "_thick": "1",
-                  "_type": "Solid"
-                },
-                "textattr": {
-                  "_colour": "Black",
-                  "_bold": "false"
-                },
-                "_id": "ID9497036285",
-                "_serial": "1"
-              },
+              "bendpoint": [
+                {
+                  "posattr": {
+                    "_x": "-482.000000",
+                    "_y": "-210"
+                  },
+                  "fillattr": {
+                    "_colour": "White",
+                    "_pattern": "Solid",
+                    "_filled": "false"
+                  },
+                  "lineattr": {
+                    "_colour": "Black",
+                    "_thick": "1",
+                    "_type": "Solid"
+                  },
+                  "textattr": {
+                    "_colour": "Black",
+                    "_bold": "false"
+                  },
+                  "_id": "ID0633962377",
+                  "_serial": "1"
+                }
+              ],
               "annot": {
                 "posattr": {
                   "_x": "-358.000000",
@@ -2075,7 +2127,8 @@
               },
               "_id": "id229571706",
               "_orientation": "PtoT",
-              "_order": "1"
+              "_order": "1",
+              "text": ""
             }
           ],
           "constraints": "",

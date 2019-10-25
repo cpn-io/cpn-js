@@ -53,7 +53,16 @@
 
   </tab>
 
-  <!-- <tab tabTitle="Model simulation console">
-  </tab> --> -->
+  <tab tabTitle="Errors" [error]="accessCpnService.errorIds.length > 0">
+
+    <div class="tab-container" id="logScrollPane">
+      <div class="logConsole">
+        <ng-container *ngFor="let id of accessCpnService.errorIds">
+          <div class="error">{{ id }} : {{ accessCpnService.errorData[id] }}</div>
+        </ng-container>
+      </div>
+    </div>
+
+  </tab>
 
 </tabs>

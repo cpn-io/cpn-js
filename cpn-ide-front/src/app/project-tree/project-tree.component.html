@@ -1,11 +1,14 @@
-<div class="tab-container">
+<!-- Project tree toolbar -->
+<app-project-tree-toolbar></app-project-tree-toolbar>
 
-  <!-- Project tree toolbar -->
-  <app-project-tree-toolbar></app-project-tree-toolbar>
+<div class="tab-container-with-toolbar">
 
   <ng-container *ngIf="cpnet">
 
-    <div id="tree" class="tree" (contextmenu)="contextMenu($event)" (click)="hideContextMenu()" (keydown)="onKeyDown($event)">
+    <!-- <div id="tree" class="tree" (contextmenu)="contextMenu($event)" (click)="hideContextMenu()"
+      (keydown)="onKeyDown($event)"> -->
+    <div id="tree" class="tree" (keydown)="onKeyDown($event)" (click)="disableContextMenu()"
+      oncontextmenu="return false;">
 
       <!-- Project root -->
       <app-tree-node id="project" [title]="'Project: ' + project.name" [expanded]="expanded" [selected]="selected"
@@ -26,11 +29,12 @@
 
         <!-- Declarations -->
         <app-tree-node id="declarations" title="Declarations" [expanded]="expanded" [selected]="selected"
-          [type]="'root'" [cpnElement]="undefined">
+          [type]="'root'" [cpnElement]="undefined" (contextmenu)="onrightClick($event)">
 
           <ng-container *ngFor="let globbox of nodeToArray(cpnet.globbox)">
             <ng-container *ngFor="let block of nodeToArray(globbox.block)">
-              <app-project-tree-block-node [block]="block" [expanded]="expanded" [selected]="selected" [mouseover]="mouseover">
+              <app-project-tree-block-node [block]="block" [expanded]="expanded" [selected]="selected"
+                [mouseover]="mouseover">
               </app-project-tree-block-node>
             </ng-container>
           </ng-container>
@@ -61,28 +65,25 @@
 
     </div>
 
-
-    <!-- Tree node context menu -->
-    <div class="dropdown-menu dropdown-menu-fixed shadow" id="contextMenu">
-      <a class="dropdown-item" href="#">New declaration</a>
-      <a class="dropdown-item" href="#">New block</a>
-      <div class="dropdown-divider" href="#"></div>
-      <a class="dropdown-item" href="#">New page</a>
-    </div>
-
-    <!-- <context-menu #treeMenu>
-      <ng-template contextMenuItem (execute)="alert('Hi, ' + $event.item.name)">
-        Say hi!
-      </ng-template>
-      <ng-template contextMenuItem divider="true"></ng-template>
-      <ng-template contextMenuItem let-item
-        (execute)="alert($event.item.name + ' said: ' + $event.item.otherProperty)">
-        Bye, {{item?.name}}
-      </ng-template>
-      <ng-template contextMenuItem passive="true">
-        Input something: <input type="text">
-      </ng-template>
-    </context-menu> -->
-
   </ng-container>
+</div>
+
+
+<!-- Tree node context menu -->
+<!-- <div class="dropdown-menu dropdown-menu-fixed shadow" id="contextMenu">
+  <a class="dropdown-item" href="#">New declaration</a>
+  <a class="dropdown-item" href="#">New block</a>
+  <div class="dropdown-divider" href="#"></div>
+  <a class="dropdown-item" href="#">New page</a>
+</div> -->
+
+<div *ngIf="contextmenu">
+  <app-context-menu [x]="contextmenuX" [y]="contextmenuY">
+    <!-- <div style="width: 100px; height: 100px; background: red">
+    </div> -->
+    <a class="dropdown-item" href="#" (click)="onNewDeclaration()">New declaration</a>
+    <a class="dropdown-item" href="#" (click)="onNewBlock()">New block</a>
+    <div class="dropdown-divider" href="#"></div>
+    <a class="dropdown-item" href="#" (click)="onNewPage()">New page</a>
+  </app-context-menu>
 </div>

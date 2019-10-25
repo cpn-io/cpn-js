@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
 import { EventService } from './event.service';
 import { Message } from '../common/message';
-import { AccessCpnService } from './access-cpn.service';
 import { SettingsService } from '../services/settings.service';
-import { ValidationService } from './validation.service';
-import { keyframes } from '@angular/animations';
 
 import {
   getNextId,
@@ -12,6 +9,7 @@ import {
 } from '../../lib/cpn-js/features/modeling/CpnElementFactory';
 import { nodeToArray, addNode } from '../common/utils';
 import { DataCollectionMonitorTemplate, BreakpointMonitorTemplate, UserDefinedMonitorTemplate, WriteInFileMonitorTemplate, MarkingSizeMonitorTemplate, ListLengthDataCollectionMonitorTemplate, CountTransitionOccurrencesMonitorTemplate, PlaceContentBreakPointMonitorTemplate, TransitionEnabledBreakPointMonitorTemplate, MonitorType } from '../common/monitors';
+import { parseDeclarartion } from '../project-tree/project-tree-declaration-node/declaration-parser';
 
 
 /**
@@ -44,7 +42,6 @@ export class ModelService {
   undoRedoBusy = false;
 
   constructor(private eventService: EventService,
-    private accessCpnService: AccessCpnService,
     private settings: SettingsService,
   ) {
     console.log('ModelService instance CREATED!');
@@ -881,6 +878,33 @@ export class ModelService {
   }
 
   /**
+   * Convert cpn declaration element to string
+   * @param cpnElement - declaration element
+   */
+  cpnDeclarationToString(cpnDeclarationType, cpnElement) {
+    let layout = '';
+
+    switch (cpnDeclarationType) {
+      case 'globref':
+        layout = this.cpnGlobrefToString(cpnElement);
+        break;
+      case 'color':
+        layout = this.cpnColorToString(cpnElement);
+        break;
+      case 'var':
+        layout = this.cpnVarToString(cpnElement);
+        break;
+      case 'ml':
+        layout = this.cpnMlToString(cpnElement);
+        break;
+      default:
+        return cpnElement.layout || JSON.stringify(cpnElement);
+    }
+
+    return layout;
+  }
+
+  /**
    * Convert cpn globref element to string
    * @param cpnElement - color(colset) cpn element
    */
@@ -1113,6 +1137,48 @@ export class ModelService {
     return { cpnType: resultCpnType, declarationType: resultDeclarationType, cpnElement: resultCpnElement };
   }
 
+  updateDeclaration(declarationCpnElement, declarationCpnType, parentBlockCpnElement, layout) {
+    const originalLayout = layout;
+
+    console.log('updateDeclaration(), layout = ', layout);
+    console.log('updateDeclaration(), declarationCpnElement = ', JSON.stringify(declarationCpnElement));
+
+    const oldCpnDeclarartionType = declarationCpnType;
+
+    // parse declaration layout
+    let result = parseDeclarartion(layout);
+
+    if (result && result.cpnElement) {
+      let newDeclaration = result.cpnElement;
+      const newCpnDeclarartionType = result.cpnDeclarationType;
+
+      console.log('onUpdate(), oldCpnDeclarartionType = ', oldCpnDeclarartionType);
+      console.log('onUpdate(), newCpnDeclarartionType = ', newCpnDeclarartionType);
+
+      this.copyDeclaration(newDeclaration, declarationCpnElement)
+
+      // move declaration cpn element from old declaration group to new, if needed
+      if (newCpnDeclarartionType !== oldCpnDeclarartionType) {
+        this.removeCpnElement(parentBlockCpnElement, declarationCpnElement, oldCpnDeclarartionType);
+        this.addCpnElement(parentBlockCpnElement, declarationCpnElement, newCpnDeclarartionType);
+      }
+    }
+  }
+
+  copyDeclaration(fromDeclaration, toDeclaration) {
+    for (const key in toDeclaration) {
+      if (key !== '_id') {
+        delete toDeclaration[key];
+      }
+    }
+    for (const key in fromDeclaration) {
+      if (key !== '_id') {
+        toDeclaration[key] = fromDeclaration[key];
+      }
+    }
+  }
+
+
 
   /**
    * Get all pages list
@@ -1172,6 +1238,12 @@ export class ModelService {
           return page;
         }
       }
+      // search in arcs
+      for (const a of nodeToArray(page.arc)) {
+        if (a._id === id) {
+          return page;
+        }
+      }
     }
 
     return undefined;
@@ -1201,6 +1273,65 @@ export class ModelService {
 
     return undefined;
   }
+
+  public getTransById(id) {
+    const pages = this.getAllPages();
+
+    for (const page of pages) {
+      // search in trans
+      for (const trans of nodeToArray(page.trans)) {
+        if (trans._id === id) {
+          return trans;
+        }
+      }
+    }
+
+    return undefined;
+  }
+
+  public getArcById(id) {
+    const pages = this.getAllPages();
+
+    for (const page of pages) {
+      // search in arcs
+      for (const arc of nodeToArray(page.arc)) {
+        if (arc._id === id) {
+          return arc;
+        }
+      }
+    }
+
+    return undefined;
+  }
+
+  public getTransitionIncomeArcs(transId) {
+    const arcs = [];
+    const pages = this.getAllPages();
+    for (const page of pages) {
+      // search in arcs
+      for (const arc of nodeToArray(page.arc)) {
+        if (arc.transend._idref === transId && ['PtoT', 'BOTHDIR'].includes(arc._orientation)) {
+          arcs.push(arc);
+        }
+      }
+    }
+    return arcs;
+  }
+
+  public getTransitionOutcomeArcs(transId) {
+    const arcs = [];
+    const pages = this.getAllPages();
+    for (const page of pages) {
+      // search in arcs
+      for (const arc of nodeToArray(page.arc)) {
+        if (arc.transend._idref === transId && ['TtoP', 'BOTHDIR'].includes(arc._orientation)) {
+          arcs.push(arc);
+        }
+      }
+    }
+    return arcs;
+  }
+
 
   /**
    * Get page id by name
@@ -1561,31 +1692,35 @@ export class ModelService {
    * @param cpnElement
    * @param cpnType - new cpn type where cpn element should be placed
    */
-  addCpnElement(cpnParentElement, cpnElement, cpnType) {
-    if (!cpnParentElement) {
-      console.error(this.constructor.name, 'addCpnElement(). ERROR: Undefined cpnParentElement element.');
-      return cpnParentElement;
-    }
-    if (!cpnElement) {
-      console.error(this.constructor.name, 'addCpnElement(). ERROR: Undefined cpnElement element.');
-      return cpnParentElement;
-    }
-    if (!cpnType) {
-      console.error(this.constructor.name, 'addCpnElement(). ERROR: Undefined cpnType.');
-      return cpnParentElement;
-    }
+  addCpnElement(cpnParentElement, cpnElement, cpnType, insertAfterElement = undefined) {
+    try {
+      if (!cpnParentElement) {
+        throw 'Undefined cpnParentElement element';
+      }
+      if (!cpnElement) {
+        throw 'Undefined cpnElement element';
+      }
+      if (!cpnType) {
+        throw 'Undefined cpnType';
+      }
 
-    if (cpnParentElement[cpnType] instanceof Array) {
-      cpnParentElement[cpnType].push(cpnElement);
-    } else if (cpnParentElement[cpnType]) {
-      cpnParentElement[cpnType] = [cpnParentElement[cpnType], cpnElement];
-    } else {
-      cpnParentElement[cpnType] = cpnElement;
+      const nodeList = nodeToArray(cpnParentElement[cpnType]);
+      nodeList.push(cpnElement);
+
+      // if (cpnParentElement[cpnType] instanceof Array) {
+      //   cpnParentElement[cpnType].push(cpnElement);
+      // } else if (cpnParentElement[cpnType]) {
+      //   cpnParentElement[cpnType] = [cpnParentElement[cpnType], cpnElement];
+      // } else {
+      //   cpnParentElement[cpnType] = cpnElement;
+      // }
+
+      cpnParentElement[cpnType] = nodeList.length === 1 ? nodeList[0] : nodeList;
+    } catch (ex) {
+      console.error(this.constructor.name, 'addCpnElement(). ERROR: ', ex);
     }
 
     console.log(this.constructor.name, 'addCpnElement(), cpnParentElement, cpnElement = ', cpnParentElement, cpnElement);
-
-    return cpnParentElement;
   }
 
   /**

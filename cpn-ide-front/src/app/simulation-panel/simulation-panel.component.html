@@ -1,42 +1,77 @@
-<div class="blockHeader">
+<!-- <div class="blockHeader">
   Simulation
-</div>
+</div> -->
 
-<div class="panel">
+<nav class="navbar navbar-sm navbar-expand shadow-sm">
+  <span class="nav-item">
+    <b>&nbsp;Simulation&nbsp;</b>
+  </span>
 
-  <button type="button" class="btn btn-primary" (click)="onRewind()">
+  <ul class="navbar-nav mr-auto">
+    <div class="divider"></div>
+
+    <li class="nav-item">
+      <a (click)="onRewind()" class="nav-link" href="#">
+        <i class="fas fa-backward"></i>
+        <span>Rewind</span>
+      </a>
+    </li>
+
+    <div class="divider"></div>
+  </ul>
+</nav>
+
+<div class="panel tab-container">
+
+  <!-- <button type="button" class="btn btn-primary" (click)="onRewind()">
     <i class="fas fa-backward"></i>
     <span>Rewind</span>
   </button>
-  <br>
+  <br> -->
 
-  <button type="button" class="btn btn-light" (click)="setMode(this.SINGLE_STEP)"
+  <!-- <button type="button" class="btn btn-light" (click)="setMode(this.SINGLE_STEP)"
     [ngClass]="{'enabled': mode === this.SINGLE_STEP }">
     <i class="fas fa-step-forward"></i>
     <span>Single Step</span>
   </button>
-  <br>
-  <div *ngIf="mode === this.SINGLE_STEP" class="note">
+  <br> -->
+
+  <div class="blockHeader" (click)="setMode(this.SINGLE_STEP)"
+    [ngClass]="mode === this.SINGLE_STEP ? 'enabled' : 'disabled'">
+    <i class="fas fa-step-forward"></i>
+    <span>Single Step</span>
+  </div>
+  <div class="note" [ngClass]="{'expanded': mode === this.SINGLE_STEP }">
     Click on a marked (enabled) transition
   </div>
 
-  <button type="button" class="btn btn-light" (click)="setMode(this.SINGLE_STEP_CHOOSE_BINDING)"
+  <!-- <button type="button" class="btn btn-light" (click)="setMode(this.SINGLE_STEP_CHOOSE_BINDING)"
     [ngClass]="{'enabled': mode === this.SINGLE_STEP_CHOOSE_BINDING }">
     <i class="fas fa-step-forward"></i>
     <span>Single Step Choose Binding</span>
   </button>
-  <br>
-  <div *ngIf="mode === this.SINGLE_STEP_CHOOSE_BINDING" class="note">
+  <br> -->
+  <div class="blockHeader" (click)="setMode(this.SINGLE_STEP_CHOOSE_BINDING)"
+    [ngClass]="mode === this.SINGLE_STEP_CHOOSE_BINDING ? 'enabled' : 'disabled'">
+    <i class="fas fa-step-forward"></i>
+    <span>Single Step Choose Binding</span>
+  </div>
+  <div class="note" [ngClass]="{'expanded': mode === this.SINGLE_STEP_CHOOSE_BINDING }">
     Click on a marked (enabled) transition and select one binding
   </div>
 
-  <button type="button" class="btn btn-light" (click)="setMode(this.MULTI_STEP)"
+  <!-- <button type="button" class="btn btn-light" (click)="setMode(this.MULTI_STEP)"
     [ngClass]="{'enabled': mode === this.MULTI_STEP }">
     <i class="fas fa-fast-forward"></i>
     <span>Multi-Step (Animated)</span>
   </button>
-  <br>
-  <div *ngIf="mode === this.MULTI_STEP" class="note">
+  <br> -->
+  <div class="blockHeader" (click)="setMode(this.MULTI_STEP)"
+    [ngClass]="mode === this.MULTI_STEP ? 'enabled' : 'disabled'">
+    <i class="fas fa-fast-forward"></i>
+    <span>Multi-Step (Animated)</span>
+  </div>
+  <div class="note" [ngClass]="{'expanded': mode === this.MULTI_STEP }">
     <table>
       <tr>
         <td>Steps</td>
@@ -61,13 +96,18 @@
     </table>
   </div>
 
-  <button type="button" class="btn btn-light" (click)="setMode(this.MULTI_STEP_FF)"
+  <!-- <button type="button" class="btn btn-light" (click)="setMode(this.MULTI_STEP_FF)"
     [ngClass]="{'enabled': mode === this.MULTI_STEP_FF }">
     <i class="fas fa-fast-forward"></i>
     <span>Multi-Step (Fast Forward)</span>
   </button>
-  <br>
-  <div *ngIf="mode === this.MULTI_STEP_FF" class="note">
+  <br> -->
+  <div class="blockHeader" (click)="setMode(this.MULTI_STEP_FF)"
+    [ngClass]="mode === this.MULTI_STEP_FF ? 'enabled' : 'disabled'">
+    <i class="fas fa-fast-forward"></i>
+    <span>Multi-Step (Fast Forward)</span>
+  </div>
+  <div class="note" [ngClass]="{'expanded': mode === this.MULTI_STEP_FF }">
     <table *ngIf="mode === this.MULTI_STEP_FF">
       <tr>
         <td>Steps</td>
@@ -93,18 +133,22 @@
             <span>Run</span>
           </button>
         </td>
-        <td></td>
       </tr>
     </table>
   </div>
 
-  <button type="button" class="btn btn-light" (click)="setMode(this.REPLICATION)"
+  <!-- <button type="button" class="btn btn-light" (click)="setMode(this.REPLICATION)"
     [ngClass]="{'enabled': mode === this.REPLICATION }">
     <i class="fas fa-copy"></i>
     <span>Replication</span>
   </button>
-  <br>
-  <div *ngIf="mode === this.REPLICATION" class="note">
+  <br> -->
+  <div class="blockHeader" (click)="setMode(this.REPLICATION)"
+    [ngClass]="mode === this.REPLICATION ? 'enabled' : 'disabled'">
+    <i class="fas fa-copy"></i>
+    <span>Replication</span>
+  </div>
+  <div class="note" [ngClass]="{'expanded': mode === this.REPLICATION }">
     <table>
       <tr>
         <td>Repeat</td>
@@ -118,7 +162,6 @@
             <span>Run</span>
           </button>
         </td>
-        <td></td>
       </tr>
     </table>
   </div>

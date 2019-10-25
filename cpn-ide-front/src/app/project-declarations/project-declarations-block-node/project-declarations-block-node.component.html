@@ -1,0 +1,45 @@
+<div *ngIf="hasDeclarations()" class="blockHeader">
+  {{ (parentBlock ? parentBlock.id  + '  >  ' : '') + block.id }}
+</div>
+
+<ng-container *ngIf="block.block">
+  <ng-container *ngFor="let subblock of nodeToArray(block.block)">
+    <div style="padding-left: 20px; background-color: lightgray; border-bottom: 1px solid lightgray;">
+      <app-project-declarations-block-node [parentBlock]="block" [block]="subblock" [expanded]="expanded"
+        [selected]="selected" [mouseover]="mouseover" [declarationType]="declarationType">
+      </app-project-declarations-block-node>
+    </div>
+  </ng-container>
+</ng-container>
+
+<div *ngIf="hasDeclarations()" style="padding: 5px; background-color: white;">
+
+  <ng-container *ngIf="declarationType === 'all' || declarationType === 'globref'">
+    <ng-container *ngFor="let globref of nodeToArray(block.globref)">
+      <app-project-tree-declaration-node [parentBlock]="block" [declaration]="globref" type="globref"
+        [selected]="selected" [mouseover]="mouseover"></app-project-tree-declaration-node>
+    </ng-container>
+  </ng-container>
+
+  <ng-container *ngIf="declarationType === 'all' || declarationType === 'color'">
+    <ng-container *ngFor="let color of nodeToArray(block.color)">
+      <app-project-tree-declaration-node [parentBlock]="block" [declaration]="color" type="color" [selected]="selected"
+        [mouseover]="mouseover"></app-project-tree-declaration-node>
+    </ng-container>
+  </ng-container>
+
+  <ng-container *ngIf="declarationType === 'all' || declarationType === 'var'">
+    <ng-container *ngFor="let variable of nodeToArray(block.var)">
+      <app-project-tree-declaration-node [parentBlock]="block" [declaration]="variable" type="var" [selected]="selected"
+        [mouseover]="mouseover"></app-project-tree-declaration-node>
+    </ng-container>
+  </ng-container>
+
+  <ng-container *ngIf="declarationType === 'all' || declarationType === 'ml'">
+    <ng-container *ngFor="let ml of nodeToArray(block.ml)">
+      <app-project-tree-declaration-node [parentBlock]="block" [declaration]="ml" type="ml" [selected]="selected"
+        [mouseover]="mouseover"></app-project-tree-declaration-node>
+    </ng-container>
+  </ng-container>
+
+</div>

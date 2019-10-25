@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 
 import Diagram from 'diagram-js';
 import CpnDiagramModule from '../../lib/cpn-js/core';
@@ -33,7 +33,7 @@ import { addNode } from '../common/utils';
   templateUrl: './model-editor.component.html',
   styleUrls: ['./model-editor.component.scss']
 })
-export class ModelEditorComponent implements OnInit {
+export class ModelEditorComponent implements OnInit, AfterViewInit {
 
   @ViewChild('container') containerElementRef: ElementRef;
   @ViewChild('popup') popupElementRef: ElementRef;
@@ -58,7 +58,6 @@ export class ModelEditorComponent implements OnInit {
   selectionProvider;
 
   // subscription: Subscription;
-  subpages = [];
   placeShapes = [];
   transShapes = [];
   arcShapes = [];
@@ -75,6 +74,10 @@ export class ModelEditorComponent implements OnInit {
     private modelService: ModelService,
     private validationService: ValidationService,
     private accessCpnService: AccessCpnService) {
+  }
+
+  ngAfterViewInit() {
+    console.log(this.constructor.name, 'ngAfterViewInit(), this = ', this);
   }
 
   ngOnInit() {
@@ -122,6 +125,7 @@ export class ModelEditorComponent implements OnInit {
       // console.log('import.render.complete, event = ', event);
 
       this.updateElementStatus();
+      this.modeling.setEditable(!this.accessCpnService.isSimulation);
     });
 
     // eventBus.on('element.changed', (event) => {
@@ -173,11 +177,11 @@ export class ModelEditorComponent implements OnInit {
     // SIM STATUS
     this.eventService.on(Message.SIMULATION_STARTED, (data) => {
       this.updateElementStatus();
-      this.modeling.setEditable(false);
+      this.modeling.setEditable(!this.accessCpnService.isSimulation);
     });
     this.eventService.on(Message.SIMULATION_STOPED, (data) => {
       this.updateElementStatus();
-      this.modeling.setEditable(true);
+      this.modeling.setEditable(!this.accessCpnService.isSimulation);
     });
 
     this.eventService.on(Message.PAGE_DELETE, (data) => {
@@ -194,7 +198,15 @@ export class ModelEditorComponent implements OnInit {
 
     this.eventService.on(Message.MONITOR_SET_AVAILABLE_NODES, (event) => this.updateAlailableStatus(event.availableNodeIds));
 
+    this.eventService.on(Message.SIMULATION_TOKEN_ANIMATE, (event) => {
+      eventBus.fire('token.animate', event);
+    });
+
     // Diagram events
+
+    eventBus.on('token.animate.complete.all', () => {
+      this.eventService.send(Message.SIMULATION_TOKEN_ANIMATE_COMPLETE);
+    });
 
     eventBus.on('element.hover', (event) => {
       if (event.element.type === 'cpn:Transition' || event.element.type === 'cpn:Place') {
@@ -357,29 +369,28 @@ export class ModelEditorComponent implements OnInit {
     });
 
 
-    eventBus.on('element.hover', (event) => {
-      const element = event.element;
+    // eventBus.on('element.hover', (event) => {
+    //   const element = event.element;
+    //   // console.log(self.constructor.name, 'element.hover, event = ', event);
 
-      // console.log(self.constructor.name, 'element.hover, event = ', event);
+    //   if (event.originalEvent) {
+    //     const position = { x: event.originalEvent.clientX, y: event.originalEvent.clientY };
 
-      if (event.originalEvent) {
-        const position = { x: event.originalEvent.offsetX, y: event.originalEvent.offsetY };
-
-        let errorText, warningText, readyText;
-        if (isCpn(element)) {
-          errorText = this.stateProvider.getErrorText(element.cpnElement._id);
-          warningText = this.stateProvider.getWarningText(element.cpnElement._id);
-          readyText = this.stateProvider.getReadyText(element.cpnElement._id);
-        }
-        let popupVisible = false;
-        popupVisible = popupVisible || this.showPopup(position, element, errorText, 'errorPopup');
-        popupVisible = popupVisible || this.showPopup(position, element, warningText, 'warningPopup');
-        popupVisible = popupVisible || this.showPopup(position, element, readyText, 'readyPopup');
-        if (!popupVisible) {
-          this.hidePopup();
-        }
-      }
-    });
+    //     let errorText, warningText, readyText;
+    //     if (isCpn(element)) {
+    //       errorText = this.stateProvider.getErrorText(element.cpnElement._id);
+    //       warningText = this.stateProvider.getWarningText(element.cpnElement._id);
+    //       readyText = this.stateProvider.getReadyText(element.cpnElement._id);
+    //     }
+    //     let popupVisible = false;
+    //     popupVisible = popupVisible || this.showPopup(position, element, errorText, 'errorPopup');
+    //     popupVisible = popupVisible || this.showPopup(position, element, warningText, 'warningPopup');
+    //     popupVisible = popupVisible || this.showPopup(position, element, readyText, 'readyPopup');
+    //     if (!popupVisible) {
+    //       this.hidePopup();
+    //     }
+    //   }
+    // });
 
 
     eventBus.on('bindingsMenu.select', (event) => {
@@ -394,6 +405,10 @@ export class ModelEditorComponent implements OnInit {
 
       self.updateAvailableMonitorList(selectedElements);
     });
+
+
+
+
   }
 
   updateAvailableMonitorList(selectedElements) {
@@ -458,9 +473,9 @@ export class ModelEditorComponent implements OnInit {
   updateElementStatus() {
     this.stateProvider.clear();
 
-    // console.log('updateElementStatus(), tokenData = ', this.accessCpnService.getTokenData());
-    // console.log('updateElementStatus(), readyData = ', this.accessCpnService.getReadyData());
-    // console.log('updateElementStatus(), errorData = ', this.accessCpnService.getErrorData());
+    console.log('updateElementStatus(), tokenData = ', this.accessCpnService.getTokenData());
+    console.log('updateElementStatus(), readyData = ', this.accessCpnService.getReadyData());
+    console.log('updateElementStatus(), errorData = ', this.accessCpnService.getErrorData());
 
     // if (Object.keys(this.accessCpnService.getTokenData()).length > 0) {
     this.eventBus.fire('model.update.tokens', { data: this.accessCpnService.getTokenData() });
@@ -550,10 +565,9 @@ export class ModelEditorComponent implements OnInit {
     console.log(this.constructor.name, 'log(), text = ' + JSON.stringify(obj));
   }
 
-  load(pageObject, subPages) {
+  load(pageObject) {
     this.loading = true;
 
-    this.subpages = subPages;
     this.jsonPageObject = pageObject;
     this.pageId = pageObject._id;
     const that = this;

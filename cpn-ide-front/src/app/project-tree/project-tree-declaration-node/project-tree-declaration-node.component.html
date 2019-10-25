@@ -1,7 +1,12 @@
 <ng-container *ngIf="declaration">
-  <div id="declaration._id" contenteditable="true"
-    [ngClass]="{'selected': selected.id === declaration._id, 'node': true, 'editablenode': true}"
-    [innerHTML]="getText() | colorDeclarations | safeHtml" (focus)="focused = true; onSelected(); onParse($event.target.textContent)"
+  <div [id]="declaration._id" [contentEditable]="!accessCpnService.isSimulation"
+    [ngClass]="{'selected': selected.id === declaration._id, 'error': accessCpnService.errorIds.includes(declaration._id), 'node': true, 'editablenode': true}"
+    [innerHTML]="getText() | colorDeclarations | safeHtml"
+    (focus)="focused = true; onSelected(); onParse($event.target.textContent)"
     (focusout)="focused = false; onUpdate($event.target.textContent)">
   </div>
+  <div *ngIf="accessCpnService.errorIds.includes(declaration._id)" class="errorText">
+    {{ accessCpnService.errorData[declaration._id] }}
+  </div>
 </ng-container>
+

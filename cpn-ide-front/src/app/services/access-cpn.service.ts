@@ -5,24 +5,37 @@ import { EventService } from './event.service';
 import { Message } from '../common/message';
 import { xmlBeautify } from '../../lib/xml-beautifier/xml-beautifier.js';
 import { CpnServerUrl } from 'src/cpn-server-url';
-import { cloneObject } from '../common/utils';
+import { cloneObject, clearArray } from '../common/utils';
+import { ModelService } from './model.service';
 
 @Injectable()
 export class AccessCpnService {
+
+  public isSimulation = false;
+
+
+  public errorData = [];
+  public errorIds = [];
+  public errorPagesIds = [];
+
+  public stateData = undefined;
+  public readyData = [];
+  public readyIds = [];
+  public readyPagesIds = [];
+
+  public tokenData = [];
+  public tokenDiff = [];
+  public tokenPageId = undefined;
 
   sessionId;
   userSessionId;
   initNetProcessing;
   initSimProcessing;
   simInitialized = false;
-  isSimulation = false;
-  errorData = [];
-  tokenData = [];
-  readyData = [];
-  stateData;
 
   constructor(private http: HttpClient,
-    private eventService: EventService) {
+    private eventService: EventService,
+    private modelService: ModelService) {
 
     this.eventService.on(Message.SERVER_INIT_NET, (event) => {
       console.log('AccessCpnService(), SERVER_INIT_NET, data = ', event);
@@ -51,7 +64,7 @@ export class AccessCpnService {
 
     const readyData = {};
     for (const id of this.readyData) {
-      readyData[id] = 'Transition is ready.';
+      readyData[id] = 'Ready';
     }
     return readyData;
   }
@@ -62,6 +75,100 @@ export class AccessCpnService {
     }
     return this.stateData;
   }
+
+
+  updateErrorData(data) {
+    clearArray(this.errorIds);
+    clearArray(this.errorData);
+    clearArray(this.errorPagesIds);
+
+    if (!data.success) {
+      for (const id of Object.keys(data.issues)) {
+        for (const issue of data.issues[id]) {
+          issue.description = issue.description.replace(issue.id + ':', '');
+          issue.description = issue.description.replace(issue.id, '');
+          issue.description = issue.description.replace(':', '');
+          issue.description = issue.description.trim();
+
+          this.errorData[issue.id] = issue.description;
+          this.errorIds.push(issue.id);
+
+          const page = this.modelService.getPageByElementId(issue.id);
+          if (page && !this.errorPagesIds.includes(page._id)) {
+            this.errorPagesIds.push(page._id);
+          }
+        }
+      }
+    }
+    console.log(this.constructor.name, 'updateErrorData(), this.errorIds = ', this.errorIds);
+    console.log(this.constructor.name, 'updateErrorData(), this.errorData = ', this.errorData);
+    console.log(this.constructor.name, 'updateErrorData(), this.errorPagesIds = ', this.errorPagesIds);
+  }
+
+  updateReadyData(readyData) {
+    this.readyData = readyData;
+
+    clearArray(this.readyIds);
+    clearArray(this.readyPagesIds);
+
+    for (const id of readyData) {
+      this.readyIds.push(id);
+
+      const page = this.modelService.getPageByElementId(id);
+      if (page && !this.readyPagesIds.includes(page._id)) {
+        this.readyPagesIds.push(page._id);
+      }
+    }
+  }
+
+  updateTokenData(tokenData) {
+    // console.log('updateTokenData(), tokenData = ', JSON.stringify(tokenData));
+
+    let prevTokenPageId = this.tokenPageId;
+    this.tokenPageId = undefined;
+
+    clearArray(this.tokenDiff);
+
+    // find token difference
+    for (const newToken of tokenData) {
+      if (newToken.tokens > 0) {
+        const oldToken = this.tokenData.find((e) => e.id === newToken.id);
+        if (!oldToken || oldToken.tokens !== newToken.tokens) {
+          this.tokenDiff.push(newToken);
+        }
+      }
+    }
+    console.log('updateTokenData(), this.tokenDiff = ', JSON.stringify(this.tokenDiff));
+
+    if (this.tokenDiff.length > 0) {
+      const placeId = this.tokenDiff[this.tokenDiff.length - 1].id;
+      if (placeId) {
+        const page = this.modelService.getPageByElementId(placeId);
+        if (page) {
+          if (page._id !== prevTokenPageId) {
+            this.tokenPageId = page._id;
+          }
+        }
+      }
+    }
+
+    clearArray(this.tokenData);
+
+    for (const token of tokenData) {
+      this.tokenData.push(token);
+
+      // const page = this.modelService.getPageByElementId(id);
+      // if (page && !this.readyPagesIds.includes(page._id)) {
+      //   this.readyPagesIds.push(page._id);
+      // }
+    }
+
+    if (this.tokenPageId && this.tokenPageId !== prevTokenPageId) {
+      // this.eventService.send(Message.PAGE_OPEN, { pageObject: this.modelService.getPageById(this.tokenPageId) });
+    }
+  }
+
+
 
   /**
    * Generate new user session
@@ -104,8 +211,6 @@ export class AccessCpnService {
 
     localStorage.setItem('cpnXml', JSON.stringify(cpnXml));
 
-    this.errorData = [];
-
     // complexVerify = true;
     localStorage.setItem('cpnXml', cpnXml);
 
@@ -116,7 +221,7 @@ export class AccessCpnService {
           console.log('AccessCpnService, initNet(), SUCCESS, data = ', data);
           this.initNetProcessing = false;
 
-          this.saveErrorData(data);
+          this.updateErrorData(data);
 
           this.eventService.send(Message.SERVER_INIT_NET_DONE, { data: data, errorIssues: data.issues });
 
@@ -133,21 +238,23 @@ export class AccessCpnService {
       );
   }
 
-  saveErrorData(data) {
-    this.errorData = [];
+  // saveErrorData(data) {
+  //   this.errorData = [];
 
-    if (!data.success) {
-      for (const id of Object.keys(data.issues)) {
-        for (const issue of data.issues[id]) {
-          issue.description = issue.description.replace(issue.id + ':', '');
-          issue.description = issue.description.replace(issue.id, '');
-          issue.description = issue.description.replace(':', '');
-          issue.description = issue.description.trim();
-          this.errorData[issue.id] = issue.description;
-        }
-      }
-    }
-  }
+  //   if (!data.success) {
+  //     for (const id of Object.keys(data.issues)) {
+  //       for (const issue of data.issues[id]) {
+  //         issue.description = issue.description.replace(issue.id + ':', '');
+  //         issue.description = issue.description.replace(issue.id, '');
+  //         issue.description = issue.description.replace(':', '');
+  //         issue.description = issue.description.trim();
+  //         this.errorData[issue.id] = issue.description;
+  //       }
+  //     }
+  //   }
+
+  //   this.updateErrorData(this.errorData);
+  // }
 
   /**
    * Reset simulator initialization flag
@@ -167,8 +274,8 @@ export class AccessCpnService {
 
     this.simInitialized = false;
 
-    this.tokenData = [];
-    this.readyData = [];
+    // this.tokenData = [];
+    // this.readyData = [];
     this.stateData = undefined;
 
     if (!this.sessionId) {
@@ -190,11 +297,16 @@ export class AccessCpnService {
         this.eventService.send(Message.SERVER_INIT_SIM_DONE, { data: data });
         // Get token marks and transition
         if (data) {
-          this.tokenData = data.tokensAndMark;
-          this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
-          this.readyData = data.enableTrans;
-          this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
+          // this.tokenData = data.tokensAndMark;
+          // this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
+          // this.readyData = data.enableTrans;
+          // this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
 
+          this.updateTokenData(data.tokensAndMark);
+          this.updateReadyData(data.enableTrans);
+
+          this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
+          this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
         }
 
         //this.getTokenMarks();
@@ -255,6 +367,7 @@ export class AccessCpnService {
         console.log('AccessCpnService, getTransitions(), SUCCESS, data = ', data);
 
         this.readyData = data;
+        this.updateReadyData(data);
 
         this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: data });
       },
@@ -279,9 +392,15 @@ export class AccessCpnService {
       (data: any) => {
         console.log('AccessCpnService, doStep(), SUCCESS, data = ', data);
         if (data) {
-          this.tokenData = data.tokensAndMark;
+          // this.tokenData = data.tokensAndMark;
+          // this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
+          // this.readyData = data.enableTrans;
+          // this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
+
+          this.updateTokenData(data.tokensAndMark);
+          this.updateReadyData(data.enableTrans);
+
           this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
-          this.readyData = data.enableTrans;
           this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
         }
 
@@ -310,9 +429,15 @@ export class AccessCpnService {
       (data: any) => {
         console.log('AccessCpnService, doStepWithBinding(), SUCCESS, data = ', data);
         if (data) {
-          this.tokenData = data.tokensAndMark;
+          // this.tokenData = data.tokensAndMark;
+          // this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
+          // this.readyData = data.enableTrans;
+          // this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
+
+          this.updateTokenData(data.tokensAndMark);
+          this.updateReadyData(data.enableTrans);
+
           this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
-          this.readyData = data.enableTrans;
           this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
 
           this.getSimState();
@@ -340,9 +465,15 @@ export class AccessCpnService {
       (data: any) => {
         console.log('AccessCpnService, doStepWithBinding(), SUCCESS, data = ', data);
         if (data) {
-          this.tokenData = data.tokensAndMark;
+          // this.tokenData = data.tokensAndMark;
+          // this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
+          // this.readyData = data.enableTrans;
+          // this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
+
+          this.updateTokenData(data.tokensAndMark);
+          this.updateReadyData(data.enableTrans);
+
           this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
-          this.readyData = data.enableTrans;
           this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
 
           this.getSimState();
@@ -404,6 +535,17 @@ export class AccessCpnService {
   public setIsSimulation(state) {
     this.isSimulation = state;
     this.eventService.send(Message.SIMULATION_UPDATE_STATE);
+
+    if (!this.isSimulation) {
+      this.stateData = undefined;
+      this.readyData = [];
+      this.readyIds = [];
+      this.readyPagesIds = [];
+
+      this.tokenData = [];
+      this.tokenDiff = [];
+      this.tokenPageId = undefined;
+    }
   }
 
   public getIsSimulation() {

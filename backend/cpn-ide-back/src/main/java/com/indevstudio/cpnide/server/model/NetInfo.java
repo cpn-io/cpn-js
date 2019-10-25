@@ -3,9 +3,13 @@ package com.indevstudio.cpnide.server.model;
 import java.util.List;
 
 public class NetInfo {
+    List<String> firedTrans;
     List<String> enableTrans;
     List<PlaceMark> tokensAndMark;
 
+    public List<String> getFiredTrans() {
+        return firedTrans;
+    }
     public List<String> getEnableTrans() {
         return enableTrans;
     }
@@ -22,7 +26,8 @@ public class NetInfo {
         this.tokensAndMark = tokensAndMark;
     }
 
-    public NetInfo(List<String> enableTrans, List<PlaceMark> tokensAndMark) {
+    public NetInfo(List<String> firedTrans, List<String> enableTrans, List<PlaceMark> tokensAndMark) {
+        this.firedTrans = firedTrans;
         this.enableTrans = enableTrans;
         this.tokensAndMark = tokensAndMark;
     }

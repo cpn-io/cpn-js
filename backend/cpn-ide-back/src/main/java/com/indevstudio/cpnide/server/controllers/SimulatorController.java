@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+
 @RequestMapping("/api/v2/cpn")
 @RestController
 @Slf4j
@@ -31,7 +33,7 @@ public class SimulatorController {
     public ResponseEntity simInit(@RequestHeader(value = "X-SessionId") String sessionId) {
         return RequestBaseLogic.HandleRequest(sessionId, () -> {
             _netConatiner.InitSimulator(sessionId);
-            NetInfo netInf = new NetInfo(_netConatiner.getEnableTransitions(sessionId), _netConatiner.getTokensAndMarking(sessionId));
+            NetInfo netInf = new NetInfo(Arrays.asList(),_netConatiner.getEnableTransitions(sessionId), _netConatiner.getTokensAndMarking(sessionId));
             return ResponseEntity.status(HttpStatus.OK).body(netInf);
         });
     }
@@ -84,8 +86,9 @@ public class SimulatorController {
             })
     public ResponseEntity doStep(@RequestHeader(value = "X-SessionId") String sessionId, @PathVariable("transId") String transId) {
         return RequestBaseLogic.HandleRequest(sessionId, () -> {
-            _netConatiner.makeStep(sessionId, transId);
-            NetInfo netInf = new NetInfo(_netConatiner.getEnableTransitions(sessionId), _netConatiner.getTokensAndMarking(sessionId));
+            String firedId =_netConatiner.makeStep(sessionId, transId);
+
+            NetInfo netInf = new NetInfo(Arrays.asList(firedId), _netConatiner.getEnableTransitions(sessionId), _netConatiner.getTokensAndMarking(sessionId));
             return ResponseEntity.status(HttpStatus.OK).body(netInf);
         });
     }
@@ -113,7 +116,7 @@ public class SimulatorController {
     public ResponseEntity doStepFastForward(@RequestHeader(value = "X-SessionId") String sessionId, @RequestBody MultiStep stepParams) {
         return RequestBaseLogic.HandleRequest(sessionId, () -> {
             _netConatiner.makeStepFastForward(sessionId,stepParams);
-            NetInfo netInf = new NetInfo(_netConatiner.getEnableTransitions(sessionId), _netConatiner.getTokensAndMarking(sessionId));
+            NetInfo netInf = new NetInfo(Arrays.asList(), _netConatiner.getEnableTransitions(sessionId), _netConatiner.getTokensAndMarking(sessionId));
             return RequestBaseLogic.HandleRequest(sessionId, () -> ResponseEntity.status(HttpStatus.OK).body(netInf));
         });
     }
@@ -129,7 +132,7 @@ public class SimulatorController {
     public ResponseEntity doStepWithBinding(@RequestHeader(value = "X-SessionId") String sessionId, @PathVariable("transId") String transId, @RequestBody BindingMark mark) {
         return RequestBaseLogic.HandleRequest(sessionId, () -> {
             _netConatiner.makeStepWithBinding(sessionId, mark.getBind_id(), transId);
-            NetInfo netInf = new NetInfo(_netConatiner.getEnableTransitions(sessionId), _netConatiner.getTokensAndMarking(sessionId));
+            NetInfo netInf = new NetInfo(Arrays.asList(),_netConatiner.getEnableTransitions(sessionId), _netConatiner.getTokensAndMarking(sessionId));
             return RequestBaseLogic.HandleRequest(sessionId, () -> ResponseEntity.status(HttpStatus.OK).body(netInf));
         });
     }

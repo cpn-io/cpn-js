@@ -26,7 +26,7 @@ import {
 } from '../util/ModelUtil';
 
 import {
-  query as domQuery
+  query as domQuery, domify
 } from 'min-dom';
 
 import {
@@ -871,26 +871,84 @@ export default function CpnRenderer(
     if (element.animate) {
       console.log('TEST ANIMATION, element.animate = ', element.animate);
 
-      const R = 10;
-      const l = path.getTotalLength();
-      // var p = path.getPointAtLength(0 * l);
+      const viewbox = canvas.viewbox();
+      const zoom = canvas.zoom();
+      let pathValue = path.attributes.d.value;
 
-      const circleShadow = svgCreate('circle');
-      svgAttr(circleShadow, { r: R, fill: 'grey' });
-      svgAppend(parentGfx, circleShadow);
+      pathValue = pathValue.replace('m', 'M');
 
-      const circle = svgCreate('circle');
-      svgAttr(circle, { r: R, fill: TOKEN_FILL_COLOR });
-      svgAppend(parentGfx, circle);
+      console.log('TEST ANIMATION, viewbox = ', viewbox);
+      console.log('TEST ANIMATION, zoom = ', zoom);
 
-      const text = undefined; // = svgCreate('text');
-      // svgAttr(text, { fill: 'black' });
-      // text.textContent = '1';
-      // svgClasses(text).add('djs-label');
-      // svgAppend(parentGfx, text);
+      console.log('TEST ANIMATION, path = ', pathValue);
 
-      moveArcCircle(path, circle, circleShadow, text, 0);
-      // setTimeout(() => moveArcCircle2(path, circle, text), 100);
+      // svgAttr(path, {
+      //   transform: 'scale(' + 0.5 + ', ' + 0.5 + ')'
+      // });
+      // console.log('TEST ANIMATION, path 2 = ', path.attributes.d.value);
+
+
+      // const R = 10;
+
+      // const circleShadow = svgCreate('circle');
+      // svgAttr(circleShadow, { r: R, fill: 'grey' });
+      // svgAppend(parentGfx, circleShadow);
+
+      // const circle = svgCreate('circle');
+      // svgAttr(circle, { r: R, fill: TOKEN_FILL_COLOR });
+      // svgAppend(parentGfx, circle);
+
+      // moveArcCircle(path, circle, circleShadow, undefined, 0);
+
+      const container = canvas._svg;
+
+      if (container) {
+        const offset = {
+          x: viewbox.x * -1,
+          y: viewbox.y * -1,
+        }
+
+        let tokenG = domQuery('#tokenBall', container);
+        if (tokenG) {
+          svgRemove(tokenG);
+        }
+
+        tokenG = svgCreate('g');
+        svgAttr(tokenG, {
+          id: 'tokenBall',
+          transform: 'scale(' + zoom + ', ' + zoom + ')'
+        });
+
+        const p = path.getPointAtLength(0);
+
+        const tokenBall = svgCreate('circle');
+        svgAttr(tokenBall, {
+          r: 10,
+          // cx: p.x,
+          // cy: p.y,
+          cx: offset.x,
+          cy: offset.y,
+          fill: 'red',
+        });
+        svgAppend(tokenG, tokenBall);
+
+        const tokenAnimation = svgCreate('animateMotion');
+        svgAttr(tokenAnimation, {
+          dur: '1s',
+          begin: '0s',
+          repeatCount: 'indefinite',
+          path: pathValue,
+        });
+        svgAppend(tokenBall, tokenAnimation);
+
+        svgAppend(container, tokenG);
+
+        setTimeout(() => {
+          svgRemove(tokenG);
+          self._eventBus.fire('token.animate.complete');
+        }, 1000);
+
+      }
 
       delete element.animate;
     }

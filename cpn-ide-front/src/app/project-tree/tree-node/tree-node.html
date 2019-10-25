@@ -1,10 +1,9 @@
-<div [ngClass]="{'selected': selected.id === id, 'node': true, 'error': error, 'ready': ready}" [style.color]="color"
-    (click)="onClick()">
-    <div class="caret" *ngIf="showBullet">
+<div [ngClass]="{'selected': selected.id === id, 'node': true, 'error': error, 'ready': ready}" [style.color]="color">
+    <div class="caret" *ngIf="showBullet" (click)="onExpand()">
         <i [ngClass]="expanded[id] ? 'fas fa-caret-down' : 'fas fa-caret-right'"></i>
     </div>
     <div class="title" [ngClass]="{ 'active' : expanded[id], 'bold': bold }" [contentEditable]="editable"
-        [innerHTML]="title">
+        [innerHTML]="title" (click)="onClick()">
     </div>
 </div>
 

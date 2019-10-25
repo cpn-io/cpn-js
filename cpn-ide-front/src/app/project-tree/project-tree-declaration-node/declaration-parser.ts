@@ -65,34 +65,31 @@ export function detectCpnDeclarartionType(cpnElement) {
  * @param layout 
  */
 export function parseDeclarartion(layout) {
-    let result = undefined;
+    let result:any = {};
 
     const regex = /^(?<declarationType>\w+)/g;
     let m = regex.exec(layout);
 
     const declarationType = parseUiDeclarartionType(layout);
 
-    if (declarationType) {
-        result = {};
-
-        switch (declarationType) {
-            case 'globref':
-                result.cpnElement = parseGlobrefDeclaration(layout);
-                result.cpnDeclarationType = 'globref';
-                break;
-            case 'colset':
-                result.cpnElement = parseColsetDeclaration(layout);
-                result.cpnDeclarationType = 'color';
-                break;
-            case 'var':
-                result.cpnElement = parseVarDeclaration(layout);
-                result.cpnDeclarationType = 'var';
-                break;
-            default:
-                result.cpnElement = parseMlDeclaration(layout);
-                result.cpnDeclarationType = 'ml';
-        }
+    switch (declarationType) {
+        case 'globref':
+            result.cpnElement = parseGlobrefDeclaration(layout);
+            result.cpnDeclarationType = 'globref';
+            break;
+        case 'colset':
+            result.cpnElement = parseColsetDeclaration(layout);
+            result.cpnDeclarationType = 'color';
+            break;
+        case 'var':
+            result.cpnElement = parseVarDeclaration(layout);
+            result.cpnDeclarationType = 'var';
+            break;
+        default:
+            result.cpnElement = parseMlDeclaration(layout);
+            result.cpnDeclarationType = 'ml';
     }
+
     return result;
 }
 

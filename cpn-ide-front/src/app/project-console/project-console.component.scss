@@ -18,3 +18,31 @@
   }
 }
 
+// -------------------------------------------
+
+svg {
+  width: 300px;
+  display: block;
+  position: absolute;
+}
+
+.ball {
+  width: 10px;
+  height: 10px;
+  background-color: green;
+  border-radius: 50%;
+
+  offset-path: path("M10 80 Q 77.5 10, 145 80 T 280 80");
+  offset-distance: 0%;
+
+  animation: green-ball 1s linear 1;
+}
+
+@keyframes green-ball {
+  from {
+    offset-distance: 0%;
+  }
+  to {
+    offset-distance: 100%;
+  }
+}

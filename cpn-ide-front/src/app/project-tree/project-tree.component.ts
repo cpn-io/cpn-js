@@ -5,6 +5,7 @@ import { Component, OnInit, OnChanges, SimpleChanges, DoCheck, HostListener } fr
 import { nodeToArray, cloneObject, getNextId, arrayToNode } from '../common/utils';
 import { clearDeclarationLayout, parseDeclarartion } from './project-tree-declaration-node/declaration-parser';
 import { AccessCpnService } from '../services/access-cpn.service';
+import { SettingsService } from '../services/settings.service';
 
 @Component({
   selector: 'app-project-tree',
@@ -34,9 +35,12 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   public contextmenuX = 0;
   public contextmenuY = 0;
 
+  newPageCount = 0;
+
   constructor(public eventService: EventService,
     public modelService: ModelService,
-    private accessCpnService: AccessCpnService) {
+    private accessCpnService: AccessCpnService,
+    private settings: SettingsService) {
   }
 
   ngOnInit() {
@@ -68,7 +72,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   }
 
   loadProject() {
-    this.reset();
+    // this.reset();
 
     this.cpnet = this.modelService.getCpn();
     this.project = this.modelService.getProject();
@@ -161,7 +165,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   }
 
   //activates the menu with the coordinates
-  onrightClick(event) {
+  onRightClick(event) {
     this.contextmenuX = event.clientX;
     this.contextmenuY = event.clientY; // - 50;
     this.contextmenu = true;
@@ -196,10 +200,11 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   onNewDeclaration() {
     this.disableContextMenu();
 
-    if (this.selected && this.selected.parentCpnElement && this.selected.type) {
-      console.log(this.constructor.name, 'onNewDeclaration(), this.selected = ', this.selected);
+    console.log(this.constructor.name, 'onNewDeclaration(), this.selected = ', this.selected);
 
-      let newLayout;
+    if (this.selected && this.selected.parentCpnElement && this.selected.type) {
+      let parentCpnElement = this.selected.parentCpnElement;
+      let newLayout = '(* Empty *)';
       switch (this.selected.type) {
         case 'globref':
           newLayout = 'globref CONST = 1;';
@@ -210,15 +215,15 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
         case 'var':
           newLayout = 'var v:int;';
           break;
-        case 'ml':
-          newLayout = 'fun Function';
-          break;
+      }
+
+      if (this.selected.type === 'block') {
+        parentCpnElement = this.selected.cpnElement;
       }
 
       if (newLayout) {
         // parse declaration layout
         let result = parseDeclarartion(newLayout);
-
         // console.log(this.constructor.name, 'onNewDeclaration(), result = ', result);
 
         if (result && result.cpnElement) {
@@ -230,12 +235,9 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
           // add declaration cpn element to declaration group
           this.modelService.addCpnElement(
-            this.selected.parentCpnElement,
+            parentCpnElement,
             newDeclaration,
             newCpnDeclarartionType);
-
-          // console.log(this.constructor.name, 'onNewDeclaration(), this.selected.parentCpnElement[newCpnDeclarartionType] =',
-          //   this.selected.parentCpnElement[newCpnDeclarartionType]);
 
           setTimeout(() => this.goToDeclaration(newDeclaration._id), 100);
         }
@@ -267,6 +269,74 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
   onNewPage() {
     this.disableContextMenu();
+
+    const defValue = this.settings.getAppSettings()['page'];
+    const cpnElement = this.modelService.createCpnPage(defValue + ' ' + (++this.newPageCount), undefined);
+
+    const cpnet = this.modelService.getCpn();
+    this.modelService.addCpnElement(cpnet, cpnElement, 'page');
+    this.modelService.updateInstances();
+  }
+
+  // Toolbar action handlers
+  onNewNode() {
+    console.log(this.constructor.name, 'onNewNode()');
+
+    if (this.selected && this.selected.parentCpnElement && this.selected.type) {
+      console.log(this.constructor.name, 'onNewNode(), this.selected = ', this.selected);
+
+      switch (this.selected.type) {
+        case 'globref':
+        case 'color':
+        case 'var':
+        case 'ml':
+          this.onNewDeclaration();
+          break;
+
+        case 'block':
+          this.onNewBlock();
+          break;
+
+        case 'page':
+          this.onNewPage();
+          break;
+      }
+    }
+  }
+
+
+  onDeleteNode() {
+    this.disableContextMenu();
+    console.log(this.constructor.name, 'onDeleteNode(), this.selected = ', this.selected);
+
+    if (this.selected
+      && this.selected.parentCpnElement
+      && ['globref', 'color', 'var', 'ml', 'block', 'page'].includes(this.selected.type)) {
+
+      this.modelService.removeCpnElement(this.selected.parentCpnElement, this.selected.cpnElement, this.selected.type);
+    }
+  }
+
+  onUpNode() {
+    console.log(this.constructor.name, 'onUpNode()');
+
+    if (this.selected
+      && this.selected.parentCpnElement
+      && ['globref', 'color', 'var', 'ml', 'block', 'page'].includes(this.selected.type)) {
+
+      this.modelService.moveCpnElement(this.selected.parentCpnElement, this.selected.cpnElement, this.selected.type, 'up');
+    }
+  }
+
+  onDownNode() {
+    console.log(this.constructor.name, 'onDownNode()');
+
+    if (this.selected
+      && this.selected.parentCpnElement
+      && ['globref', 'color', 'var', 'ml', 'block', 'page'].includes(this.selected.type)) {
+
+      this.modelService.moveCpnElement(this.selected.parentCpnElement, this.selected.cpnElement, this.selected.type, 'down');
+    }
   }
 
 }

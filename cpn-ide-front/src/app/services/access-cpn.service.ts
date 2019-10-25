@@ -23,6 +23,8 @@ export class AccessCpnService {
   public readyIds = [];
   public readyPagesIds = [];
 
+  public firedTransIdList = [];
+
   public tokenData = [];
   public tokenDiff = [];
   public tokenPageId = undefined;
@@ -40,7 +42,7 @@ export class AccessCpnService {
     this.eventService.on(Message.SERVER_INIT_NET, (event) => {
       console.log('AccessCpnService(), SERVER_INIT_NET, data = ', event);
       if (event) {
-        this.initNet(event.projectData, event.complexVerify);
+        this.initNet(event.projectData, event.complexVerify || false, event.restartSimulator || false);
       }
     });
   }
@@ -121,6 +123,10 @@ export class AccessCpnService {
     }
   }
 
+  updateFiredTrans(firedTransIdList) {
+    this.firedTransIdList = firedTransIdList;
+  }
+
   updateTokenData(tokenData) {
     // console.log('updateTokenData(), tokenData = ', JSON.stringify(tokenData));
 
@@ -189,7 +195,7 @@ export class AccessCpnService {
   /**
    * Access/CPN API
    */
-  initNet(cpnJson, complexVerify) {
+  initNet(cpnJson, complexVerify = false, restartSimulator = false) {
     if (this.initNetProcessing) {
       return;
     }
@@ -199,6 +205,7 @@ export class AccessCpnService {
     }
 
     console.log('AccessCpnService, initNet(), START, this.sessionId = ', this.sessionId);
+    console.log('AccessCpnService, initNet(), START, complexVerify = ', complexVerify);
 
     const x2js = new X2JS();
     let cpnXml = x2js.json2xml_str(cloneObject(cpnJson));
@@ -211,11 +218,18 @@ export class AccessCpnService {
 
     localStorage.setItem('cpnXml', JSON.stringify(cpnXml));
 
-    // complexVerify = true;
+    complexVerify = true;
+    restartSimulator = true;
+
     localStorage.setItem('cpnXml', cpnXml);
 
     const url = CpnServerUrl.get() + '/api/v2/cpn/init';
-    this.http.post(url, { xml: cpnXml, complex_verify: complexVerify }, { headers: { 'X-SessionId': this.sessionId } })
+    const body = {
+      xml: cpnXml,
+      complex_verify: complexVerify,
+      need_sim_restart: restartSimulator
+    };
+    this.http.post(url, body, { headers: { 'X-SessionId': this.sessionId } })
       .subscribe(
         (data: any) => {
           console.log('AccessCpnService, initNet(), SUCCESS, data = ', data);
@@ -304,6 +318,7 @@ export class AccessCpnService {
 
           this.updateTokenData(data.tokensAndMark);
           this.updateReadyData(data.enableTrans);
+          this.updateFiredTrans(data.firedTrans);
 
           this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
           this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
@@ -399,6 +414,7 @@ export class AccessCpnService {
 
           this.updateTokenData(data.tokensAndMark);
           this.updateReadyData(data.enableTrans);
+          this.updateFiredTrans(data.firedTrans);
 
           this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
           this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
@@ -436,6 +452,7 @@ export class AccessCpnService {
 
           this.updateTokenData(data.tokensAndMark);
           this.updateReadyData(data.enableTrans);
+          this.updateFiredTrans(data.firedTrans);
 
           this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
           this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
@@ -472,6 +489,7 @@ export class AccessCpnService {
 
           this.updateTokenData(data.tokensAndMark);
           this.updateReadyData(data.enableTrans);
+          this.updateFiredTrans(data.firedTrans);
 
           this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
           this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });

@@ -37,6 +37,7 @@ export function importCpnPage(diagram, cpnPageElement, alignToCenter) {
         canvas.viewbox(vb);
         canvas.zoom(1.0);
         // canvas.zoom(0.7);
+        // canvas.zoom('fit-viewport');
       }
     }
 

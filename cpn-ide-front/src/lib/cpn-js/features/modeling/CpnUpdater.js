@@ -238,9 +238,9 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
         element = elementRegistry.get(gfx);
       }
 
-      // console.log('CpnUpdater(), domEvent, mousedown, target = ', target);
-      // console.log('CpnUpdater(), domEvent, mousedown, gfx = ', gfx);
-      // console.log('CpnUpdater(), mousedown, element = ', element);
+      console.log('CpnUpdater(), domEvent, mousedown, target = ', target);
+      console.log('CpnUpdater(), domEvent, mousedown, gfx = ', gfx);
+      console.log('CpnUpdater(), mousedown, element = ', element);
 
       if (element && element === canvas.getRootElement()) {
         popupMenuProvider.close();

@@ -1,12 +1,13 @@
 <!-- Project tree toolbar -->
-<app-project-tree-toolbar></app-project-tree-toolbar>
+<app-project-tree-toolbar (newNode)="onNewNode()" (deleteNode)="onDeleteNode()" (upNode)="onUpNode()"
+  (downNode)="onDownNode()">
+  <!-- <app-project-tree-toolbar> -->
+</app-project-tree-toolbar>
 
 <div class="tab-container-with-toolbar">
 
   <ng-container *ngIf="cpnet">
 
-    <!-- <div id="tree" class="tree" (contextmenu)="contextMenu($event)" (click)="hideContextMenu()"
-      (keydown)="onKeyDown($event)"> -->
     <div id="tree" class="tree" (keydown)="onKeyDown($event)" (click)="disableContextMenu()"
       oncontextmenu="return false;">
 
@@ -29,7 +30,7 @@
 
         <!-- Declarations -->
         <app-tree-node id="declarations" title="Declarations" [expanded]="expanded" [selected]="selected"
-          [type]="'root'" [cpnElement]="undefined" (contextmenu)="onrightClick($event)">
+          [type]="'root'" [cpnElement]="undefined" (contextmenu)="onRightClick($event)">
 
           <ng-container *ngFor="let globbox of nodeToArray(cpnet.globbox)">
             <ng-container *ngFor="let block of nodeToArray(globbox.block)">
@@ -49,7 +50,7 @@
 
         <!-- Pages -->
         <app-tree-node id="pages" title="Pages" [expanded]="expanded" [selected]="selected" [type]="'root'"
-          [cpnElement]="undefined">
+          [cpnElement]="undefined" (contextmenu)="onRightClick($event)">
 
           <ng-container *ngFor="let page of pages">
             <ng-container *ngIf="!subpages.includes(page._id)">
@@ -70,20 +71,14 @@
 
 
 <!-- Tree node context menu -->
-<!-- <div class="dropdown-menu dropdown-menu-fixed shadow" id="contextMenu">
-  <a class="dropdown-item" href="#">New declaration</a>
-  <a class="dropdown-item" href="#">New block</a>
-  <div class="dropdown-divider" href="#"></div>
-  <a class="dropdown-item" href="#">New page</a>
-</div> -->
-
 <div *ngIf="contextmenu">
   <app-context-menu [x]="contextmenuX" [y]="contextmenuY">
-    <!-- <div style="width: 100px; height: 100px; background: red">
-    </div> -->
-    <a class="dropdown-item" href="#" (click)="onNewDeclaration()">New declaration</a>
-    <a class="dropdown-item" href="#" (click)="onNewBlock()">New block</a>
-    <div class="dropdown-divider" href="#"></div>
-    <a class="dropdown-item" href="#" (click)="onNewPage()">New page</a>
+    <a *ngIf="selected && ['globref', 'color', 'var', 'ml', 'block'].includes(selected.type)" class="dropdown-item"
+      href="#" (click)="onNewDeclaration()">New declaration</a>
+    <a *ngIf="selected && ['globref', 'color', 'var', 'ml', 'block'].includes(selected.type)" class="dropdown-item"
+      href="#" (click)="onNewBlock()">New block</a>
+    <!-- <div class="dropdown-divider" href="#"></div> -->
+    <a *ngIf="selected && ['page'].includes(selected.type)" class="dropdown-item"
+      href="#" (click)="onNewPage()">New page</a>
   </app-context-menu>
 </div>

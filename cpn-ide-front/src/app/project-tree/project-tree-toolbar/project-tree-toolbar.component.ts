@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { Constants } from '../../common/constants';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-project-tree-toolbar',
@@ -7,6 +6,11 @@ import { Constants } from '../../common/constants';
   styleUrls: ['./project-tree-toolbar.component.scss']
 })
 export class ProjectTreeToolbarComponent implements OnInit {
+
+  @Output() newNode = new EventEmitter();
+  @Output() deleteNode = new EventEmitter();
+  @Output() upNode = new EventEmitter();
+  @Output() downNode = new EventEmitter();
 
   filterText = '';
 
@@ -16,15 +20,19 @@ export class ProjectTreeToolbarComponent implements OnInit {
   }
 
   onNewNode() {
+    this.newNode.emit('newNode');
   }
 
   onDeleteNode() {
+    this.deleteNode.emit('deleteNode');
   }
 
   onUpNode() {
+    this.upNode.emit('upNode');
   }
 
   onDownNode() {
+    this.downNode.emit('downNode');
   }
 
   changeFilter(value) {

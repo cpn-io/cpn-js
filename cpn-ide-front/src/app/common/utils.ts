@@ -54,3 +54,16 @@ export function clearArray(array) {
     delete array[id];
   }
 }
+
+/**
+ * Move element from index to index
+ * 
+ * @param arr 
+ * @param fromIndex 
+ * @param toIndex 
+ */
+export function arrayMove(arr, fromIndex, toIndex) {
+  var element = arr[fromIndex];
+  arr.splice(fromIndex, 1);
+  arr.splice(toIndex, 0, element);
+}

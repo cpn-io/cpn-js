@@ -7,7 +7,7 @@ import {
   getNextId,
   getDefText
 } from '../../lib/cpn-js/features/modeling/CpnElementFactory';
-import { nodeToArray, addNode } from '../common/utils';
+import { nodeToArray, addNode, arrayMove } from '../common/utils';
 import { DataCollectionMonitorTemplate, BreakpointMonitorTemplate, UserDefinedMonitorTemplate, WriteInFileMonitorTemplate, MarkingSizeMonitorTemplate, ListLengthDataCollectionMonitorTemplate, CountTransitionOccurrencesMonitorTemplate, PlaceContentBreakPointMonitorTemplate, TransitionEnabledBreakPointMonitorTemplate, MonitorType } from '../common/monitors';
 import { parseDeclarartion } from '../project-tree/project-tree-declaration-node/declaration-parser';
 
@@ -59,6 +59,12 @@ export class ModelService {
     this.eventService.on(Message.PROJECT_LOAD, (event) => {
       if (event.project) {
         this.loadProject(event.project);
+        this.eventService.send(Message.SERVER_INIT_NET,
+          {
+            projectData: this.getProjectData(),
+            complexVerify: true,
+            restartSimulator: true
+          });
       }
     });
 
@@ -606,7 +612,7 @@ export class ModelService {
       _id: id ? id : getNextId()
     };
 
-    this.updateInstances();
+    // this.updateInstances();
     return newPage;
   }
 
@@ -1707,14 +1713,6 @@ export class ModelService {
       const nodeList = nodeToArray(cpnParentElement[cpnType]);
       nodeList.push(cpnElement);
 
-      // if (cpnParentElement[cpnType] instanceof Array) {
-      //   cpnParentElement[cpnType].push(cpnElement);
-      // } else if (cpnParentElement[cpnType]) {
-      //   cpnParentElement[cpnType] = [cpnParentElement[cpnType], cpnElement];
-      // } else {
-      //   cpnParentElement[cpnType] = cpnElement;
-      // }
-
       cpnParentElement[cpnType] = nodeList.length === 1 ? nodeList[0] : nodeList;
     } catch (ex) {
       console.error(this.constructor.name, 'addCpnElement(). ERROR: ', ex);
@@ -1730,29 +1728,29 @@ export class ModelService {
    * @param cpnType - new cpn type where cpn element should be placed
    */
   updateCpnElement(cpnParentElement, cpnElement, cpnType) {
-    if (!cpnParentElement) {
-      console.error(this.constructor.name, 'updateCpnElement(). ERROR: Undefined cpnParentElement element.');
-      return;
-    }
-    if (!cpnElement) {
-      console.error(this.constructor.name, 'updateCpnElement(). ERROR: Undefined cpnElement element.');
-      return;
-    }
-    if (!cpnType) {
-      console.error(this.constructor.name, 'updateCpnElement(). ERROR: Undefined cpnType.');
-      return;
-    }
-
-    if (cpnParentElement[cpnType] instanceof Array) {
-      for (let i = 0; i < cpnParentElement[cpnType].length; i++) {
-        if (cpnParentElement[cpnType][i]._id === cpnElement._id) {
-          cpnParentElement[cpnType][i] = cpnElement;
-        }
+    try {
+      if (!cpnParentElement) {
+        throw 'Undefined cpnParentElement element';
       }
-    } else {
-      cpnParentElement[cpnType] = cpnElement;
+      if (!cpnElement) {
+        throw 'Undefined cpnElement element';
+      }
+      if (!cpnType) {
+        throw 'Undefined cpnType';
+      }
+
+      if (cpnParentElement[cpnType] instanceof Array) {
+        for (let i = 0; i < cpnParentElement[cpnType].length; i++) {
+          if (cpnParentElement[cpnType][i]._id === cpnElement._id) {
+            cpnParentElement[cpnType][i] = cpnElement;
+          }
+        }
+      } else {
+        cpnParentElement[cpnType] = cpnElement;
+      }
+    } catch (ex) {
+      console.error(this.constructor.name, 'updateCpnElement(). ERROR: ', ex);
     }
-    return cpnParentElement;
   }
 
   /**
@@ -1762,32 +1760,79 @@ export class ModelService {
    * @param cpnType - old cpn type from where cpn element should be removed
    */
   removeCpnElement(cpnParentElement, cpnElement, cpnType) {
-    if (!cpnParentElement) {
-      console.error(this.constructor.name, 'removeCpnElement(). ERROR: Undefined cpnParentElement element.');
-      return;
-    }
-    if (!cpnElement) {
-      console.error(this.constructor.name, 'removeCpnElement(). ERROR: Undefined cpnElement element.');
-      return;
-    }
-    if (!cpnType) {
-      console.error(this.constructor.name, 'removeCpnElement(). ERROR: Undefined cpnType.');
-      return;
-    }
-
-    if (cpnParentElement[cpnType]) {
-      if (cpnParentElement[cpnType] instanceof Array) {
-        cpnParentElement[cpnType] = cpnParentElement[cpnType].filter((e) => {
-          return e._id !== cpnElement._id;
-        });
-        if (cpnParentElement[cpnType].length === 0) {
-          cpnParentElement[cpnType] = undefined;
-        }
-      } else {
-        cpnParentElement[cpnType] = undefined;
+    try {
+      if (!cpnParentElement) {
+        throw 'Undefined cpnParentElement element';
       }
+      if (!cpnElement) {
+        throw 'Undefined cpnElement element';
+      }
+      if (!cpnType) {
+        throw 'Undefined cpnType';
+      }
+      if (!cpnParentElement[cpnType]) {
+        throw 'Undefined cpnParentElement[cpnType] element';
+      }
+
+      let nodeList = nodeToArray(cpnParentElement[cpnType]);
+      nodeList = nodeList.filter((e) => { return e._id !== cpnElement._id; });
+      cpnParentElement[cpnType] = nodeList.length === 1 ? nodeList[0] : nodeList;
+    } catch (ex) {
+      console.error(this.constructor.name, 'removeCpnElement(). ERROR: ', ex);
     }
-    return cpnParentElement;
+  }
+
+  /**
+   * Move cpn element up or down in it's parent array
+   * @param cpnParentElement 
+   * @param cpnElement 
+   * @param cpnType 
+   * @param direction - direction how to move: ['up','down'] 
+   */
+  moveCpnElement(cpnParentElement, cpnElement, cpnType, direction) {
+    try {
+      if (!cpnParentElement) {
+        throw 'Undefined cpnParentElement element';
+      }
+      if (!cpnElement) {
+        throw 'Undefined cpnElement element';
+      }
+      if (!cpnType) {
+        throw 'Undefined cpnType';
+      }
+      if (!cpnParentElement[cpnType]) {
+        throw 'Undefined cpnParentElement[cpnType] element';
+      }
+      if (!direction || !['up', 'down'].includes(direction)) {
+        throw 'Direction should be "up" or "down"';
+      }
+
+      let fromIndex = 0, nodeList = nodeToArray(cpnParentElement[cpnType]);
+
+      for (let i = 0; i < nodeList.length; i++) {
+        if (nodeList[i]._id === cpnElement._id) {
+          fromIndex = i;
+          break;
+        }
+      }
+      let toIndex = undefined;
+      switch (direction) {
+        case 'up': {
+          toIndex = fromIndex - 1;
+        } break;
+        case 'down': {
+          toIndex = fromIndex + 1;
+        } break;
+      }
+      console.log(this.constructor.name, 'moveCpnElement(). fromIndex, toIndex = ', fromIndex, toIndex);
+      if (toIndex !== undefined && toIndex >= 0 && toIndex < nodeList.length) {
+        arrayMove(nodeList, fromIndex, toIndex);
+      }
+
+      cpnParentElement[cpnType] = nodeList.length === 1 ? nodeList[0] : nodeList;
+    } catch (ex) {
+      console.error(this.constructor.name, 'moveUpCpnElement(). ERROR: ', ex);
+    }
   }
 
 

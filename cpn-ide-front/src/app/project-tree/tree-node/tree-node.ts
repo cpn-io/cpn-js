@@ -7,7 +7,7 @@ import { Component, Input } from "@angular/core";
 })
 export class TreeNodeComponent {
     @Input() public expanded = [];
-    @Input() public selected:any = {};
+    @Input() public selected: any = {};
     @Input() id = '';
     @Input() title = '';
     @Input() type = '';
@@ -19,12 +19,25 @@ export class TreeNodeComponent {
     @Input() error = false;
     @Input() ready = false;
 
-    onClick() {
-        this.expanded[this.id] = !this.expanded[this.id];
+    onSelect() {
         this.selected.type = this.type;
         this.selected.id = this.id;
         this.selected.cpnElement = this.cpnElement;
+    }
+
+    onClick() {
+        this.expanded[this.id] = true;
+
+        this.onSelect();
 
         console.log(this.constructor.name, 'onClick(), this.selected = ', this.selected);
+    }
+
+    onExpand() {
+        this.expanded[this.id] = !this.expanded[this.id];
+
+        this.onSelect();
+
+        console.log(this.constructor.name, 'onExpand(), this.selected = ', this.selected);
     }
 }

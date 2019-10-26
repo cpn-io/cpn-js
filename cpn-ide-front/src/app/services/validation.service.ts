@@ -100,6 +100,10 @@ export class ValidationService implements OnDestroy {
   }
 
   checkValidation() {
+    if (this.accessCpnService.isSimulation) {
+      return;
+    }
+
     // console.log('checkValidation()');
 
     if (this.checkValidationBusy) {

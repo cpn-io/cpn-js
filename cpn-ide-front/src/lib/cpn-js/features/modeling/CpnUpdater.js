@@ -97,6 +97,12 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   let animateArcIdList = [];
 
   eventBus.on('token.animate', function (event) {
+    // console.log('TEST ANIMATION, canvas._container = ', self._canvas._container);
+    // console.log('TEST ANIMATION, canvas._svg = ', self._canvas._svg);
+    // console.log('TEST ANIMATION, canvas._svg isHidden1 = ', isHidden1(self._canvas._svg));
+    // console.log('TEST ANIMATION, canvas._svg isHidden2 = ', isHidden2(self._canvas._svg));
+    // console.log('TEST ANIMATION, animateArcIdList = ', animateArcIdList);
+
     animateArcIdList = [];
 
     if (event.arcIdList) {
@@ -115,6 +121,15 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     }
   });
 
+  function isHidden1(el) {
+    return (el.offsetParent === null)
+  }
+
+  function isHidden2(el) {
+    var style = window.getComputedStyle(el);
+    return (style.display === 'none')
+  }
+
   function animateArc(arcIdList) {
     if (arcIdList.length > 0) {
       const arcId = arcIdList[0];
@@ -123,7 +138,8 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
         element.animate = { tokens: 1 };
         modeling.repaintElement(element);
       } else {
-        self._eventBus.fire('token.animate.complete');
+        // console.log('TEST ANIMATION, self._eventBus.fire(\'token.animate.complete\')');
+        // self._eventBus.fire('token.animate.complete');
       }
     }
   }

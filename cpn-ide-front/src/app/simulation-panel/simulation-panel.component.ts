@@ -153,13 +153,14 @@ export class SimulationPanelComponent implements OnInit {
         break;
 
       case this.MULTI_STEP:
-        if (this.firedTransitionIdList.length > 0) {
-          if (this.multiStepCount > 0) {
-            this.accessCpnService.doStep('multistep');
-            this.multiStepCount--;
-          }
-          this.firedTransitionIdList = [];
-        }
+        // if (this.firedTransitionIdList.length > 0) {
+        //   if (this.multiStepCount > 0) {
+        //     this.accessCpnService.doStep('multistep');
+        //     this.multiStepCount--;
+        //   }
+        //   this.firedTransitionIdList = [];
+        // }
+        this.runMultiStep();
         break;
     }
   }
@@ -167,7 +168,8 @@ export class SimulationPanelComponent implements OnInit {
   onSimulationGetTransitions(event) {
     switch (this.mode) {
       case this.MULTI_STEP:
-        setTimeout(() => { this.runMultiStep(); }, +this.simulationConfig.multi_step.delay);
+        this.animateFiredTransitions();
+        // setTimeout(() => { this.runMultiStep(); }, +this.simulationConfig.multi_step.delay);
         break;
     }
   }
@@ -203,33 +205,31 @@ export class SimulationPanelComponent implements OnInit {
     console.log(this.constructor.name, 'runMultiStep(), this.multiStepCount = ', this.multiStepCount);
 
     if (this.multiStepCount > 0) {
-      const firedTransIdList: any = this.accessCpnService.firedTransIdList;
-      // const firedTransIdList: any = this.accessCpnService.getReadyData();
+      // const firedTransIdList: any = this.accessCpnService.firedTransIdList;
 
-      // console.log(this.constructor.name, 'runMultiStep(), this.accessCpnService.firedTransIdList = ', this.accessCpnService.firedTransIdList);
-      // console.log(this.constructor.name, 'runMultiStep(), firedTransIdList = ', firedTransIdList);
-
-      // if (firedTransIdList && Object.keys(firedTransIdList).length > 0) {
+      // if (firedTransIdList && firedTransIdList.length > 0) {
       //   this.firedTransitionIdList = [];
-      //   for (const transId in firedTransIdList) {
+      //   for (const transId of firedTransIdList) {
       //     this.firedTransitionIdList.push(transId);
       //   }
       //   this.transitionTokenAnimate(this.firedTransitionIdList);
-      // }
-
-      if (firedTransIdList && firedTransIdList.length > 0) {
-        this.firedTransitionIdList = [];
-        for (const transId of firedTransIdList) {
-          this.firedTransitionIdList.push(transId);
-        }
-        this.transitionTokenAnimate(this.firedTransitionIdList);
-      } else {
-        if (this.multiStepCount > 0) {
-          this.accessCpnService.doStep('multistep');
-          this.multiStepCount--;
-        }
+      // } else {
+      if (this.multiStepCount > 0) {
+        this.accessCpnService.doStep('multistep');
+        this.multiStepCount--;
       }
+      // }
+    }
+  }
 
+  animateFiredTransitions() {
+    const firedTransIdList: any = this.accessCpnService.firedTransIdList;
+    if (firedTransIdList && firedTransIdList.length > 0) {
+      this.firedTransitionIdList = [];
+      for (const transId of firedTransIdList) {
+        this.firedTransitionIdList.push(transId);
+      }
+      this.transitionTokenAnimate(this.firedTransitionIdList);
     }
   }
 

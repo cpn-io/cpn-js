@@ -523,13 +523,13 @@ export default function CpnRenderer(
   //
   // }
 
-  function createPathFromConnection(connection) {
+  function createPathFromConnection(connection, offset = { x: 0, y: 0 }) {
     let waypoints = connection.waypoints;
 
     let D = 15;
 
     let prevPoint = waypoints[0];
-    let pathData = 'm  ' + waypoints[0].x + ',' + waypoints[0].y;
+    let pathData = 'm ' + (waypoints[0].x + offset.x) + ',' + (waypoints[0].y + offset.y);
     let prevWp;
 
     for (let i = 1; i < waypoints.length; i++) {
@@ -546,7 +546,9 @@ export default function CpnRenderer(
       let wp = { x: (prevPoint.x + DD * dx / d), y: (prevPoint.y + DD * dy / d) };
 
       if (prevWp) {
-        pathData += 'Q' + prevPoint.x + ' ' + prevPoint.y + ', ' + wp.x + ' ' + wp.y + ' ';
+        pathData +=
+          'Q' + (prevPoint.x + offset.x) + ' ' + (prevPoint.y + offset.y) +
+          ', ' + (wp.x + offset.x) + ' ' + (wp.y + offset.y) + ' ';
       }
 
       let wp2 = waypoints[i];
@@ -554,11 +556,10 @@ export default function CpnRenderer(
         wp2 = { x: (prevPoint.x + dx - DD * dx / d), y: (prevPoint.y + dy - DD * dy / d) };
       }
 
-      pathData += 'L' + wp2.x + ',' + wp2.y + ' ';
+      pathData += 'L' + (wp2.x + offset.x) + ',' + (wp2.y + offset.y) + ' ';
 
       prevPoint = waypoints[i];
       prevWp = wp;
-
     }
 
     return pathData;
@@ -862,203 +863,84 @@ export default function CpnRenderer(
 
     const path = drawPath(parentGfx, pathData, attrs);
 
-    drawArcAnimation(parentGfx, element, path);
+    // token animation
+    drawArcAnimation(element);
 
     return path;
   }
 
-  function drawArcAnimation(parentGfx, element, path) {
+  function drawArcAnimation(element) {
     if (element.animate) {
       console.log('TEST ANIMATION, element.animate = ', element.animate);
 
+      const TOKEN_ANIMATION_SPEED_MS = 500;
+
       const viewbox = canvas.viewbox();
       const zoom = canvas.zoom();
-      let pathValue = path.attributes.d.value;
 
-      pathValue = pathValue.replace('m', 'M');
+      const offset = { x: viewbox.x * -1, y: viewbox.y * -1, }
 
-      console.log('TEST ANIMATION, viewbox = ', viewbox);
-      console.log('TEST ANIMATION, zoom = ', zoom);
+      let pathValue = createPathFromConnection(element, offset);
 
-      console.log('TEST ANIMATION, path = ', pathValue);
-
-      // svgAttr(path, {
-      //   transform: 'scale(' + 0.5 + ', ' + 0.5 + ')'
-      // });
-      // console.log('TEST ANIMATION, path 2 = ', path.attributes.d.value);
-
-
-      // const R = 10;
-
-      // const circleShadow = svgCreate('circle');
-      // svgAttr(circleShadow, { r: R, fill: 'grey' });
-      // svgAppend(parentGfx, circleShadow);
-
-      // const circle = svgCreate('circle');
-      // svgAttr(circle, { r: R, fill: TOKEN_FILL_COLOR });
-      // svgAppend(parentGfx, circle);
-
-      // moveArcCircle(path, circle, circleShadow, undefined, 0);
+      // console.log('TEST ANIMATION, viewbox = ', viewbox);
+      // console.log('TEST ANIMATION, zoom = ', zoom);
+      // console.log('TEST ANIMATION, path = ', path);
+      // console.log('TEST ANIMATION, pathValue = ', pathValue);
 
       const container = canvas._svg;
 
-      if (container) {
-        const offset = {
-          x: viewbox.x * -1,
-          y: viewbox.y * -1,
-        }
+      // reset animation time
+      container.setCurrentTime(0);
 
-        let tokenG = domQuery('#tokenBall', container);
+      if (container) {
+        let tokenG = domQuery('#tokenG', container);
         if (tokenG) {
           svgRemove(tokenG);
         }
 
         tokenG = svgCreate('g');
         svgAttr(tokenG, {
-          id: 'tokenBall',
-          transform: 'scale(' + zoom + ', ' + zoom + ')'
+          id: 'tokenG',
+          transform: 'scale(' + zoom + ', ' + zoom + ')',
+          visibility: 'hidden'
         });
 
-        const p = path.getPointAtLength(0);
+        const tokenGA = svgCreate('g');
+
+        const tokenBallShadow = svgCreate('circle');
+        svgAttr(tokenBallShadow, { r: 10, fill: 'gray', cx: 1, cy: 1 });
 
         const tokenBall = svgCreate('circle');
-        svgAttr(tokenBall, {
-          r: 10,
-          // cx: p.x,
-          // cy: p.y,
-          cx: offset.x,
-          cy: offset.y,
-          fill: 'red',
-        });
-        svgAppend(tokenG, tokenBall);
+        svgAttr(tokenBall, { r: 10, fill: TOKEN_FILL_COLOR, cx: 0, cy: 0 });
 
         const tokenAnimation = svgCreate('animateMotion');
         svgAttr(tokenAnimation, {
-          dur: '1s',
+          dur: (TOKEN_ANIMATION_SPEED_MS + 20) + 'ms',
           begin: '0s',
-          repeatCount: 'indefinite',
+          repeatCount: 1,
           path: pathValue,
         });
-        svgAppend(tokenBall, tokenAnimation);
 
+        svgAppend(tokenGA, tokenBallShadow);
+        svgAppend(tokenGA, tokenBall);
+        svgAppend(tokenGA, tokenAnimation);
+        svgAppend(tokenG, tokenGA);
         svgAppend(container, tokenG);
+
+        setTimeout(() => {
+          svgAttr(tokenG, {
+            visibility: 'visible'
+          });
+        }, 0);
 
         setTimeout(() => {
           svgRemove(tokenG);
           self._eventBus.fire('token.animate.complete');
-        }, 1000);
-
+        }, TOKEN_ANIMATION_SPEED_MS);
       }
 
       delete element.animate;
     }
-  }
-
-  function moveArcCircle(path, circle, circleShadow, text, n) {
-    const COUNT = 50;
-    if (n <= COUNT) {
-      const l = path.getTotalLength();
-      const p = path.getPointAtLength((n / COUNT) * l);
-
-      svgAttr(circleShadow, { transform: "translate(" + (p.x + 1) + "," + (p.y + 1) + ")" });
-      svgAttr(circle, { transform: "translate(" + p.x + "," + p.y + ")" });
-      // svgAttr(text, { transform: "translate(" + (p.x - 4) + "," + (p.y + 4) + ")" });
-
-      setTimeout(() => moveArcCircle(path, circle, circleShadow, text, n + 1), 0);
-    } else {
-      svgRemove(circleShadow);
-      svgRemove(circle);
-      // svgRemove(text);
-
-      self._eventBus.fire('token.animate.complete');
-    }
-  }
-
-  // function moveArcCircle2(path, circle, text) {
-  //   const COUNT = 10;
-  //   const l = path.getTotalLength();
-
-  //   for (let n = 0; n <= COUNT; n++) {
-  //     const p = path.getPointAtLength((n / COUNT) * l);
-
-  //     console.log('TEST ANIMATION, moveArcCircle2(), p = ', p);
-
-  //     setTimeout(() => {
-  //       svgAttr(circle, { transform: "translate(" + p.x + "," + p.y + ")", });
-  //       svgAttr(text, { transform: "translate(" + (p.x - 4) + "," + (p.y + 4) + ")", });
-  //     }, 1);
-
-  //     sleep(100);
-  //   }
-  //   svgRemove(circle);
-  //   svgRemove(text);
-  // }
-
-  function sleep(millis) {
-    var date = Date.now();
-    var curDate = null;
-    do {
-      curDate = Date.now();
-    } while (curDate - date < millis);
-  }
-
-  function drawEndMarker(parentGfx) {
-    var marker = svgCreate('marker');
-    svgAttr(marker, {
-      id: 'endMarker',
-      orient: 'auto',
-      refX: 15,
-      refY: 5,
-      markerWidth: 15,
-      markerHeight: 10,
-    });
-    // marker path
-    var path = svgCreate('path');
-    svgAttr(path, {
-      d: 'M0,0 L2,5 L0,10 L15,5 Z',
-      fill: 'black'
-    });
-    svgAppend(marker, path);
-    // -----------------------------
-    svgAppend(parentGfx, marker);
-
-    return marker;
-  }
-
-
-  /**
-   * Draw borttom text label
-   *
-   * @param {*} parentGfx - parent svg graphics element
-   * @param {*} s - text
-   * @param {*} parentRect - parent element rectangle
-   */
-  function drawBottomTextLabel(parentGfx, textRenderer, s, parentRect) {
-    const textDim = textRenderer.getTextUtil().getDimensions(s, {});
-    textDim.width += 5;
-    textDim.height += 1;
-
-    var rect = svgCreate('rect');
-    svgAttr(rect, {
-      x: parentRect.width / 2 - textDim.width / 2,
-      y: parentRect.height - textDim.height / 2,
-      width: textDim.width,
-      height: textDim.height
-    });
-    svgAttr(rect, {
-      fill: '#ffc',
-      stroke: '#000',
-      strokeWidth: 1
-    });
-    svgAppend(parentGfx, rect);
-
-    var text = svgCreate('text');
-    svgAttr(text, {
-      x: parentRect.width / 2 - textDim.width / 2 + 2.5,
-      y: parentRect.height + 4
-    });
-    text.textContent = s;
-    svgAppend(parentGfx, text);
   }
 
 

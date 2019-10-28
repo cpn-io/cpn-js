@@ -1,5 +1,5 @@
 import { ModelService } from './../services/model.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Message } from '../common/message';
 import { EventService } from '../services/event.service';
 import { AccessCpnService } from '../services/access-cpn.service';
@@ -9,7 +9,7 @@ import { AccessCpnService } from '../services/access-cpn.service';
   templateUrl: './simulation-panel.component.html',
   styleUrls: ['./simulation-panel.component.scss']
 })
-export class SimulationPanelComponent implements OnInit {
+export class SimulationPanelComponent implements OnInit, OnDestroy {
 
   SINGLE_STEP = 1;
   SINGLE_STEP_CHOOSE_BINDING = 2;
@@ -41,19 +41,41 @@ export class SimulationPanelComponent implements OnInit {
   constructor(
     private eventService: EventService,
     public accessCpnService: AccessCpnService,
-    public modelService: ModelService) { }
+    public modelService: ModelService) {
+    console.log(this.constructor.name, 'constructor');
+  }
 
   ngOnInit() {
+    console.log(this.constructor.name, 'ngOnInit()');
+
     this.setMode(this.SINGLE_STEP);
+
+    this.initEvents()
+  }
+
+  initEvents() {
+    const self = this;
 
     this.eventService.on(Message.SIMULATION_STARTED, () => { });
     this.eventService.on(Message.SIMULATION_STOPED, () => this.onStopSimulation());
-    // this.eventService.on(Message.SHAPE_HOVER, (event) => this.onShapeHover(event));
+    this.eventService.on(Message.SHAPE_HOVER, (event) => this.onShapeHover(event));
     this.eventService.on(Message.SHAPE_SELECT, (event) => this.onShapeSelect(event));
     this.eventService.on(Message.SIMULATION_TOKEN_ANIMATE_COMPLETE, (event) => this.onSimulationAnimateComplete(event));
     this.eventService.on(Message.SIMULATION_SELECT_BINDING, (event) => this.onSimulationSelectBinding(event));
     this.eventService.on(Message.SERVER_GET_TRANSITIONS, (event) => this.onSimulationGetTransitions(event));
+
   }
+
+  ngOnDestroy() {
+    this.eventService.off(Message.SIMULATION_STARTED, () => { });
+    this.eventService.off(Message.SIMULATION_STOPED, () => this.onStopSimulation());
+    this.eventService.off(Message.SHAPE_HOVER, (event) => this.onShapeHover(event));
+    this.eventService.off(Message.SHAPE_SELECT, (event) => this.onShapeSelect(event));
+    this.eventService.off(Message.SIMULATION_TOKEN_ANIMATE_COMPLETE, (event) => this.onSimulationAnimateComplete(event));
+    this.eventService.off(Message.SIMULATION_SELECT_BINDING, (event) => this.onSimulationSelectBinding(event));
+    this.eventService.off(Message.SERVER_GET_TRANSITIONS, (event) => this.onSimulationGetTransitions(event));
+  }
+
 
   public setMode(mode) {
     this.mode = mode;
@@ -77,6 +99,8 @@ export class SimulationPanelComponent implements OnInit {
   }
 
   onShapeHover(event) {
+    console.log('onShapeHover(), event = ', event);
+
     if (!this.accessCpnService.isSimulation) {
       return;
     }
@@ -92,7 +116,7 @@ export class SimulationPanelComponent implements OnInit {
           break;
       }
     }
-    document.body.style.cursor = setCursor ? 'crosshair' : 'defualt';
+    // document.body.style.cursor = setCursor ? 'crosshair' : 'defualt';
   }
 
   onShapeSelect(event) {

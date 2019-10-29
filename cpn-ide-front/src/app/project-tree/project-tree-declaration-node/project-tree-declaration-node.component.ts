@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, DoCheck, SimpleChanges, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, DoCheck, SimpleChanges, OnChanges, AfterViewInit } from '@angular/core';
 import { ModelService } from '../../services/model.service';
 import { EventService } from '../../services/event.service';
 import { Message } from '../../common/message';
@@ -10,7 +10,7 @@ import { AccessCpnService } from '../../services/access-cpn.service';
   templateUrl: './project-tree-declaration-node.component.html',
   styleUrls: ['./project-tree-declaration-node.component.scss']
 })
-export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges {
+export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, AfterViewInit {
 
   @Input() public parentBlock: any;
   @Input() public declaration: any;
@@ -28,6 +28,10 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.updateErrors();
+  }
+
+  ngAfterViewInit() {
+    console.log(this.constructor.name, 'ngAfterViewInit(), declaration = ' + JSON.stringify(this.declaration));
   }
 
   ngOnChanges(changes: SimpleChanges) {

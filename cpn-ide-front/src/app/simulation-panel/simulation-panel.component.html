@@ -23,64 +23,39 @@
 
 <div class="panel tab-container">
 
-  <!-- <button type="button" class="btn btn-primary" (click)="onRewind()">
-    <i class="fas fa-backward"></i>
-    <span>Rewind</span>
-  </button>
-  <br> -->
-
-  <!-- <button type="button" class="btn btn-light" (click)="setMode(this.SINGLE_STEP)"
-    [ngClass]="{'enabled': mode === this.SINGLE_STEP }">
-    <i class="fas fa-step-forward"></i>
-    <span>Single Step</span>
-  </button>
-  <br> -->
-
-  <div class="blockHeader" (click)="setMode(this.SINGLE_STEP)"
-    [ngClass]="mode === this.SINGLE_STEP ? 'enabled' : 'disabled'">
+  <div class="blockHeader" (click)="simulationService.setMode(simulationService.SINGLE_STEP)"
+    [ngClass]="simulationService.mode === simulationService.SINGLE_STEP ? 'enabled' : 'disabled'">
     <i class="fas fa-step-forward"></i>
     <span>Single Step</span>
   </div>
-  <div class="note" [ngClass]="{'expanded': mode === this.SINGLE_STEP }">
+  <div class="note" [ngClass]="{'expanded': simulationService.mode === simulationService.SINGLE_STEP }">
     Click on a marked (enabled) transition
   </div>
 
-  <!-- <button type="button" class="btn btn-light" (click)="setMode(this.SINGLE_STEP_CHOOSE_BINDING)"
-    [ngClass]="{'enabled': mode === this.SINGLE_STEP_CHOOSE_BINDING }">
-    <i class="fas fa-step-forward"></i>
-    <span>Single Step Choose Binding</span>
-  </button>
-  <br> -->
-  <div class="blockHeader" (click)="setMode(this.SINGLE_STEP_CHOOSE_BINDING)"
-    [ngClass]="mode === this.SINGLE_STEP_CHOOSE_BINDING ? 'enabled' : 'disabled'">
+  <div class="blockHeader" (click)="simulationService.setMode(simulationService.SINGLE_STEP_CHOOSE_BINDING)"
+    [ngClass]="simulationService.mode === simulationService.SINGLE_STEP_CHOOSE_BINDING ? 'enabled' : 'disabled'">
     <i class="fas fa-step-forward"></i>
     <span>Single Step Choose Binding</span>
   </div>
-  <div class="note" [ngClass]="{'expanded': mode === this.SINGLE_STEP_CHOOSE_BINDING }">
+  <div class="note" [ngClass]="{'expanded': simulationService.mode === simulationService.SINGLE_STEP_CHOOSE_BINDING }">
     Click on a marked (enabled) transition and select one binding
   </div>
 
-  <!-- <button type="button" class="btn btn-light" (click)="setMode(this.MULTI_STEP)"
-    [ngClass]="{'enabled': mode === this.MULTI_STEP }">
-    <i class="fas fa-fast-forward"></i>
-    <span>Multi-Step (Animated)</span>
-  </button>
-  <br> -->
-  <div class="blockHeader" (click)="setMode(this.MULTI_STEP)"
-    [ngClass]="mode === this.MULTI_STEP ? 'enabled' : 'disabled'">
+  <div class="blockHeader" (click)="simulationService.setMode(simulationService.MULTI_STEP)"
+    [ngClass]="simulationService.mode === simulationService.MULTI_STEP ? 'enabled' : 'disabled'">
     <i class="fas fa-fast-forward"></i>
     <span>Multi-Step (Animated)</span>
   </div>
-  <div class="note" [ngClass]="{'expanded': mode === this.MULTI_STEP }">
+  <div class="note" [ngClass]="{'expanded': simulationService.mode === simulationService.MULTI_STEP }">
     <table>
       <tr>
         <td>Steps</td>
-        <td><input class="full-width" type="number" [(ngModel)]="simulationConfig.multi_step.steps"></td>
+        <td><input class="full-width" type="number" [(ngModel)]="simulationService.simulationConfig.multi_step.steps"></td>
         <td></td>
       </tr>
       <tr>
         <td>Delay</td>
-        <td><input class="full-width" type="number" [(ngModel)]="simulationConfig.multi_step.delay"></td>
+        <td><input class="full-width" type="number" [(ngModel)]="simulationService.simulationConfig.multi_step.delay"></td>
         <td>ms</td>
       </tr>
       <tr>
@@ -96,34 +71,28 @@
     </table>
   </div>
 
-  <!-- <button type="button" class="btn btn-light" (click)="setMode(this.MULTI_STEP_FF)"
-    [ngClass]="{'enabled': mode === this.MULTI_STEP_FF }">
-    <i class="fas fa-fast-forward"></i>
-    <span>Multi-Step (Fast Forward)</span>
-  </button>
-  <br> -->
-  <div class="blockHeader" (click)="setMode(this.MULTI_STEP_FF)"
-    [ngClass]="mode === this.MULTI_STEP_FF ? 'enabled' : 'disabled'">
+  <div class="blockHeader" (click)="simulationService.setMode(simulationService.MULTI_STEP_FF)"
+    [ngClass]="simulationService.mode === simulationService.MULTI_STEP_FF ? 'enabled' : 'disabled'">
     <i class="fas fa-fast-forward"></i>
     <span>Multi-Step (Fast Forward)</span>
   </div>
-  <div class="note" [ngClass]="{'expanded': mode === this.MULTI_STEP_FF }">
-    <table *ngIf="mode === this.MULTI_STEP_FF">
+  <div class="note" [ngClass]="{'expanded': simulationService.mode === simulationService.MULTI_STEP_FF }">
+    <table *ngIf="simulationService.mode === simulationService.MULTI_STEP_FF">
       <tr>
         <td>Steps</td>
-        <td><input type="number" class="full-width" [(ngModel)]="simulationConfig.multi_step_ff.steps"></td>
+        <td><input type="number" class="full-width" [(ngModel)]="simulationService.simulationConfig.multi_step_ff.steps"></td>
       </tr>
       <tr>
         <td>Max Step</td>
-        <td><input type="number" class="full-width" [(ngModel)]="simulationConfig.multi_step_ff.max_step"></td>
+        <td><input type="number" class="full-width" [(ngModel)]="simulationService.simulationConfig.multi_step_ff.max_step"></td>
       </tr>
       <tr>
         <td>Time Step</td>
-        <td><input type="number" class="full-width" [(ngModel)]="simulationConfig.multi_step_ff.time_step"></td>
+        <td><input type="number" class="full-width" [(ngModel)]="simulationService.simulationConfig.multi_step_ff.time_step"></td>
       </tr>
       <tr>
         <td>Max Time</td>
-        <td><input type="number" class="full-width" [(ngModel)]="simulationConfig.multi_step_ff.max_time"></td>
+        <td><input type="number" class="full-width" [(ngModel)]="simulationService.simulationConfig.multi_step_ff.max_time"></td>
       </tr>
       <tr>
         <td></td>
@@ -137,18 +106,12 @@
     </table>
   </div>
 
-  <!-- <button type="button" class="btn btn-light" (click)="setMode(this.REPLICATION)"
-    [ngClass]="{'enabled': mode === this.REPLICATION }">
-    <i class="fas fa-copy"></i>
-    <span>Replication</span>
-  </button>
-  <br> -->
-  <div class="blockHeader" (click)="setMode(this.REPLICATION)"
-    [ngClass]="mode === this.REPLICATION ? 'enabled' : 'disabled'">
+  <div class="blockHeader" (click)="simulationService.setMode(simulationService.REPLICATION)"
+    [ngClass]="simulationService.mode === simulationService.REPLICATION ? 'enabled' : 'disabled'">
     <i class="fas fa-copy"></i>
     <span>Replication</span>
   </div>
-  <div class="note" [ngClass]="{'expanded': mode === this.REPLICATION }">
+  <div class="note" [ngClass]="{'expanded': simulationService.mode === simulationService.REPLICATION }">
     <table>
       <tr>
         <td>Repeat</td>

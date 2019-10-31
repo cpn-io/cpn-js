@@ -73,8 +73,9 @@ var DEFAULT_LABEL_FILL_COLOR = '#ebebeb00';
 var PORT_FILL_COLOR = '#e0e0fd';
 var PORT_STROKE_COLOR = '#4c66cc';
 
-var TOKEN_FILL_COLOR = '#6fe117';
-var MARKING_FILL_COLOR = '#bcfd8b';
+var TOKEN_FILL_COLOR = '#00dd00'; // '#6fe117';
+var TOKEN_BALL_FILL_COLOR = '#00dd00';
+var MARKING_FILL_COLOR = '#99ff99'; // '#bcfd8b';
 
 inherits(CpnRenderer, BaseRenderer);
 
@@ -873,6 +874,7 @@ export default function CpnRenderer(
     if (element.animate) {
       console.log('TEST ANIMATION, element.animate = ', element.animate);
 
+      const TOKEN_BALL_RADIUS = 7;
       const TOKEN_ANIMATION_SPEED_MS = 500;
 
       const viewbox = canvas.viewbox();
@@ -908,10 +910,10 @@ export default function CpnRenderer(
         const tokenGA = svgCreate('g');
 
         const tokenBallShadow = svgCreate('circle');
-        svgAttr(tokenBallShadow, { r: 10, fill: 'gray', cx: 1, cy: 1 });
+        svgAttr(tokenBallShadow, { r: TOKEN_BALL_RADIUS, fill: 'gray', cx: 1, cy: 1 });
 
         const tokenBall = svgCreate('circle');
-        svgAttr(tokenBall, { r: 10, fill: TOKEN_FILL_COLOR, cx: 0, cy: 0 });
+        svgAttr(tokenBall, { r: TOKEN_BALL_RADIUS, fill: TOKEN_BALL_FILL_COLOR, cx: 0, cy: 0 });
 
         const tokenAnimation = svgCreate('animateMotion');
         svgAttr(tokenAnimation, {

@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 
 import Diagram from 'diagram-js';
 import CpnDiagramModule from '../../lib/cpn-js/core';
@@ -33,7 +33,7 @@ import { addNode } from '../common/utils';
   templateUrl: './model-editor.component.html',
   styleUrls: ['./model-editor.component.scss']
 })
-export class ModelEditorComponent implements OnInit, AfterViewInit {
+export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild('container') containerElementRef: ElementRef;
   @ViewChild('popup') popupElementRef: ElementRef;
@@ -69,6 +69,8 @@ export class ModelEditorComponent implements OnInit, AfterViewInit {
 
   availableMonitorList = [];
 
+  instanseId;
+
   constructor(private eventService: EventService,
     private settings: SettingsService,
     private modelService: ModelService,
@@ -80,7 +82,14 @@ export class ModelEditorComponent implements OnInit, AfterViewInit {
     console.log(this.constructor.name, 'ngAfterViewInit(), this = ', this);
   }
 
+  ngOnDestroy() {
+    console.log(this.constructor.name, 'ngOnDestroy(), this.instanseId = ', this.instanseId);
+
+    this.diagram.destroy();
+  }
+
   ngOnInit() {
+    this.instanseId = Math.random().toString(36).substring(2).toUpperCase() + '-' + Date.now().toString(36).toUpperCase();
 
     const self = this;
 
@@ -113,6 +122,9 @@ export class ModelEditorComponent implements OnInit, AfterViewInit {
     this.selectionProvider = this.diagram.get('selectionProvider');
 
     const eventBus = this.eventBus;
+
+    console.log(this.constructor.name, 'ngOnInit(), this.instanseId = ', this.instanseId);
+    console.log(this.constructor.name, 'ngOnInit(), this.modeling.getInstanseId() = ', this.modeling.getInstanseId());
 
     // set defualt values to diagram
     // -----------------------------------------------------

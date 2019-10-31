@@ -97,7 +97,8 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   let animateArcIdList = [];
 
   eventBus.on('token.animate', function (event) {
-    // console.log('TEST ANIMATION, canvas._container = ', self._canvas._container);
+    console.log('TEST ANIMATION, token.animate, modeling.getInstanseId() = ', self._modeling.getInstanseId());
+
     // console.log('TEST ANIMATION, canvas._svg = ', self._canvas._svg);
     // console.log('TEST ANIMATION, canvas._svg isHidden1 = ', isHidden1(self._canvas._svg));
     // console.log('TEST ANIMATION, canvas._svg isHidden2 = ', isHidden2(self._canvas._svg));
@@ -113,6 +114,8 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   });
 
   eventBus.on('token.animate.complete', () => {
+    console.log('TEST ANIMATION, token.animate.complete, modeling.getInstanseId() = ', self._modeling.getInstanseId());
+
     if (animateArcIdList.length > 1) {
       animateArcIdList.shift();
       animateArc(animateArcIdList);

@@ -65,6 +65,8 @@ export default function Modeling(eventBus, elementFactory, elementRegistry, comm
   this._portMenuProvider = portMenuProvider;
 
   this._isEditable = true;
+
+  this._instanseId = Math.random().toString(36).substring(2).toUpperCase() + '-' + Date.now().toString(36).toUpperCase();
 }
 
 inherits(Modeling, BaseModeling);
@@ -79,6 +81,9 @@ Modeling.$inject = [
   'portMenuProvider'
 ];
 
+Modeling.prototype.getInstanseId = function () {
+  return this._instanseId;
+};
 
 Modeling.prototype.getHandlers = function () {
   // console.log('Modeling().getHandlers()');

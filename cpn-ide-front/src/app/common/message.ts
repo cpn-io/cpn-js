@@ -35,14 +35,13 @@ export class Message {
   static SERVER_INIT_SIM_DONE = 'server.init.sim.done';
   static SERVER_INIT_SIM_ERROR = 'server.init.sim.error';
 
-  static SERVER_GET_TOKEN_MARKS = 'server.get.token.mark';
-  static SERVER_GET_TRANSITIONS = 'server.get.transitions';
   static SERVER_GET_BINDINGS = 'server.get.bindings';
   static SERVER_GET_SIM_STATE = 'server.get.sim.state';
 
   static SIMULATION_STARTED = 'simulation.started';
   static SIMULATION_STOPED = 'simulation.stoped';
   static SIMULATION_SELECT_BINDING = 'simulation.select.binding';
+  static SIMULATION_STEP_DONE = 'simulation.step.done';
   static SIMULATION_UPDATE_STATE = 'simulation.update.state';
   static SIMULATION_TOKEN_ANIMATE = 'simulation.token.animate';
   static SIMULATION_TOKEN_ANIMATE_COMPLETE = 'simulation.token.animate.complete';

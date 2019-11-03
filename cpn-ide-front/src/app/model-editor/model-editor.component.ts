@@ -166,32 +166,21 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.log('Validation process...');
     });
 
-    // VALIDATION RESULT
-    this.eventService.on(Message.SERVER_INIT_NET_DONE, (event) => {
-      this.updateElementStatus();
-    });
+    // VALIDATION STATUS
+    this.eventService.on(Message.SERVER_INIT_NET_DONE, () => this.updateElementStatus());
 
-    // TOKENS
-    this.eventService.on(Message.SERVER_GET_TOKEN_MARKS, (event) => {
-      this.updateElementStatus();
-    });
-
-    // TRANSITIONS
-    this.eventService.on(Message.SERVER_GET_TRANSITIONS, (data) => {
-      this.updateElementStatus();
-    });
+    // SIMULATION STATUS
+    this.eventService.on(Message.SIMULATION_STEP_DONE, () => this.updateElementStatus());
 
     // BINDINGS
-    this.eventService.on(Message.SERVER_GET_BINDINGS, (event) => {
-      eventBus.fire('bindingsMenu.open', { data: event.data });
-    });
+    this.eventService.on(Message.SERVER_GET_BINDINGS, (event) => eventBus.fire('bindingsMenu.open', { data: event.data }));
 
     // SIM STATUS
-    this.eventService.on(Message.SIMULATION_STARTED, (data) => {
+    this.eventService.on(Message.SIMULATION_STARTED, () => {
       this.updateElementStatus();
       this.modeling.setEditable(!this.accessCpnService.isSimulation);
     });
-    this.eventService.on(Message.SIMULATION_STOPED, (data) => {
+    this.eventService.on(Message.SIMULATION_STOPED, () => {
       this.updateElementStatus();
       this.modeling.setEditable(!this.accessCpnService.isSimulation);
     });
@@ -211,7 +200,22 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.eventService.on(Message.MONITOR_SET_AVAILABLE_NODES, (event) => this.updateAlailableStatus(event.availableNodeIds));
 
     this.eventService.on(Message.SIMULATION_TOKEN_ANIMATE, (event) => {
-      eventBus.fire('token.animate', event);
+      // eventBus.fire('token.animate', event);
+
+      if (event.arcIdList) {
+        for (const arcId of event.arcIdList) {
+          eventBus.fire('token.animate.arc', { arcId: arcId });
+          new Promise(function (resolve, reject) {
+            eventBus.on('token.animate.complete', () => {
+              console.log('TEST ANIMATION, token.animate.complete, arcId = ', arcId);
+              resolve();
+            });
+          }).then(() => {
+            console.log('TEST ANIMATION, after then() (2)');
+          });
+          console.log('TEST ANIMATION, after then() (1)');
+        }
+      }
     });
 
     // Diagram events

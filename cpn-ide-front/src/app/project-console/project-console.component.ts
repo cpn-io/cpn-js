@@ -66,8 +66,6 @@ export class ProjectConsoleComponent implements OnInit {
           }
         }
       }
-      // this.accessCpnService.getTokenMarks();
-      // this.accessCpnService.getTransitions();
     });
 
     this.eventService.on(Message.SERVER_INIT_NET_ERROR, (event) => {
@@ -111,18 +109,12 @@ export class ProjectConsoleComponent implements OnInit {
     });
 
     // TOKENS
-    this.eventService.on(Message.SERVER_GET_TOKEN_MARKS, (event) => {
-      if (event) {
-        this.logSuccess('Tokens: ' + JSON.stringify(event.data));
-      }
+    this.eventService.on(Message.SIMULATION_STEP_DONE, () => {
+        this.logSuccess('Tokens: ' + JSON.stringify(this.accessCpnService.tokenData));
+        this.logSuccess('Fired transitions: ' + JSON.stringify(this.accessCpnService.firedTransIdList));
+        this.logSuccess('Ready transitions: ' + JSON.stringify(this.accessCpnService.readyData));
     });
 
-    // TRANSITIONS
-    this.eventService.on(Message.SERVER_GET_TRANSITIONS, (event) => {
-      if (event) {
-        this.logSuccess('Ready transitions: ' + JSON.stringify(event.data));
-      }
-    });
 
     // MODEL CHANGES
     this.eventService.on(Message.MODEL_CHANGED_DETAILS, (event) => {

@@ -1,7 +1,5 @@
 import { ModelService } from './../services/model.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Message } from '../common/message';
-import { EventService } from '../services/event.service';
 import { AccessCpnService } from '../services/access-cpn.service';
 import { SimulationService } from '../services/simulation.service';
 

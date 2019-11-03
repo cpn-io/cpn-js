@@ -311,21 +311,12 @@ export class AccessCpnService {
         this.eventService.send(Message.SERVER_INIT_SIM_DONE, { data: data });
         // Get token marks and transition
         if (data) {
-          // this.tokenData = data.tokensAndMark;
-          // this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
-          // this.readyData = data.enableTrans;
-          // this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
-
           this.updateTokenData(data.tokensAndMark);
           this.updateReadyData(data.enableTrans);
           this.updateFiredTrans(data.firedTrans);
 
-          this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
-          this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
+          this.eventService.send(Message.SIMULATION_STEP_DONE);
         }
-
-        //this.getTokenMarks();
-        //this.getTransitions();
       },
       (error) => {
         this.initSimProcessing = false;
@@ -356,7 +347,7 @@ export class AccessCpnService {
 
         this.tokenData = data;
 
-        this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: data });
+        this.eventService.send(Message.SIMULATION_STEP_DONE, { data: data });
       },
       (error) => {
         console.error('AccessCpnService, getTokenMarks(), ERROR, data = ', error);
@@ -365,67 +356,36 @@ export class AccessCpnService {
   }
 
   /**
-   * Get transitions state from simulator
-   */
-  getTransitions() {
-    console.log('AccessCpnService, getTransitions(), this.sessionId = ', this.sessionId);
-
-    if (!this.simInitialized || !this.sessionId) {
-      return;
-    }
-
-    this.readyData = [];
-
-    const url = CpnServerUrl.get() + '/api/v2/cpn/sim/transitions/enabled';
-    this.http.get(url, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
-      (data: any) => {
-        console.log('AccessCpnService, getTransitions(), SUCCESS, data = ', data);
-
-        this.readyData = data;
-        this.updateReadyData(data);
-
-        this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: data });
-      },
-      (error) => {
-        console.error('AccessCpnService, getTransitions(), ERROR, data = ', error);
-      }
-    );
-  }
-
-
-  /**
    * Do simulation step for transition
    * @param transId - transition id
    */
   doStep(transId) {
     if (!this.simInitialized || !this.sessionId) {
-      return;
+      return new Promise(() => {});
     }
 
-    const url = CpnServerUrl.get() + '/api/v2/cpn/sim/step/' + transId; // ID1412328496
-    this.http.get(url, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
-      (data: any) => {
-        console.log('AccessCpnService, doStep(), SUCCESS, data = ', data);
-        if (data) {
-          // this.tokenData = data.tokensAndMark;
-          // this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
-          // this.readyData = data.enableTrans;
-          // this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
+    return new Promise((resolve, reject) => {
 
-          this.updateTokenData(data.tokensAndMark);
-          this.updateReadyData(data.enableTrans);
-          this.updateFiredTrans(data.firedTrans);
+      const url = CpnServerUrl.get() + '/api/v2/cpn/sim/step/' + transId; // ID1412328496
+      this.http.get(url, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
+        (data: any) => {
+          console.log('AccessCpnService, doStep(), SUCCESS, data = ', data);
+          if (data) {
+            this.updateTokenData(data.tokensAndMark);
+            this.updateReadyData(data.enableTrans);
+            this.updateFiredTrans(data.firedTrans);
 
-          this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
-          this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
+            this.eventService.send(Message.SIMULATION_STEP_DONE);
+          }
+
+          this.getSimState();
+        },
+        (error) => {
+          console.error('AccessCpnService, doStep(), ERROR, data = ', error);
         }
+      );
 
-        this.getSimState();
-      },
-      (error) => {
-        console.error('AccessCpnService, doStep(), ERROR, data = ', error);
-      }
-    );
+    });
   }
 
   doStepWithBinding(transId, bindId) {
@@ -445,17 +405,11 @@ export class AccessCpnService {
       (data: any) => {
         console.log('AccessCpnService, doStepWithBinding(), SUCCESS, data = ', data);
         if (data) {
-          // this.tokenData = data.tokensAndMark;
-          // this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
-          // this.readyData = data.enableTrans;
-          // this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
-
           this.updateTokenData(data.tokensAndMark);
           this.updateReadyData(data.enableTrans);
           this.updateFiredTrans(data.firedTrans);
 
-          this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
-          this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
+          this.eventService.send(Message.SIMULATION_STEP_DONE);
 
           this.getSimState();
         }
@@ -482,17 +436,11 @@ export class AccessCpnService {
       (data: any) => {
         console.log('AccessCpnService, doStepWithBinding(), SUCCESS, data = ', data);
         if (data) {
-          // this.tokenData = data.tokensAndMark;
-          // this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
-          // this.readyData = data.enableTrans;
-          // this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
-
           this.updateTokenData(data.tokensAndMark);
           this.updateReadyData(data.enableTrans);
           this.updateFiredTrans(data.firedTrans);
 
-          this.eventService.send(Message.SERVER_GET_TOKEN_MARKS, { data: this.tokenData });
-          this.eventService.send(Message.SERVER_GET_TRANSITIONS, { data: this.readyData });
+          this.eventService.send(Message.SIMULATION_STEP_DONE);
 
           this.getSimState();
         }

@@ -56,7 +56,8 @@ export class MainToolbarComponent implements OnInit {
   }
 
   onTest() {
-    this.eventService.send(Message.SIMULATION_TOKEN_ANIMATE, { arcIdList: ['ID2751839452', 'ID1243034573', 'ID1243036954', 'ID1243040118'] });
+    this.eventService.send(Message.SIMULATION_TOKEN_ANIMATE, { arcIdList: ['ID2751839452'] });
+    // this.eventService.send(Message.SIMULATION_TOKEN_ANIMATE, { arcIdList: ['ID2751839452', 'ID1243034573', 'ID1243036954', 'ID1243040118'] });
     // this.eventService.send(Message.SIMULATION_TOKEN_ANIMATE, { arcIdList: ['ID1412328564', 'ID1412328605'] });
   }
 

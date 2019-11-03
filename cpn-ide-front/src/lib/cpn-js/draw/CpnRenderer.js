@@ -874,8 +874,8 @@ export default function CpnRenderer(
     if (element.animate) {
       console.log('TEST ANIMATION, element.animate = ', element.animate);
 
-      const TOKEN_BALL_RADIUS = 7;
-      const TOKEN_ANIMATION_SPEED_MS = 500;
+      const TOKEN_BALL_RADIUS = 9;
+      const TOKEN_ANIMATION_SPEED_MS = 700;
 
       const viewbox = canvas.viewbox();
       const zoom = canvas.zoom();

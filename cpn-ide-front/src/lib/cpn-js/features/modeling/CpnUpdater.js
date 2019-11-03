@@ -110,7 +110,14 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
       animateArcIdList = event.arcIdList;
     }
 
-    animateArc(animateArcIdList);
+    animateArcList(animateArcIdList);
+  });
+
+  eventBus.on('token.animate.arc', function (event) {
+    console.log('TEST ANIMATION, token.animate.arc, event = ', event);
+    if (event.arcId) {
+      animateArc(event.arcId);
+    }
   });
 
   eventBus.on('token.animate.complete', () => {
@@ -118,7 +125,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
     if (animateArcIdList.length > 1) {
       animateArcIdList.shift();
-      animateArc(animateArcIdList);
+      animateArcList(animateArcIdList);
     } else {
       self._eventBus.fire('token.animate.complete.all');
     }
@@ -133,9 +140,15 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     return (style.display === 'none')
   }
 
-  function animateArc(arcIdList) {
+  function animateArcList(arcIdList) {
     if (arcIdList.length > 0) {
       const arcId = arcIdList[0];
+      animateArc(arcId);
+    }
+  }
+
+  function animateArc(arcId) {
+    if (arcId) {
       const element = modeling.getElementById(arcId);
       if (element) {
         element.animate = { tokens: 1 };

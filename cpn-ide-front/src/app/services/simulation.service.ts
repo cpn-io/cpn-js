@@ -50,7 +50,7 @@ export class SimulationService {
     this.eventService.on(Message.SHAPE_SELECT, (event) => this.onShapeSelect(event));
     this.eventService.on(Message.SIMULATION_TOKEN_ANIMATE_COMPLETE, (event) => this.onSimulationAnimateComplete(event));
     this.eventService.on(Message.SIMULATION_SELECT_BINDING, (event) => this.onSimulationSelectBinding(event));
-    this.eventService.on(Message.SERVER_GET_TRANSITIONS, (event) => this.onSimulationGetTransitions(event));
+    this.eventService.on(Message.SIMULATION_STEP_DONE, () => this.onSimulationStepDone());
   }
 
   public setMode(mode) {
@@ -155,19 +155,18 @@ export class SimulationService {
         break;
 
       case this.MULTI_STEP:
-        // if (this.firedTransitionIdList.length > 0) {
-        //   if (this.multiStepCount > 0) {
-        //     this.accessCpnService.doStep('multistep');
-        //     this.multiStepCount--;
-        //   }
-        //   this.firedTransitionIdList = [];
-        // }
-        this.runMultiStep();
+        if (this.firedTransitionIdList.length > 0) {
+          if (this.multiStepCount > 0) {
+            this.accessCpnService.doStep('multistep');
+            this.multiStepCount--;
+          }
+          this.firedTransitionIdList = [];
+        }
         break;
     }
   }
 
-  onSimulationGetTransitions(event) {
+  onSimulationStepDone() {
     switch (this.mode) {
       case this.MULTI_STEP:
         this.animateFiredTransitions();
@@ -216,6 +215,10 @@ export class SimulationService {
       //   this.transitionTokenAnimate(this.firedTransitionIdList);
       // } else {
       if (this.multiStepCount > 0) {
+
+        // animate current fired transitions
+        // this.animateFiredTransitions();
+
         this.accessCpnService.doStep('multistep');
         this.multiStepCount--;
       }

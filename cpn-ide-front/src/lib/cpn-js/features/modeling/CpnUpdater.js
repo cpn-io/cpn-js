@@ -34,7 +34,8 @@ CpnUpdater.$inject = [
   'canvas',
   'portMenuProvider',
   'bindingsMenuProvider',
-  'layouter'
+  'layouter',
+  'cpnRenderer'
 ];
 
 import {
@@ -61,11 +62,12 @@ import { getDistance } from '../../draw/CpnRenderUtil';
  */
 export default function CpnUpdater(eventBus, modeling, elementRegistry,
   connectionDocking, selection, popupMenuProvider, contextPad, canvas,
-  portMenuProvider, bindingsMenuProvider, layouter) {
+  portMenuProvider, bindingsMenuProvider, layouter, cpnRenderer) {
 
   this._canvas = canvas;
   this._modeling = modeling;
   this._elementRegistry = elementRegistry;
+  this._cpnRenderer = cpnRenderer;
 
   const self = this;
   const container = self._canvas.getContainer();
@@ -99,66 +101,15 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   eventBus.on('token.animate', function (event) {
     console.log('TEST ANIMATION, token.animate, modeling.getInstanseId() = ', self._modeling.getInstanseId());
 
-    // console.log('TEST ANIMATION, canvas._svg = ', self._canvas._svg);
-    // console.log('TEST ANIMATION, canvas._svg isHidden1 = ', isHidden1(self._canvas._svg));
-    // console.log('TEST ANIMATION, canvas._svg isHidden2 = ', isHidden2(self._canvas._svg));
-    // console.log('TEST ANIMATION, animateArcIdList = ', animateArcIdList);
-
     animateArcIdList = [];
-
-    if (event.arcIdList) {
-      animateArcIdList = event.arcIdList;
+    for (const arcId of event.arcIdList) {
+      animateArcIdList.push(arcId);
     }
+
+    console.log('TEST ANIMATION, token.animate, animateArcIdList = ', animateArcIdList);
 
     animateArcList(animateArcIdList);
   });
-
-  eventBus.on('token.animate.arc', function (event) {
-    console.log('TEST ANIMATION, token.animate.arc, event = ', event);
-    if (event.arcId) {
-      animateArc(event.arcId);
-    }
-  });
-
-  eventBus.on('token.animate.complete', () => {
-    console.log('TEST ANIMATION, token.animate.complete, modeling.getInstanseId() = ', self._modeling.getInstanseId());
-
-    if (animateArcIdList.length > 1) {
-      animateArcIdList.shift();
-      animateArcList(animateArcIdList);
-    } else {
-      self._eventBus.fire('token.animate.complete.all');
-    }
-  });
-
-  function isHidden1(el) {
-    return (el.offsetParent === null)
-  }
-
-  function isHidden2(el) {
-    var style = window.getComputedStyle(el);
-    return (style.display === 'none')
-  }
-
-  function animateArcList(arcIdList) {
-    if (arcIdList.length > 0) {
-      const arcId = arcIdList[0];
-      animateArc(arcId);
-    }
-  }
-
-  function animateArc(arcId) {
-    if (arcId) {
-      const element = modeling.getElementById(arcId);
-      if (element) {
-        element.animate = { tokens: 1 };
-        modeling.repaintElement(element);
-      } else {
-        // console.log('TEST ANIMATION, self._eventBus.fire(\'token.animate.complete\')');
-        // self._eventBus.fire('token.animate.complete');
-      }
-    }
-  }
 
   eventBus.on('shape.changed', function (event) {
     // updateLabels(e.element);
@@ -509,3 +460,49 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   }
 }
 
+CpnUpdater.prototype.animateArcList = function (arcIdList) {
+
+  const updater = this;
+  const modeling = this._modeling;
+  const renderer = this._cpnRenderer;
+  const eventBus = this._eventBus;
+
+  return new Promise(function (resolve, reject) {
+
+    if (arcIdList.length > 0) {
+      const arcId = arcIdList[0];
+
+      const element = modeling.getElementById(arcId);
+      if (element) {
+
+        renderer.drawArcAnimation(element).then(() => {
+          console.log('TEST ANIMATION, drawArcAnimation(), Promise complete!');
+
+          if (arcIdList.length > 1) {
+            arcIdList.shift();
+            updater.animateArcList(arcIdList).then(() => {
+              resolve('complete');
+            });
+          } else {
+            resolve('complete.all');
+          }
+        });
+
+      } else {
+
+        if (arcIdList.length > 1) {
+          arcIdList.shift();
+          updater.animateArcList(arcIdList).then(() => {
+            resolve('complete');
+          });
+        } else {
+          resolve('complete.all');
+        }
+
+      }
+    } else {
+      resolve('complete.all');
+    }
+
+  });
+}

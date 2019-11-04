@@ -56,6 +56,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   portMenuProvider;
   stateProvider;
   selectionProvider;
+  cpnUpdater;
 
   // subscription: Subscription;
   placeShapes = [];
@@ -120,6 +121,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.portMenuProvider = this.diagram.get('portMenuProvider');
     this.stateProvider = this.diagram.get('stateProvider');
     this.selectionProvider = this.diagram.get('selectionProvider');
+    this.cpnUpdater = this.diagram.get('cpnUpdater');
 
     const eventBus = this.eventBus;
 
@@ -201,28 +203,13 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.eventService.on(Message.SIMULATION_TOKEN_ANIMATE, (event) => {
       // eventBus.fire('token.animate', event);
-
-      if (event.arcIdList) {
-        for (const arcId of event.arcIdList) {
-          eventBus.fire('token.animate.arc', { arcId: arcId });
-          new Promise(function (resolve, reject) {
-            eventBus.on('token.animate.complete', () => {
-              console.log('TEST ANIMATION, token.animate.complete, arcId = ', arcId);
-              resolve();
-            });
-          }).then(() => {
-            console.log('TEST ANIMATION, after then() (2)');
-          });
-          console.log('TEST ANIMATION, after then() (1)');
-        }
-      }
+      this.cpnUpdater.animateArcList(event.arcIdList).then((result) => {
+        console.log('TEST ANIMATION, this.cpnUpdater.animateArcList(), Promise complete!, result = ', result);
+      });
     });
 
+    // ----------------------------------------------------------------------------------
     // Diagram events
-
-    eventBus.on('token.animate.complete.all', () => {
-      this.eventService.send(Message.SIMULATION_TOKEN_ANIMATE_COMPLETE);
-    });
 
     eventBus.on('element.hover', (event) => {
       if (event.element.type === 'cpn:Transition' || event.element.type === 'cpn:Place') {
@@ -491,23 +478,43 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     console.log('updateElementStatus(), tokenData = ', this.accessCpnService.getTokenData());
     console.log('updateElementStatus(), readyData = ', this.accessCpnService.getReadyData());
+    console.log('updateElementStatus(), firedData = ', this.accessCpnService.getFiredData());
     console.log('updateElementStatus(), errorData = ', this.accessCpnService.getErrorData());
 
-    // if (Object.keys(this.accessCpnService.getTokenData()).length > 0) {
-    this.eventBus.fire('model.update.tokens', { data: this.accessCpnService.getTokenData() });
-    // }
+    const firedData = this.accessCpnService.getFiredData();
+    if (firedData && firedData.length > 0) {
 
-    // if (Object.keys(this.accessCpnService.getReadyData()).length > 0) {
-    this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
-    // }
+      const arcIdList = [];
+      for (const transId of firedData) {
+        for (const arc of this.modelService.getTransitionIncomeArcs(transId)) {
+          arcIdList.push(arc._id);
+        }
+        for (const arc of this.modelService.getTransitionOutcomeArcs(transId)) {
+          arcIdList.push(arc._id);
+        }
+      }
+      if (arcIdList.length > 0) {
 
-    // if (Object.keys(this.accessCpnService.getErrorData()).length > 0) {
-    this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
-    // }
+        this.cpnUpdater.animateArcList(arcIdList).then((result) => {
+          console.log('TOKEN ANIMATION, updateElementStatus(), Promise complete!, result = ', result);
 
-    this.checkPorts();
+          this.eventBus.fire('model.update.tokens', { data: this.accessCpnService.getTokenData() });
+          this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
+          this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
+          this.checkPorts();
+          this.modeling.repaintElements();
+        });
+      }
 
-    this.modeling.repaintElements();
+    } else {
+
+      this.eventBus.fire('model.update.tokens', { data: this.accessCpnService.getTokenData() });
+      this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
+      this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
+      this.checkPorts();
+      this.modeling.repaintElements();
+
+    }
   }
 
   updateAlailableStatus(availableIds) {

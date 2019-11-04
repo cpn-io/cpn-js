@@ -78,6 +78,13 @@ export class AccessCpnService {
     return this.stateData;
   }
 
+  getFiredData() {
+    if (!this.isSimulation) {
+      return [];
+    }
+    return this.firedTransIdList;
+  }
+
 
   updateErrorData(data) {
     clearArray(this.errorIds);
@@ -407,6 +414,10 @@ export class AccessCpnService {
         if (data) {
           this.updateTokenData(data.tokensAndMark);
           this.updateReadyData(data.enableTrans);
+
+          if (transId && (!data.firedTrans || data.firedTrans.length === 0)) {
+            data.firedTrans = [transId];
+          }
           this.updateFiredTrans(data.firedTrans);
 
           this.eventService.send(Message.SIMULATION_STEP_DONE);

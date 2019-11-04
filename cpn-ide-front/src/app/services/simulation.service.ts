@@ -48,9 +48,10 @@ export class SimulationService {
     this.eventService.on(Message.SIMULATION_STOPED, () => this.onStopSimulation());
     this.eventService.on(Message.SHAPE_HOVER, (event) => this.onShapeHover(event));
     this.eventService.on(Message.SHAPE_SELECT, (event) => this.onShapeSelect(event));
-    this.eventService.on(Message.SIMULATION_TOKEN_ANIMATE_COMPLETE, (event) => this.onSimulationAnimateComplete(event));
     this.eventService.on(Message.SIMULATION_SELECT_BINDING, (event) => this.onSimulationSelectBinding(event));
     this.eventService.on(Message.SIMULATION_STEP_DONE, () => this.onSimulationStepDone());
+
+    // this.eventService.on(Message.SIMULATION_TOKEN_ANIMATE_COMPLETE, (event) => this.onSimulationAnimateComplete(event));
   }
 
   public setMode(mode) {
@@ -112,12 +113,10 @@ export class SimulationService {
       if (element.cpnElement._id in this.accessCpnService.getReadyData()) {
         switch (this.mode) {
           case this.SINGLE_STEP:
-            this.firedTransitionIdList.push(element.cpnElement._id);
-            this.transitionTokenAnimate(this.firedTransitionIdList);
+            this.accessCpnService.doStep(element.cpnElement._id);
             break;
           case this.SINGLE_STEP_CHOOSE_BINDING:
-            this.firedTransitionIdList.push(element.cpnElement._id);
-            this.accessCpnService.getBindings(this.firedTransitionIdList[0]);
+            this.accessCpnService.getBindings(element.cpnElement._id);
             break;
         }
       }
@@ -132,72 +131,15 @@ export class SimulationService {
     const element = event.element;
 
     if (element && element.type && element.type === 'cpn:Transition' && event.binding) {
-      this.firedTransitionBindId = event.binding.bind_id;
-      this.transitionTokenAnimate(this.firedTransitionIdList);
-    }
-  }
-
-  onSimulationAnimateComplete(event) {
-    switch (this.mode) {
-      case this.SINGLE_STEP:
-        if (this.firedTransitionIdList.length === 1) {
-          this.accessCpnService.doStep(this.firedTransitionIdList[0]);
-          this.firedTransitionIdList = [];
-        }
-        break;
-
-      case this.SINGLE_STEP_CHOOSE_BINDING:
-        if (this.firedTransitionIdList.length === 1 && this.firedTransitionBindId) {
-          this.accessCpnService.doStepWithBinding(this.firedTransitionIdList[0], this.firedTransitionBindId);
-          this.firedTransitionIdList = [];
-          this.firedTransitionBindId = undefined;
-        }
-        break;
-
-      case this.MULTI_STEP:
-        if (this.firedTransitionIdList.length > 0) {
-          if (this.multiStepCount > 0) {
-            this.accessCpnService.doStep('multistep');
-            this.multiStepCount--;
-          }
-          this.firedTransitionIdList = [];
-        }
-        break;
+      this.accessCpnService.doStepWithBinding(element.cpnElement._id, event.binding.bind_id);
     }
   }
 
   onSimulationStepDone() {
     switch (this.mode) {
       case this.MULTI_STEP:
-        this.animateFiredTransitions();
-        // setTimeout(() => { this.runMultiStep(); }, +this.simulationConfig.multi_step.delay);
+        setTimeout(() => { this.runMultiStep(); }, +this.simulationConfig.multi_step.delay);
         break;
-    }
-  }
-
-  transitionTokenAnimate(transIdList) {
-    const arcIdList = [];
-    for (const transId of transIdList) {
-      for (const arc of this.modelService.getTransitionIncomeArcs(transId)) {
-        arcIdList.push(arc._id);
-      }
-      for (const arc of this.modelService.getTransitionOutcomeArcs(transId)) {
-        arcIdList.push(arc._id);
-      }
-    }
-    if (arcIdList.length > 0) {
-      this.eventService.send(Message.SIMULATION_TOKEN_ANIMATE, { arcIdList: arcIdList });
-    }
-  }
-
-  animateFiredTransitions() {
-    const firedTransIdList: any = this.accessCpnService.firedTransIdList;
-    if (firedTransIdList && firedTransIdList.length > 0) {
-      this.firedTransitionIdList = [];
-      for (const transId of firedTransIdList) {
-        this.firedTransitionIdList.push(transId);
-      }
-      this.transitionTokenAnimate(this.firedTransitionIdList);
     }
   }
 
@@ -205,24 +147,10 @@ export class SimulationService {
     console.log(this.constructor.name, 'runMultiStep(), this.multiStepCount = ', this.multiStepCount);
 
     if (this.multiStepCount > 0) {
-      // const firedTransIdList: any = this.accessCpnService.firedTransIdList;
-
-      // if (firedTransIdList && firedTransIdList.length > 0) {
-      //   this.firedTransitionIdList = [];
-      //   for (const transId of firedTransIdList) {
-      //     this.firedTransitionIdList.push(transId);
-      //   }
-      //   this.transitionTokenAnimate(this.firedTransitionIdList);
-      // } else {
       if (this.multiStepCount > 0) {
-
-        // animate current fired transitions
-        // this.animateFiredTransitions();
-
         this.accessCpnService.doStep('multistep');
         this.multiStepCount--;
       }
-      // }
     }
   }
 

@@ -18,6 +18,8 @@ export class SimulationPanelComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     console.log(this.constructor.name, 'ngOnInit()');
+
+    this.simulationService.setMode(this.simulationService.mode);
   }
 
   ngOnDestroy() {

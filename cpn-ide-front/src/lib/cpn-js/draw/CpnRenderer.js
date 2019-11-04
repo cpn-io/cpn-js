@@ -7,9 +7,6 @@ import {
 } from 'min-dash';
 
 import BaseRenderer from 'diagram-js/lib/draw/BaseRenderer';
-import {
-  createLine
-} from 'diagram-js/lib/util/RenderUtil';
 
 import {
   CPN_PLACE,
@@ -97,6 +94,7 @@ export default function CpnRenderer(
 
   this._eventBus = eventBus;
   this._stateProvider = stateProvider;
+  this._canvas = canvas;
 
   const self = this;
 
@@ -524,48 +522,6 @@ export default function CpnRenderer(
   //
   // }
 
-  function createPathFromConnection(connection, offset = { x: 0, y: 0 }) {
-    let waypoints = connection.waypoints;
-
-    let D = 15;
-
-    let prevPoint = waypoints[0];
-    let pathData = 'm ' + (waypoints[0].x + offset.x) + ',' + (waypoints[0].y + offset.y);
-    let prevWp;
-
-    for (let i = 1; i < waypoints.length; i++) {
-
-      // just draw line
-      // pathData += 'L' + waypoints[i].x + ',' + waypoints[i].y + ' ';
-
-      // draw spline angles
-      let dx = waypoints[i].x - prevPoint.x;
-      let dy = waypoints[i].y - prevPoint.y;
-      let d = Math.sqrt(dx * dx + dy * dy);
-      let DD = Math.min(D, d);
-
-      let wp = { x: (prevPoint.x + DD * dx / d), y: (prevPoint.y + DD * dy / d) };
-
-      if (prevWp) {
-        pathData +=
-          'Q' + (prevPoint.x + offset.x) + ' ' + (prevPoint.y + offset.y) +
-          ', ' + (wp.x + offset.x) + ' ' + (wp.y + offset.y) + ' ';
-      }
-
-      let wp2 = waypoints[i];
-      if (i < waypoints.length - 1) {
-        wp2 = { x: (prevPoint.x + dx - DD * dx / d), y: (prevPoint.y + dy - DD * dy / d) };
-      }
-
-      pathData += 'L' + (wp2.x + offset.x) + ',' + (wp2.y + offset.y) + ' ';
-
-      prevPoint = waypoints[i];
-      prevWp = wp;
-    }
-
-    return pathData;
-  }
-
   /**
    * Add CPN status shadow to svg element
    *
@@ -797,7 +753,7 @@ export default function CpnRenderer(
           } break;
 
           case 'connection': {
-            var pathData = createPathFromConnection(element);
+            var pathData = self.createPathFromConnection(element);
             var attrs = {
               stroke: strokeColor,
               strokeWidth: getStrokeWidth(element) + (3 * STATUS_STROKE_THICK / 2),
@@ -848,7 +804,7 @@ export default function CpnRenderer(
   }
 
   function drawArc(parentGfx, element) {
-    var pathData = createPathFromConnection(element);
+    var pathData = self.createPathFromConnection(element);
     var strokeColor = getStrokeColor(element);
 
     var attrs = {
@@ -865,86 +821,10 @@ export default function CpnRenderer(
     const path = drawPath(parentGfx, pathData, attrs);
 
     // token animation
-    drawArcAnimation(element);
+    // drawArcAnimation(element);
 
     return path;
   }
-
-  function drawArcAnimation(element) {
-    if (element.animate) {
-      console.log('TEST ANIMATION, element.animate = ', element.animate);
-
-      const TOKEN_BALL_RADIUS = 9;
-      const TOKEN_ANIMATION_SPEED_MS = 700;
-
-      const viewbox = canvas.viewbox();
-      const zoom = canvas.zoom();
-
-      const offset = { x: viewbox.x * -1, y: viewbox.y * -1, }
-
-      let pathValue = createPathFromConnection(element, offset);
-
-      // console.log('TEST ANIMATION, viewbox = ', viewbox);
-      // console.log('TEST ANIMATION, zoom = ', zoom);
-      // console.log('TEST ANIMATION, path = ', path);
-      // console.log('TEST ANIMATION, pathValue = ', pathValue);
-
-      const container = canvas._svg;
-
-      // reset animation time
-      container.setCurrentTime(0);
-
-      if (container) {
-        let tokenG = domQuery('#tokenG', container);
-        if (tokenG) {
-          svgRemove(tokenG);
-        }
-
-        tokenG = svgCreate('g');
-        svgAttr(tokenG, {
-          id: 'tokenG',
-          transform: 'scale(' + zoom + ', ' + zoom + ')',
-          visibility: 'hidden'
-        });
-
-        const tokenGA = svgCreate('g');
-
-        const tokenBallShadow = svgCreate('circle');
-        svgAttr(tokenBallShadow, { r: TOKEN_BALL_RADIUS, fill: 'gray', cx: 1, cy: 1 });
-
-        const tokenBall = svgCreate('circle');
-        svgAttr(tokenBall, { r: TOKEN_BALL_RADIUS, fill: TOKEN_BALL_FILL_COLOR, cx: 0, cy: 0 });
-
-        const tokenAnimation = svgCreate('animateMotion');
-        svgAttr(tokenAnimation, {
-          dur: (TOKEN_ANIMATION_SPEED_MS + 20) + 'ms',
-          begin: '0s',
-          repeatCount: 1,
-          path: pathValue,
-        });
-
-        svgAppend(tokenGA, tokenBallShadow);
-        svgAppend(tokenGA, tokenBall);
-        svgAppend(tokenGA, tokenAnimation);
-        svgAppend(tokenG, tokenGA);
-        svgAppend(container, tokenG);
-
-        setTimeout(() => {
-          svgAttr(tokenG, {
-            visibility: 'visible'
-          });
-        }, 0);
-
-        setTimeout(() => {
-          svgRemove(tokenG);
-          self._eventBus.fire('token.animate.complete');
-        }, TOKEN_ANIMATION_SPEED_MS);
-      }
-
-      delete element.animate;
-    }
-  }
-
 
   function getConnectionEndMarkerAttrs(element) {
     var attrs = {};
@@ -1173,3 +1053,130 @@ CpnRenderer.prototype.getShapePath = function (element) {
 
   return getRectPath(element);
 };
+
+/**
+ * Animate token movement for element (connection)
+ */
+CpnRenderer.prototype.drawArcAnimation = function (element) {
+
+  const renderer = this;
+
+  return new Promise(function (resolve, reject) {
+
+    try {
+      console.log('TEST ANIMATION, element = ', element);
+
+      const TOKEN_BALL_RADIUS = 9;
+      const TOKEN_ANIMATION_SPEED_MS = 700;
+
+      const viewbox = renderer._canvas.viewbox();
+      const zoom = renderer._canvas.zoom();
+
+      const offset = { x: viewbox.x * -1, y: viewbox.y * -1, }
+
+      let pathValue = renderer.createPathFromConnection(element, offset);
+
+      // console.log('TEST ANIMATION, viewbox = ', viewbox);
+      // console.log('TEST ANIMATION, zoom = ', zoom);
+      // console.log('TEST ANIMATION, path = ', path);
+      // console.log('TEST ANIMATION, pathValue = ', pathValue);
+
+      const container = renderer._canvas._svg;
+
+      // reset animation time
+      container.setCurrentTime(0);
+
+      if (container) {
+        let tokenG = domQuery('#tokenG', container);
+        if (tokenG) {
+          svgRemove(tokenG);
+        }
+
+        tokenG = svgCreate('g');
+        svgAttr(tokenG, {
+          id: 'tokenG',
+          transform: 'scale(' + zoom + ', ' + zoom + ')',
+          visibility: 'hidden'
+        });
+
+        const tokenGA = svgCreate('g');
+
+        const tokenBallShadow = svgCreate('circle');
+        svgAttr(tokenBallShadow, { r: TOKEN_BALL_RADIUS, fill: 'gray', cx: 1, cy: 1 });
+
+        const tokenBall = svgCreate('circle');
+        svgAttr(tokenBall, { r: TOKEN_BALL_RADIUS, fill: TOKEN_BALL_FILL_COLOR, cx: 0, cy: 0 });
+
+        const tokenAnimation = svgCreate('animateMotion');
+        svgAttr(tokenAnimation, {
+          dur: (TOKEN_ANIMATION_SPEED_MS + 20) + 'ms',
+          begin: '0s',
+          repeatCount: 1,
+          path: pathValue,
+        });
+
+        svgAppend(tokenGA, tokenBallShadow);
+        svgAppend(tokenGA, tokenBall);
+        svgAppend(tokenGA, tokenAnimation);
+        svgAppend(tokenG, tokenGA);
+        svgAppend(container, tokenG);
+
+        setTimeout(() => {
+          svgAttr(tokenG, {
+            visibility: 'visible'
+          });
+        }, 0);
+
+        setTimeout(() => {
+          svgRemove(tokenG);
+          resolve();
+        }, TOKEN_ANIMATION_SPEED_MS);
+      }
+    } catch (ex) {
+      console.error('CpnRenderer.prototype.drawArcAnimation(), ex = ', ex);
+      reject(ex);
+    }
+  });
+}
+
+CpnRenderer.prototype.createPathFromConnection = function (connection, offset = { x: 0, y: 0 }) {
+  let waypoints = connection.waypoints;
+
+  let D = 15;
+
+  let prevPoint = waypoints[0];
+  let pathData = 'm ' + (waypoints[0].x + offset.x) + ',' + (waypoints[0].y + offset.y);
+  let prevWp;
+
+  for (let i = 1; i < waypoints.length; i++) {
+
+    // just draw line
+    // pathData += 'L' + waypoints[i].x + ',' + waypoints[i].y + ' ';
+
+    // draw spline angles
+    let dx = waypoints[i].x - prevPoint.x;
+    let dy = waypoints[i].y - prevPoint.y;
+    let d = Math.sqrt(dx * dx + dy * dy);
+    let DD = Math.min(D, d);
+
+    let wp = { x: (prevPoint.x + DD * dx / d), y: (prevPoint.y + DD * dy / d) };
+
+    if (prevWp) {
+      pathData +=
+        'Q' + (prevPoint.x + offset.x) + ' ' + (prevPoint.y + offset.y) +
+        ', ' + (wp.x + offset.x) + ' ' + (wp.y + offset.y) + ' ';
+    }
+
+    let wp2 = waypoints[i];
+    if (i < waypoints.length - 1) {
+      wp2 = { x: (prevPoint.x + dx - DD * dx / d), y: (prevPoint.y + dy - DD * dy / d) };
+    }
+
+    pathData += 'L' + (wp2.x + offset.x) + ',' + (wp2.y + offset.y) + ' ';
+
+    prevPoint = waypoints[i];
+    prevWp = wp;
+  }
+
+  return pathData;
+}

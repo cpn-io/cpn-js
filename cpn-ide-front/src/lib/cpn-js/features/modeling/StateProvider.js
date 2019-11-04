@@ -14,41 +14,40 @@ StateProvider.prototype.clear = function () {
   this._errors = {};
   this._warnings = {};
   this._ready = {};
+  this._fired = {};
 }
 
 StateProvider.prototype.setReadyState = function (ready, append = false) {
-  let l = [];
-  if (append) {
-    l = this._ready;
-  }
-  for (const id in ready) {
-    l[id] = ready[id];
-  }
-  this._ready = l;
+  this._ready = setArray(this._ready, ready, append);
+}
+StateProvider.prototype.setFiredState = function (fired, append = false) {
+  this._fired = setArray(this._fired, fired, append);
 }
 StateProvider.prototype.setWarningState = function (warnings, append = false) {
-  let l = [];
-  if (append) {
-    l = this._warnings;
-  }
-  for (const id in warnings) {
-    l[id] = warnings[id];
-  }
-  this._warnings = l;
+  this._warnings = setArray(this._warnings, warnings, append);
 }
 StateProvider.prototype.setErrorState = function (errors, append = false) {
+  this._errors = setArray(this._errors, errors, append);
+}
+
+function setArray(target, source, append = false) {
   let l = [];
   if (append) {
-    l = this._errors;
+    l = target;
   }
-  for (const id in errors) {
-    l[id] = errors[id];
+  for (const id in source) {
+    l[id] = source[id];
   }
-  this._errors = l;
+  target = l;
+  return target;
 }
+
 
 StateProvider.prototype.getReadyState = function (id) {
   return (id in this._ready) || (this._ready instanceof Array && this._ready.includes(id));
+}
+StateProvider.prototype.getFiredState = function (id) {
+  return (id in this._fired) || (this._fired instanceof Array && this._fired.includes(id));
 }
 StateProvider.prototype.getWarningState = function (id) {
   return (id in this._warnings) || (this._warnings instanceof Array && this._warnings.includes(id));
@@ -58,7 +57,10 @@ StateProvider.prototype.getErrorState = function (id) {
 }
 
 StateProvider.prototype.getReadyText = function (id) {
-  return getIssueText(this._ready, id);
+  return 'Ready'; // getIssueText(this._ready, id);
+}
+StateProvider.prototype.getFiredText = function (id) {
+  return 'Fired'; // getIssueText(this._fired, id);
 }
 StateProvider.prototype.getErrorText = function (id) {
   return getIssueText(this._errors, id);

@@ -21,6 +21,7 @@ export class SimulationService {
   firedTransitionBindId;
 
   multiStepCount = 0;
+  multiStepLastTimeMs = 0;
 
   simulationConfig = {
     multi_step: {
@@ -51,7 +52,7 @@ export class SimulationService {
     this.eventService.on(Message.SIMULATION_SELECT_BINDING, (event) => this.onSimulationSelectBinding(event));
     this.eventService.on(Message.SIMULATION_STEP_DONE, () => this.onSimulationStepDone());
 
-    // this.eventService.on(Message.SIMULATION_TOKEN_ANIMATE_COMPLETE, (event) => this.onSimulationAnimateComplete(event));
+    this.eventService.on(Message.SIMULATION_TOKEN_ANIMATE_COMPLETE, () => this.onSimulationAnimateComplete());
   }
 
   public setMode(mode) {
@@ -135,23 +136,43 @@ export class SimulationService {
     }
   }
 
-  onSimulationStepDone() {
+  onSimulationAnimateComplete() {
     switch (this.mode) {
       case this.MULTI_STEP:
-        setTimeout(() => { this.runMultiStep(); }, +this.simulationConfig.multi_step.delay);
+        this.runMultiStep();
         break;
     }
   }
 
-  runMultiStep() {
-    console.log(this.constructor.name, 'runMultiStep(), this.multiStepCount = ', this.multiStepCount);
+  onSimulationStepDone() {
+    const firedData = this.accessCpnService.getFiredData();
 
-    if (this.multiStepCount > 0) {
+    if (firedData && firedData.length > 0) {
+      const page = this.modelService.getPageByElementId(firedData[0]);
+      if (page) {
+        this.eventService.send(Message.PAGE_OPEN, { pageObject: page });
+      }
+    }
+  }
+
+  runMultiStep() {
+    const timeFromLastStep = new Date().getTime() - this.multiStepLastTimeMs;
+
+    let delay = (+this.simulationConfig.multi_step.delay) - timeFromLastStep;
+    if (delay < 0) {
+      delay = 0;
+    }
+
+    console.log(this.constructor.name, 'runMultiStep(), this.multiStepCount = ', this.multiStepCount);
+    console.log(this.constructor.name, 'runMultiStep(), delay = ', delay);
+
+    setTimeout(() => {
       if (this.multiStepCount > 0) {
         this.accessCpnService.doStep('multistep');
         this.multiStepCount--;
+        this.multiStepLastTimeMs = new Date().getTime();
       }
-    }
+    }, delay);
   }
 
   runMultiStepFF() {

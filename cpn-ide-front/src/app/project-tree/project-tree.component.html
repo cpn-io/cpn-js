@@ -15,8 +15,8 @@
       <app-tree-node id="project" [title]="'Project: ' + project.name" [expanded]="expanded" [selected]="selected"
         [showBullet]="false">
 
-        <div class="node" [textContent]="'Step: 0'"></div>
-        <div class="node" [textContent]="'Time: 0'"></div>
+        <div class="node" [textContent]="'Step: ' + simulationState.step"></div>
+        <div class="node" [textContent]="'Time: ' + simulationState.time"></div>
 
         <!-- Options -->
         <app-tree-node id="options" title="Options" [expanded]="expanded" [selected]="selected" [type]="'options'"

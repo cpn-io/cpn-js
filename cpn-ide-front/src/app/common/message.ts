@@ -43,6 +43,7 @@ export class Message {
   static SIMULATION_SELECT_BINDING = 'simulation.select.binding';
   static SIMULATION_STEP_DONE = 'simulation.step.done';
   static SIMULATION_UPDATE_STATE = 'simulation.update.state';
+  
   static SIMULATION_TOKEN_ANIMATE = 'simulation.token.animate';
   static SIMULATION_TOKEN_ANIMATE_COMPLETE = 'simulation.token.animate.complete';
 

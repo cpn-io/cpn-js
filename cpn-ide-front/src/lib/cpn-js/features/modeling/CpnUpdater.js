@@ -500,7 +500,8 @@ CpnUpdater.prototype.animateArcList = function (arcIdList) {
         }
 
       }
-    } else {
+    } 
+    else {
       resolve('complete.all');
     }
 

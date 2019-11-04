@@ -57,9 +57,12 @@ var STATUS_STROKE_THICK = 5;
 var STATUS_STROKE_COLOR_ERROR = '#ff666666';
 var STATUS_STROKE_COLOR_WARNING = '#cccc3366';
 var STATUS_STROKE_COLOR_READY = '#33cc3399';
+var STATUS_STROKE_COLOR_FIRED = '#ff3333'; // '#ff33cc99';
+
 var STATUS_TEXT_COLOR_ERROR = '#ff6666';
 var STATUS_TEXT_COLOR_WARNING = '#cccc33';
 var STATUS_TEXT_COLOR_READY = '#339933';
+var STATUS_TEXT_COLOR_FIRED = '#ff6666'; // '#CC0099';
 
 var SELECT_STROKE_COLOR = '#00cc00';
 var SELECT_FILL_COLOR = '#00ff0011';
@@ -71,8 +74,10 @@ var PORT_FILL_COLOR = '#e0e0fd';
 var PORT_STROKE_COLOR = '#4c66cc';
 
 var TOKEN_FILL_COLOR = '#00dd00'; // '#6fe117';
-var TOKEN_BALL_FILL_COLOR = '#00dd00';
 var MARKING_FILL_COLOR = '#99ff99'; // '#bcfd8b';
+
+var TOKEN_BALL_FILL_COLOR = '#ff3333'; // '#00dd00';
+var TOKEN_BALL_RADIUS = 9;
 
 inherits(CpnRenderer, BaseRenderer);
 
@@ -695,6 +700,7 @@ export default function CpnRenderer(
 
     if (element.cpnElement) {
       const readyState = self._stateProvider.getReadyState(element.cpnElement._id);
+      const firedState = self._stateProvider.getFiredState(element.cpnElement._id);
       const warningState = self._stateProvider.getWarningState(element.cpnElement._id);
       const errorState = self._stateProvider.getErrorState(element.cpnElement._id);
       let stateText;
@@ -702,6 +708,11 @@ export default function CpnRenderer(
         strokeColor = STATUS_STROKE_COLOR_READY;
         textColor = STATUS_TEXT_COLOR_READY;
         stateText = self._stateProvider.getReadyText(element.cpnElement._id);;
+      }
+      if (firedState) {
+        strokeColor = STATUS_STROKE_COLOR_FIRED;
+        textColor = STATUS_TEXT_COLOR_FIRED;
+        stateText = self._stateProvider.getFiredText(element.cpnElement._id);;
       }
       if (warningState) {
         strokeColor = STATUS_STROKE_COLOR_WARNING;
@@ -1057,7 +1068,7 @@ CpnRenderer.prototype.getShapePath = function (element) {
 /**
  * Animate token movement for element (connection)
  */
-CpnRenderer.prototype.drawArcAnimation = function (element) {
+CpnRenderer.prototype.drawArcAnimation = function (element, speedMs = 500) {
 
   const renderer = this;
 
@@ -1065,9 +1076,6 @@ CpnRenderer.prototype.drawArcAnimation = function (element) {
 
     try {
       console.log('TEST ANIMATION, element = ', element);
-
-      const TOKEN_BALL_RADIUS = 9;
-      const TOKEN_ANIMATION_SPEED_MS = 700;
 
       const viewbox = renderer._canvas.viewbox();
       const zoom = renderer._canvas.zoom();
@@ -1101,21 +1109,21 @@ CpnRenderer.prototype.drawArcAnimation = function (element) {
 
         const tokenGA = svgCreate('g');
 
-        const tokenBallShadow = svgCreate('circle');
-        svgAttr(tokenBallShadow, { r: TOKEN_BALL_RADIUS, fill: 'gray', cx: 1, cy: 1 });
+        // const tokenBallShadow = svgCreate('circle');
+        // svgAttr(tokenBallShadow, { r: TOKEN_BALL_RADIUS, fill: 'gray', cx: 1, cy: 1 });
 
         const tokenBall = svgCreate('circle');
         svgAttr(tokenBall, { r: TOKEN_BALL_RADIUS, fill: TOKEN_BALL_FILL_COLOR, cx: 0, cy: 0 });
 
         const tokenAnimation = svgCreate('animateMotion');
         svgAttr(tokenAnimation, {
-          dur: (TOKEN_ANIMATION_SPEED_MS + 20) + 'ms',
+          dur: (speedMs + 20) + 'ms',
           begin: '0s',
           repeatCount: 1,
           path: pathValue,
         });
 
-        svgAppend(tokenGA, tokenBallShadow);
+        // svgAppend(tokenGA, tokenBallShadow);
         svgAppend(tokenGA, tokenBall);
         svgAppend(tokenGA, tokenAnimation);
         svgAppend(tokenG, tokenGA);
@@ -1130,7 +1138,7 @@ CpnRenderer.prototype.drawArcAnimation = function (element) {
         setTimeout(() => {
           svgRemove(tokenG);
           resolve();
-        }, TOKEN_ANIMATION_SPEED_MS);
+        }, speedMs);
       }
     } catch (ex) {
       console.error('CpnRenderer.prototype.drawArcAnimation(), ex = ', ex);

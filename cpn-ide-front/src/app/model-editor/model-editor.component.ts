@@ -26,7 +26,7 @@ import {
 
 import { AccessCpnService } from '../services/access-cpn.service';
 import { MonitorType, getMonitorTypeList } from '../common/monitors';
-import { addNode } from '../common/utils';
+import { addNode, nodeToArray } from '../common/utils';
 
 @Component({
   selector: 'app-model-editor',
@@ -136,7 +136,16 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     eventBus.on('import.render.complete', (event) => {
       this.loading = false;
-      // console.log('import.render.complete, event = ', event);
+      console.log('import.render.complete, event = ', event);
+
+      // this.stateProvider.clear();
+      // this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
+      // this.modeling.repaintElements();      
+
+      // setTimeout(() => {
+      //   this.updateElementStatus();
+      //   this.modeling.setEditable(!this.accessCpnService.isSimulation);
+      // }, 100);
 
       this.updateElementStatus();
       this.modeling.setEditable(!this.accessCpnService.isSimulation);
@@ -475,14 +484,31 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   updateElementStatus() {
     this.stateProvider.clear();
+    this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
+    this.stateProvider.setFiredState(this.accessCpnService.getFiredData());
+    this.modeling.repaintElements();
 
     console.log('updateElementStatus(), tokenData = ', this.accessCpnService.getTokenData());
     console.log('updateElementStatus(), readyData = ', this.accessCpnService.getReadyData());
     console.log('updateElementStatus(), firedData = ', this.accessCpnService.getFiredData());
     console.log('updateElementStatus(), errorData = ', this.accessCpnService.getErrorData());
 
+    console.log('updateElementStatus(), this.pageId = ', this.pageId);
+
     const firedData = this.accessCpnService.getFiredData();
+
+    let needAnimation = false;
+
+    // check, if current page has animated transition
     if (firedData && firedData.length > 0) {
+      const page = this.modelService.getPageByElementId(firedData[0]);
+
+      if (page && page._id === this.pageId) {
+        needAnimation = true;
+      }
+    }
+
+    if (needAnimation) {
 
       const arcIdList = [];
       for (const transId of firedData) {
@@ -498,23 +524,27 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.cpnUpdater.animateArcList(arcIdList).then((result) => {
           console.log('TOKEN ANIMATION, updateElementStatus(), Promise complete!, result = ', result);
 
+          this.stateProvider.clear();
           this.eventBus.fire('model.update.tokens', { data: this.accessCpnService.getTokenData() });
           this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
           this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
           this.checkPorts();
           this.modeling.repaintElements();
+
+          this.eventService.send(Message.SIMULATION_TOKEN_ANIMATE_COMPLETE);
         });
       }
 
     } else {
 
+      this.stateProvider.clear();
       this.eventBus.fire('model.update.tokens', { data: this.accessCpnService.getTokenData() });
       this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
       this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
       this.checkPorts();
       this.modeling.repaintElements();
-
     }
+
   }
 
   updateAlailableStatus(availableIds) {

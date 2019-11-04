@@ -37,6 +37,8 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
   newPageCount = 0;
 
+  simulationState = { step: 0, time: 0 };
+
   constructor(public eventService: EventService,
     public modelService: ModelService,
     private accessCpnService: AccessCpnService,
@@ -50,6 +52,9 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     this.eventService.on(Message.MODEL_RELOAD, () => this.loadProject());
 
     this.eventService.on(Message.SERVER_INIT_NET_DONE, () => this.updateErrors());
+
+    this.eventService.on(Message.SIMULATION_UPDATE_STATE, () => this.onSimulationState());
+
   }
 
   ngDoCheck() {
@@ -92,6 +97,15 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
   loadPages() {
     this.pages = nodeToArray(this.cpnet.page);
+  }
+
+  onSimulationState() {
+    const stateData = this.accessCpnService.getStateData();
+    if (stateData) {
+      this.simulationState = stateData;
+    } else {
+      this.simulationState = { step: 0, time: 0 };
+    }
   }
 
   onSelectedChange() {

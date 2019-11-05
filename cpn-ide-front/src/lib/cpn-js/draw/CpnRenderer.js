@@ -1117,7 +1117,7 @@ CpnRenderer.prototype.drawArcAnimation = function (element, speedMs = 500) {
 
         const tokenAnimation = svgCreate('animateMotion');
         svgAttr(tokenAnimation, {
-          dur: (speedMs + 20) + 'ms',
+          dur: (speedMs + 50) + 'ms',
           begin: '0s',
           repeatCount: 1,
           path: pathValue,
@@ -1133,11 +1133,20 @@ CpnRenderer.prototype.drawArcAnimation = function (element, speedMs = 500) {
           svgAttr(tokenG, {
             visibility: 'visible'
           });
-        }, 0);
+        }, 10);
+
+        // setTimeout(() => {
+        //   svgAttr(tokenG, {
+        //     visibility: 'hidden'
+        //   });
+        // }, speedMs - 10);
 
         setTimeout(() => {
           svgRemove(tokenG);
-          resolve();
+
+          setTimeout(() => {
+            resolve();
+          }, 10);  
         }, speedMs);
       }
     } catch (ex) {

@@ -510,13 +510,18 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     if (needAnimation) {
 
+      // [{"id":"ID1243034562","tokens":1,"marking":"1`3"},{"id":"ID1234651517","tokens":1,"marking":"1`3"}]
+      const tokenDiff = this.accessCpnService.tokenDiff;
+
       const arcIdList = [];
       for (const transId of firedData) {
         for (const arc of this.modelService.getTransitionIncomeArcs(transId)) {
           arcIdList.push(arc._id);
         }
-        for (const arc of this.modelService.getTransitionOutcomeArcs(transId)) {
-          arcIdList.push(arc._id);
+        for (const t of tokenDiff) {
+          for (const arc of this.modelService.getTransitionOutcomeArcs(transId, t.id)) {
+            arcIdList.push(arc._id);
+          }
         }
       }
       if (arcIdList.length > 0) {

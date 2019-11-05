@@ -27,7 +27,6 @@ export class AccessCpnService {
 
   public tokenData = [];
   public tokenDiff = [];
-  public tokenPageId = undefined;
 
   sessionId;
   userSessionId;
@@ -65,8 +64,17 @@ export class AccessCpnService {
     }
 
     const readyData = {};
-    for (const id of this.readyData) {
-      readyData[id] = 'Ready';
+    for (const transId of this.readyData) {
+      readyData[transId] = 'Ready';
+
+      const page = this.modelService.getPageByElementId(transId);
+      if (page) {
+        for (const trans of this.modelService.getAllTrans()) {
+          if (trans && trans.subst && trans.subst._subpage === page._id) {
+            readyData[trans._id] = 'Ready';
+          }
+        }
+      }
     }
     return readyData;
   }
@@ -137,47 +145,23 @@ export class AccessCpnService {
   updateTokenData(tokenData) {
     // console.log('updateTokenData(), tokenData = ', JSON.stringify(tokenData));
 
-    let prevTokenPageId = this.tokenPageId;
-    this.tokenPageId = undefined;
-
     clearArray(this.tokenDiff);
 
     // find token difference
     for (const newToken of tokenData) {
       if (newToken.tokens > 0) {
         const oldToken = this.tokenData.find((e) => e.id === newToken.id);
-        if (!oldToken || oldToken.tokens !== newToken.tokens) {
+        if (!oldToken || oldToken.tokens < newToken.tokens) {
           this.tokenDiff.push(newToken);
         }
       }
     }
-    console.log('updateTokenData(), this.tokenDiff = ', JSON.stringify(this.tokenDiff));
-
-    if (this.tokenDiff.length > 0) {
-      const placeId = this.tokenDiff[this.tokenDiff.length - 1].id;
-      if (placeId) {
-        const page = this.modelService.getPageByElementId(placeId);
-        if (page) {
-          if (page._id !== prevTokenPageId) {
-            this.tokenPageId = page._id;
-          }
-        }
-      }
-    }
+    // console.log('updateTokenData(), this.tokenDiff = ', JSON.stringify(this.tokenDiff));
 
     clearArray(this.tokenData);
 
     for (const token of tokenData) {
       this.tokenData.push(token);
-
-      // const page = this.modelService.getPageByElementId(id);
-      // if (page && !this.readyPagesIds.includes(page._id)) {
-      //   this.readyPagesIds.push(page._id);
-      // }
-    }
-
-    if (this.tokenPageId && this.tokenPageId !== prevTokenPageId) {
-      // this.eventService.send(Message.PAGE_OPEN, { pageObject: this.modelService.getPageById(this.tokenPageId) });
     }
   }
 
@@ -368,7 +352,7 @@ export class AccessCpnService {
    */
   doStep(transId) {
     if (!this.simInitialized || !this.sessionId) {
-      return new Promise(() => {});
+      return new Promise(() => { });
     }
 
     return new Promise((resolve, reject) => {
@@ -521,7 +505,6 @@ export class AccessCpnService {
 
       this.tokenData = [];
       this.tokenDiff = [];
-      this.tokenPageId = undefined;
     }
   }
 

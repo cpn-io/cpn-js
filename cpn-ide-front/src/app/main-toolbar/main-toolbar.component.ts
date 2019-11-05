@@ -6,6 +6,7 @@ import { EventService } from '../services/event.service';
 import { Message } from '../common/message';
 import { ValidationService } from '../services/validation.service';
 import { AccessCpnService } from '../services/access-cpn.service';
+import { EditorPanelService } from '../services/editor-panel.service';
 @Component({
   selector: 'app-main-toolbar',
   templateUrl: './main-toolbar.component.html',
@@ -21,7 +22,8 @@ export class MainToolbarComponent implements OnInit {
     private eventService: EventService,
     private validationService: ValidationService,
     public accessCpnService: AccessCpnService,
-    public modelService: ModelService
+    public modelService: ModelService,
+    private editorPanelService: EditorPanelService
   ) {
   }
 
@@ -56,9 +58,12 @@ export class MainToolbarComponent implements OnInit {
   }
 
   onTest() {
-    // this.eventService.send(Message.SIMULATION_TOKEN_ANIMATE, { arcIdList: ['ID2751839452'] });
-    this.eventService.send(Message.SIMULATION_TOKEN_ANIMATE, { arcIdList: ['ID2751839452', 'ID1243034573', 'sdfsdfsdfsdf', 'ID1243036954', 'ID1243040118'] });
-    // this.eventService.send(Message.SIMULATION_TOKEN_ANIMATE, { arcIdList: ['ID1412328564', 'ID1412328605'] });
+    const modelEditor = this.editorPanelService.getSelectedModelEditor();
+    console.log(this.constructor.name, 'onTest(), page = ', modelEditor);
+
+    if (modelEditor) {
+      modelEditor.testAnimation();
+    }
   }
 
   newCPNet() {

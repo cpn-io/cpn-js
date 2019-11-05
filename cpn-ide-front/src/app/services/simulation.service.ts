@@ -155,6 +155,15 @@ export class SimulationService {
     }
   }
 
+  public getAnimationDelay() {
+    switch (this.mode) {
+      case this.MULTI_STEP:
+        return (+this.simulationConfig.multi_step.delay);
+      default:
+        return 1000;
+    }
+  }
+
   runMultiStep() {
     const timeFromLastStep = new Date().getTime() - this.multiStepLastTimeMs;
 

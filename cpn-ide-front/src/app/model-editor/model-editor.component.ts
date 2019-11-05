@@ -27,6 +27,7 @@ import {
 import { AccessCpnService } from '../services/access-cpn.service';
 import { MonitorType, getMonitorTypeList } from '../common/monitors';
 import { addNode, nodeToArray } from '../common/utils';
+import { SimulationService } from '../services/simulation.service';
 
 @Component({
   selector: 'app-model-editor',
@@ -75,8 +76,8 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(private eventService: EventService,
     private settings: SettingsService,
     private modelService: ModelService,
-    private validationService: ValidationService,
-    private accessCpnService: AccessCpnService) {
+    private accessCpnService: AccessCpnService,
+    public simulationService: SimulationService) {
   }
 
   ngAfterViewInit() {
@@ -213,7 +214,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.eventService.on(Message.SIMULATION_TOKEN_ANIMATE, (event) => {
       // eventBus.fire('token.animate', event);
       this.cpnUpdater.animateArcList(event.arcIdList).then((result) => {
-        console.log('TEST ANIMATION, this.cpnUpdater.animateArcList(), Promise complete!, result = ', result);
+        console.log('TOKEN ANIMATION, this.cpnUpdater.animateArcList(), Promise complete!, result = ', result);
       });
     });
 
@@ -479,6 +480,28 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.eventBus.fire('model.check.ports');
   }
 
+
+  testAnimation() {
+
+    const speedMs = 500;
+    let arcIdList = [];
+
+    const page = this.modelService.getPageById(this.pageId);
+
+    // arcIdList.push('ID2751839452', 'ID1243034573', 'sdfsdfsdfsdf', 'ID1243036954', 'ID1243040118');
+
+    for (const arc of nodeToArray(page.arc)) {
+      arcIdList.push(arc._id);
+    }
+
+    console.log(this.constructor.name, 'testAnimation(), arcIdList = ', arcIdList);
+
+    this.cpnUpdater.animateArcList(arcIdList, speedMs).then((result) => {
+      console.log(this.constructor.name, 'testAnimation(), Promise complete!, result = ', result);
+    });
+  }
+
+
   /**
    * Update element status
    */
@@ -526,7 +549,13 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       if (arcIdList.length > 0) {
 
-        this.cpnUpdater.animateArcList(arcIdList).then((result) => {
+        const speedMs = this.simulationService.getAnimationDelay() / arcIdList.length;
+        // const speedMs = this.simulationService.getAnimationDelay() / 2;
+
+        console.log('TOKEN ANIMATION, updateElementStatus(), arcIdList = ', arcIdList);
+        console.log('TOKEN ANIMATION, updateElementStatus(), speedMs = ', speedMs);
+
+        this.cpnUpdater.animateArcList(arcIdList, speedMs).then((result) => {
           console.log('TOKEN ANIMATION, updateElementStatus(), Promise complete!, result = ', result);
 
           this.stateProvider.clear();

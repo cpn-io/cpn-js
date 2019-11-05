@@ -99,14 +99,14 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   let animateArcIdList = [];
 
   eventBus.on('token.animate', function (event) {
-    console.log('TEST ANIMATION, token.animate, modeling.getInstanseId() = ', self._modeling.getInstanseId());
+    console.log('TOKEN ANIMATION, token.animate, modeling.getInstanseId() = ', self._modeling.getInstanseId());
 
     animateArcIdList = [];
     for (const arcId of event.arcIdList) {
       animateArcIdList.push(arcId);
     }
 
-    console.log('TEST ANIMATION, token.animate, animateArcIdList = ', animateArcIdList);
+    console.log('TOKEN ANIMATION, token.animate, animateArcIdList = ', animateArcIdList);
 
     animateArcList(animateArcIdList);
   });
@@ -460,50 +460,60 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   }
 }
 
-CpnUpdater.prototype.animateArcList = function (arcIdList) {
+CpnUpdater.prototype.animateArcList = function (arcIdList, speedMs) {
 
   const updater = this;
   const modeling = this._modeling;
   const renderer = this._cpnRenderer;
-  const eventBus = this._eventBus;
 
   return new Promise(function (resolve, reject) {
-
-    if (arcIdList.length > 0) {
-      const arcId = arcIdList[0];
-
+    for (const arcId of arcIdList) {
       const element = modeling.getElementById(arcId);
       if (element) {
-
-        renderer.drawArcAnimation(element).then(() => {
-          console.log('TEST ANIMATION, drawArcAnimation(), Promise complete!');
-
-          if (arcIdList.length > 1) {
-            arcIdList.shift();
-            updater.animateArcList(arcIdList).then(() => {
-              resolve('complete');
-            });
-          } else {
-            resolve('complete.all');
-          }
+        renderer.drawArcAnimation(element, speedMs).then(() => {
         });
-
-      } else {
-
-        if (arcIdList.length > 1) {
-          arcIdList.shift();
-          updater.animateArcList(arcIdList).then(() => {
-            resolve('complete');
-          });
-        } else {
-          resolve('complete.all');
-        }
-
       }
-    } 
-    else {
-      resolve('complete.all');
     }
-
   });
+
+
+  // return new Promise(function (resolve, reject) {
+
+  //   if (arcIdList.length > 0) {
+  //     const arcId = arcIdList[0];
+
+  //     const element = modeling.getElementById(arcId);
+  //     if (element) {
+
+  //       renderer.drawArcAnimation(element, speedMs).then(() => {
+  //         console.log('TOKEN ANIMATION, drawArcAnimation(), Promise complete!');
+
+  //         if (arcIdList.length > 1) {
+  //           arcIdList.shift();
+  //           updater.animateArcList(arcIdList, speedMs).then(() => {
+  //             resolve('complete');
+  //           });
+  //         } else {
+  //           resolve('complete.all');
+  //         }
+  //       });
+
+  //     } else {
+
+  //       if (arcIdList.length > 1) {
+  //         arcIdList.shift();
+  //         updater.animateArcList(arcIdList).then(() => {
+  //           resolve('complete');
+  //         });
+  //       } else {
+  //         resolve('complete.all');
+  //       }
+
+  //     }
+  //   } 
+  //   else {
+  //     resolve('complete.all');
+  //   }
+
+  // });
 }

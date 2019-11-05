@@ -4,6 +4,12 @@
   <tabs #tabsComponent class="cpn-tabs" style="background: #999 !important"
     (currentTabChange)="currentTabChange($event)">
 
+    <ng-container *ngFor="let tab of mlTabArray">
+      <tab [id]="tab.id" [tabTitle]="tab.title">
+        <app-ml-editor id="ml_editor_{{tab.id}}" [project]="tab.project"></app-ml-editor>
+      </tab>
+    </ng-container>
+
     <ng-container *ngFor="let tab of pageTabArray">
       <tab [id]="tab.id" [tabTitle]="tab.pageObject.pageattr._name"
         [error]="accessCpnService.errorPagesIds.includes(tab.id)"
@@ -12,11 +18,6 @@
       </tab>
     </ng-container>
 
-    <ng-container *ngFor="let tab of mlTabArray">
-      <tab [id]="tab.id" [tabTitle]="tab.title">
-        <app-ml-editor id="ml_editor_{{tab.id}}" [project]="tab.project"></app-ml-editor>
-      </tab>
-    </ng-container>
   </tabs>
 
 </div>

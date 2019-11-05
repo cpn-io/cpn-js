@@ -262,22 +262,44 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   onNewBlock() {
     this.disableContextMenu();
 
-    let parentElement = undefined;
-
     console.log(this.constructor.name, 'onNewBlock(), this.selected = ', this.selected);
 
-    if (this.selected && this.selected.type === 'block') {
-      parentElement = this.selected.cpnElement;
-    }
+    if (this.selected) {
 
-    if (this.selected && ['globref', 'color', 'var', 'ml'].includes(this.selected.type)) {
-      parentElement = this.selected.parentCpnElement;
-    }
+      let parentElement = undefined;
 
-    if (parentElement) {
-      const newBlock = { id: 'New block', _id: getNextId() };
-      this.modelService.addCpnElement(parentElement, newBlock, 'block');
-      setTimeout(() => this.goToDeclaration(newBlock._id), 100);
+      switch (this.selected.type) {
+        case 'declarations':
+          parentElement = this.cpnet.globbox;
+          break;
+
+        case 'block':
+          parentElement = this.selected.cpnElement;
+          break;
+
+        case 'globref':
+        case 'color':
+        case 'var':
+        case 'ml':
+          parentElement = this.selected.parentCpnElement;
+          break;
+      }
+
+      // if (this.selected.type === 'declarations') {
+      //   parentElement = this.cpnet.globbox;
+      // }
+      // if (this.selected.type === 'block') {
+      //   parentElement = this.selected.cpnElement;
+      // }
+      // if (['globref', 'color', 'var', 'ml'].includes(this.selected.type)) {
+      //   parentElement = this.selected.parentCpnElement;
+      // }
+
+      if (parentElement) {
+        const newBlock = { id: 'New block', _id: getNextId() };
+        this.modelService.addCpnElement(parentElement, newBlock, 'block');
+        setTimeout(() => this.goToDeclaration(newBlock._id), 100);
+      }
     }
   }
 
@@ -296,7 +318,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   onNewNode() {
     console.log(this.constructor.name, 'onNewNode()');
 
-    if (this.selected && this.selected.parentCpnElement && this.selected.type) {
+    if (this.selected && this.selected.type) {
       console.log(this.constructor.name, 'onNewNode(), this.selected = ', this.selected);
 
       switch (this.selected.type) {
@@ -307,6 +329,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
           this.onNewDeclaration();
           break;
 
+        case 'declarations':
         case 'block':
           this.onNewBlock();
           break;

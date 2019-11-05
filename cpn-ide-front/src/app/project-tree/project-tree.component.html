@@ -12,14 +12,14 @@
       oncontextmenu="return false;">
 
       <!-- Project root -->
-      <app-tree-node id="project" [title]="'Project: ' + project.name" [expanded]="expanded" [selected]="selected"
+      <app-tree-node id="project" type="root" [title]="'Project: ' + project.name" [expanded]="expanded" [selected]="selected"
         [showBullet]="false">
 
         <div class="node" [textContent]="'Step: ' + simulationState.step"></div>
         <div class="node" [textContent]="'Time: ' + simulationState.time"></div>
 
         <!-- Options -->
-        <app-tree-node id="options" title="Options" [expanded]="expanded" [selected]="selected" [type]="'options'"
+        <app-tree-node id="options" title="Options" [expanded]="expanded" [selected]="selected" type="options"
           [cpnElement]="undefined">
 
           <app-project-tree-options-node [optionList]="nodeToArray(cpnet.options.option)" [expanded]="expanded"
@@ -29,8 +29,8 @@
 
 
         <!-- Declarations -->
-        <app-tree-node id="declarations" title="Declarations" [expanded]="expanded" [selected]="selected"
-          [type]="'root'" [cpnElement]="undefined" (contextmenu)="onRightClick($event)">
+        <app-tree-node id="declarations" type="declarations" title="Declarations" [expanded]="expanded"
+          [selected]="selected" [cpnElement]="undefined" (contextmenu)="onRightClick($event)">
 
           <ng-container *ngFor="let globbox of nodeToArray(cpnet.globbox)">
             <ng-container *ngFor="let block of nodeToArray(globbox.block)">
@@ -78,7 +78,7 @@
     <a *ngIf="selected && ['globref', 'color', 'var', 'ml', 'block'].includes(selected.type)" class="dropdown-item"
       href="#" (click)="onNewBlock()">New block</a>
     <!-- <div class="dropdown-divider" href="#"></div> -->
-    <a *ngIf="selected && ['page'].includes(selected.type)" class="dropdown-item"
-      href="#" (click)="onNewPage()">New page</a>
+    <a *ngIf="selected && ['page'].includes(selected.type)" class="dropdown-item" href="#" (click)="onNewPage()">New
+      page</a>
   </app-context-menu>
 </div>

@@ -1,5 +1,6 @@
 <app-tree-node [id]="block._id" [title]="block.id" [expanded]="expanded" [selected]="selected" [type]="'block'"
-  [cpnElement]="block" (onclick)="onSelected()" [showBullet]="showBullet" [editable]="!accessCpnService.isSimulation">
+  [cpnElement]="block" [showBullet]="showBullet"
+  [editable]="!accessCpnService.isSimulation">
 
   <ng-container *ngIf="block.block">
     <ng-container *ngFor="let subblock of nodeToArray(block.block)">
@@ -10,8 +11,8 @@
   </ng-container>
 
   <ng-container *ngFor="let globref of nodeToArray(block.globref)">
-    <app-project-tree-declaration-node [parentBlock]="block" [declaration]="globref" type="globref" [selected]="selected"
-      [mouseover]="mouseover"></app-project-tree-declaration-node>
+    <app-project-tree-declaration-node [parentBlock]="block" [declaration]="globref" type="globref"
+      [selected]="selected" [mouseover]="mouseover"></app-project-tree-declaration-node>
   </ng-container>
 
   <ng-container *ngFor="let color of nodeToArray(block.color)">

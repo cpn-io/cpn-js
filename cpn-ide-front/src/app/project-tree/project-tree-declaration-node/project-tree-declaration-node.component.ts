@@ -55,7 +55,10 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, A
 
     let declarationType = parseUiDeclarartionType(layout);
 
-    if (this.focused || declarationType === 'ml' || this.accessCpnService.errorIds.includes(this.declaration._id)) {
+    if (this.focused 
+      || declarationType === 'ml' 
+      || this.accessCpnService.errorIds.includes(this.declaration._id)
+      || layout.startsWith('(*')) {
       return layout;
     }
 

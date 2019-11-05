@@ -90,6 +90,22 @@ export class AccessCpnService {
     if (!this.isSimulation) {
       return [];
     }
+
+    const firedData = [];
+    for (const transId of this.firedTransIdList) {
+      firedData.push(transId);
+
+      // const page = this.modelService.getPageByElementId(transId);
+      // if (page) {
+      //   for (const trans of this.modelService.getAllTrans()) {
+      //     if (trans && trans.subst && trans.subst._subpage === page._id) {
+      //       firedData.push(trans._id);
+      //     }
+      //   }
+      // }
+    }
+
+    this.firedTransIdList = firedData;
     return this.firedTransIdList;
   }
 

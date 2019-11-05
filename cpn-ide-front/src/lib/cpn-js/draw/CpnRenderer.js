@@ -831,9 +831,6 @@ export default function CpnRenderer(
 
     const path = drawPath(parentGfx, pathData, attrs);
 
-    // token animation
-    // drawArcAnimation(element);
-
     return path;
   }
 
@@ -1068,41 +1065,36 @@ CpnRenderer.prototype.getShapePath = function (element) {
 /**
  * Animate token movement for element (connection)
  */
-CpnRenderer.prototype.drawArcAnimation = function (element, speedMs = 500) {
+CpnRenderer.prototype.drawArcAnimation = function (connection, speedMs = 500) {
 
   const renderer = this;
 
   return new Promise(function (resolve, reject) {
 
     try {
-      console.log('TEST ANIMATION, element = ', element);
+      console.log('TOKEN ANIMATION, connection = ', connection);
+      console.log('TOKEN ANIMATION, speedMs = ', speedMs);
 
       const viewbox = renderer._canvas.viewbox();
       const zoom = renderer._canvas.zoom();
 
       const offset = { x: viewbox.x * -1, y: viewbox.y * -1, }
 
-      let pathValue = renderer.createPathFromConnection(element, offset);
-
-      // console.log('TEST ANIMATION, viewbox = ', viewbox);
-      // console.log('TEST ANIMATION, zoom = ', zoom);
-      // console.log('TEST ANIMATION, path = ', path);
-      // console.log('TEST ANIMATION, pathValue = ', pathValue);
+      let pathValue = renderer.createPathFromConnection(connection, offset);
 
       const container = renderer._canvas._svg;
 
-      // reset animation time
-      container.setCurrentTime(0);
+      const animationId = 'tokenG_' + connection.id;
 
       if (container) {
-        let tokenG = domQuery('#tokenG', container);
+        let tokenG = domQuery('#' + animationId, container);
         if (tokenG) {
           svgRemove(tokenG);
         }
 
         tokenG = svgCreate('g');
         svgAttr(tokenG, {
-          id: 'tokenG',
+          id: animationId,
           transform: 'scale(' + zoom + ', ' + zoom + ')',
           visibility: 'hidden'
         });
@@ -1117,37 +1109,30 @@ CpnRenderer.prototype.drawArcAnimation = function (element, speedMs = 500) {
 
         const tokenAnimation = svgCreate('animateMotion');
         svgAttr(tokenAnimation, {
-          dur: (speedMs + 50) + 'ms',
+          dur: speedMs + 'ms',
           begin: '0s',
           repeatCount: 1,
           path: pathValue,
         });
 
+        // reset animation time
+        container.setCurrentTime(0);
         // svgAppend(tokenGA, tokenBallShadow);
         svgAppend(tokenGA, tokenBall);
         svgAppend(tokenGA, tokenAnimation);
         svgAppend(tokenG, tokenGA);
         svgAppend(container, tokenG);
 
-        setTimeout(() => {
+        // setTimeout(() => {
           svgAttr(tokenG, {
             visibility: 'visible'
           });
-        }, 10);
-
-        // setTimeout(() => {
-        //   svgAttr(tokenG, {
-        //     visibility: 'hidden'
-        //   });
-        // }, speedMs - 10);
+        // }, 50);
 
         setTimeout(() => {
           svgRemove(tokenG);
-
-          setTimeout(() => {
-            resolve();
-          }, 10);  
-        }, speedMs);
+          resolve();
+        }, speedMs - 50);
       }
     } catch (ex) {
       console.error('CpnRenderer.prototype.drawArcAnimation(), ex = ', ex);

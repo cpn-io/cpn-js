@@ -467,10 +467,22 @@ CpnUpdater.prototype.animateArcList = function (arcIdList, speedMs) {
   const renderer = this._cpnRenderer;
 
   return new Promise(function (resolve, reject) {
+
+    let arcIdCount = arcIdList.length;
+    if (arcIdCount === 0) {
+      resolve();
+    }
+
     for (const arcId of arcIdList) {
       const element = modeling.getElementById(arcId);
       if (element) {
-        renderer.drawArcAnimation(element, speedMs).then(() => {
+        renderer.drawArcAnimation(element, speedMs).then((result) => {
+          console.log('TOKEN ANIMATION COMPLETE, Promise complete!, result = ', result);
+
+          arcIdCount --;
+          if (arcIdCount === 0) {
+            resolve();
+          }
         });
       }
     }

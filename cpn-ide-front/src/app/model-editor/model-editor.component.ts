@@ -87,6 +87,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy() {
     console.log(this.constructor.name, 'ngOnDestroy(), this.instanseId = ', this.instanseId);
 
+    this.diagram.clear();
     this.diagram.destroy();
   }
 
@@ -484,20 +485,43 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   testAnimation() {
 
     const speedMs = 500;
-    let arcIdList = [];
+    let incomeArcIdList = [];
+    let outcomeArcIdList = [];
+    let transIdList = [];
 
     const page = this.modelService.getPageById(this.pageId);
 
     // arcIdList.push('ID2751839452', 'ID1243034573', 'sdfsdfsdfsdf', 'ID1243036954', 'ID1243040118');
 
-    for (const arc of nodeToArray(page.arc)) {
-      arcIdList.push(arc._id);
+    for (const trans of nodeToArray(page.trans)) {
+      transIdList.push(trans._id);
     }
 
-    console.log(this.constructor.name, 'testAnimation(), arcIdList = ', arcIdList);
+    for (const arc of nodeToArray(page.arc)) {
+      if (arc._orientation === 'PtoT') {
+        incomeArcIdList.push(arc._id);
+      }
+      if (arc._orientation === 'TtoP') {
+        outcomeArcIdList.push(arc._id);
+      }
+    }
 
-    this.cpnUpdater.animateArcList(arcIdList, speedMs).then((result) => {
-      console.log(this.constructor.name, 'testAnimation(), Promise complete!, result = ', result);
+    console.log(this.constructor.name, 'testAnimation(), incomeArcIdList = ', incomeArcIdList);
+    console.log(this.constructor.name, 'testAnimation(), outcomeArcIdList = ', outcomeArcIdList);
+
+    this.stateProvider.clear();
+    this.stateProvider.setFiredState(transIdList);
+    this.modeling.repaintElements();
+
+    this.cpnUpdater.animateArcList(incomeArcIdList, speedMs).then(() => {
+      console.log(this.constructor.name, 'testAnimation(), Promise complete!, incomeArcIdList = ', incomeArcIdList);
+
+      this.cpnUpdater.animateArcList(outcomeArcIdList, speedMs).then(() => {
+        console.log(this.constructor.name, 'testAnimation(), Promise complete!, outcomeArcIdList = ', outcomeArcIdList);
+
+        this.stateProvider.clear();
+        this.modeling.repaintElements();
+      });
     });
   }
 
@@ -536,27 +560,30 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       // [{"id":"ID1243034562","tokens":1,"marking":"1`3"},{"id":"ID1234651517","tokens":1,"marking":"1`3"}]
       const tokenDiff = this.accessCpnService.tokenDiff;
 
-      const arcIdList = [];
+      const incomeArcIdList = [];
+      const outcomeArcIdList = [];
       for (const transId of firedData) {
         for (const arc of this.modelService.getTransitionIncomeArcs(transId)) {
-          arcIdList.push(arc._id);
+          incomeArcIdList.push(arc._id);
         }
         for (const t of tokenDiff) {
           for (const arc of this.modelService.getTransitionOutcomeArcs(transId, t.id)) {
-            arcIdList.push(arc._id);
+            outcomeArcIdList.push(arc._id);
           }
         }
       }
-      if (arcIdList.length > 0) {
+      // const speedMs = this.simulationService.getAnimationDelay() / incomeArcIdList.length;
+      const speedMs = this.simulationService.getAnimationDelay() / 2;
 
-        const speedMs = this.simulationService.getAnimationDelay() / arcIdList.length;
-        // const speedMs = this.simulationService.getAnimationDelay() / 2;
+      console.log('TOKEN ANIMATION, updateElementStatus(), incomeArcIdList = ', incomeArcIdList);
+      console.log('TOKEN ANIMATION, updateElementStatus(), outcomeArcIdList = ', outcomeArcIdList);
+      console.log('TOKEN ANIMATION, updateElementStatus(), speedMs = ', speedMs);
 
-        console.log('TOKEN ANIMATION, updateElementStatus(), arcIdList = ', arcIdList);
-        console.log('TOKEN ANIMATION, updateElementStatus(), speedMs = ', speedMs);
+      this.cpnUpdater.animateArcList(incomeArcIdList, speedMs).then(() => {
+        console.log('TOKEN ANIMATION, updateElementStatus(), Promise complete!, incomeArcIdList = ', incomeArcIdList);
 
-        this.cpnUpdater.animateArcList(arcIdList, speedMs).then((result) => {
-          console.log('TOKEN ANIMATION, updateElementStatus(), Promise complete!, result = ', result);
+        this.cpnUpdater.animateArcList(outcomeArcIdList, speedMs).then(() => {
+          console.log('TOKEN ANIMATION, updateElementStatus(), Promise complete!, outcomeArcIdList = ', outcomeArcIdList);
 
           this.stateProvider.clear();
           this.eventBus.fire('model.update.tokens', { data: this.accessCpnService.getTokenData() });
@@ -564,10 +591,10 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
           this.checkPorts();
           this.modeling.repaintElements();
-
+  
           this.eventService.send(Message.SIMULATION_TOKEN_ANIMATE_COMPLETE);
         });
-      }
+      });
 
     } else {
 

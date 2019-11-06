@@ -1080,7 +1080,10 @@ CpnRenderer.prototype.drawArcAnimation = function (connection, speedMs = 500) {
 
       const offset = { x: viewbox.x * -1, y: viewbox.y * -1, }
 
-      let pathValue = renderer.createPathFromConnection(connection, offset);
+      let waypoints = connection.waypoints;
+      let firstPoint = waypoints[0];
+
+      let pathValue = renderer.createPathFromConnection(connection, { x: -firstPoint.x, y: -firstPoint.y });
 
       const container = renderer._canvas._svg;
 
@@ -1096,7 +1099,6 @@ CpnRenderer.prototype.drawArcAnimation = function (connection, speedMs = 500) {
         svgAttr(tokenG, {
           id: animationId,
           transform: 'scale(' + zoom + ', ' + zoom + ')',
-          visibility: 'hidden'
         });
 
         const tokenGA = svgCreate('g');
@@ -1105,34 +1107,39 @@ CpnRenderer.prototype.drawArcAnimation = function (connection, speedMs = 500) {
         // svgAttr(tokenBallShadow, { r: TOKEN_BALL_RADIUS, fill: 'gray', cx: 1, cy: 1 });
 
         const tokenBall = svgCreate('circle');
-        svgAttr(tokenBall, { r: TOKEN_BALL_RADIUS, fill: TOKEN_BALL_FILL_COLOR, cx: 0, cy: 0 });
+        svgAttr(tokenBall, {
+          r: TOKEN_BALL_RADIUS,
+          fill: TOKEN_BALL_FILL_COLOR,
+          cx: firstPoint.x + offset.x,
+          cy: firstPoint.y + offset.y
+        });
 
         const tokenAnimation = svgCreate('animateMotion');
         svgAttr(tokenAnimation, {
           dur: speedMs + 'ms',
           begin: '0s',
-          repeatCount: 1,
+          // begin: 'click',
+          // repeatCount: 1,
           path: pathValue,
         });
+        tokenAnimation.setAttribute('fill', 'freeze');
 
         // reset animation time
         container.setCurrentTime(0);
+
         // svgAppend(tokenGA, tokenBallShadow);
         svgAppend(tokenGA, tokenBall);
         svgAppend(tokenGA, tokenAnimation);
         svgAppend(tokenG, tokenGA);
         svgAppend(container, tokenG);
 
-        // setTimeout(() => {
-          svgAttr(tokenG, {
-            visibility: 'visible'
-          });
-        // }, 50);
-
         setTimeout(() => {
-          svgRemove(tokenG);
-          resolve();
-        }, speedMs - 50);
+          resolve(connection);
+          setTimeout(() => svgRemove(tokenG), 10);
+
+          // svgRemove(tokenG);
+          // setTimeout(() => resolve(connection), 10);
+        }, speedMs);
       }
     } catch (ex) {
       console.error('CpnRenderer.prototype.drawArcAnimation(), ex = ', ex);
@@ -1165,7 +1172,7 @@ CpnRenderer.prototype.createPathFromConnection = function (connection, offset = 
 
     if (prevWp) {
       pathData +=
-        'Q' + (prevPoint.x + offset.x) + ' ' + (prevPoint.y + offset.y) +
+        ' Q' + (prevPoint.x + offset.x) + ' ' + (prevPoint.y + offset.y) +
         ', ' + (wp.x + offset.x) + ' ' + (wp.y + offset.y) + ' ';
     }
 
@@ -1174,7 +1181,7 @@ CpnRenderer.prototype.createPathFromConnection = function (connection, offset = 
       wp2 = { x: (prevPoint.x + dx - DD * dx / d), y: (prevPoint.y + dy - DD * dy / d) };
     }
 
-    pathData += 'L' + (wp2.x + offset.x) + ',' + (wp2.y + offset.y) + ' ';
+    pathData += ' L' + (wp2.x + offset.x) + ',' + (wp2.y + offset.y) + ' ';
 
     prevPoint = waypoints[i];
     prevWp = wp;

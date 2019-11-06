@@ -1135,7 +1135,9 @@ CpnRenderer.prototype.drawArcAnimation = function (connection, speedMs = 500) {
 
         setTimeout(() => {
           resolve(connection);
-          setTimeout(() => svgRemove(tokenG), 10);
+          svgRemove(tokenG);
+
+          // setTimeout(() => svgRemove(tokenG), 10);
 
           // svgRemove(tokenG);
           // setTimeout(() => resolve(connection), 10);

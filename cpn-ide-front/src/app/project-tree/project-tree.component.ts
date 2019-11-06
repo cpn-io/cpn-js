@@ -77,13 +77,14 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   }
 
   loadProject() {
-    // this.reset();
+    this.reset();
 
     this.cpnet = this.modelService.getCpn();
     this.project = this.modelService.getProject();
     this.loadPages();
 
     // setTimeout(() => this.goToDeclaration('id89457845'), 100);
+    setTimeout(() => this.goToFirstPage(), 100);
   }
 
   updateErrors() {
@@ -123,6 +124,25 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
   onChange(event) {
     console.log(this.constructor.name, 'onChange(), event = ', event);
+  }
+
+  goToFirstPage() {
+    if (this.cpnet && this.cpnet.page) {
+
+      const page = nodeToArray(this.cpnet.page)[0];
+
+      console.log(this.constructor.name, 'goToFirstPage(), page = ', page);
+
+      this.selected.id = page._id;
+      this.selected.type = 'page';
+      this.selected.cpnElement = page;
+
+      const inputElem = document.getElementById(this.selected.id);
+      console.log(this.constructor.name, 'goToFirstPage(), inputElem = ', inputElem);
+      if (inputElem) {
+        inputElem.focus();
+      }
+    }
   }
 
   goToDeclaration(id) {

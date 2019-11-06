@@ -140,17 +140,10 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.loading = false;
       console.log('import.render.complete, event = ', event);
 
-      // this.stateProvider.clear();
-      // this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
-      // this.modeling.repaintElements();      
-
-      // setTimeout(() => {
-      //   this.updateElementStatus();
-      //   this.modeling.setEditable(!this.accessCpnService.isSimulation);
-      // }, 100);
-
-      this.updateElementStatus();
-      this.modeling.setEditable(!this.accessCpnService.isSimulation);
+      setTimeout(() => {
+        this.updateElementStatus();
+        this.modeling.setEditable(!this.accessCpnService.isSimulation);
+      }, 10);
     });
 
     // eventBus.on('element.changed', (event) => {
@@ -180,10 +173,18 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     // VALIDATION STATUS
-    this.eventService.on(Message.SERVER_INIT_NET_DONE, () => this.updateElementStatus());
+    this.eventService.on(Message.SERVER_INIT_NET_DONE, () => {
+      setTimeout(() => {
+        this.updateElementStatus();
+      }, 10);
+    });
 
     // SIMULATION STATUS
-    this.eventService.on(Message.SIMULATION_STEP_DONE, () => this.updateElementStatus());
+    this.eventService.on(Message.SIMULATION_STEP_DONE, () => {
+      setTimeout(() => {
+        this.updateElementStatus();
+      }, 10);
+    });
 
     // BINDINGS
     this.eventService.on(Message.SERVER_GET_BINDINGS, (event) => eventBus.fire('bindingsMenu.open', { data: event.data }));
@@ -530,8 +531,8 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
    * Update element status
    */
   updateElementStatus() {
-    this.stateProvider.clear();
-    this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
+    // this.stateProvider.clear();
+    // this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
     this.stateProvider.setFiredState(this.accessCpnService.getFiredData());
     this.modeling.repaintElements();
 
@@ -591,7 +592,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
           this.checkPorts();
           this.modeling.repaintElements();
-  
+
           this.eventService.send(Message.SIMULATION_TOKEN_ANIMATE_COMPLETE);
         });
       });
@@ -606,6 +607,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.modeling.repaintElements();
     }
 
+    console.log('updateElementStatus(), COMPLETE');
   }
 
   updateAlailableStatus(availableIds) {

@@ -67,10 +67,13 @@ export class MainToolbarComponent implements OnInit {
   }
 
   newCPNet() {
+    this.onStopSimulation();
     this.projectService.loadEmptyProject();
   }
 
   reloadProject() {
+    this.onStopSimulation();
+
     this.eventService.send(Message.PROJECT_LOAD, { project: this.modelService.getProject() });
     this.validationService.validate();
   }
@@ -80,5 +83,6 @@ export class MainToolbarComponent implements OnInit {
   }
 
   openProject() {
+    this.onStopSimulation();
   }
 }

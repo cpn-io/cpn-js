@@ -368,31 +368,32 @@ export class AccessCpnService {
    */
   doStep(transId) {
     if (!this.simInitialized || !this.sessionId) {
-      return new Promise(() => { });
+      return;
+      // return new Promise(() => { });
     }
 
-    return new Promise((resolve, reject) => {
+    console.log('AccessCpnService, doStep(), START');
 
-      const url = CpnServerUrl.get() + '/api/v2/cpn/sim/step/' + transId; // ID1412328496
-      this.http.get(url, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
-        (data: any) => {
-          console.log('AccessCpnService, doStep(), SUCCESS, data = ', data);
-          if (data) {
-            this.updateTokenData(data.tokensAndMark);
-            this.updateReadyData(data.enableTrans);
-            this.updateFiredTrans(data.firedTrans);
+    const url = CpnServerUrl.get() + '/api/v2/cpn/sim/step/' + transId; // ID1412328496
+    this.http.get(url, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
+      (data: any) => {
+        console.log('AccessCpnService, doStep(), SUCCESS, data = ', data);
+        if (data) {
+          this.updateTokenData(data.tokensAndMark);
+          this.updateReadyData(data.enableTrans);
+          this.updateFiredTrans(data.firedTrans);
 
-            this.eventService.send(Message.SIMULATION_STEP_DONE);
-          }
+          console.log('AccessCpnService, doStep(), SUCCESS (2)');
 
-          this.getSimState();
-        },
-        (error) => {
-          console.error('AccessCpnService, doStep(), ERROR, data = ', error);
+          this.eventService.send(Message.SIMULATION_STEP_DONE);
         }
-      );
 
-    });
+        this.getSimState();
+      },
+      (error) => {
+        console.error('AccessCpnService, doStep(), ERROR, data = ', error);
+      }
+    );
   }
 
   doStepWithBinding(transId, bindId) {

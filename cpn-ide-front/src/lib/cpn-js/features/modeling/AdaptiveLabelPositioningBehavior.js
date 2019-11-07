@@ -59,8 +59,9 @@ export default function AdaptiveLabelPositioningBehavior(eventBus, modeling) {
   ], function (event) {
     // console.log('SHAPE.RESIZE: adjust label position, event = ', event);
 
-    if (event.context)
+    if (event.context) {
       checkShapeLabelAdjustment(event.context);
+    }
   });
 
   /**

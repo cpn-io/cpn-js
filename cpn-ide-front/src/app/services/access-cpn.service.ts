@@ -289,6 +289,9 @@ export class AccessCpnService {
    * Initialize access/cpn simulator
    */
   initSim() {
+    if (this.initNetProcessing) {
+      return;
+    }
     if (this.initSimProcessing) {
       return;
     }

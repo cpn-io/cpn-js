@@ -51,7 +51,8 @@
         (click)="modelService.undoChanges()">
         <i class="fas fa-undo"></i>
         <!-- <span>Undo</span>&nbsp;<span *ngIf="modelService.getUndoCount() > 0">({{ modelService.getUndoCount() }})</span> -->
-        <span *ngIf="modelService.getUndoCount() > 0; else elseUndoBlock">Undo ({{ modelService.getUndoCount() }})</span>
+        <span *ngIf="modelService.getUndoCount() > 0; else elseUndoBlock">Undo
+          ({{ modelService.getUndoCount() }})</span>
         <ng-template #elseUndoBlock><span>Undo</span></ng-template>
       </div>
     </li>
@@ -61,7 +62,8 @@
       <div class="nav-link mb-0" [ngClass]="{'disabled': modelService.getRedoCount() === 0 }"
         (click)="modelService.redoChanges()">
         <i class="fas fa-redo"></i>
-        <span *ngIf="modelService.getRedoCount() > 0; else elseRedoBlock">Redo ({{ modelService.getRedoCount() }})</span>
+        <span *ngIf="modelService.getRedoCount() > 0; else elseRedoBlock">Redo
+          ({{ modelService.getRedoCount() }})</span>
         <ng-template #elseRedoBlock><span>Redo</span></ng-template>
       </div>
     </li>
@@ -112,32 +114,34 @@
 
     <!-- Start/Stop simulation -->
     <li class="nav-item">
-      <div *ngIf="accessCpnService.isSimulation; else notSim">
-        <div (click)="onStopSimulation()" class="nav-link mb-0" style="color: red">
-          <i class="fas fa-stop"></i>
-          <span>Stop</span>
-        </div>
-      </div>
-      <ng-template #notSim>
-        <div (click)="onStartSimulation()" class="nav-link mb-0" style="color: green">
+      <ng-container *ngIf="!accessCpnService.isSimulation">
+        <div (click)="onStartSimulation()" class="nav-link mb-0 green"
+          [ngClass]="{'disabled': accessCpnService.initNetProcessing || accessCpnService.initSimProcessing}">
           <i class="fas fa-play"></i>
           <span>Start</span>
         </div>
-      </ng-template>
+      </ng-container>
+
+      <ng-container *ngIf="accessCpnService.isSimulation">
+        <div (click)="onStopSimulation()" class="nav-link mb-0 red">
+          <i class="fas fa-stop"></i>
+          <span>Stop</span>
+        </div>
+      </ng-container>
     </li>
 
 
-    <!-- Test -->
+  </ul>
+
+  <ul class="navbar-nav ml-auto">
+
+    <!-- Test animation -->
     <li class="nav-item">
       <div (click)="onTest()" class="nav-link mb-0">
         <i class="fas fa-step-forward"></i>
         <span>Test animation</span>
       </div>
     </li>
-
-  </ul>
-
-  <ul class="navbar-nav ml-auto">
 
     <div class="divider"></div>
 

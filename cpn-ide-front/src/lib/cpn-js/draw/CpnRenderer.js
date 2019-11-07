@@ -1124,14 +1124,16 @@ CpnRenderer.prototype.drawArcAnimation = function (connection, speedMs = 500) {
         });
         tokenAnimation.setAttribute('fill', 'freeze');
 
-        // reset animation time
-        container.setCurrentTime(0);
+        setTimeout(() => {
+          // reset animation time
+          container.setCurrentTime(0);
 
-        // svgAppend(tokenGA, tokenBallShadow);
-        svgAppend(tokenGA, tokenBall);
-        svgAppend(tokenGA, tokenAnimation);
-        svgAppend(tokenG, tokenGA);
-        svgAppend(container, tokenG);
+          // svgAppend(tokenGA, tokenBallShadow);
+          svgAppend(tokenGA, tokenBall);
+          svgAppend(tokenGA, tokenAnimation);
+          svgAppend(tokenG, tokenGA);
+          svgAppend(container, tokenG);
+        }, 1);
 
         setTimeout(() => {
           resolve(connection);

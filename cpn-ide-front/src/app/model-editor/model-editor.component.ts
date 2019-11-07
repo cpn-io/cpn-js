@@ -28,6 +28,7 @@ import { AccessCpnService } from '../services/access-cpn.service';
 import { MonitorType, getMonitorTypeList } from '../common/monitors';
 import { addNode, nodeToArray } from '../common/utils';
 import { SimulationService } from '../services/simulation.service';
+import { TEST_TOKEN_DATA } from '../test/test-data';
 
 @Component({
   selector: 'app-model-editor',
@@ -484,6 +485,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   testAnimation() {
+    const startTime = new Date().getTime();
 
     const speedMs = 500;
     let incomeArcIdList = [];
@@ -514,6 +516,8 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.stateProvider.setFiredState(transIdList);
     this.modeling.repaintElements();
 
+    console.log('TEST ANIMATION, testAnimation(), START ANIMATION, timeMs = ', new Date().getTime() - startTime);
+
     this.cpnUpdater.animateArcList(incomeArcIdList, speedMs).then(() => {
       console.log(this.constructor.name, 'testAnimation(), Promise complete!, incomeArcIdList = ', incomeArcIdList);
 
@@ -521,8 +525,26 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         console.log(this.constructor.name, 'testAnimation(), Promise complete!, outcomeArcIdList = ', outcomeArcIdList);
 
         this.stateProvider.clear();
+        console.log('TEST ANIMATION, testAnimation() (1), clear(), COMPLETE, timeMs = ', new Date().getTime() - startTime);
+
+        const tokenData = TEST_TOKEN_DATA; // this.accessCpnService.getTokenData();
+        // localStorage.setItem('tokenData', JSON.stringify(tokenData));
+
+        this.eventBus.fire('model.update.tokens', { data: tokenData });
+        console.log('TEST ANIMATION, testAnimation() (1), fire(\'model.update.tokens\'), COMPLETE, timeMs = ', new Date().getTime() - startTime);
+
+        this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
+        console.log('TEST ANIMATION, testAnimation() (1), setReadyState(), COMPLETE, timeMs = ', new Date().getTime() - startTime);
+
+        this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
+        console.log('TEST ANIMATION, testAnimation() (1), setErrorState(), COMPLETE, timeMs = ', new Date().getTime() - startTime);
+
+        this.checkPorts();
+        console.log('TEST ANIMATION, testAnimation() (1), checkPorts(), COMPLETE, timeMs = ', new Date().getTime() - startTime);
+
         this.modeling.repaintElements();
-      });
+        console.log('TEST ANIMATION, testAnimation() (1), repaintElements(), COMPLETE, timeMs = ', new Date().getTime() - startTime);
+    });
     });
   }
 
@@ -531,17 +553,20 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
    * Update element status
    */
   updateElementStatus() {
+    const startTime = new Date().getTime();
+
     // this.stateProvider.clear();
     // this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
     this.stateProvider.setFiredState(this.accessCpnService.getFiredData());
     this.modeling.repaintElements();
 
-    console.log('updateElementStatus(), tokenData = ', this.accessCpnService.getTokenData());
-    console.log('updateElementStatus(), readyData = ', this.accessCpnService.getReadyData());
-    console.log('updateElementStatus(), firedData = ', this.accessCpnService.getFiredData());
-    console.log('updateElementStatus(), errorData = ', this.accessCpnService.getErrorData());
+    console.log('TOKEN ANIMATION, updateElementStatus(), repaintElements() (1), timeMs = ', new Date().getTime() - startTime);
 
-    console.log('updateElementStatus(), this.pageId = ', this.pageId);
+    // console.log('updateElementStatus(), tokenData = ', this.accessCpnService.getTokenData());
+    // console.log('updateElementStatus(), readyData = ', this.accessCpnService.getReadyData());
+    // console.log('updateElementStatus(), firedData = ', this.accessCpnService.getFiredData());
+    // console.log('updateElementStatus(), errorData = ', this.accessCpnService.getErrorData());
+    // console.log('updateElementStatus(), this.pageId = ', this.pageId);
 
     const firedData = this.accessCpnService.getFiredData();
 
@@ -580,11 +605,15 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log('TOKEN ANIMATION, updateElementStatus(), outcomeArcIdList = ', outcomeArcIdList);
       console.log('TOKEN ANIMATION, updateElementStatus(), speedMs = ', speedMs);
 
+      console.log('TOKEN ANIMATION, updateElementStatus(), START ANIMATION, timeMs = ', new Date().getTime() - startTime);
+
       this.cpnUpdater.animateArcList(incomeArcIdList, speedMs).then(() => {
         console.log('TOKEN ANIMATION, updateElementStatus(), Promise complete!, incomeArcIdList = ', incomeArcIdList);
+        console.log('TOKEN ANIMATION, updateElementStatus(), INCOME ANIMATION COMPLETE, timeMs = ', new Date().getTime() - startTime);
 
         this.cpnUpdater.animateArcList(outcomeArcIdList, speedMs).then(() => {
           console.log('TOKEN ANIMATION, updateElementStatus(), Promise complete!, outcomeArcIdList = ', outcomeArcIdList);
+          console.log('TOKEN ANIMATION, updateElementStatus(), OUTCOME ANIMATION COMPLETE, timeMs = ', new Date().getTime() - startTime);
 
           this.stateProvider.clear();
           this.eventBus.fire('model.update.tokens', { data: this.accessCpnService.getTokenData() });
@@ -592,6 +621,8 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
           this.checkPorts();
           this.modeling.repaintElements();
+
+          console.log('TOKEN ANIMATION, updateElementStatus() (1), COMPLETE, timeMs = ', new Date().getTime() - startTime);
 
           this.eventService.send(Message.SIMULATION_TOKEN_ANIMATE_COMPLETE);
         });
@@ -605,6 +636,8 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
       this.checkPorts();
       this.modeling.repaintElements();
+
+      console.log('TOKEN ANIMATION, updateElementStatus() (2), COMPLETE, timeMs = ', new Date().getTime() - startTime);
     }
 
     console.log('updateElementStatus(), COMPLETE');

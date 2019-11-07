@@ -35,9 +35,8 @@ export default function ChangeSupporter(eventBus, modeling, textRenderer, elemen
    */
   function updateTokens(data) {
 
-    const startTime = new Date().getTime();
-
-    // console.log('ChangeSupporter(), updateTokens(), data = ', data);
+    console.log('ChangeSupporter(), updateTokens(), data = ', data);
+    console.time('ChangeSupporter.updateTokens()');
 
     if (data && data.length > 0) {
 
@@ -131,7 +130,7 @@ export default function ChangeSupporter(eventBus, modeling, textRenderer, elemen
 
     }
 
-    console.log('END updateTokens(), time = ', new Date().getTime() - startTime);
+    console.timeEnd('ChangeSupporter.updateTokens()');
   }
 
   function updateElementSize(element) {
@@ -139,9 +138,7 @@ export default function ChangeSupporter(eventBus, modeling, textRenderer, elemen
     //   return;
     // }
 
-    const startTime = new Date().getTime();
-
-    // return;
+    console.time('ChangeSupporter.updateElementSize()');
 
     // console.log('ChangeSupporter(), updateTokens(), updateElementSize()');
     // console.log('ChangeSupporter(), updateTokens(), updateElementSize(), element.text = ', element.text);
@@ -151,11 +148,11 @@ export default function ChangeSupporter(eventBus, modeling, textRenderer, elemen
       newBounds.width = 10;
 
     // console.log('ChangeSupporter(), updateTokens(), updateElementSize(), newBounds = ', newBounds);
-    modeling.resizeShape(element, newBounds);
-    console.log('END updateTokens(), updateElementSize(), resizeShape(), time = ', new Date().getTime() - startTime);
 
+    modeling.resizeShape(element, newBounds);
     // modeling.moveShape(element, { x: 0, y: 0 }, element.parent, undefined, undefined);
-    // console.log('END updateTokens(), updateElementSize(), moveShape(), time = ', new Date().getTime() - startTime);
+
+    console.timeEnd('ChangeSupporter.updateElementSize()');
   }
 
   /**

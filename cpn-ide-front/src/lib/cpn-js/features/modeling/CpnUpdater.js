@@ -35,7 +35,8 @@ CpnUpdater.$inject = [
   'portMenuProvider',
   'bindingsMenuProvider',
   'layouter',
-  'cpnRenderer'
+  'cpnRenderer',
+  'textRenderer'
 ];
 
 import {
@@ -62,12 +63,13 @@ import { getDistance } from '../../draw/CpnRenderUtil';
  */
 export default function CpnUpdater(eventBus, modeling, elementRegistry,
   connectionDocking, selection, popupMenuProvider, contextPad, canvas,
-  portMenuProvider, bindingsMenuProvider, layouter, cpnRenderer) {
+  portMenuProvider, bindingsMenuProvider, layouter, cpnRenderer, textRenderer) {
 
   this._canvas = canvas;
   this._modeling = modeling;
   this._elementRegistry = elementRegistry;
   this._cpnRenderer = cpnRenderer;
+  this._textRenderer = textRenderer;
 
   const self = this;
   const container = self._canvas.getContainer();
@@ -148,8 +150,6 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   //       updateCpnElement(element);
   //     }
   //   });
-
-
 
   eventBus.on('shape.create.end', (event) => {
     // console.log('CpnUpdater(), shape.create.end, event = ', event);
@@ -259,18 +259,25 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
 
   function showHideMarking(tokenElement) {
-    // console.log('CpnUpdater(), showHideMarking(), tokenElement = ', tokenElement);
+    console.log('CpnUpdater(), showHideMarking(), tokenElement = ', tokenElement);
 
     if (!tokenElement || !tokenElement.label || !is(tokenElement.label, CPN_MARKING_LABEL))
       return;
 
-    tokenElement.label.hidden = !tokenElement.label.hidden;
-    // tokenElement.label.hidden = false;
-    modeling.updateElement(tokenElement.label, true);
+    const markingElement = tokenElement.label;
 
-    if (!tokenElement.label.hidden) {
-      modeling.moveShape(tokenElement.label, { x: 0, y: 0 }, tokenElement.label.parent, undefined, undefined);
-    }
+    markingElement.hidden = !markingElement.hidden;
+
+    // if (!markingElement.hidden) {
+    //   var newBounds = textRenderer.getExternalLabelBounds(markingElement, markingElement.text);
+    //   if (newBounds.width < 10)
+    //     newBounds.width = 10;
+    //   modeling.resizeShape(markingElement, newBounds);
+    //   modeling.moveShape(markingElement, { x: 0, y: 0 }, markingElement.parent, undefined, undefined);
+    // }
+    // modeling.moveShape(tokenElement, { x: 0, y: 0 }, tokenElement.parent, undefined, undefined);
+    
+    modeling.updateElement(markingElement, true);
   }
 
   // crop connection ends during create/update

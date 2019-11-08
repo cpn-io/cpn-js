@@ -23,7 +23,7 @@
 
 <ng-template #elseBlock>
   <div class="node" [contentEditable]="!accessCpnService.isSimulation" [textContent]="page.pageattr._name"
-    (click)="selected.type = 'page'; selected.id = page._id; selected.cpnElement = page"
+    (mousedown)="selected.type = 'page'; selected.id = page._id; selected.cpnElement = page"
     (input)="page.pageattr._name=$event.target.textContent"
     [ngClass]="{'selected': selected.id === page._id, 'error': accessCpnService.errorPagesIds.includes(page._id), 'ready': accessCpnService.readyPagesIds.includes(page._id)}">
   </div>

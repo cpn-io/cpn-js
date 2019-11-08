@@ -10,6 +10,14 @@
   margin-left: -15px;
 }
 
+.icon {
+  width: 12px;
+  float: left;
+  margin-left: 5px;
+  margin-right: 7px;
+  color: lightgray;
+}
+
 .title {
   float: none;
 }
@@ -48,7 +56,11 @@ div.child.expanded {
   background-color: #ffeeee;
   border-bottom: 1px solid red;
   // border-top: 5px solid white;
-  margin-top: 5px;
+  // margin-top: 5px;
+}
+
+.errorIcon {
+  color: #ffcccc;
 }
 
 .errorText {

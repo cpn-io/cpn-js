@@ -484,10 +484,11 @@ CpnUpdater.prototype.animateArcList = function (arcIdList, speedMs) {
       const element = modeling.getElementById(arcId);
       if (element) {
         renderer.drawArcAnimation(element, speedMs).then((result) => {
-          console.log('TOKEN ANIMATION COMPLETE, Promise complete!, result = ', result);
+          console.log('TOKEN ANIMATION COMPLETE, Promise complete!, result.id = ', result.id, arcIdCount);
 
           arcIdCount --;
           if (arcIdCount === 0) {
+            console.log('TOKEN ANIMATION COMPLETE, RESOLVE ALL');
             resolve();
           }
         });

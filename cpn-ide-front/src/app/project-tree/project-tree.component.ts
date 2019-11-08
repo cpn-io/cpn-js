@@ -31,9 +31,9 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
   public mouseover = { id: undefined };
 
-  public contextmenu = false;
-  public contextmenuX = 0;
-  public contextmenuY = 0;
+  // public contextmenu = false;
+  // public contextmenuX = 0;
+  // public contextmenuY = 0;
 
   newPageCount = 0;
 
@@ -200,24 +200,16 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
   //activates the menu with the coordinates
   onRightClick(event) {
-    this.contextmenuX = event.clientX;
-    this.contextmenuY = event.clientY; // - 50;
-    this.contextmenu = true;
+    // this.contextmenuX = event.clientX;
+    // this.contextmenuY = event.clientY; // - 50;
+    // this.contextmenu = true;
+
     console.log(this.constructor.name, 'onrightClick, event = ', event);
   }
   //disables the menu
   disableContextMenu() {
-    this.contextmenu = false;
+    // this.contextmenu = false;
   }
-
-  // @HostListener('document:contextmenu', ['$event'])
-  // onContextMenu(e) {
-  //   console.log(this.constructor.name, 'onContextMenu, e = ', e);
-
-  //   if (this.hideContextMenu()) {
-  //     // e.preventDefault();
-  //   }
-  // }
 
   onKeyDown(event: KeyboardEvent) {
     console.log(this.constructor.name, 'onKeyDown(), event = ', event);
@@ -236,46 +228,9 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
     console.log(this.constructor.name, 'onNewDeclaration(), this.selected = ', this.selected);
 
-    if (this.selected && this.selected.parentCpnElement && this.selected.type) {
-      let parentCpnElement = this.selected.parentCpnElement;
-      let newLayout = '(* Empty *)';
-      switch (this.selected.type) {
-        case 'globref':
-          newLayout = 'globref CONST = 1;';
-          break;
-        case 'color':
-          newLayout = 'colset TYPE = int;';
-          break;
-        case 'var':
-          newLayout = 'var v:int;';
-          break;
-      }
-
-      if (this.selected.type === 'block') {
-        parentCpnElement = this.selected.cpnElement;
-      }
-
-      if (newLayout) {
-        // parse declaration layout
-        let result = parseDeclarartion(newLayout);
-        // console.log(this.constructor.name, 'onNewDeclaration(), result = ', result);
-
-        if (result && result.cpnElement) {
-          let newDeclaration = result.cpnElement;
-          let newCpnDeclarartionType = result.cpnDeclarationType;
-
-          // set new id value
-          newDeclaration._id = getNextId();
-
-          // add declaration cpn element to declaration group
-          this.modelService.addCpnElement(
-            parentCpnElement,
-            newDeclaration,
-            newCpnDeclarartionType);
-
-          setTimeout(() => this.goToDeclaration(newDeclaration._id), 100);
-        }
-      }
+    const newDeclaration = this.modelService.newDeclaration(this.selected.parentCpnElement, this.selected, this.selected.type);
+    if (newDeclaration) {
+      setTimeout(() => this.goToDeclaration(newDeclaration._id), 100);
     }
   }
 

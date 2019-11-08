@@ -485,8 +485,6 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   testAnimation() {
-    const startTime = new Date().getTime();
-
     const speedMs = 500;
     let incomeArcIdList = [];
     let outcomeArcIdList = [];
@@ -516,8 +514,6 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.stateProvider.setFiredState(transIdList);
     this.modeling.repaintElements();
 
-    console.log('TEST ANIMATION, testAnimation(), START ANIMATION, timeMs = ', new Date().getTime() - startTime);
-
     this.cpnUpdater.animateArcList(incomeArcIdList, speedMs).then(() => {
       console.log(this.constructor.name, 'testAnimation(), Promise complete!, incomeArcIdList = ', incomeArcIdList);
 
@@ -525,26 +521,16 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         console.log(this.constructor.name, 'testAnimation(), Promise complete!, outcomeArcIdList = ', outcomeArcIdList);
 
         this.stateProvider.clear();
-        console.log('TEST ANIMATION, testAnimation() (1), clear(), COMPLETE, timeMs = ', new Date().getTime() - startTime);
 
         const tokenData = TEST_TOKEN_DATA; // this.accessCpnService.getTokenData();
         // localStorage.setItem('tokenData', JSON.stringify(tokenData));
 
         this.eventBus.fire('model.update.tokens', { data: tokenData });
-        console.log('TEST ANIMATION, testAnimation() (1), fire(\'model.update.tokens\'), COMPLETE, timeMs = ', new Date().getTime() - startTime);
-
         this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
-        console.log('TEST ANIMATION, testAnimation() (1), setReadyState(), COMPLETE, timeMs = ', new Date().getTime() - startTime);
-
         this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
-        console.log('TEST ANIMATION, testAnimation() (1), setErrorState(), COMPLETE, timeMs = ', new Date().getTime() - startTime);
-
         this.checkPorts();
-        console.log('TEST ANIMATION, testAnimation() (1), checkPorts(), COMPLETE, timeMs = ', new Date().getTime() - startTime);
-
         this.modeling.repaintElements();
-        console.log('TEST ANIMATION, testAnimation() (1), repaintElements(), COMPLETE, timeMs = ', new Date().getTime() - startTime);
-    });
+      });
     });
   }
 

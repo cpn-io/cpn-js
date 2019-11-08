@@ -1103,23 +1103,20 @@ CpnRenderer.prototype.drawArcAnimation = function (connection, speedMs = 500) {
 
         const tokenGA = svgCreate('g');
 
-        // const tokenBallShadow = svgCreate('circle');
-        // svgAttr(tokenBallShadow, { r: TOKEN_BALL_RADIUS, fill: 'gray', cx: 1, cy: 1 });
+        const cx = firstPoint.x + offset.x;
+        const cy = firstPoint.y + offset.y;
+
+        const tokenBallShadow = svgCreate('circle');
+        svgAttr(tokenBallShadow, { r: TOKEN_BALL_RADIUS, fill: 'gray', cx: cx + 1, cy: cy + 1 });
 
         const tokenBall = svgCreate('circle');
-        svgAttr(tokenBall, {
-          r: TOKEN_BALL_RADIUS,
-          fill: TOKEN_BALL_FILL_COLOR,
-          cx: firstPoint.x + offset.x,
-          cy: firstPoint.y + offset.y
-        });
+        svgAttr(tokenBall, { r: TOKEN_BALL_RADIUS, fill: TOKEN_BALL_FILL_COLOR, cx: cx, cy: cy });
 
         const tokenAnimation = svgCreate('animateMotion');
         svgAttr(tokenAnimation, {
-          dur: speedMs + 'ms',
+          dur: (speedMs) + 'ms',
           begin: '0s',
-          // begin: 'click',
-          // repeatCount: 1,
+          repeatCount: 1,
           path: pathValue,
         });
         tokenAnimation.setAttribute('fill', 'freeze');
@@ -1128,7 +1125,7 @@ CpnRenderer.prototype.drawArcAnimation = function (connection, speedMs = 500) {
           // reset animation time
           container.setCurrentTime(0);
 
-          // svgAppend(tokenGA, tokenBallShadow);
+          svgAppend(tokenGA, tokenBallShadow);
           svgAppend(tokenGA, tokenBall);
           svgAppend(tokenGA, tokenAnimation);
           svgAppend(tokenG, tokenGA);
@@ -1136,14 +1133,9 @@ CpnRenderer.prototype.drawArcAnimation = function (connection, speedMs = 500) {
         }, 1);
 
         setTimeout(() => {
-          resolve(connection);
           svgRemove(tokenG);
-
-          // setTimeout(() => svgRemove(tokenG), 10);
-
-          // svgRemove(tokenG);
-          // setTimeout(() => resolve(connection), 10);
-        }, speedMs);
+          resolve(connection);
+        }, speedMs + 300);
       }
     } catch (ex) {
       console.error('CpnRenderer.prototype.drawArcAnimation(), ex = ', ex);

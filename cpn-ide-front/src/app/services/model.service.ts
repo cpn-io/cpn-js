@@ -1330,7 +1330,7 @@ export class ModelService {
     for (const page of pages) {
       // search in arcs
       for (const arc of nodeToArray(page.arc)) {
-        if (arc.transend._idref === transId 
+        if (arc.transend._idref === transId
           && arc.placeend._idref === placeId
           && ['TtoP', 'BOTHDIR'].includes(arc._orientation)) {
           arcs.push(arc);
@@ -1693,6 +1693,50 @@ export class ModelService {
     }
   }
 
+  /**
+   * Create new declaration
+   * 
+   * @param parentBlock
+   * @param declaration 
+   * @param declarationType 
+   */
+  newDeclaration(parentBlock, declaration, declarationType) {
+    if (declaration && parentBlock && declarationType) {
+      let parentCpnElement = parentBlock;
+      let newLayout = '(* Empty *)';
+      switch (declarationType) {
+        case 'globref':
+          newLayout = 'globref CONST = 1;';
+          break;
+        case 'color':
+          newLayout = 'colset TYPE = int;';
+          break;
+        case 'var':
+          newLayout = 'var v:int;';
+          break;
+      }
+
+      if (newLayout) {
+        // parse declaration layout
+        let result = parseDeclarartion(newLayout);
+        // console.log(this.constructor.name, 'onNewDeclaration(), result = ', result);
+
+        if (result && result.cpnElement) {
+          let newDeclaration = result.cpnElement;
+          let newCpnDeclarartionType = result.cpnDeclarationType;
+
+          // set new id value
+          newDeclaration._id = getNextId();
+
+          // add declaration cpn element to declaration group
+          this.addCpnElement(parentCpnElement, newDeclaration, newCpnDeclarartionType);
+
+          return newDeclaration;
+        }
+      }
+    }
+    return undefined;
+  }
 
   /**
    * Add cpn element to parent

@@ -1,9 +1,10 @@
-import { Component, OnInit, Input, DoCheck, SimpleChanges, OnChanges, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, DoCheck, SimpleChanges, OnChanges, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { ModelService } from '../../services/model.service';
 import { EventService } from '../../services/event.service';
 import { Message } from '../../common/message';
 import { parseUiDeclarartionType } from './declaration-parser';
 import { AccessCpnService } from '../../services/access-cpn.service';
+import { ContextMenuComponent } from '../../context-menu/context-menu.component';
 
 @Component({
   selector: 'app-project-tree-declaration-node',
@@ -12,17 +13,18 @@ import { AccessCpnService } from '../../services/access-cpn.service';
 })
 export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, AfterViewInit {
 
+  @ViewChild('contextMenu') contextMenu: ContextMenuComponent;
+  @ViewChild('editField') editField: ElementRef;
+
   @Input() public parentBlock: any;
   @Input() public declaration: any;
   @Input() public type: any;
-
   @Input() public selected: any;
-
   @Input() public mouseover: any = { id: undefined };
 
   public focused = false;
 
-  constructor(private eventService: EventService, 
+  constructor(private eventService: EventService,
     private modelService: ModelService,
     public accessCpnService: AccessCpnService) { }
 
@@ -55,8 +57,8 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, A
 
     let declarationType = parseUiDeclarartionType(layout);
 
-    if (this.focused 
-      || declarationType === 'ml' 
+    if (this.focused
+      || declarationType === 'ml'
       || this.accessCpnService.errorIds.includes(this.declaration._id)
       || layout.startsWith('(*')) {
       return layout;
@@ -132,4 +134,68 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, A
     // }
   }
 
+  onNewDeclaration() {
+    console.log(this.constructor.name, 'onNewDeclaration(), declaration = ', this.declaration);
+
+    const newDeclaration = this.modelService.newDeclaration(this.parentBlock, this.declaration, this.type);
+    if (newDeclaration) {
+      this.focus(newDeclaration._id);
+    }
+  }
+
+  onNewBlock() {
+  }
+
+  onDeleteDeclaration() {
+    this.modelService.removeCpnElement(this.parentBlock, this.declaration, this.type);
+  }
+
+  onDeclarationUp() {
+    this.modelService.moveCpnElement(this.parentBlock, this.declaration, this.type, 'up');
+    this.focus(this.declaration._id);
+  }
+
+  onDeclarationDown() {
+    this.modelService.moveCpnElement(this.parentBlock, this.declaration, this.type, 'down');
+    this.focus(this.declaration._id);
+  }
+
+  onContextMenu(event) {
+    this.contextMenu.show({ x: event.clientX, y: event.clientY });
+  }
+
+  onKeyDown(event: KeyboardEvent) {
+    console.log(this.constructor.name, 'onKeyDown(), event = ', event);
+
+    if (event.shiftKey) {
+      switch (event.code) {
+        case 'Insert':
+          event.preventDefault();
+          this.onNewDeclaration();
+          break;
+        case 'Delete':
+          event.preventDefault();
+          this.onDeleteDeclaration();
+          break;
+        case 'ArrowUp':
+          event.preventDefault();
+          this.onDeclarationUp();
+          break;
+        case 'ArrowDown':
+          event.preventDefault();
+          this.onDeclarationDown();
+          break;
+      }
+    }
+  }
+
+  focus(id) {
+    setTimeout(() => {
+      // const inputElem = document.getElementById(id);
+      // if (inputElem) {
+      //   inputElem.focus();
+      // }
+      this.editField.nativeElement.focus();
+    }, 100);
+  }
 }

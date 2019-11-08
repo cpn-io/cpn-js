@@ -1,9 +1,14 @@
 <div [ngClass]="{'selected': selected.id === id, 'node': true, 'error': error, 'ready': ready}" [style.color]="color">
-    <div class="caret" *ngIf="showBullet" (click)="onExpand()">
+    <div class="caret" *ngIf="showBullet" (mousedown)="onExpand()">
         <i [ngClass]="expanded[id] ? 'fas fa-caret-down' : 'fas fa-caret-right'"></i>
     </div>
+
+    <!-- <div class="icon">
+        <i class="fas fa-shapes"></i>
+    </div> -->
+
     <div class="title" [ngClass]="{ 'active' : expanded[id], 'bold': bold }" [contentEditable]="editable"
-        [innerHTML]="title" (click)="onClick()">
+        [innerHTML]="title" (mousedown)="onClick()">
     </div>
 </div>
 

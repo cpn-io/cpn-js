@@ -35,7 +35,7 @@ export class ProjectDeclarationsComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.eventService.on(Message.PROJECT_LOAD, () => this.loadProject());
     this.eventService.on(Message.MODEL_RELOAD, () => this.loadProject());
-    this.eventService.on(Message.SERVER_INIT_NET_DONE, () => this.loadProject());
+    // this.eventService.on(Message.SERVER_INIT_NET_DONE, () => this.loadProject());
     this.eventService.on(Message.SERVER_INIT_SIM_DONE, () => this.loadProject());
     this.eventService.on(Message.SIMULATION_UPDATE_STATE, () => this.loadProject());
   }

@@ -13,23 +13,26 @@ export class ProjectTreeBlockNodeComponent implements OnInit {
 
   @Input() public parentBlock: any;
   @Input() public block: any;
-  @Input() public expanded: any;
-  @Input() public selected: any;
-  @Input() public mouseover: any;
+
+  @Input() public tree: any;
 
   @Input() showBullet = true;
 
   constructor(public accessCpnService: AccessCpnService) { }
 
   ngOnInit() {
+    if (this.tree && this.block && this.parentBlock) {
+      this.tree.parents[this.block._id] = this.parentBlock._id;
+      this.tree.cpnElements[this.block._id] = this.block;
+    }
   }
 
   onSelected() {
-    this.selected.parentCpnElement = this.parentBlock;
+    this.tree.selected.parentCpnElement = this.parentBlock;
     if (this.block) {
-      this.selected.id = this.block._id;
-      this.selected.type = 'block';
-      this.selected.cpnElement = this.block;
+      this.tree.selected.id = this.block._id;
+      this.tree.selected.type = 'block';
+      this.tree.selected.cpnElement = this.block;
     }
   }
 

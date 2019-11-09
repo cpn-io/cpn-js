@@ -12,8 +12,8 @@ export class ProjectTreeOptionsNodeComponent implements OnInit {
   public console = console;
 
   @Input() public optionList: any;
-  @Input() public expanded: any;
-  @Input() public selected: any;
+  
+  @Input() public tree: any;
 
   constructor() { }
 

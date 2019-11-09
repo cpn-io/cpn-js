@@ -11,8 +11,7 @@ export class ProjectTreeMonitorblockNodeComponent implements OnInit {
   public nodeToArray = nodeToArray;
 
   @Input() public monitorblock: any;
-  @Input() public expanded: any;
-  @Input() public selected: any;
+  @Input() public tree: any;
 
   constructor() { }
 

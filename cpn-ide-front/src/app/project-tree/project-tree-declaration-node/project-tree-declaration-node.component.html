@@ -4,7 +4,7 @@
   </div>
 
   <div #editField [id]="declaration._id" [contentEditable]="!accessCpnService.isSimulation"
-    [ngClass]="{'selected': selected.id === declaration._id, 'error': accessCpnService.errorIds.includes(declaration._id), 'node': true, 'editablenode': true}"
+    [ngClass]="{'selected': tree.selected.id === declaration._id, 'error': accessCpnService.errorIds.includes(declaration._id), 'node': true, 'editablenode': true}"
     [innerHTML]="getText() | colorDeclarations | safeHtml" (mousedown)="onSelected()"
     (contextmenu)="onSelected(); onContextMenu($event)" (focus)="onSelected(); focused = true; onParse($event.target.textContent)"
     (focusout)="focused = false; onUpdate($event.target.textContent)"

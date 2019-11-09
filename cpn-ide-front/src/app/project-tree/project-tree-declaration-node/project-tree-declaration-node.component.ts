@@ -19,8 +19,8 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, A
   @Input() public parentBlock: any;
   @Input() public declaration: any;
   @Input() public type: any;
-  @Input() public selected: any;
-  @Input() public mouseover: any = { id: undefined };
+
+  @Input() public tree: any;
 
   public focused = false;
 
@@ -29,6 +29,11 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, A
     public accessCpnService: AccessCpnService) { }
 
   ngOnInit() {
+    if (this.tree && this.declaration && this.parentBlock) {
+      this.tree.parents[this.declaration._id] = this.parentBlock._id;
+      this.tree.cpnElements[this.declaration._id] = this.declaration;
+    }
+
     this.updateErrors();
   }
 
@@ -101,10 +106,10 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, A
 
 
   onSelected() {
-    this.selected.parentCpnElement = this.parentBlock;
-    this.selected.id = this.declaration._id;
-    this.selected.type = this.type;
-    this.selected.cpnElement = this.declaration;
+    this.tree.selected.parentCpnElement = this.parentBlock;
+    this.tree.selected.id = this.declaration._id;
+    this.tree.selected.type = this.type;
+    this.tree.selected.cpnElement = this.declaration;
 
     this.eventService.send(Message.TREE_SELECT_DECLARATION_NODE_NEW, {
       cpnType: this.type,

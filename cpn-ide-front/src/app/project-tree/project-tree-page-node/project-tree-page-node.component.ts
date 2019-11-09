@@ -14,9 +14,8 @@ export class ProjectTreePageNodeComponent implements OnInit {
 
   @Input() page: any = {};
   @Input() isSubpage = false;
-  @Input() subpages: any = [];
-  @Input() expanded: any = [];
-  @Input() selected: any = {};
+
+  @Input() tree: any = [];
 
   constructor(public modelService: ModelService, public accessCpnService: AccessCpnService) { }
 
@@ -26,7 +25,7 @@ export class ProjectTreePageNodeComponent implements OnInit {
     // console.log(this.constructor.name, 'ngOnInit(), this.subpages = ', this.subpages);
 
     if (this.isSubpage) {
-      this.subpages.push(this.page._id);
+      this.tree.subpages.push(this.page._id);
     }
   }
 

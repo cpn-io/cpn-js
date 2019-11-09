@@ -7,9 +7,8 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class ProjectTreeOptionNodeComponent implements OnInit {
 
+  @Input() public tree: any = {};
   @Input() public option: any = {};
-  @Input() public expanded: any = [];
-  @Input() public selected: any = {};
 
   constructor() { }
 
@@ -17,9 +16,9 @@ export class ProjectTreeOptionNodeComponent implements OnInit {
   }
 
   onSelected() {
-    this.selected.id = this.option._name;
-    this.selected.type = 'option';
-    this.selected.cpnElement = this.option;
+    this.tree.selected.id = this.option._name;
+    this.tree.selected.type = 'option';
+    this.tree.selected.cpnElement = this.option;
   }
 
 }

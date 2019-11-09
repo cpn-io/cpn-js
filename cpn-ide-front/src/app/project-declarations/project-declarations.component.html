@@ -1,5 +1,5 @@
 <tabs class="cpn-tabs">
-  
+
   <ng-container *ngFor="let tab of tabList">
     <tab *ngIf="tab" [id]="tab.id" [tabTitle]="tab.name">
 
@@ -9,7 +9,7 @@
           <ng-container *ngIf="['all', 'globref', 'color', 'var', 'ml'].includes(tab.id)">
             <ng-container *ngFor="let globbox of nodeToArray(cpnet.globbox)">
               <ng-container *ngFor="let block of nodeToArray(globbox.block)">
-                <app-project-declarations-block-node [block]="block" [expanded]="expanded" [selected]="selected"
+                <app-project-declarations-block-node [tree]="tree" [block]="block"
                   [declarationType]="tab.declarationType">
                 </app-project-declarations-block-node>
               </ng-container>

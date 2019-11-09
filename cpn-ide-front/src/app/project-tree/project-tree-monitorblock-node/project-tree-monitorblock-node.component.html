@@ -1,13 +1,13 @@
-<app-tree-node [id]="monitorblock._name" [title]="monitorblock._name" [expanded]="expanded" [selected]="selected"
-  [type]="'monitorblock'" [cpnElement]="monitorblock">
+<app-tree-node [tree]="tree" [id]="monitorblock._name" [title]="monitorblock._name" [type]="'monitorblock'"
+  [cpnElement]="monitorblock">
 
   <ng-container *ngIf="monitorblock.monitorblock">
-    <app-project-tree-monitorblock-node [monitorblock]="monitorblock.monitorblock" [expanded]="expanded"
-      [selected]="selected"> </app-project-tree-monitorblock-node>
+    <app-project-tree-monitorblock-node [tree]="tree" [monitorblock]="monitorblock.monitorblock">
+    </app-project-tree-monitorblock-node>
   </ng-container>
 
   <ng-container *ngFor="let monitor of nodeToArray(monitorblock.monitor)">
-    <app-project-tree-monitor-node [monitor]="monitor" [expanded]="expanded" [selected]="selected">
+    <app-project-tree-monitor-node [tree]="tree" [monitor]="monitor">
     </app-project-tree-monitor-node>
   </ng-container>
 

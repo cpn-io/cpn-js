@@ -1,6 +1,6 @@
 <ng-container *ngIf="hasSubpages(); else elseBlock">
 
-  <app-tree-node [id]="page._id" [title]="page.pageattr._name" [expanded]="expanded" [selected]="selected"
+  <app-tree-node [tree]="tree" [id]="page._id" [title]="page.pageattr._name"
     [type]="'page'" [cpnElement]="page" [editable]="!accessCpnService.isSimulation"
     [error]="accessCpnService.errorPagesIds.includes(page._id)"
     [ready]="accessCpnService.readyPagesIds.includes(page._id)">
@@ -9,8 +9,7 @@
       <ng-container *ngIf="trans.subst && trans.subst._subpage">
         <ng-container *ngFor="let subpage of [modelService.getPageById(trans.subst._subpage)]">
 
-          <app-project-tree-page-node [page]="subpage" [isSubpage]="true" [subpages]="subpages" [expanded]="expanded"
-            [selected]="selected">
+          <app-project-tree-page-node [tree]="tree" [page]="subpage" [isSubpage]="true">
           </app-project-tree-page-node>
 
         </ng-container>
@@ -23,8 +22,8 @@
 
 <ng-template #elseBlock>
   <div class="node" [contentEditable]="!accessCpnService.isSimulation" [textContent]="page.pageattr._name"
-    (mousedown)="selected.type = 'page'; selected.id = page._id; selected.cpnElement = page"
+    (mousedown)="tree.selected.type = 'page'; tree.selected.id = page._id; tree.selected.cpnElement = page"
     (input)="page.pageattr._name=$event.target.textContent"
-    [ngClass]="{'selected': selected.id === page._id, 'error': accessCpnService.errorPagesIds.includes(page._id), 'ready': accessCpnService.readyPagesIds.includes(page._id)}">
+    [ngClass]="{'selected': tree.selected.id === page._id, 'error': accessCpnService.errorPagesIds.includes(page._id), 'ready': accessCpnService.readyPagesIds.includes(page._id)}">
   </div>
 </ng-template>

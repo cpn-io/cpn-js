@@ -1,11 +1,11 @@
-<div *ngIf="option.value && option.value.boolean" [ngClass]="{'selected': selected.id === option._name, 'node': true}"
+<div *ngIf="option.value && option.value.boolean" [ngClass]="{'selected': tree.selected.id === option._name, 'node': true}"
   (click)="onSelected()">
   <input type="checkbox" [checked]="option.value.boolean === 'true'" style="margin-top: 3px; margin-right: 5px"
     (change)="option.value.boolean = $event.target.checked ? 'true' : 'false'">
   <span>{{ option._name | optionName }}</span>
 </div>
 
-<div *ngIf="option.value && option.value.text" [ngClass]="{'selected': selected.id === option._name, 'node': true}"
+<div *ngIf="option.value && option.value.text" [ngClass]="{'selected': tree.selected.id === option._name, 'node': true}"
   (click)="onSelected()">
   <span>{{ option._name | optionName }}</span>
   &nbsp;

@@ -1,18 +1,18 @@
-<div [ngClass]="{'selected': selected.id === id, 'node': true, 'error': error, 'ready': ready}" [style.color]="color">
+<div [ngClass]="{'selected': tree.selected.id === id, 'node': true, 'error': error, 'ready': ready}" [style.color]="color">
     <div class="caret" *ngIf="showBullet" (mousedown)="onExpand()">
-        <i [ngClass]="expanded[id] ? 'fas fa-caret-down' : 'fas fa-caret-right'"></i>
+        <i [ngClass]="tree.expanded[id] ? 'fas fa-caret-down' : 'fas fa-caret-right'"></i>
     </div>
 
     <!-- <div class="icon">
         <i class="fas fa-shapes"></i>
     </div> -->
 
-    <div class="title" [ngClass]="{ 'active' : expanded[id], 'bold': bold }" [contentEditable]="editable"
+    <div class="title" [ngClass]="{ 'active' : tree.expanded[id], 'bold': bold }" [contentEditable]="editable"
         [innerHTML]="title" (mousedown)="onClick()">
     </div>
 </div>
 
 
-<div class="child" [ngClass]="{ 'expanded' : expanded[id] }">
+<div class="child" [ngClass]="{ 'expanded' : tree.expanded[id] }">
     <ng-content></ng-content>
 </div>

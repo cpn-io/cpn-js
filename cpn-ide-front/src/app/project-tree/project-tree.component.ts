@@ -20,14 +20,8 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
   public project;
   public cpnet;
-  public expanded;
-  public subpages;
-  public pages;
 
-  public selected;
-  public selectedOld;
-
-  public errors = [];
+  public tree = this.getDefaultTree();
 
   public mouseover = { id: undefined };
 
@@ -58,22 +52,30 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   }
 
   ngDoCheck() {
-    if (this.selectedOld.id !== this.selected.id) {
-      this.selectedOld = cloneObject(this.selected);
+    if (this.tree.selectedOld.id !== this.tree.selected.id) {
+      this.tree.selectedOld = cloneObject(this.tree.selected);
       this.onSelectedChange();
     }
   }
 
   reset() {
-    this.expanded = [];
-    this.subpages = [];
-    this.pages = [];
+    this.tree = this.getDefaultTree();
 
-    this.selected = { type: undefined, id: undefined, cpnElement: undefined };
-    this.selectedOld = { id: undefined };
+    this.tree.expanded['pages'] = true;
+    this.tree.expanded['project'] = true;
+  }
 
-    this.expanded['pages'] = true;
-    this.expanded['project'] = true;
+  getDefaultTree() {
+    return {
+      expanded: [],
+      selected: { type: undefined, id: undefined, cpnElement: undefined, parentCpnElement: undefined },
+      selectedOld: { id: undefined },
+      errors: [],
+      pages: [],
+      subpages: [],
+      parents: [],
+      cpnElements: []
+    };
   }
 
   loadProject() {
@@ -83,21 +85,21 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     this.project = this.modelService.getProject();
     this.loadPages();
 
-    // setTimeout(() => this.goToDeclaration('id89457845'), 100);
-    setTimeout(() => this.goToFirstPage(), 100);
+    setTimeout(() => this.goToDeclaration('ID1438190116'), 100);
+    // setTimeout(() => this.goToFirstPage(), 100);
   }
 
   updateErrors() {
-    this.errors = this.accessCpnService.getErrorData() || [];
+    this.tree.errors = this.accessCpnService.getErrorData() || [];
     // for (const id in this.accessCpnService.getErrorData()) {
     //   this.errors.push(id);
     // }
 
-    console.log(this.constructor.name, 'updateErrors(), this.errors = ', this.errors);
+    console.log(this.constructor.name, 'updateErrors(), this.errors = ', this.tree.errors);
   }
 
   loadPages() {
-    this.pages = nodeToArray(this.cpnet.page);
+    this.tree.pages = nodeToArray(this.cpnet.page);
   }
 
   onSimulationState() {
@@ -112,12 +114,12 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   onSelectedChange() {
     // console.log(this.constructor.name, 'onSelectedChange(), this.selected = ', JSON.stringify(this.selected));
 
-    switch (this.selected.type) {
+    switch (this.tree.selected.type) {
       case 'page':
-        this.eventService.send(Message.PAGE_OPEN, { pageObject: this.selected.cpnElement });
+        this.eventService.send(Message.PAGE_OPEN, { pageObject: this.tree.selected.cpnElement });
         break;
       case 'monitor':
-        this.eventService.send(Message.MONITOR_OPEN, { monitorObject: this.selected.cpnElement });
+        this.eventService.send(Message.MONITOR_OPEN, { monitorObject: this.tree.selected.cpnElement });
         break;
     }
   }
@@ -133,11 +135,11 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
       console.log(this.constructor.name, 'goToFirstPage(), page = ', page);
 
-      this.selected.id = page._id;
-      this.selected.type = 'page';
-      this.selected.cpnElement = page;
+      this.tree.selected.id = page._id;
+      this.tree.selected.type = 'page';
+      this.tree.selected.cpnElement = page;
 
-      const inputElem = document.getElementById(this.selected.id);
+      const inputElem = document.getElementById(this.tree.selected.id);
       console.log(this.constructor.name, 'goToFirstPage(), inputElem = ', inputElem);
       if (inputElem) {
         inputElem.focus();
@@ -146,33 +148,56 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   }
 
   goToDeclaration(id) {
-    if (this.cpnet && this.cpnet.globbox) {
-      console.log(this.constructor.name, 'goToDeclaration(), id = ', id);
-      const blocksToExpand = [];
-      const blocks = nodeToArray(this.cpnet.globbox.block);
-      for (const block of blocks) {
-        let isBlockExpanded = false;
-        for (const globref of nodeToArray(block.globref)) {
-          if (globref._id === id) {
-            this.selected.id = globref._id;
-            this.selected.type = 'globref';
-            this.selected.cpnElement = globref;
-            isBlockExpanded = true;
-            console.log(this.constructor.name, 'goToDeclaration(), id = ', id);
-          }
-        }
-        if (isBlockExpanded) {
-          this.expanded['declarations'] = true;
-          this.expanded[block._id] = true;
-        }
-      }
 
-      const inputElem = document.getElementById(id);
-      console.log(this.constructor.name, 'goToDeclaration(), inputElem = ', inputElem);
-      if (inputElem) {
-        inputElem.focus();
-      }
+    console.log(this.constructor.name, 'goToDeclaration(), id = ', id);
+    console.log(this.constructor.name, 'goToDeclaration(), this.tree.parents[id] = ', this.tree.parents[id]);
+
+    const path = [];
+    let nodeId = id;
+    while (this.tree.parents[nodeId]) {
+      path.push(this.tree.parents[nodeId]);
+      nodeId = this.tree.parents[nodeId];
     }
+    console.log(this.constructor.name, 'goToDeclaration(), path = ', path);
+
+    this.tree.expanded['declarations'] = true;
+    for (nodeId of path) {
+      this.tree.expanded[nodeId] = true;
+    }
+
+    if (this.tree.cpnElements[id]) {
+      const cpnElement = this.tree.cpnElements[id];
+      this.tree.selected.id = cpnElement._id;
+      this.tree.selected.cpnElement = cpnElement;
+    }
+
+    // if (this.cpnet && this.cpnet.globbox) {
+    //   console.log(this.constructor.name, 'goToDeclaration(), id = ', id);
+    //   const blocksToExpand = [];
+    //   const blocks = nodeToArray(this.cpnet.globbox.block);
+    //   for (const block of blocks) {
+    //     let isBlockExpanded = false;
+    //     for (const globref of nodeToArray(block.globref)) {
+    //       if (globref._id === id) {
+    //         this.tree.selected.id = globref._id;
+    //         this.tree.selected.type = 'globref';
+    //         this.tree.selected.cpnElement = globref;
+    //         isBlockExpanded = true;
+    //         console.log(this.constructor.name, 'goToDeclaration(), id = ', id);
+    //       }
+    //     }
+    //     if (isBlockExpanded) {
+    //       this.tree.expanded['declarations'] = true;
+    //       this.tree.expanded[block._id] = true;
+    //     }
+    //   }
+
+    //   const inputElem = document.getElementById(id);
+    //   console.log(this.constructor.name, 'goToDeclaration(), inputElem = ', inputElem);
+    //   if (inputElem) {
+    //     inputElem.focus();
+    //   }
+    // }
   }
 
   contextMenu(event: MouseEvent) {
@@ -226,9 +251,9 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   onNewDeclaration() {
     this.disableContextMenu();
 
-    console.log(this.constructor.name, 'onNewDeclaration(), this.selected = ', this.selected);
+    console.log(this.constructor.name, 'onNewDeclaration(), this.selected = ', this.tree.selected);
 
-    const newDeclaration = this.modelService.newDeclaration(this.selected.parentCpnElement, this.selected, this.selected.type);
+    const newDeclaration = this.modelService.newDeclaration(this.tree.selected.parentCpnElement, this.tree.selected, this.tree.selected.type);
     if (newDeclaration) {
       setTimeout(() => this.goToDeclaration(newDeclaration._id), 100);
     }
@@ -237,26 +262,26 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   onNewBlock() {
     this.disableContextMenu();
 
-    console.log(this.constructor.name, 'onNewBlock(), this.selected = ', this.selected);
+    console.log(this.constructor.name, 'onNewBlock(), this.selected = ', this.tree.selected);
 
-    if (this.selected) {
+    if (this.tree.selected) {
 
       let parentElement = undefined;
 
-      switch (this.selected.type) {
+      switch (this.tree.selected.type) {
         case 'declarations':
           parentElement = this.cpnet.globbox;
           break;
 
         case 'block':
-          parentElement = this.selected.cpnElement;
+          parentElement = this.tree.selected.cpnElement;
           break;
 
         case 'globref':
         case 'color':
         case 'var':
         case 'ml':
-          parentElement = this.selected.parentCpnElement;
+          parentElement = this.tree.selected.parentCpnElement;
           break;
       }
 
@@ -293,10 +318,10 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   onNewNode() {
     console.log(this.constructor.name, 'onNewNode()');
 
-    if (this.selected && this.selected.type) {
-      console.log(this.constructor.name, 'onNewNode(), this.selected = ', this.selected);
+    if (this.tree.selected && this.tree.selected.type) {
+      console.log(this.constructor.name, 'onNewNode(), this.selected = ', this.tree.selected);
 
-      switch (this.selected.type) {
+      switch (this.tree.selected.type) {
         case 'globref':
         case 'color':
         case 'var':
@@ -319,35 +344,35 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
   onDeleteNode() {
     this.disableContextMenu();
-    console.log(this.constructor.name, 'onDeleteNode(), this.selected = ', this.selected);
+    console.log(this.constructor.name, 'onDeleteNode(), this.selected = ', this.tree.selected);
 
-    if (this.selected
-      && this.selected.parentCpnElement
-      && ['globref', 'color', 'var', 'ml', 'block', 'page'].includes(this.selected.type)) {
+    if (this.tree.selected
+      && this.tree.selected.parentCpnElement
+      && ['globref', 'color', 'var', 'ml', 'block', 'page'].includes(this.tree.selected.type)) {
 
-      this.modelService.removeCpnElement(this.selected.parentCpnElement, this.selected.cpnElement, this.selected.type);
+      this.modelService.removeCpnElement(this.tree.selected.parentCpnElement, this.tree.selected.cpnElement, this.tree.selected.type);
     }
   }
 
   onUpNode() {
     console.log(this.constructor.name, 'onUpNode()');
 
-    if (this.selected
-      && this.selected.parentCpnElement
-      && ['globref', 'color', 'var', 'ml', 'block', 'page'].includes(this.selected.type)) {
+    if (this.tree.selected
+      && this.tree.selected.parentCpnElement
+      && ['globref', 'color', 'var', 'ml', 'block', 'page'].includes(this.tree.selected.type)) {
 
-      this.modelService.moveCpnElement(this.selected.parentCpnElement, this.selected.cpnElement, this.selected.type, 'up');
+      this.modelService.moveCpnElement(this.tree.selected.parentCpnElement, this.tree.selected.cpnElement, this.tree.selected.type, 'up');
     }
   }
 
   onDownNode() {
     console.log(this.constructor.name, 'onDownNode()');
 
-    if (this.selected
-      && this.selected.parentCpnElement
-      && ['globref', 'color', 'var', 'ml', 'block', 'page'].includes(this.selected.type)) {
+    if (this.tree.selected
+      && this.tree.selected.parentCpnElement
+      && ['globref', 'color', 'var', 'ml', 'block', 'page'].includes(this.tree.selected.type)) {
 
-      this.modelService.moveCpnElement(this.selected.parentCpnElement, this.selected.cpnElement, this.selected.type, 'down');
+      this.modelService.moveCpnElement(this.tree.selected.parentCpnElement, this.tree.selected.cpnElement, this.tree.selected.type, 'down');
     }
   }
 

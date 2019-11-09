@@ -6,12 +6,12 @@ import { Component, Input } from "@angular/core";
     styleUrls: ['./tree-node.scss']
 })
 export class TreeNodeComponent {
-    @Input() public expanded = [];
-    @Input() public selected: any = {};
+    @Input() public tree: any;
+
     @Input() id = '';
     @Input() title = '';
     @Input() type = '';
-    @Input() cpnElement: any;
+    @Input() cpnElement: any = undefined;
     @Input() bold = true;
     @Input() color = 'black';
     @Input() showBullet = true;
@@ -20,24 +20,24 @@ export class TreeNodeComponent {
     @Input() ready = false;
 
     onSelect() {
-        this.selected.type = this.type;
-        this.selected.id = this.id;
-        this.selected.cpnElement = this.cpnElement;
+        this.tree.selected.type = this.type;
+        this.tree.selected.id = this.id;
+        this.tree.selected.cpnElement = this.cpnElement;
     }
 
     onClick() {
-        this.expanded[this.id] = true;
+        this.tree.expanded[this.id] = true;
 
         this.onSelect();
 
-        console.log(this.constructor.name, 'onClick(), this.selected = ', this.selected);
+        console.log(this.constructor.name, 'onClick(), this.tree.selected = ', this.tree.selected);
     }
 
     onExpand() {
-        this.expanded[this.id] = !this.expanded[this.id];
+        this.tree.expanded[this.id] = !this.tree.expanded[this.id];
 
         this.onSelect();
 
-        console.log(this.constructor.name, 'onExpand(), this.selected = ', this.selected);
+        console.log(this.constructor.name, 'onExpand(), this.tree.selected = ', this.tree.selected);
     }
 }

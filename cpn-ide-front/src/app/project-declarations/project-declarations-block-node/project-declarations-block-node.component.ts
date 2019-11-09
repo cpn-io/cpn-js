@@ -13,9 +13,8 @@ export class ProjectDeclarationsBlockNodeComponent implements OnInit {
   @Input() public declarationType: any;
   @Input() public parentBlock: any;
   @Input() public block: any;
-  @Input() public expanded: any;
-  @Input() public selected: any;
-  @Input() public mouseover: any;
+
+  @Input() public tree: any;
 
   @Input() showBullet = true;
 
@@ -25,11 +24,11 @@ export class ProjectDeclarationsBlockNodeComponent implements OnInit {
   }
 
   onSelected() {
-    this.selected.parentCpnElement = this.parentBlock;
+    this.tree.selected.parentCpnElement = this.parentBlock;
     if (this.block) {
-      this.selected.id = this.block._id;
-      this.selected.type = 'block';
-      this.selected.cpnElement = this.block;
+      this.tree.selected.id = this.block._id;
+      this.tree.selected.type = 'block';
+      this.tree.selected.cpnElement = this.block;
     }
   }
 

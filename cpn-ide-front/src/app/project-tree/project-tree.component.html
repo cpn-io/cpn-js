@@ -12,30 +12,27 @@
       oncontextmenu="return false;">
 
       <!-- Project root -->
-      <app-tree-node id="project" type="root" [title]="'Project: ' + project.name" [expanded]="expanded" [selected]="selected"
-        [showBullet]="false">
+      <app-tree-node [tree]="tree" id="project" type="root" [title]="'Project: ' + project.name" [showBullet]="false">
 
         <div class="node" [textContent]="'Step: ' + simulationState.step"></div>
         <div class="node" [textContent]="'Time: ' + simulationState.time"></div>
 
         <!-- Options -->
-        <app-tree-node id="options" title="Options" [expanded]="expanded" [selected]="selected" type="options"
-          [cpnElement]="undefined">
+        <app-tree-node [tree]="tree" id="options" title="Options" type="options">
 
-          <app-project-tree-options-node [optionList]="nodeToArray(cpnet.options.option)" [expanded]="expanded"
-            [selected]="selected"></app-project-tree-options-node>
+          <app-project-tree-options-node [tree]="tree" [optionList]="nodeToArray(cpnet.options.option)">
+          </app-project-tree-options-node>
 
         </app-tree-node>
 
 
         <!-- Declarations -->
-        <app-tree-node id="declarations" type="declarations" title="Declarations" [expanded]="expanded"
-          [selected]="selected" [cpnElement]="undefined" (contextmenu)="onRightClick($event)">
+        <app-tree-node [tree]="tree" id="declarations" type="declarations" title="Declarations"
+          (contextmenu)="onRightClick($event)">
 
           <ng-container *ngFor="let globbox of nodeToArray(cpnet.globbox)">
             <ng-container *ngFor="let block of nodeToArray(globbox.block)">
-              <app-project-tree-block-node [block]="block" [expanded]="expanded" [selected]="selected"
-                [mouseover]="mouseover">
+              <app-project-tree-block-node [tree]="tree" [block]="block">
               </app-project-tree-block-node>
             </ng-container>
           </ng-container>
@@ -44,18 +41,16 @@
 
 
         <!-- Monitors -->
-        <app-project-tree-monitorblock-node [monitorblock]="cpnet.monitorblock" [expanded]="expanded"
-          [selected]="selected">
+        <app-project-tree-monitorblock-node [tree]="tree" [monitorblock]="cpnet.monitorblock">
         </app-project-tree-monitorblock-node>
 
         <!-- Pages -->
-        <app-tree-node id="pages" title="Pages" [expanded]="expanded" [selected]="selected" [type]="'root'"
-          [cpnElement]="undefined" (contextmenu)="onRightClick($event)">
+        <app-tree-node [tree]="tree" id="pages" title="Pages" [type]="'root'" [cpnElement]="undefined"
+          (contextmenu)="onRightClick($event)">
 
-          <ng-container *ngFor="let page of pages">
-            <ng-container *ngIf="!subpages.includes(page._id)">
-              <app-project-tree-page-node [page]="page" [subpages]="subpages" [expanded]="expanded"
-                [selected]="selected">
+          <ng-container *ngFor="let page of tree.pages">
+            <ng-container *ngIf="!tree.subpages.includes(page._id)">
+              <app-project-tree-page-node [tree]="tree" [page]="page">
               </app-project-tree-page-node>
             </ng-container>
           </ng-container>

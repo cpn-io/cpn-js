@@ -17,8 +17,8 @@ export class ProjectDeclarationsComponent implements OnInit, AfterViewInit {
 
   public project;
   public cpnet;
-  public expanded;
-  public selected;
+
+  public tree = this.getDefaultTree();
 
   tabList = [
     { id: 'all', name: 'BatchOrdering', declarationType: 'all' },
@@ -26,7 +26,7 @@ export class ProjectDeclarationsComponent implements OnInit, AfterViewInit {
     { id: 'color', name: 'Color', declarationType: 'color' },
     { id: 'var', name: 'Var', declarationType: 'var' },
     { id: 'ml', name: 'ML', declarationType: 'ml' },
-    // { id: 'monitor', name: 'Monitors', declarationType: '' },
+    { id: 'monitor', name: 'Monitors', declarationType: 'monitor' },
   ];
 
   constructor(public eventService: EventService,
@@ -45,9 +45,22 @@ export class ProjectDeclarationsComponent implements OnInit, AfterViewInit {
   }
 
   reset() {
-    this.expanded = [];
-    this.selected = { type: undefined, id: undefined, cpnElement: undefined };
+    this.tree = this.getDefaultTree();
   }
+
+  getDefaultTree() {
+    return {
+      expanded: [],
+      selected: { type: undefined, id: undefined, cpnElement: undefined, parentCpnElement: undefined },
+      selectedOld: { id: undefined },
+      errors: [],
+      pages: [],
+      subpages: [],
+      parents: [],
+      cpnElements: []
+    };
+  }
+
 
   loadProject() {
     this.reset();

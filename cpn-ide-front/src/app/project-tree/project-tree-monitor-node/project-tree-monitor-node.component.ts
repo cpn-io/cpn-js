@@ -13,9 +13,9 @@ export class ProjectTreeMonitorNodeComponent implements OnInit, DoCheck {
   public nodeToArray = nodeToArray;
 
   @Input() public monitor: any;
-  @Input() public expanded: any;
-  @Input() public selected: any;
 
+  @Input() public tree: any;
+  
   public nodeList = [];
 
   differ: any;
@@ -38,14 +38,14 @@ export class ProjectTreeMonitorNodeComponent implements OnInit, DoCheck {
   }
 
   onSelectedOption(option) {
-    this.selected.id = 'monitorOption_' + option._name;
-    this.selected.type = 'monitorOption';
-    this.selected.cpnElement = option;
+    this.tree.selected.id = 'monitorOption_' + option._name;
+    this.tree.selected.type = 'monitorOption';
+    this.tree.selected.cpnElement = option;
   }
 
   onSelectedNode(node) {
-    this.selected.id = 'monitorNode_' + node.element._id;
-    this.selected.type = 'monitorNode';
-    this.selected.cpnElement = node;
+    this.tree.selected.id = 'monitorNode_' + node.element._id;
+    this.tree.selected.type = 'monitorNode';
+    this.tree.selected.cpnElement = node;
   }
 }

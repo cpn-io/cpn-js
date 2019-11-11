@@ -13,7 +13,6 @@ import { ContextMenuComponent } from '../../context-menu/context-menu.component'
 })
 export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, AfterViewInit {
 
-  @ViewChild('contextMenu') contextMenu: ContextMenuComponent;
   @ViewChild('editField') editField: ElementRef;
 
   @Input() public parentBlock: any;
@@ -166,7 +165,16 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, A
   }
 
   onContextMenu(event) {
-    this.contextMenu.show({ x: event.clientX, y: event.clientY });
+    if (this.tree && this.tree.contextMenu) {
+
+      const entries = [
+        { title: 'New declaration', action: () => this.onNewDeclaration() },
+        { title: 'New block', action: () => this.onNewBlock() },
+      ];
+
+      this.tree.contextMenu.setEntries(entries);
+      this.tree.contextMenu.show({ x: event.clientX, y: event.clientY });
+    }
   }
 
   onKeyDown(event: KeyboardEvent) {
@@ -196,11 +204,19 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, A
 
   focus(id) {
     setTimeout(() => {
-      // const inputElem = document.getElementById(id);
-      // if (inputElem) {
-      //   inputElem.focus();
-      // }
-      this.editField.nativeElement.focus();
+      if (this.tree && this.tree.containerId) {
+
+        const container = document.getElementById(this.tree.containerId);
+        
+        if (container) {
+          const inputElem: any = container.querySelector('#' + id);
+          if (inputElem) {
+            inputElem.focus();
+          }
+        }
+      } else {
+        this.editField.nativeElement.focus();
+      }
     }, 100);
   }
 }

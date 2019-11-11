@@ -1,9 +1,10 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { EventService } from '../services/event.service';
 import { ModelService } from '../services/model.service';
 
 import { nodeToArray, cloneObject, getNextId, arrayToNode } from '../common/utils';
 import { Message } from '../common/message';
+import { ContextMenuComponent } from '../context-menu/context-menu.component';
 
 @Component({
   selector: 'app-project-declarations',
@@ -11,6 +12,8 @@ import { Message } from '../common/message';
   styleUrls: ['./project-declarations.component.scss']
 })
 export class ProjectDeclarationsComponent implements OnInit, AfterViewInit {
+
+  @ViewChild('contextMenu') contextMenu: ContextMenuComponent;
 
   public nodeToArray = nodeToArray;
   public JSON = JSON;
@@ -57,7 +60,11 @@ export class ProjectDeclarationsComponent implements OnInit, AfterViewInit {
       pages: [],
       subpages: [],
       parents: [],
-      cpnElements: []
+      cpnElements: [],
+
+      // Context menu
+      contextMenu: this.contextMenu,
+      containerId: 'projectDeclarationsComponentContainer'
     };
   }
 

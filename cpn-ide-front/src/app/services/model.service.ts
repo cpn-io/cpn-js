@@ -1709,10 +1709,13 @@ export class ModelService {
           newLayout = 'globref CONST = 1;';
           break;
         case 'color':
-          newLayout = 'colset TYPE = int;';
+          newLayout = 'colset TYPE = unit;';
           break;
         case 'var':
-          newLayout = 'var v:int;';
+          newLayout = 'var v:UNIT;';
+          break;
+        case 'fun':
+          newLayout = 'fun Fun1() = [];';
           break;
       }
 

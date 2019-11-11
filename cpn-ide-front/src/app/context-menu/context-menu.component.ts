@@ -11,6 +11,7 @@ export class ContextMenuComponent implements OnInit {
   @Input() y = 0;
   @Input() point = { x: 0, y: 0 };
 
+  entries = [];
   visible = false;
 
   constructor() { }
@@ -43,5 +44,9 @@ export class ContextMenuComponent implements OnInit {
 
   public hide() {
     setTimeout(() => { this.visible = false; }, 100);
+  }
+
+  public setEntries(entries) {
+    this.entries = entries;
   }
 }

@@ -1,3 +1,11 @@
 <div *ngIf="visible" class="contextmenu" [ngStyle]="{'left.px': x, 'top.px': y}">
   <ng-content></ng-content>
+
+  <ng-container *ngIf="entries">
+    <ng-container *ngFor="let entry of entries">
+
+      <a class="dropdown-item" href="#" (click)="entry.action()">{{ entry.title }}</a>
+
+    </ng-container>
+  </ng-container>
 </div>

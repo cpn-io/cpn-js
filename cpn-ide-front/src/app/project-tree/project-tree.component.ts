@@ -1,11 +1,12 @@
 import { Message } from './../common/message';
 import { ModelService } from './../services/model.service';
 import { EventService } from './../services/event.service';
-import { Component, OnInit, OnChanges, SimpleChanges, DoCheck, HostListener } from '@angular/core';
+import { Component, OnInit, OnChanges, SimpleChanges, DoCheck, HostListener, ViewChild } from '@angular/core';
 import { nodeToArray, cloneObject, getNextId, arrayToNode } from '../common/utils';
 import { clearDeclarationLayout, parseDeclarartion } from './project-tree-declaration-node/declaration-parser';
 import { AccessCpnService } from '../services/access-cpn.service';
 import { SettingsService } from '../services/settings.service';
+import { ContextMenuComponent } from '../context-menu/context-menu.component';
 
 @Component({
   selector: 'app-project-tree',
@@ -13,6 +14,8 @@ import { SettingsService } from '../services/settings.service';
   styleUrls: ['./project-tree.component.scss']
 })
 export class ProjectTreeComponent implements OnInit, DoCheck {
+
+  @ViewChild('contextMenu') contextMenu: ContextMenuComponent;
 
   public nodeToArray = nodeToArray;
   public JSON = JSON;
@@ -74,7 +77,11 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
       pages: [],
       subpages: [],
       parents: [],
-      cpnElements: []
+      cpnElements: [],
+
+      // Context menu
+      contextMenu: this.contextMenu,
+      containerId: 'projectTreeComponentContainer'
     };
   }
 
@@ -200,18 +207,18 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     // }
   }
 
-  contextMenu(event: MouseEvent) {
-    console.log(this.constructor.name, 'contextMenu(), event = ', event);
+  // contextMenu(event: MouseEvent) {
+  //   console.log(this.constructor.name, 'contextMenu(), event = ', event);
 
-    const menuElement: HTMLElement = document.getElementById('contextMenu');
+  //   const menuElement: HTMLElement = document.getElementById('contextMenu');
 
-    console.log(this.constructor.name, 'contextMenu(), menuElement = ', menuElement);
+  //   console.log(this.constructor.name, 'contextMenu(), menuElement = ', menuElement);
 
-    menuElement.style.display = 'block';
-    menuElement.style.position = 'absolute';
-    menuElement.style.left = event.x + 'px';
-    menuElement.style.top = (event.y - 60) + 'px';
-  }
+  //   menuElement.style.display = 'block';
+  //   menuElement.style.position = 'absolute';
+  //   menuElement.style.left = event.x + 'px';
+  //   menuElement.style.top = (event.y - 60) + 'px';
+  // }
 
   hideContextMenu() {
     const menuElement: HTMLElement = document.getElementById('contextMenu');

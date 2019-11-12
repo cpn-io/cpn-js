@@ -1700,10 +1700,10 @@ export class ModelService {
    * @param declaration 
    * @param declarationType 
    */
-  newDeclaration(parentBlock, declaration, declarationType) {
-    if (declaration && parentBlock && declarationType) {
+  newDeclaration(parentBlock, declarationType) {
+    if (parentBlock && declarationType) {
       let parentCpnElement = parentBlock;
-      let newLayout = '(* Empty *)';
+      let newLayout = '(* New declaration *)';
       switch (declarationType) {
         case 'globref':
           newLayout = 'globref CONST = 1;';

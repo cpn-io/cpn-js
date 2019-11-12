@@ -64,7 +64,11 @@ export class ProjectDeclarationsComponent implements OnInit, AfterViewInit {
 
       // Context menu
       contextMenu: this.contextMenu,
-      containerId: 'projectDeclarationsComponentContainer'
+      containerId: 'projectDeclarationsComponentContainer',
+
+      // Tree component
+      treeComponent: this,
+      treeType: 'declarations'
     };
   }
 

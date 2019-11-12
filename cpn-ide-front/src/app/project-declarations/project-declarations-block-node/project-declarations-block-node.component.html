@@ -1,10 +1,13 @@
 <div *ngIf="hasDeclarations()" class="blockHeader">
   {{ (parentBlock ? parentBlock.id  + '  >  ' : '') + block.id }}
 </div>
+<!-- <div class="blockHeader">
+  {{ (parentBlock ? parentBlock.id  + '  >  ' : '') + block.id }}
+</div> -->
 
-<ng-container *ngIf="block.block">
+<ng-container *ngIf="hasBlocks()">
   <ng-container *ngFor="let subblock of nodeToArray(block.block)">
-    <div style="padding-left: 20px; background-color: lightgray; border-bottom: 1px solid lightgray;">
+    <div style="padding-left: 20px; background-color: lightgray;">
       <app-project-declarations-block-node [tree]="tree" [parentBlock]="block" [block]="subblock"
         [declarationType]="declarationType">
       </app-project-declarations-block-node>
@@ -12,7 +15,7 @@
   </ng-container>
 </ng-container>
 
-<div *ngIf="hasDeclarations()" style="padding: 5px; background-color: white;">
+<div *ngIf="hasDeclarations()" style="padding: 5px; background-color: white; border-bottom: 1px solid lightgray;">
 
   <ng-container *ngIf="declarationType === 'all' || declarationType === 'globref'">
     <ng-container *ngFor="let globref of nodeToArray(block.globref)">

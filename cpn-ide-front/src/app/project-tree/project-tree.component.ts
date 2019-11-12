@@ -28,10 +28,6 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
   public mouseover = { id: undefined };
 
-  // public contextmenu = false;
-  // public contextmenuX = 0;
-  // public contextmenuY = 0;
-
   newPageCount = 0;
 
   simulationState = { step: 0, time: 0 };
@@ -81,7 +77,11 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
       // Context menu
       contextMenu: this.contextMenu,
-      containerId: 'projectTreeComponentContainer'
+      containerId: 'projectTreeComponentContainer',
+
+      // Tree component
+      treeComponent: this,
+      treeType: 'tree'
     };
   }
 
@@ -155,7 +155,6 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   }
 
   goToDeclaration(id) {
-
     console.log(this.constructor.name, 'goToDeclaration(), id = ', id);
     console.log(this.constructor.name, 'goToDeclaration(), this.tree.parents[id] = ', this.tree.parents[id]);
 
@@ -177,98 +176,34 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
       this.tree.selected.id = cpnElement._id;
       this.tree.selected.cpnElement = cpnElement;
     }
-
-    // if (this.cpnet && this.cpnet.globbox) {
-    //   console.log(this.constructor.name, 'goToDeclaration(), id = ', id);
-    //   const blocksToExpand = [];
-    //   const blocks = nodeToArray(this.cpnet.globbox.block);
-    //   for (const block of blocks) {
-    //     let isBlockExpanded = false;
-    //     for (const globref of nodeToArray(block.globref)) {
-    //       if (globref._id === id) {
-    //         this.tree.selected.id = globref._id;
-    //         this.tree.selected.type = 'globref';
-    //         this.tree.selected.cpnElement = globref;
-    //         isBlockExpanded = true;
-    //         console.log(this.constructor.name, 'goToDeclaration(), id = ', id);
-    //       }
-    //     }
-    //     if (isBlockExpanded) {
-    //       this.tree.expanded['declarations'] = true;
-    //       this.tree.expanded[block._id] = true;
-    //     }
-    //   }
-
-    //   const inputElem = document.getElementById(id);
-    //   console.log(this.constructor.name, 'goToDeclaration(), inputElem = ', inputElem);
-    //   if (inputElem) {
-    //     inputElem.focus();
-    //   }
-    // }
   }
 
-  // contextMenu(event: MouseEvent) {
-  //   console.log(this.constructor.name, 'contextMenu(), event = ', event);
+  focus(id) {
+    setTimeout(() => {
+      if (this.tree && this.tree.containerId) {
 
-  //   const menuElement: HTMLElement = document.getElementById('contextMenu');
+        const container = document.getElementById(this.tree.containerId);
 
-  //   console.log(this.constructor.name, 'contextMenu(), menuElement = ', menuElement);
-
-  //   menuElement.style.display = 'block';
-  //   menuElement.style.position = 'absolute';
-  //   menuElement.style.left = event.x + 'px';
-  //   menuElement.style.top = (event.y - 60) + 'px';
-  // }
-
-  hideContextMenu() {
-    const menuElement: HTMLElement = document.getElementById('contextMenu');
-
-    if (menuElement.style.display !== 'none') {
-      menuElement.style.display = 'none';
-      return true;
-    }
-    return false;
-  }
-
-  //activates the menu with the coordinates
-  onRightClick(event) {
-    // this.contextmenuX = event.clientX;
-    // this.contextmenuY = event.clientY; // - 50;
-    // this.contextmenu = true;
-
-    console.log(this.constructor.name, 'onrightClick, event = ', event);
-  }
-  //disables the menu
-  disableContextMenu() {
-    // this.contextmenu = false;
-  }
-
-  onKeyDown(event: KeyboardEvent) {
-    console.log(this.constructor.name, 'onKeyDown(), event = ', event);
-
-    if (event.code === 'Insert') {
-      event.preventDefault();
-
-      console.log(this.constructor.name, 'onKeyDown(), INSERT PRESSED');
-
-      this.onNewDeclaration();
-    }
+        if (container) {
+          const inputElem: any = container.querySelector('#' + id);
+          if (inputElem) {
+            inputElem.focus();
+          }
+        }
+      }
+    }, 100);
   }
 
   onNewDeclaration() {
-    this.disableContextMenu();
-
     console.log(this.constructor.name, 'onNewDeclaration(), this.selected = ', this.tree.selected);
 
-    const newDeclaration = this.modelService.newDeclaration(this.tree.selected.parentCpnElement, this.tree.selected, this.tree.selected.type);
+    const newDeclaration = this.modelService.newDeclaration(this.tree.selected.parentCpnElement, this.tree.selected.type);
     if (newDeclaration) {
-      setTimeout(() => this.goToDeclaration(newDeclaration._id), 100);
+      this.focus(newDeclaration._id);
     }
   }
 
   onNewBlock() {
-    this.disableContextMenu();
-
     console.log(this.constructor.name, 'onNewBlock(), this.selected = ', this.tree.selected);
 
     if (this.tree.selected) {
@@ -292,27 +227,15 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
           break;
       }
 
-      // if (this.selected.type === 'declarations') {
-      //   parentElement = this.cpnet.globbox;
-      // }
-      // if (this.selected.type === 'block') {
-      //   parentElement = this.selected.cpnElement;
-      // }
-      // if (['globref', 'color', 'var', 'ml'].includes(this.selected.type)) {
-      //   parentElement = this.selected.parentCpnElement;
-      // }
-
       if (parentElement) {
         const newBlock = { id: 'New block', _id: getNextId() };
         this.modelService.addCpnElement(parentElement, newBlock, 'block');
-        setTimeout(() => this.goToDeclaration(newBlock._id), 100);
+        this.focus(newBlock._id);
       }
     }
   }
 
   onNewPage() {
-    this.disableContextMenu();
-
     const defValue = this.settings.getAppSettings()['page'];
     const cpnElement = this.modelService.createCpnPage(defValue + ' ' + (++this.newPageCount), undefined);
 
@@ -350,7 +273,6 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
 
   onDeleteNode() {
-    this.disableContextMenu();
     console.log(this.constructor.name, 'onDeleteNode(), this.selected = ', this.tree.selected);
 
     if (this.tree.selected
@@ -369,6 +291,8 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
       && ['globref', 'color', 'var', 'ml', 'block', 'page'].includes(this.tree.selected.type)) {
 
       this.modelService.moveCpnElement(this.tree.selected.parentCpnElement, this.tree.selected.cpnElement, this.tree.selected.type, 'up');
+
+      this.focus(this.tree.selected.cpnElement._id);
     }
   }
 
@@ -380,7 +304,28 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
       && ['globref', 'color', 'var', 'ml', 'block', 'page'].includes(this.tree.selected.type)) {
 
       this.modelService.moveCpnElement(this.tree.selected.parentCpnElement, this.tree.selected.cpnElement, this.tree.selected.type, 'down');
+
+      this.focus(this.tree.selected.cpnElement._id);
     }
   }
+
+  onContextMenu(event, type) {
+    if (this.contextMenu) {
+      event.preventDefault();
+
+      const entries = [];
+      switch (type) {
+        case 'declarations':
+          entries.push({ title: 'New block', action: () => this.onNewBlock(), iconClass: 'fas fa-cube' });
+          break;
+      }
+
+      if (entries.length > 0) {
+        this.tree.contextMenu.setEntries(entries);
+        this.tree.contextMenu.show({ x: event.clientX, y: event.clientY });
+      }
+    }
+  }
+
 
 }

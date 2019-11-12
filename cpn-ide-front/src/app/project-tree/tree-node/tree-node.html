@@ -1,14 +1,17 @@
-<div [ngClass]="{'selected': tree.selected.id === id, 'node': true, 'error': error, 'ready': ready}" [style.color]="color">
+<div [ngClass]="{'selected': tree.selected.id === id, 'node': true, 'error': error, 'ready': ready}"
+    [style.color]="color">
     <div class="caret" *ngIf="showBullet" (mousedown)="onExpand()">
         <i [ngClass]="tree.expanded[id] ? 'fas fa-caret-down' : 'fas fa-caret-right'"></i>
     </div>
 
-    <!-- <div class="icon">
-        <i class="fas fa-shapes"></i>
-    </div> -->
+    <div *ngIf="iconClass" class="icon">
+        <i [class]="iconClass"></i>
+    </div>
 
-    <div class="title" [ngClass]="{ 'active' : tree.expanded[id], 'bold': bold }" [contentEditable]="editable"
-        [innerHTML]="title" (mousedown)="onClick()">
+    <div [id]="id" class="title" [ngClass]="{ 'active' : tree.expanded[id], 'bold': bold }" [contentEditable]="editable"
+        [innerHTML]="title" (mousedown)="onClick()" (contextmenu)="onContextMenu($event)" (keydown)="onKeydown($event)"
+        (focusout)="onUpdate($event)"
+        >
     </div>
 </div>
 

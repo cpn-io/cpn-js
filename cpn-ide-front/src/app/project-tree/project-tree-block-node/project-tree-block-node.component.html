@@ -1,5 +1,9 @@
 <app-tree-node [tree]="tree" [id]="block._id" [title]="block.id" [type]="'block'" [cpnElement]="block"
-  [showBullet]="showBullet" [editable]="!accessCpnService.isSimulation">
+  [showBullet]="showBullet" [editable]="!accessCpnService.isSimulation" iconClass="fas fa-cube"
+  (contextmenuAction)="onSelected(); onContextMenu($event);"
+  (keydownAction)="onKeyDown($event)"
+  (updateAction)="onUpdate($event)"
+  >
 
   <ng-container *ngIf="block.block">
     <ng-container *ngFor="let subblock of nodeToArray(block.block)">

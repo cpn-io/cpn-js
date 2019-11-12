@@ -4,7 +4,12 @@
   <ng-container *ngIf="entries">
     <ng-container *ngFor="let entry of entries">
 
-      <a class="dropdown-item" href="#" (click)="entry.action()">{{ entry.title }}</a>
+      <div *ngIf="entry.title === 'separator'" class="dropdown-divider" href="#"></div>
+
+      <a *ngIf="entry.title !== 'separator'" class="dropdown-item" href="#" (click)="entry.action()">
+        <i *ngIf="entry.iconClass" [class]="entry.iconClass"></i>
+        <span>{{ entry.title }}</span>
+      </a>
 
     </ng-container>
   </ng-container>

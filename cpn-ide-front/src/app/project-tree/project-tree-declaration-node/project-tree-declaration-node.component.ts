@@ -5,15 +5,14 @@ import { Message } from '../../common/message';
 import { parseUiDeclarartionType } from './declaration-parser';
 import { AccessCpnService } from '../../services/access-cpn.service';
 import { ContextMenuComponent } from '../../context-menu/context-menu.component';
+import { getNextId } from '../../common/utils';
 
 @Component({
   selector: 'app-project-tree-declaration-node',
   templateUrl: './project-tree-declaration-node.component.html',
   styleUrls: ['./project-tree-declaration-node.component.scss']
 })
-export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, AfterViewInit {
-
-  @ViewChild('editField') editField: ElementRef;
+export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges {
 
   @Input() public parentBlock: any;
   @Input() public declaration: any;
@@ -36,15 +35,8 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, A
     this.updateErrors();
   }
 
-  ngAfterViewInit() {
-    console.log(this.constructor.name, 'ngAfterViewInit(), declaration = ' + JSON.stringify(this.declaration));
-  }
-
   ngOnChanges(changes: SimpleChanges) {
     for (let propName in changes) {
-      // let chng = changes[propName];
-      // let cur  = JSON.stringify(chng.currentValue);
-      // let prev = JSON.stringify(chng.previousValue);
       // console.log(this.constructor.name, `ngOnChanges(), ${propName}: currentValue = ${cur}, previousValue = ${prev}`);
       if (propName === 'errorData') {
         this.updateErrors();
@@ -75,79 +67,47 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, A
 
   onUpdate(layout) {
     this.modelService.updateDeclaration(this.declaration, this.type, this.parentBlock, layout);
-
-    // const originalLayout = layout;
-
-    // console.log('onUpdate(), layout = ', layout);
-    // console.log('onUpdate(), this.declaration = ', JSON.stringify(this.declaration));
-
-    // const oldCpnDeclarartionType = this.type;
-
-    // // parse declaration layout
-    // let result = parseDeclarartion(layout);
-
-    // if (result && result.cpnElement) {
-    //   let newDeclaration = result.cpnElement;
-    //   const newCpnDeclarartionType = result.cpnDeclarationType;
-
-    //   console.log('onUpdate(), oldCpnDeclarartionType = ', oldCpnDeclarartionType);
-    //   console.log('onUpdate(), newCpnDeclarartionType = ', newCpnDeclarartionType);
-
-    //   this.copyDeclaration(newDeclaration, this.declaration)
-
-    //   // move declaration cpn element from old declaration group to new, if needed
-    //   if (newCpnDeclarartionType !== oldCpnDeclarartionType) {
-    //     this.modelService.removeCpnElement(this.parentBlock, this.declaration, oldCpnDeclarartionType);
-    //     this.modelService.addCpnElement(this.parentBlock, this.declaration, newCpnDeclarartionType);
-    //   }
-    // }
   }
-
 
   onSelected() {
-    this.tree.selected.parentCpnElement = this.parentBlock;
-    this.tree.selected.id = this.declaration._id;
-    this.tree.selected.type = this.type;
-    this.tree.selected.cpnElement = this.declaration;
-
-    this.eventService.send(Message.TREE_SELECT_DECLARATION_NODE_NEW, {
-      cpnType: this.type,
-      cpnElement: this.declaration,
-      cpnParentElement: this.parentBlock
-    });
+    this.setSelected(this.parentBlock, this.declaration, this.type);
   }
 
-  onParse(layout) {
-    // layout = this.getText();
-    // if (this.declaration.layout) {
-    //   layout = this.declaration.layout;
-    // }
+  setSelected(cpnParentElement, cpnElement, type) {
+    this.tree.selected.parentCpnElement = cpnParentElement;
+    this.tree.selected.id = cpnElement._id;
+    this.tree.selected.type = type;
+    this.tree.selected.cpnElement = cpnElement;
 
-    // // clear declaration layout
-    // layout = clearDeclarationLayout(layout);
-    // // parse declaration layout
-    // let result = parseDeclarartion(layout);
-
-    // if (result && result.cpnElement) {
-    //   let newDeclaration = result.cpnElement;
-    //   newDeclaration._id = this.declaration._id;
-    //   this.eventService.send(Message.TREE_SELECT_DECLARATION_NODE_NEW, {
-    //     cpnType: 'ml',
-    //     cpnElement: newDeclaration
-    //   });
-    // }
+    this.eventService.send(Message.TREE_SELECT_DECLARATION_NODE_NEW, {
+      cpnType: type,
+      cpnElement: cpnElement,
+      cpnParentElement: cpnParentElement
+    });
   }
 
   onNewDeclaration() {
     console.log(this.constructor.name, 'onNewDeclaration(), declaration = ', this.declaration);
 
-    const newDeclaration = this.modelService.newDeclaration(this.parentBlock, this.declaration, this.type);
+    const newDeclaration = this.modelService.newDeclaration(this.parentBlock, this.type);
     if (newDeclaration) {
       this.focus(newDeclaration._id);
     }
   }
 
   onNewBlock() {
+    console.log(this.constructor.name, 'onNewBlock(), declaration = ', this.declaration);
+
+    let parentElement = this.parentBlock;
+    if (parentElement) {
+      const newBlock = { id: 'New block', _id: getNextId() };
+      this.modelService.addCpnElement(parentElement, newBlock, 'block');
+
+      // set selected to new block
+      this.setSelected(parentElement, newBlock, 'block');
+
+      this.focus(newBlock._id);
+    }
   }
 
   onDeleteDeclaration() {
@@ -166,11 +126,16 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, A
 
   onContextMenu(event) {
     if (this.tree && this.tree.contextMenu) {
+      event.preventDefault();
 
-      const entries = [
-        { title: 'New declaration', action: () => this.onNewDeclaration() },
-        { title: 'New block', action: () => this.onNewBlock() },
-      ];
+      const entries = [];
+
+      entries.push({ title: 'New declaration', action: () => this.onNewDeclaration(), iconClass: 'fas fa-code' });
+      if (this.tree && this.tree.treeType === 'tree') {
+        entries.push({ title: 'New block', action: () => this.onNewBlock(), iconClass: 'fas fa-cube' });
+      }
+      entries.push({ title: 'separator' });
+      entries.push({ title: 'Delete', action: () => this.onDeleteDeclaration(), iconClass: 'fas fa-minus' });
 
       this.tree.contextMenu.setEntries(entries);
       this.tree.contextMenu.show({ x: event.clientX, y: event.clientY });
@@ -207,15 +172,13 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, A
       if (this.tree && this.tree.containerId) {
 
         const container = document.getElementById(this.tree.containerId);
-        
+
         if (container) {
           const inputElem: any = container.querySelector('#' + id);
           if (inputElem) {
             inputElem.focus();
           }
         }
-      } else {
-        this.editField.nativeElement.focus();
       }
     }, 100);
   }

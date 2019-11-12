@@ -32,6 +32,12 @@ export class ProjectDeclarationsBlockNodeComponent implements OnInit {
     }
   }
 
+  hasBlocks() {
+    if (nodeToArray(this.block.block).length > 0) {
+      return true;
+    }
+  }
+
   hasDeclarations() {
     if (this.declarationType) {
       if (this.declarationType === 'all' &&

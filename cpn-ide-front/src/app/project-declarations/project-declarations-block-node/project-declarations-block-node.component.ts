@@ -1,35 +1,27 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { nodeToArray } from '../../common/utils';
+import { ITreeNode } from '../../project-tree/tree-node/tree-node';
+import { TreeData } from '../../project-tree/project-tree.component';
 
 @Component({
   selector: 'app-project-declarations-block-node',
   templateUrl: './project-declarations-block-node.component.html',
   styleUrls: ['./project-declarations-block-node.component.scss']
 })
-export class ProjectDeclarationsBlockNodeComponent implements OnInit {
-
+export class ProjectDeclarationsBlockNodeComponent implements OnInit, ITreeNode {
   public nodeToArray = nodeToArray;
 
   @Input() public declarationType: any;
   @Input() public parentBlock: any;
   @Input() public block: any;
 
-  @Input() public tree: any;
+  @Input() public tree: TreeData;
 
   @Input() showBullet = true;
 
   constructor() { }
 
   ngOnInit() {
-  }
-
-  onSelected() {
-    this.tree.selected.parentCpnElement = this.parentBlock;
-    if (this.block) {
-      this.tree.selected.id = this.block._id;
-      this.tree.selected.type = 'block';
-      this.tree.selected.cpnElement = this.block;
-    }
   }
 
   hasBlocks() {
@@ -62,6 +54,43 @@ export class ProjectDeclarationsBlockNodeComponent implements OnInit {
       }
     }
     return false;
+  }
+
+  onSelect() {
+    this.tree.selected.treeNodeComponent = this;
+    this.tree.selected.parentCpnElement = this.parentBlock;
+    if (this.block) {
+      this.tree.selected.id = this.block._id;
+      this.tree.selected.type = 'block';
+      this.tree.selected.cpnElement = this.block;
+    }
+  }
+  onClick() {
+    throw new Error("Method not implemented.");
+  }
+  onExpand() {
+    throw new Error("Method not implemented.");
+  }
+  onContextMenu(event: any) {
+    throw new Error("Method not implemented.");
+  }
+  onKeydown(event: any) {
+    throw new Error("Method not implemented.");
+  }
+  onUpdate(event: any) {
+    throw new Error("Method not implemented.");
+  }
+  onNew(event: any) {
+    throw new Error("Method not implemented.");
+  }
+  onDelete(event: any) {
+    throw new Error("Method not implemented.");
+  }
+  onUp(event: any) {
+    throw new Error("Method not implemented.");
+  }
+  onDown(event: any) {
+    throw new Error("Method not implemented.");
   }
 
 }

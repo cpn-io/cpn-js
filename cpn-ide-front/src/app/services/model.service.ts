@@ -1825,7 +1825,12 @@ export class ModelService {
 
       let nodeList = nodeToArray(cpnParentElement[cpnType]);
       nodeList = nodeList.filter((e) => { return e._id !== cpnElement._id; });
-      cpnParentElement[cpnType] = nodeList.length === 1 ? nodeList[0] : nodeList;
+
+      if (!nodeList || nodeList.length === 0) {
+        delete cpnParentElement[cpnType];
+      } else {
+        cpnParentElement[cpnType] = nodeList.length === 1 ? nodeList[0] : nodeList;
+      }
     } catch (ex) {
       console.error(this.constructor.name, 'removeCpnElement(). ERROR: ', ex);
     }

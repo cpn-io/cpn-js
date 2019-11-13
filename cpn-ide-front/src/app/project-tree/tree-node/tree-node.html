@@ -10,8 +10,7 @@
 
     <div [id]="id" class="title" [ngClass]="{ 'active' : tree.expanded[id], 'bold': bold }" [contentEditable]="editable"
         [innerHTML]="title" (mousedown)="onClick()" (contextmenu)="onContextMenu($event)" (keydown)="onKeydown($event)"
-        (focusout)="onUpdate($event)"
-        >
+        (focus)="onSelect()" (focusout)="onUpdate($event)">
     </div>
 </div>
 

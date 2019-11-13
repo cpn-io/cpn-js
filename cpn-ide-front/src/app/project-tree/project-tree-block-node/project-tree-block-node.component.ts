@@ -4,19 +4,20 @@ import { AccessCpnService } from '../../services/access-cpn.service';
 import { EventService } from '../../services/event.service';
 import { ModelService } from '../../services/model.service';
 import { Message } from '../../common/message';
+import { TreeData } from '../project-tree.component';
+import { ITreeNode } from '../tree-node/tree-node';
 
 @Component({
   selector: 'app-project-tree-block-node',
   templateUrl: './project-tree-block-node.component.html',
   styleUrls: ['./project-tree-block-node.component.scss']
 })
-export class ProjectTreeBlockNodeComponent implements OnInit {
-
+export class ProjectTreeBlockNodeComponent implements OnInit, ITreeNode {
   public nodeToArray = nodeToArray;
 
   @Input() public parentBlock: any;
   @Input() public block: any;
-  @Input() public tree: any;
+  @Input() public tree: TreeData;
   @Input() showBullet = true;
 
   type = 'block';
@@ -32,11 +33,9 @@ export class ProjectTreeBlockNodeComponent implements OnInit {
     }
   }
 
-  onSelected() {
-    this.setSelected(this.parentBlock, this.block, this.type);
-  }
-
   setSelected(cpnParentElement, cpnElement, type) {
+    this.tree.selected.treeNodeComponent = this;
+    
     this.tree.selected.parentCpnElement = cpnParentElement;
     this.tree.selected.id = cpnElement._id;
     this.tree.selected.type = type;
@@ -49,12 +48,6 @@ export class ProjectTreeBlockNodeComponent implements OnInit {
     });
   }
 
-  expand() {
-    if (this.tree && this.tree.expanded) {
-      this.tree.expanded[this.block._id] = true;
-    }
-  }
-
   onNewDeclaration() {
     console.log(this.constructor.name, 'onNewDeclaration(), block = ', this.block);
 
@@ -62,7 +55,7 @@ export class ProjectTreeBlockNodeComponent implements OnInit {
     if (newDeclaration) {
 
       // set selected to new declaration
-      this.expand();
+      this.onExpand();
       this.setSelected(this.block, newDeclaration, 'ml');
       this.focus(newDeclaration._id);
     }
@@ -77,7 +70,7 @@ export class ProjectTreeBlockNodeComponent implements OnInit {
       this.modelService.addCpnElement(parentElement, newBlock, 'block');
 
       // set selected to new block
-      this.expand();
+      this.onExpand();
       this.setSelected(parentElement, newBlock, 'block');
       this.focus(newBlock._id);
     }
@@ -85,16 +78,6 @@ export class ProjectTreeBlockNodeComponent implements OnInit {
 
   onDeleteBlock() {
     this.modelService.removeCpnElement(this.parentBlock, this.block, this.type);
-  }
-
-  onBlockUp() {
-    this.modelService.moveCpnElement(this.parentBlock, this.block, this.type, 'up');
-    this.focus(this.block._id);
-  }
-
-  onBlockDown() {
-    this.modelService.moveCpnElement(this.parentBlock, this.block, this.type, 'down');
-    this.focus(this.block._id);
   }
 
   onContextMenu(event) {
@@ -113,34 +96,6 @@ export class ProjectTreeBlockNodeComponent implements OnInit {
     }
   }
 
-  onKeyDown(event: KeyboardEvent) {
-    console.log(this.constructor.name, 'onKeyDown(), event = ', event);
-
-    if (event.shiftKey) {
-      switch (event.code) {
-        case 'Insert':
-          event.preventDefault();
-          this.onNewBlock();
-          break;
-        case 'Delete':
-          event.preventDefault();
-          this.onDeleteBlock();
-          break;
-        case 'ArrowUp':
-          event.preventDefault();
-          this.onBlockUp();
-          break;
-        case 'ArrowDown':
-          event.preventDefault();
-          this.onBlockDown();
-          break;
-      }
-    }
-  }
-
-  onUpdate(event) {
-    this.block.id = event.target.textContent;
-  }
 
   focus(id) {
     setTimeout(() => {
@@ -157,5 +112,63 @@ export class ProjectTreeBlockNodeComponent implements OnInit {
       }
     }, 100);
   }
+
+  // implements ITreeNode
+
+  onSelect() {
+    this.setSelected(this.parentBlock, this.block, this.type);
+  }
+  onClick() {
+    throw new Error("Method not implemented.");
+  }
+  onExpand() {
+    if (this.tree && this.tree.expanded) {
+      this.tree.expanded[this.block._id] = true;
+    }
+  }
+  onKeydown(event: KeyboardEvent) {
+    console.log(this.constructor.name, 'onKeydown(), event = ', event);
+
+    if (event.shiftKey) {
+      switch (event.code) {
+        case 'Insert':
+          event.preventDefault();
+          this.onNewBlock();
+          break;
+        case 'Delete':
+          event.preventDefault();
+          this.onDeleteBlock();
+          break;
+        case 'ArrowUp':
+          event.preventDefault();
+          this.onUp();
+          break;
+        case 'ArrowDown':
+          event.preventDefault();
+          this.onDown();
+          break;
+      }
+    }
+  }
+
+  onUpdate(event) {
+    this.block.id = event.target.textContent;
+  }
+
+  onNew(event: any) {
+    this.onNewDeclaration();
+  }
+  onDelete(event: any) {
+    this.onDeleteBlock();
+  }
+  onUp(event: any = undefined) {
+    this.modelService.moveCpnElement(this.parentBlock, this.block, this.type, 'up');
+    this.focus(this.block._id);
+  }
+  onDown(event: any = undefined) {
+    this.modelService.moveCpnElement(this.parentBlock, this.block, this.type, 'down');
+    this.focus(this.block._id);
+  }
+
 
 }

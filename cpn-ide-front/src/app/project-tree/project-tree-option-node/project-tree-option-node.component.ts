@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { TreeData } from '../project-tree.component';
 
 @Component({
   selector: 'app-project-tree-option-node',
@@ -7,7 +8,7 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class ProjectTreeOptionNodeComponent implements OnInit {
 
-  @Input() public tree: any = {};
+  @Input() public tree: TreeData;
   @Input() public option: any = {};
 
   constructor() { }

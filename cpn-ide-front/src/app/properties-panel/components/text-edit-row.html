@@ -2,7 +2,7 @@
 <div class="valueRow" [ngClass]="{'bordered': bordered}" *ngIf="object && type === 'text'">
   <div class="valueName">{{name}}</div>
   <div class="value" [ngClass]="{'value-readonly': readonly, 'pre': pre}" [contentEditable]="!readonly"
-    [textContent]="object[field]" (keydown)="onKeyDown($event);" (focusout)="onChange($event);">
+    [textContent]="object[field]" (keydown)="onKeydown($event);" (focusout)="onChange($event);">
   </div>
 </div>
 
@@ -10,7 +10,7 @@
 <div class="valueRow" [ngClass]="{'bordered': bordered}" *ngIf="object && type === 'int'">
   <div class="valueName">{{name}}</div>
   <div class="value" [ngClass]="{'value-readonly': readonly, 'pre': pre}" [contentEditable]="!readonly"
-    [textContent]="parseInt(object[field], 0)" (keydown)="onKeyDown($event);" (focusout)="onChange($event);">
+    [textContent]="parseInt(object[field], 0)" (keydown)="onKeydown($event);" (focusout)="onChange($event);">
   </div>
 </div>
 
@@ -39,7 +39,7 @@
 <!-- ML input -->
 <div class="valueRow" [ngClass]="{'bordered': bordered}" *ngIf="object && type === 'ml'">
   <div class="value" [ngClass]="{'value-readonly': readonly, 'pre': pre}" [contentEditable]="!readonly"
-    [innerHTML]="object[field] | colorDeclarations | safeHtml" (keydown)="onKeyDown($event);"
+    [innerHTML]="object[field] | colorDeclarations | safeHtml" (keydown)="onKeydown($event);"
     (focusout)="onChange($event);">
     <!-- (dblclick)="onDblClick($event)"     -->
   </div>

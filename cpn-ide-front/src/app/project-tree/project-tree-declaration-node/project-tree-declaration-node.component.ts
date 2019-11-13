@@ -6,19 +6,20 @@ import { parseUiDeclarartionType } from './declaration-parser';
 import { AccessCpnService } from '../../services/access-cpn.service';
 import { ContextMenuComponent } from '../../context-menu/context-menu.component';
 import { getNextId } from '../../common/utils';
+import { ITreeNode } from '../tree-node/tree-node';
+import { TreeData } from '../project-tree.component';
 
 @Component({
   selector: 'app-project-tree-declaration-node',
   templateUrl: './project-tree-declaration-node.component.html',
   styleUrls: ['./project-tree-declaration-node.component.scss']
 })
-export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges {
-
+export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, ITreeNode {
   @Input() public parentBlock: any;
   @Input() public declaration: any;
   @Input() public type: any;
 
-  @Input() public tree: any;
+  @Input() public tree: TreeData;
 
   public focused = false;
 
@@ -65,15 +66,9 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges {
     return transformed && transformed.length > 0 ? transformed[0] : layout;
   }
 
-  onUpdate(layout) {
-    this.modelService.updateDeclaration(this.declaration, this.type, this.parentBlock, layout);
-  }
-
-  onSelected() {
-    this.setSelected(this.parentBlock, this.declaration, this.type);
-  }
-
   setSelected(cpnParentElement, cpnElement, type) {
+    this.tree.selected.treeNodeComponent = this;
+
     this.tree.selected.parentCpnElement = cpnParentElement;
     this.tree.selected.id = cpnElement._id;
     this.tree.selected.type = type;
@@ -110,63 +105,6 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges {
     }
   }
 
-  onDeleteDeclaration() {
-    this.modelService.removeCpnElement(this.parentBlock, this.declaration, this.type);
-  }
-
-  onDeclarationUp() {
-    this.modelService.moveCpnElement(this.parentBlock, this.declaration, this.type, 'up');
-    this.focus(this.declaration._id);
-  }
-
-  onDeclarationDown() {
-    this.modelService.moveCpnElement(this.parentBlock, this.declaration, this.type, 'down');
-    this.focus(this.declaration._id);
-  }
-
-  onContextMenu(event) {
-    if (this.tree && this.tree.contextMenu) {
-      event.preventDefault();
-
-      const entries = [];
-
-      entries.push({ title: 'New declaration', action: () => this.onNewDeclaration(), iconClass: 'fas fa-code' });
-      if (this.tree && this.tree.treeType === 'tree') {
-        entries.push({ title: 'New block', action: () => this.onNewBlock(), iconClass: 'fas fa-cube' });
-      }
-      entries.push({ title: 'separator' });
-      entries.push({ title: 'Delete', action: () => this.onDeleteDeclaration(), iconClass: 'fas fa-minus' });
-
-      this.tree.contextMenu.setEntries(entries);
-      this.tree.contextMenu.show({ x: event.clientX, y: event.clientY });
-    }
-  }
-
-  onKeyDown(event: KeyboardEvent) {
-    console.log(this.constructor.name, 'onKeyDown(), event = ', event);
-
-    if (event.shiftKey) {
-      switch (event.code) {
-        case 'Insert':
-          event.preventDefault();
-          this.onNewDeclaration();
-          break;
-        case 'Delete':
-          event.preventDefault();
-          this.onDeleteDeclaration();
-          break;
-        case 'ArrowUp':
-          event.preventDefault();
-          this.onDeclarationUp();
-          break;
-        case 'ArrowDown':
-          event.preventDefault();
-          this.onDeclarationDown();
-          break;
-      }
-    }
-  }
-
   focus(id) {
     setTimeout(() => {
       if (this.tree && this.tree.containerId) {
@@ -182,4 +120,85 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges {
       }
     }, 100);
   }
+
+
+  // ITreeNode implements
+
+  onSelect() {
+    this.setSelected(this.parentBlock, this.declaration, this.type);
+  }
+
+  onClick() {
+    this.onSelect();
+  }
+
+  onExpand() {
+    throw new Error("Method not implemented.");
+  }
+
+  onContextMenu(event) {
+    if (this.tree && this.tree.contextMenu) {
+      event.preventDefault();
+
+      const entries = [];
+
+      entries.push({ title: 'New declaration', action: () => this.onNewDeclaration(), iconClass: 'fas fa-code' });
+      if (this.tree && this.tree.treeType === 'tree') {
+        entries.push({ title: 'New block', action: () => this.onNewBlock(), iconClass: 'fas fa-cube' });
+      }
+      entries.push({ title: 'separator' });
+      entries.push({ title: 'Delete', action: () => this.onDelete(), iconClass: 'fas fa-minus' });
+
+      this.tree.contextMenu.setEntries(entries);
+      this.tree.contextMenu.show({ x: event.clientX, y: event.clientY });
+    }
+  }
+
+  onKeydown(event: any = undefined) {
+    console.log(this.constructor.name, 'onKeydown(), event = ', event);
+
+    if (event.shiftKey) {
+      switch (event.code) {
+        case 'Insert':
+          event.preventDefault();
+          this.onNewDeclaration();
+          break;
+        case 'Delete':
+          event.preventDefault();
+          this.onDelete();
+          break;
+        case 'ArrowUp':
+          event.preventDefault();
+          this.onUp();
+          break;
+        case 'ArrowDown':
+          event.preventDefault();
+          this.onDown();
+          break;
+      }
+    }
+  }
+
+  onUpdate(layout) {
+    this.modelService.updateDeclaration(this.declaration, this.type, this.parentBlock, layout);
+  }
+
+  onNew(event: any = undefined) {
+    this.onNewDeclaration();
+  }
+
+  onDelete(event: any = undefined) {
+    this.modelService.removeCpnElement(this.parentBlock, this.declaration, this.type);
+  }
+
+  onUp(event: any = undefined) {
+    this.modelService.moveCpnElement(this.parentBlock, this.declaration, this.type, 'up');
+    this.focus(this.declaration._id);
+  }
+
+  onDown(event: any = undefined) {
+    this.modelService.moveCpnElement(this.parentBlock, this.declaration, this.type, 'down');
+    this.focus(this.declaration._id);
+  }
+
 }

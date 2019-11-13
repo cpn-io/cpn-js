@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { nodeToArray } from '../../common/utils';
+import { TreeData } from '../project-tree.component';
 
 @Component({
   selector: 'app-project-tree-options-node',
@@ -8,12 +9,11 @@ import { nodeToArray } from '../../common/utils';
 })
 export class ProjectTreeOptionsNodeComponent implements OnInit {
 
+  @Input() public tree: TreeData;
+  @Input() public optionList: any;
+
   public nodeToArray = nodeToArray;
   public console = console;
-
-  @Input() public optionList: any;
-  
-  @Input() public tree: any;
 
   constructor() { }
 

@@ -7,6 +7,48 @@ import { clearDeclarationLayout, parseDeclarartion } from './project-tree-declar
 import { AccessCpnService } from '../services/access-cpn.service';
 import { SettingsService } from '../services/settings.service';
 import { ContextMenuComponent } from '../context-menu/context-menu.component';
+import { SelectedNode } from './tree-node/tree-node';
+
+export class TreeData {
+  expanded = [];
+  errors = [];
+  pages = [];
+  subpages = [];
+  parents = [];
+  cpnElements = [];
+
+  selected:SelectedNode = new SelectedNode();
+  selectedOld:SelectedNode = new SelectedNode();
+
+  // Context menu
+  contextMenu = undefined;
+  containerId = undefined;
+
+  // Tree component
+  treeComponent = undefined;
+  treeType = undefined;
+
+  reset() {
+    this.expanded = [];
+    this.errors = [];
+    this.pages = [];
+    this.subpages = [];
+    this.parents = [];
+    this.cpnElements = [];
+
+    this.selected = new SelectedNode();
+    this.selectedOld = new SelectedNode();
+
+    // Context menu
+    this.contextMenu = undefined;
+    this.containerId = undefined;
+
+    // Tree component
+    this.treeComponent = undefined;
+    this.treeType = undefined;
+  }
+}
+
 
 @Component({
   selector: 'app-project-tree',
@@ -24,7 +66,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   public project;
   public cpnet;
 
-  public tree = this.getDefaultTree();
+  public tree: TreeData = this.getDefaultTree();
 
   public mouseover = { id: undefined };
 
@@ -52,7 +94,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
   ngDoCheck() {
     if (this.tree.selectedOld.id !== this.tree.selected.id) {
-      this.tree.selectedOld = cloneObject(this.tree.selected);
+      this.tree.selectedOld = this.tree.selected.clone();
       this.onSelectedChange();
     }
   }
@@ -64,25 +106,19 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     this.tree.expanded['project'] = true;
   }
 
-  getDefaultTree() {
-    return {
-      expanded: [],
-      selected: { type: undefined, id: undefined, cpnElement: undefined, parentCpnElement: undefined },
-      selectedOld: { id: undefined },
-      errors: [],
-      pages: [],
-      subpages: [],
-      parents: [],
-      cpnElements: [],
+  getDefaultTree(): TreeData {
+    const treeData = new TreeData();
+    treeData.reset();
 
-      // Context menu
-      contextMenu: this.contextMenu,
-      containerId: 'projectTreeComponentContainer',
+    // Context menu
+    treeData.contextMenu = this.contextMenu;
+    treeData.containerId = 'projectTreeComponentContainer';
 
-      // Tree component
-      treeComponent: this,
-      treeType: 'tree'
-    };
+    // Tree component
+    treeData.treeComponent = this;
+    treeData.treeType = 'tree';
+
+    return treeData;
   }
 
   loadProject() {
@@ -194,15 +230,6 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     }, 100);
   }
 
-  onNewDeclaration() {
-    console.log(this.constructor.name, 'onNewDeclaration(), this.selected = ', this.tree.selected);
-
-    const newDeclaration = this.modelService.newDeclaration(this.tree.selected.parentCpnElement, this.tree.selected.type);
-    if (newDeclaration) {
-      this.focus(newDeclaration._id);
-    }
-  }
-
   onNewBlock() {
     console.log(this.constructor.name, 'onNewBlock(), this.selected = ', this.tree.selected);
 
@@ -235,77 +262,42 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     }
   }
 
-  onNewPage() {
-    const defValue = this.settings.getAppSettings()['page'];
-    const cpnElement = this.modelService.createCpnPage(defValue + ' ' + (++this.newPageCount), undefined);
+  // onNewPage() {
+  //   const defValue = this.settings.getAppSettings()['page'];
+  //   const cpnElement = this.modelService.createCpnPage(defValue + ' ' + (++this.newPageCount), undefined);
 
-    const cpnet = this.modelService.getCpn();
-    this.modelService.addCpnElement(cpnet, cpnElement, 'page');
-    this.modelService.updateInstances();
-  }
+  //   const cpnet = this.modelService.getCpn();
+  //   this.modelService.addCpnElement(cpnet, cpnElement, 'page');
+  //   this.modelService.updateInstances();
+  // }
 
   // Toolbar action handlers
   onNewNode() {
-    console.log(this.constructor.name, 'onNewNode()');
-
-    if (this.tree.selected && this.tree.selected.type) {
-      console.log(this.constructor.name, 'onNewNode(), this.selected = ', this.tree.selected);
-
-      switch (this.tree.selected.type) {
-        case 'globref':
-        case 'color':
-        case 'var':
-        case 'ml':
-          this.onNewDeclaration();
-          break;
-
-        case 'declarations':
-        case 'block':
-          this.onNewBlock();
-          break;
-
-        case 'page':
-          this.onNewPage();
-          break;
-      }
+    console.log(this.constructor.name, 'onNewNode(), this.selected = ', this.tree.selected);
+    if (this.tree.selected && this.tree.selected.treeNodeComponent) {
+      this.tree.selected.treeNodeComponent.onNew(undefined);
     }
   }
 
 
   onDeleteNode() {
     console.log(this.constructor.name, 'onDeleteNode(), this.selected = ', this.tree.selected);
-
-    if (this.tree.selected
-      && this.tree.selected.parentCpnElement
-      && ['globref', 'color', 'var', 'ml', 'block', 'page'].includes(this.tree.selected.type)) {
-
-      this.modelService.removeCpnElement(this.tree.selected.parentCpnElement, this.tree.selected.cpnElement, this.tree.selected.type);
+    if (this.tree.selected && this.tree.selected.treeNodeComponent) {
+      this.tree.selected.treeNodeComponent.onDelete(undefined);
     }
   }
 
   onUpNode() {
-    console.log(this.constructor.name, 'onUpNode()');
-
-    if (this.tree.selected
-      && this.tree.selected.parentCpnElement
-      && ['globref', 'color', 'var', 'ml', 'block', 'page'].includes(this.tree.selected.type)) {
-
-      this.modelService.moveCpnElement(this.tree.selected.parentCpnElement, this.tree.selected.cpnElement, this.tree.selected.type, 'up');
-
-      this.focus(this.tree.selected.cpnElement._id);
+    console.log(this.constructor.name, 'onUpNode(), this.selected = ', this.tree.selected);
+    if (this.tree.selected && this.tree.selected.treeNodeComponent) {
+      this.tree.selected.treeNodeComponent.onUp(undefined);
     }
   }
 
   onDownNode() {
-    console.log(this.constructor.name, 'onDownNode()');
-
-    if (this.tree.selected
-      && this.tree.selected.parentCpnElement
-      && ['globref', 'color', 'var', 'ml', 'block', 'page'].includes(this.tree.selected.type)) {
-
-      this.modelService.moveCpnElement(this.tree.selected.parentCpnElement, this.tree.selected.cpnElement, this.tree.selected.type, 'down');
-
-      this.focus(this.tree.selected.cpnElement._id);
+    console.log(this.constructor.name, 'onDownNode(), this.selected = ', this.tree.selected);
+    if (this.tree.selected && this.tree.selected.treeNodeComponent) {
+      this.tree.selected.treeNodeComponent.onDown(undefined);
     }
   }
 

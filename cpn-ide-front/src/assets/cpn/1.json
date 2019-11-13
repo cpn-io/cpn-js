@@ -24,7 +24,16 @@
                 "__text": "val P_LOW = 10000;"
               }
             ],
-            "_id": "ID1412310166"
+            "_id": "ID1412310166",
+            "block": {
+              "id": "New block",
+              "_id": "ID3644416098",
+              "block": {
+                "id": "New block",
+                "_id": "ID3644418993"
+              },
+              "ml": []
+            }
           },
           {
             "id": "Standard declarations",

@@ -51,7 +51,7 @@ export class TextEditRowComponent {
     return this.colorNames[name] || name;
   }
 
-  onKeyDown(e) {
+  onKeydown(e) {
     if (!e) {
       e = window.event;
     }

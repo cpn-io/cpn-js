@@ -5,6 +5,7 @@ import { ModelService } from '../services/model.service';
 import { nodeToArray, cloneObject, getNextId, arrayToNode } from '../common/utils';
 import { Message } from '../common/message';
 import { ContextMenuComponent } from '../context-menu/context-menu.component';
+import { TreeData } from '../project-tree/project-tree.component';
 
 @Component({
   selector: 'app-project-declarations',
@@ -52,24 +53,18 @@ export class ProjectDeclarationsComponent implements OnInit, AfterViewInit {
   }
 
   getDefaultTree() {
-    return {
-      expanded: [],
-      selected: { type: undefined, id: undefined, cpnElement: undefined, parentCpnElement: undefined },
-      selectedOld: { id: undefined },
-      errors: [],
-      pages: [],
-      subpages: [],
-      parents: [],
-      cpnElements: [],
+    const treeData = new TreeData();
+    treeData.reset();
 
-      // Context menu
-      contextMenu: this.contextMenu,
-      containerId: 'projectDeclarationsComponentContainer',
+    // Context menu
+    treeData.contextMenu = this.contextMenu;
+    treeData.containerId = 'projectDeclarationsComponentContainer';
 
-      // Tree component
-      treeComponent: this,
-      treeType: 'declarations'
-    };
+    // Tree component
+    treeData.treeComponent = this;
+    treeData.treeType = 'declarations';
+
+    return treeData;
   }
 
 

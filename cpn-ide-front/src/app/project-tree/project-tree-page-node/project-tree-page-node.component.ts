@@ -2,31 +2,34 @@ import { Component, OnInit, Input } from '@angular/core';
 import { nodeToArray } from '../../common/utils';
 import { ModelService } from '../../services/model.service';
 import { AccessCpnService } from '../../services/access-cpn.service';
+import { ITreeNode } from '../tree-node/tree-node';
+import { EventService } from '../../services/event.service';
+import { Message } from '../../common/message';
+import { TreeData } from '../project-tree.component';
+import { SettingsService } from '../../services/settings.service';
 
 @Component({
   selector: 'app-project-tree-page-node',
   templateUrl: './project-tree-page-node.component.html',
   styleUrls: ['./project-tree-page-node.component.scss']
 })
-export class ProjectTreePageNodeComponent implements OnInit {
-
+export class ProjectTreePageNodeComponent implements OnInit, ITreeNode {
   public nodeToArray = nodeToArray;
 
-  @Input() page: any = {};
-  @Input() isSubpage = false;
+  @Input() public tree: TreeData;
+  @Input() public parentBlock: any;
+  @Input() public page: any;
+  @Input() public type: any;
+  @Input() public containerId: any;
 
-  @Input() tree: any = [];
+  public newPageCount = 0;
 
-  constructor(public modelService: ModelService, public accessCpnService: AccessCpnService) { }
+  constructor(private eventService: EventService,
+    public modelService: ModelService,
+    public accessCpnService: AccessCpnService,
+    private settings: SettingsService) { }
 
   ngOnInit() {
-    // console.log(this.constructor.name, 'ngOnInit(), this.page.pageattr._name = ', this.page.pageattr._name);
-    // console.log(this.constructor.name, 'ngOnInit(), this.isSubpage = ', this.isSubpage);
-    // console.log(this.constructor.name, 'ngOnInit(), this.subpages = ', this.subpages);
-
-    if (this.isSubpage) {
-      this.tree.subpages.push(this.page._id);
-    }
   }
 
   hasSubpages() {
@@ -38,6 +41,108 @@ export class ProjectTreePageNodeComponent implements OnInit {
       }
     }
     return false;
+  }
+
+  setSelected(cpnParentElement, cpnElement, type) {
+    this.tree.selected.treeNodeComponent = this;
+
+    this.tree.selected.parentCpnElement = cpnParentElement;
+    this.tree.selected.id = cpnElement._id;
+    this.tree.selected.type = type;
+    this.tree.selected.cpnElement = cpnElement;
+
+    this.eventService.send(Message.PAGE_OPEN, { pageObject: this.tree.selected.cpnElement });
+  }
+
+  focus(id) {
+    setTimeout(() => {
+      if (this.tree && this.containerId) {
+
+        console.log(this.constructor.name, 'focus(), this.containerId = ', this.containerId);
+
+        const container = document.getElementById(this.containerId);
+
+        if (container) {
+          const inputElem: any = container.querySelector('#' + id);
+          if (inputElem) {
+            inputElem.focus();
+          }
+        }
+      }
+    }, 100);
+  }
+
+  onSelect() {
+    this.setSelected(this.parentBlock, this.page, this.type);
+  }
+  onClick() {
+    throw new Error("Method not implemented.");
+  }
+  onExpand() {
+    throw new Error("Method not implemented.");
+  }
+  onContextMenu(event: any) {
+    if (this.tree && this.tree.contextMenu) {
+      event.preventDefault();
+
+      const entries = [];
+
+      entries.push({ title: 'New page', action: () => this.onNew(), iconClass: 'fas fa-shapes' });
+      entries.push({ title: 'separator' });
+      entries.push({ title: 'Delete', action: () => this.onDelete(), iconClass: 'fas fa-minus' });
+
+      this.tree.contextMenu.setEntries(entries);
+      this.tree.contextMenu.show({ x: event.clientX, y: event.clientY });
+    }
+  }
+  onKeydown(event: any) {
+    console.log(this.constructor.name, 'onKeydown(), event = ', event);
+
+    if (event.shiftKey) {
+      switch (event.code) {
+        case 'Insert':
+          event.preventDefault();
+          this.onNew();
+          break;
+        case 'Delete':
+          event.preventDefault();
+          this.onDelete();
+          break;
+        case 'ArrowUp':
+          event.preventDefault();
+          this.onUp();
+          break;
+        case 'ArrowDown':
+          event.preventDefault();
+          this.onDown();
+          break;
+      }
+    }
+  }
+  onUpdate(event: any) {
+    this.page.pageattr._name = event.target.textContent;
+  }
+  onNew(event: any = undefined) {
+    const defValue = this.settings.getAppSettings()['page'];
+    const newPage = this.modelService.createCpnPage(defValue);
+    this.modelService.addCpnElement(this.parentBlock, newPage, 'page');
+    this.modelService.updateInstances();
+
+    this.focus(newPage._id);
+  }
+  onDelete(event: any = undefined) {
+    console.log(this.constructor.name, 'onDelete(), this.parentBlock, this.page, this.type = ', this.parentBlock, this.page, this.type);
+    this.modelService.removeCpnElement(this.parentBlock, this.page, this.type);
+    this.modelService.updateInstances();
+    this.eventService.send(Message.PAGE_DELETE, { id: this.page._id });
+  }
+  onUp(event: any = undefined) {
+    // this.modelService.moveCpnElement(this.parentBlock, this.page, this.type, 'up');
+    this.focus(this.page._id);
+  }
+  onDown(event: any = undefined) {
+    // this.modelService.moveCpnElement(this.parentBlock, this.page, this.type, 'down');
+    this.focus(this.page._id);
   }
 
 }

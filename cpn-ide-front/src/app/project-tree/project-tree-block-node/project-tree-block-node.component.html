@@ -1,34 +1,36 @@
 <app-tree-node [tree]="tree" [id]="block._id" [title]="block.id" [type]="'block'" [cpnElement]="block"
   [showBullet]="showBullet" [editable]="!accessCpnService.isSimulation" iconClass="fas fa-cube"
-  (contextmenuAction)="onSelect(); onContextMenu($event);"
-  (selectAction)="onSelect()"
-  (keydownAction)="onKeydown($event)"
-  (updateAction)="onUpdate($event)">
+  (contextmenuAction)="onSelect(); onContextMenu($event);" (selectAction)="onSelect()"
+  (keydownAction)="onKeydown($event)" (updateAction)="onUpdate($event)">
 
   <ng-container *ngIf="block.block">
     <ng-container *ngFor="let subblock of nodeToArray(block.block)">
-      <app-project-tree-block-node [tree]="tree" [parentBlock]="block" [block]="subblock">
+      <app-project-tree-block-node [containerId]="containerId" [tree]="tree" [parentBlock]="block" [block]="subblock">
       </app-project-tree-block-node>
     </ng-container>
   </ng-container>
 
   <ng-container *ngFor="let globref of nodeToArray(block.globref)">
-    <app-project-tree-declaration-node [tree]="tree" [parentBlock]="block" [declaration]="globref" type="globref">
+    <app-project-tree-declaration-node [containerId]="containerId" [tree]="tree" [parentBlock]="block"
+      [declaration]="globref" type="globref">
     </app-project-tree-declaration-node>
   </ng-container>
 
   <ng-container *ngFor="let color of nodeToArray(block.color)">
-    <app-project-tree-declaration-node [tree]="tree" [parentBlock]="block" [declaration]="color" type="color">
+    <app-project-tree-declaration-node [containerId]="containerId" [tree]="tree" [parentBlock]="block"
+      [declaration]="color" type="color">
     </app-project-tree-declaration-node>
   </ng-container>
 
   <ng-container *ngFor="let variable of nodeToArray(block.var)">
-    <app-project-tree-declaration-node [tree]="tree" [parentBlock]="block" [declaration]="variable" type="var">
+    <app-project-tree-declaration-node [containerId]="containerId" [tree]="tree" [parentBlock]="block"
+      [declaration]="variable" type="var">
     </app-project-tree-declaration-node>
   </ng-container>
 
   <ng-container *ngFor="let ml of nodeToArray(block.ml)">
-    <app-project-tree-declaration-node [tree]="tree" [parentBlock]="block" [declaration]="ml" type="ml">
+    <app-project-tree-declaration-node [containerId]="containerId" [tree]="tree" [parentBlock]="block"
+      [declaration]="ml" type="ml">
     </app-project-tree-declaration-node>
   </ng-container>
 

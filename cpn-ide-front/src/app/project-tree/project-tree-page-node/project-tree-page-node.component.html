@@ -1,29 +1,42 @@
-<ng-container *ngIf="hasSubpages(); else elseBlock">
+<ng-container *ngIf="page">
 
-  <app-tree-node [tree]="tree" [id]="page._id" [title]="page.pageattr._name"
-    [type]="'page'" [cpnElement]="page" [editable]="!accessCpnService.isSimulation"
-    [error]="accessCpnService.errorPagesIds.includes(page._id)"
-    [ready]="accessCpnService.readyPagesIds.includes(page._id)">
+  <ng-container *ngIf="hasSubpages(); else elseBlock">
 
-    <ng-container *ngFor="let trans of nodeToArray(page.trans)">
-      <ng-container *ngIf="trans.subst && trans.subst._subpage">
-        <ng-container *ngFor="let subpage of [modelService.getPageById(trans.subst._subpage)]">
+    <app-tree-node [tree]="tree" [id]="page._id" [title]="page.pageattr._name" type="page" [cpnElement]="page"
+      [editable]="!accessCpnService.isSimulation" iconClass="fas fa-shapes"
+      [error]="accessCpnService.errorPagesIds.includes(page._id)"
+      [ready]="accessCpnService.readyPagesIds.includes(page._id)"
+      (contextmenuAction)="onSelect(); onContextMenu($event);" (selectAction)="onSelect()"
+      (keydownAction)="onKeydown($event)" (updateAction)="onUpdate($event)">
 
-          <app-project-tree-page-node [tree]="tree" [page]="subpage" [isSubpage]="true">
-          </app-project-tree-page-node>
+      <ng-container *ngFor="let trans of nodeToArray(page.trans)">
+        <ng-container *ngIf="trans.subst && trans.subst._subpage">
+          <ng-container *ngFor="let subpage of [modelService.getPageById(trans.subst._subpage)]">
 
+            <app-project-tree-page-node [containerId]="containerId" [tree]="tree" [page]="subpage"
+              [parentBlock]="parentBlock" [type]="type">
+            </app-project-tree-page-node>
+
+          </ng-container>
         </ng-container>
       </ng-container>
-    </ng-container>
 
-  </app-tree-node>
+    </app-tree-node>
+
+  </ng-container>
+
+  <ng-template #elseBlock>
+
+    <div class="icon" [ngClass]="{'errorIcon': accessCpnService.errorIds.includes(page._id)}">
+      <i class="fas fa-shapes"></i>
+    </div>
+
+    <div [id]="page._id" class="node" [contentEditable]="!accessCpnService.isSimulation" [textContent]="page.pageattr._name"
+      [ngClass]="{'selected': tree.selected.id === page._id, 'error': accessCpnService.errorPagesIds.includes(page._id), 'ready': accessCpnService.readyPagesIds.includes(page._id)}"
+      (input)="onUpdate($event)" (mousedown)="onSelect()" (contextmenu)="onSelect(); onContextMenu($event)"
+      (focus)="onSelect(); focused = true;" (focusout)="focused = false; onUpdate($event)"
+      (keydown)="onKeydown($event)">
+    </div>
+  </ng-template>
 
 </ng-container>
-
-<ng-template #elseBlock>
-  <div class="node" [contentEditable]="!accessCpnService.isSimulation" [textContent]="page.pageattr._name"
-    (mousedown)="tree.selected.type = 'page'; tree.selected.id = page._id; tree.selected.cpnElement = page"
-    (input)="page.pageattr._name=$event.target.textContent"
-    [ngClass]="{'selected': tree.selected.id === page._id, 'error': accessCpnService.errorPagesIds.includes(page._id), 'ready': accessCpnService.readyPagesIds.includes(page._id)}">
-  </div>
-</ng-template>

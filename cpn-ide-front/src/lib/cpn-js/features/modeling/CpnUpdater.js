@@ -32,7 +32,6 @@ CpnUpdater.$inject = [
   'popupMenuProvider',
   'contextPad',
   'canvas',
-  'portMenuProvider',
   'bindingsMenuProvider',
   'layouter',
   'cpnRenderer',
@@ -42,6 +41,7 @@ CpnUpdater.$inject = [
 import {
   event as domEvent
 } from 'min-dom';
+
 import Modeling from "./Modeling";
 import { assign } from 'min-dash';
 
@@ -63,7 +63,7 @@ import { getDistance } from '../../draw/CpnRenderUtil';
  */
 export default function CpnUpdater(eventBus, modeling, elementRegistry,
   connectionDocking, selection, popupMenuProvider, contextPad, canvas,
-  portMenuProvider, bindingsMenuProvider, layouter, cpnRenderer, textRenderer) {
+  bindingsMenuProvider, layouter, cpnRenderer, textRenderer) {
 
   this._canvas = canvas;
   this._modeling = modeling;
@@ -179,6 +179,10 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   eventBus.on('element.click', function (event) {
     // console.log('CpnUpdater(), element.click, event = ', event);
 
+    popupMenuProvider.close();
+    contextPad.close();
+    bindingsMenuProvider.close();
+
     const element = event.element;
 
     if (element && is(element, CPN_TOKEN_LABEL)) {
@@ -208,7 +212,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   // object.addEventListener("click", myScript);
 
   domEvent.bind(container, 'mousedown', function (event) {
-    console.log('CpnUpdater()', event);
+    console.log('CpnUpdater(), mousedown ', event);
     // console.log('CpnUpdater(), domEvent, mousedown, event = ', event);
     // console.log('CpnUpdater(), mousedown, container = ', container);
 
@@ -228,7 +232,6 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
       if (element && element === canvas.getRootElement()) {
         popupMenuProvider.close();
         contextPad.close();
-        portMenuProvider.close();
         bindingsMenuProvider.close();
       }
 
@@ -236,7 +239,6 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
       event.preventDefault();
 
       popupMenuProvider.close();
-      portMenuProvider.close();
       bindingsMenuProvider.close();
 
       // console.log('CpnUpdater(), domEvent, mousedown, popup menu, x,y = ', event.x, event.y);
@@ -276,7 +278,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     //   modeling.moveShape(markingElement, { x: 0, y: 0 }, markingElement.parent, undefined, undefined);
     // }
     // modeling.moveShape(tokenElement, { x: 0, y: 0 }, tokenElement.parent, undefined, undefined);
-    
+
     modeling.updateElement(markingElement, true);
   }
 
@@ -486,7 +488,7 @@ CpnUpdater.prototype.animateArcList = function (arcIdList, speedMs) {
         renderer.drawArcAnimation(element, speedMs).then((result) => {
           console.log('TOKEN ANIMATION COMPLETE, Promise complete!, result.id = ', result.id, arcIdCount);
 
-          arcIdCount --;
+          arcIdCount--;
           if (arcIdCount === 0) {
             console.log('TOKEN ANIMATION COMPLETE, RESOLVE ALL');
             resolve();

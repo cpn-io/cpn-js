@@ -29,11 +29,12 @@
 
           <!-- Declarations -->
           <app-tree-node [tree]="tree" id="declarations" type="declarations" title="Declarations"
-            (contextmenuAction)="onContextMenu($event, 'declarations');">
+            (contextmenuAction)="onContextMenu($event, 'declarations')" (newAction)="onNewBlock()">
 
             <ng-container *ngFor="let globbox of nodeToArray(cpnet.globbox)">
               <ng-container *ngFor="let block of nodeToArray(globbox.block)">
-                <app-project-tree-block-node [tree]="tree" [parentBlock]="globbox" [block]="block">
+                <app-project-tree-block-node [containerId]="containerId" [tree]="tree" [parentBlock]="globbox"
+                  [block]="block">
                 </app-project-tree-block-node>
               </ng-container>
             </ng-container>
@@ -46,11 +47,13 @@
           </app-project-tree-monitorblock-node>
 
           <!-- Pages -->
-          <app-tree-node [tree]="tree" id="pages" title="Pages" [type]="'root'" [cpnElement]="undefined">
+          <app-tree-node [tree]="tree" id="pages" type="pages" title="Pages"
+            (contextmenuAction)="onContextMenu($event, 'pages')" (newAction)="onNewPage()">
 
-            <ng-container *ngFor="let page of tree.pages">
-              <ng-container *ngIf="!tree.subpages.includes(page._id)">
-                <app-project-tree-page-node [tree]="tree" [page]="page">
+            <ng-container *ngFor="let page of nodeToArray(cpnet.page)">
+              <ng-container *ngIf="!modelService.isSubpage(page._id)">
+                <app-project-tree-page-node [containerId]="containerId" [tree]="tree" [page]="page"
+                  [parentBlock]="cpnet" type="page">
                 </app-project-tree-page-node>
               </ng-container>
             </ng-container>

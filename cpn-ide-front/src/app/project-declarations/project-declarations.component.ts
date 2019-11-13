@@ -30,7 +30,7 @@ export class ProjectDeclarationsComponent implements OnInit, AfterViewInit {
     { id: 'color', name: 'Color', declarationType: 'color' },
     { id: 'var', name: 'Var', declarationType: 'var' },
     { id: 'ml', name: 'ML', declarationType: 'ml' },
-    { id: 'monitor', name: 'Monitors', declarationType: 'monitor' },
+    // { id: 'monitor', name: 'Monitors', declarationType: 'monitor' },
   ];
 
   constructor(public eventService: EventService,
@@ -58,7 +58,6 @@ export class ProjectDeclarationsComponent implements OnInit, AfterViewInit {
 
     // Context menu
     treeData.contextMenu = this.contextMenu;
-    treeData.containerId = 'projectDeclarationsComponentContainer';
 
     // Tree component
     treeData.treeComponent = this;
@@ -73,6 +72,36 @@ export class ProjectDeclarationsComponent implements OnInit, AfterViewInit {
 
     this.cpnet = this.modelService.getCpn();
     this.project = this.modelService.getProject();
+  }
+
+  // Toolbar action handlers
+  onNewNode() {
+    console.log(this.constructor.name, 'onNewNode(), this.selected = ', this.tree.selected);
+    if (this.tree.selected && this.tree.selected.treeNodeComponent) {
+      this.tree.selected.treeNodeComponent.onNew(undefined);
+    }
+  }
+
+
+  onDeleteNode() {
+    console.log(this.constructor.name, 'onDeleteNode(), this.selected = ', this.tree.selected);
+    if (this.tree.selected && this.tree.selected.treeNodeComponent) {
+      this.tree.selected.treeNodeComponent.onDelete(undefined);
+    }
+  }
+
+  onUpNode() {
+    console.log(this.constructor.name, 'onUpNode(), this.selected = ', this.tree.selected);
+    if (this.tree.selected && this.tree.selected.treeNodeComponent) {
+      this.tree.selected.treeNodeComponent.onUp(undefined);
+    }
+  }
+
+  onDownNode() {
+    console.log(this.constructor.name, 'onDownNode(), this.selected = ', this.tree.selected);
+    if (this.tree.selected && this.tree.selected.treeNodeComponent) {
+      this.tree.selected.treeNodeComponent.onDown(undefined);
+    }
   }
 
 }

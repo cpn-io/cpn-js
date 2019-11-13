@@ -17,12 +17,11 @@ export class TreeData {
   parents = [];
   cpnElements = [];
 
-  selected:SelectedNode = new SelectedNode();
-  selectedOld:SelectedNode = new SelectedNode();
+  selected: SelectedNode = new SelectedNode();
+  selectedOld: SelectedNode = new SelectedNode();
 
   // Context menu
   contextMenu = undefined;
-  containerId = undefined;
 
   // Tree component
   treeComponent = undefined;
@@ -41,7 +40,6 @@ export class TreeData {
 
     // Context menu
     this.contextMenu = undefined;
-    this.containerId = undefined;
 
     // Tree component
     this.treeComponent = undefined;
@@ -67,10 +65,11 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   public cpnet;
 
   public tree: TreeData = this.getDefaultTree();
-
   public mouseover = { id: undefined };
 
-  newPageCount = 0;
+  public containerId = 'projectTreeComponentContainer';
+
+  public newPageCount = 0;
 
   simulationState = { step: 0, time: 0 };
 
@@ -112,7 +111,6 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
     // Context menu
     treeData.contextMenu = this.contextMenu;
-    treeData.containerId = 'projectTreeComponentContainer';
 
     // Tree component
     treeData.treeComponent = this;
@@ -128,8 +126,8 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     this.project = this.modelService.getProject();
     this.loadPages();
 
-    setTimeout(() => this.goToDeclaration('ID1438190116'), 100);
-    // setTimeout(() => this.goToFirstPage(), 100);
+    // setTimeout(() => this.goToDeclaration('ID1438190116'), 100);
+    setTimeout(() => this.goToFirstPage(), 100);
   }
 
   updateErrors() {
@@ -158,9 +156,9 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     // console.log(this.constructor.name, 'onSelectedChange(), this.selected = ', JSON.stringify(this.selected));
 
     switch (this.tree.selected.type) {
-      case 'page':
-        this.eventService.send(Message.PAGE_OPEN, { pageObject: this.tree.selected.cpnElement });
-        break;
+      // case 'page':
+      //   this.eventService.send(Message.PAGE_OPEN, { pageObject: this.tree.selected.cpnElement });
+      //   break;
       case 'monitor':
         this.eventService.send(Message.MONITOR_OPEN, { monitorObject: this.tree.selected.cpnElement });
         break;
@@ -181,6 +179,8 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
       this.tree.selected.id = page._id;
       this.tree.selected.type = 'page';
       this.tree.selected.cpnElement = page;
+
+      this.tree.expanded[page._id] = true;
 
       const inputElem = document.getElementById(this.tree.selected.id);
       console.log(this.constructor.name, 'goToFirstPage(), inputElem = ', inputElem);
@@ -216,9 +216,9 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
   focus(id) {
     setTimeout(() => {
-      if (this.tree && this.tree.containerId) {
+      if (this.tree && this.containerId) {
 
-        const container = document.getElementById(this.tree.containerId);
+        const container = document.getElementById(this.containerId);
 
         if (container) {
           const inputElem: any = container.querySelector('#' + id);
@@ -233,43 +233,24 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   onNewBlock() {
     console.log(this.constructor.name, 'onNewBlock(), this.selected = ', this.tree.selected);
 
-    if (this.tree.selected) {
-
-      let parentElement = undefined;
-
-      switch (this.tree.selected.type) {
-        case 'declarations':
-          parentElement = this.cpnet.globbox;
-          break;
-
-        case 'block':
-          parentElement = this.tree.selected.cpnElement;
-          break;
-
-        case 'globref':
-        case 'color':
-        case 'var':
-        case 'ml':
-          parentElement = this.tree.selected.parentCpnElement;
-          break;
-      }
-
-      if (parentElement) {
-        const newBlock = { id: 'New block', _id: getNextId() };
-        this.modelService.addCpnElement(parentElement, newBlock, 'block');
-        this.focus(newBlock._id);
-      }
+    if (this.tree.selected && this.tree.selected.type === 'declarations') {
+      const newBlock = { id: 'New block', _id: getNextId() };
+      this.modelService.addCpnElement(this.cpnet.globbox, newBlock, 'block');
+      this.focus(newBlock._id);
     }
   }
 
-  // onNewPage() {
-  //   const defValue = this.settings.getAppSettings()['page'];
-  //   const cpnElement = this.modelService.createCpnPage(defValue + ' ' + (++this.newPageCount), undefined);
+  onNewPage() {
+    console.log(this.constructor.name, 'onNewPage(), this.selected = ', this.tree.selected);
 
-  //   const cpnet = this.modelService.getCpn();
-  //   this.modelService.addCpnElement(cpnet, cpnElement, 'page');
-  //   this.modelService.updateInstances();
-  // }
+    if (this.tree.selected && this.tree.selected.type === 'pages') {
+      const defValue = this.settings.getAppSettings()['page'];
+      const newPage = this.modelService.createCpnPage(defValue);
+      this.modelService.addCpnElement(this.cpnet, newPage, 'page');
+      this.modelService.updateInstances();
+      this.focus(newPage._id);
+    }
+  }
 
   // Toolbar action handlers
   onNewNode() {
@@ -309,6 +290,9 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
       switch (type) {
         case 'declarations':
           entries.push({ title: 'New block', action: () => this.onNewBlock(), iconClass: 'fas fa-cube' });
+          break;
+        case 'pages':
+          entries.push({ title: 'New page', action: () => this.onNewPage(), iconClass: 'fas fa-project-diagram' });
           break;
       }
 

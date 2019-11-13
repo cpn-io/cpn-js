@@ -11,11 +11,11 @@ import { TreeData } from '../../project-tree/project-tree.component';
 export class ProjectDeclarationsBlockNodeComponent implements OnInit, ITreeNode {
   public nodeToArray = nodeToArray;
 
+  @Input() public tree: TreeData;
   @Input() public declarationType: any;
   @Input() public parentBlock: any;
   @Input() public block: any;
-
-  @Input() public tree: TreeData;
+  @Input() public containerId: any;
 
   @Input() showBullet = true;
 

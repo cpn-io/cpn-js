@@ -4,12 +4,13 @@ import { Message } from '../common/message';
 import { SettingsService } from '../services/settings.service';
 
 import {
-  getNextId,
   getDefText
 } from '../../lib/cpn-js/features/modeling/CpnElementFactory';
-import { nodeToArray, addNode, arrayMove } from '../common/utils';
+
+import { nodeToArray, addNode, arrayMove, getNextId, cloneObject } from '../common/utils';
 import { DataCollectionMonitorTemplate, BreakpointMonitorTemplate, UserDefinedMonitorTemplate, WriteInFileMonitorTemplate, MarkingSizeMonitorTemplate, ListLengthDataCollectionMonitorTemplate, CountTransitionOccurrencesMonitorTemplate, PlaceContentBreakPointMonitorTemplate, TransitionEnabledBreakPointMonitorTemplate, MonitorType } from '../common/monitors';
 import { parseDeclarartion } from '../project-tree/project-tree-declaration-node/declaration-parser';
+import { DEFAULT_PAGE } from '../common/default-data';
 
 
 /**
@@ -603,14 +604,23 @@ export class ModelService {
    * @param name - name of new page
    * @returns - new page cpnElement
    */
-  createCpnPage(name, id) {
-    const newPage = {
-      pageattr: {
-        _name: name
-      },
-      constraints: '',
-      _id: id ? id : getNextId()
-    };
+  createCpnPage(name, id = undefined) {
+    // const newPage = {
+    //   pageattr: {
+    //     _name: name
+    //   },
+    //   constraints: '',
+    //   _id: id ? id : getNextId()
+    // };
+
+    const placeList = this.getAllPlaces();
+    const pageList = this.getAllPages();
+
+    const newPage = cloneObject(DEFAULT_PAGE);
+    newPage.pageattr._name = name + ' ' + (pageList.length + 1);
+    newPage._id = id || getNextId();
+    newPage.place._id = getNextId();
+    newPage.place.text = "P" + (placeList.length + 1);
 
     // this.updateInstances();
     return newPage;
@@ -1218,10 +1228,20 @@ export class ModelService {
 
   /**
    * Get page object from model by id
-   * @param id
+   * @param pageId
    */
-  public getPageById(id) {
-    return this.getAllPages().find(page => page && page._id === id);
+  public getPageById(pageId) {
+    return this.getAllPages().find(page => page && page._id === pageId);
+  }
+
+  /**
+   * Checks if page is subpage
+   * @param pageId - page id
+   */
+  public isSubpage(pageId) {
+    const transList = this.getAllTrans().filter((trans) => { return trans.subst && trans.subst._subpage === pageId });
+    // console.log(this.constructor.name, 'isSubpage(), pageId, transList = ', pageId, transList)
+    return (transList && transList.length > 0) ? true : false;
   }
 
   /**

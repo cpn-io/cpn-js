@@ -55,7 +55,6 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   textRenderer;
   selectedElement;
   jsonPageObject;
-  portMenuProvider;
   stateProvider;
   selectionProvider;
   cpnUpdater;
@@ -121,7 +120,6 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.labelEditingProvider = this.diagram.get('labelEditingProvider');
     this.textRenderer = this.diagram.get('textRenderer');
     this.cpnFactory = this.diagram.get('cpnFactory');
-    this.portMenuProvider = this.diagram.get('portMenuProvider');
     this.stateProvider = this.diagram.get('stateProvider');
     this.selectionProvider = this.diagram.get('selectionProvider');
     this.cpnUpdater = this.diagram.get('cpnUpdater');
@@ -364,26 +362,6 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
     });
-
-    eventBus.on('portMenuProvider.open', (event) => {
-      if (event.trans && event.trans.cpnElement && event.trans.cpnElement.subst) {
-        const pageObj = self.modelService.getPageById(event.trans.cpnElement.subst._subpage);
-        if (pageObj) {
-          const list = [];
-          for (const place of pageObj.place) {
-            if (place.port && (place.port._type === 'I/O' || place.port._type === event.portType)) {
-              list.push({
-                id: place._id,
-                name: place.text,
-                type: place.port._type
-              });
-            }
-          }
-          self.portMenuProvider.open({ trans: event.trans, place: event.place, arc: event.arc, list: list }, event.position, self.modeling);
-        }
-      }
-    });
-
 
     // eventBus.on('element.hover', (event) => {
     //   const element = event.element;

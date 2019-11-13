@@ -15,10 +15,11 @@ import { ITreeNode } from '../tree-node/tree-node';
 export class ProjectTreeBlockNodeComponent implements OnInit, ITreeNode {
   public nodeToArray = nodeToArray;
 
+  @Input() public tree: TreeData;
   @Input() public parentBlock: any;
   @Input() public block: any;
-  @Input() public tree: TreeData;
   @Input() showBullet = true;
+  @Input() public containerId: any;
 
   type = 'block';
 
@@ -35,7 +36,7 @@ export class ProjectTreeBlockNodeComponent implements OnInit, ITreeNode {
 
   setSelected(cpnParentElement, cpnElement, type) {
     this.tree.selected.treeNodeComponent = this;
-    
+
     this.tree.selected.parentCpnElement = cpnParentElement;
     this.tree.selected.id = cpnElement._id;
     this.tree.selected.type = type;
@@ -99,9 +100,9 @@ export class ProjectTreeBlockNodeComponent implements OnInit, ITreeNode {
 
   focus(id) {
     setTimeout(() => {
-      if (this.tree && this.tree.containerId) {
+      if (this.tree && this.containerId) {
 
-        const container = document.getElementById(this.tree.containerId);
+        const container = document.getElementById(this.containerId);
 
         if (container) {
           const inputElem: any = container.querySelector('#' + id);

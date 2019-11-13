@@ -15,11 +15,11 @@ import { TreeData } from '../project-tree.component';
   styleUrls: ['./project-tree-declaration-node.component.scss']
 })
 export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, ITreeNode {
+  @Input() public tree: TreeData;
   @Input() public parentBlock: any;
   @Input() public declaration: any;
   @Input() public type: any;
-
-  @Input() public tree: TreeData;
+  @Input() public containerId: any;
 
   public focused = false;
 
@@ -107,9 +107,11 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, I
 
   focus(id) {
     setTimeout(() => {
-      if (this.tree && this.tree.containerId) {
+      if (this.tree && this.containerId) {
 
-        const container = document.getElementById(this.tree.containerId);
+        console.log(this.constructor.name, 'focus(), this.containerId = ', this.containerId);
+
+        const container = document.getElementById(this.containerId);
 
         if (container) {
           const inputElem: any = container.querySelector('#' + id);

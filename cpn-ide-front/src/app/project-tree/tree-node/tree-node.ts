@@ -66,6 +66,16 @@ export class TreeNodeComponent implements ITreeNode {
     @Output() keydownAction = new EventEmitter();
     @Output() updateAction = new EventEmitter();
     @Output() selectAction = new EventEmitter();
+    @Output() inputAction = new EventEmitter();
+
+    @Output() newAction = new EventEmitter();
+    @Output() deleteAction = new EventEmitter();
+    @Output() upAction = new EventEmitter();
+    @Output() downAction = new EventEmitter();
+
+    onInput(event) {
+        this.inputAction.emit(event);
+    }
 
     onSelect() {
         this.tree.selected.treeNodeComponent = this;
@@ -107,15 +117,15 @@ export class TreeNodeComponent implements ITreeNode {
     }
 
     onNew(event: any) {
-        throw new Error("Method not implemented.");
+        this.newAction.emit(event);
     }
     onDelete(event: any) {
-        throw new Error("Method not implemented.");
+        this.deleteAction.emit(event);
     }
     onUp(event: any) {
-        throw new Error("Method not implemented.");
+        this.upAction.emit(event);
     }
     onDown(event: any) {
-        throw new Error("Method not implemented.");
+        this.downAction.emit(event);
     }
 }

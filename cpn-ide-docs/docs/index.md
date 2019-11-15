@@ -8,6 +8,7 @@ For full documentation visit [cpn-io](https://github.com/cpn-io/cpn-js).
 * Declarations panel
 * Editor view
 * Properties panel
+* Console panel
 
 ## Diagram example
 

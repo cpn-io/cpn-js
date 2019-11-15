@@ -38,6 +38,8 @@ export class EditorPanelComponent implements OnInit, OnDestroy
 
   pageTabArray = [];
   mlTabArray = [];
+  docTabArray = [];
+
   constructor(private eventService: EventService,
     private modelService: ModelService,
     public accessCpnService: AccessCpnService,
@@ -58,9 +60,12 @@ export class EditorPanelComponent implements OnInit, OnDestroy
   loadProject() {
     this.pageTabArray = [];
     this.mlTabArray = [];
+    this.docTabArray = [];
+
     this.tabsComponent.clear();
 
     this.openMlEditor();
+    this.openDocumentation();
   }
 
   currentTabChange(event) {
@@ -76,9 +81,6 @@ export class EditorPanelComponent implements OnInit, OnDestroy
   }
 
   deleteTab(id) {
-    console.log('deleteTab(), modelTabArray = ', this.pageTabArray);
-    console.log('deleteTab(), mlTabArray = ', this.mlTabArray);
-
     for (const i in this.pageTabArray) {
       if (this.pageTabArray[i].id === id) {
         console.log('deleteTab(), i, this.modelTabArray[i] = ', i, this.pageTabArray[i]);
@@ -97,21 +99,7 @@ export class EditorPanelComponent implements OnInit, OnDestroy
     }
   }
 
-  addPageTab(tabArray, pageObject) {
-    const tabAttrs = { id: pageObject._id, pageObject: pageObject };
-    tabArray.push(tabAttrs);
-
-    setTimeout(() => {
-      const tab = this.tabsComponent.getTabByID(tabAttrs.id);
-      if (tab) {
-        this.tabsComponent.selectTab(tab);
-      }
-    }, 0);
-  }
-
-  addMlTab(tabArray, id, name) {
-    tabArray.push({ id: id, title: name });
-
+  selectTab(id) {
     setTimeout(() => {
       const tab = this.tabsComponent.getTabByID(id);
       if (tab) {
@@ -128,7 +116,10 @@ export class EditorPanelComponent implements OnInit, OnDestroy
     if (tab) {
       this.tabsComponent.selectTab(tab);
     } else {
-      this.addPageTab(this.pageTabArray, pageObject);
+      const tabAttrs = { id: pageObject._id, pageObject: pageObject };
+      this.pageTabArray.push(tabAttrs);
+      this.selectTab(tabAttrs.id);
+  
 
       setTimeout(() => {
         if (this.modelEditorList) {
@@ -156,15 +147,21 @@ export class EditorPanelComponent implements OnInit, OnDestroy
     if (tab) {
       this.tabsComponent.selectTab(tab);
     } else {
-      this.addMlTab(this.mlTabArray, pageId, pageName);
+      this.mlTabArray.push({ id: pageId, title: pageName });
+      this.selectTab(pageId);
+    }
+  }
 
-      setTimeout(() => {
-        if (this.modelEditorList) {
-          tab = this.tabsComponent.getSelectedTab();
-          if (tab) {
-          }
-        }
-      }, 0);
+  openDocumentation() {
+    const pageId = 'documentation';
+    const pageName = 'Documentation';
+
+    let tab = this.tabsComponent.getTabByID(pageId);
+    if (tab) {
+      this.tabsComponent.selectTab(tab);
+    } else {
+      this.docTabArray.push({ id: pageId, title: pageName });
+      this.selectTab(pageId);
     }
   }
 

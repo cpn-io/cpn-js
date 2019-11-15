@@ -4,6 +4,13 @@
   <tabs #tabsComponent class="cpn-tabs" style="background: #999 !important"
     (currentTabChange)="currentTabChange($event)">
 
+    <ng-container *ngFor="let tab of docTabArray">
+      <tab [id]="tab.id" [tabTitle]="tab.title">
+        <iframe src="../../assets/documentation/index.html" height="100%" width="100%" target="_parent"
+          style="border: none"></iframe>
+      </tab>
+    </ng-container>
+
     <ng-container *ngFor="let tab of mlTabArray">
       <tab [id]="tab.id" [tabTitle]="tab.title">
         <app-ml-editor id="ml_editor_{{tab.id}}" [project]="tab.project"></app-ml-editor>

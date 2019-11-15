@@ -1,0 +1,7 @@
+site_name: CPN IDE Documentation
+
+use_directory_urls: false
+
+nav:
+  - Home: index.md
+  - About: about.md

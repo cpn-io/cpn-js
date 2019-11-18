@@ -26,7 +26,6 @@ export class AccessCpnService {
   public firedTransIdList = [];
 
   public tokenData = [];
-  public tokenDiff = [];
 
   sessionId;
   userSessionId;
@@ -95,14 +94,14 @@ export class AccessCpnService {
     for (const transId of this.firedTransIdList) {
       firedData.push(transId);
 
-      // const page = this.modelService.getPageByElementId(transId);
-      // if (page) {
-      //   for (const trans of this.modelService.getAllTrans()) {
-      //     if (trans && trans.subst && trans.subst._subpage === page._id) {
-      //       firedData.push(trans._id);
-      //     }
-      //   }
-      // }
+      const page = this.modelService.getPageByElementId(transId);
+      if (page) {
+        for (const trans of this.modelService.getAllTrans()) {
+          if (trans && trans.subst && trans.subst._subpage === page._id) {
+            firedData.push(trans._id);
+          }
+        }
+      }
     }
 
     this.firedTransIdList = firedData;
@@ -160,19 +159,6 @@ export class AccessCpnService {
 
   updateTokenData(tokenData) {
     // console.log('updateTokenData(), tokenData = ', JSON.stringify(tokenData));
-
-    clearArray(this.tokenDiff);
-
-    // find token difference
-    for (const newToken of tokenData) {
-      if (newToken.tokens > 0) {
-        const oldToken = this.tokenData.find((e) => e.id === newToken.id);
-        if (!oldToken || oldToken.tokens < newToken.tokens) {
-          this.tokenDiff.push(newToken);
-        }
-      }
-    }
-    // console.log('updateTokenData(), this.tokenDiff = ', JSON.stringify(this.tokenDiff));
 
     clearArray(this.tokenData);
 
@@ -522,9 +508,7 @@ export class AccessCpnService {
       this.readyData = [];
       this.readyIds = [];
       this.readyPagesIds = [];
-
       this.tokenData = [];
-      this.tokenDiff = [];
     }
   }
 

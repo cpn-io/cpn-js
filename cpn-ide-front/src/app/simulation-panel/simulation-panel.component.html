@@ -17,8 +17,28 @@
       </a>
     </li>
 
-    <div class="divider"></div>
   </ul>
+
+  <ul class="navbar-nav ml-auto">
+
+    <div class="divider"></div>
+
+    <li class="nav-item">
+      <a (click)="onAnimation()" class="nav-link" href="#">
+        <i [ngClass]="simulationService.isAnimation ? 'far fa-check-square' : 'far fa-square'"></i>
+        <span>Animation</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a (click)="onAutoswitchPages()" class="nav-link" href="#">
+        <i [ngClass]="simulationService.isAutoswitchPage ? 'far fa-check-square' : 'far fa-square'"></i>
+        <span>Auto-switch pages</span>
+      </a>
+    </li>
+
+  </ul>
+
 </nav>
 
 <div class="panel tab-container">
@@ -50,21 +70,46 @@
     <table>
       <tr>
         <td>Steps</td>
-        <td><input class="full-width" type="number" [(ngModel)]="simulationService.simulationConfig.multi_step.steps"></td>
+        <td><input class="full-width" type="number" [(ngModel)]="simulationService.simulationConfig.multi_step.steps">
+        </td>
         <td></td>
       </tr>
       <tr>
         <td>Delay</td>
-        <td><input class="full-width" type="number" [(ngModel)]="simulationService.simulationConfig.multi_step.delay"></td>
+        <td><input class="full-width" type="number" [(ngModel)]="simulationService.simulationConfig.multi_step.delay">
+        </td>
         <td>ms</td>
       </tr>
       <tr>
-        <td></td>
+        <td>
+        </td>
         <td class="full-width text-right">
-          <button type="button" class="btn btn-primary" (click)="onRunMultiStep()">
-            <i class="fas fa-play"></i>
-            <span>Run</span>
-          </button>
+
+          <table width="100%">
+            <tr>
+              <td width="100%">
+                <div *ngIf="simulationService.multiStepCount > 0">
+                  <div style="text-align: left; color: gray; font-size: 0.9em;">
+                    Step {{this.simulationService.simulationConfig.multi_step.steps
+                    - this.simulationService.multiStepCount}} of
+                    {{this.simulationService.simulationConfig.multi_step.steps}}
+                  </div>
+                  <div class="progress">
+                    <div class="progress-bar bg-danger" role="progressbar" [style.width]="getMultistepProgress()"></div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <button type="button" class="btn"
+                  [ngClass]="simulationService.multiStepCount > 0 ? 'btn-danger' : 'btn-primary'"
+                  (click)="onRunMultiStep()">
+                  <i [class]="simulationService.multiStepCount > 0 ? 'fas fa-stop' : 'fas fa-play'"></i>
+                  <span>{{ simulationService.multiStepCount > 0 ? 'Stop' : 'Run' }}</span>
+                </button>
+              </td>
+            </tr>
+          </table>
+
         </td>
         <td></td>
       </tr>
@@ -80,19 +125,23 @@
     <table *ngIf="simulationService.mode === simulationService.MULTI_STEP_FF">
       <tr>
         <td>Steps</td>
-        <td><input type="number" class="full-width" [(ngModel)]="simulationService.simulationConfig.multi_step_ff.steps"></td>
+        <td><input type="number" class="full-width"
+            [(ngModel)]="simulationService.simulationConfig.multi_step_ff.steps"></td>
       </tr>
       <tr>
         <td>Max Step</td>
-        <td><input type="number" class="full-width" [(ngModel)]="simulationService.simulationConfig.multi_step_ff.max_step"></td>
+        <td><input type="number" class="full-width"
+            [(ngModel)]="simulationService.simulationConfig.multi_step_ff.max_step"></td>
       </tr>
       <tr>
         <td>Time Step</td>
-        <td><input type="number" class="full-width" [(ngModel)]="simulationService.simulationConfig.multi_step_ff.time_step"></td>
+        <td><input type="number" class="full-width"
+            [(ngModel)]="simulationService.simulationConfig.multi_step_ff.time_step"></td>
       </tr>
       <tr>
         <td>Max Time</td>
-        <td><input type="number" class="full-width" [(ngModel)]="simulationService.simulationConfig.multi_step_ff.max_time"></td>
+        <td><input type="number" class="full-width"
+            [(ngModel)]="simulationService.simulationConfig.multi_step_ff.max_time"></td>
       </tr>
       <tr>
         <td></td>

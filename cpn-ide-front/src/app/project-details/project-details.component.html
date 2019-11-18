@@ -1,5 +1,3 @@
-<app-simulation-panel *ngIf="accessCpnService.isSimulation"></app-simulation-panel>
-
-<!-- <app-project-declarations-old *ngIf="!accessCpnService.isSimulation"></app-project-declarations-old> -->
-
 <app-project-declarations *ngIf="!accessCpnService.isSimulation"></app-project-declarations>
+
+<app-simulation-panel *ngIf="accessCpnService.isSimulation"></app-simulation-panel>

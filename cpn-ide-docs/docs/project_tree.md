@@ -58,12 +58,15 @@ Put ticks on extensions you would like to choose.
 ## Declarations
 
 In the picture below the Declarations entry consists of two blocks:
+<br>
 - Standard priorities
+<br>
 - Standard declarations
 
 ![Screenshot](img/right-click-menu.png)
 
 You can add or delete declarations and declaration blocks by right-clicking and selecting the appropriate option or by using the buttons **New** | **Delete** on the top of the Project tree.
+<br>
 
 ![Screenshot](img/buttons.png)
 
@@ -75,10 +78,15 @@ To delete a declaration or a declaration block you can use **Shift+Delete**.
 
 To edit a declaration or block, open it by clicking on the triangle next to it, and then click on the declaration or block text. 
 
-Navigating within the elements of Declarations blocks is possible by  
+Navigating within the elements of Declarations blocks is possible by 
+<br> 
 - clicking with the mouse to choose a specific position 
+<br>
 - using the hot-key combinations **Shift+Up** / **Shift+Down**
+<br>
 - pressing keys on the top of the Project tree
+<br>
+
 ![Screenshot](img/buttons.png)
 
 
@@ -87,6 +95,7 @@ The declaration will be in text edit mode when it appears, so it can be modified
 
 
 ## Monitors
+
 
 ## Pages
 All **pages** in a net are accessible through the **Project tree**. 

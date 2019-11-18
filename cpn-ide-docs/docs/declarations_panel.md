@@ -1,4 +1,4 @@
-Declaration Panel
+## Declaration Panel
 
 The **Declaration Panel** is located under the Project tree. It consists of five tabs (BatchOrdering, Globref, Color, Var, ML) classifying the declarations in a more detailed way than in the Project tree.
 
@@ -10,4 +10,8 @@ The **BatchOrdering** tab replicates the list of declarations in the Declaration
 
 You can add or delete declarations by right-clicking and selecting the appropriate option or by using the buttons **New** | **Delete** on the top of the Declaration Panel.
 
+Navigating between the lines can be made by pressing **Shift+Up** / **Shift+Down** or by pressing the buttons on the top of the Declaration Panel.
+
 ![Screenshot](img/buttons.png)
+
+

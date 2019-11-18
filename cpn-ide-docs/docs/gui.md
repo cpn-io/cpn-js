@@ -1,23 +1,31 @@
-The Interface
+## The Interface
+
+To get started working on a CPN, you can either load an existing net or create a new one.
+
+![Screenshot](img/head.png)
+
+If you want to load a project, press **Open project**
+
+For creating a new project, press **New project**
 
 When you open CPN IDE, you see a window, containing the following panels and areas:
 
-Project tree 
+### Project tree 
 
 ![Screenshot](img/project-tree.png)
 
-Declaration panel
+### Declaration panel
 
 ![Screenshot](img/declarations-panel.png)
 
-Editor view
+### Editor view
 
 ![Screenshot](img/editor-view.png)
 
-Properties panel
+### Properties panel
 
-![Screenshot](img/editor-view.png)
+![Screenshot](img/properties-panel.png)
 
-Console panel
+### Console panel
 
 ![Screenshot](img/console-panel.png)

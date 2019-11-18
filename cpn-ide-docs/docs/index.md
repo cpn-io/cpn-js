@@ -10,7 +10,3 @@ For full documentation visit [cpn-io](https://github.com/cpn-io/cpn-js).
 * [Properties panel](properties_panel.md)
 * [Console panel](console_panel.md)
 
-## Diagram example
-
-![Screenshot](img/cpn-diagram-1.png)
-

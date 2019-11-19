@@ -4,9 +4,10 @@ To get started working on a CPN, you can either load an existing net or create a
 
 ![Screenshot](img/head.png)
 
-If you want to load a project, press **Open project**
+To create a new project, press **New project**
 
-For creating a new project, press **New project**
+To load a project, press **Open project**
+
 
 When you open CPN IDE, you see a window, containing the following panels and areas:
 
@@ -14,7 +15,7 @@ When you open CPN IDE, you see a window, containing the following panels and are
 
 ![Screenshot](img/project-tree.png)
 
-### Declaration panel
+### Declarations panel
 
 ![Screenshot](img/declarations-panel.png)
 

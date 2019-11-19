@@ -29,7 +29,19 @@ export class SimulationPanelComponent implements OnInit, OnDestroy {
     this.accessCpnService.initSim();
   }
 
+  onAnimation() {
+    this.simulationService.isAnimation = !this.simulationService.isAnimation;
+  }
+
+  onAutoswitchPages() {
+    this.simulationService.isAutoswitchPage = !this.simulationService.isAutoswitchPage;
+  }
+
   onRunMultiStep() {
+    if (this.simulationService.multiStepCount > 0) {
+      this.simulationService.multiStepCount = 0;
+      return;
+    }
     console.log(this.constructor.name, 'runMultiStep(), simulationConfig = ', this.simulationService.simulationConfig);
 
     this.simulationService.multiStepCount = this.simulationService.simulationConfig.multi_step.steps;
@@ -39,6 +51,15 @@ export class SimulationPanelComponent implements OnInit, OnDestroy {
   onRunMultiStepFF() {
     console.log(this.constructor.name, 'onRunMultiStepFF(), simulationConfig = ', this.simulationService.simulationConfig);
     this.simulationService.runMultiStepFF();
+  }
+
+  getMultistepProgress() {
+    return (
+      100
+      * (this.simulationService.simulationConfig.multi_step.steps
+        - this.simulationService.multiStepCount)
+      / this.simulationService.simulationConfig.multi_step.steps
+    ) + '%';
   }
 
 }

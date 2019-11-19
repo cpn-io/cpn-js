@@ -37,6 +37,9 @@ export class SimulationService {
     }
   };
 
+  public isAnimation = true;
+  public isAutoswitchPage = true;
+
   constructor(private eventService: EventService,
     public accessCpnService: AccessCpnService,
     public modelService: ModelService) {
@@ -149,9 +152,15 @@ export class SimulationService {
 
     if (firedData && firedData.length > 0) {
       const page = this.modelService.getPageByElementId(firedData[0]);
-      if (page) {
+      if (page && this.isAutoswitchPage) {
         this.eventService.send(Message.PAGE_OPEN, { pageObject: page });
       }
+    }
+
+    const readyData = this.accessCpnService.getReadyData();
+    // stop simulation steps if no ready data
+    if (Object.keys(readyData).length === 0) {
+      this.multiStepCount = 0;
     }
   }
 

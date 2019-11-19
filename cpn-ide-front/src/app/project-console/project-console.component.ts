@@ -111,7 +111,7 @@ export class ProjectConsoleComponent implements OnInit {
     // TOKENS
     this.eventService.on(Message.SIMULATION_STEP_DONE, () => {
         this.logSuccess('Tokens: ' + JSON.stringify(this.accessCpnService.tokenData));
-        this.logSuccess('Fired transitions: ' + JSON.stringify(this.accessCpnService.firedTransIdList));
+        this.logSuccess('Fired transitions: ' + JSON.stringify(this.accessCpnService.getFiredData()));
         this.logSuccess('Ready transitions: ' + JSON.stringify(this.accessCpnService.getReadyData()));
     });
 

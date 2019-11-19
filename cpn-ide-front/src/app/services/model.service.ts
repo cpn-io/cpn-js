@@ -1344,14 +1344,14 @@ export class ModelService {
     return arcs;
   }
 
-  public getTransitionOutcomeArcs(transId, placeId) {
+  public getTransitionOutcomeArcs(transId, placeId = undefined) {
     const arcs = [];
     const pages = this.getAllPages();
     for (const page of pages) {
       // search in arcs
       for (const arc of nodeToArray(page.arc)) {
         if (arc.transend._idref === transId
-          && arc.placeend._idref === placeId
+          && (placeId === undefined || arc.placeend._idref === placeId)
           && ['TtoP', 'BOTHDIR'].includes(arc._orientation)) {
           arcs.push(arc);
         }

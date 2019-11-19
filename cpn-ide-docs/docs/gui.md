@@ -14,7 +14,7 @@ When you open CPN IDE, you see a window, containing the following panels and are
 
 ![Screenshot](img/project-tree.png)
 
-### Declaration panel
+### Declarations panel
 
 ![Screenshot](img/declarations-panel.png)
 

@@ -31,7 +31,6 @@ Fix a bug which caused instances of the first enabled transition instance to hav
 When using global binding element fairness, sometimes the transition would appear more than once in the simulation report.
 
 
-
 #### Output directory 
 
 The Output directory option determines where various kinds of output files will be saved. The default output directory is indicated by the text **same as model**, but the default output directory is actually **model-dir/output/** where **model-dir** is the directory in which the model is saved.

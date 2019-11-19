@@ -1,6 +1,7 @@
 import { Component, HostListener } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
 import { SettingsService } from './services/settings.service';
+import { AccessCpnService } from './services/access-cpn.service';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +13,8 @@ export class AppComponent {
 
   constructor(
     private electronService: ElectronService,
-    private settings: SettingsService) {
+    private settings: SettingsService,
+    public accessCpnService: AccessCpnService) {
 
     // const p = new Place({ x: 1, y: 2 });
     // p._z = 234;

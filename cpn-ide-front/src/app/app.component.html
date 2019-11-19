@@ -1,5 +1,10 @@
 <app-main-toolbar></app-main-toolbar>
-
 <app-main-frame>Loading...</app-main-frame>
+
+<div *ngIf="accessCpnService.initSimProcessing" class="loading">
+    <div class="loading-text">
+        Simulation mode initializing...
+    </div>
+</div>
 
 <!--<router-outlet></router-outlet>-->

@@ -3,6 +3,7 @@ import { EventService } from './event.service';
 import { AccessCpnService } from './access-cpn.service';
 import { ModelService } from './model.service';
 import { Message } from '../common/message';
+import { EditorPanelService } from './editor-panel.service';
 
 @Injectable({
   providedIn: 'root'
@@ -42,7 +43,8 @@ export class SimulationService {
 
   constructor(private eventService: EventService,
     public accessCpnService: AccessCpnService,
-    public modelService: ModelService) {
+    public modelService: ModelService,
+    private editorPanelService: EditorPanelService) {
 
     this.initEvents();
   }
@@ -53,9 +55,6 @@ export class SimulationService {
     this.eventService.on(Message.SHAPE_HOVER, (event) => this.onShapeHover(event));
     this.eventService.on(Message.SHAPE_SELECT, (event) => this.onShapeSelect(event));
     this.eventService.on(Message.SIMULATION_SELECT_BINDING, (event) => this.onSimulationSelectBinding(event));
-    this.eventService.on(Message.SIMULATION_STEP_DONE, () => this.onSimulationStepDone());
-
-    this.eventService.on(Message.SIMULATION_TOKEN_ANIMATE_COMPLETE, () => this.onSimulationAnimateComplete());
   }
 
   public setMode(mode) {
@@ -117,15 +116,34 @@ export class SimulationService {
       if (element.cpnElement._id in this.accessCpnService.getReadyData()) {
         switch (this.mode) {
           case this.SINGLE_STEP:
-            this.accessCpnService.doStep(element.cpnElement._id);
+            this.accessCpnService.doStep(element.cpnElement._id).then(() => {
+              this.animateModelEditor();
+            });
             break;
           case this.SINGLE_STEP_CHOOSE_BINDING:
-            this.accessCpnService.getBindings(element.cpnElement._id);
+            this.accessCpnService.getBindings(element.cpnElement._id).then((data) => {
+              if (data) {
+                this.eventService.send(Message.SERVER_GET_BINDINGS, { data: data });
+              }
+            });
             break;
         }
       }
     }
   }
+
+  animateModelEditor() {
+    const modelEditor = this.editorPanelService.getSelectedModelEditor();
+    console.log(this.constructor.name, 'animateModelEditor(), page = ', modelEditor);
+
+    if (modelEditor) {
+      modelEditor.updateElementStatus(this.isAnimation).then(() => {
+        console.log(this.constructor.name, 'animateModelEditor(), modelEditor.updateElementStatus(), COMPLETE');
+        this.onSimulationAnimateComplete();
+      });
+    }
+  }
+
 
   onSimulationSelectBinding(event) {
     if (!this.accessCpnService.isSimulation) {
@@ -135,7 +153,9 @@ export class SimulationService {
     const element = event.element;
 
     if (element && element.type && element.type === 'cpn:Transition' && event.binding) {
-      this.accessCpnService.doStepWithBinding(element.cpnElement._id, event.binding.bind_id);
+      this.accessCpnService.doStepWithBinding(element.cpnElement._id, event.binding.bind_id).then(() => {
+        this.animateModelEditor();
+      });
     }
   }
 
@@ -148,20 +168,39 @@ export class SimulationService {
   }
 
   onSimulationStepDone() {
-    const firedData = this.accessCpnService.getFiredData();
+    return new Promise((resolve, reject) => {
 
-    if (firedData && firedData.length > 0) {
-      const page = this.modelService.getPageByElementId(firedData[0]);
-      if (page && this.isAutoswitchPage) {
-        this.eventService.send(Message.PAGE_OPEN, { pageObject: page });
+      const firedData = this.accessCpnService.getFiredData();
+
+      const readyData = this.accessCpnService.getReadyData();
+      // stop simulation steps if no ready data
+      if (Object.keys(readyData).length === 0) {
+        this.multiStepCount = 0;
       }
-    }
 
-    const readyData = this.accessCpnService.getReadyData();
-    // stop simulation steps if no ready data
-    if (Object.keys(readyData).length === 0) {
-      this.multiStepCount = 0;
-    }
+      if (firedData && firedData.length > 0) {
+        const page = this.modelService.getPageByElementId(firedData[0]);
+
+        // let needLoadPage = true;
+        // const modelEditorList = this.editorPanelService.getModelEditorList();
+        // for (const modelEditor of modelEditorList) {
+        //   if (modelEditor.pageId === page._id) {
+        //     needLoadPage = false;
+        //     break;
+        //   }
+        // }
+
+        if (page && this.isAutoswitchPage) {
+          // this.eventService.send(Message.PAGE_OPEN, { pageObject: page });
+          this.editorPanelService.getEditorPanelComponent().openModelEditor(page).then(() => {
+            resolve();
+          });
+        }
+      }
+
+      resolve();
+
+    });
   }
 
   public getAnimationDelay() {
@@ -186,9 +225,13 @@ export class SimulationService {
 
     setTimeout(() => {
       if (this.multiStepCount > 0) {
-        this.accessCpnService.doStep('multistep');
-        this.multiStepCount--;
-        this.multiStepLastTimeMs = new Date().getTime();
+        this.accessCpnService.doStep('multistep').then(() => {
+          this.multiStepCount--;
+          this.multiStepLastTimeMs = new Date().getTime();
+          this.onSimulationStepDone().then(() => {
+            this.animateModelEditor();
+          });
+        });
       }
     }, delay);
   }

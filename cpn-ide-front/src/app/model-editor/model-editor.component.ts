@@ -29,6 +29,7 @@ import { MonitorType, getMonitorTypeList } from '../common/monitors';
 import { addNode, nodeToArray } from '../common/utils';
 import { SimulationService } from '../services/simulation.service';
 import { TEST_TOKEN_DATA } from '../test/test-data';
+import { EditorPanelService } from '../services/editor-panel.service';
 
 @Component({
   selector: 'app-model-editor',
@@ -77,7 +78,8 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     private settings: SettingsService,
     private modelService: ModelService,
     private accessCpnService: AccessCpnService,
-    public simulationService: SimulationService) {
+    public simulationService: SimulationService,
+    public editorPanelService: EditorPanelService) {
   }
 
   ngAfterViewInit() {
@@ -89,9 +91,13 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.diagram.clear();
     this.diagram.destroy();
+
+    this.editorPanelService.removeModelEditor(this);
   }
 
   ngOnInit() {
+    this.editorPanelService.addModelEditor(this);
+
     this.instanseId = Math.random().toString(36).substring(2).toUpperCase() + '-' + Date.now().toString(36).toUpperCase();
 
     const self = this;
@@ -178,13 +184,6 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       }, 10);
     });
 
-    // SIMULATION STATUS
-    this.eventService.on(Message.SIMULATION_STEP_DONE, () => {
-      setTimeout(() => {
-        this.updateElementStatus();
-      }, 10);
-    });
-
     // BINDINGS
     this.eventService.on(Message.SERVER_GET_BINDINGS, (event) => eventBus.fire('bindingsMenu.open', { data: event.data }));
 
@@ -211,13 +210,6 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     this.eventService.on(Message.MONITOR_SET_AVAILABLE_NODES, (event) => this.updateAlailableStatus(event.availableNodeIds));
-
-    this.eventService.on(Message.SIMULATION_TOKEN_ANIMATE, (event) => {
-      // eventBus.fire('token.animate', event);
-      this.cpnUpdater.animateArcList(event.arcIdList).then((result) => {
-        console.log('TOKEN ANIMATION, this.cpnUpdater.animateArcList(), Promise complete!, result = ', result);
-      });
-    });
 
     // ----------------------------------------------------------------------------------
     // Diagram events
@@ -463,51 +455,56 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   testAnimation() {
-    const speedMs = 500;
-    let incomeArcIdList = [];
-    let outcomeArcIdList = [];
-    let transIdList = [];
+    return new Promise((resolve, reject) => {
 
-    const page = this.modelService.getPageById(this.pageId);
+      const speedMs = 500;
+      let incomeArcIdList = [];
+      let outcomeArcIdList = [];
+      let transIdList = [];
 
-    // arcIdList.push('ID2751839452', 'ID1243034573', 'sdfsdfsdfsdf', 'ID1243036954', 'ID1243040118');
+      const page = this.modelService.getPageById(this.pageId);
 
-    for (const trans of nodeToArray(page.trans)) {
-      transIdList.push(trans._id);
-    }
+      // arcIdList.push('ID2751839452', 'ID1243034573', 'sdfsdfsdfsdf', 'ID1243036954', 'ID1243040118');
 
-    for (const transId of transIdList) {
-      for (const arc of this.modelService.getTransitionIncomeArcs(transId)) {
-        incomeArcIdList.push(arc._id);
+      for (const trans of nodeToArray(page.trans)) {
+        transIdList.push(trans._id);
       }
-      for (const arc of this.modelService.getTransitionOutcomeArcs(transId)) {
-        outcomeArcIdList.push(arc._id);
+
+      for (const transId of transIdList) {
+        for (const arc of this.modelService.getTransitionIncomeArcs(transId)) {
+          incomeArcIdList.push(arc._id);
+        }
+        for (const arc of this.modelService.getTransitionOutcomeArcs(transId)) {
+          outcomeArcIdList.push(arc._id);
+        }
       }
-    }
 
-    console.log(this.constructor.name, 'testAnimation(), incomeArcIdList = ', incomeArcIdList);
-    console.log(this.constructor.name, 'testAnimation(), outcomeArcIdList = ', outcomeArcIdList);
+      console.log(this.constructor.name, 'testAnimation(), incomeArcIdList = ', incomeArcIdList);
+      console.log(this.constructor.name, 'testAnimation(), outcomeArcIdList = ', outcomeArcIdList);
 
-    this.stateProvider.clear();
-    this.stateProvider.setFiredState(transIdList);
-    this.modeling.repaintElements();
+      this.stateProvider.clear();
+      this.stateProvider.setFiredState(transIdList);
+      this.modeling.repaintElements();
 
-    this.cpnUpdater.animateArcList(incomeArcIdList, speedMs).then(() => {
-      console.log(this.constructor.name, 'testAnimation(), Promise complete!, incomeArcIdList = ', incomeArcIdList);
+      this.cpnUpdater.animateArcList(incomeArcIdList, speedMs).then(() => {
+        console.log(this.constructor.name, 'testAnimation(), Promise complete!, incomeArcIdList = ', incomeArcIdList);
 
-      this.cpnUpdater.animateArcList(outcomeArcIdList, speedMs).then(() => {
-        console.log(this.constructor.name, 'testAnimation(), Promise complete!, outcomeArcIdList = ', outcomeArcIdList);
+        this.cpnUpdater.animateArcList(outcomeArcIdList, speedMs).then(() => {
+          console.log(this.constructor.name, 'testAnimation(), Promise complete!, outcomeArcIdList = ', outcomeArcIdList);
 
-        this.stateProvider.clear();
+          this.stateProvider.clear();
 
-        const tokenData = TEST_TOKEN_DATA; // this.accessCpnService.getTokenData();
-        // localStorage.setItem('tokenData', JSON.stringify(tokenData));
+          const tokenData = TEST_TOKEN_DATA; // this.accessCpnService.getTokenData();
+          // localStorage.setItem('tokenData', JSON.stringify(tokenData));
 
-        this.eventBus.fire('model.update.tokens', { data: tokenData });
-        this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
-        this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
-        this.checkPorts();
-        this.modeling.repaintElements();
+          this.eventBus.fire('model.update.tokens', { data: tokenData });
+          this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
+          this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
+          this.checkPorts();
+          this.modeling.repaintElements();
+
+          resolve();
+        });
       });
     });
   }
@@ -516,58 +513,75 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   /**
    * Update element status
    */
-  updateElementStatus() {
-    const startTime = new Date().getTime();
+  updateElementStatus(animate: boolean = false) {
+    return new Promise((resolve, reject) => {
 
-    // this.stateProvider.clear();
-    // this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
-    this.stateProvider.setFiredState(this.accessCpnService.getFiredData());
-    this.modeling.repaintElements();
+      const startTime = new Date().getTime();
 
-    console.log('TOKEN ANIMATION, updateElementStatus(), repaintElements() (1), timeMs = ', new Date().getTime() - startTime);
+      if (animate) {
+        this.stateProvider.setFiredState(this.accessCpnService.getFiredData());
+        this.modeling.repaintElements();
+      }
 
+      console.log('TOKEN ANIMATION, updateElementStatus(), repaintElements() (1), timeMs = ', new Date().getTime() - startTime);
 
-    let firedData = this.accessCpnService.getFiredData();
-    let animatedTransIds = [];
+      let firedData = this.accessCpnService.getFiredData();
+      let animatedTransIds = [];
 
-    if (this.simulationService.isAnimation) {
-      // check, if current page has animated transition
-      if (firedData && firedData.length > 0) {
-        for (const transId of firedData) {
-          const page = this.modelService.getPageByElementId(transId);
+      if (animate) {
+        // check, if current page has animated transition
+        if (firedData && firedData.length > 0) {
+          for (const transId of firedData) {
+            const page = this.modelService.getPageByElementId(transId);
 
-          if (page && page._id === this.pageId) {
-            animatedTransIds.push(transId);
+            if (page && page._id === this.pageId) {
+              animatedTransIds.push(transId);
+            }
           }
         }
       }
-    }
 
-    // if current page has animated transitions
-    if (animatedTransIds.length > 0) {
+      // if current page has animated transitions
+      if (animatedTransIds.length > 0) {
 
-      const incomeArcIdList = [];
-      const outcomeArcIdList = [];
-      for (const transId of animatedTransIds) {
-        for (const arc of this.modelService.getTransitionIncomeArcs(transId)) {
-          incomeArcIdList.push(arc._id);
+        const incomeArcIdList = [];
+        const outcomeArcIdList = [];
+        for (const transId of animatedTransIds) {
+          for (const arc of this.modelService.getTransitionIncomeArcs(transId)) {
+            incomeArcIdList.push(arc._id);
+          }
+          for (const arc of this.modelService.getTransitionOutcomeArcs(transId)) {
+            outcomeArcIdList.push(arc._id);
+          }
         }
-        for (const arc of this.modelService.getTransitionOutcomeArcs(transId)) {
-          outcomeArcIdList.push(arc._id);
-        }
-      }
-      const speedMs = this.simulationService.getAnimationDelay() / 2;
+        const speedMs = this.simulationService.getAnimationDelay() / 2;
 
-      console.log('TOKEN ANIMATION, updateElementStatus(), START ANIMATION, timeMs = ', new Date().getTime() - startTime);
+        console.log('TOKEN ANIMATION, updateElementStatus(), START ANIMATION, timeMs = ', new Date().getTime() - startTime);
 
-      this.cpnUpdater.animateArcList(incomeArcIdList, speedMs).then(() => {
-        console.log('TOKEN ANIMATION, updateElementStatus(), Promise complete!, incomeArcIdList = ', incomeArcIdList);
-        console.log('TOKEN ANIMATION, updateElementStatus(), INCOME ANIMATION COMPLETE, timeMs = ', new Date().getTime() - startTime);
+        this.cpnUpdater.animateArcList(incomeArcIdList, speedMs).then(() => {
+          console.log('TOKEN ANIMATION, updateElementStatus(), Promise complete!, incomeArcIdList = ', incomeArcIdList);
+          console.log('TOKEN ANIMATION, updateElementStatus(), INCOME ANIMATION COMPLETE, timeMs = ', new Date().getTime() - startTime);
 
-        this.cpnUpdater.animateArcList(outcomeArcIdList, speedMs).then(() => {
-          console.log('TOKEN ANIMATION, updateElementStatus(), Promise complete!, outcomeArcIdList = ', outcomeArcIdList);
-          console.log('TOKEN ANIMATION, updateElementStatus(), OUTCOME ANIMATION COMPLETE, timeMs = ', new Date().getTime() - startTime);
+          this.cpnUpdater.animateArcList(outcomeArcIdList, speedMs).then(() => {
+            console.log('TOKEN ANIMATION, updateElementStatus(), Promise complete!, outcomeArcIdList = ', outcomeArcIdList);
+            console.log('TOKEN ANIMATION, updateElementStatus(), OUTCOME ANIMATION COMPLETE, timeMs = ', new Date().getTime() - startTime);
 
+            this.stateProvider.clear();
+            this.eventBus.fire('model.update.tokens', { data: this.accessCpnService.getTokenData() });
+            this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
+            this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
+            this.checkPorts();
+            this.modeling.repaintElements();
+
+            console.log('TOKEN ANIMATION, updateElementStatus() (1), COMPLETE, timeMs = ', new Date().getTime() - startTime);
+
+            resolve();
+          });
+        });
+
+      } else {
+
+        setTimeout(() => {
           this.stateProvider.clear();
           this.eventBus.fire('model.update.tokens', { data: this.accessCpnService.getTokenData() });
           this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
@@ -575,29 +589,14 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           this.checkPorts();
           this.modeling.repaintElements();
 
-          console.log('TOKEN ANIMATION, updateElementStatus() (1), COMPLETE, timeMs = ', new Date().getTime() - startTime);
+          console.log('TOKEN ANIMATION, updateElementStatus() (2), COMPLETE, timeMs = ', new Date().getTime() - startTime);
 
-          this.eventService.send(Message.SIMULATION_TOKEN_ANIMATE_COMPLETE);
-        });
-      });
+          resolve();
+        }, animate ? 200 : 0);
+      }
 
-    } else {
-
-      setTimeout(() => {
-        this.stateProvider.clear();
-        this.eventBus.fire('model.update.tokens', { data: this.accessCpnService.getTokenData() });
-        this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
-        this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
-        this.checkPorts();
-        this.modeling.repaintElements();
-
-        console.log('TOKEN ANIMATION, updateElementStatus() (2), COMPLETE, timeMs = ', new Date().getTime() - startTime);
-
-        // this.eventService.send(Message.SIMULATION_TOKEN_ANIMATE_COMPLETE);
-      }, 200);
-    }
-
-    console.log('updateElementStatus(), COMPLETE');
+      console.log('updateElementStatus(), COMPLETE');
+    });
   }
 
   updateAlailableStatus(availableIds) {

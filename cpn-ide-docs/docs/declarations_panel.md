@@ -6,22 +6,27 @@ The **Declarations Panel** is located under the Project tree. It consists of fiv
 
 Operations for creating, deleting and editing declarations contained in these tabs are the same for each of these tabs:
 <br>
-- You can create or delete new lines by bringing up the right-click menu and selecting the appropriate option or by using the buttons **New** | **Delete** on the top of the Declaration Panel.
+
+- You can create or delete new lines by bringing up the right-click menu and selecting the appropriate option or by using the buttons **+ New** | **- Delete** on the top of the Declaration Panel.
 <br>
-![Screenshot](img/buttons.png)
+
+  ![Screenshot](img/buttons.png)
 <br>
+
 - To edit a declaration simply click on the text to enter text edit mode. You can also edit it using the **ML editor**.
 <br>
-![Screenshot](img/ml_editor.png)
+
+  ![Screenshot](img/ml_editor.png)
 <br>
 - Navigating between the lines can be made by pressing **Shift+Up** / **Shift+Down** or by pressing the buttons on the top of the Declarations Panel.
 <br>
-![Screenshot](img/buttons.png)
+
+  ![Screenshot](img/buttons.png)
 <br>
 
 ### BatchOrdering
 
-The **BatchOrdering** tab replicates the list of declarations in the Declarations entry in the Project tree. All the changes made in the Declarations entry in the Project tree  appear concurrently in the BatchOrdering tab.
+The **BatchOrdering** tab replicates the list of declarations in the Declarations entry in the Project tree. All changes made in the Declarations entry in the Project tree appear concurrently in the BatchOrdering tab.
 
 
 ### Globref
@@ -38,6 +43,7 @@ The Color tab contains a list of color sets.
 
 ### Var
 **Var** tab contains variables that are used in CP-net inscriptions.
+
 ![Screenshot](img/var.png)
 
 ### ML

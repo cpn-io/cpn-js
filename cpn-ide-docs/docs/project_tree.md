@@ -1,4 +1,4 @@
-# Project tree 
+# Project Tree 
 
 Project tree is labeled with the name of the net. In the picture below, the net is named **mynet-for-sim-sub.cpn**. 
 
@@ -64,7 +64,7 @@ In the picture below the Declarations entry consists of two blocks:
 
 ![Screenshot](img/right-click-menu.png)
 
-You can add or delete declarations and declaration blocks by right-clicking and selecting the appropriate option or by using the buttons **New** | **Delete** on the top of the Project tree.
+You can add or delete declarations and declaration blocks by right-clicking and selecting the appropriate option or by using the buttons **+ New** | **- Delete** on the top of the Project tree.
 <br>
 
 ![Screenshot](img/buttons.png)
@@ -101,11 +101,11 @@ All **pages** in a net are accessible through the **Project tree**.
 
 ![Screenshot](img/pages.png)
 
-The hierarchical structure of a net is reflected in the Project tree. The entry for a subpage appears under the entry for its superpage, and the entry for the subpage is indented with respect to the entry for its subpage. Subpage entries are visible in the Project tree when the corresponding superpage entry has been opened.
+The hierarchical structure of a net is reflected in the Project tree. The entry for a subpage appears under the entry for its superpage, and the entry for the subpage is indented with respect to the entry for its superpage. Subpage entries are visible in the Project tree when the corresponding superpage entry has been opened.
 
 
 If you have created a new net instead of loading one, there will be only one page. This page is created automatically with the new net, and is empty so you can start creating net objects on it.
 
-You can create or delete new pages by bringing up the right-click menu and selecting the appropriate option or by using the buttons **New** | **Delete** on the top of the Project tree.
+You can create or delete new pages by bringing up the right-click menu and selecting the appropriate option or by using the buttons **+ New** | **- Delete** on the top of the Project tree.
 
 ![Screenshot](img/buttons.png)

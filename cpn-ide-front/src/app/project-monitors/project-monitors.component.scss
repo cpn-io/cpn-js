@@ -42,3 +42,13 @@ a.tableButton {
   // outline: 0px solid transparent;
   outline: none !important;
 }
+
+.errorPane {
+  width: 100%;
+  height: auto;
+  padding: 10px;
+
+  background-color: #ffeeee;
+  border-bottom: 1px solid red;
+  color: red;
+}

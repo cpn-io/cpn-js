@@ -1,5 +1,6 @@
 <app-tree-node [tree]="tree" [id]="monitor._id" [title]="monitor._name" [bold]="false" color="darkblue"
-  [type]="'monitor'" [cpnElement]="monitor">
+  [type]="'monitor'" [cpnElement]="monitor"
+  [error]="accessCpnService.errorIds.includes(monitor._id)">
 
   <!-- Type -->
   <app-tree-node [tree]="tree" [id]="'monitorType_' + monitor._id" [title]="'Type: ' + monitor._typedescription"

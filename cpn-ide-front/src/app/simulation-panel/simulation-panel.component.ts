@@ -53,6 +53,11 @@ export class SimulationPanelComponent implements OnInit, OnDestroy {
     this.simulationService.runMultiStepFF();
   }
 
+  onRunReplication() {
+    console.log(this.constructor.name, 'onRunReplication(), simulationConfig = ', this.simulationService.simulationConfig);
+    this.simulationService.runReplication();
+  }
+
   getMultistepProgress() {
     return (
       100

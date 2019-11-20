@@ -65,6 +65,23 @@
 
   </tab>
 
+  <tab tabTitle="Simulation report"
+    [ready]="accessCpnService.simulationReport && accessCpnService.simulationReport !== ''">
+
+    <div class="tab-container" id="logScrollPane">
+      <div class="logConsole">
+        <!-- <pre>
+          {{ accessCpnService.simulationReport }}
+        </pre> -->
+
+        <div class="report" [innerHTML]="accessCpnService.simulationReport | simulationReport | safeHtml">
+        </div>
+      </div>
+    </div>
+
+  </tab>
+
+
   <!-- test animation -->
   <!-- <tab id="testTab" tabTitle="Test">
 

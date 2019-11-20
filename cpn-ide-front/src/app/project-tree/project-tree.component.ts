@@ -86,9 +86,9 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     this.eventService.on(Message.MODEL_RELOAD, () => this.loadProject());
 
     this.eventService.on(Message.SERVER_INIT_NET_DONE, () => this.updateErrors());
-
     this.eventService.on(Message.SIMULATION_UPDATE_STATE, () => this.onSimulationState());
 
+    this.eventService.on(Message.MONITOR_CREATED, (event) => this.goToMonitor(event.newMonitorCpnElement._id));
   }
 
   ngDoCheck() {
@@ -186,6 +186,30 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
       console.log(this.constructor.name, 'goToFirstPage(), inputElem = ', inputElem);
       if (inputElem) {
         inputElem.focus();
+      }
+    }
+  }
+
+  goToMonitor(id) {
+    if (this.cpnet && this.cpnet.monitorblock) {
+
+      const monitorList = nodeToArray(this.cpnet.monitorblock.monitor);
+      const monitor = monitorList.find((e) => e._id === id);
+
+      if (monitor) {
+        console.log(this.constructor.name, 'goToMonitor(), monitor = ', monitor);
+
+        this.tree.selected.id = monitor._id;
+        this.tree.selected.type = 'monitor';
+        this.tree.selected.cpnElement = monitor;
+
+        this.tree.expanded[this.cpnet.monitorblock._name] = true;
+
+        const inputElem = document.getElementById(this.tree.selected.id);
+        console.log(this.constructor.name, 'goToMonitor(), inputElem = ', inputElem);
+        if (inputElem) {
+          inputElem.focus();
+        }
       }
     }
   }

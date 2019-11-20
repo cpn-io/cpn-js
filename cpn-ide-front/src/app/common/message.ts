@@ -22,6 +22,7 @@ export class Message {
   static TREE_OPEN_DECLARATION_NODE = 'tree.open.declaration.node';
   static TREE_SELECT_DECLARATION_NODE = 'tree.select.declaration.node';
   static TREE_SELECT_DECLARATION_NODE_NEW = 'tree.select.declaration.node.new';
+  static TREE_SELECT_MONITOR = 'tree.select.monitor';
 
   static DECLARATION_CHANGED = 'declaration.changed';
 

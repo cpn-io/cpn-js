@@ -4,6 +4,7 @@ import { nodeToArray } from '../../common/utils';
 import { ModelService } from '../../services/model.service';
 import { TreeData } from '../project-tree.component';
 import { ITreeNode } from '../tree-node/tree-node';
+import { AccessCpnService } from '../../services/access-cpn.service';
 
 @Component({
   selector: 'app-project-tree-monitor-node',
@@ -21,7 +22,11 @@ export class ProjectTreeMonitorNodeComponent implements OnInit, DoCheck, ITreeNo
 
   differ: any;
 
-  constructor(public modelService: ModelService, private differs: KeyValueDiffers) {
+  constructor(
+    public modelService: ModelService,
+    private differs: KeyValueDiffers,
+    public accessCpnService: AccessCpnService) {
+
     this.differ = this.differs.find({}).create();
   }
 

@@ -35,6 +35,10 @@ export class SimulationService {
       max_step: 0,
       time_step: 0,
       max_time: 0,
+    },
+
+    replication: {
+      repeat: 30
     }
   };
 
@@ -52,6 +56,8 @@ export class SimulationService {
   initEvents() {
     this.eventService.on(Message.SIMULATION_STARTED, () => { });
     this.eventService.on(Message.SIMULATION_STOPED, () => this.onStopSimulation());
+    this.eventService.on(Message.SERVER_INIT_SIM_DONE, () => this.onInitSimDone());
+
     this.eventService.on(Message.SHAPE_HOVER, (event) => this.onShapeHover(event));
     this.eventService.on(Message.SHAPE_SELECT, (event) => this.onShapeSelect(event));
     this.eventService.on(Message.SIMULATION_SELECT_BINDING, (event) => this.onSimulationSelectBinding(event));
@@ -72,6 +78,17 @@ export class SimulationService {
       default:
         document.body.style.cursor = 'default';
     }
+  }
+
+  updateModelEditors() {
+    const modelEditorList = this.editorPanelService.getModelEditorList();
+    for (const modelEditor of modelEditorList) {
+      modelEditor.updateElementStatus();
+    }
+  }
+
+  onInitSimDone() {
+    this.updateModelEditors();
   }
 
   onStopSimulation() {
@@ -116,9 +133,14 @@ export class SimulationService {
       if (element.cpnElement._id in this.accessCpnService.getReadyData()) {
         switch (this.mode) {
           case this.SINGLE_STEP:
-            this.accessCpnService.doStep(element.cpnElement._id).then(() => {
-              this.animateModelEditor();
-            });
+            this.accessCpnService.doStep(element.cpnElement._id).then(
+              (success) => {
+                this.animateModelEditor();
+              },
+              (error) => {
+                console.error(this.constructor.name, 'runMultiStep(), doStep(), error = ', error);
+              }
+            );
             break;
           case this.SINGLE_STEP_CHOOSE_BINDING:
             this.accessCpnService.getBindings(element.cpnElement._id).then((data) => {
@@ -133,15 +155,18 @@ export class SimulationService {
   }
 
   animateModelEditor() {
-    const modelEditor = this.editorPanelService.getSelectedModelEditor();
-    console.log(this.constructor.name, 'animateModelEditor(), page = ', modelEditor);
 
-    if (modelEditor) {
-      modelEditor.updateElementStatus(this.isAnimation).then(() => {
-        console.log(this.constructor.name, 'animateModelEditor(), modelEditor.updateElementStatus(), COMPLETE');
-        this.onSimulationAnimateComplete();
-      });
-    }
+    setTimeout(() => {
+      const modelEditor = this.editorPanelService.getSelectedModelEditor();
+      console.log(this.constructor.name, 'animateModelEditor(), page = ', modelEditor);
+
+      if (modelEditor) {
+        modelEditor.updateElementStatus(this.isAnimation).then(() => {
+          console.log(this.constructor.name, 'animateModelEditor(), modelEditor.updateElementStatus(), COMPLETE');
+          this.onSimulationAnimateComplete();
+        });
+      }
+    }, 0);
   }
 
 
@@ -153,13 +178,20 @@ export class SimulationService {
     const element = event.element;
 
     if (element && element.type && element.type === 'cpn:Transition' && event.binding) {
-      this.accessCpnService.doStepWithBinding(element.cpnElement._id, event.binding.bind_id).then(() => {
-        this.animateModelEditor();
-      });
+      this.accessCpnService.doStepWithBinding(element.cpnElement._id, event.binding.bind_id).then(
+        (success) => {
+          this.animateModelEditor();
+        },
+        (error) => {
+          console.error(this.constructor.name, 'onSimulationSelectBinding(), doStepWithBinding(), error = ', error);
+        });
     }
   }
 
   onSimulationAnimateComplete() {
+    
+    this.updateModelEditors();
+
     switch (this.mode) {
       case this.MULTI_STEP:
         this.runMultiStep();
@@ -191,14 +223,15 @@ export class SimulationService {
         // }
 
         if (page && this.isAutoswitchPage) {
-          // this.eventService.send(Message.PAGE_OPEN, { pageObject: page });
           this.editorPanelService.getEditorPanelComponent().openModelEditor(page).then(() => {
             resolve();
           });
+        } else {
+          resolve();
         }
+      } else {
+        resolve();
       }
-
-      resolve();
 
     });
   }
@@ -208,7 +241,7 @@ export class SimulationService {
       case this.MULTI_STEP:
         return (+this.simulationConfig.multi_step.delay);
       default:
-        return 1000;
+        return 500;
     }
   }
 
@@ -225,19 +258,24 @@ export class SimulationService {
 
     setTimeout(() => {
       if (this.multiStepCount > 0) {
-        this.accessCpnService.doStep('multistep').then(() => {
-          this.multiStepCount--;
-          this.multiStepLastTimeMs = new Date().getTime();
-          this.onSimulationStepDone().then(() => {
-            this.animateModelEditor();
-          });
-        });
+        this.accessCpnService.doStep('multistep').then(
+          (success) => {
+            this.multiStepCount--;
+            this.multiStepLastTimeMs = new Date().getTime();
+            this.onSimulationStepDone().then(() => {
+              this.animateModelEditor();
+            });
+          },
+          (error) => {
+            console.error(this.constructor.name, 'runMultiStep(), doStep(\'multistep\'), error = ', error);
+          }
+        );
       }
     }, delay);
   }
 
   runMultiStepFF() {
-    console.log(this.constructor.name, 'runMultiStepFF(), this.multiStepCount = ', this.multiStepCount);
+    console.log(this.constructor.name, 'runMultiStepFF(), this.simulationConfig.multi_step_ff = ', this.simulationConfig.multi_step_ff);
 
     const config = this.simulationConfig.multi_step_ff;
     const options = {
@@ -250,5 +288,14 @@ export class SimulationService {
     this.accessCpnService.doMultiStepFF(options);
   }
 
+  runReplication() {
+    console.log(this.constructor.name, 'runReplication(), this.simulationConfig.replication = ', this.simulationConfig.replication);
+
+    const config = this.simulationConfig.replication;
+    const options = {
+      repeat: '' + config.repeat,
+    };
+    this.accessCpnService.doReplication(options);
+  }
 
 }

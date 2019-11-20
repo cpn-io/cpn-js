@@ -27,8 +27,13 @@ export class AccessCpnService {
 
   public tokenData = [];
 
+  public simulationReport:string = '';
+
   public initNetProcessing;
   public initSimProcessing;
+  public fastforwardProcessing = false;
+  public replicationProcessing = false;
+
   public simInitialized = false;
 
   sessionId;
@@ -190,6 +195,8 @@ export class AccessCpnService {
    * Access/CPN API
    */
   initNet(cpnJson, complexVerify = false, restartSimulator = false) {
+    this.simulationReport = '';
+    
     if (this.initNetProcessing) {
       return;
     }
@@ -276,6 +283,8 @@ export class AccessCpnService {
    * Initialize access/cpn simulator
    */
   initSim() {
+    this.simulationReport = '';
+
     if (this.initNetProcessing) {
       return;
     }
@@ -305,15 +314,15 @@ export class AccessCpnService {
         console.log('AccessCpnService, initSim(), SUCCESS, data = ', data);
         this.simInitialized = true;
 
-        this.eventService.send(Message.SERVER_INIT_SIM_DONE, { data: data });
         // Get token marks and transition
         if (data) {
           this.updateTokenData(data.tokensAndMark);
           this.updateReadyData(data.enableTrans);
           this.updateFiredTrans(data.firedTrans);
-
-          this.eventService.send(Message.SIMULATION_STEP_DONE);
+          // this.eventService.send(Message.SIMULATION_STEP_DONE);
         }
+
+        this.eventService.send(Message.SERVER_INIT_SIM_DONE, { data: data });
       },
       (error) => {
         this.initSimProcessing = false;
@@ -438,7 +447,21 @@ export class AccessCpnService {
   }
 
 
+  /**
+   *  POST /api/v2/cpn/sim/step_fast_forward
+   *  {
+   *    "addStep": "string",
+   *    "addTime": "string",
+   *    "amount": 0,
+   *    "untilStep": "string",
+   *    "untilTime": "string"
+   *  }
+   * 
+   * @param options 
+   */
   doMultiStepFF(options) {
+    this.simulationReport = '';
+
     return new Promise((resolve, reject) => {
 
       if (!this.simInitialized || !this.sessionId) {
@@ -446,30 +469,87 @@ export class AccessCpnService {
         return;
       }
 
+      this.fastforwardProcessing = true;
+
       const postData = options;
 
       console.log('AccessCpnService, doMultiStepFF(), postData = ', postData);
 
-      // POST /api/v2/cpn/sim/step_with_binding/{transId}
       const url = CpnServerUrl.get() + '/api/v2/cpn/sim/step_fast_forward';
       this.http.post(url, postData, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
         (data: any) => {
-          console.log('AccessCpnService, doStepWithBinding(), SUCCESS, data = ', data);
+          console.log('AccessCpnService, doMultiStepFF(), SUCCESS, data = ', data);
           if (data) {
             this.updateTokenData(data.tokensAndMark);
             this.updateReadyData(data.enableTrans);
             this.updateFiredTrans(data.firedTrans);
 
+            this.simulationReport = data.extraInfo;
+
             this.eventService.send(Message.SIMULATION_STEP_DONE);
 
             this.getSimState();
 
+            this.fastforwardProcessing = false;
             resolve();
           }
         },
         (error) => {
-          console.error('AccessCpnService, doStepWithBinding(), ERROR, data = ', error);
+          console.error('AccessCpnService, doMultiStepFF(), ERROR, data = ', error);
 
+          this.fastforwardProcessing = false;
+          reject(error);
+        }
+      );
+    });
+  }
+
+  /**
+   * POST /api/v2/cpn/sim/replication
+   * {
+   *  "repeat": "string"
+   * }
+   * @param options 
+   */
+  doReplication(options) {
+    this.simulationReport = '';
+
+    return new Promise((resolve, reject) => {
+
+      if (!this.simInitialized || !this.sessionId) {
+        resolve();
+        return;
+      }
+
+      this.replicationProcessing = true;
+
+      const postData = options;
+
+      console.log('AccessCpnService, doReplication(), postData = ', postData);
+
+      const url = CpnServerUrl.get() + '/api/v2/cpn/sim/replication';
+      this.http.post(url, postData, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
+        (data: any) => {
+          console.log('AccessCpnService, doReplication(), SUCCESS, data = ', data);
+          if (data) {
+            // this.updateTokenData(data.tokensAndMark);
+            // this.updateReadyData(data.enableTrans);
+            // this.updateFiredTrans(data.firedTrans);
+
+            this.simulationReport = data.extraInfo;
+
+            this.eventService.send(Message.SIMULATION_STEP_DONE);
+
+            this.getSimState();
+
+            this.replicationProcessing = false;
+            resolve();
+          }
+        },
+        (error) => {
+          console.error('AccessCpnService, doReplication(), ERROR, data = ', error);
+
+          this.replicationProcessing = false;
           reject(error);
         }
       );

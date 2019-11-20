@@ -55,7 +55,6 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   labelEditingProvider;
   textRenderer;
   selectedElement;
-  jsonPageObject;
   stateProvider;
   selectionProvider;
   cpnUpdater;
@@ -141,16 +140,6 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.modeling.setDefaultValue(key, this.settings.getAppSettings()[key]);
     }
 
-    eventBus.on('import.render.complete', (event) => {
-      this.loading = false;
-      console.log('import.render.complete, event = ', event);
-
-      setTimeout(() => {
-        this.updateElementStatus();
-        this.modeling.setEditable(!this.accessCpnService.isSimulation);
-      }, 10);
-    });
-
     // eventBus.on('element.changed', (event) => {
     eventBus.on([
       'shape.move.end',
@@ -180,7 +169,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     // VALIDATION STATUS
     this.eventService.on(Message.SERVER_INIT_NET_DONE, () => {
       setTimeout(() => {
-        this.updateElementStatus();
+        // this.updateElementStatus();
       }, 10);
     });
 
@@ -443,8 +432,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.pageId) {
       const pageObject = this.modelService.getPageById(this.pageId);
       if (pageObject) {
-        this.jsonPageObject = pageObject;
-        this.loadPageDiagram(pageObject, false);
+        this.loadPage(pageObject, false);
       }
     }
   }
@@ -592,7 +580,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           console.log('TOKEN ANIMATION, updateElementStatus() (2), COMPLETE, timeMs = ', new Date().getTime() - startTime);
 
           resolve();
-        }, animate ? 200 : 0);
+        }, animate ? 100 : 0);
       }
 
       console.log('updateElementStatus(), COMPLETE');
@@ -670,33 +658,50 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     console.log(this.constructor.name, 'log(), text = ' + JSON.stringify(obj));
   }
 
-  load(pageObject) {
-    this.loading = true;
+  /**
+   * Load page to ModelEditorComponent
+   * 
+   * @param pageObject 
+   * @param alignToCenter 
+   */
+  loadPage(pageObject, alignToCenter = true) {
+    return new Promise((resolve, reject) => {
+      this.loading = true;
 
-    this.jsonPageObject = pageObject;
-    this.pageId = pageObject._id;
-    const that = this;
-    if (pageObject) {
-      // this.diagram.createDiagram(function () {
-      setTimeout(() => {
-        that.loadPageDiagram(pageObject);
-      },
-        100);
-      // });
-    } else {
-      this.canvas._clear();
-    }
+      this.pageId = undefined;
+      this.clearPage();
+
+      if (pageObject) {
+        this.pageId = pageObject._id;
+
+        setTimeout(() => {
+          importCpnPage(this.diagram, pageObject, alignToCenter).then(
+            (success) => {
+              this.loading = false;
+              console.log(this.constructor.name, 'loadPage(), RENDER COMPLETE');
+
+              // this.updateElementStatus();
+              this.modeling.setEditable(!this.accessCpnService.isSimulation);
+
+              resolve();
+            },
+            (error) => {
+
+              console.log(this.constructor.name, 'loadPage(), ERROR = ', error);
+              reject();
+            }
+          );
+        }, 0);
+
+      } else {
+        this.clearPage();
+        resolve();
+      }
+    });
   }
 
   clearPage() {
-  }
-
-  loadPageDiagram(pageObject, alignToCenter = true) {
-    // console.log('loadPageDiagram(), import, pageObject = ', pageObject);
-
-    this.clearPage();
-
-    importCpnPage(this.diagram, pageObject, alignToCenter);
+    this.canvas._clear();
   }
 
   makeid(length) {

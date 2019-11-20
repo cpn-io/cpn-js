@@ -84,9 +84,9 @@ export class EditorPanelComponent implements OnInit, OnDestroy
       this.editorPanelService.setSelectedModelEditor(modelEditor);
 
       // update status for selected editor
-      if (modelEditor) {
-        modelEditor.updateElementStatus();
-      }
+      // if (modelEditor) {
+      //   modelEditor.updateElementStatus();
+      // }
     }
     this.currentTab = tab;
   }
@@ -126,8 +126,12 @@ export class EditorPanelComponent implements OnInit, OnDestroy
       const tab = this.tabsComponent.getTabByID(pageObject._id);
 
       if (tab) {
+
         this.tabsComponent.selectTab(tab);
+        resolve();
+
       } else {
+
         const tabAttrs = { id: pageObject._id, pageObject: pageObject };
         this.pageTabArray.push(tabAttrs);
         this.selectTab(tabAttrs.id);
@@ -141,11 +145,19 @@ export class EditorPanelComponent implements OnInit, OnDestroy
               this.editorPanelService.setSelectedModelEditor(modelEditor);
 
               if (modelEditor) {
-                modelEditor.load(pageObject);
+                modelEditor.loadPage(pageObject).then(
+                  () => {
+                    modelEditor.updateElementStatus().then(() => {
+                      resolve();
+                    });
+                  }
+                );
               }
-
+            } else {
               resolve();
             }
+          } else {
+            resolve();
           }
         }, 0);
 

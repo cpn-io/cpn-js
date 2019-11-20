@@ -1,6 +1,6 @@
 <nav class="navbar navbar-sm navbar-expand shadow-sm">
 
-  <ul *ngIf="cpnElement" class="navbar-nav mr-auto">
+  <ul *ngIf="monitor" class="navbar-nav mr-auto">
     <!-- <li class="nav-item">
       <div class="header">Monitor</div>
     </li>
@@ -14,14 +14,14 @@
     </li>
 
     <!-- Disable action -->
-    <li *ngIf="cpnElement && cpnElement._disabled === 'false'" class="nav-item">
+    <li *ngIf="monitor && monitor._disabled === 'false'" class="nav-item">
       <a (click)="onDisableMonitor(true)" class="nav-link" href="#" title="Disable monitor">
         <i class="fas fa-toggle-on"></i>
       </a>
     </li>
 
     <!-- Enable action -->
-    <li *ngIf="cpnElement && cpnElement._disabled === 'true'" class="nav-item">
+    <li *ngIf="monitor && monitor._disabled === 'true'" class="nav-item">
       <a (click)="onDisableMonitor(false)" class="nav-link" href="#" title="Enable monitor">
         <i class="fas fa-toggle-off"></i>
       </a>
@@ -39,10 +39,20 @@
 
 <div class="tab-container-with-toolbar">
 
-  <div *ngIf="cpnElement" style="width: 100%">
+  <div *ngIf="monitor" style="width: 100%">
+
+
+    <div *ngIf="accessCpnService.errorIds.includes(monitor._id)" class="errorPane">
+      {{ accessCpnService.errorData[monitor._id] }}
+    </div>
+
+    <!-- <div class="errorPane">
+      Error!
+    </div> -->
+
 
     <div class="blockHeader">
-      {{ cpnElement._typedescription }}
+      {{ monitor._typedescription }}
     </div>
 
     <!--
@@ -50,16 +60,16 @@
     -->
 
     <!-- ID -->
-    <app-text-edit-row name="Id" [object]="cpnElement" field="_id" [readonly]="true">
+    <app-text-edit-row name="Id" [object]="monitor" field="_id" [readonly]="true">
     </app-text-edit-row>
 
     <!-- Name -->
-    <app-text-edit-row type="text" [pre]="false" name="Name" [object]="cpnElement" field="_name"
+    <app-text-edit-row type="text" [pre]="false" name="Name" [object]="monitor" field="_name"
       [readonly]="accessCpnService.isSimulation" (changed)="updateChanges()">
     </app-text-edit-row>
 
     <!-- TypeID -->
-    <app-text-edit-row name="Type" [object]="cpnElement" field="_type" [readonly]="true">
+    <app-text-edit-row name="Type" [object]="monitor" field="_type" [readonly]="true">
     </app-text-edit-row>
 
     <!-- Timed -->
@@ -74,7 +84,7 @@
     </app-text-edit-row>
 
     <!-- Disabled -->
-    <app-text-edit-row name="Disabled" [object]="cpnElement" field="_disabled" [readonly]="true">
+    <app-text-edit-row name="Disabled" [object]="monitor" field="_disabled" [readonly]="true">
     </app-text-edit-row>
 
     <!------------------------->
@@ -130,7 +140,7 @@
     <!--
       Declarations
     -->
-    <div *ngFor="let declaration of nodeToArray(cpnElement.declaration)">
+    <div *ngFor="let declaration of nodeToArray(monitor.declaration)">
 
       <table *ngIf="declaration && declaration.ml" class="table table-bordered table-hover table-small">
 
@@ -161,7 +171,7 @@
     <!------------------------->
 
     <!-- <div style="width:100%">
-      {{ JSON.stringify(cpnElement) }}
+      {{ JSON.stringify(monitor) }}
     </div> -->
 
   </div>

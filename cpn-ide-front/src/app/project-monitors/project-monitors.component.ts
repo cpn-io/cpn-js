@@ -23,7 +23,7 @@ export class ProjectMonitorsComponent implements OnInit {
   JSON = JSON;
   nodeToArray = nodeToArray;
 
-  cpnElement;
+  monitor;
   optionTimed = false;
   optionLogging = false;
 
@@ -53,10 +53,10 @@ export class ProjectMonitorsComponent implements OnInit {
   }
 
   getOption(name) {
-    if (this.cpnElement && this.cpnElement.option) {
+    if (this.monitor && this.monitor.option) {
       // console.log('this.cpnElement.option = ', this.cpnElement.option);
 
-      const options = this.cpnElement.option instanceof Array ? this.cpnElement.option : [this.cpnElement.option];
+      const options = this.monitor.option instanceof Array ? this.monitor.option : [this.monitor.option];
       const option = options.find((o) => o._name === name);
       if (option) {
         return option;
@@ -79,15 +79,15 @@ export class ProjectMonitorsComponent implements OnInit {
   }
 
   onLoadMonitor(cpnElement) {
-    this.cpnElement = cpnElement;
-    this.nodeList = this.modelService.getMonitorNodeNamesList(this.cpnElement);
+    this.monitor = cpnElement;
+    this.nodeList = this.modelService.getMonitorNodeNamesList(this.monitor);
 
     this.optionTimed = this.getOption('Timed');
     this.optionLogging = this.getOption('Logging');
 
-    this.nodeTypeList = this.cpnElement ? getMonitorNodeTypeList(this.cpnElement._type) : [];
+    this.nodeTypeList = this.monitor ? getMonitorNodeTypeList(this.monitor._type) : [];
 
-    console.log('onLoadMonitor(), this.cpnElement = ', this.cpnElement);
+    console.log('onLoadMonitor(), this.cpnElement = ', this.monitor);
     console.log('onLoadMonitor(), this.nodeList = ', this.nodeList);
   }
 
@@ -123,13 +123,13 @@ export class ProjectMonitorsComponent implements OnInit {
       //   }
       // }
 
-      const monitorNodeList = nodeToArray(this.cpnElement.node) || [];
+      const monitorNodeList = nodeToArray(this.monitor.node) || [];
       monitorNodeList.push({
         _idref: element.cpnElement._id,
         _pageinstanceidref: 'id251437332ia'
       });
-      this.cpnElement.node = monitorNodeList.length === 1 ? monitorNodeList[0] : monitorNodeList;
-      this.onLoadMonitor(this.cpnElement);
+      this.monitor.node = monitorNodeList.length === 1 ? monitorNodeList[0] : monitorNodeList;
+      this.onLoadMonitor(this.monitor);
       this.updateChanges();
     }
   }
@@ -144,7 +144,7 @@ export class ProjectMonitorsComponent implements OnInit {
 
       event.cpnElement.__text = result.cpnElement.__text;
 
-      this.onLoadMonitor(this.cpnElement);
+      this.onLoadMonitor(this.monitor);
       this.updateChanges();
     }
   }
@@ -184,7 +184,7 @@ export class ProjectMonitorsComponent implements OnInit {
   }
 
   onNewNode() {
-    console.log('onNewNode(), this.cpnElement = ', this.cpnElement);
+    console.log('onNewNode(), this.cpnElement = ', this.monitor);
     console.log('onNewNode(), this.nodeTypeList = ', this.nodeTypeList);
     this.setCreateNodeIntent(true);
 
@@ -206,15 +206,15 @@ export class ProjectMonitorsComponent implements OnInit {
   onDeleteNode(node) {
     // console.log('onDeleteNode(), node = ', node);
 
-    let monitorNodeList = nodeToArray(this.cpnElement.node);
+    let monitorNodeList = nodeToArray(this.monitor.node);
     const monitorNode = monitorNodeList.find(n => n._idref === node.element._id);
 
     // console.log('onDeleteNode(), monitorNode = ', monitorNode);
 
     if (monitorNode) {
       monitorNodeList = monitorNodeList.filter(n => n !== monitorNode);
-      this.cpnElement.node = monitorNodeList.length === 1 ? monitorNodeList[0] : monitorNodeList;
-      this.onLoadMonitor(this.cpnElement);
+      this.monitor.node = monitorNodeList.length === 1 ? monitorNodeList[0] : monitorNodeList;
+      this.onLoadMonitor(this.monitor);
       this.updateChanges();
     }
   }
@@ -228,7 +228,7 @@ export class ProjectMonitorsComponent implements OnInit {
   updateOptionValue(event, name) {
     // console.log(this.constructor.name, 'updatePortType(), event = ', event);
 
-    if (!this.cpnElement) {
+    if (!this.monitor) {
       return;
     }
 
@@ -244,15 +244,15 @@ export class ProjectMonitorsComponent implements OnInit {
   }
 
   onDisableMonitor(disable: boolean) {
-    this.cpnElement._disabled = disable.toString();
-    this.eventService.send(Message.MONITOR_CHANGED, { monitorCpnElement: this.cpnElement });
+    this.monitor._disabled = disable.toString();
+    this.eventService.send(Message.MONITOR_CHANGED, { monitorCpnElement: this.monitor });
   }
 
   onDeleteMonitor() {
-    if (this.cpnElement) {
-      this.modelService.deleteFromModel(this.cpnElement);
+    if (this.monitor) {
+      this.modelService.deleteFromModel(this.monitor);
       this.onLoadMonitor(undefined);
-      this.eventService.send(Message.MONITOR_DELETED, { monitorCpnElement: this.cpnElement });
+      this.eventService.send(Message.MONITOR_DELETED, { monitorCpnElement: this.monitor });
     }
   }
 

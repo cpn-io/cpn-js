@@ -125,23 +125,30 @@
     <table *ngIf="simulationService.mode === simulationService.MULTI_STEP_FF">
       <tr>
         <td>Steps</td>
-        <td><input type="number" class="full-width"
-            [(ngModel)]="simulationService.simulationConfig.multi_step_ff.steps"></td>
+        <td>
+          <input type="number" class="full-width" [(ngModel)]="simulationService.simulationConfig.multi_step_ff.steps">
+        </td>
       </tr>
       <tr>
         <td>Max Step</td>
-        <td><input type="number" class="full-width"
-            [(ngModel)]="simulationService.simulationConfig.multi_step_ff.max_step"></td>
+        <td>
+          <input type="number" class="full-width"
+            [(ngModel)]="simulationService.simulationConfig.multi_step_ff.max_step">
+        </td>
       </tr>
       <tr>
         <td>Time Step</td>
-        <td><input type="number" class="full-width"
-            [(ngModel)]="simulationService.simulationConfig.multi_step_ff.time_step"></td>
+        <td>
+          <input type="number" class="full-width"
+            [(ngModel)]="simulationService.simulationConfig.multi_step_ff.time_step">
+        </td>
       </tr>
       <tr>
         <td>Max Time</td>
-        <td><input type="number" class="full-width"
-            [(ngModel)]="simulationService.simulationConfig.multi_step_ff.max_time"></td>
+        <td>
+          <input type="number" class="full-width"
+            [(ngModel)]="simulationService.simulationConfig.multi_step_ff.max_time">
+        </td>
       </tr>
       <tr>
         <td></td>
@@ -164,12 +171,15 @@
     <table>
       <tr>
         <td>Repeat</td>
-        <td><input type="number" value="30" class="full-width"></td>
+        <td>
+          <input type="number" value="30" class="full-width"
+            [(ngModel)]="simulationService.simulationConfig.replication.repeat">
+        </td>
       </tr>
       <tr>
         <td></td>
         <td class="full-width text-right">
-          <button type="button" class="btn btn-primary">
+          <button type="button" class="btn btn-primary" (click)="onRunReplication()">
             <i class="fas fa-play"></i>
             <span>Run</span>
           </button>

@@ -7,4 +7,16 @@
     </div>
 </div>
 
+<div *ngIf="accessCpnService.fastforwardProcessing" class="loading">
+    <div class="loading-text">
+        Multistep fast forward processing...
+    </div>
+</div>
+
+<div *ngIf="accessCpnService.replicationProcessing" class="loading">
+    <div class="loading-text">
+        Replication processing...
+    </div>
+</div>
+
 <!--<router-outlet></router-outlet>-->

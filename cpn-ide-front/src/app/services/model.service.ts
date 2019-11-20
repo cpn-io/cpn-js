@@ -316,17 +316,17 @@ export class ModelService {
   addElementJsonOnPage(cpnElement, pageId, type, _modeling) {
     console.log('addElementJsonOnPage()', cpnElement, pageId, type);
 
-    const jsonPageObject = this.getPageById(pageId);
-    console.log('addElementJsonOnPage(), jsonPageObject = ', jsonPageObject);
+    const page = this.getPageById(pageId);
+    console.log('addElementJsonOnPage(), page = ', page);
 
-    if (jsonPageObject[this.modelCase[type]] instanceof Array) {
-      jsonPageObject[this.modelCase[type]].push(cpnElement);
+    if (page[this.modelCase[type]] instanceof Array) {
+      page[this.modelCase[type]].push(cpnElement);
     } else {
-      if (jsonPageObject[this.modelCase[type]]) {
-        const currentElem = jsonPageObject[this.modelCase[type]];
-        jsonPageObject[this.modelCase[type]] = [currentElem, cpnElement];
+      if (page[this.modelCase[type]]) {
+        const currentElem = page[this.modelCase[type]];
+        page[this.modelCase[type]] = [currentElem, cpnElement];
       } else {
-        jsonPageObject[this.modelCase[type]] = [cpnElement];
+        page[this.modelCase[type]] = [cpnElement];
       }
     }
 

@@ -71,9 +71,7 @@ public class SimulatorController {
                     @ApiResponse(code = 500, message = "Internal error. Object with description", response = ErrorDescription.class)
             })
     public ResponseEntity getState(@RequestHeader(value = "X-SessionId") String sessionId) {
-        return RequestBaseLogic.HandleRequest(sessionId, () -> {
-            return ResponseEntity.status(HttpStatus.OK).body(_netConatiner.getState(sessionId));
-        });
+        return RequestBaseLogic.HandleRequest(sessionId, () -> ResponseEntity.status(HttpStatus.OK).body(_netConatiner.getState(sessionId)));
     }
 
     @GetMapping(value = "/sim/step/{transId}")
@@ -115,9 +113,27 @@ public class SimulatorController {
             })
     public ResponseEntity doStepFastForward(@RequestHeader(value = "X-SessionId") String sessionId, @RequestBody MultiStep stepParams) {
         return RequestBaseLogic.HandleRequest(sessionId, () -> {
-            _netConatiner.makeStepFastForward(sessionId,stepParams);
-            NetInfo netInf = new NetInfo(Arrays.asList(), _netConatiner.getEnableTransitions(sessionId), _netConatiner.getTokensAndMarking(sessionId));
+            String content = _netConatiner.makeStepFastForward(sessionId,stepParams);
+            final NetInfo netInf = new NetInfo(Arrays.asList(), _netConatiner.getEnableTransitions(sessionId), _netConatiner.getTokensAndMarking(sessionId));
+            netInf.setExtraInfo(content);
             return RequestBaseLogic.HandleRequest(sessionId, () -> ResponseEntity.status(HttpStatus.OK).body(netInf));
+        });
+    }
+
+
+    @PostMapping(value = "/sim/replication")
+    @ApiOperation(nickname = "Replication", value = "Replication - long running op (from mins to hours)")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Step success", response = Replication.class),
+                    @ApiResponse(code = 400, message = "Incorrect Request", response = ErrorDescription.class),
+                    @ApiResponse(code = 500, message = "Internal error. Object with description", response = ErrorDescription.class)
+            })
+    public ResponseEntity doReplication(@RequestHeader(value = "X-SessionId") String sessionId, @RequestBody Replication replicationParams) {
+        return RequestBaseLogic.HandleRequest(sessionId, () -> {
+            ReplicationResp resp = new ReplicationResp();
+            resp.setExtraInfo(_netConatiner.makeReplication(sessionId,replicationParams));
+            return RequestBaseLogic.HandleRequest(sessionId, () -> ResponseEntity.status(HttpStatus.OK).body(resp));
         });
     }
 

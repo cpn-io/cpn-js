@@ -106,6 +106,11 @@ The hierarchical structure of a net is reflected in the Project tree. The entry 
 
 If you have created a new net instead of loading one, there will be only one page. This page is created automatically with the new net, and is empty so you can start creating net objects on it.
 
-You can create or delete new pages by bringing up the right-click menu and selecting the appropriate option or by using the buttons **+ New** | **- Delete** on the top of the Project tree.
+You can create or delete new pages (subpages) by bringing up the right-click menu and selecting the appropriate option or by using the buttons **+ New** | **- Delete** on the top of the Project tree.
 
 ![Screenshot](img/buttons.png)
+
+# Application settings
+![Screenshot](img/settings.png)
+
+The Application settings tab shows the default settings for declarations, pages and objects created. To change the settings click on the text you wish to edit.

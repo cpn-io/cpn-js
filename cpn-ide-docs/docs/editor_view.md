@@ -12,24 +12,24 @@ To load a net, click on **Open project** and select the desired net.
 
 ## Tools
 
-#### Creating elements
-One of the instruments for creating net elements is the mouse right-click button menu. You can bring it up by clicking the right mouse button in the editor area.
+#### Creating objects
+One of the instruments for creating net objects is the mouse right-click button menu. You can bring it up by clicking the right mouse button in the editor area.
 
 ![Screenshot](img/mouse-menu.png)
 
 To create a new **place** or **transition**, select the corresponding option of the menu.
 
-Having created an element, you can create the next one by putting the cursor on the first element and bringing up the menu with the right mouse button click. A place can be related only to a transition and a transition can be related only to a place. It's impossible to make an arc between two transitions or two places.
+Having created an object, you can create the next one by putting the cursor on the first object and bringing up the menu with the right mouse button click. A place can be related only to a transition and a transition can be related only to a place. It's impossible to make an arc between two transitions or two places.
 
 
 To create an **arc**: 
+<br>
 - click on a place or transition to bring up the menu 
 
 ![Screenshot](img/menu2.png)
 
 - select the arrow icon
-- draw the arc to the element you wish to connect to.
-
+- draw the arc to the object you wish to connect to.
 
 #### Creating new subpage
 When a CP-net uses a substitution transition the logic that the transition represents must be kept somewhere. It is kept on a page called a **subpage**.
@@ -39,28 +39,37 @@ To create a **new subpage**, select the corresponding option in the menu
 
 ![Screenshot](img/mouse-menu.png)
 
+The subpage created has a corresponding mark, it looks like this:
 
-#### Deleting elements
+![Screenshot](img/subpage.png)
 
-To delete a place, an arc or a transition put the cursor on the element to be removed, bring up the right-click menu and select the bin icon.
-
-You can also remove several elements at once using the menu in the upper left corner of the Editor View. 
+#### Moving selected objects to subpage
+If you need to make a group of objects to be the objects of a subpage, use the menu:
 
 ![Screenshot](img/lasso.png)
 
-To delete a group of elements:
 - Press the lasso icon (the top icon)
-- Select elements to be removed by drawing the lasso with the pointer
+- Select objects to be replaced to the subpage by drawing the lasso with the pointer
+- Press the icon in the middle ("Move selected objects to subpage")
+
+
+#### Deleting objects
+
+To delete a place, an arc or a transition put the cursor on the object to be removed, bring up the right-click menu and select the bin icon.
+
+You can also remove several objects at once using the menu in the upper left corner of the Editor View. 
+
+![Screenshot](img/lasso.png)
+
+To delete a group of objects:
+<br>
+- Press the lasso icon (the top icon)
+<br>
+- Select objects to be removed by drawing the lasso with the pointer
+<br>
 - Press the bin icon
 
-#### Moving selected elements to subpage
-If you need to make a group of elements to be the elements of a subpage, use the menu:
 
-![Screenshot](img/lasso.png)
-
-- Press the lasso icon (the top icon)
-- Select elements to be replaced to the subpage by drawing the lasso with the pointer
-- Press the middle icon ("Move selected elements to subpage")
 
 
 ## Inscriptions
@@ -70,7 +79,7 @@ To add an inscription, click on the place, transition, or arc where you want to 
 
 Immediately after creating a place, transition, or arc you are also in the text edit mode, and can add the first inscription right away.
 
-To navigate between inscriptions, put the cursor on the element and use the **Tab** key.
+To switch between inscriptions of an object, put the cursor on the object and use the **Tab** key.
 
 ### Place inscriptions
 Place inscriptions are created when you add/edit inscriptions for places. There are three inscriptions that may be associated with a place.
@@ -79,7 +88,7 @@ Place inscriptions are created when you add/edit inscriptions for places. There 
 
 ![Screenshot](img/place-name.png)
 
-- Color set inscription – required. The color set inscription determines the color set, i.e. the type, of all the tokens that can be put in the place. 
+- Color set inscription – required. The color set inscription determines the color set, i.e. the type of all the tokens that can be put in the place. 
 
 *Default color set inscription*
 
@@ -130,17 +139,46 @@ There are five inscriptions that may be associated with a transition. All are op
 
 ### Arc inscriptions
 
-Arcs have only one inscription — the arc inscription. An arc inscription is a CPN ML expression that evaluates to a multiset or a single element.
+Arcs have only one inscription — the arc inscription. An arc inscription is a CPN ML expression that evaluates to a multiset or a single object.
 
 *Default arc inscription*
 
 ![Screenshot](img/arc.png)
 
+
+## ML editor
+ML editor is a tab for creating declarations using ML code. It's easier to write a declaration in the **ML editor** if the declaration is very complex.
+
+![Screenshot](img/ml_editor.png)
+
+
 ## Tabs
-### ML editor
+The number of tabs related to the Editor View depends on how many pages have been created. Clicking on a page in the Project tree (block "Pages") opens the corresponding tab in the Editor View. You can switch between the pages either by clicking on the names of pages in the Project tree 
 
-### myNet
+![Screenshot](img/pages1.png)
 
-### Subpage
+or by clicking on the tabs in the Editor View
 
-### Deeppage
+![Screenshot](img/tabpages3.png)
+
+
+### Diagram zooming 
+To zoom in or out, hold the **Ctrl** key and scroll the mouse wheel.
+
+### Resizing objects
+To resize an object: 
+<br>
+- put the pointer on any corner of the object
+<br>
+- when you see the pointer as two-way arrow, drag the corner of the object to get desired size and form.
+
+### Diagram moving
+To move a diagram across the Editor View, set the pointer in the free space of the Editor View, hold down the left mouse key and move the pointer. The diagram will repeat the movements of the pointer.
+
+To move a particular object, put the cursor in the object, hold down the left mouse key and move the pointer.
+
+While moving the object, you can see **magnetic guidelines** (orange lines in the picture below). 
+
+Magnetic guidelines are horizontal and vertical lines which can be used for aligning your objects during the graphical editing of the net.
+
+![Screenshot](img/guidelines.png)

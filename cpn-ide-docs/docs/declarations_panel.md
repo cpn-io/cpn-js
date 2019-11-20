@@ -18,6 +18,7 @@ Operations for creating, deleting and editing declarations contained in these ta
 
   ![Screenshot](img/ml_editor.png)
 <br>
+
 - Navigating between the lines can be made by pressing **Shift+Up** / **Shift+Down** or by pressing the buttons on the top of the Declarations Panel.
 <br>
 
@@ -47,10 +48,10 @@ The Color tab contains a list of color sets.
 ![Screenshot](img/var.png)
 
 ### ML
-**ML** tab contains value declarations corresponding to the Standard priorities block in the Project tree.
+**ML** tab contains value declarations corresponding to the Standard priorities block in the Project tree. 
 
 ![Screenshot](img/ML.png)
 
-It's easier to edit a value declaration using the **ML editor** if its description is too long.
+You can edit declarations within this tab but it's often easier to edit a declaration using the **ML editor** if its description is very complex.
 
 ![Screenshot](img/ml-editor.png)

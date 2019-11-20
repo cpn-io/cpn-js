@@ -6,6 +6,8 @@ import com.indevstudio.cpnide.server.model.monitors.MonitorTemplateFactory;
 import com.indevstudio.cpnide.server.model.monitors.MonitorTypes;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.cpntools.accesscpn.engine.SimulatorService;
 import org.cpntools.accesscpn.engine.highlevel.*;
 import org.cpntools.accesscpn.engine.highlevel.checker.Checker;
@@ -28,8 +30,12 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.lang.Object;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -42,6 +48,8 @@ public class PetriNetContainer {
     HighLevelSimulator _sim;
     private final static Object lock = new Object();
 
+
+    private static final String OUTPUT_MODEL_PATH = "model_out";
     @PostConstruct
     void Init() throws Exception {
         //_sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
@@ -61,10 +69,12 @@ public class PetriNetContainer {
             if(restartSim) {
                 if (_sim != null)
                     _sim.destroy();
+                CleanOutputPathContent(sessionId);
                 _sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
             }
             else if (_sim == null)
                 _sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
+
 
 
             Checker checker = new Checker(net, null, _sim);
@@ -157,7 +167,10 @@ public class PetriNetContainer {
             //checker.checkEntireModel();
 
             // checker.localCheck();
-            checker.checkInitializing("", "");
+            CleanOutputPathContent(sessionId);
+
+
+            checker.checkInitializing("", Paths.get(FilenameUtils.concat(OUTPUT_MODEL_PATH, sessionId)).toAbsolutePath().toString());
             checker.checkDeclarations();
             checker.generateSerializers();
             checker.checkPages();
@@ -181,6 +194,22 @@ public class PetriNetContainer {
 
         }
 
+    }
+
+    String getOutputPathContent(String sessionId) throws Exception
+    {
+        final StringBuilder sb = new StringBuilder();
+        List<Path> files = Files.walk(Paths.get(FilenameUtils.concat(OUTPUT_MODEL_PATH,sessionId)).toAbsolutePath()).filter(Files::isRegularFile).collect(Collectors.toList());
+
+        for(Path f: files) {
+            sb.append("\n\nFilename: " + f.toString() + "\n");
+            Files.lines(f).forEach(s -> sb.append(s + "\n"));
+        }
+
+        return sb.toString();
+    }
+    void CleanOutputPathContent(String sessionId) throws Exception{
+        FileUtils.deleteDirectory(new File(Paths.get(FilenameUtils.concat(OUTPUT_MODEL_PATH,sessionId)).toAbsolutePath().toString()));
     }
 
     List<String> getEnableTransitionsImpl(String sessionId) throws Exception {
@@ -529,7 +558,13 @@ public class PetriNetContainer {
         s.execute(binds.get(bindingId));
     }
 
-    public void makeStepFastForward(String sessionId, MultiStep stepParam) throws Exception {
+    public String makeReplication(String sessionId, Replication stepParam) throws Exception {
+        HighLevelSimulator sim = usersSimulator.get(sessionId);
+        sim.evaluate("CPN'Replications.nreplications " + stepParam.getRepeat());
+        return getOutputPathContent(sessionId);
+    }
+
+    public String makeStepFastForward(String sessionId, MultiStep stepParam) throws Exception {
         //String type = requestBody.get(0).get("type").toString();
         HighLevelSimulator sim = usersSimulator.get(sessionId);
         int i = 0;
@@ -553,6 +588,8 @@ public class PetriNetContainer {
             sim.execute(ti);
             i++;
         }
+
+        return getOutputPathContent(sessionId);
     }
 
 

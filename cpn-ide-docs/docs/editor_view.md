@@ -1,0 +1,146 @@
+# Editor View
+Editor View is the workspace for creating a net. You can either load an existing net or create a new one.
+
+![Screenshot](img/editor-view.png)
+
+To create a new net, click on **New Project**.
+
+To load a net, click on **Open project** and select the desired net.
+
+![Screenshot](img/head.png)
+
+
+## Tools
+
+#### Creating elements
+One of the instruments for creating net elements is the mouse right-click button menu. You can bring it up by clicking the right mouse button in the editor area.
+
+![Screenshot](img/mouse-menu.png)
+
+To create a new **place** or **transition**, select the corresponding option of the menu.
+
+Having created an element, you can create the next one by putting the cursor on the first element and bringing up the menu with the right mouse button click. A place can be related only to a transition and a transition can be related only to a place. It's impossible to make an arc between two transitions or two places.
+
+
+To create an **arc**: 
+- click on a place or transition to bring up the menu 
+
+![Screenshot](img/menu2.png)
+
+- select the arrow icon
+- draw the arc to the element you wish to connect to.
+
+
+#### Creating new subpage
+When a CP-net uses a substitution transition the logic that the transition represents must be kept somewhere. It is kept on a page called a **subpage**.
+A page that contains a substitution transition is called a **superpage**. 
+
+To create a **new subpage**, select the corresponding option in the menu
+
+![Screenshot](img/mouse-menu.png)
+
+
+#### Deleting elements
+
+To delete a place, an arc or a transition put the cursor on the element to be removed, bring up the right-click menu and select the bin icon.
+
+You can also remove several elements at once using the menu in the upper left corner of the Editor View. 
+
+![Screenshot](img/lasso.png)
+
+To delete a group of elements:
+- Press the lasso icon (the top icon)
+- Select elements to be removed by drawing the lasso with the pointer
+- Press the bin icon
+
+#### Moving selected elements to subpage
+If you need to make a group of elements to be the elements of a subpage, use the menu:
+
+![Screenshot](img/lasso.png)
+
+- Press the lasso icon (the top icon)
+- Select elements to be replaced to the subpage by drawing the lasso with the pointer
+- Press the middle icon ("Move selected elements to subpage")
+
+
+## Inscriptions
+
+### Adding inscriptions
+To add an inscription, click on the place, transition, or arc where you want to add the inscription. This activates the text edit mode for the object you have clicked on.
+
+Immediately after creating a place, transition, or arc you are also in the text edit mode, and can add the first inscription right away.
+
+To navigate between inscriptions, put the cursor on the element and use the **Tab** key.
+
+### Place inscriptions
+Place inscriptions are created when you add/edit inscriptions for places. There are three inscriptions that may be associated with a place.
+
+- Place name inscription – optional. The place name inscription is an optional label that identifies the place, and it may contain any sequence of characters.
+
+![Screenshot](img/place-name.png)
+
+- Color set inscription – required. The color set inscription determines the color set, i.e. the type, of all the tokens that can be put in the place. 
+
+*Default color set inscription*
+
+![Screenshot](img/place-unit.png) 
+
+
+- Initial marking inscription – optional. The initial marking inscription is a multiset expression that specifies the initial tokens for a place. 
+
+*Default initial marking inscription*
+
+![Screenshot](img/place-initial-marking.png)
+
+
+
+### Transition inscriptions
+Transition inscriptions are created when you add/edit inscriptions for transitions.
+There are five inscriptions that may be associated with a transition. All are optional:
+
+- Transition name inscription
+
+![Screenshot](img/transition-name.png)
+
+- Condition inscription
+
+*Default condition inscription*
+
+![Screenshot](img/transition-condition.png)
+
+- Time inscription
+
+*Default time inscription*
+
+![Screenshot](img/transition-time.png)
+
+- Code segment inscription
+
+*Default code inscription*
+
+![Screenshot](img/transition-code.png)
+
+- Priority inscription
+
+*Default priority inscription*
+
+![Screenshot](img/transition-priority.png)
+
+
+
+### Arc inscriptions
+
+Arcs have only one inscription — the arc inscription. An arc inscription is a CPN ML expression that evaluates to a multiset or a single element.
+
+*Default arc inscription*
+
+![Screenshot](img/arc.png)
+
+## Tabs
+### ML editor
+
+### myNet
+
+### Subpage
+
+### Deeppage

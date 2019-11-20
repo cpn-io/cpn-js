@@ -62,7 +62,9 @@ export class MainToolbarComponent implements OnInit {
     console.log(this.constructor.name, 'onTest(), page = ', modelEditor);
 
     if (modelEditor) {
-      modelEditor.testAnimation();
+      modelEditor.testAnimation().then(() => {
+        console.log(this.constructor.name, 'onTest(), modelEditor.testAnimation(), COMPLETE');
+      });
     }
   }
 

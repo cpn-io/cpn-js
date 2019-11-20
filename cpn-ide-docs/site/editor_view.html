@@ -1,129 +1,279 @@
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  
-  <link rel="shortcut icon" href="img/favicon.ico">
-  <title>Editor view - CPN IDE Documentation</title>
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="img/favicon.ico">
+        <title>Editor View - CPN IDE Documentation</title>
+        <link href="css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="css/font-awesome.min.css" rel="stylesheet">
+        <link href="css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <link href="css/extra.css" rel="stylesheet">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
 
-  <link rel="stylesheet" href="css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="css/theme_extra.css" type="text/css" />
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
-  
-  <script>
-    // Current page data
-    var mkdocs_page_name = "Editor view";
-    var mkdocs_page_input_path = "editor_view.md";
-    var mkdocs_page_url = null;
-  </script>
-  
-  <script src="js/jquery-2.1.1.min.js" defer></script>
-  <script src="js/modernizr-2.8.3.min.js" defer></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-  <script>hljs.initHighlightingOnLoad();</script> 
-  
-</head>
+        <script src="js/jquery-1.10.2.min.js" defer></script>
+        <script src="js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
 
-<body class="wy-body-for-nav" role="document">
+    <body>
 
-  <div class="wy-grid-for-nav">
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
 
-    
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
-      <div class="wy-side-nav-search">
-        <a href="index.html" class="icon icon-home"> CPN IDE Documentation</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
-  </form>
-</div>
-      </div>
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="index.html">CPN IDE Documentation</a>
+                </div>
 
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-	<ul class="current">
-	  
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="index.html">Home</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="about.html">About</a>
-	    </li>
-          
-        </ul>
-      </div>
-      &nbsp;
-    </nav>
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="index.html">Home</a>
+                            </li>
+                            <li >
+                                <a href="about.html">About</a>
+                            </li>
+                        </ul>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">CPN IDE Documentation</a>
-      </nav>
-
-      
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
-  <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-    
-      
-    
-    <li>Editor view</li>
-    <li class="wy-breadcrumbs-aside">
-      
-    </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main">
-            <div class="section">
-              
-                
-              
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-          </div>
-          <footer>
-  
-
-  <hr/>
-
-  <div role="contentinfo">
-    <!-- Copyright etc -->
-    
-  </div>
-
-  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
-</footer>
-      
         </div>
-      </div>
 
-    </section>
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#editor-view">Editor View</a></li>
+            <li><a href="#tools">Tools</a></li>
+            <li><a href="#inscriptions">Inscriptions</a></li>
+            <li><a href="#ml-editor">ML editor</a></li>
+            <li><a href="#tabs">Tabs</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
 
-  </div>
+<h1 id="editor-view">Editor View</h1>
+<p>Editor View is the workspace for creating a net. You can either load an existing net or create a new one.</p>
+<p><img alt="Screenshot" src="img/editor-view.png" /></p>
+<p>To create a new net, click on <strong>New Project</strong>.</p>
+<p>To load a net, click on <strong>Open project</strong> and select the desired net.</p>
+<p><img alt="Screenshot" src="img/head.png" /></p>
+<h2 id="tools">Tools</h2>
+<h4 id="creating-objects">Creating objects</h4>
+<p>One of the instruments for creating net objects is the mouse right-click button menu. You can bring it up by clicking the right mouse button in the editor area.</p>
+<p><img alt="Screenshot" src="img/mouse-menu.png" /></p>
+<p>To create a new <strong>place</strong> or <strong>transition</strong>, select the corresponding option of the menu.</p>
+<p>Having created an object, you can create the next one by putting the cursor on the first object and bringing up the menu with the right mouse button click. A place can be related only to a transition and a transition can be related only to a place. It's impossible to make an arc between two transitions or two places.</p>
+<p>To create an <strong>arc</strong>: 
+<br>
+- click on a place or transition to bring up the menu </p>
+<p><img alt="Screenshot" src="img/menu2.png" /></p>
+<ul>
+<li>select the arrow icon</li>
+<li>draw the arc to the object you wish to connect to.</li>
+</ul>
+<h4 id="creating-new-subpage">Creating new subpage</h4>
+<p>When a CP-net uses a substitution transition the logic that the transition represents must be kept somewhere. It is kept on a page called a <strong>subpage</strong>.
+A page that contains a substitution transition is called a <strong>superpage</strong>. </p>
+<p>To create a <strong>new subpage</strong>, select the corresponding option in the menu</p>
+<p><img alt="Screenshot" src="img/mouse-menu.png" /></p>
+<p>The subpage created has a corresponding mark, it looks like this:</p>
+<p><img alt="Screenshot" src="img/subpage.png" /></p>
+<h4 id="moving-selected-objects-to-subpage">Moving selected objects to subpage</h4>
+<p>If you need to make a group of objects to be the objects of a subpage, use the menu:</p>
+<p><img alt="Screenshot" src="img/lasso.png" /></p>
+<ul>
+<li>Press the lasso icon (the top icon)</li>
+<li>Select objects to be replaced to the subpage by drawing the lasso with the pointer</li>
+<li>Press the icon in the middle ("Move selected objects to subpage")</li>
+</ul>
+<h4 id="deleting-objects">Deleting objects</h4>
+<p>To delete a place, an arc or a transition put the cursor on the object to be removed, bring up the right-click menu and select the bin icon.</p>
+<p>You can also remove several objects at once using the menu in the upper left corner of the Editor View. </p>
+<p><img alt="Screenshot" src="img/lasso.png" /></p>
+<p>To delete a group of objects:
+<br>
+- Press the lasso icon (the top icon)
+<br>
+- Select objects to be removed by drawing the lasso with the pointer
+<br>
+- Press the bin icon</p>
+<h2 id="inscriptions">Inscriptions</h2>
+<h3 id="adding-inscriptions">Adding inscriptions</h3>
+<p>To add an inscription, click on the place, transition, or arc where you want to add the inscription. This activates the text edit mode for the object you have clicked on.</p>
+<p>Immediately after creating a place, transition, or arc you are also in the text edit mode, and can add the first inscription right away.</p>
+<p>To switch between inscriptions of an object, put the cursor on the object and use the <strong>Tab</strong> key.</p>
+<h3 id="place-inscriptions">Place inscriptions</h3>
+<p>Place inscriptions are created when you add/edit inscriptions for places. There are three inscriptions that may be associated with a place.</p>
+<ul>
+<li>Place name inscription – optional. The place name inscription is an optional label that identifies the place, and it may contain any sequence of characters.</li>
+</ul>
+<p><img alt="Screenshot" src="img/place-name.png" /></p>
+<ul>
+<li>Color set inscription – required. The color set inscription determines the color set, i.e. the type of all the tokens that can be put in the place. </li>
+</ul>
+<p><em>Default color set inscription</em></p>
+<p><img alt="Screenshot" src="img/place-unit.png" /> </p>
+<ul>
+<li>Initial marking inscription – optional. The initial marking inscription is a multiset expression that specifies the initial tokens for a place. </li>
+</ul>
+<p><em>Default initial marking inscription</em></p>
+<p><img alt="Screenshot" src="img/place-initial-marking.png" /></p>
+<h3 id="transition-inscriptions">Transition inscriptions</h3>
+<p>Transition inscriptions are created when you add/edit inscriptions for transitions.
+There are five inscriptions that may be associated with a transition. All are optional:</p>
+<ul>
+<li>Transition name inscription</li>
+</ul>
+<p><img alt="Screenshot" src="img/transition-name.png" /></p>
+<ul>
+<li>Condition inscription</li>
+</ul>
+<p><em>Default condition inscription</em></p>
+<p><img alt="Screenshot" src="img/transition-condition.png" /></p>
+<ul>
+<li>Time inscription</li>
+</ul>
+<p><em>Default time inscription</em></p>
+<p><img alt="Screenshot" src="img/transition-time.png" /></p>
+<ul>
+<li>Code segment inscription</li>
+</ul>
+<p><em>Default code inscription</em></p>
+<p><img alt="Screenshot" src="img/transition-code.png" /></p>
+<ul>
+<li>Priority inscription</li>
+</ul>
+<p><em>Default priority inscription</em></p>
+<p><img alt="Screenshot" src="img/transition-priority.png" /></p>
+<h3 id="arc-inscriptions">Arc inscriptions</h3>
+<p>Arcs have only one inscription — the arc inscription. An arc inscription is a CPN ML expression that evaluates to a multiset or a single object.</p>
+<p><em>Default arc inscription</em></p>
+<p><img alt="Screenshot" src="img/arc.png" /></p>
+<h2 id="ml-editor">ML editor</h2>
+<p>ML editor is a tab for creating declarations using ML code. It's easier to write a declaration in the <strong>ML editor</strong> if the declaration is very complex.</p>
+<p><img alt="Screenshot" src="img/ml_editor.png" /></p>
+<h2 id="tabs">Tabs</h2>
+<p>The number of tabs related to the Editor View depends on how many pages have been created. Clicking on a page in the Project tree (block "Pages") opens the corresponding tab in the Editor View. You can switch between the pages either by clicking on the names of pages in the Project tree </p>
+<p><img alt="Screenshot" src="img/pages1.png" /></p>
+<p>or by clicking on the tabs in the Editor View</p>
+<p><img alt="Screenshot" src="img/tabpages3.png" /></p>
+<h3 id="diagram-zooming">Diagram zooming</h3>
+<p>To zoom in or out, hold the <strong>Ctrl</strong> key and scroll the mouse wheel.</p>
+<h3 id="resizing-objects">Resizing objects</h3>
+<p>To resize an object: 
+<br>
+- put the pointer on any corner of the object
+<br>
+- when you see the pointer as two-way arrow, drag the corner of the object to get desired size and form.</p>
+<h3 id="diagram-moving">Diagram moving</h3>
+<p>To move a diagram across the Editor View, set the pointer in the free space of the Editor View, hold down the left mouse key and move the pointer. The diagram will repeat the movements of the pointer.</p>
+<p>To move a particular object, put the cursor in the object, hold down the left mouse key and move the pointer.</p>
+<p>While moving the object, you can see <strong>magnetic guidelines</strong> (orange lines in the picture below). </p>
+<p>Magnetic guidelines are horizontal and vertical lines which can be used for aligning your objects during the graphical editing of the net.</p>
+<p><img alt="Screenshot" src="img/guidelines.png" /></p></div>
+        </div>
 
-  <div class="rst-versions" role="note" style="cursor: pointer">
-    <span class="rst-current-version" data-toggle="rst-current-version">
-      
-      
-      
-    </span>
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = ".",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="js/base.js" defer></script>
+        <script src="search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
 </div>
-    <script>var base_url = '.';</script>
-    <script src="js/theme.js" defer></script>
-      <script src="search/main.js" defer></script>
 
-</body>
+    </body>
 </html>

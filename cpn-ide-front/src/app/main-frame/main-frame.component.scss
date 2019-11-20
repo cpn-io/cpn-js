@@ -1,8 +1,7 @@
 .split-container {
   position: absolute;
   width: 100%;
-  height: 100%;
-  padding-bottom: 35px;
+  height: calc(100% - 35px);
   border: 0px solid green;
   flex-basis: 2px !important;
 

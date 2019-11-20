@@ -7,6 +7,7 @@ import { Message } from '../common/message';
 import { ValidationService } from '../services/validation.service';
 import { AccessCpnService } from '../services/access-cpn.service';
 import { EditorPanelService } from '../services/editor-panel.service';
+import { ApplicationService } from '../services/application.service';
 @Component({
   selector: 'app-main-toolbar',
   templateUrl: './main-toolbar.component.html',
@@ -23,7 +24,8 @@ export class MainToolbarComponent implements OnInit {
     private validationService: ValidationService,
     public accessCpnService: AccessCpnService,
     public modelService: ModelService,
-    private editorPanelService: EditorPanelService
+    private editorPanelService: EditorPanelService,
+    public applicationService: ApplicationService
   ) {
   }
 
@@ -66,6 +68,10 @@ export class MainToolbarComponent implements OnInit {
         console.log(this.constructor.name, 'onTest(), modelEditor.testAnimation(), COMPLETE');
       });
     }
+  }
+
+  onDocumentation() {
+    this.applicationService.isShowDocumentation = !this.applicationService.isShowDocumentation;
   }
 
   newCPNet() {

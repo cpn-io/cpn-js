@@ -1,15 +1,15 @@
 <!-- <button (click)='addTab()'>Add tab</button> -->
 <div style="background: #999; height: 100%;">
 
-  <tabs #tabsComponent class="cpn-tabs" style="background: #999 !important"
-    (currentTabChange)="currentTabChange($event)">
+  <ng-container *ngIf="applicationService.isShowDocumentation">
+    <div style="width:100%; height:100%; border: 0px solid red">
+      <iframe src="../../assets/documentation/index.html" width="100%" height="100%" target="_parent"
+        style="border: none"></iframe>
+    </div>
+  </ng-container>
 
-    <!-- <ng-container *ngFor="let tab of docTabArray">
-      <tab [id]="tab.id" [tabTitle]="tab.title">
-        <iframe src="../../assets/documentation/index.html" height="100%" width="100%" target="_self"
-          style="border: none"></iframe>
-      </tab>
-    </ng-container> -->
+  <tabs #tabsComponent *ngIf="!applicationService.isShowDocumentation" class="cpn-tabs"
+    style="background: #999 !important" (currentTabChange)="currentTabChange($event)">
 
     <ng-container *ngFor="let tab of mlTabArray">
       <tab [id]="tab.id" [tabTitle]="tab.title">

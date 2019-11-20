@@ -19,6 +19,7 @@ import { Message } from '../common/message';
 import { EventService } from '../services/event.service';
 import { AccessCpnService } from '../services/access-cpn.service';
 import { EditorPanelService } from '../services/editor-panel.service';
+import { ApplicationService } from '../services/application.service';
 
 
 @Component({
@@ -45,7 +46,8 @@ export class EditorPanelComponent implements OnInit, OnDestroy
   constructor(private eventService: EventService,
     private modelService: ModelService,
     public accessCpnService: AccessCpnService,
-    private editorPanelService: EditorPanelService) {
+    private editorPanelService: EditorPanelService,
+    public applicationService: ApplicationService) {
   }
 
   ngOnInit() {

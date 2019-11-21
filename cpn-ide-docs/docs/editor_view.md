@@ -86,7 +86,7 @@ To get a port bind for an arc:
 
 ![Screenshot](img/portbind.png)
 
-**If you don't set port types and port binds for places and arcs surrounding a substitution transition, a mistake occurs**. (see an example in the picture below)
+**If you don't set port types and port binds for places and arcs surrounding a substitution transition, mistakes occur**. (see an example in the picture below)
 
 ![Screenshot](img/binderror.png)
 

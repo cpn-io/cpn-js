@@ -70,16 +70,15 @@ You can add or delete declarations and declaration blocks by right-clicking and 
 
 ![Screenshot](img/buttons.png)
 
-To add a declaration or a declaration block you can also use **Shift+Insert**.
+To add a declaration or a declaration block, you can also use **Shift+Insert**.
 
-To delete a declaration or a declaration block you can use **Shift+Delete**.
+To delete a declaration or a declaration block, you can use **Shift+Delete**.
 
 
 
 To edit a declaration or block, open it by clicking on the triangle next to it, and then click on the declaration or block text. 
 
-Navigating within the elements of Declarations blocks is possible by
- 
+Navigating within the elements of Declarations blocks is possible by:
 <br> 
 - clicking with the mouse to choose a specific position 
 <br>
@@ -115,4 +114,4 @@ You can create or delete new pages (subpages) by bringing up the right-click men
 # Application settings
 ![Screenshot](img/settings.png)
 
-The Application settings tab shows the default settings for declarations, pages and objects created. To change the settings click on the text you wish to edit.
+The Application settings tab shows the default settings for declarations, pages and objects created. To change the settings, click on the text you wish to edit.

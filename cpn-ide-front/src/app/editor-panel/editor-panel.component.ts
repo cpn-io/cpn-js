@@ -20,6 +20,7 @@ import { EventService } from '../services/event.service';
 import { AccessCpnService } from '../services/access-cpn.service';
 import { EditorPanelService } from '../services/editor-panel.service';
 import { ApplicationService } from '../services/application.service';
+import { ElementRef } from '@angular/core';
 
 
 @Component({
@@ -31,7 +32,9 @@ export class EditorPanelComponent implements OnInit, OnDestroy
 // , OnChanges, DoCheck 
 {
 
+  @ViewChild('documentationIFrame') documentationIFrame: ElementRef;
   @ViewChild('tabsComponent') tabsComponent: TabsContainer;
+
   @ViewChildren(ModelEditorComponent) modelEditorList: QueryList<ModelEditorComponent>;
 
   @Input() public readyPagesIds: any;
@@ -43,14 +46,20 @@ export class EditorPanelComponent implements OnInit, OnDestroy
 
   currentTab = undefined;
 
+  documentationHref = ''; // ../../assets/documentation/index.html
+
   constructor(private eventService: EventService,
     private modelService: ModelService,
     public accessCpnService: AccessCpnService,
     private editorPanelService: EditorPanelService,
     public applicationService: ApplicationService) {
+
+    // this.documentationHref = '../../assets/documentation/index.html';
   }
 
   ngOnInit() {
+    this.documentationIFrame.nativeElement.src = '../../assets/documentation/index.html';
+
     this.editorPanelService.setEditorPanelComponent(this);
 
     this.eventService.on(Message.PROJECT_LOAD, () => this.loadProject());

@@ -74,7 +74,6 @@
         <li class="main "><a href="#tools">Tools</a></li>
             <li><a href="#creating-objects">Creating objects</a></li>
             <li><a href="#creating-new-subpage">Creating new subpage</a></li>
-            <li><a href="#moving-selected-objects-to-subpage">Moving selected objects to subpage</a></li>
             <li><a href="#deleting-objects">Deleting objects</a></li>
         <li class="main "><a href="#inscriptions">Inscriptions</a></li>
             <li><a href="#adding-inscriptions">Adding inscriptions</a></li>
@@ -98,7 +97,7 @@
 <p>To load a net, click on <strong>Open project</strong> and select the desired net.</p>
 <p><img alt="Screenshot" src="img/head.png" /></p>
 <h2 id="tools">Tools</h2>
-<h4 id="creating-objects">Creating objects</h4>
+<h3 id="creating-objects">Creating objects</h3>
 <p>One of the instruments for creating net objects is the mouse right-click button menu. You can bring it up by clicking the right mouse button in the editor area.</p>
 <p><img alt="Screenshot" src="img/mouse-menu.png" /></p>
 <p>To create a new <strong>place</strong> or <strong>transition</strong>, select the corresponding option of the menu.</p>
@@ -111,22 +110,43 @@
 <li>select the arrow icon</li>
 <li>draw the arc to the object you wish to connect to.</li>
 </ul>
-<h4 id="creating-new-subpage">Creating new subpage</h4>
+<h3 id="creating-new-subpage">Creating new subpage</h3>
 <p>When a CP-net uses a substitution transition the logic that the transition represents must be kept somewhere. It is kept on a page called a <strong>subpage</strong>.
 A page that contains a substitution transition is called a <strong>superpage</strong>. </p>
-<p>To create a <strong>new subpage</strong>, select the corresponding option in the menu</p>
+<p>To create a <strong>new subpage</strong>, select the corresponding option in the right-click menu. A new page is created. It is set as a subpage in the Project Tree panel.</p>
 <p><img alt="Screenshot" src="img/mouse-menu.png" /></p>
-<p>The subpage created has a corresponding mark, it looks like this:</p>
-<p><img alt="Screenshot" src="img/subpage.png" /></p>
-<h4 id="moving-selected-objects-to-subpage">Moving selected objects to subpage</h4>
-<p>If you need to make a group of objects to be the objects of a subpage, use the menu:</p>
+<p>The subpage has a mark, it looks like this:</p>
+<p><img alt="Screenshot" src="img/subpage3.png" /></p>
+<p>To connect a subpage to other objects of the net, use arcs.</p>
+<h4 id="creating-diagram-on-subpage">Creating diagram on subpage</h4>
+<p>Having made a subpage, create new objects on it. You can also move already existing objects from the superpage to the subpage. To move a group of existing objects, use the menu:</p>
 <p><img alt="Screenshot" src="img/lasso.png" /></p>
 <ul>
 <li>Press the lasso icon (the top icon)</li>
 <li>Select objects to be replaced to the subpage by drawing the lasso with the pointer</li>
 <li>Press the icon in the middle ("Move selected objects to subpage")</li>
 </ul>
-<h4 id="deleting-objects">Deleting objects</h4>
+<h4 id="selecting-port-type">Selecting port type</h4>
+<p>When creating a diagram on the subpage, places at the ends of the diagram must be set as <strong>ports</strong>. Ports can be of 3 types: <strong>In</strong> | <strong>Out</strong> | <strong>In/Out</strong>. To set a port:</p>
+<ul>
+<li>click on the place at the left end of the diagram</li>
+<li>select a port type in the corresponding line of the Properties panel</li>
+</ul>
+<p><img alt="Screenshot" src="img/porttype.png" /></p>
+<p>Repeat the same with the right end place.</p>
+<p>In the picture below the places at the ends of the diagram are <strong>ports</strong>. They can be labeled as <strong>In</strong> / <strong>Out</strong> / <strong>In/Out</strong> according to the selected port type.</p>
+<p><img alt="Screenshot" src="img/ports.png" /></p>
+<p>A substitution transition having been created, places surrounding the substitution transition become <strong>sockets</strong>. On the picture below sockets are places <strong>CVert</strong> and <strong>P3</strong>.</p>
+<p><img alt="Screenshot" src="img/sockets.png" /> </p>
+<h4 id="selecting-port-bind">Selecting port bind</h4>
+<p>When creating a subpage, arcs surrounding the substitution transition must get a port bind.
+To get a port bind for an arc:
+- click on the arc
+- select a port bind in the corresponding line of the Properties panel</p>
+<p><img alt="Screenshot" src="img/portbind.png" /></p>
+<p><strong>If you don't set port types and port binds for places and arcs surrounding a substitution transition, a mistake occurs</strong>. (see an example in the picture below)</p>
+<p><img alt="Screenshot" src="img/binderror.png" /></p>
+<h3 id="deleting-objects">Deleting objects</h3>
 <p>To delete a place, an arc or a transition put the cursor on the object to be removed, bring up the right-click menu and select the bin icon.</p>
 <p>You can also remove several objects at once using the menu in the upper left corner of the Editor View. </p>
 <p><img alt="Screenshot" src="img/lasso.png" /></p>

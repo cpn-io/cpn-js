@@ -115,13 +115,13 @@
 It corresponds to a time inscription given to the transition in the Editor View.</p>
 <p><strong>Code</strong>. Each transition may have an attached code segment which contains ML code. Code segments are executed when their parent transition occurs. It corresponds to a code segment inscription given to the transition in the Editor View.</p>
 <p><strong>Priority</strong> must be a non-negative integer expression. The lower the value, the higher the priority. Hence, a transition with priority value 1 has priority over a transition with priority value 2. It corresponds to a priority inscription given to the transition in the Editor View.</p>
-<p><strong>Subpage</strong> allows to select a subpage for the given substitution transition. After selecting a subpage from the list, a blue subpage label with the name of the subpage shows up on the transition.</p>
+<p><strong>Subpage</strong> allows to select a subpage for the given substitution transition. After selecting a subpage, a blue label with the name of the subpage shows up on the transition. You can move this label to any place of the Editor View.</p>
 <p><img alt="Screenshot" src="img/subpage-label.png" /> </p>
-<p><strong>PortSock</strong> cell shows up when a transition becomes a substitution transition. </p>
+<p><strong>PortSock</strong> shows up when a transition becomes a substitution transition. PortSock contains ID of ports and sockets assigned to a substitution transition.</p>
 <p><img alt="Screenshot" src="img/subpage-properties1.png" /> </p>
 <h2 id="arc-connection-properties">Arc (connection) properties</h2>
 <p><img alt="Screenshot" src="img/arc-properties.png" /> </p>
-<p>To bring up the Properties panel for a particular arc, click on the arc in the Editor View.</p>
+<p>To bring up the Properties Panel for a particular arc, click on the arc in the Editor View.</p>
 <p>To edit a property, click on the cell to enter text edit mode. </p>
 <p>Object <strong>ID</strong> can't be edited.  </p>
 <p><strong>Annotation</strong> is a CPN ML expression that evaluates to a multiset or a single object. It corresponds to an arc inscription given to the arc in the Editor View. You can edit it either in the Editor View or in the Properties Panel.</p>
@@ -131,7 +131,8 @@ It corresponds to a time inscription given to the transition in the Editor View.
 <li>PtoT - from place to transition</li>
 <li>TtoP - from transition to place</li>
 <li>BOTHDIR - both directions</li>
-</ul></div>
+</ul>
+<p><strong>Port bind</strong> property shows up if an arc is connected to a substitution transition. </p></div>
         </div>
 
         <footer class="col-md-12">

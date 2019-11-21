@@ -78,7 +78,8 @@ To delete a declaration or a declaration block you can use **Shift+Delete**.
 
 To edit a declaration or block, open it by clicking on the triangle next to it, and then click on the declaration or block text. 
 
-Navigating within the elements of Declarations blocks is possible by 
+Navigating within the elements of Declarations blocks is possible by
+ 
 <br> 
 - clicking with the mouse to choose a specific position 
 <br>

@@ -67,11 +67,11 @@ It corresponds to a time inscription given to the transition in the Editor View.
 
 **Priority** must be a non-negative integer expression. The lower the value, the higher the priority. Hence, a transition with priority value 1 has priority over a transition with priority value 2. It corresponds to a priority inscription given to the transition in the Editor View.
 
-**Subpage** allows to select a subpage for the given substitution transition. After selecting a subpage from the list, a blue subpage label with the name of the subpage shows up on the transition.
+**Subpage** allows to select a subpage for the given substitution transition. After selecting a subpage, a blue label with the name of the subpage shows up on the transition. You can move this label to any place of the Editor View.
 
 ![Screenshot](img/subpage-label.png) 
 
-**PortSock** cell shows up when a transition becomes a substitution transition. 
+**PortSock** shows up when a transition becomes a substitution transition. PortSock contains ID of ports and sockets assigned to a substitution transition.
 
 ![Screenshot](img/subpage-properties1.png) 
 
@@ -79,7 +79,7 @@ It corresponds to a time inscription given to the transition in the Editor View.
 ## Arc (connection) properties
 ![Screenshot](img/arc-properties.png) 
 
-To bring up the Properties panel for a particular arc, click on the arc in the Editor View.
+To bring up the Properties Panel for a particular arc, click on the arc in the Editor View.
 
 To edit a property, click on the cell to enter text edit mode. 
 
@@ -95,4 +95,4 @@ Object **ID** can't be edited.
 - TtoP - from transition to place
 - BOTHDIR - both directions
 
-
+**Port bind** property shows up if an arc is connected to a substitution transition. 

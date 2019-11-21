@@ -14,7 +14,7 @@ To load a net, click on **Open project** and select the desired net.
 
 ## Tools
 
-#### Creating objects
+### Creating objects
 One of the instruments for creating net objects is the mouse right-click button menu. You can bring it up by clicking the right mouse button in the editor area.
 
 ![Screenshot](img/mouse-menu.png)
@@ -33,20 +33,24 @@ To create an **arc**:
 - select the arrow icon
 - draw the arc to the object you wish to connect to.
 
-#### Creating new subpage
+### Creating new subpage
 When a CP-net uses a substitution transition the logic that the transition represents must be kept somewhere. It is kept on a page called a **subpage**.
 A page that contains a substitution transition is called a **superpage**. 
 
-To create a **new subpage**, select the corresponding option in the menu
+To create a **new subpage**, select the corresponding option in the right-click menu. A new page is created. It is set as a subpage in the Project Tree panel.
 
 ![Screenshot](img/mouse-menu.png)
 
-The subpage created has a corresponding mark, it looks like this:
+The subpage has a mark, it looks like this:
 
-![Screenshot](img/subpage.png)
+![Screenshot](img/subpage3.png)
 
-#### Moving selected objects to subpage
-If you need to make a group of objects to be the objects of a subpage, use the menu:
+To connect a subpage to other objects of the net, use arcs.
+
+
+#### Creating diagram on subpage
+
+Having made a subpage, create new objects on it. You can also move already existing objects from the superpage to the subpage. To move a group of existing objects, use the menu:
 
 ![Screenshot](img/lasso.png)
 
@@ -54,8 +58,39 @@ If you need to make a group of objects to be the objects of a subpage, use the m
 - Select objects to be replaced to the subpage by drawing the lasso with the pointer
 - Press the icon in the middle ("Move selected objects to subpage")
 
+#### Selecting port type
 
-#### Deleting objects
+When creating a diagram on the subpage, places at the ends of the diagram must be set as **ports**. Ports can be of 3 types: **In** | **Out** | **In/Out**. To set a port:
+
+- click on the place at the left end of the diagram
+- select a port type in the corresponding line of the Properties panel
+
+![Screenshot](img/porttype.png)
+
+Repeat the same with the right end place.
+
+In the picture below the places at the ends of the diagram are **ports**. They can be labeled as **In** / **Out** / **In/Out** according to the selected port type.
+
+![Screenshot](img/ports.png)
+
+A substitution transition having been created, places surrounding the substitution transition become **sockets**. On the picture below sockets are places **CVert** and **P3**.
+
+![Screenshot](img/sockets.png) 
+
+#### Selecting port bind
+
+When creating a subpage, arcs surrounding the substitution transition must get a port bind.
+To get a port bind for an arc:
+- click on the arc
+- select a port bind in the corresponding line of the Properties panel
+
+![Screenshot](img/portbind.png)
+
+**If you don't set port types and port binds for places and arcs surrounding a substitution transition, a mistake occurs**. (see an example in the picture below)
+
+![Screenshot](img/binderror.png)
+
+### Deleting objects
 
 To delete a place, an arc or a transition put the cursor on the object to be removed, bring up the right-click menu and select the bin icon.
 

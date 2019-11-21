@@ -690,26 +690,49 @@ export class ModelService {
     return nodeList.length === 1 ? nodeList[0] : nodeList;
   }
 
-  createCpnMonitor(monitorType: string, cpnElementList) {
+  createCpnMonitor(monitorType: string, cpnElementList, monitorDefaults) {
+
+    // monitorDefaults
+    // {
+    //   "defaultInit": "string",
+    //   "defaultObserver": "string",
+    //   "defaultPredicate": "string",
+    //   "defaultStop": "string",
+    //   "defaultTimed": true
+    // }    
+
     let newMonitorCpnElement;
     switch (monitorType) {
-      case this.monitorType.BP: newMonitorCpnElement = this.createCpnMonitorBP(cpnElementList); break;
-      case this.monitorType.CTODC: newMonitorCpnElement = this.createMonitorCTODC(cpnElementList); break;
-      case this.monitorType.DC: newMonitorCpnElement = this.createCpnMonitorDC(cpnElementList); break;
-      case this.monitorType.LLDC: newMonitorCpnElement = this.createCpnMonitorLLDC(cpnElementList); break;
-      case this.monitorType.MS: newMonitorCpnElement = this.createCpnMonitorMS(cpnElementList); break;
-      case this.monitorType.PCBP: newMonitorCpnElement = this.createCpnMonitorPCBP(cpnElementList); break;
-      case this.monitorType.TEBP: newMonitorCpnElement = this.createCpnMonitorTEBP(cpnElementList); break;
-      case this.monitorType.UD: newMonitorCpnElement = this.createCpnMonitorUD(cpnElementList); break;
-      case this.monitorType.WIF: newMonitorCpnElement = this.createCpnMonitorWIF(cpnElementList); break;
+      case this.monitorType.BP: newMonitorCpnElement = this.createCpnMonitorBP(cpnElementList, monitorDefaults); break;
+      case this.monitorType.CTODC: newMonitorCpnElement = this.createMonitorCTODC(cpnElementList, monitorDefaults); break;
+      case this.monitorType.DC: newMonitorCpnElement = this.createCpnMonitorDC(cpnElementList, monitorDefaults); break;
+      case this.monitorType.LLDC: newMonitorCpnElement = this.createCpnMonitorLLDC(cpnElementList, monitorDefaults); break;
+      case this.monitorType.MS: newMonitorCpnElement = this.createCpnMonitorMS(cpnElementList, monitorDefaults); break;
+      case this.monitorType.PCBP: newMonitorCpnElement = this.createCpnMonitorPCBP(cpnElementList, monitorDefaults); break;
+      case this.monitorType.TEBP: newMonitorCpnElement = this.createCpnMonitorTEBP(cpnElementList, monitorDefaults); break;
+      case this.monitorType.UD: newMonitorCpnElement = this.createCpnMonitorUD(cpnElementList, monitorDefaults); break;
+      case this.monitorType.WIF: newMonitorCpnElement = this.createCpnMonitorWIF(cpnElementList, monitorDefaults); break;
     }
     return newMonitorCpnElement;
   }
 
-  createCpnMonitorDC(cpnElement) {
+  getMonitorDefaults(monitorDefaults, monitorTemplate: DataCollectionMonitorTemplate) {
+    return {
+      defaultInit: monitorDefaults && monitorDefaults.defaultInit ? monitorDefaults.defaultInit : monitorTemplate.defaultInit(),
+      defaultObserver: monitorDefaults && monitorDefaults.defaultObserver ? monitorDefaults.defaultObserver : monitorTemplate.defaultObserver(),
+      defaultPredicate: monitorDefaults && monitorDefaults.defaultPredicate ? monitorDefaults.defaultPredicate : monitorTemplate.defaultPredicate(),
+      defaultStop: monitorDefaults && monitorDefaults.defaultStop ? monitorDefaults.defaultStop : monitorTemplate.defaultStop(),
+      defaultTimed: monitorDefaults && monitorDefaults.defaultTimed ? monitorDefaults.defaultTimed : monitorTemplate.defaultTimed(),
+      defaultLogging: monitorDefaults && monitorDefaults.defaultLogging ? monitorDefaults.defaultLogging : monitorTemplate.defaultLogging()
+    };
+  }
+
+  createCpnMonitorDC(cpnElement, monitorDefaults) {
     console.log('createCpnMonitorDC(), cpnElement = ', cpnElement);
     const monitorTemplate = new DataCollectionMonitorTemplate();
 
+    monitorDefaults = this.getMonitorDefaults(monitorDefaults, monitorTemplate);
+
     return {
       _id: getNextId(),
       _name: monitorTemplate.typeDescription() + ' monitor',
@@ -718,22 +741,24 @@ export class ModelService {
       _disabled: 'false',
       node: this.getMonitorNodeList(cpnElement),
       declaration: [
-        { _name: 'Predicate', ml: { _id: getNextId(), __text: monitorTemplate.defaultPredicate() } },
-        { _name: 'Observer', ml: { _id: getNextId(), __text: monitorTemplate.defaultObserver() } },
-        { _name: 'Init function', ml: { _id: getNextId(), __text: monitorTemplate.defaultInit() } },
-        { _name: 'Stop', ml: { _id: getNextId(), __text: monitorTemplate.defaultStop() } },
+        { _name: 'Predicate', ml: { _id: getNextId(), __text: monitorDefaults.defaultPredicate } },
+        { _name: 'Observer', ml: { _id: getNextId(), __text: monitorDefaults.defaultObserver } },
+        { _name: 'Init function', ml: { _id: getNextId(), __text: monitorDefaults.defaultInit } },
+        { _name: 'Stop', ml: { _id: getNextId(), __text: monitorDefaults.defaultStop } },
       ],
       option: [
-        { _name: 'Timed', _value: monitorTemplate.defaultTimed() },
-        { _name: 'Logging', _value: monitorTemplate.defaultLogging() }
+        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
+        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
       ]
     };
   }
 
-  createCpnMonitorBP(cpnElement) {
+  createCpnMonitorBP(cpnElement, monitorDefaults) {
     console.log('createCpnMonitorBP(), cpnElement = ', cpnElement);
     const monitorTemplate = new BreakpointMonitorTemplate();
 
+    monitorDefaults = this.getMonitorDefaults(monitorDefaults, monitorTemplate);
+
     return {
       _id: getNextId(),
       _name: monitorTemplate.typeDescription() + ' monitor',
@@ -742,22 +767,24 @@ export class ModelService {
       _disabled: 'false',
       node: this.getMonitorNodeList(cpnElement),
       declaration: [
-        { _name: 'Predicate', ml: { _id: getNextId(), __text: monitorTemplate.defaultPredicate() } },
-        { _name: 'Observer', ml: { _id: getNextId(), __text: monitorTemplate.defaultObserver() } },
-        { _name: 'Init function', ml: { _id: getNextId(), __text: monitorTemplate.defaultInit() } },
-        { _name: 'Stop', ml: { _id: getNextId(), __text: monitorTemplate.defaultStop() } },
+        { _name: 'Predicate', ml: { _id: getNextId(), __text: monitorDefaults.defaultPredicate } },
+        { _name: 'Observer', ml: { _id: getNextId(), __text: monitorDefaults.defaultObserver } },
+        { _name: 'Init function', ml: { _id: getNextId(), __text: monitorDefaults.defaultInit } },
+        { _name: 'Stop', ml: { _id: getNextId(), __text: monitorDefaults.defaultStop } },
       ],
       option: [
-        { _name: 'Timed', _value: monitorTemplate.defaultTimed() },
-        { _name: 'Logging', _value: monitorTemplate.defaultLogging() }
+        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
+        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
       ]
     };
   }
 
-  createCpnMonitorUD(cpnElement) {
+  createCpnMonitorUD(cpnElement, monitorDefaults) {
     console.log('createCpnMonitorUD(), cpnElement = ', cpnElement);
     const monitorTemplate = new UserDefinedMonitorTemplate();
 
+    monitorDefaults = this.getMonitorDefaults(monitorDefaults, monitorTemplate);
+
     return {
       _id: getNextId(),
       _name: monitorTemplate.typeDescription() + ' monitor',
@@ -766,22 +793,24 @@ export class ModelService {
       _disabled: 'false',
       node: this.getMonitorNodeList(cpnElement),
       declaration: [
-        { _name: 'Predicate', ml: { _id: getNextId(), __text: monitorTemplate.defaultPredicate() } },
-        { _name: 'Observer', ml: { _id: getNextId(), __text: monitorTemplate.defaultObserver() } },
-        { _name: 'Init function', ml: { _id: getNextId(), __text: monitorTemplate.defaultInit() } },
-        { _name: 'Stop', ml: { _id: getNextId(), __text: monitorTemplate.defaultStop() } },
+        { _name: 'Predicate', ml: { _id: getNextId(), __text: monitorDefaults.defaultPredicate } },
+        { _name: 'Observer', ml: { _id: getNextId(), __text: monitorDefaults.defaultObserver } },
+        { _name: 'Init function', ml: { _id: getNextId(), __text: monitorDefaults.defaultInit } },
+        { _name: 'Stop', ml: { _id: getNextId(), __text: monitorDefaults.defaultStop } },
       ],
       option: [
-        { _name: 'Timed', _value: monitorTemplate.defaultTimed() },
-        { _name: 'Logging', _value: monitorTemplate.defaultLogging() }
+        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
+        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
       ]
     };
   }
 
-  createCpnMonitorWIF(cpnElement) {
+  createCpnMonitorWIF(cpnElement, monitorDefaults) {
     console.log('createCpnMonitorWIF(), cpnElement = ', cpnElement);
     const monitorTemplate = new WriteInFileMonitorTemplate();
 
+    monitorDefaults = this.getMonitorDefaults(monitorDefaults, monitorTemplate);
+
     return {
       _id: getNextId(),
       _name: monitorTemplate.typeDescription() + ' monitor',
@@ -790,22 +819,24 @@ export class ModelService {
       _disabled: 'false',
       node: this.getMonitorNodeList(cpnElement),
       declaration: [
-        { _name: 'Predicate', ml: { _id: getNextId(), __text: monitorTemplate.defaultPredicate() } },
-        { _name: 'Observer', ml: { _id: getNextId(), __text: monitorTemplate.defaultObserver() } },
-        { _name: 'Init function', ml: { _id: getNextId(), __text: monitorTemplate.defaultInit() } },
-        { _name: 'Stop', ml: { _id: getNextId(), __text: monitorTemplate.defaultStop() } },
+        { _name: 'Predicate', ml: { _id: getNextId(), __text: monitorDefaults.defaultPredicate } },
+        { _name: 'Observer', ml: { _id: getNextId(), __text: monitorDefaults.defaultObserver } },
+        { _name: 'Init function', ml: { _id: getNextId(), __text: monitorDefaults.defaultInit } },
+        { _name: 'Stop', ml: { _id: getNextId(), __text: monitorDefaults.defaultStop } },
       ],
       option: [
-        { _name: 'Timed', _value: monitorTemplate.defaultTimed() },
-        { _name: 'Logging', _value: monitorTemplate.defaultLogging() }
+        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
+        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
       ]
     };
   }
 
-  createCpnMonitorMS(cpnElement) {
+  createCpnMonitorMS(cpnElement, monitorDefaults) {
     console.log('createCpnMonitorMS(), cpnElement = ', cpnElement);
     const monitorTemplate = new MarkingSizeMonitorTemplate();
 
+    monitorDefaults = this.getMonitorDefaults(monitorDefaults, monitorTemplate);
+
     return {
       _id: getNextId(),
       _name: monitorTemplate.typeDescription() + ' monitor (' + this.getShapeNames(cpnElement) + ')',
@@ -814,16 +845,18 @@ export class ModelService {
       _disabled: 'false',
       node: this.getMonitorNodeList(cpnElement),
       option: [
-        { _name: 'Timed', _value: monitorTemplate.defaultTimed() },
-        { _name: 'Logging', _value: monitorTemplate.defaultLogging() }
+        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
+        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
       ]
     };
   }
 
-  createCpnMonitorLLDC(cpnElement) {
+  createCpnMonitorLLDC(cpnElement, monitorDefaults) {
     console.log('createCpnMonitorLLDC(), cpnElement = ', cpnElement);
     const monitorTemplate = new ListLengthDataCollectionMonitorTemplate();
 
+    monitorDefaults = this.getMonitorDefaults(monitorDefaults, monitorTemplate);
+
     return {
       _id: getNextId(),
       _name: monitorTemplate.typeDescription() + ' monitor (' + this.getShapeNames(cpnElement) + ')',
@@ -832,17 +865,19 @@ export class ModelService {
       _disabled: 'false',
       node: this.getMonitorNodeList(cpnElement),
       option: [
-        { _name: 'Timed', _value: monitorTemplate.defaultTimed() },
-        { _name: 'Logging', _value: monitorTemplate.defaultLogging() }
+        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
+        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
       ]
     };
   }
 
 
-  createMonitorCTODC(cpnElement: any): any {
+  createMonitorCTODC(cpnElement, monitorDefaults): any {
     console.log('createMonitorCTODC(), cpnElement = ', cpnElement);
     const monitorTemplate = new CountTransitionOccurrencesMonitorTemplate();
 
+    monitorDefaults = this.getMonitorDefaults(monitorDefaults, monitorTemplate);
+
     return {
       _id: getNextId(),
       _name: monitorTemplate.typeDescription() + ' monitor (' + this.getShapeNames(cpnElement) + ')',
@@ -851,16 +886,18 @@ export class ModelService {
       _disabled: 'false',
       node: this.getMonitorNodeList(cpnElement),
       option: [
-        { _name: 'Timed', _value: monitorTemplate.defaultTimed() },
-        { _name: 'Logging', _value: monitorTemplate.defaultLogging() }
+        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
+        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
       ]
     };
   }
 
-  createCpnMonitorPCBP(cpnElement) {
+  createCpnMonitorPCBP(cpnElement, monitorDefaults) {
     console.log('createCpnMonitorPCBP(), cpnElement = ', cpnElement);
     const monitorTemplate = new PlaceContentBreakPointMonitorTemplate();
 
+    monitorDefaults = this.getMonitorDefaults(monitorDefaults, monitorTemplate);
+
     return {
       _id: getNextId(),
       _name: monitorTemplate.typeDescription() + ' monitor (' + this.getShapeNames(cpnElement) + ')',
@@ -869,15 +906,17 @@ export class ModelService {
       _disabled: 'false',
       node: this.getMonitorNodeList(cpnElement),
       option: [
-        { _name: 'Timed', _value: monitorTemplate.defaultTimed() },
-        { _name: 'Logging', _value: monitorTemplate.defaultLogging() }
+        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
+        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
       ]
     };
   }
 
-  createCpnMonitorTEBP(cpnElement) {
+  createCpnMonitorTEBP(cpnElement, monitorDefaults) {
     console.log('createCpnMonitorTEBP(), cpnElement = ', cpnElement);
     const monitorTemplate = new TransitionEnabledBreakPointMonitorTemplate();
+
+    monitorDefaults = this.getMonitorDefaults(monitorDefaults, monitorTemplate);
 
     return {
       _id: getNextId(),
@@ -887,8 +926,8 @@ export class ModelService {
       _disabled: 'false',
       node: this.getMonitorNodeList(cpnElement),
       option: [
-        { _name: 'Timed', _value: monitorTemplate.defaultTimed() },
-        { _name: 'Logging', _value: monitorTemplate.defaultLogging() }
+        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
+        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
       ]
     };
   }

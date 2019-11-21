@@ -25,7 +25,7 @@ import {
 } from '../../lib/cpn-js/util/ModelUtil';
 
 import { AccessCpnService } from '../services/access-cpn.service';
-import { MonitorType, getMonitorTypeList } from '../common/monitors';
+import { MonitorType, getMonitorTypeList, getMonitorTypeId } from '../common/monitors';
 import { addNode, nodeToArray } from '../common/utils';
 import { SimulationService } from '../services/simulation.service';
 import { TEST_TOKEN_DATA } from '../test/test-data';
@@ -168,9 +168,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // VALIDATION STATUS
     this.eventService.on(Message.SERVER_INIT_NET_DONE, () => {
-      setTimeout(() => {
-        // this.updateElementStatus();
-      }, 10);
+      this.updateElementStatus();
     });
 
     // BINDINGS
@@ -723,20 +721,33 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
+    const nodes = [];
     const cpnElementList = [];
     for (const e of selectedElements) {
       if (e.cpnElement) {
         cpnElementList.push(e.cpnElement);
+        nodes.push(e.cpnElement._id);
       }
     }
 
-    const monitorsCpnParentElement = this.modelService.getMonitorsRoot();
-    const newMonitorCpnElement = this.modelService.createCpnMonitor(monitorType, cpnElementList);
-    if (newMonitorCpnElement) {
-      addNode(monitorsCpnParentElement, 'monitor', newMonitorCpnElement);
-      this.eventService.send(Message.MONITOR_CREATED, { newMonitorCpnElement: newMonitorCpnElement });
-    }
 
-    console.log('model-editor onCreateNewMonitor(), monitorsCpnParentElement = ', monitorsCpnParentElement);
+    const options = {
+      nodes: nodes,
+      type: getMonitorTypeId(monitorType)
+    };
+    this.accessCpnService.getMonitorDefaults(options).then((result) => {
+
+      // console.log(this.constructor.name, 'onCreateNewMonitor(), getMonitorDefaults(), result = ', result);
+
+      const monitorDefaults = result;
+
+      const monitorsCpnParentElement = this.modelService.getMonitorsRoot();
+      const newMonitorCpnElement = this.modelService.createCpnMonitor(monitorType, cpnElementList, monitorDefaults);
+      if (newMonitorCpnElement) {
+        addNode(monitorsCpnParentElement, 'monitor', newMonitorCpnElement);
+        this.eventService.send(Message.MONITOR_CREATED, { newMonitorCpnElement: newMonitorCpnElement });
+      }
+      console.log('model-editor onCreateNewMonitor(), monitorsCpnParentElement = ', monitorsCpnParentElement);
+    });
   }
 }

@@ -27,7 +27,7 @@ export class AccessCpnService {
 
   public tokenData = [];
 
-  public simulationReport:string = '';
+  public simulationReport: string = '';
 
   public initNetProcessing;
   public initSimProcessing;
@@ -196,7 +196,7 @@ export class AccessCpnService {
    */
   initNet(cpnJson, complexVerify = false, restartSimulator = false) {
     this.simulationReport = '';
-    
+
     if (this.initNetProcessing) {
       return;
     }
@@ -651,6 +651,43 @@ export class AccessCpnService {
         }
       );
 
+    });
+  }
+
+
+  /**
+   * POST /api/v2/cpn/sim/monitor/new
+   * {
+   *    "nodes": [
+   *      "string"
+   *    ],
+   *    "type": 0
+   * }
+   * 
+   * @param transId 
+   */
+  getMonitorDefaults(options) {
+    return new Promise((resolve, reject) => {
+
+      if (!this.sessionId) {
+        resolve();
+        return;
+      }
+
+      const postData = options;
+      console.log('AccessCpnService, getMonitorDefaults(), postData = ', postData, this.sessionId);
+
+      const url = CpnServerUrl.get() + '/api/v2/cpn/sim/monitor/new';
+      this.http.post(url, postData, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
+        (data: any) => {
+          console.log('AccessCpnService, getMonitorDefaults(), SUCCESS, data = ', data);
+          resolve(data);
+        },
+        (error) => {
+          console.error('AccessCpnService, getMonitorDefaults(), ERROR, data = ', error);
+          reject(error);
+        }
+      );
     });
   }
 

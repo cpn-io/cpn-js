@@ -189,96 +189,96 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         data.element.labelTarget.labelTarget || data.element.labelTarget :
         data.element;
 
-      if (this.createMonitorIntent) {
-        console.log('SHAPE_SELECT, element = ', element);
-        let newCpnElement, newNode, cpnType;
-        switch (this.createMonitorIntent) {
-          case this.monitorType.BP: {
-            if (element.type === this.cpnElementType.place || element.type === this.cpnElementType.transition) {
-              newCpnElement = this.modelService.createCpnMonitorBP(element.cpnElement);
-            }
-            break;
-          }
-          case this.monitorType.CTODC: {
-            if (element.type === this.cpnElementType.transition) {
-              newCpnElement = this.modelService.createMonitorCTODC(element.cpnElement);
-            }
-            break;
-          }
-          case this.monitorType.DC: {
-            if (element.type === this.cpnElementType.place || element.type === this.cpnElementType.transition) {
-              newCpnElement = this.modelService.createCpnMonitorDC(element.cpnElement);
-            }
-            break;
-          }
-          case this.monitorType.LLDC: {
-            if (element.type === this.cpnElementType.place) {
-              newCpnElement = this.modelService.createCpnMonitorLLDC(element.cpnElement);
-            }
-            break;
-          }
-          case this.monitorType.MS: {
-            if (element.type === this.cpnElementType.place) {
-              newCpnElement = this.modelService.createCpnMonitorMS(element.cpnElement);
-            }
-            break;
-          }
-          case this.monitorType.PCBP: {
-            if (element.type === this.cpnElementType.place) {
-              newCpnElement = this.modelService.createCpnMonitorPCBP(element.cpnElement);
-            }
-            break;
-          }
-          case this.monitorType.TEBP: {
-            if (element.type === this.cpnElementType.transition) {
-              newCpnElement = this.modelService.createCpnMonitorTEBP(element.cpnElement);
-            }
-            break;
-          }
-          case this.monitorType.UD: {
-            if (element.type === this.cpnElementType.place || element.type === this.cpnElementType.transition) {
-              newCpnElement = this.modelService.createCpnMonitorUD(element.cpnElement);
-            }
-            break;
-          }
-          case this.monitorType.WIF: {
-            if (element.type === this.cpnElementType.place || element.type === this.cpnElementType.transition) {
-              newCpnElement = this.modelService.createCpnMonitorWIF(element.cpnElement);
-            }
-            break;
-          }
-        }
-        if (newCpnElement) {
-          console.log('Monitor: newCpnElement = ', newCpnElement);
-          newNode = this.createMonitorNode(newCpnElement);
-          console.log('Monitor: newNode = ', newNode);
-          cpnType = newNode.type;
-          this.clearCreateMonitorIntent();
-          let monitorsRootNode;
-          // console.log('Monitor: this.nodes[0].children = ', this.nodes[0].children);
-          for (const monitors of this.nodes[0].children) {
-            if (monitors.id === 'Monitors') {
-              monitorsRootNode = monitors;
-              break;
-            }
-          }
+      // if (this.createMonitorIntent) {
+      //   console.log('SHAPE_SELECT, element = ', element);
+      //   let newCpnElement, newNode, cpnType;
+      //   switch (this.createMonitorIntent) {
+      //     case this.monitorType.BP: {
+      //       if (element.type === this.cpnElementType.place || element.type === this.cpnElementType.transition) {
+      //         newCpnElement = this.modelService.createCpnMonitorBP(element.cpnElement);
+      //       }
+      //       break;
+      //     }
+      //     case this.monitorType.CTODC: {
+      //       if (element.type === this.cpnElementType.transition) {
+      //         newCpnElement = this.modelService.createMonitorCTODC(element.cpnElement);
+      //       }
+      //       break;
+      //     }
+      //     case this.monitorType.DC: {
+      //       if (element.type === this.cpnElementType.place || element.type === this.cpnElementType.transition) {
+      //         newCpnElement = this.modelService.createCpnMonitorDC(element.cpnElement);
+      //       }
+      //       break;
+      //     }
+      //     case this.monitorType.LLDC: {
+      //       if (element.type === this.cpnElementType.place) {
+      //         newCpnElement = this.modelService.createCpnMonitorLLDC(element.cpnElement);
+      //       }
+      //       break;
+      //     }
+      //     case this.monitorType.MS: {
+      //       if (element.type === this.cpnElementType.place) {
+      //         newCpnElement = this.modelService.createCpnMonitorMS(element.cpnElement);
+      //       }
+      //       break;
+      //     }
+      //     case this.monitorType.PCBP: {
+      //       if (element.type === this.cpnElementType.place) {
+      //         newCpnElement = this.modelService.createCpnMonitorPCBP(element.cpnElement);
+      //       }
+      //       break;
+      //     }
+      //     case this.monitorType.TEBP: {
+      //       if (element.type === this.cpnElementType.transition) {
+      //         newCpnElement = this.modelService.createCpnMonitorTEBP(element.cpnElement);
+      //       }
+      //       break;
+      //     }
+      //     case this.monitorType.UD: {
+      //       if (element.type === this.cpnElementType.place || element.type === this.cpnElementType.transition) {
+      //         newCpnElement = this.modelService.createCpnMonitorUD(element.cpnElement);
+      //       }
+      //       break;
+      //     }
+      //     case this.monitorType.WIF: {
+      //       if (element.type === this.cpnElementType.place || element.type === this.cpnElementType.transition) {
+      //         newCpnElement = this.modelService.createCpnMonitorWIF(element.cpnElement);
+      //       }
+      //       break;
+      //     }
+      //   }
+      //   if (newCpnElement) {
+      //     console.log('Monitor: newCpnElement = ', newCpnElement);
+      //     newNode = this.createMonitorNode(newCpnElement);
+      //     console.log('Monitor: newNode = ', newNode);
+      //     cpnType = newNode.type;
+      //     this.clearCreateMonitorIntent();
+      //     let monitorsRootNode;
+      //     // console.log('Monitor: this.nodes[0].children = ', this.nodes[0].children);
+      //     for (const monitors of this.nodes[0].children) {
+      //       if (monitors.id === 'Monitors') {
+      //         monitorsRootNode = monitors;
+      //         break;
+      //       }
+      //     }
 
-          if (monitorsRootNode) {
-            console.log('Monitor: monitorsRootNode = ', monitorsRootNode);
+      //     if (monitorsRootNode) {
+      //       console.log('Monitor: monitorsRootNode = ', monitorsRootNode);
 
-            if (monitorsRootNode.cpnElement) {
-              const monitorList = nodeToArray(monitorsRootNode.cpnElement.monitor);
-              monitorList.push(newCpnElement);
-              monitorsRootNode.cpnElement.monitor = monitorList.length === 1 ? monitorList[0] : monitorList;
-            }
+      //       if (monitorsRootNode.cpnElement) {
+      //         const monitorList = nodeToArray(monitorsRootNode.cpnElement.monitor);
+      //         monitorList.push(newCpnElement);
+      //         monitorsRootNode.cpnElement.monitor = monitorList.length === 1 ? monitorList[0] : monitorList;
+      //       }
 
-            // TODO: дописать эту функция для добавления мониторов
-            // this.addCreatedNode(monitorsRootNode, newNode, newCpnElement, cpnType, monitorsRootNode.cpnElement, false);
-            monitorsRootNode.children.push(newNode);
-            this.updateTree();
-          }
-        }
-      }
+      //       // TODO: дописать эту функция для добавления мониторов
+      //       // this.addCreatedNode(monitorsRootNode, newNode, newCpnElement, cpnType, monitorsRootNode.cpnElement, false);
+      //       monitorsRootNode.children.push(newNode);
+      //       this.updateTree();
+      //     }
+      //   }
+      // }
     });
 
     // Update monitors

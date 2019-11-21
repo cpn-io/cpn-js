@@ -26,8 +26,8 @@ export function importCpnPage(diagram, cpnPageElement, alignToCenter) {
       elementRegistry = diagram.get('elementRegistry');
       layouter = diagram.get('layouter');
 
-      // const root = canvas.getRootElement();
-      canvas.setRootElement({ id: '__implicitroot', children: [] });
+      const root = canvas.getRootElement();
+      // canvas.setRootElement({ id: '__implicitroot', children: [] });
 
       eventBus.fire('import.render.start', { source: cpnPageElement });
 
@@ -51,7 +51,8 @@ export function importCpnPage(diagram, cpnPageElement, alignToCenter) {
       console.error('ERROR rendering CPN page diagram, e = ', ex);
       error = ex;
 
-      reject(ex);
+      // reject(ex);
+      resolve();
     }
 
     /**

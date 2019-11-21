@@ -22,6 +22,22 @@ export const MonitorTypeId = {
   TEBP: '8'
 };
 
+export function getMonitorTypeId(type) {
+  let id = MonitorTypeId.DC;
+  switch (type) {
+    case MonitorType.DC: id = MonitorTypeId.DC; break;
+    case MonitorType.MS: id = MonitorTypeId.MS; break;
+    case MonitorType.BP: id = MonitorTypeId.BP; break;
+    case MonitorType.UD: id = MonitorTypeId.UD; break;
+    case MonitorType.WIF: id = MonitorTypeId.WIF; break;
+    case MonitorType.LLDC: id = MonitorTypeId.LLDC; break;
+    case MonitorType.CTODC: id = MonitorTypeId.CTODC; break;
+    case MonitorType.PCBP: id = MonitorTypeId.PCBP; break;
+    case MonitorType.TEBP: id = MonitorTypeId.TEBP; break;
+  }
+  return id;
+}
+
 /**
  * Returns monitor type list for given element type
  * @param elementType - one of string values:

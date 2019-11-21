@@ -41,15 +41,12 @@
 
   <div *ngIf="monitor" style="width: 100%">
 
-
+    <!--
+      Error
+    -->
     <div *ngIf="accessCpnService.errorIds.includes(monitor._id)" class="errorPane">
       {{ accessCpnService.errorData[monitor._id] }}
     </div>
-
-    <!-- <div class="errorPane">
-      Error!
-    </div> -->
-
 
     <div class="blockHeader">
       {{ monitor._typedescription }}
@@ -157,7 +154,7 @@
 
                 <app-text-edit-row type="ml" name="declaration._name" [object]="declaration.ml" field="__text"
                   [readonly]="accessCpnService.isSimulation" [bordered]="false" (changed)="updateChanges()"
-                  (dblclick)="onDeclarationDblClick($event, declaration)">
+                  (mousedown)="onDeclarationDblClick($event, declaration)">
                 </app-text-edit-row>
 
               </div>

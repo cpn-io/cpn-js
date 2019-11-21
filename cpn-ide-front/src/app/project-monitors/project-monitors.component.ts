@@ -171,7 +171,7 @@ export class ProjectMonitorsComponent implements OnInit {
     //   this.sendSelectDeclarationNode(node, true);
     // }
 
-    this.eventService.send(Message.TREE_SELECT_DECLARATION_NODE, {
+    this.eventService.send(Message.TREE_SELECT_DECLARATION_NODE_NEW, {
       sender: this,
       openEditorTab: true,
       cpnType: 'ml',

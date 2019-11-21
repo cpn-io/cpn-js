@@ -8,8 +8,9 @@
     </div>
   </ng-container>
 
-  <tabs #tabsComponent *ngIf="!applicationService.isShowDocumentation" class="cpn-tabs"
-    style="background: #999 !important" (currentTabChange)="currentTabChange($event)">
+  <tabs #tabsComponent class="cpn-tabs"
+    style="background: #999 !important" (currentTabChange)="currentTabChange($event)"
+    [style.visibility]="applicationService.isShowDocumentation ? 'hidden' : 'visible'">
 
     <ng-container *ngFor="let tab of mlTabArray">
       <tab [id]="tab.id" [tabTitle]="tab.title">

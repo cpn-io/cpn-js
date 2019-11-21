@@ -1,4 +1,5 @@
 ## Declarations Panel
+---
 
 The **Declarations Panel** is located under the Project tree. It consists of five tabs (BatchOrdering, Globref, Color, Var, ML) classifying the declarations in a more detailed way than in the Project tree.
 

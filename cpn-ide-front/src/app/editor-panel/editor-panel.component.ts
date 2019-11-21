@@ -122,6 +122,8 @@ export class EditorPanelComponent implements OnInit, OnDestroy
   }
 
   openModelEditor(pageObject) {
+    this.applicationService.isShowDocumentation = false;
+
     return new Promise((resolve, reject) => {
       console.log('openPage(), pageObject = ', pageObject);
 
@@ -168,6 +170,8 @@ export class EditorPanelComponent implements OnInit, OnDestroy
   }
 
   openMlEditor() {
+    this.applicationService.isShowDocumentation = false;
+
     const pageId = 'ml-editor';
     const pageName = 'ML editor';
 

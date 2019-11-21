@@ -1,4 +1,5 @@
-## The Interface
+## GUI
+---
 
 To get started working on a CPN, you can either load an existing net or create a new one.
 

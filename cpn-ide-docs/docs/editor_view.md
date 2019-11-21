@@ -1,4 +1,6 @@
-# Editor View
+## Editor View
+---
+
 Editor View is the workspace for creating a net. You can either load an existing net or create a new one.
 
 ![Screenshot](img/editor-view.png)

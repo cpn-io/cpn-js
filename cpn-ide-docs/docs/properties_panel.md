@@ -1,4 +1,6 @@
-# Properties Panel
+## Properties Panel
+---
+
 The **Properties Panel** is located on the right side of the window. It shows the properties of an object including layout details.
 
 To bring up the Properties panel for a particular object, click on the object in the Editor View.

@@ -1,4 +1,4 @@
-site_name: CPN IDE Documentation
+site_name: CPN IDE User Guide
 
 use_directory_urls: false
 
@@ -6,7 +6,7 @@ extra_css: [css/extra.css]
 
 nav:
   - Home: index.md
-  - About: about.md
+# - About: about.md
   
 # theme:
 #     name: null

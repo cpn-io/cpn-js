@@ -1,4 +1,5 @@
-# Project Tree 
+## Project Tree 
+---
 
 Project tree is labeled with the name of the net. In the picture below, the net is named **mynet-for-sim-sub.cpn**. 
 

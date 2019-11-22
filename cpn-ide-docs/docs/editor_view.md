@@ -41,7 +41,7 @@ To create a **new subpage**, select the corresponding option in the right-click 
 
 ![Screenshot](img/mouse-menu.png)
 
-The subpage has a mark, it looks like this:
+The subpage has a mark, it looks as follows:
 
 ![Screenshot](img/subpage3.png)
 
@@ -107,8 +107,6 @@ To delete a group of objects:
 - Press the bin icon
 
 
-
-
 ## Inscriptions
 
 ### Adding inscriptions
@@ -137,7 +135,6 @@ Place inscriptions are created when you add/edit inscriptions for places. There 
 *Default initial marking inscription*
 
 ![Screenshot](img/place-initial-marking.png)
-
 
 
 ### Transition inscriptions
@@ -171,7 +168,6 @@ There are five inscriptions that may be associated with a transition. All are op
 *Default priority inscription*
 
 ![Screenshot](img/transition-priority.png)
-
 
 
 ### Arc inscriptions
@@ -219,3 +215,61 @@ While moving the object, you can see **magnetic guidelines** (orange lines in th
 Magnetic guidelines are horizontal and vertical lines which can be used for aligning your objects during the graphical editing of the net.
 
 ![Screenshot](img/guidelines.png)
+
+
+## Monitors
+
+A monitor is a mechanism in CPN Tools that is used to observe, inspect, control, or modify a simulation of a CP-net. Many different monitors can be defined for a given net. Monitors can inspect both the markings of places and the occurring binding elements during a simulation, and they can take appropriate actions based on the observations.
+
+### Create a monitor
+To create a monitor 
+
+- select the objects to be monitored. It can be done either by applying the **lasso tool** from the panel
+
+![Screenshot](img/lasso.png)
+
+or by pressing **CTRL + right mouse button click** (use the same combination to deselect an object).
+
+As a result, the selected objects get highlighted in green and a new green tab called **+ New monitor** appears in the Editor View. 
+
+- Having selected the objects, click on **+ New monitor** tab and choose a monitor type by one-click. 
+
+![Screenshot](img/view-monitor.png)
+
+There are 4 types of monitors that are common for any selected object/group of objects:
+
+- **Breakpoint monitors** are used to stop a simulation when certain conditions are fulfilled.
+
+- **Data collection monitors** are used to extract numerical data from a net. The numerical data is then used to calculate statistics, and the data can be saved in log files. The log files can then be post-processed, e.g. by importing them into spreadsheet programs or plotting them in graphs.
+
+- **Write-in-file monitors** are used to update files during simulations.
+
+- **User-defined monitors** are generic monitors that can be used for any purposes that are not covered by the other kinds of monitors. For example, a user-defined monitor could be used to update a message sequence chart (MSC) or to check that a particular property holds during the simulation.
+
+
+#### Monitor types for a place
+If you select just one place, a list of available monitor types looks as follows:
+
+![Screenshot](img/place-monitors.png)
+
+In addition to the common monitor types described above, there are two more types that are available only for a place.
+
+- A **Marking size** monitor extracts the number of tokens on a particular place during a simulation, and it is used to calculate, e.g. the average number of tokens on the place during a simulation.
+
+
+- A **Place content break point** monitor checks the number of tokens on a place to determine if a simulation should be stopped. The simulation can be stopped when the place is either empty – that is, when there are no tokens on the place – or not empty – that is, when there is at least one token on the place.
+
+To create a desired monitor, click on the corresponding option in the **+ New monitor** menu. 
+
+#### Monitor types for a transition
+If you select just one transition, a list of monitor types available looks as follows:
+
+![Screenshot](img/transition-monitors.png)
+
+In addition to the common monitor types described above, there are two more types that are available only for a transition.
+
+A **Count transition occurence** monitor is used to calculate the number of times a particular transition occurs during a simulation.
+
+A **Transition enabled** monitor checks whether the appropriate transition is enabled after every step in a simulation. If at least one place in the net has a timed color set, then the Transition enabled monitor will also check if the transition is enabled whenever the model time is increased. A Transition enabled monitor will not check if the transition is enabled before the first step in a simulation.
+
+To create a desired monitor, click on the corresponding option in the **+ New monitor** menu. 

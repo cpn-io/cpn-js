@@ -1,7 +1,7 @@
 ## Editor View
 ---
 
-Editor View is the workspace for creating a net. You can either load an existing net or create a new one.
+Editor View is a workspace for creating a net. You can either load an existing net or create a new one.
 
 ![Screenshot](img/editor-view.png)
 
@@ -41,9 +41,11 @@ To create a **new subpage**, select the corresponding option in the right-click 
 
 ![Screenshot](img/mouse-menu.png)
 
-The subpage has a mark, it looks as follows:
+The subpage has a blue mark, it looks as follows:
 
 ![Screenshot](img/subpage3.png)
+
+You can move this mark to any place of the workspace.
 
 To connect a subpage to other objects of the net, use arcs.
 

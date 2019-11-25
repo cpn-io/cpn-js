@@ -101,7 +101,7 @@ The declaration will be in text edit mode when it appears, so it can be modified
 
 
 ## Monitors
-The Monitors entry of the Project Tree provides information about the monitors applied to the net. To open the subentries of the Monitors entry, click on the black triangle next to the name of a particular monitor. Edititing of the monitors subentries is available within the Monitor tab of the Properties Panel.
+The Monitors entry of the Project Tree provides information about the monitors applied to the net. To open the subentries of the Monitors entry,click on the black triangle next to the name of a particular monitor. Edititing of the monitors subentries is available within the Monitor tab of the Properties Panel.
 
 ![Screenshot](img/tree-monitors.png)
 

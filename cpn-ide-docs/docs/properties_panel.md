@@ -178,17 +178,17 @@ It periodically examines the places and transitions associated with the monitor.
 <br>
 
 #### Cloning a monitor
-To clone a monitor, click on the left-end button. 
+To clone a monitor, click on the left-end button: 
 
 ![Screenshot](img/mon-up-panel.png)
 
 #### Disabling a monitor
-To enable/disable a monitor, click on the switch button in the middle.
+To enable/disable a monitor, click on the switch button in the middle:
 
 ![Screenshot](img/mon-up-panel.png)
 
 #### Deleting a monitor
-To delete a monitor, click on **- Delete**
+To delete a monitor, click on **- Delete**:
 
 ![Screenshot](img/mon-up-panel.png)
 

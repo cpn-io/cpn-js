@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="img/favicon.ico">
-        <title>Properties panel - CPN IDE User Guide</title>
+        <title>Properties Panel - CPN IDE User Guide</title>
         <link href="css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="css/font-awesome.min.css" rel="stylesheet">
         <link href="css/base.css" rel="stylesheet">
@@ -71,18 +71,21 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#properties-panel">Properties Panel</a></li>
-            <li><a href="#layout-details">Layout details</a></li>
-        <li class="main "><a href="#place-properties">Place properties</a></li>
-        <li class="main "><a href="#transition-properties">Transition properties</a></li>
-        <li class="main "><a href="#arc-connection-properties">Arc (connection) properties</a></li>
+            <li><a href="#properties-tab">Properties tab</a></li>
+            <li><a href="#place-properties">Place properties</a></li>
+            <li><a href="#transition-properties">Transition properties</a></li>
+            <li><a href="#arc-connection-properties">Arc (connection) properties</a></li>
+            <li><a href="#monitor-tab">Monitor tab</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h2 id="properties-panel">Properties Panel</h2>
+<h1 id="properties-panel">Properties Panel</h1>
 <hr />
-<p>The <strong>Properties Panel</strong> is located on the right side of the window. It shows the properties of an object including layout details.</p>
-<p>To bring up the Properties panel for a particular object, click on the object in the Editor View.</p>
+<p>The <strong>Properties Panel</strong> is located on the right side of the window. It includes 2 tabs: <strong>Properties</strong> and <strong>Monitor</strong>.</p>
+<h2 id="properties-tab">Properties tab</h2>
+<p>Properties tab shows the properties of an object including layout details.</p>
+<p>To bring up Properties tab for a particular object, click on the object in the Editor View.</p>
 <p><img alt="Screenshot" src="img/properties-panel.png" /></p>
 <h3 id="layout-details">Layout details</h3>
 <p>To open the layout details menu, click on the triangle next to "Layout" if it's not already opened. </p>
@@ -94,7 +97,7 @@
 <p><strong>Fill color</strong> allows to select an object color. </p>
 <h2 id="place-properties">Place properties</h2>
 <p><img alt="Screenshot" src="img/properties-panel.png" /></p>
-<p>To bring up the Properties panel for a particular place, click on the place in the Editor View.</p>
+<p>To bring up Properties tab for a particular place, click on the place in the Editor View.</p>
 <p>To edit a property, click on the cell to enter text edit mode. </p>
 <p>Object <strong>ID</strong> can't be edited.  </p>
 <p><strong>Name</strong> identifies a place, it may contain any sequence of characters.</p>
@@ -106,7 +109,7 @@
 <img alt="Screenshot" src="img/in-out.png" /></p>
 <h2 id="transition-properties">Transition properties</h2>
 <p><img alt="Screenshot" src="img/transition-properties.png" /> </p>
-<p>To bring up the Properties panel for a particular transition, click on the transition in the Editor View.</p>
+<p>To bring up Properties tab for a particular transition, click on the transition in the Editor View.</p>
 <p>To edit a property, click on the cell to enter text edit mode. </p>
 <p>Object <strong>ID</strong> can't be edited.  </p>
 <p><strong>Name</strong> identifies a transition, it may contain any sequence of characters. It corresponds to a name inscription given to the transition in the Editor View.</p>
@@ -121,10 +124,10 @@ It corresponds to a time inscription given to the transition in the Editor View.
 <p><img alt="Screenshot" src="img/subpage-properties1.png" /> </p>
 <h2 id="arc-connection-properties">Arc (connection) properties</h2>
 <p><img alt="Screenshot" src="img/arc-properties.png" /> </p>
-<p>To bring up the Properties Panel for a particular arc, click on the arc in the Editor View.</p>
+<p>To bring up the Properties tab for a particular arc, click on the arc in the Editor View.</p>
 <p>To edit a property, click on the cell to enter text edit mode. </p>
 <p>Object <strong>ID</strong> can't be edited.  </p>
-<p><strong>Annotation</strong> is a CPN ML expression that evaluates to a multiset or a single object. It corresponds to an arc inscription given to the arc in the Editor View. You can edit it either in the Editor View or in the Properties Panel.</p>
+<p><strong>Annotation</strong> is a CPN ML expression that evaluates to a multiset or a single object. It corresponds to an arc inscription given to the arc in the Editor View. You can edit it either in the Editor View or in the Properties tab.</p>
 <p><strong>Direction</strong> allows to select the direction of an arc.</p>
 <p><img alt="Screenshot" src="img/direction.png" /> </p>
 <ul>
@@ -132,7 +135,96 @@ It corresponds to a time inscription given to the transition in the Editor View.
 <li>TtoP - from transition to place</li>
 <li>BOTHDIR - both directions</li>
 </ul>
-<p><strong>Port bind</strong> property shows up if an arc is connected to a substitution transition. </p></div>
+<p><strong>Port bind</strong> property shows up if an arc is connected to a substitution transition. </p>
+<h2 id="monitor-tab">Monitor tab</h2>
+<p>Monitor tab provides information about a monitor applied to a net. </p>
+<p><img alt="Screenshot" src="img/mon-general-info.png" /></p>
+<p>There can be 8 types of monitors:</p>
+<ul>
+<li>Breakpoint monitor</li>
+<li>Data collection monitor</li>
+<li>Write-in-file monitor</li>
+<li>User-defined monitor</li>
+<li>Marking size monitor</li>
+<li>Place content break point monitor</li>
+<li>Count transition occurence monitor</li>
+<li>Transition enabled monitor</li>
+</ul>
+<p>To see information about a particular monitor, click on the corresponding entry in the Monitors block of the Project tree. After that the information appears on the Monitor tab of the Properties Panel.</p>
+<h3 id="modifyng-a-monitor">Modifyng a monitor</h3>
+<p>Monitor tab allows to modify a monitor. Changes made in the monitor tab appear concurrently in the corresponding entries of the Project tree.</p>
+<p>Monitor tab for each kind of monitors contains the following entries:</p>
+<ul>
+<li>
+<p><strong>ID</strong> is non-editable.
+<br></p>
+</li>
+<li>
+<p><strong>Name</strong> shows the name of the monitor. Click on the name to enter text edit mode if you need to change it.
+<br></p>
+</li>
+<li>
+<p><strong>Type</strong> is non-editable.
+<br></p>
+</li>
+<li>
+<p><strong>Timed</strong> can be <strong>True</strong> or <strong>False</strong>. Press the black triangle to select one of the options.
+<br></p>
+</li>
+<li>
+<p><strong>Logging</strong> determines whether the data values that are collected during a simulation should be saved in a log file. Can be <strong>True</strong> or <strong>False</strong>. Press the black triangle to select one of the options.
+<br></p>
+</li>
+<li>
+<p><strong>Disabled</strong> shows if a monitor is active or inactive. If a monitor is disabled, the value is true. To enable and disable a monitor, move a <strong>switch button</strong> on the upper panel of the Monitor tab (the one in the middle in the picture below). </p>
+</li>
+</ul>
+<p><img alt="Screenshot" src="img/mon-up-panel.png" /></p>
+<p><strong>Nodes</strong> entry contains information about objects that are monitored. </p>
+<p>Deleting objects from a monitor is made by clicking the <strong>bin icon</strong>.</p>
+<p><img alt="Screenshot" src="img/nodes.png" /></p>
+<p>The Monitor tab for such monitor types as</p>
+<ul>
+<li>Marking size monitor</li>
+<li>Place content break point monitor</li>
+<li>Count transition occurence monitor</li>
+<li>Transition enabled monitor</li>
+</ul>
+<p>contains the Monitoring functions code. <strong>To edit function</strong> code, click on it to get text edit mode. </p>
+<p><img alt="Screenshot" src="img/func-code.png" /></p>
+<p><em>Predicate</em> - predicate function is for checking if the relevant condition is fulfilled. It determines when a monitor should be activated.
+It periodically examines the places and transitions associated with the monitor. </p>
+<p><em>Observer</em> - observation function is for extracting information from the places and transitions that are associated with the monitor.</p>
+<p><em>Init function</em> - initialization function is used to extract data from a CP-net and/or initialize monitors before a simulation is started the first time. </p>
+<p><em>Stop</em> - stop function is used to extract data from a CPN and/or conclude the work of a monitor when simulation stop criteria have been met.
+<br>
+<br></p>
+<h4 id="cloning-a-monitor">Cloning a monitor</h4>
+<p>To clone a monitor, click on the left-end button: </p>
+<p><img alt="Screenshot" src="img/mon-up-panel.png" /></p>
+<h4 id="disabling-a-monitor">Disabling a monitor</h4>
+<p>To enable/disable a monitor, click on the switch button in the middle:</p>
+<p><img alt="Screenshot" src="img/mon-up-panel.png" /></p>
+<h4 id="deleting-a-monitor">Deleting a monitor</h4>
+<p>To delete a monitor, click on <strong>- Delete</strong>:</p>
+<p><img alt="Screenshot" src="img/mon-up-panel.png" /></p>
+<h3 id="examples-of-monitors">Examples of monitors</h3>
+<h4 id="breakpoint-monitor">Breakpoint monitor</h4>
+<p><img alt="Screenshot" src="img/breakpoint-mon.png" /> </p>
+<h4 id="data-collection-monitor">Data collection monitor</h4>
+<p><img alt="Screenshot" src="img/data-col-mon.png" /> </p>
+<h4 id="write-in-file-monitor">Write-in-file monitor</h4>
+<p><img alt="Screenshot" src="img/write-in-file-mon.png" /> </p>
+<h4 id="user-defined-monitor">User-defined monitor</h4>
+<p><img alt="Screenshot" src="img/user-def-mon.png" /> </p>
+<h4 id="marking-size-monitor">Marking size monitor</h4>
+<p><img alt="Screenshot" src="img/marking-size.png" /></p>
+<h4 id="place-content-break-point-monitor">Place content break point monitor</h4>
+<p><img alt="Screenshot" src="img/place-content-mon.png" /> </p>
+<h4 id="count-transition-occurence-monitor">Count transition occurence monitor</h4>
+<p><img alt="Screenshot" src="img/count-trans-occur.png" /> </p>
+<h4 id="transition-enabled-monitor">Transition enabled monitor</h4>
+<p><img alt="Screenshot" src="img/trans-enabled-mon.png" /> </p></div>
         </div>
 
         <footer class="col-md-12">

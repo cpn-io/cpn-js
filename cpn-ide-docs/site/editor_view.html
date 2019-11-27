@@ -85,13 +85,15 @@
             <li><a href="#diagram-zooming">Diagram zooming</a></li>
             <li><a href="#resizing-objects">Resizing objects</a></li>
             <li><a href="#diagram-moving">Diagram moving</a></li>
+        <li class="main "><a href="#monitors">Monitors</a></li>
+            <li><a href="#create-a-monitor">Create a monitor</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
 <h2 id="editor-view">Editor View</h2>
 <hr />
-<p>Editor View is the workspace for creating a net. You can either load an existing net or create a new one.</p>
+<p>Editor View is a workspace for creating a net. You can either load an existing net or create a new one.</p>
 <p><img alt="Screenshot" src="img/editor-view.png" /></p>
 <p>To create a new net, click on <strong>New Project</strong>.</p>
 <p>To load a net, click on <strong>Open project</strong> and select the desired net.</p>
@@ -115,8 +117,9 @@
 A page that contains a substitution transition is called a <strong>superpage</strong>. </p>
 <p>To create a <strong>new subpage</strong>, select the corresponding option in the right-click menu. A new page is created. It is set as a subpage in the Project Tree panel.</p>
 <p><img alt="Screenshot" src="img/mouse-menu.png" /></p>
-<p>The subpage has a mark, it looks like this:</p>
+<p>The subpage has a blue mark, it looks as follows:</p>
 <p><img alt="Screenshot" src="img/subpage3.png" /></p>
+<p>You can move this mark to any place of the workspace.</p>
 <p>To connect a subpage to other objects of the net, use arcs.</p>
 <h4 id="creating-diagram-on-subpage">Creating diagram on subpage</h4>
 <p>Having made a subpage, create new objects on it. You can also move already existing objects from the superpage to the subpage. To move a group of existing objects, use the menu:</p>
@@ -144,7 +147,7 @@ To get a port bind for an arc:
 - click on the arc
 - select a port bind in the corresponding line of the Properties panel</p>
 <p><img alt="Screenshot" src="img/portbind.png" /></p>
-<p><strong>If you don't set port types and port binds for places and arcs surrounding a substitution transition, a mistake occurs</strong>. (see an example in the picture below)</p>
+<p><strong>If you don't set port types and port binds for places and arcs surrounding a substitution transition, mistakes occur</strong>. (see an example in the picture below)</p>
 <p><img alt="Screenshot" src="img/binderror.png" /></p>
 <h3 id="deleting-objects">Deleting objects</h3>
 <p>To delete a place, an arc or a transition put the cursor on the object to be removed, bring up the right-click menu and select the bin icon.</p>
@@ -230,7 +233,56 @@ There are five inscriptions that may be associated with a transition. All are op
 <p>To move a particular object, put the cursor in the object, hold down the left mouse key and move the pointer.</p>
 <p>While moving the object, you can see <strong>magnetic guidelines</strong> (orange lines in the picture below). </p>
 <p>Magnetic guidelines are horizontal and vertical lines which can be used for aligning your objects during the graphical editing of the net.</p>
-<p><img alt="Screenshot" src="img/guidelines.png" /></p></div>
+<p><img alt="Screenshot" src="img/guidelines.png" /></p>
+<h2 id="monitors">Monitors</h2>
+<p>A monitor is a mechanism in CPN Tools that is used to observe, inspect, control, or modify a simulation of a CP-net. Many different monitors can be defined for a given net. Monitors can inspect both the markings of places and the occurring binding elements during a simulation, and they can take appropriate actions based on the observations.</p>
+<h3 id="create-a-monitor">Create a monitor</h3>
+<p>To create a monitor </p>
+<ul>
+<li>select the objects to be monitored. It can be done either by applying the <strong>lasso tool</strong> from the panel</li>
+</ul>
+<p><img alt="Screenshot" src="img/lasso.png" /></p>
+<p>or by pressing <strong>CTRL + right mouse button click</strong> (use the same combination to deselect an object).</p>
+<p>As a result, the selected objects get highlighted in green and a new green tab called <strong>+ New monitor</strong> appears in the Editor View. </p>
+<ul>
+<li>Having selected the objects, click on <strong>+ New monitor</strong> tab and choose a monitor type by one-click. </li>
+</ul>
+<p><img alt="Screenshot" src="img/view-monitor.png" /></p>
+<p>There are 4 types of monitors that are common for any selected object/group of objects:</p>
+<ul>
+<li>
+<p><strong>Breakpoint monitors</strong> are used to stop a simulation when certain conditions are fulfilled.</p>
+</li>
+<li>
+<p><strong>Data collection monitors</strong> are used to extract numerical data from a net. The numerical data is then used to calculate statistics, and the data can be saved in log files. The log files can then be post-processed, e.g. by importing them into spreadsheet programs or plotting them in graphs.</p>
+</li>
+<li>
+<p><strong>Write-in-file monitors</strong> are used to update files during simulations.</p>
+</li>
+<li>
+<p><strong>User-defined monitors</strong> are generic monitors that can be used for any purposes that are not covered by the other kinds of monitors. For example, a user-defined monitor could be used to update a message sequence chart (MSC) or to check that a particular property holds during the simulation.</p>
+</li>
+</ul>
+<h4 id="monitor-types-for-a-place">Monitor types for a place</h4>
+<p>If you select just one place, a list of available monitor types looks as follows:</p>
+<p><img alt="Screenshot" src="img/place-monitors.png" /></p>
+<p>In addition to the common monitor types described above, there are two more types that are available only for a place.</p>
+<ul>
+<li>
+<p>A <strong>Marking size</strong> monitor extracts the number of tokens on a particular place during a simulation, and it is used to calculate, e.g. the average number of tokens on the place during a simulation.</p>
+</li>
+<li>
+<p>A <strong>Place content break point</strong> monitor checks the number of tokens on a place to determine if a simulation should be stopped. The simulation can be stopped when the place is either empty – that is, when there are no tokens on the place – or not empty – that is, when there is at least one token on the place.</p>
+</li>
+</ul>
+<p>To create a desired monitor, click on the corresponding option in the <strong>+ New monitor</strong> menu. </p>
+<h4 id="monitor-types-for-a-transition">Monitor types for a transition</h4>
+<p>If you select just one transition, a list of monitor types available looks as follows:</p>
+<p><img alt="Screenshot" src="img/transition-monitors.png" /></p>
+<p>In addition to the common monitor types described above, there are two more types that are available only for a transition.</p>
+<p>A <strong>Count transition occurence</strong> monitor is used to calculate the number of times a particular transition occurs during a simulation.</p>
+<p>A <strong>Transition enabled</strong> monitor checks whether the appropriate transition is enabled after every step in a simulation. If at least one place in the net has a timed color set, then the Transition enabled monitor will also check if the transition is enabled whenever the model time is increased. A Transition enabled monitor will not check if the transition is enabled before the first step in a simulation.</p>
+<p>To create a desired monitor, click on the corresponding option in the <strong>+ New monitor</strong> menu. </p></div>
         </div>
 
         <footer class="col-md-12">

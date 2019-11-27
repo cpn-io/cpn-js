@@ -794,7 +794,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       cpnParentElement = treeNode.parent.data.cpnElement;
     }
 
-    const defValue = this.settings.getAppSettings()[type];
+    const defValue = this.settings.appSettings[type];
 
     let cpnType;
 
@@ -949,7 +949,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
               }
             }
             if (upperPage) {
-              this.eventService.send(Message.PAGE_OPEN, { pageObject: upperPage });
+              this.eventService.send(Message.PAGE_TAB_OPEN, { pageObject: upperPage });
             }
 
             this.modelService.deleteFromModel(treeNode.data.cpnElement);
@@ -957,7 +957,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
             // update instances
             this.modelService.updateInstances();
 
-            this.eventService.send(Message.PAGE_DELETE, { id: treeNode.id, parent: treeNode.parent.id });
+            this.eventService.send(Message.PAGE_TAB_CLOSE, { id: treeNode.id });
             this.eventService.send(Message.MODEL_RELOAD);
 
             deleted = true;
@@ -2242,7 +2242,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     console.log(event.node);
 
     if (event && event.node && this.isPage(event.node)) {
-      this.eventService.send(Message.PAGE_OPEN, { pageObject: event.node.data.cpnElement });
+      this.eventService.send(Message.PAGE_TAB_OPEN, { pageObject: event.node.data.cpnElement });
     }
 
     if (event && event.node && this.isMonitor(event.node)) {

@@ -66,6 +66,20 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, I
     return transformed && transformed.length > 0 ? transformed[0] : layout;
   }
 
+  isFiltered() {
+    if (!this.tree.filter || this.tree.filter === '') {
+      return true;
+    }
+
+    let layout = this.modelService.cpnDeclarationToString(this.type, this.declaration);
+
+    if (layout.toLowerCase().includes(this.tree.filter.toLowerCase())) {
+      return true;
+    }
+
+    return false;
+  }
+
   setSelected(cpnParentElement, cpnElement, type) {
     this.tree.selected.treeNodeComponent = this;
 

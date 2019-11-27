@@ -345,7 +345,7 @@ export class ModelService {
    * Correct Place types. It should be UNIT by default if empty
    */
   updatePlaceTypes() {
-    const defPlaceType = this.settings.getAppSettings()['type'];
+    const defPlaceType = this.settings.appSettings['type'];
 
     const allPlaces = this.getAllPlaces();
     for (const p of allPlaces) {
@@ -1592,7 +1592,7 @@ export class ModelService {
    */
   getNextPageName(pageName) {
     let n = 1;
-    let newPageName = pageName ? pageName : this.settings.getAppSettings()['page'] + ' ' + n;
+    let newPageName = pageName ? pageName : this.settings.appSettings['page'] + ' ' + n;
 
     for (const page of this.getAllPages()) {
       if (newPageName === page.pageattr._name) {
@@ -1762,19 +1762,20 @@ export class ModelService {
   newDeclaration(parentBlock, declarationType) {
     if (parentBlock && declarationType) {
       let parentCpnElement = parentBlock;
-      let newLayout = '(* New declaration *)';
+
+      let newLayout = this.settings.appSettings['declaration'];
       switch (declarationType) {
         case 'globref':
-          newLayout = 'globref CONST = 1;';
+          newLayout = this.settings.appSettings['globref'];
           break;
         case 'color':
-          newLayout = 'colset TYPE = unit;';
+          newLayout = this.settings.appSettings['color'];
           break;
         case 'var':
-          newLayout = 'var v:UNIT;';
+          newLayout = this.settings.appSettings['var'];
           break;
         case 'fun':
-          newLayout = 'fun Fun1() = [];';
+          newLayout = this.settings.appSettings['fun'];
           break;
       }
 

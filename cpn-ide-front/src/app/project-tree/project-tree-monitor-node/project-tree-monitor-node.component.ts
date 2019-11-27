@@ -43,6 +43,18 @@ export class ProjectTreeMonitorNodeComponent implements OnInit, DoCheck, ITreeNo
     }
   }
 
+  isFiltered() {
+    if (!this.tree.filter || this.tree.filter === '') {
+      return true;
+    }
+
+    if (this.monitor._name.toLowerCase().includes(this.tree.filter.toLowerCase())) {
+      return true;
+    }
+
+    return false;
+  }
+
   onSelectedOption(option) {
     this.tree.selected.treeNodeComponent = this;
 

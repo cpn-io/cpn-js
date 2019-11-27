@@ -63,18 +63,22 @@ export function getMonitorTypeList(elementType) {
 export function getMonitorNodeTypeList(monitorTypeId) {
   const shapeTypeList = [];
 
-  if ([MonitorTypeId.CTODC, MonitorTypeId.TEBP, MonitorTypeId.DC, MonitorTypeId.BP, MonitorTypeId.UD, MonitorTypeId.WIF].includes(monitorTypeId)) {
+  console.log('getMonitorNodeTypeList(), monitorTypeId = ', monitorTypeId);
+
+  if ([MonitorTypeId.CTODC, MonitorTypeId.TEBP, MonitorTypeId.DC, MonitorTypeId.BP, MonitorTypeId.UD, MonitorTypeId.WIF].includes('' + monitorTypeId)) {
     shapeTypeList.push('transition');
   }
-  if ([MonitorTypeId.MS, MonitorTypeId.PCBP, MonitorTypeId.DC, MonitorTypeId.BP, MonitorTypeId.UD, MonitorTypeId.WIF].includes(monitorTypeId)) {
+  if ([MonitorTypeId.MS, MonitorTypeId.PCBP, MonitorTypeId.DC, MonitorTypeId.BP, MonitorTypeId.UD, MonitorTypeId.WIF].includes('' + monitorTypeId)) {
     shapeTypeList.push('place');
   }
   if ([MonitorTypeId.LLDC].includes(monitorTypeId)) {
     shapeTypeList.push('placeWithListColor');
   }
-  if ([MonitorTypeId.DC, MonitorTypeId.BP, MonitorTypeId.UD, MonitorTypeId.WIF].includes(monitorTypeId)) {
+  if ([MonitorTypeId.DC, MonitorTypeId.BP, MonitorTypeId.UD, MonitorTypeId.WIF].includes('' + monitorTypeId)) {
     shapeTypeList.push('group');
   }
+
+  console.log('getMonitorNodeTypeList(), shapeTypeList = ', shapeTypeList);
 
   return shapeTypeList;
 }

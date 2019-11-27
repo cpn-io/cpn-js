@@ -103,4 +103,9 @@ export class ProjectDeclarationsComponent implements OnInit, AfterViewInit {
     }
   }
 
+  onFilterChanged(event) {
+    console.log(this.constructor.name, 'onFilterChanged(), event = ', event);
+    this.tree.filter = event; 
+  }
+
 }

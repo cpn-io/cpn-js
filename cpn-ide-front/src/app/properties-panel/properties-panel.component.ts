@@ -93,7 +93,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   updateJsonScheduled = false;
 
   ngOnInit() {
-    this.eventService.on(Message.PAGE_OPEN, (data) => {
+    this.eventService.on(Message.PAGE_TAB_OPEN, (data) => {
       // console.log(this.constructor.name, 'Message.PAGE_OPEN, data = ', data);
 
       this.showPageAttrs(data.pageObject);

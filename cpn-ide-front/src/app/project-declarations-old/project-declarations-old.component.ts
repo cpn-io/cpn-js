@@ -197,7 +197,7 @@ export class ProjectDeclarationsOldComponent implements OnInit, OnDestroy {
     declarationNode.cpnParentElement = cpnParentElement;
     declarationNode.cpnElement = cpnElement;
     declarationNode.id = cpnElement._id;
-    declarationNode.text = declarationNode.name = this.settings.getAppSettings()['declaration'];
+    declarationNode.text = declarationNode.name = this.settings.appSettings['declaration'];
 
     if (cpnElement && key) {
       switch (key) {
@@ -290,7 +290,7 @@ export class ProjectDeclarationsOldComponent implements OnInit, OnDestroy {
       cpnParentElement = node.cpnParentElement;
     }
 
-    const defValue = this.settings.getAppSettings()[type];
+    const defValue = this.settings.appSettings[type];
 
     let cpnType;
 

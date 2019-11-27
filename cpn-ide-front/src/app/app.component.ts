@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
 import { SettingsService } from './services/settings.service';
 import { AccessCpnService } from './services/access-cpn.service';
@@ -8,7 +8,7 @@ import { AccessCpnService } from './services/access-cpn.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit, OnDestroy {
   title = 'CPN-IDE';
 
   constructor(
@@ -20,6 +20,11 @@ export class AppComponent {
     // p._z = 234;
     // console.log('TEST, p = ', p);
     // console.log('TEST, p = ', JSON.stringify(p));
+  }
+
+  ngOnInit(): void {
+  }
+  ngOnDestroy(): void {
   }
 
   launchWindow() {

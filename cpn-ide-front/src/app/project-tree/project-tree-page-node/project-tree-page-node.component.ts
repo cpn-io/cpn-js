@@ -32,6 +32,18 @@ export class ProjectTreePageNodeComponent implements OnInit, ITreeNode {
   ngOnInit() {
   }
 
+  isFiltered() {
+    if (!this.tree.filter || this.tree.filter === '') {
+      return true;
+    }
+
+    if (this.page && this.page.pageattr._name.toLowerCase().includes(this.tree.filter.toLowerCase())) {
+      return true;
+    }
+
+    return false;
+  }
+
   hasSubpages() {
     if (this.page) {
       for (const trans of nodeToArray(this.page.trans)) {
@@ -51,7 +63,7 @@ export class ProjectTreePageNodeComponent implements OnInit, ITreeNode {
     this.tree.selected.type = type;
     this.tree.selected.cpnElement = cpnElement;
 
-    this.eventService.send(Message.PAGE_OPEN, { pageObject: this.tree.selected.cpnElement });
+    this.eventService.send(Message.PAGE_TAB_OPEN, { pageObject: this.tree.selected.cpnElement });
   }
 
   focus(id) {
@@ -123,7 +135,7 @@ export class ProjectTreePageNodeComponent implements OnInit, ITreeNode {
     this.page.pageattr._name = event.target.textContent;
   }
   onNew(event: any = undefined) {
-    const defValue = this.settings.getAppSettings()['page'];
+    const defValue = this.settings.appSettings['page'];
     const newPage = this.modelService.createCpnPage(defValue);
     this.modelService.addCpnElement(this.parentBlock, newPage, 'page');
     this.modelService.updateInstances();
@@ -134,7 +146,7 @@ export class ProjectTreePageNodeComponent implements OnInit, ITreeNode {
     console.log(this.constructor.name, 'onDelete(), this.parentBlock, this.page, this.type = ', this.parentBlock, this.page, this.type);
     this.modelService.removeCpnElement(this.parentBlock, this.page, this.type);
     this.modelService.updateInstances();
-    this.eventService.send(Message.PAGE_DELETE, { id: this.page._id });
+    this.eventService.send(Message.PAGE_TAB_CLOSE, { id: this.page._id });
   }
   onUp(event: any = undefined) {
     // this.modelService.moveCpnElement(this.parentBlock, this.page, this.type, 'up');

@@ -8,75 +8,38 @@ import { SettingsService } from '../services/settings.service';
 })
 export class ApplicationSettingsComponent implements OnInit {
 
-  public showTable = 'not';
-  appSettingsKeys;
-  appSettings;
+  Object = Object;
 
-  constructor(private settings: SettingsService) { }
+  public showTable = 'not';
+
+  constructor(public settings: SettingsService) { }
 
   ngOnInit() {
-    this.appSettings = this.settings.getAppSettings();
-    this.appSettingsKeys = Object.keys(this.appSettings);
   }
 
-  // @HostListener('document:keydown', ['$event'])
-  keyEvent(event: KeyboardEvent) {
-    console.log(this.constructor.name, 'keyEvent(), event = ', event);
-
-    let code: number | string;
-
-    if (event.code !== undefined) {
-      code = event.code;
-    } else if (event.keyCode !== undefined) {
-      code = event.keyCode;
+  getValueText(key) {
+    // console.log('getValueText(), key = ', key, typeof this.settings.appSettings[key]);
+    if (this.settings.appSettings[key] instanceof Object) {
+      return JSON.stringify(this.settings.appSettings[key]);
+    } else {
+      return this.settings.appSettings[key];
     }
+  }
 
-    if (code === 'Enter' || code === 'NumpadEnter' || code === 13) {
-      const htmlElement: HTMLInputElement = <HTMLInputElement>event.target;
-      if (htmlElement && htmlElement.nodeName === 'TD') {
-        if (htmlElement.offsetParent) {
-          const htmlTableElement: HTMLTableElement = <HTMLTableElement>document.getElementById(htmlElement.offsetParent.id);
+  saveEditedData(event, key) {
+    console.log('saveEditedData(), event, item = ', event, key);
 
-          if (htmlTableElement.id === 'application-settings-table') {
-            const rows = htmlTableElement.rows.length;
-            for (let i = 0; i < rows; i += 1) {
-              const value = htmlTableElement.rows[i].cells[1].textContent;
-              const name = htmlTableElement.rows[i].cells[0].textContent;
-              this.appSettings[name] = value;
-            }
-
-            localStorage.setItem('applicationSettings', JSON.stringify(this.appSettings));
-          }
-
-          this.showTable = 'application-settings-table';
-          setTimeout(() => {
-            this.showTable = 'not';
-          }, 0);
-
-        }
-
+    if (event.target) {
+      const value = event.target.textContent;
+      
+      if (this.settings.appSettings[key] instanceof Object) {
+        this.settings.appSettings[key] = JSON.parse(value);
+      } else {
+        this.settings.appSettings[key] = value;
       }
+
+      this.settings.saveLocalSettings();
     }
-
-  }
-
-  saveEditedData(event, item) {
-    console.log('saveEditedData(), event, item = ', event, item);
-
-    const htmlElement = event.srcElement || event.target;
-    if (!htmlElement) {
-      console.error('saveEditedData(), Error: fail to get html element, event = ', event);
-      return;
-    }
-
-    let value = htmlElement.textContent;
-  }
-
-  getServerAddress() {
-  }
-
-  updateServerAddress(event) {
-    console.log('updateServerAddress(), event = ', event);
   }
 
   getServerAddressList() {
@@ -85,6 +48,10 @@ export class ApplicationSettingsComponent implements OnInit {
     addressList.push('http://localhost:8080');
     addressList.push('http://95.161.178.222:42020');
     return addressList;
+  }
+
+  onReset() {
+    this.settings.reset();
   }
 
 }

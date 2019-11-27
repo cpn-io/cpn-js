@@ -98,17 +98,9 @@
 
     <div class="divider"></div>
 
-    <li class="nav-item disabled">
+    <!-- <li class="nav-item disabled">
       <div class="nav-link mb-0 disabled">
         <span style="color:gray">Simulation:</span>
-      </div>
-    </li>
-
-    <!-- Step -->
-    <!-- <li *ngIf="accessCpnService.isSimulation" class="nav-item">
-      <div (click)="onDoStep()" class="nav-link mb-0">
-        <i class="fas fa-step-forward"></i>
-        <span>Step</span>
       </div>
     </li> -->
 
@@ -118,14 +110,14 @@
         <div (click)="onStartSimulation()" class="nav-link mb-0 green"
           [ngClass]="{'disabled': accessCpnService.initNetProcessing || accessCpnService.initSimProcessing}">
           <i class="fas fa-play"></i>
-          <span>Start</span>
+          <span>Start simulation</span>
         </div>
       </ng-container>
 
       <ng-container *ngIf="accessCpnService.isSimulation">
         <div (click)="onStopSimulation()" class="nav-link mb-0 red">
           <i class="fas fa-stop"></i>
-          <span>Stop</span>
+          <span>Stop simulation</span>
         </div>
       </ng-container>
     </li>
@@ -136,14 +128,14 @@
   <ul class="navbar-nav ml-auto">
 
     <!-- Test animation -->
-    <li class="nav-item">
+    <!-- <li class="nav-item">
       <div (click)="onTest()" class="nav-link mb-0">
         <i class="fas fa-step-forward"></i>
         <span>Test animation</span>
       </div>
     </li>
 
-    <div class="divider"></div>
+    <div class="divider"></div> -->
 
     <!-- Show documentation -->
     <li class="nav-item">

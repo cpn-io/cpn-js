@@ -1,31 +1,34 @@
-<app-tree-node [tree]="tree" [id]="monitor._id" [title]="monitor._name" [bold]="false" color="darkblue"
-  [type]="'monitor'" [cpnElement]="monitor"
-  [error]="accessCpnService.errorIds.includes(monitor._id)">
+<ng-container *ngIf="isFiltered()">
 
-  <!-- Type -->
-  <app-tree-node [tree]="tree" [id]="'monitorType_' + monitor._id" [title]="'Type: ' + monitor._typedescription"
-    [bold]="false" [type]="'monitorType'">
-    <ng-container *ngFor="let option of nodeToArray(monitor.option)">
-      <div [ngClass]="{'selected': tree.selected.id === 'monitorOption_' + option._name, 'node': true}"
-        (click)="onSelectedOption(option)">
-        <span class="option">{{option._name}}</span>:
-        <span [ngClass]="{'true': option._value === 'true', 'false': option._value === 'false'}">
-          {{option._value}}
-        </span>
-      </div>
-    </ng-container>
+  <app-tree-node [tree]="tree" [id]="monitor._id" [title]="monitor._name" [bold]="false" color="darkblue"
+    [type]="'monitor'" [cpnElement]="monitor" [error]="accessCpnService.errorIds.includes(monitor._id)">
+
+    <!-- Type -->
+    <app-tree-node [tree]="tree" [id]="'monitorType_' + monitor._id" [title]="'Type: ' + monitor._typedescription"
+      [bold]="false" [type]="'monitorType'">
+      <ng-container *ngFor="let option of nodeToArray(monitor.option)">
+        <div [ngClass]="{'selected': tree.selected.id === 'monitorOption_' + option._name, 'node': true}"
+          (click)="onSelectedOption(option)">
+          <span class="option">{{option._name}}</span>:
+          <span [ngClass]="{'true': option._value === 'true', 'false': option._value === 'false'}">
+            {{option._value}}
+          </span>
+        </div>
+      </ng-container>
+    </app-tree-node>
+
+    <!-- Nodes -->
+    <app-tree-node [tree]="tree" [id]="'monitorNodes_' + monitor._id" [title]="'Nodes '" [bold]="false"
+      [type]="'monitorNodes'">
+      <ng-container *ngFor="let node of nodeList">
+        <div [ngClass]="{'selected': tree.selected.id === 'monitorNode_' + node.element._id, 'node': true}"
+          (click)="onSelectedNode(node)">
+          <span class="option"> {{ node.page.pageattr._name }} </span>:
+          <span> {{ node.element.text }} ({{ node.elementType }}) </span>
+        </div>
+      </ng-container>
+    </app-tree-node>
+
   </app-tree-node>
 
-  <!-- Nodes -->
-  <app-tree-node [tree]="tree" [id]="'monitorNodes_' + monitor._id" [title]="'Nodes '" [bold]="false"
-    [type]="'monitorNodes'">
-    <ng-container *ngFor="let node of nodeList">
-      <div [ngClass]="{'selected': tree.selected.id === 'monitorNode_' + node.element._id, 'node': true}"
-        (click)="onSelectedNode(node)">
-        <span class="option"> {{ node.page.pageattr._name }} </span>:
-        <span> {{ node.element.text }} ({{ node.elementType }}) </span>
-      </div>
-    </ng-container>
-  </app-tree-node>
-
-</app-tree-node>
+</ng-container>

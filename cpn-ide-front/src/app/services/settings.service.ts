@@ -1,50 +1,48 @@
 import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
-import { getDefaultSettings } from '../common/default-settings';
+import { cloneObject } from '../common/utils';
+import { DEFAULT_SETTINGS } from '../common/default-settings';
 
 @Injectable()
 export class SettingsService {
   public appSettings;
 
-  constructor(private http: HttpClient) {
-    const localSettings = localStorage.getItem('applicationSettings');
+  constructor() {
+    this.loadLocalSettings();
 
-    console.log(this.constructor.name, 'constructor(), localSettings = ', localSettings);
-
-    if (localSettings) {
-      this.appSettings = localSettings;
-    } else {
-      this.appSettings = getDefaultSettings();
-      // this.loadDefaultSettings();
-    }
-
-    console.log(this.constructor.name, 'constructor(), this.appSettings = ', this.appSettings);
+    this.saveLocalSettings();
   }
 
-  public getAppSettings() {
-    return this.appSettings;
+  public loadLocalSettings() {
+    const localSettings = localStorage.getItem('applicationSettings');
+
+    console.log(this.constructor.name, 'loadLocalSettings(), localSettings = ', localSettings);
+
+    if (localSettings) {
+      this.appSettings = JSON.parse(localSettings);
+    } else {
+      this.appSettings = cloneObject(DEFAULT_SETTINGS);
+    }
+
+    console.log(this.constructor.name, 'loadLocalSettings(), this.appSettings = ', this.appSettings);
   }
 
   public saveLocalSettings() {
-    localStorage.setItem('applicationSettings', this.appSettings);
+    console.log(this.constructor.name, 'saveLocalSettings(), this.appSettings = ', this.appSettings);
+
+    localStorage.setItem('applicationSettings', JSON.stringify(this.appSettings));
   }
 
-  loadDefaultSettings() {
-    const headers = new HttpHeaders()
-      .set('Access-Control-Allow-Origin', '*')
-      .set('Accept', 'application/json');
+  public reset() {
+    this.appSettings = cloneObject(DEFAULT_SETTINGS);
 
-    const url = './assets/app/default_settings.json';
-    this.http.get(url, { headers: headers, responseType: 'text' })
-      .subscribe(
-        (response: any) => {
-          this.appSettings = JSON.parse(response);
-          console.log(this.constructor.name, 'loadDefaultSettings(), this.appSettings = ', this.appSettings);
-        },
-        (error) => {
-          console.error(this.constructor.name, 'loadDefaultSettings(), url, error = ', url, error);
-        }
-      );
+    this.saveLocalSettings();
   }
 
+  public getServerUrl() {
+    if (this.appSettings['localServer'] == 1 || this.appSettings['localServer'] == 'true') {
+      return '';
+    }
+    return this.appSettings['serverAddress'];
+  }
 }

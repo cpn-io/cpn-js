@@ -42,10 +42,10 @@
   <!-- Project tree filter -->
   <ul class="navbar-nav ml-auto">
     <li>
-      <input (input)="changeFilter($event.target.value)" [value]="filterText" placeholder="Filter" type="text" />
+      <input (input)="onChangeFilter($event.target.value)" [value]="filterText" placeholder="Filter" type="text" />
     </li>
     <li class="nav-item">
-      <a (click)="changeFilter('')" class="nav-link btn-close" href="#" title="Clear filter">
+      <a (click)="onChangeFilter('')" class="nav-link btn-close" href="#" title="Clear filter">
         <i class="fas fa-times"></i>
       </a>
     </li>

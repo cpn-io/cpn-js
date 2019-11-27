@@ -16,6 +16,7 @@ export class TreeData {
   subpages = [];
   parents = [];
   cpnElements = [];
+  filter = '';
 
   selected: SelectedNode = new SelectedNode();
   selectedOld: SelectedNode = new SelectedNode();
@@ -258,7 +259,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     console.log(this.constructor.name, 'onNewBlock(), this.selected = ', this.tree.selected);
 
     if (this.tree.selected && this.tree.selected.type === 'declarations') {
-      const newBlock = { id: 'New block', _id: getNextId() };
+      const newBlock = { id: this.settings.appSettings['block'], _id: getNextId() };
       this.modelService.addCpnElement(this.cpnet.globbox, newBlock, 'block');
       this.focus(newBlock._id);
     }
@@ -268,7 +269,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     console.log(this.constructor.name, 'onNewPage(), this.selected = ', this.tree.selected);
 
     if (this.tree.selected && this.tree.selected.type === 'pages') {
-      const defValue = this.settings.getAppSettings()['page'];
+      const defValue = this.settings.appSettings['page'];
       const newPage = this.modelService.createCpnPage(defValue);
       this.modelService.addCpnElement(this.cpnet, newPage, 'page');
       this.modelService.updateInstances();
@@ -303,6 +304,16 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     console.log(this.constructor.name, 'onDownNode(), this.selected = ', this.tree.selected);
     if (this.tree.selected && this.tree.selected.treeNodeComponent) {
       this.tree.selected.treeNodeComponent.onDown(undefined);
+    }
+  }
+
+  onFilterChanged(event) {
+    console.log(this.constructor.name, 'onFilterChanged(), event = ', event);
+    this.tree.filter = event; 
+
+    if (this.tree.filter === '') {
+      this.goToDeclaration(this.tree.selected.id);
+      this.focus(this.tree.selected.id);
     }
   }
 

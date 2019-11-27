@@ -7,6 +7,7 @@ import { xmlBeautify } from '../../lib/xml-beautifier/xml-beautifier.js';
 import { CpnServerUrl } from 'src/cpn-server-url';
 import { cloneObject, clearArray } from '../common/utils';
 import { ModelService } from './model.service';
+import { SettingsService } from './settings.service';
 
 @Injectable()
 export class AccessCpnService {
@@ -41,7 +42,8 @@ export class AccessCpnService {
 
   constructor(private http: HttpClient,
     private eventService: EventService,
-    private modelService: ModelService) {
+    private modelService: ModelService,
+    private settingsService: SettingsService) {
 
     this.eventService.on(Message.SERVER_INIT_NET, (event) => {
       console.log('AccessCpnService(), SERVER_INIT_NET, data = ', event);
@@ -224,7 +226,7 @@ export class AccessCpnService {
 
     localStorage.setItem('cpnXml', cpnXml);
 
-    const url = CpnServerUrl.get() + '/api/v2/cpn/init';
+    const url = this.settingsService.getServerUrl() + '/api/v2/cpn/init';
     const body = {
       xml: cpnXml,
       complex_verify: complexVerify,
@@ -307,7 +309,7 @@ export class AccessCpnService {
 
     console.log('AccessCpnService, initSim(), START, this.sessionId = ', this.sessionId);
 
-    const url = CpnServerUrl.get() + '/api/v2/cpn/sim/init';
+    const url = this.settingsService.getServerUrl() + '/api/v2/cpn/sim/init';
     this.http.get(url, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
       (data: any) => {
         this.initSimProcessing = false;
@@ -346,7 +348,7 @@ export class AccessCpnService {
 
     this.tokenData = [];
 
-    const url = CpnServerUrl.get() + '/api/v2/cpn/sim/marks';
+    const url = this.settingsService.getServerUrl() + '/api/v2/cpn/sim/marks';
     this.http.get(url, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
       (data: any) => {
         console.log('AccessCpnService, getTokenMarks(), SUCCESS, data = ', data);
@@ -375,7 +377,7 @@ export class AccessCpnService {
 
       console.log('AccessCpnService, doStep(), START');
 
-      const url = CpnServerUrl.get() + '/api/v2/cpn/sim/step/' + transId; // ID1412328496
+      const url = this.settingsService.getServerUrl() + '/api/v2/cpn/sim/step/' + transId; // ID1412328496
       this.http.get(url, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
         (data: any) => {
           console.log('AccessCpnService, doStep(), SUCCESS, data = ', data);
@@ -417,7 +419,7 @@ export class AccessCpnService {
       console.log('AccessCpnService, doStepWithBinding(), postData = ', postData);
 
       // POST /api/v2/cpn/sim/step_with_binding/{transId}
-      const url = CpnServerUrl.get() + '/api/v2/cpn/sim/step_with_binding/' + transId;
+      const url = this.settingsService.getServerUrl() + '/api/v2/cpn/sim/step_with_binding/' + transId;
       this.http.post(url, postData, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
         (data: any) => {
           console.log('AccessCpnService, doStepWithBinding(), SUCCESS, data = ', data);
@@ -475,7 +477,7 @@ export class AccessCpnService {
 
       console.log('AccessCpnService, doMultiStepFF(), postData = ', postData);
 
-      const url = CpnServerUrl.get() + '/api/v2/cpn/sim/step_fast_forward';
+      const url = this.settingsService.getServerUrl() + '/api/v2/cpn/sim/step_fast_forward';
       this.http.post(url, postData, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
         (data: any) => {
           console.log('AccessCpnService, doMultiStepFF(), SUCCESS, data = ', data);
@@ -527,7 +529,7 @@ export class AccessCpnService {
 
       console.log('AccessCpnService, doReplication(), postData = ', postData);
 
-      const url = CpnServerUrl.get() + '/api/v2/cpn/sim/replication';
+      const url = this.settingsService.getServerUrl() + '/api/v2/cpn/sim/replication';
       this.http.post(url, postData, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
         (data: any) => {
           console.log('AccessCpnService, doReplication(), SUCCESS, data = ', data);
@@ -569,7 +571,7 @@ export class AccessCpnService {
         return;
       }
 
-      const url = CpnServerUrl.get() + '/api/v2/cpn/sim/bindings/' + transId; // ID1412328496
+      const url = this.settingsService.getServerUrl() + '/api/v2/cpn/sim/bindings/' + transId; // ID1412328496
       this.http.get(url, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
         (data: any) => {
           console.log('AccessCpnService, getBindings(), SUCCESS, data = ', data);
@@ -594,7 +596,7 @@ export class AccessCpnService {
 
     this.stateData = undefined;
 
-    const url = CpnServerUrl.get() + '/api/v2/cpn/sim/state';
+    const url = this.settingsService.getServerUrl() + '/api/v2/cpn/sim/state';
     this.http.get(url, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
       (data: any) => {
         console.log('AccessCpnService, getSimState(), SUCCESS, data = ', data);
@@ -639,7 +641,7 @@ export class AccessCpnService {
         reject('ERROR: sessionId not defined!');
       }
 
-      const url = CpnServerUrl.get() + '/api/v2/cpn/xml/export';
+      const url = this.settingsService.getServerUrl() + '/api/v2/cpn/xml/export';
       this.http.get(url, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
         (data: any) => {
           console.log('AccessCpnService, getXmlFromServer(), SUCCESS, data = ', data);
@@ -677,7 +679,7 @@ export class AccessCpnService {
       const postData = options;
       console.log('AccessCpnService, getMonitorDefaults(), postData = ', postData, this.sessionId);
 
-      const url = CpnServerUrl.get() + '/api/v2/cpn/sim/monitor/new';
+      const url = this.settingsService.getServerUrl() + '/api/v2/cpn/sim/monitor/new';
       this.http.post(url, postData, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
         (data: any) => {
           console.log('AccessCpnService, getMonitorDefaults(), SUCCESS, data = ', data);

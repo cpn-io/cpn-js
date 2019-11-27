@@ -1,4 +1,4 @@
-<ng-container *ngIf="declaration">
+<ng-container *ngIf="declaration && isFiltered()">
   <div class="icon" [ngClass]="{'errorIcon': accessCpnService.errorIds.includes(declaration._id)}">
     <i class="fas fa-code"></i>
   </div>

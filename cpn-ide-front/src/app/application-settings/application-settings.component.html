@@ -1,21 +1,32 @@
-<div class="tab-container">
+<nav class="navbar navbar-sm navbar-expand shadow-sm">
+  <ul class="navbar-nav mr-auto">
+    <li class="nav-item">
+      <b>Application settings</b>
+    </li>
+    <div class="divider"></div>
+  </ul>
 
-  <div class="blockHeader">
+  <ul class="navbar-nav ml-auto">
+    <div class="divider"></div>
+
+    <li class="nav-item"><a (click)="onReset()" class="nav-link" href="#">
+        <i class="fas fa-reply"></i>
+        <span>Reset</span>
+      </a></li>
+  </ul>
+</nav>
+
+
+<div class="tab-container-with-toolbar">
+
+  <!-- <div class="blockHeader">
     Application settings
-  </div>
+  </div> -->
 
-  <!-- Server address -->
-  <!-- <app-text-edit-row type="select"
-  name="Server address" [object]="getServerAddress()" field="value" (changed)="updateServerAddress($event)"
-  [options]="getServerAddressList()">
-</app-text-edit-row> -->
-
-
-  <table [id]="'application-settings-table'" class="table table-bordered table-hover table-small"
-    *ngIf="showTable !== 'application-settings-table'">
-    <tr *ngFor="let item of appSettingsKeys">
-      <td width="50%" class="valueName">{{ item }}</td>
-      <td width="50%" contenteditable='true' (focusout)="saveEditedData($event, item)">{{ appSettings[item] }}</td>
+  <table class="table table-bordered table-hover table-small">
+    <tr *ngFor="let key of Object.keys(settings.appSettings)">
+      <td class="valueName">{{ key }}</td>
+      <td contenteditable='true' (focusout)="saveEditedData($event, key)">{{ getValueText(key) }}</td>
     </tr>
   </table>
 

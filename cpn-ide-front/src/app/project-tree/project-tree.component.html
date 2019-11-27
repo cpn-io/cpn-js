@@ -2,7 +2,7 @@
 
   <!-- Project tree toolbar -->
   <app-project-tree-toolbar (newNode)="onNewNode()" (deleteNode)="onDeleteNode()" (upNode)="onUpNode()"
-    (downNode)="onDownNode()">
+    (downNode)="onDownNode()" [filterText]="tree.filter" (filterChanged)="onFilterChanged($event)">
     <!-- <app-project-tree-toolbar> -->
   </app-project-tree-toolbar>
 
@@ -15,8 +15,10 @@
         <!-- Project root -->
         <app-tree-node [tree]="tree" id="project" type="root" [title]="'Project: ' + project.name" [showBullet]="false">
 
-          <div class="node" [textContent]="'Step: ' + simulationState.step"></div>
-          <div class="node" [textContent]="'Time: ' + simulationState.time"></div>
+          <ng-container *ngIf="!tree.filter || tree.filter === ''">
+            <div class="node" [textContent]="'Step: ' + simulationState.step"></div>
+            <div class="node" [textContent]="'Time: ' + simulationState.time"></div>
+          </ng-container>
 
           <!-- Options -->
           <app-tree-node [tree]="tree" id="options" title="Options" type="options">

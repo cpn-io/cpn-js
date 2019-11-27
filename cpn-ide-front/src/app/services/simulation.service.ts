@@ -20,6 +20,7 @@ export class SimulationService {
 
   firedTransitionIdList = [];
   firedTransitionBindId;
+  firedId;
 
   multiStepCount = 0;
   multiStepLastTimeMs = 0;
@@ -119,6 +120,8 @@ export class SimulationService {
   }
 
   onShapeSelect(event) {
+    this.firedId = undefined;
+
     if (!this.accessCpnService.isSimulation) {
       return;
     }
@@ -130,20 +133,24 @@ export class SimulationService {
 
       // console.log(this.constructor.name, 'onShapeSelect(), this.mode = ', this.mode);
 
-      if (element.cpnElement._id in this.accessCpnService.getReadyData()) {
+      this.firedId = this.getRealFiredId(element.cpnElement._id);
+
+      if (this.firedId) {
+        console.log(this.constructor.name, 'onShapeSelect(), firedId = ', this.firedId, ' IS READY');
+
         switch (this.mode) {
           case this.SINGLE_STEP:
-            this.accessCpnService.doStep(element.cpnElement._id).then(
+            this.accessCpnService.doStep(this.firedId).then(
               (success) => {
                 this.animateModelEditor();
               },
               (error) => {
-                console.error(this.constructor.name, 'runMultiStep(), doStep(), error = ', error);
+                console.error(this.constructor.name, 'onShapeSelect(), doStep(), error = ', error);
               }
             );
             break;
           case this.SINGLE_STEP_CHOOSE_BINDING:
-            this.accessCpnService.getBindings(element.cpnElement._id).then((data) => {
+            this.accessCpnService.getBindings(this.firedId).then((data: any) => {
               if (data) {
                 this.eventService.send(Message.SERVER_GET_BINDINGS, { data: data });
               }
@@ -152,6 +159,35 @@ export class SimulationService {
         }
       }
     }
+  }
+
+  /**
+   * Get real fired transition id even subst transition clicked
+   * 
+   * @param transId - selected transition id
+   */
+  getRealFiredId(transId) {
+    const trans = this.modelService.getTransById(transId);
+    if (!trans) {
+      return undefined;
+    }
+    if (!(trans.subst && trans.subst._subpage)) {
+      if (transId in this.accessCpnService.getReadyData()) {
+        return transId;
+      } else {
+        return undefined;
+      }
+    }
+    const subpage = this.modelService.getPageById(trans.subst._subpage);
+    if (!subpage) {
+      return undefined;
+    }
+    for (const t of subpage.trans) {
+      if (t._id in this.accessCpnService.getReadyData()) {
+        return t._id;
+      }
+    }
+    return undefined;
   }
 
   animateModelEditor() {
@@ -175,10 +211,10 @@ export class SimulationService {
       return;
     }
 
-    const element = event.element;
+    if (this.firedId && event.binding) {
+      console.log(this.constructor.name, 'onSimulationSelectBinding(), this.firedId = ', this.firedId);
 
-    if (element && element.type && element.type === 'cpn:Transition' && event.binding) {
-      this.accessCpnService.doStepWithBinding(element.cpnElement._id, event.binding.bind_id).then(
+      this.accessCpnService.doStepWithBinding(this.firedId, event.binding.bind_id).then(
         (success) => {
           this.animateModelEditor();
         },
@@ -189,7 +225,7 @@ export class SimulationService {
   }
 
   onSimulationAnimateComplete() {
-    
+
     this.updateModelEditors();
 
     switch (this.mode) {

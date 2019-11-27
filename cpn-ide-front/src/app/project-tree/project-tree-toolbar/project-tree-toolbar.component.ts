@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 
 @Component({
   selector: 'app-project-tree-toolbar',
@@ -12,7 +12,9 @@ export class ProjectTreeToolbarComponent implements OnInit {
   @Output() upNode = new EventEmitter();
   @Output() downNode = new EventEmitter();
 
-  filterText = '';
+  @Input() filterText = '';
+  @Output() filterChanged = new EventEmitter();
+
 
   constructor() { }
 
@@ -35,8 +37,9 @@ export class ProjectTreeToolbarComponent implements OnInit {
     this.downNode.emit('downNode');
   }
 
-  changeFilter(value) {
+  onChangeFilter(value) {
     this.filterText = value;
-    console.log(this.constructor.name, 'changeFilter(), this.filterText = ', this.filterText);
+    console.log(this.constructor.name, 'onChangeFilter(), this.filterText = ', this.filterText);
+    this.filterChanged.emit(value);
   }
 }

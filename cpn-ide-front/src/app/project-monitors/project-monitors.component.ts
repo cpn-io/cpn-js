@@ -200,6 +200,8 @@ export class ProjectMonitorsComponent implements OnInit {
         availableNodeIds.push(t._id);
       }
     }
+    console.log('onNewNode(), availableNodeIds = ', availableNodeIds);
+
     this.eventService.send(Message.MONITOR_SET_AVAILABLE_NODES, { availableNodeIds: availableNodeIds });
   }
 

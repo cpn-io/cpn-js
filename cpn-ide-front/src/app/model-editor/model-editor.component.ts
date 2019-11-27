@@ -95,6 +95,14 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
+    this.init();
+  }
+
+  onClose() {
+    this.eventService.send(Message.PAGE_TAB_CLOSE, { id: this.pageId });
+  }
+
+  init() {
     this.editorPanelService.addModelEditor(this);
 
     this.instanseId = Math.random().toString(36).substring(2).toUpperCase() + '-' + Date.now().toString(36).toUpperCase();
@@ -137,7 +145,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     // set defualt values to diagram
     // -----------------------------------------------------
     for (const key of ['type', 'initmark', 'cond', 'time', 'code', 'priority', 'annot', 'ellipse', 'box']) {
-      this.modeling.setDefaultValue(key, this.settings.getAppSettings()[key]);
+      this.modeling.setDefaultValue(key, this.settings.appSettings[key]);
     }
 
     // eventBus.on('element.changed', (event) => {
@@ -184,7 +192,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.modeling.setEditable(!this.accessCpnService.isSimulation);
     });
 
-    this.eventService.on(Message.PAGE_DELETE, (data) => {
+    this.eventService.on(Message.PAGE_TAB_CLOSE, (data) => {
       if (data.id === this.pageId) {
         this.diagram.clear();
       }

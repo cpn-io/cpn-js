@@ -64,8 +64,8 @@ export class EditorPanelComponent implements OnInit, OnDestroy
 
     this.eventService.on(Message.PROJECT_LOAD, () => this.loadProject());
     this.eventService.on(Message.TREE_SELECT_DECLARATION_NODE, () => this.openMlEditor());
-    this.eventService.on(Message.PAGE_OPEN, (event) => this.openModelEditor(event.pageObject).then());
-    this.eventService.on(Message.PAGE_DELETE, (event) => this.deleteTab(event.id));
+    this.eventService.on(Message.PAGE_TAB_OPEN, (event) => this.openModelEditor(event.pageObject).then());
+    this.eventService.on(Message.PAGE_TAB_CLOSE, (event) => this.deleteTab(event.id));
     this.eventService.on(Message.PAGE_CHANGE_NAME, (event) => this.changeName(event.id, event.name));
   }
 
@@ -112,6 +112,11 @@ export class EditorPanelComponent implements OnInit, OnDestroy
     }
 
     this.tabsComponent.deleteTabById(id);
+
+    const tabs = this.tabsComponent.tabs;
+    if (tabs && tabs.length > 0) {
+      this.selectTab(tabs[tabs.length - 1].id);
+    }
   }
 
   changeName(id, name) {

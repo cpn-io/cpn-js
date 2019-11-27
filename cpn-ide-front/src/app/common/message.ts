@@ -12,8 +12,8 @@ export class Message {
   static SHAPE_HOVER = 'shape.hover';
   static SHAPE_OUT = 'shape.out';
 
-  static PAGE_OPEN = 'page.open';
-  static PAGE_DELETE = 'page.delete';
+  static PAGE_TAB_OPEN = 'page.tab.open';
+  static PAGE_TAB_CLOSE = 'page.tab.close';
   static PAGE_CHANGE_NAME = 'page.change.name';
   static PAGE_CREATE_SUBST = 'page.create.subst';
   static PAGE_UPDATE_SUBST = 'page.update.subst';

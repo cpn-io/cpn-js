@@ -30,7 +30,7 @@ export class SelectedNode {
         this.treeNodeComponent = undefined;
     }
 
-    clone():SelectedNode {
+    clone(): SelectedNode {
         const newObject = new SelectedNode();
         newObject.type = this.type;
         newObject.id = this.id;
@@ -72,6 +72,23 @@ export class TreeNodeComponent implements ITreeNode {
     @Output() deleteAction = new EventEmitter();
     @Output() upAction = new EventEmitter();
     @Output() downAction = new EventEmitter();
+
+    isExpanded() {
+        return (this.tree.filter && this.tree.filter !== '') || this.tree.expanded[this.id];
+    }
+
+    isFiltered() {
+        if (!this.tree.filter || this.tree.filter === '') {
+            return true;
+        }
+
+        if (this.title.toLowerCase().includes(this.tree.filter.toLowerCase())) {
+            return true;
+        }
+
+        return false;
+    }
+
 
     onInput(event) {
         this.inputAction.emit(event);

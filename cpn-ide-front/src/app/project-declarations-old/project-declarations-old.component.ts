@@ -29,7 +29,7 @@ export class ProjectDeclarationsOldComponent implements OnInit, OnDestroy {
   // error identificators
   errorIds = [];
 
-  @ViewChild('tabsComponent') tabsComponent: TabsContainer;
+  @ViewChild('tabsComponent', {static: false}) tabsComponent: TabsContainer;
 
 
   // globref, colset, var, val, fun, monitors

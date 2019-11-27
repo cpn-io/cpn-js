@@ -14,7 +14,7 @@ import { TreeData } from '../project-tree/project-tree.component';
 })
 export class ProjectDeclarationsComponent implements OnInit, AfterViewInit {
 
-  @ViewChild('contextMenu') contextMenu: ContextMenuComponent;
+  @ViewChild('contextMenu', {static: false}) contextMenu: ContextMenuComponent;
 
   public nodeToArray = nodeToArray;
   public JSON = JSON;

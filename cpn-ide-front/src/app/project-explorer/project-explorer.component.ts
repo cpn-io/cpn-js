@@ -29,7 +29,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   /**
    * treeComponent - component for displaying project tree
    */
-  @ViewChild('tree') treeComponent: TreeComponent;
+  @ViewChild('tree', {static: false}) treeComponent: TreeComponent;
 
   monitorType = MonitorType;
 

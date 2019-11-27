@@ -38,8 +38,8 @@ import { EditorPanelService } from '../services/editor-panel.service';
 })
 export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  @ViewChild('container') containerElementRef: ElementRef;
-  @ViewChild('popup') popupElementRef: ElementRef;
+  @ViewChild('container', { static: false }) containerElementRef: ElementRef;
+  @ViewChild('popup', { static: false }) popupElementRef: ElementRef;
 
   @Input() id: string;
 
@@ -81,10 +81,6 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     public editorPanelService: EditorPanelService) {
   }
 
-  ngAfterViewInit() {
-    console.log(this.constructor.name, 'ngAfterViewInit(), this = ', this);
-  }
-
   ngOnDestroy() {
     console.log(this.constructor.name, 'ngOnDestroy(), this.instanseId = ', this.instanseId);
 
@@ -95,6 +91,11 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
+  }
+
+  ngAfterViewInit() {
+    console.log(this.constructor.name, 'ngAfterViewInit(), this = ', this);
+    
     this.init();
   }
 
@@ -707,7 +708,9 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   clearPage() {
-    this.canvas._clear();
+    if (this.canvas) {
+      this.canvas._clear();
+    }
   }
 
   makeid(length) {

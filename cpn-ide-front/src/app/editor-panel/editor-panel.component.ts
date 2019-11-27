@@ -1,17 +1,13 @@
 import {
   Component,
-  ComponentFactoryResolver,
   OnDestroy,
   OnInit,
   QueryList,
   ViewChild,
   ViewChildren,
-  ViewContainerRef,
-  SimpleChanges,
-  OnChanges,
   Input,
-  DoCheck
 } from '@angular/core';
+
 import { ModelService } from '../services/model.service';
 import { ModelEditorComponent } from '../model-editor/model-editor.component';
 import { TabsContainer } from '../../lib/tabs/tabs-container/tabs.container';
@@ -20,7 +16,7 @@ import { EventService } from '../services/event.service';
 import { AccessCpnService } from '../services/access-cpn.service';
 import { EditorPanelService } from '../services/editor-panel.service';
 import { ApplicationService } from '../services/application.service';
-import { ElementRef } from '@angular/core';
+import { ElementRef, AfterViewInit } from '@angular/core';
 
 
 @Component({
@@ -28,12 +24,10 @@ import { ElementRef } from '@angular/core';
   templateUrl: './editor-panel.component.html',
   styleUrls: ['./editor-panel.component.scss']
 })
-export class EditorPanelComponent implements OnInit, OnDestroy
-// , OnChanges, DoCheck 
-{
+export class EditorPanelComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  @ViewChild('documentationIFrame') documentationIFrame: ElementRef;
-  @ViewChild('tabsComponent') tabsComponent: TabsContainer;
+  @ViewChild('documentationIFrame', {static: false}) documentationIFrame: ElementRef;
+  @ViewChild('tabsComponent', {static: false}) tabsComponent: TabsContainer;
 
   @ViewChildren(ModelEditorComponent) modelEditorList: QueryList<ModelEditorComponent>;
 
@@ -58,8 +52,6 @@ export class EditorPanelComponent implements OnInit, OnDestroy
   }
 
   ngOnInit() {
-    this.documentationIFrame.nativeElement.src = '../../assets/documentation/index.html';
-
     this.editorPanelService.setEditorPanelComponent(this);
 
     this.eventService.on(Message.PROJECT_LOAD, () => this.loadProject());
@@ -67,6 +59,10 @@ export class EditorPanelComponent implements OnInit, OnDestroy
     this.eventService.on(Message.PAGE_TAB_OPEN, (event) => this.openModelEditor(event.pageObject).then());
     this.eventService.on(Message.PAGE_TAB_CLOSE, (event) => this.deleteTab(event.id));
     this.eventService.on(Message.PAGE_CHANGE_NAME, (event) => this.changeName(event.id, event.name));
+  }
+
+  ngAfterViewInit() {
+    this.documentationIFrame.nativeElement.src = '../../assets/documentation/index.html';
   }
 
   ngOnDestroy() {

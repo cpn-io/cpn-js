@@ -3,7 +3,6 @@ import { EventService } from './event.service';
 import { ModelService } from './model.service';
 import { Message } from '../common/message';
 import { AccessCpnService } from '../services/access-cpn.service';
-import { initDomAdapter } from '@angular/platform-browser/src/browser';
 import { cloneObject, objectsEqual } from '../common/utils';
 import { Observable, timer } from 'rxjs';
 

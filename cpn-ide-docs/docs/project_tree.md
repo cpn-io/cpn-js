@@ -40,14 +40,20 @@ To change the output directory for a net, edit the text of the option. To enter 
 
 ### Performance report statistics
 
-The Performance report statistics options are used to determine which statistics should be included in different kinds of performance output. A check mark next to a statistic indicates that the statistic will be included in the appropriate report.
+The Performance report statistics options are used to determine which statistics should be included in different kinds of performance output. A check mark next to a statistic indicates that the statistic will be included in the report.
 
 ![Screenshot](img/simulation.png)
 
 
-The **Simulation performance report** options are used to select the statistics to be included in simulation performance reports. 
+The **Simulation performance report** entry provides an overview of the statistics that are calculated during one simulation for the data collection monitors in a net.
 
-The **Replication performance report** options are used to select the statistics to be included in replication performance reports
+To select the statistics, put check marks next to the names of statistics.
+
+A set of statistics that can be included in the report depends on whether they are **timed** or **untimed**. 
+
+To open the list of statistics, click on the triangle next to **Timed** / **Untimed**.
+
+The **Replication performance report** entry provides an overview of the statistics that are calculated for the data values that are found in replication log files. 
 
 ### Extensions
 Put ticks on extensions you would like to choose.
@@ -95,6 +101,10 @@ The declaration will be in text edit mode when it appears, so it can be modified
 
 
 ## Monitors
+The Monitors entry of the Project Tree provides information about the monitors applied to the net. To open the subentries of the Monitors entry,click on the black triangle next to the name of a particular monitor. Edititing of the monitors subentries is available within the Monitor tab of the Properties Panel.
+
+![Screenshot](img/tree-monitors.png)
+
 
 
 ## Pages
@@ -111,7 +121,7 @@ You can create or delete new pages (subpages) by bringing up the right-click men
 
 ![Screenshot](img/buttons.png)
 
-# Application settings
+## Application settings
 ![Screenshot](img/settings.png)
 
 The Application settings tab shows the default settings for declarations, pages and objects created. To change the settings, click on the text you wish to edit.

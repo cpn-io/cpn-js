@@ -32,14 +32,16 @@ CpnUpdater.$inject = [
   'popupMenuProvider',
   'contextPad',
   'canvas',
-  'portMenuProvider',
   'bindingsMenuProvider',
-  'layouter'
+  'layouter',
+  'cpnRenderer',
+  'textRenderer'
 ];
 
 import {
   event as domEvent
 } from 'min-dom';
+
 import Modeling from "./Modeling";
 import { assign } from 'min-dash';
 
@@ -61,14 +63,18 @@ import { getDistance } from '../../draw/CpnRenderUtil';
  */
 export default function CpnUpdater(eventBus, modeling, elementRegistry,
   connectionDocking, selection, popupMenuProvider, contextPad, canvas,
-  portMenuProvider, bindingsMenuProvider, layouter) {
+  bindingsMenuProvider, layouter, cpnRenderer, textRenderer) {
 
+  this._canvas = canvas;
   this._modeling = modeling;
   this._elementRegistry = elementRegistry;
+  this._cpnRenderer = cpnRenderer;
+  this._textRenderer = textRenderer;
 
   const self = this;
+  const container = self._canvas.getContainer();
 
-  console.log('CpnUpdater()');
+  // console.log('CpnUpdater()');
 
   CommandInterceptor.call(this, eventBus);
 
@@ -91,6 +97,21 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   // this.reverted(['connection.layout'], function (e) {
   //   delete e.context.cropped;
   // });
+
+  let animateArcIdList = [];
+
+  eventBus.on('token.animate', function (event) {
+    console.log('TOKEN ANIMATION, token.animate, modeling.getInstanseId() = ', self._modeling.getInstanseId());
+
+    animateArcIdList = [];
+    for (const arcId of event.arcIdList) {
+      animateArcIdList.push(arcId);
+    }
+
+    console.log('TOKEN ANIMATION, token.animate, animateArcIdList = ', animateArcIdList);
+
+    animateArcList(animateArcIdList);
+  });
 
   eventBus.on('shape.changed', function (event) {
     // updateLabels(e.element);
@@ -130,10 +151,8 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   //     }
   //   });
 
-
-
   eventBus.on('shape.create.end', (event) => {
-    console.log('CpnUpdater(), shape.create.end, event = ', event);
+    // console.log('CpnUpdater(), shape.create.end, event = ', event);
 
     // updateCpnElement(event.element);
     // layouter.layoutConnections();
@@ -141,7 +160,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     modeling.updateElement(event.element, true);
   });
   eventBus.on('connection.create', (event) => {
-    console.log('CpnUpdater(), connection.create, event = ', event);
+    // console.log('CpnUpdater(), connection.create, event = ', event);
     // updateCpnElement(event.element);
   });
 
@@ -158,7 +177,11 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   });
 
   eventBus.on('element.click', function (event) {
-    console.log('CpnUpdater(), element.click, event = ', event);
+    // console.log('CpnUpdater(), element.click, event = ', event);
+
+    popupMenuProvider.close();
+    contextPad.close();
+    bindingsMenuProvider.close();
 
     const element = event.element;
 
@@ -186,35 +209,36 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   //   console.log('CpnUpdater(), domEvent, mouseup, event = ', event);
   // });
 
-  domEvent.bind(document, 'mousedown', function (event) {
+  // object.addEventListener("click", myScript);
+
+  domEvent.bind(container, 'mousedown', function (event) {
+    console.log('CpnUpdater(), mousedown ', event);
     // console.log('CpnUpdater(), domEvent, mousedown, event = ', event);
-
-    const position = toPoint(event);
-    const target = document.elementFromPoint(position.x, position.y);
-    const gfx = getGfx(target);
-    var element;
-    if (gfx) {
-      element = elementRegistry.get(gfx);
-    }
-
-    // console.log('CpnUpdater(), domEvent, mousedown, target = ', target);
-    // console.log('CpnUpdater(), domEvent, mousedown, gfx = ', gfx);
-
-    console.log('CpnUpdater(), mousedown, element = ', element);
-
-    if (element === canvas.getRootElement()) {
-      popupMenuProvider.close();
-      contextPad.close();
-      portMenuProvider.close();
-      bindingsMenuProvider.close();
-    }
+    // console.log('CpnUpdater(), mousedown, container = ', container);
 
     if (event.button === 2) {
+      const position = toPoint(event);
+      const target = document.elementFromPoint(position.x, position.y);
+      const gfx = getGfx(target);
+      var element;
+      if (gfx) {
+        element = elementRegistry.get(gfx);
+      }
+
+      console.log('CpnUpdater(), domEvent, mousedown, target = ', target);
+      console.log('CpnUpdater(), domEvent, mousedown, gfx = ', gfx);
+      console.log('CpnUpdater(), mousedown, element = ', element);
+
+      if (element && element === canvas.getRootElement()) {
+        popupMenuProvider.close();
+        contextPad.close();
+        bindingsMenuProvider.close();
+      }
+
       event.stopPropagation();
       event.preventDefault();
 
       popupMenuProvider.close();
-      portMenuProvider.close();
       bindingsMenuProvider.close();
 
       // console.log('CpnUpdater(), domEvent, mousedown, popup menu, x,y = ', event.x, event.y);
@@ -237,18 +261,25 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
 
   function showHideMarking(tokenElement) {
-    // console.log('CpnUpdater(), showHideMarking(), tokenElement = ', tokenElement);
+    console.log('CpnUpdater(), showHideMarking(), tokenElement = ', tokenElement);
 
     if (!tokenElement || !tokenElement.label || !is(tokenElement.label, CPN_MARKING_LABEL))
       return;
 
-    tokenElement.label.hidden = !tokenElement.label.hidden;
-    // tokenElement.label.hidden = false;
-    modeling.updateElement(tokenElement.label, true);
+    const markingElement = tokenElement.label;
 
-    if (!tokenElement.label.hidden) {
-      modeling.moveShape(tokenElement.label, { x: 0, y: 0 }, tokenElement.label.parent, undefined, undefined);
-    }
+    markingElement.hidden = !markingElement.hidden;
+
+    // if (!markingElement.hidden) {
+    //   var newBounds = textRenderer.getExternalLabelBounds(markingElement, markingElement.text);
+    //   if (newBounds.width < 10)
+    //     newBounds.width = 10;
+    //   modeling.resizeShape(markingElement, newBounds);
+    //   modeling.moveShape(markingElement, { x: 0, y: 0 }, markingElement.parent, undefined, undefined);
+    // }
+    // modeling.moveShape(tokenElement, { x: 0, y: 0 }, tokenElement.parent, undefined, undefined);
+
+    modeling.updateElement(markingElement, true);
   }
 
   // crop connection ends during create/update
@@ -331,18 +362,18 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
       if (shape.x && shape.y && shape.width && shape.height) {
         // if element is any shape object
         if (cpnElement.posattr) {
-          cpnElement.posattr._x = (shape.x + shape.width / 2).toString();
-          cpnElement.posattr._y = ((shape.y + shape.height / 2) * -1).toString();
+          cpnElement.posattr._x = Math.round((shape.x + shape.width / 2)).toFixed(6); // .toString();
+          cpnElement.posattr._y = Math.round((shape.y + shape.height / 2) * -1).toFixed(6); // .toString();
         }
         // if element is Place object
         if (cpnElement.ellipse) {
-          cpnElement.ellipse._w = (shape.width).toString();
-          cpnElement.ellipse._h = (shape.height).toString();
+          cpnElement.ellipse._w = Math.round(shape.width).toFixed(6); // .toString();
+          cpnElement.ellipse._h = Math.round(shape.height).toFixed(6); // .toString();
         }
         // if element is Transition object
         if (cpnElement.box) {
-          cpnElement.box._w = (shape.width).toString();
-          cpnElement.box._h = (shape.height).toString();
+          cpnElement.box._w = Math.round(shape.width).toFixed(6); // .toString();
+          cpnElement.box._h = Math.round(shape.height).toFixed(6); // .toString();
         }
       }
 
@@ -358,8 +389,8 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
           // if (!updateBendpoints(cpnElement, wp)) {
           // create new bendpoint item for cpnElement
           const position = {
-            x: (wp.x).toString(),
-            y: (wp.y).toString(),
+            x: Math.round(wp.x).toFixed(6), // .toString(),
+            y: Math.round(wp.y).toFixed(6), // .toString(),
           };
 
           bendpoints.push({
@@ -425,8 +456,8 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
       for (const bp of cpnElement.bendpoints) {
         if (bp._id === shapeWaypoint.id) {
           const position = {
-            x: (shapeWaypoint.x).toString(),
-            y: (shapeWaypoint.y).toString(),
+            x: Math.round(shapeWaypoint.x).toFixed(6), // .toString(),
+            y: Math.round(shapeWaypoint.y).toFixed(6), // .toString(),
           };
           bp.posattr = getDefPosattr(position);
           updated = true;
@@ -438,3 +469,73 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   }
 }
 
+CpnUpdater.prototype.animateArcList = function (arcIdList, speedMs) {
+
+  const updater = this;
+  const modeling = this._modeling;
+  const renderer = this._cpnRenderer;
+
+  return new Promise(function (resolve, reject) {
+
+    let arcIdCount = arcIdList.length;
+    if (arcIdCount === 0) {
+      resolve();
+    }
+
+    for (const arcId of arcIdList) {
+      const element = modeling.getElementById(arcId);
+      if (element) {
+        renderer.drawArcAnimation(element, speedMs).then((result) => {
+          console.log('TOKEN ANIMATION COMPLETE, Promise complete!, result.id = ', result.id, arcIdCount);
+
+          arcIdCount--;
+          if (arcIdCount === 0) {
+            console.log('TOKEN ANIMATION COMPLETE, RESOLVE ALL');
+            resolve();
+          }
+        });
+      }
+    }
+  });
+
+
+  // return new Promise(function (resolve, reject) {
+
+  //   if (arcIdList.length > 0) {
+  //     const arcId = arcIdList[0];
+
+  //     const element = modeling.getElementById(arcId);
+  //     if (element) {
+
+  //       renderer.drawArcAnimation(element, speedMs).then(() => {
+  //         console.log('TOKEN ANIMATION, drawArcAnimation(), Promise complete!');
+
+  //         if (arcIdList.length > 1) {
+  //           arcIdList.shift();
+  //           updater.animateArcList(arcIdList, speedMs).then(() => {
+  //             resolve('complete');
+  //           });
+  //         } else {
+  //           resolve('complete.all');
+  //         }
+  //       });
+
+  //     } else {
+
+  //       if (arcIdList.length > 1) {
+  //         arcIdList.shift();
+  //         updater.animateArcList(arcIdList).then(() => {
+  //           resolve('complete');
+  //         });
+  //       } else {
+  //         resolve('complete.all');
+  //       }
+
+  //     }
+  //   } 
+  //   else {
+  //     resolve('complete.all');
+  //   }
+
+  // });
+}

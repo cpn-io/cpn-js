@@ -1,11 +1,13 @@
+<app-main-toolbar></app-main-toolbar>
+
 <div class="split-container" style="overflow-y:hidden;">
 
   <as-split direction="horizontal" style="overflow-y:hidden" [gutterSize]="gutterSize" useTransition=true>
 
     <as-split-area style="overflow-y:hidden" [size]="leftSplitPaneSize">
 
-        <!-- Project explorer -->
-        <!-- <app-project-explorer></app-project-explorer> -->
+      <!-- Project explorer -->
+      <!-- <app-project-explorer></app-project-explorer> -->
 
       <as-split direction="vertical" [gutterSize]="gutterSize" useTransition=true>
 
@@ -27,7 +29,8 @@
 
         <!-- Editor -->
         <as-split-area style="overflow-y:hidden" [size]="editorSplitPaneSize">
-          <app-editor-panel></app-editor-panel>
+          <app-editor-panel [readyPagesIds]="accessCpnService.readyPagesIds"
+            [errorPagesIds]="accessCpnService.errorPagesIds"></app-editor-panel>
         </as-split-area>
 
         <!-- Console -->

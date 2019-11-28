@@ -1,24 +1,48 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
+import { Message } from '../common/message';
+import { Subject, Observable } from 'rxjs';
 
 @Injectable()
 export class EventService {
-  private handlers = [];
 
-  public on(id, func) {
-    this.handlers.push({ id, func });
+  listeners = {};
+  eventsSubject = new Subject();
+  events;
+
+  constructor() {
+    this.listeners = {};
+    this.eventsSubject = new Subject();
+
+    this.events = Observable.from(this.eventsSubject);
+
+    this.events.subscribe(
+      ({ name, args }) => {
+        if (this.listeners[name]) {
+          for (let listener of this.listeners[name]) {
+            listener(...args);
+          }
+        }
+      });
   }
 
-  public send(id, event = null, wait = false) {
-    for (const handler of this.handlers) {
-      if (handler && handler.id && handler.id === id) {
-        if (wait) {
-          handler.func(event);
-        } else {
-          setTimeout(() => {
-            handler.func(event);
-          }, 1);
-        }
-      }
+  on(name, listener) {
+    if (!this.listeners[name]) {
+      this.listeners[name] = [];
     }
+
+    this.listeners[name].push(listener);
+  }
+
+  off(name, listener) {
+    this.listeners[name] = this.listeners[name].filter(x => x != listener);
+  }
+
+  send(name, ...args) {
+    this.eventsSubject.next({
+      name,
+      args
+    });
   }
 }
+
+

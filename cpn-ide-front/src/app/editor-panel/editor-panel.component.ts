@@ -1,18 +1,22 @@
 import {
   Component,
-  ComponentFactoryResolver,
   OnDestroy,
   OnInit,
   QueryList,
   ViewChild,
   ViewChildren,
-  ViewContainerRef
+  Input,
 } from '@angular/core';
+
 import { ModelService } from '../services/model.service';
 import { ModelEditorComponent } from '../model-editor/model-editor.component';
 import { TabsContainer } from '../../lib/tabs/tabs-container/tabs.container';
 import { Message } from '../common/message';
 import { EventService } from '../services/event.service';
+import { AccessCpnService } from '../services/access-cpn.service';
+import { EditorPanelService } from '../services/editor-panel.service';
+import { ApplicationService } from '../services/application.service';
+import { ElementRef, AfterViewInit } from '@angular/core';
 
 
 @Component({
@@ -20,80 +24,95 @@ import { EventService } from '../services/event.service';
   templateUrl: './editor-panel.component.html',
   styleUrls: ['./editor-panel.component.scss']
 })
-export class EditorPanelComponent implements OnInit, OnDestroy {
+export class EditorPanelComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  @ViewChild('tabsComponent') tabsComponent: TabsContainer;
+  @ViewChild('documentationIFrame', {static: false}) documentationIFrame: ElementRef;
+  @ViewChild('tabsComponent', {static: false}) tabsComponent: TabsContainer;
 
   @ViewChildren(ModelEditorComponent) modelEditorList: QueryList<ModelEditorComponent>;
 
-  modelTabArray = [];
+  @Input() public readyPagesIds: any;
+  @Input() public errorPagesIds: any;
+
+  pageTabArray = [];
   mlTabArray = [];
-  constructor(private eventService: EventService, private modelService: ModelService) {
+  docTabArray = [];
+
+  currentTab = undefined;
+
+  documentationHref = ''; // ../../assets/documentation/index.html
+
+  constructor(private eventService: EventService,
+    private modelService: ModelService,
+    public accessCpnService: AccessCpnService,
+    private editorPanelService: EditorPanelService,
+    public applicationService: ApplicationService) {
+
+    // this.documentationHref = '../../assets/documentation/index.html';
   }
 
   ngOnInit() {
-    // Subscribe on project load event
-    this.eventService.on(Message.PROJECT_LOAD, (event) => {
-      if (event.project) {
-        this.loadProject(event.project);
-      }
-    });
+    this.editorPanelService.setEditorPanelComponent(this);
 
-    this.eventService.on(Message.TREE_SELECT_DECLARATION_NODE, (event) => {
-      if (event && event.openEditorTab) {
-        this.openMlEditor();
-      }
-    });
+    this.eventService.on(Message.PROJECT_LOAD, () => this.loadProject());
+    this.eventService.on(Message.TREE_SELECT_DECLARATION_NODE, () => this.openMlEditor());
+    this.eventService.on(Message.PAGE_TAB_OPEN, (event) => this.openModelEditor(event.pageObject).then());
+    this.eventService.on(Message.PAGE_TAB_CLOSE, (event) => this.deleteTab(event.id));
+    this.eventService.on(Message.PAGE_CHANGE_NAME, (event) => this.changeName(event.id, event.name));
+  }
 
-    this.eventService.on(Message.PAGE_OPEN, (event) => {
-      this.openModelEditor(event.pageObject, event.subPages);
-    });
-
-    this.eventService.on(Message.PAGE_DELETE, (event) => {
-      this.deleteTab(event.id);
-
-      // const filteredList = this.modelEditorList.filter(e => e.pageId !== event.id);
-      // this.modelEditorList.reset(filteredList);
-      // if (filteredList.length === 0) {
-      //   this.loadProject(this.modelService.project);
-      // }
-      // console.log('editor-panel delete page --- ', this.modelEditorList);
-    });
-
-    this.eventService.on(Message.PAGE_CHANGE_NAME, (event) => {
-      this.changeName(event.id, event.name);
-    });
-
+  ngAfterViewInit() {
+    this.documentationIFrame.nativeElement.src = '../../assets/documentation/index.html';
   }
 
   ngOnDestroy() {
   }
 
-  loadProject(project) {
-    this.modelTabArray = [];
+  loadProject() {
+    this.pageTabArray = [];
     this.mlTabArray = [];
+    this.docTabArray = [];
+    this.currentTab = undefined;
+
     this.tabsComponent.clear();
 
     this.openMlEditor();
+    this.openDocumentation();
   }
 
-  currentTabChange(event) {
+  currentTabChange(event = undefined) {
     console.log('currentTabChange(), event = ', event);
+
+    const tab = this.tabsComponent.getSelectedTab();
+    if (tab && tab !== this.currentTab) {
+      const modelEditor = this.modelEditorList.toArray().find(e => e.id === 'model_editor_' + tab.id);
+      console.log('currentTabChange(), editor = ', modelEditor);
+
+      this.editorPanelService.setSelectedModelEditor(modelEditor);
+
+      // update status for selected editor
+      // if (modelEditor) {
+      //   modelEditor.updateElementStatus();
+      // }
+    }
+    this.currentTab = tab;
   }
 
   deleteTab(id) {
-    console.log('deleteTab(), modelTabArray = ', this.modelTabArray);
-    console.log('deleteTab(), mlTabArray = ', this.mlTabArray);
-
-    for (const i in this.modelTabArray) {
-      if (this.modelTabArray[i].id === id) {
-        console.log('deleteTab(), i, this.modelTabArray[i] = ', i, this.modelTabArray[i]);
-        this.modelTabArray.splice(parseInt(i, 0), 1);
+    for (const i in this.pageTabArray) {
+      if (this.pageTabArray[i].id === id) {
+        console.log('deleteTab(), i, this.modelTabArray[i] = ', i, this.pageTabArray[i]);
+        this.pageTabArray.splice(parseInt(i, 0), 1);
         break;
       }
     }
 
     this.tabsComponent.deleteTabById(id);
+
+    const tabs = this.tabsComponent.tabs;
+    if (tabs && tabs.length > 0) {
+      this.selectTab(tabs[tabs.length - 1].id);
+    }
   }
 
   changeName(id, name) {
@@ -103,9 +122,7 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
     }
   }
 
-  addTab(tabArray, id, name) {
-    tabArray.push({ id: id, title: name });
-
+  selectTab(id) {
     setTimeout(() => {
       const tab = this.tabsComponent.getTabByID(id);
       if (tab) {
@@ -114,51 +131,57 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
     }, 0);
   }
 
-  addMlTab(tabArray, id, name) {
-    tabArray.push({ id: id, title: name });
+  openModelEditor(pageObject) {
+    this.applicationService.isShowDocumentation = false;
 
-    setTimeout(() => {
-      const tab = this.tabsComponent.getTabByID(id);
+    return new Promise((resolve, reject) => {
+      console.log('openPage(), pageObject = ', pageObject);
+
+      const tab = this.tabsComponent.getTabByID(pageObject._id);
+
       if (tab) {
+
         this.tabsComponent.selectTab(tab);
-      }
-    }, 0);
-  }
+        resolve();
 
-  openModelEditor(pageObject, subPage) {
-    console.log('openPage(), pageObject = ', pageObject);
+      } else {
 
-    // var pageId = pageObject['@attributes'].id;
-    // var pageName = pageObject.pageattr['@attributes'].name;
-    const pageId = pageObject._id;
-    const pageName = pageObject.pageattr._name;
+        const tabAttrs = { id: pageObject._id, pageObject: pageObject };
+        this.pageTabArray.push(tabAttrs);
+        this.selectTab(tabAttrs.id);
 
-    const tab = this.tabsComponent.getTabByID(pageId);
+        setTimeout(() => {
+          if (this.modelEditorList) {
 
-    if (tab) {
-      this.tabsComponent.selectTab(tab);
-    } else {
+            const tab = this.tabsComponent.getSelectedTab();
+            if (tab) {
+              const modelEditor = this.modelEditorList.toArray().find(e => e.id === 'model_editor_' + tab.id);
+              this.editorPanelService.setSelectedModelEditor(modelEditor);
 
-      this.addTab(this.modelTabArray, pageId, pageName);
-
-      setTimeout(() => {
-        if (this.modelEditorList) {
-          const tab = this.tabsComponent.getSelectedTab();
-
-          if (tab) {
-            this.modelEditorList.forEach(editor => {
-              if (editor.id === 'model_editor_' + tab.id) {
-                editor.load(pageObject, subPage);
+              if (modelEditor) {
+                modelEditor.loadPage(pageObject).then(
+                  () => {
+                    modelEditor.updateElementStatus().then(() => {
+                      resolve();
+                    });
+                  }
+                );
               }
-            });
+            } else {
+              resolve();
+            }
+          } else {
+            resolve();
           }
-        }
-      }, 0);
+        }, 0);
 
-    }
+      }
+    });
   }
 
   openMlEditor() {
+    this.applicationService.isShowDocumentation = false;
+
     const pageId = 'ml-editor';
     const pageName = 'ML editor';
 
@@ -166,15 +189,21 @@ export class EditorPanelComponent implements OnInit, OnDestroy {
     if (tab) {
       this.tabsComponent.selectTab(tab);
     } else {
-      this.addMlTab(this.mlTabArray, pageId, pageName);
+      this.mlTabArray.push({ id: pageId, title: pageName });
+      this.selectTab(pageId);
+    }
+  }
 
-      setTimeout(() => {
-        if (this.modelEditorList) {
-          tab = this.tabsComponent.getSelectedTab();
-          if (tab) {
-          }
-        }
-      }, 0);
+  openDocumentation() {
+    const pageId = 'documentation';
+    const pageName = 'Documentation';
+
+    let tab = this.tabsComponent.getTabByID(pageId);
+    if (tab) {
+      this.tabsComponent.selectTab(tab);
+    } else {
+      this.docTabArray.push({ id: pageId, title: pageName });
+      this.selectTab(pageId);
     }
   }
 

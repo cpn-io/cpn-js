@@ -1,6 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Message } from '../common/message';
 import { EventService } from '../services/event.service';
+import { ModelService } from '../services/model.service';
+import { AccessCpnService } from '../services/access-cpn.service';
 
 @Component({
   selector: 'app-main-frame',
@@ -22,7 +24,9 @@ export class MainFrameComponent implements OnInit, OnDestroy {
   editorSplitPaneSize = 70;
   consoleSplitPaneSize = 30;
 
-  constructor(private eventService: EventService) {
+  constructor(private eventService: EventService, 
+    public modelService: ModelService,
+    public accessCpnService: AccessCpnService) {
   }
 
   ngOnInit() {

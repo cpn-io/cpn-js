@@ -46,7 +46,7 @@ import {
  * @param {ElementFactory} elementFactory
  * @param {CommandStack} commandStack
  */
-export default function Modeling(eventBus, elementFactory, elementRegistry, commandStack, textRenderer, canvas, portMenuProvider) {
+export default function Modeling(eventBus, elementFactory, elementRegistry, commandStack, textRenderer, canvas) {
   // console.log('Modeling()');
 
   BaseModeling.call(this, eventBus, elementFactory, commandStack);
@@ -62,9 +62,10 @@ export default function Modeling(eventBus, elementFactory, elementRegistry, comm
   this._elementRegistry = elementRegistry;
   this._textRenderer = textRenderer;
   this._canvas = canvas;
-  this._portMenuProvider = portMenuProvider;
 
   this._isEditable = true;
+
+  this._instanseId = Math.random().toString(36).substring(2).toUpperCase() + '-' + Date.now().toString(36).toUpperCase();
 }
 
 inherits(Modeling, BaseModeling);
@@ -75,10 +76,12 @@ Modeling.$inject = [
   'elementRegistry',
   'commandStack',
   'textRenderer',
-  'canvas',
-  'portMenuProvider'
+  'canvas'
 ];
 
+Modeling.prototype.getInstanseId = function () {
+  return this._instanseId;
+};
 
 Modeling.prototype.getHandlers = function () {
   // console.log('Modeling().getHandlers()');
@@ -398,37 +401,12 @@ Modeling.prototype.connect = function (source, target, attrs, hints) {
       // this._eventBus.fire('shape.editing.activate', {shape: conElem});
       // this._eventBus.fire('shape.contextpad.activate', {shape: conElem});
 
-      //openPortProvider(this._portMenuProvider, transShape);
-      //this._portMenuProvider.open(transShape, { cursor: { x: 609, y: 575 } });
-      // openPortMenu(this._eventBus, transShape, placeShape, conElem, orientation);
-
       return conElem;
     }
   }
 
   return undefined;
 };
-
-
-function openPortMenu(eventBus, transShape, placeShape, conElem, orientation) {
-  if (transShape.cpnElement.subst)
-    eventBus.fire('portMenuProvider.open', {
-      trans: transShape,
-      place: placeShape,
-      arc: conElem,
-      portType: orientation === 'PtoT' ? 'In' : 'Out',
-      position: {
-        cursor: orientation === 'PtoT'
-          ? { x: transShape.x, y: transShape.y }
-          : { x: placeShape.x, y: placeShape.y }
-      }
-    });
-}
-
-
-function openPortProvider(portMenuProvider, trnsShape) {
-  portMenuProvider.open(transShape, { cursor: { x: 609, y: 575 } });
-}
 
 Modeling.prototype.createNewConnection = function (placeShape, transShape, orientation) {
   // console.log('Modeling.prototype.createNewConnection(), place = ', placeShape);
@@ -969,10 +947,10 @@ Modeling.prototype.createShapeCpnElement = function (position, type) {
 
   switch (type) {
     case CPN_PLACE:
-      newElement = getDefPlace('P' + n, position);
+      newElement = getDefPlace('P' + n, position, getDefaultValue('ellipse'));
       break;
     case CPN_TRANSITION:
-      newElement = getDefTransition('T' + n, position);
+      newElement = getDefTransition('T' + n, position, getDefaultValue('box'));
       break;
     case CPN_TEXT_ANNOTATION:
       newElement = getDefAux('Text', position);

@@ -5,6 +5,23 @@ import {
 import { is, CPN_PLACE, CPN_TRANSITION, CPN_TEXT_ANNOTATION } from '../../util/ModelUtil';
 import { getNextId } from '../modeling/CpnElementFactory';
 
+import {
+  event as domEvent
+} from 'min-dom';
+
+CpnPopupMenuProvider.$inject = [
+  'create',
+  'cpnFactory',
+  'canvas',
+  'popupMenu',
+  'modeling',
+  'connect',
+  'rules',
+  'translate',
+  'eventBus'
+];
+
+
 /**
  * This module is an element agnostic replace menu provider for the popup menu.
  */
@@ -25,19 +42,14 @@ export default function CpnPopupMenuProvider(create, cpnFactory, canvas, popupMe
 
   this._element = undefined;
   this._position = undefined;
+
+
+  // domEvent.bind(container, 'mousedown', function (event) {
+  //   console.log('CpnPopupMenuProvider(), mousedown ', event);
+  // });
+
 }
 
-CpnPopupMenuProvider.$inject = [
-  'create',
-  'cpnFactory',
-  'canvas',
-  'popupMenu',
-  'modeling',
-  'connect',
-  'rules',
-  'translate',
-  'eventBus'
-];
 
 
 /**

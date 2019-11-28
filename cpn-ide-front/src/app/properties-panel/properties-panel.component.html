@@ -1,4 +1,4 @@
-<tabs class="cpn-tabs">
+<tabs #tabsComponent class="cpn-tabs">
   <ng-template ngFor let-tab [ngForOf]="tabList">
     <tab *ngIf="tab" [id]="tab.id" [tabTitle]="tab.name">
 
@@ -7,128 +7,123 @@
       <!-------------------------->
       <ng-container *ngIf="tab.id === 'propertiesPanel'">
 
-        <div class="blockHeader">
-          {{ title }}
-        </div>
+        <div class="tab-container">
 
-        <!-- <input [value]="getCpnElement()" (change)="onChange()"> -->
+          <div class="blockHeader">
+            {{ title }}
+          </div>
 
-        <div class="workspace-container">
-          <div class="inner">
-            <div class="scroll-y">
-
-              <div *ngIf="cpnElement">
-
-                <!----------------->
-                <!-- Common part -->
-                <!----------------->
-                <div style="width:100%">
-
-                  <!-- ID -->
-                  <app-text-edit-row name="Id" [object]="cpnElement" field="_id" readonly="true">
-                  </app-text-edit-row>
-
-                  <!-- Name (if no arc) -->
-                  <app-text-edit-row *ngIf="!cpnElement._orientation" type="text" name="Name" [object]="cpnElement"
-                    field="text" [readonly]="accessCpnService.isSimulation" (changed)="updateChanges()">
-                  </app-text-edit-row>
-
-                  <!-- Shape Labels -->
-                  <div *ngFor="let labelKey of ['initmark', 'type', 'cond', 'time', 'code', 'priority', 'annot']">
-                    <!-- {{ JSON.stringify(cpnElement[labelKey]) }}<br> -->
-                    <app-text-edit-row *ngIf="cpnElement[labelKey]" type="text" [name]="names[labelKey] || labelKey"
-                      [object]="cpnElement[labelKey].text" field="__text" (changed)="updateLabel($event)"
-                      [readonly]="accessCpnService.isSimulation">
-                    </app-text-edit-row>
-                  </div>
-
-                  <!-- Port Labels -->
-                  <app-text-edit-row *ngIf="cpnElement.ellipse" type="select" name="Port type"
-                    [object]="getPort(cpnElement)" field="value" (changed)="updatePortType($event)"
-                    [options]="portTypes"
-                    [readonly]="accessCpnService.isSimulation">
-                  </app-text-edit-row>
-
-                  <!-- Subst Labels -->
-                  <app-text-edit-row *ngIf="cpnElement.box" type="select" name="Suppage" [object]="getSubst(cpnElement)"
-                    field="value" (changed)="updateSubst($event)" [options]="getSubstPages(cpnElement)"
-                    [readonly]="accessCpnService.isSimulation">
-                  </app-text-edit-row>
-
-                  <!-- PortSock -->
-                  <app-text-edit-row *ngIf="cpnElement.subst" name="PortSock" [object]="cpnElement.subst"
-                    field="_portsock" readonly="true">
-                  </app-text-edit-row>
-
-                  <!-- Direction (only for acrs) -->
-                  <app-text-edit-row *ngIf="cpnElement._orientation" type="select" name="Direction"
-                    [object]="cpnElement" field="_orientation" (changed)="updateChanges()" [options]="orientations"
-                    [readonly]="accessCpnService.isSimulation">
-                  </app-text-edit-row>
+          <!-- <input [value]="getCpnElement()" (change)="onChange()"> -->
 
 
-                  <!-- Port binds -->
-                  <app-text-edit-row *ngIf="cpnElement._orientation && getBindTransElementSubst(cpnElement)"
-                    type="select" name="Port bind" [object]="getPortBind(cpnElement)" field="value"
-                    (changed)="updatePortBind($event)" [options]="getSubPagesPorts(cpnElement)"
-                    [readonly]="accessCpnService.isSimulation">
-                  </app-text-edit-row>
+          <div *ngIf="cpnElement">
 
-                </div>
+            <!----------------->
+            <!-- Common part -->
+            <!----------------->
+            <div style="width:100%">
 
-                <!----------------->
-                <!-- Layout part -->
-                <!----------------->
-                <app-block-header [opened]="layoutPartOpened['common']"
-                  (click)="layoutPartOpened['common']=!layoutPartOpened['common']"></app-block-header>
+              <!-- ID -->
+              <app-text-edit-row name="Id" [object]="cpnElement" field="_id" readonly="true">
+              </app-text-edit-row>
 
-                <div [hidden]="!layoutPartOpened['common']" style="width:100%">
+              <!-- Name (if no arc) -->
+              <app-text-edit-row *ngIf="!cpnElement._orientation" type="text" name="Name" [object]="cpnElement"
+                field="text" [readonly]="accessCpnService.isSimulation" (changed)="updateChanges()">
+              </app-text-edit-row>
 
-                  <!-- Shape Position -->
-                  <div *ngIf="cpnElement.posattr && !cpnElement._orientation">
-                    <app-text-edit-row type="int" name="X" readonly="true" [object]="cpnElement.posattr" field="_x"
-                      (changed)="updateChanges()">
-                    </app-text-edit-row>
-                    <app-text-edit-row type="int" name="Y" readonly="true" [object]="cpnElement.posattr" field="_y"
-                      (changed)="updateChanges()">
-                    </app-text-edit-row>
-                  </div>
+              <!-- Shape Labels -->
+              <div *ngFor="let labelKey of ['initmark', 'type', 'cond', 'time', 'code', 'priority', 'annot']">
+                <!-- {{ JSON.stringify(cpnElement[labelKey]) }}<br> -->
+                <app-text-edit-row *ngIf="cpnElement[labelKey]" type="text" [name]="names[labelKey] || labelKey"
+                  [object]="cpnElement[labelKey].text" field="__text" (changed)="updateLabel($event)"
+                  [readonly]="accessCpnService.isSimulation">
+                </app-text-edit-row>
+              </div>
 
-                  <!-- Shape Dimention -->
-                  <div *ngFor="let form of ['ellipse', 'box']">
-                    <app-text-edit-row type="int" name="Width" readonly="true" [object]="cpnElement[form]" field="_w"
-                      (changed)="updateChanges()">
-                    </app-text-edit-row>
-                    <app-text-edit-row type="int" name="Height" readonly="true" [object]="cpnElement[form]" field="_h"
-                      (changed)="updateChanges()">
-                    </app-text-edit-row>
-                  </div>
+              <!-- Port Labels -->
+              <app-text-edit-row *ngIf="cpnElement.ellipse" type="select" name="Port type"
+                [object]="getPort(cpnElement)" field="value" (changed)="updatePortType($event)" [options]="portTypes"
+                [readonly]="accessCpnService.isSimulation">
+              </app-text-edit-row>
 
-                  <!-- Stroke thick -->
-                  <app-text-edit-row type="int" name="Stroke thick" [object]="cpnElement.lineattr" field="_thick"
-                    (changed)="updateChanges()"
-                    [readonly]="accessCpnService.isSimulation">
-                  </app-text-edit-row>
+              <!-- Subst Labels -->
+              <app-text-edit-row *ngIf="cpnElement.box" type="select" name="Suppage" [object]="getSubst(cpnElement)"
+                field="value" (changed)="updateSubst($event)" [options]="getSubstPages(cpnElement)"
+                [readonly]="accessCpnService.isSimulation">
+              </app-text-edit-row>
 
-                  <!-- Stroke color -->
-                  <app-text-edit-row type="color" name="Stroke color" [object]="cpnElement.lineattr" field="_colour"
-                    (changed)="updateChanges()" [colors]="colors"
-                    [readonly]="accessCpnService.isSimulation">
-                  </app-text-edit-row>
+              <!-- PortSock -->
+              <app-text-edit-row *ngIf="cpnElement.subst" name="PortSock" [object]="cpnElement.subst" field="_portsock"
+                readonly="true">
+              </app-text-edit-row>
 
-                  <!-- Fill color -->
-                  <app-text-edit-row *ngIf="!cpnElement._orientation" type="color" name="Fill color"
-                    [object]="cpnElement.fillattr" field="_colour" (changed)="updateChanges()" [colors]="colors"
-                    [readonly]="accessCpnService.isSimulation">
-                  </app-text-edit-row>
-
-                </div>
+              <!-- Direction (only for acrs) -->
+              <app-text-edit-row *ngIf="cpnElement._orientation" type="select" name="Direction" [object]="cpnElement"
+                field="_orientation" (changed)="updateChanges()" [options]="orientations"
+                [readonly]="accessCpnService.isSimulation">
+              </app-text-edit-row>
 
 
-                <!----------------->
-                <!-- Label part -->
-                <!----------------->
-                <!--
+              <!-- Port binds -->
+              <app-text-edit-row *ngIf="cpnElement._orientation && getBindTransElementSubst(cpnElement)" type="select"
+                name="Port bind" [object]="getPortBind(cpnElement)" field="value" (changed)="updatePortBind($event)"
+                [options]="getSubPagesPorts(cpnElement)" [readonly]="accessCpnService.isSimulation">
+              </app-text-edit-row>
+
+            </div>
+
+            <!----------------->
+            <!-- Layout part -->
+            <!----------------->
+            <app-block-header [opened]="layoutPartOpened['common']"
+              (click)="layoutPartOpened['common']=!layoutPartOpened['common']"></app-block-header>
+
+            <div [hidden]="!layoutPartOpened['common']" style="width:100%">
+
+              <!-- Shape Position -->
+              <div *ngIf="cpnElement.posattr && !cpnElement._orientation">
+                <app-text-edit-row type="int" name="X" readonly="true" [object]="cpnElement.posattr" field="_x"
+                  (changed)="updateChanges()">
+                </app-text-edit-row>
+                <app-text-edit-row type="int" name="Y" readonly="true" [object]="cpnElement.posattr" field="_y"
+                  (changed)="updateChanges()">
+                </app-text-edit-row>
+              </div>
+
+              <!-- Shape Dimention -->
+              <div *ngFor="let form of ['ellipse', 'box']">
+                <app-text-edit-row type="int" name="Width" readonly="true" [object]="cpnElement[form]" field="_w"
+                  (changed)="updateChanges()">
+                </app-text-edit-row>
+                <app-text-edit-row type="int" name="Height" readonly="true" [object]="cpnElement[form]" field="_h"
+                  (changed)="updateChanges()">
+                </app-text-edit-row>
+              </div>
+
+              <!-- Stroke thick -->
+              <app-text-edit-row type="int" name="Stroke thick" [object]="cpnElement.lineattr" field="_thick"
+                (changed)="updateChanges()" [readonly]="accessCpnService.isSimulation">
+              </app-text-edit-row>
+
+              <!-- Stroke color -->
+              <app-text-edit-row type="color" name="Stroke color" [object]="cpnElement.lineattr" field="_colour"
+                (changed)="updateChanges()" [colors]="colors" [readonly]="accessCpnService.isSimulation">
+              </app-text-edit-row>
+
+              <!-- Fill color -->
+              <app-text-edit-row *ngIf="!cpnElement._orientation" type="color" name="Fill color"
+                [object]="cpnElement.fillattr" field="_colour" (changed)="updateChanges()" [colors]="colors"
+                [readonly]="accessCpnService.isSimulation">
+              </app-text-edit-row>
+
+            </div>
+
+
+            <!----------------->
+            <!-- Label part -->
+            <!----------------->
+            <!--
           <div *ngFor="let labelKey of ['type', 'initmark', 'port', 'cond', 'time', 'code', 'priority', 'annot']">
 
             <div *ngIf="cpnElement[labelKey]">
@@ -153,10 +148,8 @@
 
           </div>
         -->
-              </div>
-
-            </div>
           </div>
+
         </div>
 
       </ng-container>
@@ -166,17 +159,23 @@
       <!-------------------------->
       <!-- <ng-container *ngIf="tab.id === 'modelPanel'">
 
-        <div class="workspace-container">
-          <div class="inner">
-            <div class="scroll-y">
-
-              <ngx-json-viewer [json]="projectData" [expanded]="false"></ngx-json-viewer>
-
-            </div>
-          </div>
+        <div class="tab-container">
+          <ngx-json-viewer [json]="projectData" [expanded]="false"></ngx-json-viewer>
         </div>
 
       </ng-container> -->
+
+      <!-------------------------->
+      <!-- Monitor tab -->
+      <!-------------------------->
+      <ng-container *ngIf="tab.id === 'monitorPanel'">
+
+        <div class="tab-container">
+          <app-project-monitors></app-project-monitors>
+        </div>
+
+      </ng-container>
+
 
     </tab>
   </ng-template>

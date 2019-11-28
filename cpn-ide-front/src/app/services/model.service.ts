@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import { EventService } from './event.service';
 import { Message } from '../common/message';
-import { AccessCpnService } from './access-cpn.service';
 import { SettingsService } from '../services/settings.service';
-import { ValidationService } from './validation.service';
-import { keyframes } from '@angular/animations';
 
 import {
-  getNextId,
   getDefText
 } from '../../lib/cpn-js/features/modeling/CpnElementFactory';
+
+import { nodeToArray, addNode, arrayMove, getNextId, cloneObject } from '../common/utils';
+import { DataCollectionMonitorTemplate, BreakpointMonitorTemplate, UserDefinedMonitorTemplate, WriteInFileMonitorTemplate, MarkingSizeMonitorTemplate, ListLengthDataCollectionMonitorTemplate, CountTransitionOccurrencesMonitorTemplate, PlaceContentBreakPointMonitorTemplate, TransitionEnabledBreakPointMonitorTemplate, MonitorType } from '../common/monitors';
+import { parseDeclarartion } from '../project-tree/project-tree-declaration-node/declaration-parser';
+import { DEFAULT_PAGE } from '../common/default-data';
 
 
 /**
@@ -17,6 +18,8 @@ import {
  */
 @Injectable()
 export class ModelService {
+
+  monitorType = MonitorType;
 
   private isLoaded = false;
 
@@ -27,15 +30,8 @@ export class ModelService {
   private backupModel = [];
   private redoBackupModel;
   private modelCase = [];
-  subPages;
-  pageId;
+
   countNewItems = 0;
-  labelsEntry = {
-    trans: ['time', 'code', 'priority', 'edit', 'cond'],
-    place: ['initmark', 'edit', 'type'],
-    arc: ['annot'],
-    label: ['edit']
-  };
   paramsTypes = ['ml', 'color', 'var', 'globref'];
 
 
@@ -47,7 +43,6 @@ export class ModelService {
   undoRedoBusy = false;
 
   constructor(private eventService: EventService,
-    private accessCpnService: AccessCpnService,
     private settings: SettingsService,
   ) {
     console.log('ModelService instance CREATED!');
@@ -65,17 +60,18 @@ export class ModelService {
     this.eventService.on(Message.PROJECT_LOAD, (event) => {
       if (event.project) {
         this.loadProject(event.project);
+        this.eventService.send(Message.SERVER_INIT_NET,
+          {
+            projectData: this.getProjectData(),
+            complexVerify: true,
+            restartSimulator: true
+          });
       }
     });
 
     // this.eventService.on(Message.MODEL_RELOAD, () => {
     //   // this.loadProject(this.getProject());
     // });
-
-    this.eventService.on(Message.PAGE_OPEN, (data) => {
-      this.subPages = data.subPages;
-      this.pageId = data.pageObject._id;
-    });
 
     // MODEL SAVE BACKUP
     this.eventService.on(Message.MODEL_SAVE_BACKUP, (event) => {
@@ -167,7 +163,7 @@ export class ModelService {
 
     this.undoRedoBusy = false;
 
-    this.eventService.send(Message.MODEL_CHANGED);
+    // this.eventService.send(Message.MODEL_CHANGED);
   }
 
   redoChanges() {
@@ -189,15 +185,7 @@ export class ModelService {
 
     this.undoRedoBusy = false;
 
-    this.eventService.send(Message.MODEL_CHANGED);
-  }
-
-  getLabelEntry() {
-    return this.labelsEntry;
-  }
-
-  getModelCase(labelType) {
-    return this.modelCase[labelType];
+    // this.eventService.send(Message.MODEL_CHANGED);
   }
 
   public getProject() {
@@ -214,21 +202,34 @@ export class ModelService {
    */
   getCpn() {
     let cpnet;
-    if (this.projectData.workspaceElements) {
-      if (this.projectData.workspaceElements instanceof Array) {
-        for (const workspaceElement of this.projectData.workspaceElements) {
-          if (workspaceElement.cpnet) {
-            cpnet = workspaceElement.cpnet;
-            break;
+    if (this.projectData) {
+      if (this.projectData.workspaceElements) {
+        if (this.projectData.workspaceElements instanceof Array) {
+          for (const workspaceElement of this.projectData.workspaceElements) {
+            if (workspaceElement.cpnet) {
+              cpnet = workspaceElement.cpnet;
+              break;
+            }
           }
-        }
-      } else {
-        if (this.projectData.workspaceElements.cpnet) {
-          cpnet = this.projectData.workspaceElements.cpnet;
+        } else {
+          if (this.projectData.workspaceElements.cpnet) {
+            cpnet = this.projectData.workspaceElements.cpnet;
+          }
         }
       }
     }
     return cpnet;
+  }
+
+  getMonitorsRoot() {
+    const cpnet = this.getCpn();
+    if (cpnet) {
+      if (!cpnet.monitorblock) {
+        cpnet.monitorblock = {};
+      }
+      return cpnet.monitorblock;
+    }
+    return undefined;
   }
 
   /**
@@ -315,17 +316,17 @@ export class ModelService {
   addElementJsonOnPage(cpnElement, pageId, type, _modeling) {
     console.log('addElementJsonOnPage()', cpnElement, pageId, type);
 
-    const jsonPageObject = this.getPageById(pageId);
-    console.log('addElementJsonOnPage(), jsonPageObject = ', jsonPageObject);
+    const page = this.getPageById(pageId);
+    console.log('addElementJsonOnPage(), page = ', page);
 
-    if (jsonPageObject[this.modelCase[type]] instanceof Array) {
-      jsonPageObject[this.modelCase[type]].push(cpnElement);
+    if (page[this.modelCase[type]] instanceof Array) {
+      page[this.modelCase[type]].push(cpnElement);
     } else {
-      if (jsonPageObject[this.modelCase[type]]) {
-        const currentElem = jsonPageObject[this.modelCase[type]];
-        jsonPageObject[this.modelCase[type]] = [currentElem, cpnElement];
+      if (page[this.modelCase[type]]) {
+        const currentElem = page[this.modelCase[type]];
+        page[this.modelCase[type]] = [currentElem, cpnElement];
       } else {
-        jsonPageObject[this.modelCase[type]] = [cpnElement];
+        page[this.modelCase[type]] = [cpnElement];
       }
     }
 
@@ -333,7 +334,7 @@ export class ModelService {
       this.updateInstances();
     }
 
-    this.eventService.send(Message.MODEL_CHANGED);
+    // this.eventService.send(Message.MODEL_CHANGED);
   }
 
   instaceForTransition(id, isRoot) {
@@ -344,7 +345,7 @@ export class ModelService {
    * Correct Place types. It should be UNIT by default if empty
    */
   updatePlaceTypes() {
-    const defPlaceType = this.settings.getAppSettings()['type'];
+    const defPlaceType = this.settings.appSettings['type'];
 
     const allPlaces = this.getAllPlaces();
     for (const p of allPlaces) {
@@ -603,16 +604,25 @@ export class ModelService {
    * @param name - name of new page
    * @returns - new page cpnElement
    */
-  createCpnPage(name, id) {
-    const newPage = {
-      pageattr: {
-        _name: name
-      },
-      constraints: '',
-      _id: id ? id : getNextId()
-    };
+  createCpnPage(name, id = undefined) {
+    // const newPage = {
+    //   pageattr: {
+    //     _name: name
+    //   },
+    //   constraints: '',
+    //   _id: id ? id : getNextId()
+    // };
 
-    this.updateInstances();
+    const placeList = this.getAllPlaces();
+    const pageList = this.getAllPages();
+
+    const newPage = cloneObject(DEFAULT_PAGE);
+    newPage.pageattr._name = name + ' ' + (pageList.length + 1);
+    newPage._id = id || getNextId();
+    newPage.place._id = getNextId();
+    newPage.place.text = "P" + (placeList.length + 1);
+
+    // this.updateInstances();
     return newPage;
   }
 
@@ -642,238 +652,311 @@ export class ModelService {
     };
   }
 
-  createCpnMonitorBP(_cpnElement) {
+  // ------------------------------------------------
+  // DC: 'Data collection',
+  // MS: 'Marking size',
+  // BP: 'Break point',
+  // UD: 'User defined',
+  // WIF: 'Write in file',
+  // LLDC: 'List length data collection',
+  // CTODC: 'Count transition occurence data collector',
+  // PCBP: 'Place content break point',
+  // TEBP: 'Transition enabled break point'
+  // ------------------------------------------------
 
+  getShapeNames(cpnElement) {
+    let s = '';
+    for (const e of nodeToArray(cpnElement)) {
+      if (s.length > 0) {
+        s += ', ';
+      }
+      s += e.text;
+    }
+    return s;
   }
 
-  // <monitor id="ID1438426776"
-  //   name="Count_trans_occur_Customer&apos;place_                    order_1"
-  //   type="6"
-  //   typedescription="Count transition occurrence data collection"
-  //   disabled="false">
-  //   <node idref="ID1437019464"
-  //   pageinstanceidref="ID1437019576"/>
-  //   <option name="Logging"
-  //   value="true"/>
-  // </monitor>
-  createMonitorCTODC(cpnElement: any): any {
-    console.log('createMonitorCTODC(), cpnElement = ', cpnElement);
+  getMonitorNodeList(cpnElement) {
+    const cpnElementList = cpnElement instanceof Array ? cpnElement : [cpnElement];
+    const nodeList = [];
+    for (const e of cpnElementList) {
+      nodeList.push({
+        _idref: e._id,
+        _pageinstanceidref: 'PAGEINSTANCEID' // TODO: add page instance ID
+      });
+    }
+    if (nodeList.length === 0) {
+      return undefined;
+    }
+    return nodeList.length === 1 ? nodeList[0] : nodeList;
+  }
+
+  createCpnMonitor(monitorType: string, cpnElementList, monitorDefaults) {
+
+    // monitorDefaults
+    // {
+    //   "defaultInit": "string",
+    //   "defaultObserver": "string",
+    //   "defaultPredicate": "string",
+    //   "defaultStop": "string",
+    //   "defaultTimed": true
+    // }    
+
+    let newMonitorCpnElement;
+    switch (monitorType) {
+      case this.monitorType.BP: newMonitorCpnElement = this.createCpnMonitorBP(cpnElementList, monitorDefaults); break;
+      case this.monitorType.CTODC: newMonitorCpnElement = this.createMonitorCTODC(cpnElementList, monitorDefaults); break;
+      case this.monitorType.DC: newMonitorCpnElement = this.createCpnMonitorDC(cpnElementList, monitorDefaults); break;
+      case this.monitorType.LLDC: newMonitorCpnElement = this.createCpnMonitorLLDC(cpnElementList, monitorDefaults); break;
+      case this.monitorType.MS: newMonitorCpnElement = this.createCpnMonitorMS(cpnElementList, monitorDefaults); break;
+      case this.monitorType.PCBP: newMonitorCpnElement = this.createCpnMonitorPCBP(cpnElementList, monitorDefaults); break;
+      case this.monitorType.TEBP: newMonitorCpnElement = this.createCpnMonitorTEBP(cpnElementList, monitorDefaults); break;
+      case this.monitorType.UD: newMonitorCpnElement = this.createCpnMonitorUD(cpnElementList, monitorDefaults); break;
+      case this.monitorType.WIF: newMonitorCpnElement = this.createCpnMonitorWIF(cpnElementList, monitorDefaults); break;
+    }
+    return newMonitorCpnElement;
+  }
+
+  getMonitorDefaults(monitorDefaults, monitorTemplate: DataCollectionMonitorTemplate) {
     return {
-      _id: getNextId(),
-      _name: 'Count_trans_occur_PAGENAME_' + cpnElement.text, // TODO add page name: 'Count_trans_occur_' + PAGENAME + '_' + cpnElement.text
-      _type: '6',
-      _typedescription: 'Count transition occurrence data collection',
-      _disabled: 'false',
-      node: {
-        _idref: cpnElement.id,
-        _pageinstanceidref: 'PAGEINSTANCEID' // TODO add page instance ID
-      },
-      option: {
-        _name: 'Logging',
-        _value: 'false'
-      }
+      defaultInit: monitorDefaults && monitorDefaults.defaultInit ? monitorDefaults.defaultInit : monitorTemplate.defaultInit(),
+      defaultObserver: monitorDefaults && monitorDefaults.defaultObserver ? monitorDefaults.defaultObserver : monitorTemplate.defaultObserver(),
+      defaultPredicate: monitorDefaults && monitorDefaults.defaultPredicate ? monitorDefaults.defaultPredicate : monitorTemplate.defaultPredicate(),
+      defaultStop: monitorDefaults && monitorDefaults.defaultStop ? monitorDefaults.defaultStop : monitorTemplate.defaultStop(),
+      defaultTimed: monitorDefaults && monitorDefaults.defaultTimed ? monitorDefaults.defaultTimed : monitorTemplate.defaultTimed(),
+      defaultLogging: monitorDefaults && monitorDefaults.defaultLogging ? monitorDefaults.defaultLogging : monitorTemplate.defaultLogging()
     };
   }
 
-  // <monitor id="ID1437510504"
-  //   name="Throughput times order size 3"
-  //   type="3"
-  //   typedescription="Data collection"
-  //   disabled="true">
-  //   <node idref="ID1437019470"
-  //   pageinstanceidref="ID1437019576"/>
-  //   <declaration name="Predicate">
-  //   <ml id="ID1437510512">fun pred (bindelem) =
-  //   let
-  //   fun predBindElem (Customer&apos;consume (1, {its,oid,s})) = true
-  //   | predBindElem _ = false
-  //   in
-  //   predBindElem bindelem
-  // end
-  // <layout>fun pred (bindelem) =
-  //   let
-  // fun predBindElem (Customer&apos;consume (1, {its,oid,s})) = true
-  //   | predBindElem _ = false
-  //   in
-  //   predBindElem bindelem
-  // end</layout>
-  // </ml>
-  // </declaration>
-  // <declaration name="Observer">
-  // <ml id="ID1437510516">fun obs (bindelem) =
-  //   let
-  // fun obsBindElem (Customer&apos;consume (1, {its,oid,s})) = 0
-  //   | obsBindElem _ = ~1
-  //   in
-  //   obsBindElem bindelem
-  // end
-  // <layout>fun obs (bindelem) =
-  //   let
-  // fun obsBindElem (Customer&apos;consume (1, {its,oid,s})) = 0
-  //   | obsBindElem _ = ~1
-  //   in
-  //   obsBindElem bindelem
-  // end</layout>
-  // </ml>
-  // </declaration>
-  // <declaration name="Init function">
-  // <ml id="ID1437510520">fun init () =
-  //   NONE
-  //   <layout>fun init () =
-  //   NONE</layout>
-  //   </ml>
-  //   </declaration>
-  //   <declaration name="Stop">
-  // <ml id="ID1437510524">fun stop () =
-  //   NONE
-  //   <layout>fun stop () =
-  //   NONE</layout>
-  //   </ml>
-  //   </declaration>
-  //   <option name="Timed"
-  // value="false"/>
-  // <option name="Logging"
-  // value="false"/>
-  // </monitor>
-  createCpnMonitorDC(cpnElement) {
+  createCpnMonitorDC(cpnElement, monitorDefaults) {
+    console.log('createCpnMonitorDC(), cpnElement = ', cpnElement);
+    const monitorTemplate = new DataCollectionMonitorTemplate();
 
-    let predicate: string;
-    if (cpnElement.cpnType === 'cpn:Place') {
-      predicate =
-        'fun pred (PAGENAME&apos;SHAPETEXT_1_mark : U ms) = ' +
-        '  true';
-    } else {
-      predicate =
-        'fun pred (bindelem) =\n' +
-        '  let\n' +
-        '  fun predBindElem (PAGENAME&apos;SHAPETEXT (1, {x,y})) = true\n' + // TODO here
-        '    | predBindElem _ = false\n' +
-        'in\n' +
-        '  predBindElem bindelem\n' +
-        'end';
-    }
+    monitorDefaults = this.getMonitorDefaults(monitorDefaults, monitorTemplate);
+
     return {
       _id: getNextId(),
-      _name: '',
-      _type: '3',
-      _typedescription: 'Data collection',
+      _name: monitorTemplate.typeDescription() + ' monitor',
+      _type: monitorTemplate.type(),
+      _typedescription: monitorTemplate.typeDescription(),
       _disabled: 'false',
-      node: {
-        _idref: cpnElement.id,
-        _pageinstanceidref: 'PAGEINSTANCEID' // TODO add page instance ID
-      },
+      node: this.getMonitorNodeList(cpnElement),
       declaration: [
-        {
-          _name: 'Predicate',
-          ml: {
-            _id: 'ID' + new Date().getTime(),
-            layout: predicate
-          }
-        },
-        {
-          _name: 'Observer',
-          ml: {
-            _id: 'ID' + new Date().getTime(),
-            layout:
-              'fun obs (bindelem) =\n' +
-              '  let\n' +
-              'fun obsBindElem (PAGENAME&apos;SHAPETEXT (1, {x,y})) = 0\n' + // TODO here
-              '  | obsBindElem _ = ~1\n' +
-              ' in\n' +
-              '  obsBindElem bindelem\n' +
-              'end'
-          }
-        },
-        {
-          _name: 'Init function',
-          ml: {
-            _id: 'ID' + new Date().getTime(),
-            layout: 'fun init () =\n' +
-              'NONE'
-          }
-        },
-        {
-          _name: 'Stop',
-          ml: {
-            _id: 'ID' + new Date().getTime(),
-            layout: 'fun stop () =' +
-              'NONE'
-          }
-        },
+        { _name: 'Predicate', ml: { _id: getNextId(), __text: monitorDefaults.defaultPredicate } },
+        { _name: 'Observer', ml: { _id: getNextId(), __text: monitorDefaults.defaultObserver } },
+        { _name: 'Init function', ml: { _id: getNextId(), __text: monitorDefaults.defaultInit } },
+        { _name: 'Stop', ml: { _id: getNextId(), __text: monitorDefaults.defaultStop } },
       ],
       option: [
-        {
-          _name: 'Timed',
-          _value: 'false'
-        },
-        {
-          _name: 'Logging',
-          _value: 'false'
-        }
+        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
+        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
       ]
     };
   }
 
-  createCpnMonitorLLDC(_cpnElement) {
+  createCpnMonitorBP(cpnElement, monitorDefaults) {
+    console.log('createCpnMonitorBP(), cpnElement = ', cpnElement);
+    const monitorTemplate = new BreakpointMonitorTemplate();
 
-  }
+    monitorDefaults = this.getMonitorDefaults(monitorDefaults, monitorTemplate);
 
-  // <monitor id="ID1438122141"
-  //   name="Marking_size_BurgerHeaven&apos;C busy_1"
-  //   type="0"
-  //   typedescription="Marking size"
-  //   disabled="true">
-  //   <node idref="ID1438112416"
-  //   pageinstanceidref="ID1437053129"/>
-  //   <node idref="ID1438118761"
-  //   pageinstanceidref="ID1437053129"/>
-  //   <node idref="ID1437052949"
-  //   pageinstanceidref="ID1437053129"/>
-  //   <option name="Logging"
-  //   value="true"/>
-  // </monitor>
-  createCpnMonitorMS(cpnElement) {
     return {
-      _id: 'ID' + new Date().getTime(),
-      _name: 'Marking_size_PAGENAME_' + cpnElement.text, // TODO add page name: 'Count_trans_occur_' + PAGENAME + '_' + cpnElement.text
-      _type: '0',
-      _typedescription: 'Marking size',
+      _id: getNextId(),
+      _name: monitorTemplate.typeDescription() + ' monitor',
+      _type: monitorTemplate.type(),
+      _typedescription: monitorTemplate.typeDescription(),
       _disabled: 'false',
-      node: [
-        {
-          _idref: 'IDREF', // TODO
-          _pageinstanceidref: 'PAGEINSTANCEID' // TODO
-        },
-        {
-          _idref: 'IDREF', // TODO
-          _pageinstanceidref: 'PAGEINSTANCEID' // TODO
-        },
-        {
-          _idref: 'IDREF', // TODO
-          _pageinstanceidref: 'PAGEINSTANCEID' // TODO
-        }
+      node: this.getMonitorNodeList(cpnElement),
+      declaration: [
+        { _name: 'Predicate', ml: { _id: getNextId(), __text: monitorDefaults.defaultPredicate } },
+        { _name: 'Observer', ml: { _id: getNextId(), __text: monitorDefaults.defaultObserver } },
+        { _name: 'Init function', ml: { _id: getNextId(), __text: monitorDefaults.defaultInit } },
+        { _name: 'Stop', ml: { _id: getNextId(), __text: monitorDefaults.defaultStop } },
       ],
-      option: {
-        _name: 'Logging',
-        _value: 'true'
-      }
+      option: [
+        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
+        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
+      ]
     };
   }
 
-  createCpnMonitorPCBP(_cpnElement) {
+  createCpnMonitorUD(cpnElement, monitorDefaults) {
+    console.log('createCpnMonitorUD(), cpnElement = ', cpnElement);
+    const monitorTemplate = new UserDefinedMonitorTemplate();
 
+    monitorDefaults = this.getMonitorDefaults(monitorDefaults, monitorTemplate);
+
+    return {
+      _id: getNextId(),
+      _name: monitorTemplate.typeDescription() + ' monitor',
+      _type: monitorTemplate.type(),
+      _typedescription: monitorTemplate.typeDescription(),
+      _disabled: 'false',
+      node: this.getMonitorNodeList(cpnElement),
+      declaration: [
+        { _name: 'Predicate', ml: { _id: getNextId(), __text: monitorDefaults.defaultPredicate } },
+        { _name: 'Observer', ml: { _id: getNextId(), __text: monitorDefaults.defaultObserver } },
+        { _name: 'Init function', ml: { _id: getNextId(), __text: monitorDefaults.defaultInit } },
+        { _name: 'Stop', ml: { _id: getNextId(), __text: monitorDefaults.defaultStop } },
+      ],
+      option: [
+        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
+        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
+      ]
+    };
   }
 
-  createCpnMonitorTEBP(_cpnElement) {
+  createCpnMonitorWIF(cpnElement, monitorDefaults) {
+    console.log('createCpnMonitorWIF(), cpnElement = ', cpnElement);
+    const monitorTemplate = new WriteInFileMonitorTemplate();
 
+    monitorDefaults = this.getMonitorDefaults(monitorDefaults, monitorTemplate);
+
+    return {
+      _id: getNextId(),
+      _name: monitorTemplate.typeDescription() + ' monitor',
+      _type: monitorTemplate.type(),
+      _typedescription: monitorTemplate.typeDescription(),
+      _disabled: 'false',
+      node: this.getMonitorNodeList(cpnElement),
+      declaration: [
+        { _name: 'Predicate', ml: { _id: getNextId(), __text: monitorDefaults.defaultPredicate } },
+        { _name: 'Observer', ml: { _id: getNextId(), __text: monitorDefaults.defaultObserver } },
+        { _name: 'Init function', ml: { _id: getNextId(), __text: monitorDefaults.defaultInit } },
+        { _name: 'Stop', ml: { _id: getNextId(), __text: monitorDefaults.defaultStop } },
+      ],
+      option: [
+        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
+        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
+      ]
+    };
   }
 
-  createCpnMonitorUD(_cpnElement) {
+  createCpnMonitorMS(cpnElement, monitorDefaults) {
+    console.log('createCpnMonitorMS(), cpnElement = ', cpnElement);
+    const monitorTemplate = new MarkingSizeMonitorTemplate();
 
+    monitorDefaults = this.getMonitorDefaults(monitorDefaults, monitorTemplate);
+
+    return {
+      _id: getNextId(),
+      _name: monitorTemplate.typeDescription() + ' monitor (' + this.getShapeNames(cpnElement) + ')',
+      _type: monitorTemplate.type(),
+      _typedescription: monitorTemplate.typeDescription(),
+      _disabled: 'false',
+      node: this.getMonitorNodeList(cpnElement),
+      option: [
+        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
+        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
+      ]
+    };
   }
 
-  createCpnMonitorWIF(_cpnElement) {
+  createCpnMonitorLLDC(cpnElement, monitorDefaults) {
+    console.log('createCpnMonitorLLDC(), cpnElement = ', cpnElement);
+    const monitorTemplate = new ListLengthDataCollectionMonitorTemplate();
 
+    monitorDefaults = this.getMonitorDefaults(monitorDefaults, monitorTemplate);
+
+    return {
+      _id: getNextId(),
+      _name: monitorTemplate.typeDescription() + ' monitor (' + this.getShapeNames(cpnElement) + ')',
+      _type: monitorTemplate.type(),
+      _typedescription: monitorTemplate.typeDescription(),
+      _disabled: 'false',
+      node: this.getMonitorNodeList(cpnElement),
+      option: [
+        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
+        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
+      ]
+    };
+  }
+
+
+  createMonitorCTODC(cpnElement, monitorDefaults): any {
+    console.log('createMonitorCTODC(), cpnElement = ', cpnElement);
+    const monitorTemplate = new CountTransitionOccurrencesMonitorTemplate();
+
+    monitorDefaults = this.getMonitorDefaults(monitorDefaults, monitorTemplate);
+
+    return {
+      _id: getNextId(),
+      _name: monitorTemplate.typeDescription() + ' monitor (' + this.getShapeNames(cpnElement) + ')',
+      _type: monitorTemplate.type(),
+      _typedescription: monitorTemplate.typeDescription(),
+      _disabled: 'false',
+      node: this.getMonitorNodeList(cpnElement),
+      option: [
+        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
+        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
+      ]
+    };
+  }
+
+  createCpnMonitorPCBP(cpnElement, monitorDefaults) {
+    console.log('createCpnMonitorPCBP(), cpnElement = ', cpnElement);
+    const monitorTemplate = new PlaceContentBreakPointMonitorTemplate();
+
+    monitorDefaults = this.getMonitorDefaults(monitorDefaults, monitorTemplate);
+
+    return {
+      _id: getNextId(),
+      _name: monitorTemplate.typeDescription() + ' monitor (' + this.getShapeNames(cpnElement) + ')',
+      _type: monitorTemplate.type(),
+      _typedescription: monitorTemplate.typeDescription(),
+      _disabled: 'false',
+      node: this.getMonitorNodeList(cpnElement),
+      option: [
+        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
+        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
+      ]
+    };
+  }
+
+  createCpnMonitorTEBP(cpnElement, monitorDefaults) {
+    console.log('createCpnMonitorTEBP(), cpnElement = ', cpnElement);
+    const monitorTemplate = new TransitionEnabledBreakPointMonitorTemplate();
+
+    monitorDefaults = this.getMonitorDefaults(monitorDefaults, monitorTemplate);
+
+    return {
+      _id: getNextId(),
+      _name: monitorTemplate.typeDescription() + ' monitor (' + this.getShapeNames(cpnElement) + ')',
+      _type: monitorTemplate.type(),
+      _typedescription: monitorTemplate.typeDescription(),
+      _disabled: 'false',
+      node: this.getMonitorNodeList(cpnElement),
+      option: [
+        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
+        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
+      ]
+    };
+  }
+
+  /**
+   * Convert cpn declaration element to string
+   * @param cpnElement - declaration element
+   */
+  cpnDeclarationToString(cpnDeclarationType, cpnElement) {
+    let layout = '';
+
+    switch (cpnDeclarationType) {
+      case 'globref':
+        layout = this.cpnGlobrefToString(cpnElement);
+        break;
+      case 'color':
+        layout = this.cpnColorToString(cpnElement);
+        break;
+      case 'var':
+        layout = this.cpnVarToString(cpnElement);
+        break;
+      case 'ml':
+        layout = this.cpnMlToString(cpnElement);
+        break;
+      default:
+        return cpnElement.layout || JSON.stringify(cpnElement);
+    }
+
+    return layout;
   }
 
   /**
@@ -904,7 +987,7 @@ export class ModelService {
         str += ' = product ';
         if (color.product.id instanceof Array) {
           for (let i = 0; i < color.product.id.length; i++) {
-            str += i === 0 ? color.product.id[i] + ' ' : '* ' + color.product.id[i];
+            str += i === 0 ? color.product.id[i] : ' * ' + color.product.id[i];
           }
         } else {
           str += color.product.id;
@@ -970,12 +1053,19 @@ export class ModelService {
    */
   parseDeclarationTypeFromString(str) {
     const parser = str.match('^\\S+');
+    let declarationType = '';
 
     if (parser) {
-      return parser[0];
+      declarationType = parser[0];
     }
 
-    return undefined;
+    return ['var', 'colset', 'globref', 'ml', 'val', 'fun', 'local'].includes(declarationType) ? declarationType : 'ml';
+  }
+
+  trimChars(str, c) {
+    str = str.trim();
+    var re = new RegExp("^[" + c + "]+|[" + c + "]+$", "g");
+    return str.replace(re, "");
   }
 
   /**
@@ -985,71 +1075,77 @@ export class ModelService {
    */
   stringToCpnDeclarationElement(cpnElement, str) {
 
-    cpnElement = { _id: cpnElement._id };
+    let resultCpnType = 'ml';
+    let resultCpnElement: any = { _id: cpnElement._id };
 
-    const parser = str.match('^\\S+');
+    // const parser = str.match('^\\S+');
     // console.log('stringToCpnDeclarationElement(), parser = ', parser);
 
-    const declarationType = this.parseDeclarationTypeFromString(str);
+    // str = str.trim();
+    // str = this.trimChars(str, ';');
 
-    if (!declarationType) {
-      return;
+    let resultDeclarationType = this.parseDeclarationTypeFromString(str);
+    if (!resultDeclarationType) {
+      resultDeclarationType = 'ml';
     }
 
-    let cpnType;
-
-    switch (declarationType) {
+    switch (resultDeclarationType) {
       case 'var':
-        cpnType = 'var';
+        resultCpnType = 'var';
         let splitLayoutArray;
-        cpnElement.layout = str;
+        resultCpnElement.layout = str;
+
+        str = this.trimChars(str, ';');
         str = str.replace('var', '');
         splitLayoutArray = str.trim().split(':');
         for (let i = 0; i < splitLayoutArray.length; i++) {
           splitLayoutArray[i] = splitLayoutArray[i].replace(/\s+/g, '').split(',');
         }
-        cpnElement.id = splitLayoutArray[0];
-        if (!cpnElement.type) {
-          cpnElement.type = {};
+        resultCpnElement.id = splitLayoutArray[0];
+        if (!resultCpnElement.type) {
+          resultCpnElement.type = {};
         }
         if (splitLayoutArray[1]) {
-          cpnElement.type.id = splitLayoutArray[1][0];
+          resultCpnElement.type.id = splitLayoutArray[1][0];
         }
         break;
-      case 'ml':
-      case 'val':
-      case 'fun':
-      case 'local':
-        cpnType = 'ml';
-        cpnElement.layout = str;
-        cpnElement.__text = str;
-        break;
-      case 'colset':   // ***** отрефакторить *****
-        cpnType = 'color';
-        cpnElement.layout = str;
+
+      case 'colset':   // TODO: отрефакторить
+        resultCpnType = 'color';
+        // cpnElement.layout = str;
         str = str.replace('colset', '');
         splitLayoutArray = str.split('=');
 
         if (splitLayoutArray[1]) {
           splitLayoutArray[1] = splitLayoutArray[1].split(' ').filter(e => e.trim() !== '');
           let testElem = splitLayoutArray[1][0].replace(/\s+/g, '');
-          for (const key of Object.keys(cpnElement)) {
+          for (const key of Object.keys(resultCpnElement)) {
             if (key !== '_id' && key !== 'layout') {
-              delete cpnElement[key];
+              delete resultCpnElement[key];
             }
           }
           if (splitLayoutArray[1][splitLayoutArray[1].length - 1].replace(';', '') === 'timed') {
-            cpnElement.timed = '';
+            resultCpnElement.timed = '';
             splitLayoutArray[1].length = splitLayoutArray[1].length - 1;
           }
           if (testElem === 'product') {
             const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
-            cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
-            cpnElement.product = { id: productList };
+            for (const i in productList) {
+              productList[i] = this.trimChars(productList[i], ';');
+              productList[i] = this.trimChars(productList[i], '*');
+            }
+
+            resultCpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
+            resultCpnElement.product = { id: productList.length === 1 ? productList[0] : productList };
           } else if (testElem === 'list') {
             const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
-            cpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
-            cpnElement.list = { id: productList };
+            for (const i in productList) {
+              productList[i] = this.trimChars(productList[i], ';');
+              productList[i] = this.trimChars(productList[i], '*');
+            }
+
+            resultCpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
+            resultCpnElement.list = { id: productList.length === 1 ? productList[0] : productList };
           } else {
             testElem = testElem.replace(/\s+/g, '').replace(';', '');
             splitLayoutArray[1][0] = splitLayoutArray[1][0].replace(/\s+/g, '').replace(';', '');
@@ -1058,36 +1154,95 @@ export class ModelService {
             // console.log('stringToCpnDeclarationElement(), splitLayoutArray = ', splitLayoutArray);
 
             if (testElem.toLowerCase() === splitLayoutArray[1][0].toLowerCase()) {
-              cpnElement.id = splitLayoutArray[0].trim();
-              cpnElement[testElem.toLowerCase()] = '';
+              resultCpnElement.id = splitLayoutArray[0].trim();
+              resultCpnElement[testElem.toLowerCase()] = '';
             } else {
-              cpnElement.id = splitLayoutArray[0].trim();
-              cpnElement.alias = { id: testElem };
+              resultCpnElement.id = splitLayoutArray[0].trim();
+              resultCpnElement.alias = { id: testElem };
             }
           }
         }
         break;
+
       case 'globref':
-        cpnType = 'globref';
+        resultCpnType = 'globref';
         splitLayoutArray = str.split(' ').filter(e => e.trim() !== '' && e.trim() !== '=');
-        cpnElement.id = splitLayoutArray[1].replace(/\s+/g, '').replace(';', '');
-        cpnElement.ml = splitLayoutArray[2].replace(/\s+/g, '').replace(';', '');
-        cpnElement.layout = str;
+        resultCpnElement.id = splitLayoutArray[1].replace(/\s+/g, '').replace(';', '');
+        resultCpnElement.ml = splitLayoutArray[2].replace(/\s+/g, '').replace(';', '');
+        // cpnElement.layout = str;
         break;
+
+      // case 'ml':
+      // case 'val':
+      // case 'fun':
+      // case 'local':
+      default:
+        resultCpnType = 'ml';
+        resultDeclarationType = 'ml';
+        resultCpnElement.layout = str;
+        resultCpnElement.__text = str;
+        break;
+
     }
 
     // console.log('stringToCpnDeclarationElement(), cpnType = ', cpnType);
     // console.log('stringToCpnDeclarationElement(), declarationType = ', declarationType);
     // console.log('stringToCpnDeclarationElement(), cpnElement = ', cpnElement);
 
-    return { cpnType: cpnType, declarationType: declarationType, cpnElement: cpnElement };
+    return { cpnType: resultCpnType, declarationType: resultDeclarationType, cpnElement: resultCpnElement };
   }
+
+  updateDeclaration(declarationCpnElement, declarationCpnType, parentBlockCpnElement, layout) {
+    const originalLayout = layout;
+
+    console.log('updateDeclaration(), layout = ', layout);
+    console.log('updateDeclaration(), declarationCpnElement = ', JSON.stringify(declarationCpnElement));
+
+    const oldCpnDeclarartionType = declarationCpnType;
+
+    // parse declaration layout
+    let result = parseDeclarartion(layout);
+
+    if (result && result.cpnElement) {
+      let newDeclaration = result.cpnElement;
+      const newCpnDeclarartionType = result.cpnDeclarationType;
+
+      console.log('onUpdate(), oldCpnDeclarartionType = ', oldCpnDeclarartionType);
+      console.log('onUpdate(), newCpnDeclarartionType = ', newCpnDeclarartionType);
+
+      this.copyDeclaration(newDeclaration, declarationCpnElement)
+
+      // move declaration cpn element from old declaration group to new, if needed
+      if (newCpnDeclarartionType !== oldCpnDeclarartionType) {
+        this.removeCpnElement(parentBlockCpnElement, declarationCpnElement, oldCpnDeclarartionType);
+        this.addCpnElement(parentBlockCpnElement, declarationCpnElement, newCpnDeclarartionType);
+      }
+    }
+  }
+
+  copyDeclaration(fromDeclaration, toDeclaration) {
+    for (const key in toDeclaration) {
+      if (key !== '_id') {
+        delete toDeclaration[key];
+      }
+    }
+    for (const key in fromDeclaration) {
+      if (key !== '_id') {
+        toDeclaration[key] = fromDeclaration[key];
+      }
+    }
+  }
+
 
 
   /**
    * Get all pages list
    */
   getAllPages() {
+    const cpn = this.getCpn();
+    if (!cpn) {
+      return [];
+    }
     const page = this.getCpn().page;
     if (!page) {
       return [];
@@ -1112,11 +1267,138 @@ export class ModelService {
 
   /**
    * Get page object from model by id
-   * @param id
+   * @param pageId
    */
-  getPageById(id) {
-    return this.getAllPages().find(page => page && page._id === id);
+  public getPageById(pageId) {
+    return this.getAllPages().find(page => page && page._id === pageId);
   }
+
+  /**
+   * Checks if page is subpage
+   * @param pageId - page id
+   */
+  public isSubpage(pageId) {
+    const transList = this.getAllTrans().filter((trans) => { return trans.subst && trans.subst._subpage === pageId });
+    // console.log(this.constructor.name, 'isSubpage(), pageId, transList = ', pageId, transList)
+    return (transList && transList.length > 0) ? true : false;
+  }
+
+  /**
+   * Find page by place or transitions id
+   * @param id - place or transition id
+   */
+  public getPageByElementId(id) {
+    const pages = this.getAllPages();
+
+    for (const page of pages) {
+      // search in transitions
+      for (const t of nodeToArray(page.trans)) {
+        if (t._id === id) {
+          return page;
+        }
+      }
+      // search in places
+      for (const p of nodeToArray(page.place)) {
+        if (p._id === id) {
+          return page;
+        }
+      }
+      // search in arcs
+      for (const a of nodeToArray(page.arc)) {
+        if (a._id === id) {
+          return page;
+        }
+      }
+    }
+
+    return undefined;
+  }
+
+  /**
+   * Find place or transitions by id
+   * @param id - place or transition id
+   */
+  public getPlaceOrTransitionById(id) {
+    const pages = this.getAllPages();
+
+    for (const page of pages) {
+      // search in transitions
+      for (const t of nodeToArray(page.trans)) {
+        if (t._id === id) {
+          return { element: t, type: 'Transition' };
+        }
+      }
+      // search in places
+      for (const p of nodeToArray(page.place)) {
+        if (p._id === id) {
+          return { element: p, type: 'Place' };
+        }
+      }
+    }
+
+    return undefined;
+  }
+
+  public getTransById(id) {
+    const pages = this.getAllPages();
+
+    for (const page of pages) {
+      // search in trans
+      for (const trans of nodeToArray(page.trans)) {
+        if (trans._id === id) {
+          return trans;
+        }
+      }
+    }
+
+    return undefined;
+  }
+
+  public getArcById(id) {
+    const pages = this.getAllPages();
+
+    for (const page of pages) {
+      // search in arcs
+      for (const arc of nodeToArray(page.arc)) {
+        if (arc._id === id) {
+          return arc;
+        }
+      }
+    }
+
+    return undefined;
+  }
+
+  public getTransitionIncomeArcs(transId) {
+    const arcs = [];
+    const pages = this.getAllPages();
+    for (const page of pages) {
+      // search in arcs
+      for (const arc of nodeToArray(page.arc)) {
+        if (arc.transend._idref === transId && ['PtoT', 'BOTHDIR'].includes(arc._orientation)) {
+          arcs.push(arc);
+        }
+      }
+    }
+    return arcs;
+  }
+
+  public getTransitionOutcomeArcs(transId, placeId = undefined) {
+    const arcs = [];
+    const pages = this.getAllPages();
+    for (const page of pages) {
+      // search in arcs
+      for (const arc of nodeToArray(page.arc)) {
+        if (arc.transend._idref === transId
+          && (placeId === undefined || arc.placeend._idref === placeId)
+          && ['TtoP', 'BOTHDIR'].includes(arc._orientation)) {
+          arcs.push(arc);
+        }
+      }
+    }
+    return arcs;
+  }
+
 
   /**
    * Get page id by name
@@ -1310,7 +1592,7 @@ export class ModelService {
    */
   getNextPageName(pageName) {
     let n = 1;
-    let newPageName = pageName ? pageName : this.settings.getAppSettings()['page'] + ' ' + n;
+    let newPageName = pageName ? pageName : this.settings.appSettings['page'] + ' ' + n;
 
     for (const page of this.getAllPages()) {
       if (newPageName === page.pageattr._name) {
@@ -1470,6 +1752,54 @@ export class ModelService {
     }
   }
 
+  /**
+   * Create new declaration
+   * 
+   * @param parentBlock
+   * @param declaration 
+   * @param declarationType 
+   */
+  newDeclaration(parentBlock, declarationType) {
+    if (parentBlock && declarationType) {
+      let parentCpnElement = parentBlock;
+
+      let newLayout = this.settings.appSettings['declaration'];
+      switch (declarationType) {
+        case 'globref':
+          newLayout = this.settings.appSettings['globref'];
+          break;
+        case 'color':
+          newLayout = this.settings.appSettings['color'];
+          break;
+        case 'var':
+          newLayout = this.settings.appSettings['var'];
+          break;
+        case 'fun':
+          newLayout = this.settings.appSettings['fun'];
+          break;
+      }
+
+      if (newLayout) {
+        // parse declaration layout
+        let result = parseDeclarartion(newLayout);
+        // console.log(this.constructor.name, 'onNewDeclaration(), result = ', result);
+
+        if (result && result.cpnElement) {
+          let newDeclaration = result.cpnElement;
+          let newCpnDeclarartionType = result.cpnDeclarationType;
+
+          // set new id value
+          newDeclaration._id = getNextId();
+
+          // add declaration cpn element to declaration group
+          this.addCpnElement(parentCpnElement, newDeclaration, newCpnDeclarartionType);
+
+          return newDeclaration;
+        }
+      }
+    }
+    return undefined;
+  }
 
   /**
    * Add cpn element to parent
@@ -1477,31 +1807,27 @@ export class ModelService {
    * @param cpnElement
    * @param cpnType - new cpn type where cpn element should be placed
    */
-  addCpnElement(cpnParentElement, cpnElement, cpnType) {
-    if (!cpnParentElement) {
-      console.error(this.constructor.name, 'addCpnElement(). ERROR: Undefined cpnParentElement element.');
-      return cpnParentElement;
-    }
-    if (!cpnElement) {
-      console.error(this.constructor.name, 'addCpnElement(). ERROR: Undefined cpnElement element.');
-      return cpnParentElement;
-    }
-    if (!cpnType) {
-      console.error(this.constructor.name, 'addCpnElement(). ERROR: Undefined cpnType.');
-      return cpnParentElement;
-    }
+  addCpnElement(cpnParentElement, cpnElement, cpnType, insertAfterElement = undefined) {
+    try {
+      if (!cpnParentElement) {
+        throw 'Undefined cpnParentElement element';
+      }
+      if (!cpnElement) {
+        throw 'Undefined cpnElement element';
+      }
+      if (!cpnType) {
+        throw 'Undefined cpnType';
+      }
 
-    if (cpnParentElement[cpnType] instanceof Array) {
-      cpnParentElement[cpnType].push(cpnElement);
-    } else if (cpnParentElement[cpnType]) {
-      cpnParentElement[cpnType] = [cpnParentElement[cpnType], cpnElement];
-    } else {
-      cpnParentElement[cpnType] = cpnElement;
+      const nodeList = nodeToArray(cpnParentElement[cpnType]);
+      nodeList.push(cpnElement);
+
+      cpnParentElement[cpnType] = nodeList.length === 1 ? nodeList[0] : nodeList;
+    } catch (ex) {
+      console.error(this.constructor.name, 'addCpnElement(). ERROR: ', ex);
     }
 
     console.log(this.constructor.name, 'addCpnElement(), cpnParentElement, cpnElement = ', cpnParentElement, cpnElement);
-
-    return cpnParentElement;
   }
 
   /**
@@ -1511,29 +1837,29 @@ export class ModelService {
    * @param cpnType - new cpn type where cpn element should be placed
    */
   updateCpnElement(cpnParentElement, cpnElement, cpnType) {
-    if (!cpnParentElement) {
-      console.error(this.constructor.name, 'updateCpnElement(). ERROR: Undefined cpnParentElement element.');
-      return;
-    }
-    if (!cpnElement) {
-      console.error(this.constructor.name, 'updateCpnElement(). ERROR: Undefined cpnElement element.');
-      return;
-    }
-    if (!cpnType) {
-      console.error(this.constructor.name, 'updateCpnElement(). ERROR: Undefined cpnType.');
-      return;
-    }
-
-    if (cpnParentElement[cpnType] instanceof Array) {
-      for (let i = 0; i < cpnParentElement[cpnType].length; i++) {
-        if (cpnParentElement[cpnType][i]._id === cpnElement._id) {
-          cpnParentElement[cpnType][i] = cpnElement;
-        }
+    try {
+      if (!cpnParentElement) {
+        throw 'Undefined cpnParentElement element';
       }
-    } else {
-      cpnParentElement[cpnType] = cpnElement;
+      if (!cpnElement) {
+        throw 'Undefined cpnElement element';
+      }
+      if (!cpnType) {
+        throw 'Undefined cpnType';
+      }
+
+      if (cpnParentElement[cpnType] instanceof Array) {
+        for (let i = 0; i < cpnParentElement[cpnType].length; i++) {
+          if (cpnParentElement[cpnType][i]._id === cpnElement._id) {
+            cpnParentElement[cpnType][i] = cpnElement;
+          }
+        }
+      } else {
+        cpnParentElement[cpnType] = cpnElement;
+      }
+    } catch (ex) {
+      console.error(this.constructor.name, 'updateCpnElement(). ERROR: ', ex);
     }
-    return cpnParentElement;
   }
 
   /**
@@ -1543,32 +1869,118 @@ export class ModelService {
    * @param cpnType - old cpn type from where cpn element should be removed
    */
   removeCpnElement(cpnParentElement, cpnElement, cpnType) {
-    if (!cpnParentElement) {
-      console.error(this.constructor.name, 'removeCpnElement(). ERROR: Undefined cpnParentElement element.');
-      return;
-    }
-    if (!cpnElement) {
-      console.error(this.constructor.name, 'removeCpnElement(). ERROR: Undefined cpnElement element.');
-      return;
-    }
-    if (!cpnType) {
-      console.error(this.constructor.name, 'removeCpnElement(). ERROR: Undefined cpnType.');
-      return;
-    }
-
-    if (cpnParentElement[cpnType]) {
-      if (cpnParentElement[cpnType] instanceof Array) {
-        cpnParentElement[cpnType] = cpnParentElement[cpnType].filter((e) => {
-          return e._id !== cpnElement._id;
-        });
-        if (cpnParentElement[cpnType].length === 0) {
-          cpnParentElement[cpnType] = undefined;
-        }
-      } else {
-        cpnParentElement[cpnType] = undefined;
+    try {
+      if (!cpnParentElement) {
+        throw 'Undefined cpnParentElement element';
       }
+      if (!cpnElement) {
+        throw 'Undefined cpnElement element';
+      }
+      if (!cpnType) {
+        throw 'Undefined cpnType';
+      }
+      if (!cpnParentElement[cpnType]) {
+        throw 'Undefined cpnParentElement[cpnType] element';
+      }
+
+      let nodeList = nodeToArray(cpnParentElement[cpnType]);
+      nodeList = nodeList.filter((e) => { return e._id !== cpnElement._id; });
+
+      if (!nodeList || nodeList.length === 0) {
+        delete cpnParentElement[cpnType];
+      } else {
+        cpnParentElement[cpnType] = nodeList.length === 1 ? nodeList[0] : nodeList;
+      }
+    } catch (ex) {
+      console.error(this.constructor.name, 'removeCpnElement(). ERROR: ', ex);
     }
-    return cpnParentElement;
   }
 
+  /**
+   * Move cpn element up or down in it's parent array
+   * @param cpnParentElement 
+   * @param cpnElement 
+   * @param cpnType 
+   * @param direction - direction how to move: ['up','down'] 
+   */
+  moveCpnElement(cpnParentElement, cpnElement, cpnType, direction) {
+    try {
+      if (!cpnParentElement) {
+        throw 'Undefined cpnParentElement element';
+      }
+      if (!cpnElement) {
+        throw 'Undefined cpnElement element';
+      }
+      if (!cpnType) {
+        throw 'Undefined cpnType';
+      }
+      if (!cpnParentElement[cpnType]) {
+        throw 'Undefined cpnParentElement[cpnType] element';
+      }
+      if (!direction || !['up', 'down'].includes(direction)) {
+        throw 'Direction should be "up" or "down"';
+      }
+
+      let fromIndex = 0, nodeList = nodeToArray(cpnParentElement[cpnType]);
+
+      for (let i = 0; i < nodeList.length; i++) {
+        if (nodeList[i]._id === cpnElement._id) {
+          fromIndex = i;
+          break;
+        }
+      }
+      let toIndex = undefined;
+      switch (direction) {
+        case 'up': {
+          toIndex = fromIndex - 1;
+        } break;
+        case 'down': {
+          toIndex = fromIndex + 1;
+        } break;
+      }
+      console.log(this.constructor.name, 'moveCpnElement(). fromIndex, toIndex = ', fromIndex, toIndex);
+      if (toIndex !== undefined && toIndex >= 0 && toIndex < nodeList.length) {
+        arrayMove(nodeList, fromIndex, toIndex);
+      }
+
+      cpnParentElement[cpnType] = nodeList.length === 1 ? nodeList[0] : nodeList;
+    } catch (ex) {
+      console.error(this.constructor.name, 'moveUpCpnElement(). ERROR: ', ex);
+    }
+  }
+
+
+  /**
+   * Returns monitor node list with names of elements and pages
+   * @param cpnElement = monitor cpn element
+   */
+  getMonitorNodeNamesList(cpnElement) {
+    console.log('getMonitorNodeNamesList(), cpnElement = ', cpnElement);
+
+    if (!cpnElement || !cpnElement.node) {
+      return [];
+    }
+
+    const nodes = nodeToArray(cpnElement.node);
+
+    const nodeList = [];
+    for (const node of nodes) {
+      const page = this.getPageByElementId(node._idref);
+      const element = this.getPlaceOrTransitionById(node._idref);
+      if (element) {
+        nodeList.push({
+          page: page,
+          element: element.element,
+          elementType: element.type
+        });
+      }
+    }
+    return nodeList;
+  }
+
+
+
 }
+
+
+

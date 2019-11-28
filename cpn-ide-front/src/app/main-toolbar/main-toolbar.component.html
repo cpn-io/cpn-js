@@ -35,7 +35,7 @@
 
     <!-- Open -->
     <li class="nav-item">
-      <app-openproject-button></app-openproject-button>
+      <app-openproject-button (click)="openProject()"></app-openproject-button>
     </li>
 
     <!-- Save -->
@@ -51,7 +51,8 @@
         (click)="modelService.undoChanges()">
         <i class="fas fa-undo"></i>
         <!-- <span>Undo</span>&nbsp;<span *ngIf="modelService.getUndoCount() > 0">({{ modelService.getUndoCount() }})</span> -->
-        <span *ngIf="modelService.getUndoCount() > 0; else elseUndoBlock">Undo ({{ modelService.getUndoCount() }})</span>
+        <span *ngIf="modelService.getUndoCount() > 0; else elseUndoBlock">Undo
+          ({{ modelService.getUndoCount() }})</span>
         <ng-template #elseUndoBlock><span>Undo</span></ng-template>
       </div>
     </li>
@@ -61,7 +62,8 @@
       <div class="nav-link mb-0" [ngClass]="{'disabled': modelService.getRedoCount() === 0 }"
         (click)="modelService.redoChanges()">
         <i class="fas fa-redo"></i>
-        <span *ngIf="modelService.getRedoCount() > 0; else elseRedoBlock">Redo ({{ modelService.getRedoCount() }})</span>
+        <span *ngIf="modelService.getRedoCount() > 0; else elseRedoBlock">Redo
+          ({{ modelService.getRedoCount() }})</span>
         <ng-template #elseRedoBlock><span>Redo</span></ng-template>
       </div>
     </li>
@@ -96,34 +98,28 @@
 
     <div class="divider"></div>
 
-    <li class="nav-item disabled">
+    <!-- <li class="nav-item disabled">
       <div class="nav-link mb-0 disabled">
         <span style="color:gray">Simulation:</span>
-      </div>
-    </li>
-
-    <!-- Step -->
-    <!-- <li *ngIf="accessCpnService.isSimulation" class="nav-item">
-      <div (click)="onDoStep()" class="nav-link mb-0">
-        <i class="fas fa-step-forward"></i>
-        <span>Step</span>
       </div>
     </li> -->
 
     <!-- Start/Stop simulation -->
     <li class="nav-item">
-      <div *ngIf="accessCpnService.isSimulation; else notSim">
-        <div (click)="onStopSimulation()" class="nav-link mb-0" style="color: red">
-          <i class="fas fa-stop"></i>
-          <span>Stop</span>
-        </div>
-      </div>
-      <ng-template #notSim>
-        <div (click)="onStartSimulation()" class="nav-link mb-0" style="color: green">
+      <ng-container *ngIf="!accessCpnService.isSimulation">
+        <div (click)="onStartSimulation()" class="nav-link mb-0 green"
+          [ngClass]="{'disabled': accessCpnService.initNetProcessing || accessCpnService.initSimProcessing}">
           <i class="fas fa-play"></i>
-          <span>Start</span>
+          <span>Start simulation</span>
         </div>
-      </ng-template>
+      </ng-container>
+
+      <ng-container *ngIf="accessCpnService.isSimulation">
+        <div (click)="onStopSimulation()" class="nav-link mb-0 red">
+          <i class="fas fa-stop"></i>
+          <span>Stop simulation</span>
+        </div>
+      </ng-container>
     </li>
 
 
@@ -131,13 +127,31 @@
 
   <ul class="navbar-nav ml-auto">
 
+    <!-- Test animation -->
+    <!-- <li class="nav-item">
+      <div (click)="onTest()" class="nav-link mb-0">
+        <i class="fas fa-step-forward"></i>
+        <span>Test animation</span>
+      </div>
+    </li>
+
+    <div class="divider"></div> -->
+
+    <!-- Show documentation -->
+    <li class="nav-item">
+      <div (click)="onDocumentation()" class="nav-link mb-0">
+        <i class="fas fa-book"></i>
+        <span>User Guide</span>
+      </div>
+    </li>
+
     <div class="divider"></div>
+
 
     <!-- New -->
     <li class="nav-item">
-      <a href="../../assets/changes.md">{{ version }}</a>
-      <!--span>{{ version }}</span-->
-      &nbsp;
+      <!-- <a class="nav-link mb-0" href="../../assets/changes.md">{{ version }}</a> -->
+      <a class="nav-link mb-0" href="#">{{ version }}</a>
     </li>
 
   </ul>

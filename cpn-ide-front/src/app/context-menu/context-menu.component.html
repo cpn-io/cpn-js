@@ -1,0 +1,16 @@
+<div *ngIf="visible" class="contextmenu" [ngStyle]="{'left.px': x, 'top.px': y}">
+  <ng-content></ng-content>
+
+  <ng-container *ngIf="entries">
+    <ng-container *ngFor="let entry of entries">
+
+      <div *ngIf="entry.title === 'separator'" class="dropdown-divider" href="#"></div>
+
+      <a *ngIf="entry.title !== 'separator'" class="dropdown-item" href="#" (click)="entry.action()">
+        <i *ngIf="entry.iconClass" [class]="entry.iconClass"></i>
+        <span>{{ entry.title }}</span>
+      </a>
+
+    </ng-container>
+  </ng-container>
+</div>

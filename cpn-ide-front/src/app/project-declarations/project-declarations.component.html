@@ -1,0 +1,36 @@
+<div id="projectDeclarationsComponentContainer" style="width: 100%; height: 100%;">
+
+  <tabs class="cpn-tabs">
+
+    <ng-container *ngFor="let tab of tabList">
+      <tab *ngIf="tab" [id]="tab.id" [tabTitle]="tab.name">
+
+        <!-- Project tree toolbar -->
+        <app-project-tree-toolbar (newNode)="onNewNode()" (deleteNode)="onDeleteNode()" (upNode)="onUpNode()"
+          (downNode)="onDownNode()" [filterText]="tree.filter" (filterChanged)="onFilterChanged($event)">
+        </app-project-tree-toolbar>
+
+        <div [id]="tab.id" class="tab-container-with-toolbar">
+
+          <ng-container *ngIf="cpnet">
+            <ng-container *ngIf="['all', 'globref', 'color', 'var', 'ml'].includes(tab.id)">
+              <ng-container *ngFor="let globbox of nodeToArray(cpnet.globbox)">
+                <ng-container *ngFor="let block of nodeToArray(globbox.block)">
+                  <app-project-declarations-block-node [containerId]="tab.id" [tree]="tree" [block]="block"
+                    [declarationType]="tab.declarationType">
+                  </app-project-declarations-block-node>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+
+        </div>
+
+      </tab>
+    </ng-container>
+
+  </tabs>
+
+  <app-context-menu #contextMenu></app-context-menu>
+
+</div>

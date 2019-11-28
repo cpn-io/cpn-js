@@ -1,0 +1,74 @@
+<!-- Root options -->
+<ng-container *ngFor="let option of optionList">
+  <ng-container *ngIf="['realtimestamp', 'fair_be', 'global_fairness', 'outputdirectory'].includes(option._name)">
+    <app-project-tree-option-node [tree]="tree" [option]="option">
+    </app-project-tree-option-node>
+  </ng-container>
+</ng-container>
+
+<!-- Performance report statistics -->
+<app-tree-node [tree]="tree" id="options-performance" title="Performance report statistics"
+  [type]="'options-performance'" [cpnElement]="undefined">
+
+  <!-- Simulation performance report -->
+  <app-tree-node [tree]="tree" id="options-sim-performance" title="Simulation performance report"
+    [type]="'options-sim-performance'" [cpnElement]="undefined">
+
+    <!-- Timed -->
+    <app-tree-node [tree]="tree" id="options-sim-performance-timed" title="Timed"
+      [type]="'options-sim-performance-timed'" [cpnElement]="undefined">
+
+      <ng-container *ngFor="let option of optionList">
+        <ng-container *ngIf="!['realtimestamp', 'fair_be', 'global_fairness', 'outputdirectory'].includes(option._name) && 
+          !option._name.startsWith('untimed') &&
+          !option._name.startsWith('rep') &&
+          !option._name.startsWith('extensions')">
+          <app-project-tree-option-node [tree]="tree" [option]="option">
+          </app-project-tree-option-node>
+        </ng-container>
+      </ng-container>
+
+    </app-tree-node>
+
+    <!-- Untimed -->
+    <app-tree-node [tree]="tree" id="options-sim-performance-untimed" title="Untimed"
+      [type]="'options-sim-performance-untimed'" [cpnElement]="undefined">
+
+      <ng-container *ngFor="let option of optionList">
+        <ng-container *ngIf="option._name.startsWith('untimed')">
+          <app-project-tree-option-node [tree]="tree" [option]="option">
+          </app-project-tree-option-node>
+        </ng-container>
+      </ng-container>
+
+    </app-tree-node>
+
+  </app-tree-node>
+
+  <!-- Replication performance report -->
+  <app-tree-node [tree]="tree" id="options-rep-performance" title="Replication performance report"
+    [type]="'options-rep-performance'" [cpnElement]="undefined">
+
+    <ng-container *ngFor="let option of optionList">
+      <ng-container *ngIf="option._name.startsWith('rep')">
+        <app-project-tree-option-node [tree]="tree" [option]="option">
+        </app-project-tree-option-node>
+      </ng-container>
+    </ng-container>
+
+  </app-tree-node>
+
+</app-tree-node>
+
+<!-- Extentions -->
+<app-tree-node [tree]="tree" id="options-extentions" title="Extentions" [type]="'options-extentions'"
+  [cpnElement]="undefined">
+
+  <ng-container *ngFor="let option of optionList">
+    <ng-container *ngIf="option._name.startsWith('extensions')">
+      <app-project-tree-option-node [tree]="tree" [option]="option">
+      </app-project-tree-option-node>
+    </ng-container>
+  </ng-container>
+
+</app-tree-node>

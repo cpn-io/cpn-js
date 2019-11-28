@@ -1,4 +1,4 @@
-import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Constants } from '../common/constants';
 import TextRenderer from '../../lib/cpn-js/draw/TextRenderer';
 
@@ -7,6 +7,7 @@ import { EventService } from '../services/event.service';
 import { ModelService } from '../services/model.service';
 import { element } from 'protractor';
 import { AccessCpnService } from '../services/access-cpn.service';
+import { TabsContainer } from 'src/lib/tabs/tabs-container/tabs.container';
 
 
 @Component({
@@ -16,6 +17,8 @@ import { AccessCpnService } from '../services/access-cpn.service';
 })
 export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
+  @ViewChild('tabsComponent', {static: false}) tabsComponent: TabsContainer;
+
   console = console;
   JSON = JSON;
 
@@ -23,6 +26,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
   tabList = [
     { id: 'propertiesPanel', name: 'Properties' },
+    { id: 'monitorPanel', name: 'Monitor' },
     // { id: 'modelPanel', name: 'Model' },
   ];
 
@@ -78,7 +82,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
   pages = [];
 
-  private layoutPartOpened: boolean[] = [];
+  public layoutPartOpened: boolean[] = [];
 
   constructor(private eventService: EventService,
     private modelService: ModelService,
@@ -89,14 +93,16 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   updateJsonScheduled = false;
 
   ngOnInit() {
-    this.eventService.on(Message.PAGE_OPEN, (data) => {
-      console.log(this.constructor.name, 'Message.PAGE_OPEN, data = ', data);
+    this.eventService.on(Message.PAGE_TAB_OPEN, (data) => {
+      // console.log(this.constructor.name, 'Message.PAGE_OPEN, data = ', data);
 
       this.showPageAttrs(data.pageObject);
     });
 
     this.eventService.on(Message.SHAPE_SELECT, (data) => {
       console.log(this.constructor.name, 'Message.SHAPE_SELECT, data = ', data);
+
+      // this.selectTab('propertiesPanel');
 
       const element = data.element.labelTarget ?
         data.element.labelTarget.labelTarget || data.element.labelTarget :
@@ -116,15 +122,26 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
       //     if (this.modelService.projectData
       //       && this.modelService.projectData.workspaceElements
       //       && this.modelService.projectData.workspaceElements.cpnet) {
-      //       this.projectData = JSON.parse(JSON.stringify(this.modelService.projectData.workspaceElements.cpnet));
+      //       this.projectData = cloneObject(this.modelService.projectData.workspaceElements.cpnet);
       //       this.updateJsonScheduled = false;
       //     }
       //   }, 1000);
       // }
     });
+
+    this.eventService.on(Message.MONITOR_OPEN, () => { this.selectTab('monitorPanel'); });
   }
 
   ngOnDestroy() {
+  }
+
+  selectTab(tabId) {
+    setTimeout(() => {
+      const tab = this.tabsComponent.getTabByID(tabId);
+      if (tab) {
+        this.tabsComponent.selectTab(tab);
+      }
+    }, 0);
   }
 
   // getCpnElement() {
@@ -139,7 +156,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     console.log('updateChanges(), this = ', this);
 
     this.eventService.send(Message.MODEL_UPDATE_DIAGRAM, { cpnElement: this.cpnElement });
-    this.eventService.send(Message.MODEL_CHANGED);
+    // this.eventService.send(Message.MODEL_CHANGED);
   }
 
   updateLabel(event) {

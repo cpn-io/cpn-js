@@ -2,6 +2,9 @@ div.valueRow {
   display: table;
   width: 100%;
   padding-right: 2px;
+}
+
+div.bordered {
   border-bottom: 1px solid lightgrey;
 }
 
@@ -43,6 +46,9 @@ div.value-readonly {
 }
 
 [contenteditable] {
-  white-space: pre;
   font-family: 'Courier New', Courier, monospace;
+}
+
+.pre {
+  white-space: pre;
 }

@@ -1,15 +1,46 @@
-<!--<app-model-editor-toolbar [editorRef]="this"></app-model-editor-toolbar>-->
-<!--<div style="width: 100%; height:100%; margin-top:-68px; border: 0px solid blue">-->
-<!--<div style="padding-top:68px; height:100%; border:0px solid red">-->
+<nav class="navbar navbar-sm navbar-expand shadow-sm">
 
-<div style="width: 100%; height:100%; margin-top:-26px; border: 0px solid blue">
-  <div style="padding-top:26px; height:100%; border:0px solid red">
+  <ul class="navbar-nav mr-auto">
+    <li class="nav-item">
+      <div class="header">Model diagram</div>
+    </li>
+    <div class="divider"></div>
 
-    <div style="width: 100%; height:100%; padding-bottom:0px; border: 0px solid green">
-      <div id="container" #container style="width:100%; height:100%; border: 0px solid red; background: #ebebeb"></div>
-    </div>
+    <ng-container *ngIf="availableMonitorList.length > 0">
+      <li class="dropdown nav-item">
+        <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle nav-link monitor" data-toggle="dropdown"
+          href="#" id="navbarMonitorsDD">
+          <i class="fas fa-plus"></i>
+          <span>New monitor</span>
+        </a>
+        <div aria-labelledby="navbarDropdown" class="dropdown-menu shadow">
+          <ng-container *ngFor="let mt of availableMonitorList">
+            <a (click)="onCreateNewMonitor(mt)" class="dropdown-item" href="#">{{ mt }}</a>
+          </ng-container>
+        </div>
+      </li>
+      <div class="divider"></div>
+    </ng-container>
+  </ul>
 
-  </div>
+
+  <ul class="navbar-nav ml-auto">
+    <div class="divider"></div>
+
+    <li class="nav-item">
+      <div (click)="onClose()" class="nav-link mb-0">
+        <i class="fas fa-times"></i>
+        <span>Close</span>
+      </div>
+    </li>
+
+  </ul>
+
+</nav>
+
+<div class="tab-container-with-toolbar">
+  <!-- Container for cpn-js diagram -->
+  <div id="container" #container style="width:100%; height:100%; border: 0px solid red; background: #ebebeb"></div>
 </div>
 
 <div class="loading" *ngIf="loading">

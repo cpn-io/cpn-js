@@ -1,5 +1,8 @@
 <tabs class="cpn-tabs">
-  <ng-template ngFor let-tab [ngForOf]="tabList">
+
+  <!-- <ng-template ngFor let-tab [ngForOf]="tabList"> -->
+  <ng-container *ngFor="let tab of tabList">
+
     <tab *ngIf="tab" [id]="tab.id" [tabTitle]="tab.name">
 
       <!-------------------------->
@@ -35,7 +38,7 @@
 
               </li>
 
-              <div *ngIf="(selectedNode && selectedNode.data && selectedNode.data.actions ? true : false)"
+              <!-- <div *ngIf="(selectedNode && selectedNode.data && selectedNode.data.actions ? true : false)"
                 class="divider"></div>
 
               <li class="dropdown nav-item">
@@ -61,7 +64,7 @@
                     href="#">{{monitorType.TEBP}}</a>
                 </div>
 
-              </li>
+              </li> -->
 
               <div class="divider"></div>
               <!-- Clone action -->
@@ -74,26 +77,26 @@
               <!-- Disable action -->
               <li *ngIf="canDoEditAction(selectedNode, 'disable')" class="nav-item">
                 <a (click)="onDisableMonitor(selectedNode)" class="nav-link" href="#" title="Disable monitor">
-                  <i class="fas fa-toggle-off"></i>
+                  <i class="fas fa-toggle-on"></i>
                 </a>
               </li>
 
               <li *ngIf="canDoEditAction(selectedNode, 'disable_all')" class="nav-item">
                 <a (click)="onDisableMonitor(selectedNode)" class="nav-link" href="#" title="Disable all">
-                  <i class="fas fa-toggle-off"></i>
+                  <i class="fas fa-toggle-on"></i>
                 </a>
               </li>
 
               <!-- Enable action -->
               <li *ngIf="canDoEditAction(selectedNode, 'enable')" class="nav-item">
                 <a (click)="onEnableMonitor(selectedNode)" class="nav-link" href="#" title="Enable monitor">
-                  <i class="fas fa-toggle-on"></i>
+                  <i class="fas fa-toggle-off"></i>
                 </a>
               </li>
 
               <li *ngIf="canDoEditAction(selectedNode, 'enable_all')" class="nav-item">
                 <a (click)="onEnableMonitor(selectedNode)" class="nav-link" href="#" title="Enable all">
-                  <i class="fas fa-toggle-on"></i>
+                  <i class="fas fa-toggle-off"></i>
                 </a>
               </li>
 
@@ -107,17 +110,19 @@
 
               <div class="divider" *ngIf="isExistsEditSection(selectedNode)"></div>
 
-          <!-- Up/down actions -->
-          <li  *ngIf="selectedNode && selectedNode.data && selectedNode.data.actions "  class="nav-item">
-            <a (click)="onUpNode(selectedNode)" class="nav-link"   [ngClass]="{'disabled': !isOneGroup(getDataForMoving('up'))}" href="#">
-              <i class="fas fa-arrow-up"></i>
-            </a>
-          </li>
-          <li *ngIf="selectedNode && selectedNode.data && selectedNode.data.actions "  class="nav-item" >
-            <a (click)="onDownNode(selectedNode)" class="nav-link"  [ngClass]="{'disabled': !isOneGroup(getDataForMoving('down'))}" href="#">
-              <i class="fas fa-arrow-down"></i>
-            </a>
-          </li>
+              <!-- Up/down actions -->
+              <li *ngIf="selectedNode && selectedNode.data && selectedNode.data.actions " class="nav-item">
+                <a (click)="onUpNode(selectedNode)" class="nav-link"
+                  [ngClass]="{'disabled': !isOneGroup(getDataForMoving('up'))}" href="#">
+                  <i class="fas fa-arrow-up"></i>
+                </a>
+              </li>
+              <li *ngIf="selectedNode && selectedNode.data && selectedNode.data.actions " class="nav-item">
+                <a (click)="onDownNode(selectedNode)" class="nav-link"
+                  [ngClass]="{'disabled': !isOneGroup(getDataForMoving('down'))}" href="#">
+                  <i class="fas fa-arrow-down"></i>
+                </a>
+              </li>
 
               <div class="divider"></div>
 
@@ -142,117 +147,113 @@
 
         <!-- Project tree explorer -->
         <!--------------------------->
-        <div class="workspace-container-with-tab">
-          <div class="inner">
-            <div class="scroll-y" id="tree-scroll-pane">
-              <div class="pane" style="padding:10px">
+        <div class="tab-container-with-toolbar" id="tree-scroll-pane">
+          <div class="pane" style="padding:10px">
 
-                <tree-root #tree [state]="treeState" (stateChange)="setState($event)" [nodes]="nodes" [options]="options"
-                  (activate)="activateNode($event)" (ngModelChange)="treeModelChanged($event)">
-                  <ng-template #treeNodeTemplate let-node let-index="index">
+            <tree-root #tree [state]="treeState" (stateChange)="setState($event)" [nodes]="nodes" [options]="options"
+              (activate)="activateNode($event)" (ngModelChange)="treeModelChanged($event)">
+              <ng-template #treeNodeTemplate let-node let-index="index">
 
-                    <div [ngClass]="node.data.classes">
+                <div [ngClass]="node.data.classes">
 
-                      <!-- Tree node view -->
-                      <table class="table-textarea" [id]="'node-table-' + node.id">
-                        <tr>
-                          <!-- Expanding/collapsing arrow -->
-                          <td [ngClass]="{'node-disabled': isDisabledNode(node.id)}">
-                            <span *ngIf="canCollapse(node)" class="toggle-children-wrapper">
-                              <span
-                                [class]="openedLabel[node.id] ? 'toggle-children-wrapper-expanded' : 'toggle-children-wrapper-collapsed'"
-                                (click)="onNodeArrowClick($event, node)">
-                                <span class="toggle-children"></span>
-                              </span>
-                            </span>
-                            <span *ngIf="node.parent.parent === null">Project: </span>
-                            <span *ngIf="isMonitorType(node)">Type: </span>
-                          </td>
+                  <!-- Tree node view -->
+                  <table class="table-textarea" [id]="'node-table-' + node.id">
+                    <tr>
+                      <!-- Expanding/collapsing arrow -->
+                      <td [ngClass]="{'node-disabled': isDisabledNode(node.id)}">
+                        <span *ngIf="canCollapse(node)" class="toggle-children-wrapper">
+                          <span
+                            [class]="openedLabel[node.id] ? 'toggle-children-wrapper-expanded' : 'toggle-children-wrapper-collapsed'"
+                            (click)="onNodeArrowClick($event, node)">
+                            <span class="toggle-children"></span>
+                          </span>
+                        </span>
+                        <span *ngIf="node.parent.parent === null">Project: </span>
+                        <span *ngIf="isMonitorType(node)">Type: </span>
+                      </td>
 
-                          <td *ngIf="isMonitorOption(node)" style="padding-right: 5px;"
-                            [ngClass]="{'node-disabled': isDisabledNode(node.id)}">
-                            <input type="checkbox" [checked]="getMonitorOption(node)" style="margin-top: 3px"
-                              (change)="setMonitorOption($event, node)">
-                          </td>
+                      <td *ngIf="isMonitorOption(node)" style="padding-right: 5px;"
+                        [ngClass]="{'node-disabled': isDisabledNode(node.id)}">
+                        <input type="checkbox" [checked]="getMonitorOption(node)" style="margin-top: 3px"
+                          (change)="setMonitorOption($event, node)">
+                      </td>
 
-                          <td *ngIf="isPage(node)" style="padding-right: 5px; color:lightskyblue">
-                            <i class="fas fa-project-diagram"></i>
-                          </td>
+                      <td *ngIf="isPage(node)" style="padding-right: 5px; color:lightskyblue">
+                        <i class="fas fa-project-diagram"></i>
+                      </td>
 
-                          <!-- Tree node label (can be editable) -->
-                          <td class="node"
-                            [ngClass]="{'node-disabled': isDisabledNode(node.id), 'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id), 'node-highlight-error': isError(node.id)}">
+                      <!-- Tree node label (can be editable) -->
+                      <td class="node"
+                        [ngClass]="{'node-disabled': isDisabledNode(node.id), 'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id), 'node-highlight-error': isError(node.id)}">
 
-                            <div *ngIf="!isOption(node) && !isMonitorRef(node)" [id]="'textinpfield_' + node.id"
-                              class="editablenode" (click)="onNodeClick($event, node)"
-                              (dblclick)="onNodeDblClick($event, node)" (focusout)="saveEditedData($event, node)"
-                              [contentEditable]="canEdit(node) && (openedLabel[node.id] || (editableNode === node))"
-                              [innerHTML]="getLabel(node) | colorDeclarations | safeHtml">
-                            </div>
-                          </td>
+                        <div *ngIf="!isOption(node) && !isMonitorRef(node)" [id]="'textinpfield_' + node.id"
+                          class="editablenode" (click)="onNodeClick($event, node)"
+                          (dblclick)="onNodeDblClick($event, node)" (focusout)="saveEditedData($event, node)"
+                          [contentEditable]="canEdit(node) && (openedLabel[node.id] || (editableNode === node))"
+                          [innerHTML]="getLabel(node) | colorDeclarations | safeHtml">
+                        </div>
+                      </td>
 
-                          <!-- Monitor - idref -->
-                          <td id="monitorref" *ngIf="isMonitorRef(node)" class="node"
-                            [ngClass]="{'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id), 'node-disabled': isDisabledNode(node.id)}">
-                            <div [id]="'textinpfield_' + node.id" style="white-space: normal">{{node.data.name}}
-                            </div>
-                          </td>
+                      <!-- Monitor - idref -->
+                      <td id="monitorref" *ngIf="isMonitorRef(node)" class="node"
+                        [ngClass]="{'node-highlight-bottom': isHighlightBottom(node.id), 'node-highlight-all': isHighlightAround(node.id), 'node-disabled': isDisabledNode(node.id)}">
+                        <div [id]="'textinpfield_' + node.id" style="white-space: normal">{{node.data.name}}
+                        </div>
+                      </td>
 
-                          <!-- Checkbox for boolean option -->
-                          <td *ngIf="isBooleanOption(node)" style="padding-right: 5px;">
-                            <input type="checkbox" [checked]="getBooleanOption(node)" style="margin-top: 3px"
-                              (change)="setBooleanOption($event, node)">
-                          </td>
+                      <!-- Checkbox for boolean option -->
+                      <td *ngIf="isBooleanOption(node)" style="padding-right: 5px;">
+                        <input type="checkbox" [checked]="getBooleanOption(node)" style="margin-top: 3px"
+                          (change)="setBooleanOption($event, node)">
+                      </td>
 
-                          <!-- Name of the option-->
-                          <td *ngIf="isOption(node)">
-                            <div [innerHTML]="node.id | optionName"></div>
-                          </td>
+                      <!-- Name of the option-->
+                      <td *ngIf="isOption(node)">
+                        <div [innerHTML]="node.id | optionName"></div>
+                      </td>
 
-                          <!-- Text input for text option -->
-                          <td *ngIf="isTextOption(node)" style="padding-left: 5px">
-                            <div class="editablenode" contentEditable="true" [innerText]="getTextOption(node)"></div>
-                          </td>
+                      <!-- Text input for text option -->
+                      <td *ngIf="isTextOption(node)" style="padding-left: 5px">
+                        <div class="editablenode" contentEditable="true" [innerText]="getTextOption(node)"></div>
+                      </td>
 
-                        </tr>
+                    </tr>
 
-                      </table>
+                  </table>
 
-                      <!-- Tree node context menu -->
-                      <div *ngIf="node.data.actions ? true : false" class="dropdown-menu dropdown-menu-fixed shadow"
-                        id="context-menu-{{node.id | replaceSpaces}}">
+                  <!-- Tree node context menu -->
+                  <div *ngIf="node.data.actions ? true : false" class="dropdown-menu dropdown-menu-fixed shadow"
+                    id="context-menu-{{node.id | replaceSpaces}}">
 
-                        <a *ngIf="node.data.actions.includes('declaration')" (click)="onAddNode(node, 'declaration')"
-                          class="dropdown-item" href="#">New declaration</a>
-                        <a *ngIf="node.data.actions.includes('block')" (click)="onAddNode(node, 'block')"
-                          class="dropdown-item" href="#">New block</a>
-                        <a *ngIf="node.data.actions.includes('page')" (click)="onAddNode(node, 'page')"
-                          class="dropdown-item" href="#">New page</a>
+                    <a *ngIf="node.data.actions.includes('declaration')" (click)="onAddNode(node, 'declaration')"
+                      class="dropdown-item" href="#">New declaration</a>
+                    <a *ngIf="node.data.actions.includes('block')" (click)="onAddNode(node, 'block')"
+                      class="dropdown-item" href="#">New block</a>
+                    <a *ngIf="node.data.actions.includes('page')" (click)="onAddNode(node, 'page')"
+                      class="dropdown-item" href="#">New page</a>
 
-                        <div *ngIf="node.data.actions.length > 1" class="dropdown-divider" href="#"></div>
+                    <div *ngIf="node.data.actions.length > 1" class="dropdown-divider" href="#"></div>
 
-                        <a *ngIf="node.data.actions.includes('clone')" (click)="onCloneMonitor(node)"
-                          class="dropdown-item" href="#">Clone monitor</a>
-                        <a *ngIf="node.data.actions.includes('disable')" (click)="onDisableMonitor(node)"
-                          class="dropdown-item" href="#">Disable monitor</a>
-                        <a *ngIf="node.data.actions.includes('enable')" (click)="onEnableMonitor(node)"
-                          class="dropdown-item" href="#">Enable monitor</a>
-                        <a *ngIf="node.data.actions.includes('disable_all')" (click)="onDisableMonitor(node)"
-                          class="dropdown-item" href="#">Disable all</a>
-                        <a *ngIf="node.data.actions.includes('enable_all')" (click)="onEnableMonitor(node)"
-                          class="dropdown-item" href="#">Enable all</a>
-                        <a *ngIf="node.data.actions.includes('delete')" (click)="onDeleteNode(node)"
-                          class="dropdown-item" href="#">Delete</a>
-                      </div>
+                    <a *ngIf="node.data.actions.includes('clone')" (click)="onCloneMonitor(node)" class="dropdown-item"
+                      href="#">Clone monitor</a>
+                    <a *ngIf="node.data.actions.includes('disable')" (click)="onDisableMonitor(node)"
+                      class="dropdown-item" href="#">Disable monitor</a>
+                    <a *ngIf="node.data.actions.includes('enable')" (click)="onEnableMonitor(node)"
+                      class="dropdown-item" href="#">Enable monitor</a>
+                    <a *ngIf="node.data.actions.includes('disable_all')" (click)="onDisableMonitor(node)"
+                      class="dropdown-item" href="#">Disable all</a>
+                    <a *ngIf="node.data.actions.includes('enable_all')" (click)="onEnableMonitor(node)"
+                      class="dropdown-item" href="#">Enable all</a>
+                    <a *ngIf="node.data.actions.includes('delete')" (click)="onDeleteNode(node)" class="dropdown-item"
+                      href="#">Delete</a>
+                  </div>
 
-                    </div>
+                </div>
 
-                  </ng-template>
-                </tree-root>
-                <!------------------->
+              </ng-template>
+            </tree-root>
+            <!------------------->
 
-              </div>
-            </div>
           </div>
         </div>
 
@@ -266,6 +267,13 @@
         <app-application-settings></app-application-settings>
       </ng-container>
 
+      <ng-container *ngIf="tab.id === 'projectTree'">
+        <app-project-tree></app-project-tree>
+      </ng-container>
+
     </tab>
-  </ng-template>
+
+  </ng-container>
+
+  <!-- </ng-template> -->
 </tabs>

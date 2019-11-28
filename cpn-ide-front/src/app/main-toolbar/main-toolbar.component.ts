@@ -6,6 +6,8 @@ import { EventService } from '../services/event.service';
 import { Message } from '../common/message';
 import { ValidationService } from '../services/validation.service';
 import { AccessCpnService } from '../services/access-cpn.service';
+import { EditorPanelService } from '../services/editor-panel.service';
+import { ApplicationService } from '../services/application.service';
 @Component({
   selector: 'app-main-toolbar',
   templateUrl: './main-toolbar.component.html',
@@ -21,7 +23,9 @@ export class MainToolbarComponent implements OnInit {
     private eventService: EventService,
     private validationService: ValidationService,
     public accessCpnService: AccessCpnService,
-    public modelService: ModelService
+    public modelService: ModelService,
+    private editorPanelService: EditorPanelService,
+    public applicationService: ApplicationService
   ) {
   }
 
@@ -52,14 +56,32 @@ export class MainToolbarComponent implements OnInit {
 
   onValidate() {
     // this.validationService.validate();
-    this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData(), complexVerify: false });
+    this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData(), complexVerify: true });
+  }
+
+  onTest() {
+    const modelEditor = this.editorPanelService.getSelectedModelEditor();
+    console.log(this.constructor.name, 'onTest(), page = ', modelEditor);
+
+    if (modelEditor) {
+      modelEditor.testAnimation().then(() => {
+        console.log(this.constructor.name, 'onTest(), modelEditor.testAnimation(), COMPLETE');
+      });
+    }
+  }
+
+  onDocumentation() {
+    this.applicationService.isShowDocumentation = !this.applicationService.isShowDocumentation;
   }
 
   newCPNet() {
+    this.onStopSimulation();
     this.projectService.loadEmptyProject();
   }
 
   reloadProject() {
+    this.onStopSimulation();
+
     this.eventService.send(Message.PROJECT_LOAD, { project: this.modelService.getProject() });
     this.validationService.validate();
   }
@@ -69,5 +91,6 @@ export class MainToolbarComponent implements OnInit {
   }
 
   openProject() {
+    this.onStopSimulation();
   }
 }

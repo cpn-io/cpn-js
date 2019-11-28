@@ -1,5 +1,21 @@
-<app-main-toolbar></app-main-toolbar>
-
 <app-main-frame>Loading...</app-main-frame>
+
+<div *ngIf="accessCpnService.initSimProcessing" class="loading">
+    <div class="loading-text">
+        Simulation mode initializing...
+    </div>
+</div>
+
+<div *ngIf="accessCpnService.fastforwardProcessing" class="loading">
+    <div class="loading-text">
+        Multistep fast forward processing...
+    </div>
+</div>
+
+<div *ngIf="accessCpnService.replicationProcessing" class="loading">
+    <div class="loading-text">
+        Replication processing...
+    </div>
+</div>
 
 <!--<router-outlet></router-outlet>-->

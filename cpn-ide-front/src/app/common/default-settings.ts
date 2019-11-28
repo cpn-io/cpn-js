@@ -1,23 +1,24 @@
-export function getDefaultSettings() {
-  return {
-    'serverAddress': 'http://95.161.178.222:42020',
-    'color': 'newColor',
-    'var': 'newVar',
-    'ml': 'newMl',
-    'globref': 'newGlobref',
-    'type': 'UNIT',
-    'initmark': 'empty',
-    'code': 'input();\noutput();\naction();',
-    'cond': '[]',
-    'time': '@+',
-    'priority': 'P_NORMAL',
-    'annot': '1`()',
+export const DEFAULT_SETTINGS = {
+  localServer: 'true',
+  serverAddress: 'http://95.161.178.222:42020',
 
-    'block': 'New block',
-    'declaration': '(* New declaration *)',
-    'page': 'New page',
+  globref: 'globref CONST = 1;',
+  color: 'colset TYPE = unit;',
+  var: 'var v:UNIT;',
+  fun: 'fun Fun1() = [];',
+  
+  type: 'UNIT',
+  initmark: 'empty',
+  code: 'input();\noutput();\naction();',
+  cond: '[]',
+  time: '@+',
+  priority: 'P_NORMAL',
+  annot: '1`()',
 
-    'ellipse': { 'h': 40, 'w': 70 },
-    'box': { 'h': 40, 'w': 70 }
-  };
-}
+  block: 'New block',
+  declaration: '(* New declaration *)',
+  page: 'New page',
+
+  ellipse: { 'h': 40, 'w': 70 },
+  box: { 'h': 40, 'w': 70 }
+};

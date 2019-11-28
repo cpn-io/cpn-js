@@ -5,7 +5,7 @@ export class OptionsNamePipePipe implements PipeTransform {
 
   transform(value: string): string {
 
-    let transformed;
+    let transformed = value;
     if (value.startsWith('option_')) {
       transformed = value.substring(7);
     }

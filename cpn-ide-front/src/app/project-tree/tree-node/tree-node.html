@@ -1,0 +1,23 @@
+<ng-container *ngIf="isFiltered()">
+
+    <div [ngClass]="{'selected': tree.selected.id === id, 'node': true, 'error': error, 'ready': ready}"
+        [style.color]="color">
+        <div class="caret" *ngIf="showBullet" (mousedown)="onExpand()">
+            <i [ngClass]="isExpanded() ? 'fas fa-caret-down' : 'fas fa-caret-right'"></i>
+        </div>
+
+        <div *ngIf="iconClass" class="icon">
+            <i [class]="iconClass"></i>
+        </div>
+
+        <div [id]="id" class="title" [ngClass]="{ 'active' : isExpanded(), 'bold': bold }" [contentEditable]="editable"
+            [innerHTML]="title" (mousedown)="onClick()" (contextmenu)="onContextMenu($event)"
+            (keydown)="onKeydown($event)" (focus)="onSelect()" (focusout)="onUpdate($event)" (input)="onInput($event)">
+        </div>
+    </div>
+
+</ng-container>
+
+<div class="child" [ngClass]="{ 'expanded' : isExpanded() }">
+    <ng-content></ng-content>
+</div>

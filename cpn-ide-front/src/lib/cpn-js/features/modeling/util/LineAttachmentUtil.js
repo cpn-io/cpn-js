@@ -54,6 +54,10 @@ function getDistance(p1, p2) {
  */
 export function getAttachment(point, line) {
 
+  if (!line) {
+    return undefined;
+  }
+
   var idx = 0,
       segmentStart,
       segmentEnd,

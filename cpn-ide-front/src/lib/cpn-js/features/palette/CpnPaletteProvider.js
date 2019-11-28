@@ -93,7 +93,8 @@ CpnPaletteProvider.prototype.getPaletteEntries = function () {
 
   }
 
-  return {
+
+  return !this._modeling.isEditable() ? undefined : {
     'lasso-tool': {
       group: 'tools',
       className: 'bpmn-icon-lasso-tool',

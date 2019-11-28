@@ -6,15 +6,18 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./text-edit-row.scss']
 })
 export class TextEditRowComponent {
-  @Input('type') _type = 'text';
-  @Input('name') _name;
-  @Input('object') _object;
-  @Input('field') _field;
-  @Input('colors') _colors = [];
-  @Input('options') _options = [];
-  @Input('readonly') readonly = false;
+  @Input() type = 'text';
+  @Input() name: string;
+  @Input() object: object;
+  @Input() field: string;
+  @Input() colors = [];
+  @Input() options = [];
+  @Input() readonly = false;
+  @Input() pre = true;
+  @Input() bordered = true;
 
-  @Output('changed') changed = new EventEmitter();
+  @Output() changed = new EventEmitter();
+  // @Output() dblclick = new EventEmitter();
 
   private colorNames = {
     'Fucia': '#ff00ff',
@@ -48,14 +51,14 @@ export class TextEditRowComponent {
     return this.colorNames[name] || name;
   }
 
-  onKeyDown(e) {
+  onKeydown(e) {
     if (!e) {
       e = window.event;
     }
 
     console.log('keydown, e = ', e);
 
-    let keyCode = e.which || e.keyCode,
+    const keyCode = e.which || e.keyCode,
       target = e.target || e.srcElement;
 
     if (keyCode === 13 && !e.shiftKey) {
@@ -72,40 +75,30 @@ export class TextEditRowComponent {
   }
 
   onChange(event) {
-    if (this._type === 'text') {
-      this._object[this._field] = event.target.textContent;
+    if (this.type === 'text') {
+      this.object[this.field] = event.target.textContent;
     }
-    if (this._type === 'int') {
-      this._object[this._field] = parseInt(event.target.textContent, 0);
+    if (this.type === 'ml') {
+      this.object[this.field] = event.target.textContent;
     }
-    if (this._type === 'color') {
-      this._object[this._field] = this.color2name(event.target.value);
+    if (this.type === 'int') {
+      this.object[this.field] = parseInt(event.target.textContent, 0);
     }
-    if (this._type === 'select') {
-      // console.log('List in prop-panel - OBJ-', this._object);
-      // //console.log('List in prop-panel - OBJ[field]-', this._object[this._field]);
-      // console.log('List in prop-panel - field-', this._field);
-      // if (event !== '') {
-      //   if (this._object.state === 'none') {
-      //     if (event) {
-      //       this._object.obj['port'] = this.getPortObject(this._object.obj, event);
-      //       //this._object['port'] = this.getPortObject(this._object, this._field);
-      //       this._object = this._object.obj['port'];
-      //     }
-      //   } else {
-      //     this._object = this._object.pobj;
-      //   }
-      //   this._object[this._field] = event;
-      // } else {
-      //   this._object.obj['port'] = 'delete';
-      // }
-      this._object[this._field] = event;
+    if (this.type === 'color') {
+      this.object[this.field] = this.color2name(event.target.value);
     }
-    this.changed.emit(this._object[this._field]);
+    if (this.type === 'select') {
+      this.object[this.field] = event;
+    }
+    this.changed.emit(this.object[this.field]);
   }
 
+  // onDblClick(event) {
+  //   this.dblclick.emit(this.object[this.field]);
+  // }
+
   parseInt(x, base) {
-    let parsed = parseInt(x, base);
+    const parsed = parseInt(x, base);
     if (isNaN(parsed)) { return base; }
     return parsed;
   }

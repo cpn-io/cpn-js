@@ -5,6 +5,7 @@ import { ModelService } from '../../services/model.service';
 import * as X2JS from '../../../lib/x2js/xml2json';
 import { AccessCpnService } from 'src/app/services/access-cpn.service';
 import { xmlBeautify } from '../../../lib/xml-beautifier/xml-beautifier.js';
+import { cloneObject } from 'src/app/common/utils';
 
 @Component({
   selector: 'app-saveproject-button',
@@ -36,7 +37,7 @@ export class SaveprojectButtonComponent implements OnInit {
 
     this.modal.open(modalName, { ariaLabelledBy: 'modal-basic-title', centered: true }).result.then((result) => {
       const x2js = new X2JS();
-      let xml = (x2js.json2xml_str(JSON.parse(JSON.stringify(this.modelService.getProjectData())))); /// netJson
+      let xml = (x2js.json2xml_str(cloneObject(this.modelService.getProjectData()))); /// netJson
       xml = `${this.xmlPrefix}\n${xml}`;
 
       xml = xmlBeautify(xml);

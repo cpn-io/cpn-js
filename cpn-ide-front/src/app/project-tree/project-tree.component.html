@@ -1,0 +1,74 @@
+<div id="projectTreeComponentContainer" style="width: 100%; height: 100%;">
+
+  <!-- Project tree toolbar -->
+  <app-project-tree-toolbar (newNode)="onNewNode()" (deleteNode)="onDeleteNode()" (upNode)="onUpNode()"
+    (downNode)="onDownNode()" [filterText]="tree.filter" (filterChanged)="onFilterChanged($event)">
+    <!-- <app-project-tree-toolbar> -->
+  </app-project-tree-toolbar>
+
+  <div class="tab-container-with-toolbar">
+
+    <ng-container *ngIf="cpnet">
+
+      <div id="tree" class="tree">
+
+        <!-- Project root -->
+        <app-tree-node [tree]="tree" id="project" type="root" [title]="'Project: ' + project.name" [showBullet]="false">
+
+          <ng-container *ngIf="!tree.filter || tree.filter === ''">
+            <div class="node" [textContent]="'Step: ' + simulationState.step"></div>
+            <div class="node" [textContent]="'Time: ' + simulationState.time"></div>
+          </ng-container>
+
+          <!-- Options -->
+          <app-tree-node [tree]="tree" id="options" title="Options" type="options">
+
+            <app-project-tree-options-node [tree]="tree" [optionList]="nodeToArray(cpnet.options.option)">
+            </app-project-tree-options-node>
+
+          </app-tree-node>
+
+
+          <!-- Declarations -->
+          <app-tree-node [tree]="tree" id="declarations" type="declarations" title="Declarations"
+            (contextmenuAction)="onContextMenu($event, 'declarations')" (newAction)="onNewBlock()">
+
+            <ng-container *ngFor="let globbox of nodeToArray(cpnet.globbox)">
+              <ng-container *ngFor="let block of nodeToArray(globbox.block)">
+                <app-project-tree-block-node [containerId]="containerId" [tree]="tree" [parentBlock]="globbox"
+                  [block]="block">
+                </app-project-tree-block-node>
+              </ng-container>
+            </ng-container>
+
+          </app-tree-node>
+
+
+          <!-- Monitors -->
+          <app-project-tree-monitorblock-node [tree]="tree" [monitorblock]="cpnet.monitorblock">
+          </app-project-tree-monitorblock-node>
+
+          <!-- Pages -->
+          <app-tree-node [tree]="tree" id="pages" type="pages" title="Pages"
+            (contextmenuAction)="onContextMenu($event, 'pages')" (newAction)="onNewPage()">
+
+            <ng-container *ngFor="let page of nodeToArray(cpnet.page)">
+              <ng-container *ngIf="!modelService.isSubpage(page._id)">
+                <app-project-tree-page-node [containerId]="containerId" [tree]="tree" [page]="page"
+                  [parentBlock]="cpnet" type="page">
+                </app-project-tree-page-node>
+              </ng-container>
+            </ng-container>
+
+          </app-tree-node>
+
+        </app-tree-node>
+
+      </div>
+
+    </ng-container>
+  </div>
+
+  <app-context-menu #contextMenu></app-context-menu>
+
+</div>

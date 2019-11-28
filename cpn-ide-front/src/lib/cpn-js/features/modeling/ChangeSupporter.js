@@ -35,9 +35,8 @@ export default function ChangeSupporter(eventBus, modeling, textRenderer, elemen
    */
   function updateTokens(data) {
 
-    const startTime = new Date().getTime();
-
-    // console.log('ChangeSupporter(), updateTokens(), data = ', data);
+    console.log('ChangeSupporter(), updateTokens(), data = ', data);
+    console.time('ChangeSupporter.updateTokens()');
 
     if (data && data.length > 0) {
 
@@ -89,7 +88,7 @@ export default function ChangeSupporter(eventBus, modeling, textRenderer, elemen
 
                   // update marking element
                   if (item.marking && item.marking !== '' && item.marking !== 'empty') {
-                    markingElement.hidden = false;
+                    // markingElement.hidden = false;
                     markingElement.text = item.marking;
                     updateElementSize(markingElement);
                     markingElement.x = parseInt(markingElement.cpnElement._x) + Math.round(markingElement.labelTarget.x + markingElement.labelTarget.width * 3);
@@ -103,7 +102,7 @@ export default function ChangeSupporter(eventBus, modeling, textRenderer, elemen
 
                 }
 
-                modeling.updateElement(element, true);
+                modeling.updateElement(element, false);
               }
             }
           }
@@ -119,33 +118,41 @@ export default function ChangeSupporter(eventBus, modeling, textRenderer, elemen
       // console.log('ChangeSupporter(), updateTokens(), tokenElements = ', tokenElements);
       for (const e of markingElements) {
         e.hidden = true;
-        modeling.updateElement(e, true);
+        modeling.updateElement(e, false);
       }
 
       var markingElements = modeling.getMarkingElements();
       // console.log('ChangeSupporter(), updateTokens(), markingElements = ', markingElements);
       for (const e of markingElements) {
         e.hidden = true;
-        modeling.updateElement(e, true);
+        modeling.updateElement(e, false);
       }
 
     }
 
-    const t = new Date().getTime() - startTime;
-    console.log('END updateTokens(), time = ', t);
+    console.timeEnd('ChangeSupporter.updateTokens()');
   }
 
   function updateElementSize(element) {
-    // console.log('ChangeSupporter(), updateTokens(), updateElementSize(), element = ', element);
+    // if (element.hidden) {
+    //   return;
+    // }
+
+    console.time('ChangeSupporter.updateElementSize()');
+
+    // console.log('ChangeSupporter(), updateTokens(), updateElementSize()');
+    // console.log('ChangeSupporter(), updateTokens(), updateElementSize(), element.text = ', element.text);
 
     var newBounds = textRenderer.getExternalLabelBounds(element, element.text);
     if (newBounds.width < 10)
       newBounds.width = 10;
 
     // console.log('ChangeSupporter(), updateTokens(), updateElementSize(), newBounds = ', newBounds);
-    modeling.resizeShape(element, newBounds);
 
-    modeling.moveShape(element, { x: 0, y: 0 }, element.parent, undefined, undefined);
+    modeling.resizeShape(element, newBounds);
+    // modeling.moveShape(element, { x: 0, y: 0 }, element.parent, undefined, undefined);
+
+    console.timeEnd('ChangeSupporter.updateElementSize()');
   }
 
   /**

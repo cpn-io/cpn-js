@@ -15,18 +15,14 @@
       </ul>
     </nav>
 
-    <div class="workspace-container-with-tab">
-      <div class="inner">
-        <div class="scroll-y" id="logScrollPane">
+    <div class="tab-container-with-toolbar" id="logScrollPane">
 
-          <div class="logConsole">
-            <div *ngFor="let item of logHtml" [ngClass]="item.class">
-              {{ item.date | date: 'yyyy-MM-dd HH:mm:ss' }} : {{ item.text }}
-            </div>
-          </div>
-
+      <div class="logConsole">
+        <div *ngFor="let item of logHtml" [ngClass]="item.class">
+          {{ item.date | date: 'yyyy-MM-dd HH:mm:ss' }} : {{ item.text }}
         </div>
       </div>
+
     </div>
 
   </tab>
@@ -45,23 +41,61 @@
       </ul>
     </nav>
 
-    <div class="workspace-container-with-tab">
-      <div class="inner">
-        <div class="scroll-y" id="changesScrollPane">
+    <div class="tab-container-with-toolbar" id="changesScrollPane">
 
-          <div class="logConsole">
-            <div *ngFor="let item of changesHtml" [ngClass]="item.class">
-              {{ item.date | date: 'yyyy-MM-dd HH:mm:ss' }} : {{ item.text }}
-            </div>
-          </div>
+      <div class="logConsole">
+        <div *ngFor="let item of changesHtml" [ngClass]="item.class">
+          {{ item.date | date: 'yyyy-MM-dd HH:mm:ss' }} : {{ item.text }}
+        </div>
+      </div>
 
+    </div>
+
+  </tab>
+
+  <tab tabTitle="Errors" [error]="accessCpnService.errorIds.length > 0">
+
+    <div class="tab-container" id="logScrollPane">
+      <div class="logConsole">
+        <ng-container *ngFor="let id of accessCpnService.errorIds">
+          <div class="error">{{ id }} : {{ accessCpnService.errorData[id] }}</div>
+        </ng-container>
+      </div>
+    </div>
+
+  </tab>
+
+  <tab tabTitle="Simulation report"
+    [ready]="accessCpnService.simulationReport && accessCpnService.simulationReport !== ''">
+
+    <div class="tab-container" id="logScrollPane">
+      <div class="logConsole">
+        <!-- <pre>
+          {{ accessCpnService.simulationReport }}
+        </pre> -->
+
+        <div class="report" [innerHTML]="accessCpnService.simulationReport | simulationReport | safeHtml">
         </div>
       </div>
     </div>
 
   </tab>
 
-  <!-- <tab tabTitle="Model simulation console">
-  </tab> --> -->
+
+  <!-- test animation -->
+  <!-- <tab id="testTab" tabTitle="Test">
+
+    <svg style="width: 100%; height: 100%; background: #ffffcc">
+      <g id="tokenG_ID2751839452" transform="scale(1, 1)">
+        <g>
+          <circle r="9" cx="100" cy="100" style="fill: rgb(255, 51, 51);">
+            <animateMotion dur="500ms" begin="click" fill="freeze" path="m 0,0 L147,-92 "></animateMotion>
+          </circle>
+        </g>
+      </g>
+    </svg>
+
+  </tab> -->
+
 
 </tabs>

@@ -1,0 +1,176 @@
+<nav class="navbar navbar-sm navbar-expand shadow-sm">
+
+  <ul *ngIf="monitor" class="navbar-nav mr-auto">
+    <!-- <li class="nav-item">
+      <div class="header">Monitor</div>
+    </li>
+    <div class="divider"></div> -->
+
+    <!-- Clone action -->
+    <li class="nav-item">
+      <a (click)="onCloneMonitor()" class="nav-link" href="#" title="Clone monitor">
+        <i class="far fa-clone"></i>
+      </a>
+    </li>
+
+    <!-- Disable action -->
+    <li *ngIf="monitor && monitor._disabled === 'false'" class="nav-item">
+      <a (click)="onDisableMonitor(true)" class="nav-link" href="#" title="Disable monitor">
+        <i class="fas fa-toggle-on"></i>
+      </a>
+    </li>
+
+    <!-- Enable action -->
+    <li *ngIf="monitor && monitor._disabled === 'true'" class="nav-item">
+      <a (click)="onDisableMonitor(false)" class="nav-link" href="#" title="Enable monitor">
+        <i class="fas fa-toggle-off"></i>
+      </a>
+    </li>
+
+    <!-- Delete action -->
+    <li class="nav-item">
+      <a (click)="onDeleteMonitor()" class="nav-link" href="#" title="Delete">
+        <i class="fas fa-minus"></i>
+        <span *ngIf="!isMonitorsSubnode()">Delete</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<div class="tab-container-with-toolbar">
+
+  <div *ngIf="monitor" style="width: 100%">
+
+    <!--
+      Error
+    -->
+    <div *ngIf="accessCpnService.errorIds.includes(monitor._id)" class="errorPane">
+      {{ accessCpnService.errorData[monitor._id] }}
+    </div>
+
+    <div class="blockHeader">
+      {{ monitor._typedescription }}
+    </div>
+
+    <!--
+      Monitor description
+    -->
+
+    <!-- ID -->
+    <app-text-edit-row name="Id" [object]="monitor" field="_id" [readonly]="true">
+    </app-text-edit-row>
+
+    <!-- Name -->
+    <app-text-edit-row type="text" [pre]="false" name="Name" [object]="monitor" field="_name"
+      [readonly]="accessCpnService.isSimulation" (changed)="updateChanges()">
+    </app-text-edit-row>
+
+    <!-- TypeID -->
+    <app-text-edit-row name="Type" [object]="monitor" field="_type" [readonly]="true">
+    </app-text-edit-row>
+
+    <!-- Timed -->
+    <app-text-edit-row *ngIf="optionTimed" type="select" name="Timed" [object]="optionTimed" field="_value"
+      (changed)="updateOptionValue($event, 'Timed')" [options]="boolValues" [readonly]="accessCpnService.isSimulation">
+    </app-text-edit-row>
+
+    <!-- Logging -->
+    <app-text-edit-row *ngIf="optionLogging" type="select" name="Logging" [object]="optionLogging" field="_value"
+      (changed)="updateOptionValue($event, 'Logging')" [options]="boolValues"
+      [readonly]="accessCpnService.isSimulation">
+    </app-text-edit-row>
+
+    <!-- Disabled -->
+    <app-text-edit-row name="Disabled" [object]="monitor" field="_disabled" [readonly]="true">
+    </app-text-edit-row>
+
+    <!------------------------->
+
+    <!--
+      Nodes
+    -->
+    <!-- <div class="blockHeader">Nodes</div> -->
+    <nav class="navbar navbar-sm navbar-expand shadow-sm">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <span class="header">Nodes</span>
+        </li>
+      </ul>
+
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item" *ngIf="nodeList.length === 0 || this.nodeTypeList.includes('group')">
+          <a (click)="onNewNode()" class="nav-link" href="#" title="Add new node to monitor">
+            <i class="fas fa-plus"></i>
+            <span>New node</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- <div>
+      {{ nodeList.length }}
+    </div> -->
+
+    <table class="table table-bordered table-hover table-small">
+      <!-- <tr>
+        <th>Page</th>
+        <th>Element</th>
+      </tr> -->
+
+      <ng-container *ngFor="let node of nodeList">
+        <tr>
+          <td *ngIf="node.page">{{ node.page.pageattr._name }}</td>
+          <td *ngIf="node.element">{{ node.element.text }} ({{ node.elementType }})</td>
+
+          <ng-container>
+            <td class="tableButton">
+              <a (click)="onDeleteNode(node)" href="#" title="Delete node" class="tableButton">
+                <i class="far fa-trash-alt"></i>
+              </a>
+            </td>
+          </ng-container>
+        </tr>
+      </ng-container>
+    </table>
+    <!------------------------->
+
+    <!--
+      Declarations
+    -->
+    <div *ngFor="let declaration of nodeToArray(monitor.declaration)">
+
+      <table *ngIf="declaration && declaration.ml" class="table table-bordered table-hover table-small">
+
+        <tr>
+          <td class="blockHeader">
+            {{ declaration._name }}
+          </td>
+        </tr>
+
+        <tr>
+          <td class="ml">
+            <div style="position: relative; display: grid">
+              <div style="max-width:100%; overflow-x:auto;">
+
+                <app-text-edit-row type="ml" name="declaration._name" [object]="declaration.ml" field="__text"
+                  [readonly]="accessCpnService.isSimulation" [bordered]="false" (changed)="updateChanges()"
+                  (mousedown)="onDeclarationDblClick($event, declaration)">
+                </app-text-edit-row>
+
+              </div>
+            </div>
+          </td>
+        </tr>
+
+      </table>
+
+    </div>
+    <!------------------------->
+
+    <!-- <div style="width:100%">
+      {{ JSON.stringify(monitor) }}
+    </div> -->
+
+  </div>
+
+</div>

@@ -7,9 +7,6 @@ import {
 } from 'min-dash';
 
 import BaseRenderer from 'diagram-js/lib/draw/BaseRenderer';
-import {
-  createLine
-} from 'diagram-js/lib/util/RenderUtil';
 
 import {
   CPN_PLACE,
@@ -26,11 +23,12 @@ import {
 } from '../util/ModelUtil';
 
 import {
-  query as domQuery
+  query as domQuery, domify
 } from 'min-dom';
 
 import {
   append as svgAppend,
+  remove as svgRemove,
   attr as svgAttr,
   create as svgCreate,
   classes as svgClasses
@@ -55,25 +53,31 @@ import {
 
 var RENDERER_IDS = new Ids();
 
-var ERROR_STROKE_COLOR = '#ff999966';
-var ERROR_STROKE_THICK = 5;
+var STATUS_STROKE_THICK = 5;
+var STATUS_STROKE_COLOR_ERROR = '#ff666666';
+var STATUS_STROKE_COLOR_WARNING = '#cccc3366';
+var STATUS_STROKE_COLOR_READY = '#33cc3399';
+var STATUS_STROKE_COLOR_FIRED = '#ff3333'; // '#ff33cc99';
+
+var STATUS_TEXT_COLOR_ERROR = '#ff6666';
+var STATUS_TEXT_COLOR_WARNING = '#cccc33';
+var STATUS_TEXT_COLOR_READY = '#339933';
+var STATUS_TEXT_COLOR_FIRED = '#ff6666'; // '#CC0099';
 
 var SELECT_STROKE_COLOR = '#00cc00';
 var SELECT_FILL_COLOR = '#00ff0011';
-var SELECT_STROKE_THICK = 2;
+var SELECT_STROKE_THICK = 3;
 
 var DEFAULT_LABEL_FILL_COLOR = '#ebebeb00';
 
 var PORT_FILL_COLOR = '#e0e0fd';
 var PORT_STROKE_COLOR = '#4c66cc';
 
-var TOKEN_FILL_COLOR = '#6fe117';
-var MARKING_FILL_COLOR = '#bcfd8b';
+var TOKEN_FILL_COLOR = '#00dd00'; // '#6fe117';
+var MARKING_FILL_COLOR = '#99ff99'; // '#bcfd8b';
 
-var ERROR_FILL_COLOR = '#cc0000';
-var WARNING_FILL_COLOR = '#996600';
-var PROCESS_FILL_COLOR = '#999900';
-var READY_FILL_COLOR = '#009900';
+var TOKEN_BALL_FILL_COLOR = '#ff3333'; // '#00dd00';
+var TOKEN_BALL_RADIUS = 9;
 
 inherits(CpnRenderer, BaseRenderer);
 
@@ -93,7 +97,9 @@ export default function CpnRenderer(
 
   BaseRenderer.call(this, eventBus, priority);
 
+  this._eventBus = eventBus;
   this._stateProvider = stateProvider;
+  this._canvas = canvas;
 
   const self = this;
 
@@ -521,75 +527,22 @@ export default function CpnRenderer(
   //
   // }
 
-  function createPathFromConnection(connection) {
-    let waypoints = connection.waypoints;
-
-    let D = 15;
-
-    let prevPoint = waypoints[0];
-    let pathData = 'm  ' + waypoints[0].x + ',' + waypoints[0].y;
-    let prevWp;
-
-    for (let i = 1; i < waypoints.length; i++) {
-
-      // just draw line
-      // pathData += 'L' + waypoints[i].x + ',' + waypoints[i].y + ' ';
-
-      // draw spline angles
-      let dx = waypoints[i].x - prevPoint.x;
-      let dy = waypoints[i].y - prevPoint.y;
-      let d = Math.sqrt(dx * dx + dy * dy);
-      let DD = Math.min(D, d);
-
-      let wp = { x: (prevPoint.x + DD * dx / d), y: (prevPoint.y + DD * dy / d) };
-
-      if (prevWp) {
-        pathData += 'Q' + prevPoint.x + ' ' + prevPoint.y + ', ' + wp.x + ' ' + wp.y + ' ';
-      }
-
-      let wp2 = waypoints[i];
-      if (i < waypoints.length - 1) {
-        wp2 = { x: (prevPoint.x + dx - DD * dx / d), y: (prevPoint.y + dy - DD * dy / d) };
-      }
-
-      pathData += 'L' + wp2.x + ',' + wp2.y + ' ';
-
-      prevPoint = waypoints[i];
-      prevWp = wp;
-
-    }
-
-    return pathData;
-  }
-
   /**
    * Add CPN status shadow to svg element
    *
    * @param {*} element
    * @param {*} svgElement
    */
-  function drawCpnStatus(element, svgElement) {
-    // if (element.cpnStatus) {
-    //   if (element.cpnStatus === 'process') {
-    //     svgAttr(svgElement, { filter: shadow('shape', PROCESS_FILL_COLOR), });
-    //   }
-    //   if (element.cpnStatus === 'error') {
-    //     svgAttr(svgElement, { filter: shadow('shape', ERROR_FILL_COLOR), });
-    //   }
-    //   if (element.cpnStatus === 'ready') {
-    //     svgAttr(svgElement, { filter: shadow('shape', READY_FILL_COLOR), });
-    //   }
-    // }
-
+  function drawCpnStatus_Blured(element, svgElement) {
     if (element.cpnElement) {
       if (self._stateProvider.getReadyState(element.cpnElement._id)) {
-        svgAttr(svgElement, { filter: shadow('shape', READY_FILL_COLOR), });
+        svgAttr(svgElement, { filter: shadow('shape', STATUS_STROKE_COLOR_READY), });
       }
       if (self._stateProvider.getWarningState(element.cpnElement._id)) {
-        svgAttr(svgElement, { filter: shadow('shape', WARNING_FILL_COLOR), });
+        svgAttr(svgElement, { filter: shadow('shape', STATUS_STROKE_COLOR_WARNING), });
       }
       if (self._stateProvider.getErrorState(element.cpnElement._id)) {
-        svgAttr(svgElement, { filter: shadow('shape', ERROR_FILL_COLOR), });
+        svgAttr(svgElement, { filter: shadow('shape', STATUS_STROKE_COLOR_ERROR), });
       }
     }
   }
@@ -623,7 +576,7 @@ export default function CpnRenderer(
     });
 
     // Add CPN status shadow
-    drawCpnStatus(element, ellipse);
+    // drawCpnStatus(element, ellipse);
 
     svgAppend(parentGfx, ellipse);
 
@@ -646,6 +599,9 @@ export default function CpnRenderer(
 
     // Draw selected state
     drawSelectedStatus(parentGfx, element);
+
+    // Draw cpn status (error, warning, ready)
+    drawCpnStatus(parentGfx, element, 'ellipse');
 
     return ellipse;
   }
@@ -678,7 +634,7 @@ export default function CpnRenderer(
     });
 
     // Add CPN status shadow
-    drawCpnStatus(element, rect);
+    // drawCpnStatus_Blured(element, rect);
 
     svgAppend(parentGfx, rect);
 
@@ -702,6 +658,9 @@ export default function CpnRenderer(
     // Draw selected state
     drawSelectedStatus(parentGfx, element);
 
+    // Draw cpn status (error, warning, ready)
+    drawCpnStatus(parentGfx, element, 'rect');
+
     return rect;
   }
 
@@ -712,12 +671,14 @@ export default function CpnRenderer(
       const cx = parseFloat(box.width / 2);
       const cy = parseFloat(box.height / 2);
 
+      const d = 16;
+
       const sel = svgCreate('rect');
       svgAttr(sel, {
-        x: -5,
-        y: -5,
-        width: cx * 2 + 10,
-        height: cy * 2 + 10
+        x: -d / 2,
+        y: -d / 2,
+        width: cx * 2 + d,
+        height: cy * 2 + d
       });
       svgAttr(sel, {
         fill: SELECT_FILL_COLOR,
@@ -729,107 +690,149 @@ export default function CpnRenderer(
     }
   }
 
-  function drawErrorStatus(parentGfx, element, type) {
-    if (type === 'rect') {
-      var rect = svgCreate('rect');
-      const b = {
-        x: -(ERROR_STROKE_THICK + strokeWidth) / 2,
-        y: -(ERROR_STROKE_THICK + strokeWidth) / 2,
-        width: box.width + (ERROR_STROKE_THICK + strokeWidth),
-        height: box.height + (ERROR_STROKE_THICK + strokeWidth)
-      };
+  function drawCpnStatus(parentGfx, element, type) {
+    const strokeWidth = getStrokeWidth(element) + 1;
+    var box = getBox(element);
+    const cx = parseFloat(box.width / 2);
+    const cy = parseFloat(box.height / 2);
+    var strokeColor = undefined;
+    var textColor = undefined;
 
-      svgAttr(rect, b);
-      svgAttr(rect, {
-        fill: 'transparent',
-        stroke: ERROR_STROKE_COLOR,
-        strokeWidth: ERROR_STROKE_THICK
-      });
-      svgAppend(parentGfx, rect);
+    if (element.cpnElement) {
+      const readyState = self._stateProvider.getReadyState(element.cpnElement._id);
+      const firedState = self._stateProvider.getFiredState(element.cpnElement._id);
+      const warningState = self._stateProvider.getWarningState(element.cpnElement._id);
+      const errorState = self._stateProvider.getErrorState(element.cpnElement._id);
+      let stateText;
+      if (readyState) {
+        strokeColor = STATUS_STROKE_COLOR_READY;
+        textColor = STATUS_TEXT_COLOR_READY;
+        stateText = self._stateProvider.getReadyText(element.cpnElement._id);;
+      }
+      if (firedState) {
+        strokeColor = STATUS_STROKE_COLOR_FIRED;
+        textColor = STATUS_TEXT_COLOR_FIRED;
+        stateText = self._stateProvider.getFiredText(element.cpnElement._id);;
+      }
+      if (warningState) {
+        strokeColor = STATUS_STROKE_COLOR_WARNING;
+        textColor = STATUS_TEXT_COLOR_WARNING;
+        stateText = self._stateProvider.getWarningText(element.cpnElement._id);;
+      }
+      if (errorState) {
+        strokeColor = STATUS_STROKE_COLOR_ERROR;
+        textColor = STATUS_TEXT_COLOR_ERROR;
+        stateText = self._stateProvider.getErrorText(element.cpnElement._id);;
+      }
+
+      if (strokeColor) {
+        switch (type) {
+          case 'rect': {
+            var rect = svgCreate('rect');
+            const b = {
+              x: -(STATUS_STROKE_THICK + strokeWidth) / 2,
+              y: -(STATUS_STROKE_THICK + strokeWidth) / 2,
+              width: box.width + (STATUS_STROKE_THICK + strokeWidth),
+              height: box.height + (STATUS_STROKE_THICK + strokeWidth)
+            };
+
+            svgAttr(rect, b);
+            svgAttr(rect, {
+              fill: 'transparent',
+              stroke: strokeColor,
+              strokeWidth: STATUS_STROKE_THICK
+            });
+            svgAppend(parentGfx, rect);
+          } break;
+
+          case 'ellipse': {
+            let ellipse = svgCreate('ellipse');
+            const b = {
+              cx: cx,
+              cy: cy,
+              rx: cx + (strokeWidth + STATUS_STROKE_THICK) / 2,
+              ry: cy + (strokeWidth + STATUS_STROKE_THICK) / 2
+            };
+            svgAttr(ellipse, b);
+
+            svgAttr(ellipse, {
+              fill: 'transparent',
+              stroke: strokeColor,
+              strokeWidth: STATUS_STROKE_THICK
+            });
+            svgAppend(parentGfx, ellipse);
+          } break;
+
+          case 'connection': {
+            var pathData = self.createPathFromConnection(element);
+            var attrs = {
+              stroke: strokeColor,
+              strokeWidth: getStrokeWidth(element) + (3 * STATUS_STROKE_THICK / 2),
+            };
+            // connection end markers
+            drawPath(parentGfx, pathData, attrs);
+            console.log('drawCpnStatus(), element = ', element);
+            console.log('drawCpnStatus(), pathData = ', pathData);
+
+            if (element.waypoints) {
+              const p1 = element.waypoints[0];
+              const p2 = element.waypoints[element.waypoints.length - 1];
+
+              var text = svgCreate('text');
+              svgAttr(text, {
+                fill: textColor,
+                // x: p1.x + (p2.x - p1.x) / 2 + 5,
+                // y: p1.y + (p2.y - p1.y) / 2 + 15
+                x: p1.x + 5,
+                y: p1.y + 15
+              });
+              text.textContent = stateText;
+              svgAppend(parentGfx, text);
+            }
+
+          } break;
+
+        }
+
+        if (['rect', 'ellipse'].includes(type)) {
+          if (stateText) {
+            var text = svgCreate('text');
+            svgAttr(text, {
+              fill: textColor,
+              // stroke: textColor,
+              x: - STATUS_STROKE_THICK,
+              y: box.height + STATUS_STROKE_THICK * 2 + 10
+            });
+            text.textContent = stateText;
+            svgAppend(parentGfx, text);
+          }
+        }
+
+      }
+
     }
+
   }
 
-  function drawArc(parentGfx, element, d) {
-    // console.log('drawArc(), element = ', element);
+  function drawArc(parentGfx, element) {
+    var pathData = self.createPathFromConnection(element);
+    var strokeColor = getStrokeColor(element);
 
-    var endMrker = drawEndMarker(parentGfx);
+    var attrs = {
+      stroke: strokeColor,
+      strokeWidth: getStrokeWidth(element)
+    };
 
-    var path = svgCreate('path');
-    svgAttr(path, {
-      d: d,
-      'marker-start': 'url(#startMarker)',
-      'marker-end': 'url(#endMarker)'
-    });
-    svgAttr(path, {
-      stroke: getStrokeColor(element),
-      strokeWidth: getStrokeWidth(element),
-    });
-    svgAppend(parentGfx, path);
+    // connection end markers
+    attrs = assign(attrs, getConnectionEndMarkerAttrs(element));
 
-    // drawMarker(parentGfx, element);
+    // spn status
+    drawCpnStatus(parentGfx, element, 'connection');
+
+    const path = drawPath(parentGfx, pathData, attrs);
 
     return path;
   }
-
-  function drawEndMarker(parentGfx) {
-    var marker = svgCreate('marker');
-    svgAttr(marker, {
-      id: 'endMarker',
-      orient: 'auto',
-      refX: 15,
-      refY: 5,
-      markerWidth: 15,
-      markerHeight: 10,
-    });
-    // marker path
-    var path = svgCreate('path');
-    svgAttr(path, {
-      d: 'M0,0 L2,5 L0,10 L15,5 Z',
-      fill: 'black'
-    });
-    svgAppend(marker, path);
-    // -----------------------------
-    svgAppend(parentGfx, marker);
-
-    return marker;
-  }
-
-
-  /**
-   * Draw borttom text label
-   *
-   * @param {*} parentGfx - parent svg graphics element
-   * @param {*} s - text
-   * @param {*} parentRect - parent element rectangle
-   */
-  function drawBottomTextLabel(parentGfx, textRenderer, s, parentRect) {
-    const textDim = textRenderer.getTextUtil().getDimensions(s, {});
-    textDim.width += 5;
-    textDim.height += 1;
-
-    var rect = svgCreate('rect');
-    svgAttr(rect, {
-      x: parentRect.width / 2 - textDim.width / 2,
-      y: parentRect.height - textDim.height / 2,
-      width: textDim.width,
-      height: textDim.height
-    });
-    svgAttr(rect, {
-      fill: '#ffc',
-      stroke: '#000',
-      strokeWidth: 1
-    });
-    svgAppend(parentGfx, rect);
-
-    var text = svgCreate('text');
-    svgAttr(text, {
-      x: parentRect.width / 2 - textDim.width / 2 + 2.5,
-      y: parentRect.height + 4
-    });
-    text.textContent = s;
-    svgAppend(parentGfx, text);
-  }
-
 
   function getConnectionEndMarkerAttrs(element) {
     var attrs = {};
@@ -892,50 +895,7 @@ export default function CpnRenderer(
   };
 
   handlers[CPN_CONNECTION] = function (parentGfx, element) {
-    var pathData = createPathFromConnection(element);
-    // var path = drawArc(parentGfx, element, pathData);
-    // return path;
-
-    var pathData = createPathFromConnection(element);
-
-    var fill = getFillColor(element), strokeColor = getStrokeColor(element);
-
-    var attrs = {
-      // strokeLinejoin: 'round',
-      stroke: strokeColor,
-      strokeWidth: getStrokeWidth(element)
-    };
-
-
-    // cpn status
-    // if (element.cpnStatus) {
-    var color;
-
-    if (self._stateProvider.getReadyState(element.cpnElement._id)) {
-      color = READY_FILL_COLOR;
-    }
-    if (self._stateProvider.getWarningState(element.cpnElement._id)) {
-      color = WARNING_FILL_COLOR;
-    }
-    if (self._stateProvider.getErrorState(element.cpnElement._id)) {
-      color = ERROR_FILL_COLOR;
-    }
-
-    if (color) {
-      var attrs2 = assign({}, attrs, {
-        stroke: color + '33',
-        strokeWidth: getStrokeWidth(element) + 8,
-        // filter: shadow('blur', ERROR_FILL_COLOR),
-      });
-      drawPath(parentGfx, pathData, attrs2);
-    }
-    // }
-
-    // connection end markers
-    attrs = assign(attrs, getConnectionEndMarkerAttrs(element));
-
-    const path = drawPath(parentGfx, pathData, attrs);
-
+    var path = drawArc(parentGfx, element);
     return path;
   };
 
@@ -1101,3 +1061,127 @@ CpnRenderer.prototype.getShapePath = function (element) {
 
   return getRectPath(element);
 };
+
+/**
+ * Animate token movement for element (connection)
+ */
+CpnRenderer.prototype.drawArcAnimation = function (connection, speedMs = 500) {
+
+  const renderer = this;
+
+  return new Promise(function (resolve, reject) {
+
+    try {
+      console.log('TOKEN ANIMATION, connection = ', connection);
+      console.log('TOKEN ANIMATION, speedMs = ', speedMs);
+
+      const viewbox = renderer._canvas.viewbox();
+      const zoom = renderer._canvas.zoom();
+
+      const offset = { x: viewbox.x * -1, y: viewbox.y * -1, }
+
+      let waypoints = connection.waypoints;
+      let firstPoint = waypoints[0];
+
+      let pathValue = renderer.createPathFromConnection(connection, { x: -firstPoint.x, y: -firstPoint.y });
+
+      const container = renderer._canvas._svg;
+
+      const animationId = 'tokenG_' + connection.id;
+
+      if (container) {
+        let tokenG = domQuery('#' + animationId, container);
+        if (tokenG) {
+          svgRemove(tokenG);
+        }
+
+        tokenG = svgCreate('g');
+        svgAttr(tokenG, {
+          id: animationId,
+          transform: 'scale(' + zoom + ', ' + zoom + ')',
+        });
+
+        const tokenGA = svgCreate('g');
+
+        const cx = firstPoint.x + offset.x;
+        const cy = firstPoint.y + offset.y;
+
+        const tokenBallShadow = svgCreate('circle');
+        svgAttr(tokenBallShadow, { r: TOKEN_BALL_RADIUS, fill: 'gray', cx: cx + 1, cy: cy + 1 });
+
+        const tokenBall = svgCreate('circle');
+        svgAttr(tokenBall, { r: TOKEN_BALL_RADIUS, fill: TOKEN_BALL_FILL_COLOR, cx: cx, cy: cy });
+
+        const tokenAnimation = svgCreate('animateMotion');
+        svgAttr(tokenAnimation, {
+          dur: (speedMs) + 'ms',
+          begin: '0s',
+          repeatCount: 1,
+          path: pathValue,
+        });
+        tokenAnimation.setAttribute('fill', 'freeze');
+
+        setTimeout(() => {
+          // reset animation time
+          container.setCurrentTime(0);
+
+          svgAppend(tokenGA, tokenBallShadow);
+          svgAppend(tokenGA, tokenBall);
+          svgAppend(tokenGA, tokenAnimation);
+          svgAppend(tokenG, tokenGA);
+          svgAppend(container, tokenG);
+        }, 1);
+
+        setTimeout(() => {
+          svgRemove(tokenG);
+          resolve(connection);
+        }, speedMs + 300);
+      }
+    } catch (ex) {
+      console.error('CpnRenderer.prototype.drawArcAnimation(), ex = ', ex);
+      reject(ex);
+    }
+  });
+}
+
+CpnRenderer.prototype.createPathFromConnection = function (connection, offset = { x: 0, y: 0 }) {
+  let waypoints = connection.waypoints;
+
+  let D = 15;
+
+  let prevPoint = waypoints[0];
+  let pathData = 'm ' + (waypoints[0].x + offset.x) + ',' + (waypoints[0].y + offset.y);
+  let prevWp;
+
+  for (let i = 1; i < waypoints.length; i++) {
+
+    // just draw line
+    // pathData += 'L' + waypoints[i].x + ',' + waypoints[i].y + ' ';
+
+    // draw spline angles
+    let dx = waypoints[i].x - prevPoint.x;
+    let dy = waypoints[i].y - prevPoint.y;
+    let d = Math.sqrt(dx * dx + dy * dy);
+    let DD = Math.min(D, d);
+
+    let wp = { x: (prevPoint.x + DD * dx / d), y: (prevPoint.y + DD * dy / d) };
+
+    if (prevWp) {
+      pathData +=
+        ' Q' + (prevPoint.x + offset.x) + ' ' + (prevPoint.y + offset.y) +
+        ', ' + (wp.x + offset.x) + ' ' + (wp.y + offset.y) + ' ';
+    }
+
+    let wp2 = waypoints[i];
+    if (i < waypoints.length - 1) {
+      wp2 = { x: (prevPoint.x + dx - DD * dx / d), y: (prevPoint.y + dy - DD * dy / d) };
+    }
+
+    pathData += ' L' + (wp2.x + offset.x) + ',' + (wp2.y + offset.y) + ' ';
+
+    prevPoint = waypoints[i];
+    prevWp = wp;
+  }
+
+  return pathData;
+}

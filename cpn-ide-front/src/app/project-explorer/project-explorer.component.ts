@@ -7,10 +7,11 @@ import { TreeComponent, TREE_ACTIONS } from 'angular-tree-component';
 import { ModelService } from '../services/model.service';
 import { ColorDeclarationsPipe } from '../pipes/color-declarations.pipe';
 import { OptionsNamePipePipe } from '../pipes/options-name.pipe';
-import { Constants } from '../common/constants';
 import { AccessCpnService } from '../services/access-cpn.service';
 import { SettingsService } from '../services/settings.service';
 import { ValidationService } from '../services/validation.service';
+import { nodeToArray } from '../common/utils';
+import { MonitorType } from '../common/monitors';
 
 // import {TreeComponent} from 'angular-tree-component';
 @Component({
@@ -28,19 +29,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   /**
    * treeComponent - component for displaying project tree
    */
-  @ViewChild('tree') treeComponent: TreeComponent;
+  @ViewChild('tree', {static: false}) treeComponent: TreeComponent;
 
-  monitorType = {
-    DC: 'Data collection',
-    MS: 'Marking size',
-    BP: 'Break point',
-    UD: 'User defined',
-    WIF: 'Write in file',
-    LLDC: 'List length data collection',
-    CTODC: 'Count transition occurence data collector',
-    PCBP: 'Place content break point',
-    TEBP: 'Transition enabled break point'
-  };
+  monitorType = MonitorType;
 
   cpnElementType = {
     place: 'cpn:Place',
@@ -50,7 +41,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   JSON = JSON;
 
   tabList = [
-    { id: 'explorerPanel', name: 'Project explorer' },
+    { id: 'projectTree', name: 'Project explorer' },
+    // { id: 'explorerPanel', name: 'Project explorer (Old)' },
     { id: 'applicationSettings', name: 'Application settings' },
   ];
 
@@ -87,6 +79,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   // Step and Time nodes
   stepNode;
   timeNode;
+  monitorsNode;
 
   // Множество идентификаторов узлов, которые должны быть подсвечены снизу в даный момент
   underlineNodeSet = new Set();
@@ -196,82 +189,137 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         data.element.labelTarget.labelTarget || data.element.labelTarget :
         data.element;
 
-      if (this.createMonitorIntent) {
-        console.log('SHAPE_SELECT, element = ', element);
-        let newCpnElement, newNode, cpnType;
-        switch (this.createMonitorIntent) {
-          case this.monitorType.BP: {
-            if (element.type === this.cpnElementType.place || element.type === this.cpnElementType.transition) {
-              newCpnElement = this.modelService.createCpnMonitorBP(element.cpnElement);
-            }
-            break;
-          }
-          case this.monitorType.CTODC: {
-            if (element.type === this.cpnElementType.transition) {
-              newCpnElement = this.modelService.createMonitorCTODC(element.cpnElement);
-            }
-            break;
-          }
-          case this.monitorType.DC: {
-            if (element.type === this.cpnElementType.place || element.type === this.cpnElementType.transition) {
-              newCpnElement = this.modelService.createCpnMonitorDC(element.cpnElement);
-            }
-            break;
-          }
-          case this.monitorType.LLDC: {
-            if (element.type === this.cpnElementType.place) {
-              newCpnElement = this.modelService.createCpnMonitorLLDC(element.cpnElement);
-            }
-            break;
-          }
-          case this.monitorType.MS: {
-            if (element.type === this.cpnElementType.place) {
-              newCpnElement = this.modelService.createCpnMonitorMS(element.cpnElement);
-            }
-            break;
-          }
-          case this.monitorType.PCBP: {
-            if (element.type === this.cpnElementType.place) {
-              newCpnElement = this.modelService.createCpnMonitorPCBP(element.cpnElement);
-            }
-            break;
-          }
-          case this.monitorType.TEBP: {
-            if (element.type === this.cpnElementType.transition) {
-              newCpnElement = this.modelService.createCpnMonitorTEBP(element.cpnElement);
-            }
-            break;
-          }
-          case this.monitorType.UD: {
-            if (element.type === this.cpnElementType.place || element.type === this.cpnElementType.transition) {
-              newCpnElement = this.modelService.createCpnMonitorUD(element.cpnElement);
-            }
-            break;
-          }
-          case this.monitorType.WIF: {
-            if (element.type === this.cpnElementType.place || element.type === this.cpnElementType.transition) {
-              newCpnElement = this.modelService.createCpnMonitorWIF(element.cpnElement);
-            }
-            break;
-          }
-        }
-        if (newCpnElement) {
-          console.log(newCpnElement);
-          newNode = this.createMonitorNode(newCpnElement);
-          console.log('newNode = ', newNode);
-          cpnType = newNode.type;
-          this.clearCreateMonitorIntent();
-          let monitorsRootNode;
-          for (const monitors of this.nodes[0].children) {
-            if (monitors.id === 'Monitors') {
-              monitorsRootNode = monitors;
-              break;
-            }
-          }
-          // TODO: дописать эту функция для добавления мониторов
-          // this.addCreatedNode(monitorsRootNode, newNode, newCpnElement, cpnType, monitorsRootNode.cpnElement, false);
-        }
+      // if (this.createMonitorIntent) {
+      //   console.log('SHAPE_SELECT, element = ', element);
+      //   let newCpnElement, newNode, cpnType;
+      //   switch (this.createMonitorIntent) {
+      //     case this.monitorType.BP: {
+      //       if (element.type === this.cpnElementType.place || element.type === this.cpnElementType.transition) {
+      //         newCpnElement = this.modelService.createCpnMonitorBP(element.cpnElement);
+      //       }
+      //       break;
+      //     }
+      //     case this.monitorType.CTODC: {
+      //       if (element.type === this.cpnElementType.transition) {
+      //         newCpnElement = this.modelService.createMonitorCTODC(element.cpnElement);
+      //       }
+      //       break;
+      //     }
+      //     case this.monitorType.DC: {
+      //       if (element.type === this.cpnElementType.place || element.type === this.cpnElementType.transition) {
+      //         newCpnElement = this.modelService.createCpnMonitorDC(element.cpnElement);
+      //       }
+      //       break;
+      //     }
+      //     case this.monitorType.LLDC: {
+      //       if (element.type === this.cpnElementType.place) {
+      //         newCpnElement = this.modelService.createCpnMonitorLLDC(element.cpnElement);
+      //       }
+      //       break;
+      //     }
+      //     case this.monitorType.MS: {
+      //       if (element.type === this.cpnElementType.place) {
+      //         newCpnElement = this.modelService.createCpnMonitorMS(element.cpnElement);
+      //       }
+      //       break;
+      //     }
+      //     case this.monitorType.PCBP: {
+      //       if (element.type === this.cpnElementType.place) {
+      //         newCpnElement = this.modelService.createCpnMonitorPCBP(element.cpnElement);
+      //       }
+      //       break;
+      //     }
+      //     case this.monitorType.TEBP: {
+      //       if (element.type === this.cpnElementType.transition) {
+      //         newCpnElement = this.modelService.createCpnMonitorTEBP(element.cpnElement);
+      //       }
+      //       break;
+      //     }
+      //     case this.monitorType.UD: {
+      //       if (element.type === this.cpnElementType.place || element.type === this.cpnElementType.transition) {
+      //         newCpnElement = this.modelService.createCpnMonitorUD(element.cpnElement);
+      //       }
+      //       break;
+      //     }
+      //     case this.monitorType.WIF: {
+      //       if (element.type === this.cpnElementType.place || element.type === this.cpnElementType.transition) {
+      //         newCpnElement = this.modelService.createCpnMonitorWIF(element.cpnElement);
+      //       }
+      //       break;
+      //     }
+      //   }
+      //   if (newCpnElement) {
+      //     console.log('Monitor: newCpnElement = ', newCpnElement);
+      //     newNode = this.createMonitorNode(newCpnElement);
+      //     console.log('Monitor: newNode = ', newNode);
+      //     cpnType = newNode.type;
+      //     this.clearCreateMonitorIntent();
+      //     let monitorsRootNode;
+      //     // console.log('Monitor: this.nodes[0].children = ', this.nodes[0].children);
+      //     for (const monitors of this.nodes[0].children) {
+      //       if (monitors.id === 'Monitors') {
+      //         monitorsRootNode = monitors;
+      //         break;
+      //       }
+      //     }
+
+      //     if (monitorsRootNode) {
+      //       console.log('Monitor: monitorsRootNode = ', monitorsRootNode);
+
+      //       if (monitorsRootNode.cpnElement) {
+      //         const monitorList = nodeToArray(monitorsRootNode.cpnElement.monitor);
+      //         monitorList.push(newCpnElement);
+      //         monitorsRootNode.cpnElement.monitor = monitorList.length === 1 ? monitorList[0] : monitorList;
+      //       }
+
+      //       // TODO: дописать эту функция для добавления мониторов
+      //       // this.addCreatedNode(monitorsRootNode, newNode, newCpnElement, cpnType, monitorsRootNode.cpnElement, false);
+      //       monitorsRootNode.children.push(newNode);
+      //       this.updateTree();
+      //     }
+      //   }
+      // }
+    });
+
+    // Update monitors
+    this.eventService.on(Message.MONITOR_CREATED, (event) => {
+      if (event.newMonitorCpnElement) {
+
+        // let monitorsRootNode;
+        // for (const monitors of this.nodes[0].children) {
+        //   if (monitors.id === 'Monitors') {
+        //     monitorsRootNode = monitors;
+        //     break;
+        //   }
+        // }
+        // if (monitorsRootNode) {
+        //   this.createMonitorsRootNode('Monitors', cpnet.monitorblock);
+        // }
+
+        this.loadProject(this.modelService.getProject());
+
+        const nodeId = event.newMonitorCpnElement._id;
+        this.expandNode(nodeId);
+        this.gotoNode(nodeId);
       }
+    });
+
+    // Update monitors
+    this.eventService.on(Message.MONITOR_CHANGED, (event) => {
+      if (event.monitorCpnElement) {
+        this.loadProject(this.modelService.getProject());
+        const nodeId = event.monitorCpnElement._id;
+        this.expandNode(nodeId);
+        this.gotoNode(nodeId);
+      }
+    });
+
+    // Update monitors
+    this.eventService.on(Message.MONITOR_DELETED, (event) => {
+      this.loadProject(this.modelService.getProject());
+      const nodeId = 'Monitors';
+      this.expandNode(nodeId);
+      this.gotoNode(nodeId);
     });
 
     // Get error identificators
@@ -390,7 +438,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     TREE_ACTIONS.MOVE_NODE(tree, node, $event, { from, to });
 
-    this.eventService.send(Message.MODEL_CHANGED);
+    // this.eventService.send(Message.MODEL_CHANGED);
   }
 
   getNodeByCpnElement(cpnElement) {
@@ -746,7 +794,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       cpnParentElement = treeNode.parent.data.cpnElement;
     }
 
-    const defValue = this.settings.getAppSettings()[type];
+    const defValue = this.settings.appSettings[type];
 
     let cpnType;
 
@@ -764,7 +812,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         break;
 
       case 'page':
-        cpnElement = this.modelService.createCpnPage(defValue + ' ' + (++this.newPageCount), undefined);
+        cpnElement = this.modelService.createCpnPage(defValue + ' ' + (++this.newPageCount));
         newNode = this.createPageNode(cpnElement);
         cpnType = 'page';
         break;
@@ -772,7 +820,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     this.addCreatedNode(treeNode, newNode, cpnElement, cpnType, cpnParentElement, true);
 
-    this.eventService.send(Message.MODEL_CHANGED);
+    // this.eventService.send(Message.MODEL_CHANGED);
 
     if (type === 'page') {
       // update instances
@@ -786,7 +834,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     // console.log('onAddNode(), cpnElement = ', cpnElement);
     // console.log('onAddNode(), treeNode = ', treeNode);
 
-    const result = this.modelService.addCpnElement(cpnParentElement, cpnElement, cpnType);
+    this.modelService.addCpnElement(cpnParentElement, cpnElement, cpnType);
 
     if (newNode) {
       if (treeNode.data.children && !(['declaration', 'page'].includes(treeNode.data.type))) {
@@ -804,10 +852,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         }, 100);
       }
     }
-  }
-
-  cloneObject(obj) {
-    return JSON.parse(JSON.stringify(obj));
   }
 
   onUpNode() {
@@ -831,7 +875,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
         data.type);
     }
 
-    this.eventService.send(Message.MODEL_CHANGED);
+    // this.eventService.send(Message.MODEL_CHANGED);
     //  this.moveNodeInTree(this.treeComponent, treeNode.parent, undefined, {from, to});
   }
 
@@ -847,7 +891,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       to: { index: direction === 'down' ? treeNode.parent.data.children.indexOf(treeNode.data) + 2 : treeNode.parent.data.children.indexOf(treeNode.data) - 1, parent: treeNode.parent }
     };
 
-    this.eventService.send(Message.MODEL_CHANGED);
+    // this.eventService.send(Message.MODEL_CHANGED);
   }
 
 
@@ -905,7 +949,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
               }
             }
             if (upperPage) {
-              this.eventService.send(Message.PAGE_OPEN, { pageObject: upperPage });
+              this.eventService.send(Message.PAGE_TAB_OPEN, { pageObject: upperPage });
             }
 
             this.modelService.deleteFromModel(treeNode.data.cpnElement);
@@ -913,7 +957,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
             // update instances
             this.modelService.updateInstances();
 
-            this.eventService.send(Message.PAGE_DELETE, { id: treeNode.id, parent: treeNode.parent.id });
+            this.eventService.send(Message.PAGE_TAB_CLOSE, { id: treeNode.id });
             this.eventService.send(Message.MODEL_RELOAD);
 
             deleted = true;
@@ -940,7 +984,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
       }
 
-      this.eventService.send(Message.MODEL_CHANGED);
+      // this.eventService.send(Message.MODEL_CHANGED);
     }
   }
 
@@ -955,6 +999,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   onNodeClick(event, node) {
+    console.log(this.constructor.name, 'onNodeClick(), node = ', node);
+
+
     if (!this.openedLabel[node.id]) {
       this.onNodeArrowClick(event, node);
     } else {
@@ -1199,16 +1246,6 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     }
   }
 
-  focusedNode(node) {
-    if (node) {
-      const newfocusedBlock = this.getCurrentBlock(node);
-      this.eventService.send(Message.TREE_OPEN_DECLARATION_NODE, { id: newfocusedBlock.id });
-      this.treeComponent.treeModel.setFocusedNode(newfocusedBlock);
-      this.treeComponent.treeModel.setActiveNode(newfocusedBlock, true, false);
-      this.treeComponent.treeModel.setSelectedNode(newfocusedBlock, true);
-    }
-  }
-
   /**
    * delete page node from model
    */
@@ -1246,9 +1283,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
    * Clear tree component
    */
   clearTree() {
-    this.treeComponent.treeModel.collapseAll();
-    this.nodes = [];
-    this.updateTree();
+    if (this.treeComponent) {
+      this.treeComponent.treeModel.collapseAll();
+      this.nodes = [];
+      this.updateTree();
+    }
   }
 
   /**
@@ -1634,12 +1673,11 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     const monitorsNodeList = [];
 
     // Monitor nodes, create and save it to monitorsNodeList
-    if (cpnElement.monitor instanceof Array) {
-      for (const monitor of cpnElement.monitor) {
-        const monitorNode = this.createMonitorNode(monitor);
-        monitorsNodeList[monitorNode.id] = monitorNode;
-      }
+    for (const monitor of nodeToArray(cpnElement.monitor)) {
+      const monitorNode = this.createMonitorNode(monitor);
+      monitorsNodeList[monitorNode.id] = monitorNode;
     }
+
     // Move monitors to it's parent page
     for (const monitorId of Object.keys(monitorsNodeList)) {
       const monitorNode = monitorsNodeList[monitorId];
@@ -1784,32 +1822,20 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   findElementOnPageByID(page, idref): any {
     let name = null;
     if (page.trans) {
-      if (page.trans instanceof Array) {
-        for (const trans of page.trans) {
-          if (trans._id === idref) {
-            name = trans.text + ' (transition)';
-            break;
-          }
-        }
-      } else {
-        if (page.trans._id === idref) {
-          name = page.trans.text + ' (transition)';
+      for (const trans of nodeToArray(page.trans)) {
+        if (trans._id === idref) {
+          name = trans.text + ' (Transition)';
+          break;
         }
       }
     }
 
     if (name === null) {
       if (page.place) {
-        if (page.place instanceof Array) {
-          for (const place of page.place) {
-            if (place._id === idref) {
-              name = place.text + ' (place)';
-              break;
-            }
-          }
-        } else {
-          if (page.place._id === idref) {
-            name = page.place.text + ' (place)';
+        for (const place of nodeToArray(page.place)) {
+          if (place._id === idref) {
+            name = place.text + ' (Place)';
+            break;
           }
         }
       }
@@ -1915,7 +1941,21 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   isDisabledNode(nodeId): boolean {
-    return this.disabledNodeSet.has(nodeId);
+    let disabled = undefined;
+
+    const treeNode = this.treeComponent.treeModel.getNodeById(nodeId);
+    if (treeNode) {
+      if (treeNode.data && treeNode.data.cpnElement && treeNode.data.cpnElement._disabled) {
+        disabled = treeNode.data.cpnElement._disabled === 'true';
+      }
+    }
+
+    if (disabled === undefined) {
+      disabled = this.disabledNodeSet.has(nodeId);
+    }
+
+    return disabled;
+    // return this.disabledNodeSet.has(nodeId);
   }
 
   // </editor-fold desc="Monitors">
@@ -1963,9 +2003,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     // historyNode.classes = ['tree-project'];
     // historyNode.children = [this.createTreeNode('* empty *')];
 
-    let monitors;
+    this.monitorsNode = null;
     if (cpnet.monitorblock) {
-      monitors = this.createMonitorsRootNode('Monitors', cpnet.monitorblock);
+      this.monitorsNode = this.createMonitorsRootNode('Monitors', cpnet.monitorblock);
     }
 
     // Create project Declarations node
@@ -1984,8 +2024,8 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     // projectNode.children.push(historyNode);
     projectNode.children.push(declarationsNode);
-    if (monitors) {
-      projectNode.children.push(monitors);
+    if (this.monitorsNode) {
+      projectNode.children.push(this.monitorsNode);
     }
     projectNode.children.push(pagesNode);
 
@@ -2012,35 +2052,41 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
   expandParentNode(nodeId) {
     setTimeout(() => {
-      const treeNode = this.treeComponent.treeModel.getNodeById(nodeId);
-      if (treeNode && treeNode.parent) {
-        treeNode.parent.expand();
+      if (this.treeComponent) {
+        const treeNode = this.treeComponent.treeModel.getNodeById(nodeId);
+        if (treeNode && treeNode.parent) {
+          treeNode.parent.expand();
+        }
       }
     }, 100);
   }
 
   expandNode(nodeId) {
     setTimeout(() => {
-      const treeNode = this.treeComponent.treeModel.getNodeById(nodeId);
-      if (treeNode) {
-        treeNode.expand();
+      if (this.treeComponent) {
+        const treeNode = this.treeComponent.treeModel.getNodeById(nodeId);
+        if (treeNode) {
+          treeNode.expand();
+        }
       }
     }, 100);
   }
 
   gotoNode(nodeId) {
     setTimeout(() => {
-      const treeNode = this.treeComponent.treeModel.getNodeById(nodeId);
-      if (treeNode) {
-        treeNode.setActiveAndVisible();
+      if (this.treeComponent) {
+        const treeNode = this.treeComponent.treeModel.getNodeById(nodeId);
+        if (treeNode) {
+          treeNode.setActiveAndVisible();
 
-        const scrollHtmlElement = document.getElementById('tree-scroll-pane');
-        const nodeHtmlElement = document.getElementById('node-table-' + treeNode.id);
-        if (scrollHtmlElement && nodeHtmlElement) {
-          console.log('TREE COTO NODE, nodeHtmlElement = ', nodeHtmlElement.offsetTop);
-          scrollHtmlElement.scrollTop = nodeHtmlElement.offsetTop;
+          const scrollHtmlElement = document.getElementById('tree-scroll-pane');
+          const nodeHtmlElement = document.getElementById('node-table-' + treeNode.id);
+          if (scrollHtmlElement && nodeHtmlElement) {
+            console.log('TREE COTO NODE, nodeHtmlElement = ', nodeHtmlElement.offsetTop);
+            scrollHtmlElement.scrollTop = nodeHtmlElement.offsetTop;
+          }
+
         }
-
       }
     }, 100);
   }
@@ -2170,7 +2216,9 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   updateTree() {
-    this.treeComponent.treeModel.update();
+    if (this.treeComponent && this.treeComponent.treeModel) {
+      this.treeComponent.treeModel.update();
+    }
   }
 
 
@@ -2189,12 +2237,16 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     this.selectedNode = event.node;
     this.openedLabel[this.selectedNode.id] = true;
 
+    this.expandNode(this.selectedNode.id);
+
     console.log(event.node);
 
-    if (event && event.node && event.node.data && event.node.data.type === 'page') {
-      // const pageObject = event.node.data.cpnElement;
-      const pageObject = event.node.data.cpnElement;
-      this.eventService.send(Message.PAGE_OPEN, { pageObject: pageObject, subPages: this.subpages });
+    if (event && event.node && this.isPage(event.node)) {
+      this.eventService.send(Message.PAGE_TAB_OPEN, { pageObject: event.node.data.cpnElement });
+    }
+
+    if (event && event.node && this.isMonitor(event.node)) {
+      this.eventService.send(Message.MONITOR_OPEN, { monitorObject: event.node.data.cpnElement });
     }
 
     if (this.selectedNode.data.type === 'declaration') {
@@ -2277,7 +2329,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
 
     this.updateTree();
 
-    this.eventService.send(Message.MODEL_CHANGED);
+    // this.eventService.send(Message.MODEL_CHANGED);
 
     this.sendSelectDeclarationNode(node, false);
   }
@@ -2337,7 +2389,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
       console.log('updateDeclarationNodeText(). node.parent.data.cpnElement = ', node.parent.data.cpnElement);
 
       cpnParentElement = node.parent.data.cpnElement;
-      node.parent.data.cpnElement = this.modelService.addCpnElement(cpnParentElement, cpnElement, cpnType);
+      this.modelService.addCpnElement(cpnParentElement, cpnElement, cpnType);
     } else {
       this.modelService.updateCpnElement(cpnParentElement, cpnElement, cpnType);
     }

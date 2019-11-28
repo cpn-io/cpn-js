@@ -24,11 +24,6 @@ function createWindow() {
   win = new BrowserWindow({ width: 800, height: 600 });
   win.setMenuBarVisibility(false);
 
-  // console.log('isDev() = ', isDev());
-  // console.log('directory = ', directory);
-  // console.log('process.cwd() = ', process.cwd());
-  // console.log('__dirname = ', __dirname);
-
   win.loadURL(
     url.format({
       pathname: path.join(__dirname, `/../../dist/cpn-ide/index.html`),
@@ -37,9 +32,14 @@ function createWindow() {
     })
   );
 
-  // win.webContents.openDevTools();
+  win.webContents.openDevTools();
 
   win.on('closed', () => {
     win = null;
   });
+
+  console.log('isDev() = ', isDev());
+  console.log('directory = ', directory);
+  console.log('process.cwd() = ', process.cwd());
+  console.log('__dirname = ', __dirname);
 }

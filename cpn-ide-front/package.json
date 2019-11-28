@@ -8,14 +8,17 @@
     "start": "node ./version.build.js && ng serve --proxy-config proxy.conf.json",
     "updateBuild": "node ./replace.build.js",
     "build": "node ./version.build.js && ng build",
-    "buildProd": "node ./version.build.js && ng build --prod --build-optimizer=false",
+    "buildProd": "node ./version.build.js && ng build --prod --build-optimizer=false --base-href ./",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "electronClean": "rm -rf ./electron/dist",
-    "electronCleanWin": "rmdir /S /Q \"./electron/dist\"",
-    "electron": "node ./version.build.js && ng build --prod --build-optimizer=false --base-href ./ && tsc --p electron && electron . > electron-app.log",
-    "electronBuild": "electron-builder",
+    "electronCleanLinux": "rm -rf ./electron/dist && rm -rf ./dist/linux-unpacked/",
+    "electronCleanWin": "rmdir /S /Q \"./electron/dist\" && rmdir /S /Q \"./dist/win-unpacked/\"",
+    "electronClean": "npm run electronCleanWin || npm run electronCleanLinux",
+    "electronBuildAll": "npm run electronClean && npm run buildProd && tsc --p electron",
+    "electronBuild": "tsc --p electron",
+    "electronRun": "electron . > electron-app.log",
+    "electronBuildInstaller": "electron-builder",
     "docs": "typedoc --options typedoc.json ./src/app/ ",
     "compodoc": "compodoc -p tsconfig.json"
   },
@@ -29,6 +32,15 @@
     "files": [
       "./dist/**/*",
       "./electron/dist/main.js"
+    ],
+    "extraResources": [
+      {
+        "from": "../backend/cpn-ide-back/build/libs/",
+        "to": "backend",
+        "filter": [
+          "**/*"
+        ]
+      }
     ]
   },
   "private": true,

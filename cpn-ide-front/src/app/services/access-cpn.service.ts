@@ -199,6 +199,8 @@ export class AccessCpnService {
   initNet(cpnJson, complexVerify = false, restartSimulator = false) {
     this.simulationReport = '';
 
+    console.log('AccessCpnService, initNet(), START, this.initNetProcessing = ', this.initNetProcessing);
+
     if (this.initNetProcessing) {
       return;
     }

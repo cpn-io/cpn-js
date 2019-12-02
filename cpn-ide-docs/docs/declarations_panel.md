@@ -26,6 +26,12 @@ Operations for creating, deleting and editing declarations contained in these ta
   ![Screenshot](img/buttons.png)
 <br>
 
+
+- To find a particular entry by a single word or a word combination, enter it in the **Filter** field.
+<br>
+
+  ![Screenshot](img/filter.png)
+<br>
 ### BatchOrdering
 
 The **BatchOrdering** tab replicates the list of declarations in the Declarations entry in the Project tree. All changes made in the Declarations entry in the Project tree appear concurrently in the BatchOrdering tab.

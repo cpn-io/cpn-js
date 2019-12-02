@@ -99,6 +99,11 @@ Navigating within the elements of Declarations blocks is possible by:
 The added declaration will appear either at the bottom of the list of declarations or below the declaration where you added it. 
 The declaration will be in text edit mode when it appears, so it can be modified right away.
 
+To find a particular entry by a single word or a word combination, enter it in the **Filter** field.
+
+![Screenshot](img/filter.png)
+
+
 
 ## Monitors
 The Monitors entry of the Project Tree provides information about the monitors applied to the net. To open the subentries of the Monitors entry,click on the black triangle next to the name of a particular monitor. Edititing of the monitors subentries is available within the Monitor tab of the Properties Panel.

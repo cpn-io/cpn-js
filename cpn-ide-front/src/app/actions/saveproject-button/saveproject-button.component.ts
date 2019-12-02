@@ -57,7 +57,7 @@ export class SaveprojectButtonComponent implements OnInit {
   /**
    * Полное имя файла с расширением
    */
-  private get fileName() {
+  public get fileName() {
     return `${this.fileNameModel}.cpn`;
   }
 

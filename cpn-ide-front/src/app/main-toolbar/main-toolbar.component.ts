@@ -8,6 +8,9 @@ import { ValidationService } from '../services/validation.service';
 import { AccessCpnService } from '../services/access-cpn.service';
 import { EditorPanelService } from '../services/editor-panel.service';
 import { ApplicationService } from '../services/application.service';
+import { ElectronService } from 'ngx-electron';
+import { IpcService } from '../services/ipc.service';
+
 @Component({
   selector: 'app-main-toolbar',
   templateUrl: './main-toolbar.component.html',
@@ -25,12 +28,18 @@ export class MainToolbarComponent implements OnInit {
     public accessCpnService: AccessCpnService,
     public modelService: ModelService,
     private editorPanelService: EditorPanelService,
-    public applicationService: ApplicationService
+    public applicationService: ApplicationService,
+    private electronService: ElectronService,
+    private ipcService: IpcService
   ) {
   }
 
   ngOnInit() {
     this.accessCpnService.setIsSimulation(false);
+
+    this.ipcService.on(Message.MAIN_MENU_NEW_PROJECT, () => this.onNewProject());
+    this.ipcService.on(Message.MAIN_MENU_OPEN_PROJECT, () => this.openProject());
+    // this.ipcService.on(Message.MAIN_MENU_SAVE_PROJECT, () => this.onSaveProject());
   }
 
   onDoStep() {
@@ -74,7 +83,7 @@ export class MainToolbarComponent implements OnInit {
     this.applicationService.isShowDocumentation = !this.applicationService.isShowDocumentation;
   }
 
-  newCPNet() {
+  onNewProject() {
     this.onStopSimulation();
     this.projectService.loadEmptyProject();
   }

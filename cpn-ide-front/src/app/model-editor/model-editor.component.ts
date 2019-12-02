@@ -30,6 +30,7 @@ import { addNode, nodeToArray } from '../common/utils';
 import { SimulationService } from '../services/simulation.service';
 import { TEST_TOKEN_DATA } from '../test/test-data';
 import { EditorPanelService } from '../services/editor-panel.service';
+import { IpcService } from '../services/ipc.service';
 
 @Component({
   selector: 'app-model-editor',
@@ -78,7 +79,8 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     private modelService: ModelService,
     private accessCpnService: AccessCpnService,
     public simulationService: SimulationService,
-    public editorPanelService: EditorPanelService) {
+    public editorPanelService: EditorPanelService,
+    private ipcService: IpcService) {
   }
 
   ngOnDestroy() {
@@ -95,7 +97,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     console.log(this.constructor.name, 'ngAfterViewInit(), this = ', this);
-    
+
     this.init();
   }
 
@@ -689,6 +691,8 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
               // this.updateElementStatus();
               this.modeling.setEditable(!this.accessCpnService.isSimulation);
+
+              this.ipcService.send('app.init.complete');
 
               resolve();
             },

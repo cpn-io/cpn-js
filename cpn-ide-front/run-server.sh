@@ -1,0 +1,1 @@
+java -jar ./electron/server/cpn-ide-back-1.24-SNAPSHOT.jar

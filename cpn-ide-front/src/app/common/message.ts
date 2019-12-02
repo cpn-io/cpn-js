@@ -44,12 +44,16 @@ export class Message {
   static SIMULATION_SELECT_BINDING = 'simulation.select.binding';
   static SIMULATION_STEP_DONE = 'simulation.step.done';
   static SIMULATION_UPDATE_STATE = 'simulation.update.state';
-  
+
   static MONITOR_OPEN = 'monitor.open';
   static MONITOR_CREATED = 'monitor.created';
   static MONITOR_CHANGED = 'monitor.changed';
   static MONITOR_DELETED = 'monitor.deleted';
   static MONITOR_SET_AVAILABLE_NODES = 'monitor.set.available.nodes';
+
+  static MAIN_MENU_NEW_PROJECT = 'main.menu.new.project';
+  static MAIN_MENU_OPEN_PROJECT = 'main.menu.open.project';
+  static MAIN_MENU_SAVE_PROJECT = 'main.menu.save.project';
 
   id: string;
   data: object;

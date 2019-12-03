@@ -79,8 +79,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     private modelService: ModelService,
     private accessCpnService: AccessCpnService,
     public simulationService: SimulationService,
-    public editorPanelService: EditorPanelService,
-    private ipcService: IpcService) {
+    public editorPanelService: EditorPanelService) {
   }
 
   ngOnDestroy() {
@@ -691,8 +690,6 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
               // this.updateElementStatus();
               this.modeling.setEditable(!this.accessCpnService.isSimulation);
-
-              this.ipcService.send('app.init.complete');
 
               resolve();
             },

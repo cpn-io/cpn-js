@@ -14,8 +14,9 @@ let loadingScreen: BrowserWindow;
 let shellRunner;
 
 app.on('ready', () => {
-  createLoadingScreen();
   createWindow();
+  createLoadingScreen();
+  runCpnServer();
 });
 
 function initCpnServerUrl() {
@@ -31,7 +32,7 @@ function createWindow() {
 
   mainWindow.loadURL(
     url.format({
-      pathname: path.join(__dirname, '/../../dist/cpn-ide/index.html'),
+      pathname: path.join(__dirname, './../../dist/cpn-ide/index.html'),
       protocol: 'file:',
       slashes: true,
     })
@@ -39,33 +40,18 @@ function createWindow() {
 
   // mainWindow.webContents.openDevTools();
 
-  // const hideSplashscreen = initSplashScreen({
-  //   mainWindow,
-  //   icon: isDev ? resolve('assets/icon.ico') : undefined,
-  //   url: OfficeTemplate,
-  //   width: 700,
-  //   height: 400,
-  //   brand: '',
-  //   productName: 'CPN-IDE',
-  //   logo: resolve('assets/logo.svg'),
-  //   website: 'https://github.com/cpn-io/cpn-js',
-  //   text: 'Initializing ...'
-  // });
-
-  // mainWindow.once('ready-to-show', () => {
-  //   mainWindow.show();
-  //   hideSplashscreen();
-  // });
-
   ipcMain.on('app.init.complete', function (event, arg) {
     setTimeout(() => {
-      mainWindow.show();
+      if (mainWindow) {
+        mainWindow.show();
+      }
+
       if (loadingScreen) {
         loadingScreen.close();
+        loadingScreen = undefined;
       }
-    }, 3000);
+    }, 1000);
   });
-
 
   // App close handler
   app.on('before-quit', function () {
@@ -74,9 +60,7 @@ function createWindow() {
 
   log.info('APP PATH = ', app.getAppPath());
 
-  mainWindow.on('closed', () => {
-    mainWindow = null;
-  });
+  // mainWindow.on('closed', () => { mainWindow = null; });
 
   log.info('isDev = ', isDev);
   log.info('directory = ', directory);
@@ -89,9 +73,9 @@ function createWindow() {
       submenu: [
         { label: 'New project', click() { newProject() } },
         { type: 'separator' },
-        { label: 'Open project', click() { openProject() }, accelerator: 'Ctrl+O' },
-        { label: 'Save project', click() { saveProject() }, accelerator: 'Ctrl+S' },
-        { type: 'separator' },
+        // { label: 'Open project', click() { openProject() }, accelerator: 'Ctrl+O' },
+        // { label: 'Save project', click() { saveProject() }, accelerator: 'Ctrl+S' },
+        // { type: 'separator' },
         { label: 'Exit', click() { app.quit() }, accelerator: 'Alt+F4' }
       ]
     },
@@ -105,8 +89,6 @@ function createWindow() {
     }
   ])
   Menu.setApplicationMenu(menu);
-
-  setTimeout(() => runCpnServer(), 100);
 }
 
 function createLoadingScreen() {
@@ -114,23 +96,29 @@ function createLoadingScreen() {
   loadingScreen.setMenuBarVisibility(false);
   loadingScreen.loadURL(
     url.format({
-      pathname: path.join(__dirname, '/../splash.html'),
+      pathname: path.join(__dirname, './../splash.html'),
       protocol: 'file:',
       slashes: true,
     })
   );
-  loadingScreen.on('closed', () => loadingScreen = null);
+  // loadingScreen.on('closed', () => loadingScreen = null);
 }
 
 
 function runCpnServer() {
   killCpnServer();
-  shellRunner = spawn("xterm", ["./run-server.sh"], { detached: true });
+
+  const runScriptPath = isDev ?
+    path.join(process.cwd(), './electron/backend/run.sh') :
+    path.join(process.cwd(), './resources/backend/run.sh');
+
+  shellRunner = spawn("xterm", [runScriptPath], { detached: true });
 }
 
 function killCpnServer() {
   if (shellRunner) {
     shellRunner.kill();
+    shellRunner = undefined;
     log.info('SERVER Process has been killed!');
   }
 }

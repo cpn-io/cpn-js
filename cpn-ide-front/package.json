@@ -12,10 +12,15 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "electronCleanLinux": "rm -rf ./electron/dist && rm -rf ./dist/linux-unpacked/",
-    "electronCleanWin": "rmdir /S /Q \"./electron/dist\" && rmdir /S /Q \"./dist/win-unpacked/\"",
+
+    "electronCleanLinux": "rm -rf ./electron/dist && rm -rf ./dist",
+    "electronCleanWin": "rmdir /S /Q \"./electron/dist\" && rmdir /S /Q \"./dist\"",
     "electronClean": "npm run electronCleanWin || npm run electronCleanLinux",
-    "electronBuildAll": "npm run electronClean && npm run buildProd && tsc --p electron",
+
+    "electronCopyServerLinux": "rm -rf ./electron/backend && mkdir -p ./electron/backend && cp -r ../backend/cpn-ide-back/build/libs/. ./electron/backend/.",
+    "electronCopyServer": "npm run electronCopyServerLinux",
+
+    "electronBuildAll": "npm run electronClean && npm run electronCopyServer && npm run buildProd && tsc --p electron",
     "electronBuild": "tsc --p electron",
     "electronRun": "electron . > electron-app.log",
     "electron": "electron",
@@ -32,7 +37,9 @@
     },
     "files": [
       "./dist/**/*",
-      "./electron/dist/electron/main.js"
+      "./electron/dist/main.js",
+      "./electron/splash.html",
+      "./electron/splash.png"
     ],
     "extraResources": [
       {

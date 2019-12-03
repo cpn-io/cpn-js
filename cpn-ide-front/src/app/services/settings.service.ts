@@ -40,9 +40,9 @@ export class SettingsService {
   }
 
   public getServerUrl() {
-    if (this.appSettings['localServer'] == 1 || this.appSettings['localServer'] == 'true') {
-      return '';
-    }
+    // if (this.appSettings['localServer'] == 1 || this.appSettings['localServer'] == 'true') {
+    //   return '';
+    // }
     return this.appSettings['serverAddress'];
   }
 }

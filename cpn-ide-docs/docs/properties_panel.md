@@ -161,7 +161,7 @@ The Monitor tab for such monitor types as
 - Count transition occurence monitor
 - Transition enabled monitor
 
-contains the Monitoring functions code. **To edit function** code, click on it to get text edit mode. 
+contains the Monitoring functions code. **To edit function** code, click on it to get text edit mode. You can also edit functions in the ML editor.
 
 ![Screenshot](img/func-code.png)
 

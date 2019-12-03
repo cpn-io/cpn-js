@@ -1,6 +1,6 @@
 export const DEFAULT_SETTINGS = {
-  localServer: 'true',
-  serverAddress: 'http://95.161.178.222:42020',
+  // localServer: 'true',
+  serverAddress: 'http://localhost:8080',
 
   globref: 'globref CONST = 1;',
   color: 'colset TYPE = unit;',

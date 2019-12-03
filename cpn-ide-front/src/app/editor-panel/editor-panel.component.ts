@@ -62,7 +62,8 @@ export class EditorPanelComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.documentationIFrame.nativeElement.src = '../../assets/documentation/index.html';
+    // this.documentationIFrame.nativeElement.src = '../../assets/documentation/index.html';
+    this.documentationIFrame.nativeElement.src = './assets/documentation/index.html';
   }
 
   ngOnDestroy() {

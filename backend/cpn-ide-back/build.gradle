@@ -19,7 +19,7 @@ sourceSets {
     }
 }
 
-        sourceCompatibility = 1.8
+sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 bootJar{
@@ -27,6 +27,30 @@ bootJar{
     exclude ("src/main/resources/logback.xml")
 }
 
+build {
+    finalizedBy "createRunScript", "changeRunScriptPermission"
+}
+
+task createRunScript(type: Copy) {
+    mkdir "${buildDir}/libs"
+
+    new File("${buildDir}/libs", "run.sh").text = """
+DIR="\$(dirname \$(readlink -f \$0))"
+echo "DIR = \$DIR"
+cd \$DIR
+java -jar -Xms512m \$DIR/cpn-ide-back-${version}.jar
+"""
+
+    new File("${buildDir}/libs", "run.bat").text = "java -jar -Xms512m cpn-ide-back-${version}.jar"
+}
+
+task changeRunScriptPermission {
+    doLast {
+        project.exec {
+            commandLine('chmod',  '+x', "${buildDir}/libs/run.sh")
+        }
+    }
+}
 
 dependencies {
 

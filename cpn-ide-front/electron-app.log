@@ -1,1 +1,6 @@
-
+17:35:31.427 › APP PATH =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front
+17:35:31.439 › isDev =  true
+17:35:31.440 › directory =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front/app
+17:35:31.441 › process.cwd() =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front
+17:35:31.441 › __dirname =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front/electron/dist
+17:36:43.259 › SERVER Process has been killed!

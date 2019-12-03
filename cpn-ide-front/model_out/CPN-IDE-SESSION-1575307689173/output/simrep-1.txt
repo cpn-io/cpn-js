@@ -1,0 +1,6 @@
+CPN Tools simulation report for:
+/home/user/INDEV/development/tue/cpn-js/cpn-ide-front/model_out/CPN-IDE-SESSION-1575307689173/CPN-IDE-SESSION-1575307689173
+Report generated: Mon Dec  2 20:28:32 2019
+
+1	0	T2 @ (1:myNet)
+ - x = 1

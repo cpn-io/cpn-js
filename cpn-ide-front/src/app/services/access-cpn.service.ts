@@ -8,6 +8,7 @@ import { CpnServerUrl } from 'src/cpn-server-url';
 import { cloneObject, clearArray } from '../common/utils';
 import { ModelService } from './model.service';
 import { SettingsService } from './settings.service';
+import { IpcService } from './ipc.service';
 
 @Injectable()
 export class AccessCpnService {
@@ -43,7 +44,8 @@ export class AccessCpnService {
   constructor(private http: HttpClient,
     private eventService: EventService,
     private modelService: ModelService,
-    private settingsService: SettingsService) {
+    private settingsService: SettingsService,
+    private ipcService: IpcService) {
 
     this.eventService.on(Message.SERVER_INIT_NET, (event) => {
       console.log('AccessCpnService(), SERVER_INIT_NET, data = ', event);
@@ -248,13 +250,22 @@ export class AccessCpnService {
           // if (!this.simInitialized) {
           //   this.initSim();
           // }
+
+          this.reportReady();
         },
         (error) => {
           console.error('AccessCpnService, initNet(), ERROR, data = ', error);
           this.initNetProcessing = false;
           this.eventService.send(Message.SERVER_INIT_NET_ERROR, { data: error });
+
+          // run again if error (DEBUG)
+          // setTimeout(() => this.initNet(cpnJson, complexVerify, restartSimulator), 1000);
         }
       );
+  }
+
+  reportReady() {
+    this.ipcService.send('app.init.complete');
   }
 
   // saveErrorData(data) {

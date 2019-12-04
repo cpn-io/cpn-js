@@ -28,7 +28,7 @@ bootJar{
 }
 
 build {
-    finalizedBy "createRunScript", "changeRunScriptPermission"
+    finalizedBy "createRunScript"
 }
 
 task createRunScript(type: Copy) {
@@ -41,7 +41,11 @@ cd \$DIR
 java -jar -Xms512m \$DIR/cpn-ide-back-${version}.jar
 """
 
-    new File("${buildDir}/libs", "run.bat").text = "java -jar -Xms512m cpn-ide-back-${version}.jar"
+    new File("${buildDir}/libs", "run.bat").text = """
+setlocal
+cd /d %~dp0
+java -jar -Xms512m cpn-ide-back-${version}.jar
+"""
 }
 
 task changeRunScriptPermission {

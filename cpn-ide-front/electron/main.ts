@@ -8,6 +8,8 @@ import { initSplashScreen, OfficeTemplate } from 'electron-splashscreen';
 import { resolve } from 'app-root-path';
 import * as isDev from 'electron-is-dev';
 
+const findProcess = require('find-process');
+
 let mainWindow: BrowserWindow;
 let loadingScreen: BrowserWindow;
 
@@ -82,7 +84,12 @@ function createWindow() {
     {
       label: 'Tools',
       submenu: [
-        { label: 'Restart CPN server', click() { runCpnServer() } },
+        {
+          label: 'Restart CPN server', click() {
+            killCpnServer()
+            // runCpnServer() 
+          }
+        },
         { type: 'separator' },
         { label: 'Developer tools', click() { mainWindow.webContents.openDevTools() }, accelerator: 'F12' }
       ]
@@ -108,18 +115,49 @@ function createLoadingScreen() {
 function runCpnServer() {
   killCpnServer();
 
-  const runScriptPath = isDev ?
-    path.join(process.cwd(), './electron/backend/run.sh') :
-    path.join(process.cwd(), './resources/backend/run.sh');
+  const isWin = process.platform === "win32";
+  const scriptFilename = isWin ? 'run.bat' : 'run.sh';
 
-  shellRunner = spawn("xterm", [runScriptPath], { detached: true });
+  log.info('scriptFilename = ', scriptFilename);
+
+  const runScriptPath = isDev ?
+    path.join(process.cwd(), './electron/backend/' + scriptFilename) :
+    path.join(process.cwd(), './resources/backend/' + scriptFilename);
+
+  const jarPath = isDev ?
+    path.join(process.cwd(), './electron/backend/cpn-ide-back-1.24-SNAPSHOT.jar') :
+    path.join(process.cwd(), './resources/backend/cpn-ide-back-1.24-SNAPSHOT.jar');
+
+  log.info('runScriptPath = ', runScriptPath);
+
+  shellRunner = isWin ?
+    // spawn('cmd', ['start', runScriptPath], { detached: true }) :
+    spawn('cmd', ['/c', runScriptPath], { detached: true }) :
+    spawn('xterm', [runScriptPath], { detached: true });
+
+  shellRunner.on('error', (error) => {
+    log.error('runCpnServer, error = ', error);
+  });
+
+  shellRunner.on('close', function (code) {
+    log.error('killCpnServer, code = ', code);;
+    shellRunner = undefined;
+    log.info('SERVER Process has been killed!');
+  });
+
+  // shellRunner.kill();
 }
 
 function killCpnServer() {
   if (shellRunner) {
+    log.info('killCpnServer(), findProcess(), data = ', data);
+    const list = findProcess("pid", shellRunner.pid).then((data) => {
+      log.info('killCpnServer(), findProcess(), data = ', data);
+    });
+    // if (list[0] && list[0].name.toLowerCase() === "app.exe")
+    //     process.kill(proc.pid);
+
     shellRunner.kill();
-    shellRunner = undefined;
-    log.info('SERVER Process has been killed!');
   }
 }
 

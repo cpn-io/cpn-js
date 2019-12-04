@@ -10,10 +10,10 @@ import * as isDev from 'electron-is-dev';
 
 const findProcess = require('find-process');
 
-let mainWindow: BrowserWindow;
-let loadingScreen: BrowserWindow;
+var mainWindow: BrowserWindow;
+var loadingScreen: BrowserWindow;
 
-let shellRunner;
+var shellRunner = undefined;
 
 app.on('ready', () => {
   createWindow();
@@ -57,7 +57,12 @@ function createWindow() {
 
   // App close handler
   app.on('before-quit', function () {
-    killCpnServer();
+    log.info('app, before-quit');
+    killCpnServer().then();
+  });
+  mainWindow.on('close', function (code) {
+    log.info('mainWindow, close, code = ', code);;
+    killCpnServer().then();
   });
 
   log.info('APP PATH = ', app.getAppPath());
@@ -86,8 +91,7 @@ function createWindow() {
       submenu: [
         {
           label: 'Restart CPN server', click() {
-            killCpnServer()
-            // runCpnServer() 
+            killCpnServer().then(() => setTimeout(() => runCpnServer(), 100));
           }
         },
         { type: 'separator' },
@@ -113,8 +117,6 @@ function createLoadingScreen() {
 
 
 function runCpnServer() {
-  killCpnServer();
-
   const isWin = process.platform === "win32";
   const scriptFilename = isWin ? 'run.bat' : 'run.sh';
 
@@ -133,32 +135,39 @@ function runCpnServer() {
   shellRunner = isWin ?
     // spawn('cmd', ['start', runScriptPath], { detached: true }) :
     spawn('cmd', ['/c', runScriptPath], { detached: true }) :
-    spawn('xterm', [runScriptPath], { detached: true });
+    spawn('gnome-terminal', ['--', runScriptPath], { detached: true });
 
   shellRunner.on('error', (error) => {
     log.error('runCpnServer, error = ', error);
   });
 
   shellRunner.on('close', function (code) {
-    log.error('killCpnServer, code = ', code);;
-    shellRunner = undefined;
-    log.info('SERVER Process has been killed!');
+    log.error('killCpnServer, close, code = ', code);;
+    // shellRunner = undefined;
+    // log.info('SERVER Process has been killed!');
   });
 
   // shellRunner.kill();
 }
 
 function killCpnServer() {
-  if (shellRunner) {
-    log.info('killCpnServer(), findProcess(), data = ', data);
-    const list = findProcess("pid", shellRunner.pid).then((data) => {
-      log.info('killCpnServer(), findProcess(), data = ', data);
-    });
-    // if (list[0] && list[0].name.toLowerCase() === "app.exe")
-    //     process.kill(proc.pid);
 
-    shellRunner.kill();
-  }
+  return new Promise((resolve) => {
+    log.info('killCpnServer()');
+
+    if (shellRunner) {
+      log.info('killCpnServer(), findProcess(), shellRunner.pid = ', shellRunner.pid);
+
+      findProcess('name', 'cpn-ide-back').then((list) => {
+        log.info('killCpnServer(), findProcess(), data = ', list);
+        if (list && list[0] && list[0].pid) {
+          process.kill(list[0].pid);
+          shellRunner = undefined;
+        }
+        resolve();
+      });
+    }
+  });
 }
 
 function newProject() {

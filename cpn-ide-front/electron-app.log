@@ -1,11 +1,26 @@
-
-19:43:05.000 > APP PATH =  C:\INDEV\development\tue\cpn-js\cpn-ide-front
-19:43:05.007 > isDev =  true
-19:43:05.007 > directory =  C:\INDEV\development\tue\cpn-js\cpn-ide-front/app
-19:43:05.008 > process.cwd() =  C:\INDEV\development\tue\cpn-js\cpn-ide-front
-19:43:05.008 > __dirname =  C:\INDEV\development\tue\cpn-js\cpn-ide-front\electron\dist
-19:43:05.087 > scriptFilename =  run.bat
-19:43:05.088 > runScriptPath =  C:\INDEV\development\tue\cpn-js\cpn-ide-front\electron\backend\run.bat
-19:43:32.040 > killCpnServer(), findProcess(), data =  []
-19:43:44.860 > killCpnServer, code =  null
-19:43:44.861 > SERVER Process has been killed!
+20:21:05.997 › APP PATH =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front
+20:21:06.163 › isDev =  true
+20:21:06.164 › directory =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front/app
+20:21:06.165 › process.cwd() =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front
+20:21:06.165 › __dirname =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front/electron/dist
+20:21:06.197 › scriptFilename =  run.sh
+20:21:06.198 › runScriptPath =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front/electron/backend/run.sh
+20:21:14.414 › mainWindow, close, code =  { preventDefault: [Function: preventDefault],
+  sender:
+   BrowserWindow {
+     _events:
+      { blur: [Function],
+        focus: [Function],
+        show: [Function: visibilityChanged],
+        hide: [Function: visibilityChanged],
+        minimize: [Function: visibilityChanged],
+        maximize: [Function: visibilityChanged],
+        restore: [Function: visibilityChanged],
+        close: [Function] },
+     _eventsCount: 8,
+     devToolsWebContents: [Getter] } }
+20:21:14.422 › killCpnServer()
+20:21:14.423 › killCpnServer(), findProcess(), shellRunner.pid =  25379
+20:21:14.437 › app, before-quit
+20:21:14.438 › killCpnServer()
+20:21:14.438 › killCpnServer(), findProcess(), shellRunner.pid =  25379

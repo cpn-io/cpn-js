@@ -1,32 +1,11 @@
-
-11:58:50.472 > APP PATH =  C:\INDEV\development\tue\cpn-js\cpn-ide-front
-11:58:50.479 > isDev =  true
-11:58:50.480 > directory =  C:\INDEV\development\tue\cpn-js\cpn-ide-front/app
-11:58:50.481 > process.cwd() =  C:\INDEV\development\tue\cpn-js\cpn-ide-front
-11:58:50.481 > __dirname =  C:\INDEV\development\tue\cpn-js\cpn-ide-front\electron\dist
-11:58:50.556 > scriptFilename =  run.bat
-11:58:50.556 > runScriptPath =  C:\INDEV\development\tue\cpn-js\cpn-ide-front\electron\backend\run.bat
-11:59:17.599 > killCpnServer()
-11:59:17.600 > killCpnServer(), findProcess(), shellRunner.pid =  3480
-11:59:17.715 > scriptFilename =  run.bat
-11:59:17.716 > runScriptPath =  C:\INDEV\development\tue\cpn-js\cpn-ide-front\electron\backend\run.bat
-11:59:19.155 > killCpnServer(), findProcess(), list =  [ { pid: 732,
-    ppid: 3480,
-    bin:
-     'C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath\\java.exe',
-    name: 'java.exe',
-    cmd: 'java  -jar -server cpn-ide-back-1.24-SNAPSHOT.jar' },
-  { pid: 4972,
-    ppid: 3188,
-    bin:
-     'C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath\\java.exe',
-    name: 'java.exe',
-    cmd: 'java  -jar -server cpn-ide-back-1.24-SNAPSHOT.jar' } ]
-11:59:19.240 > killCpnServer, close, code =  1
-11:59:39.428 > killCpnServer()
-11:59:39.530 > scriptFilename =  run.bat
-11:59:39.532 > runScriptPath =  C:\INDEV\development\tue\cpn-js\cpn-ide-front\electron\backend\run.bat
-11:59:59.277 > mainWindow, close
-11:59:59.279 > killCpnServer()
-11:59:59.280 > killCpnServer(), findProcess(), shellRunner.pid =  1732
-11:59:59.295 > mainWindow, close, killCpnServer() complete!, result =  NO CPN Server process DETECTED!
+12:47:35.332 › APP PATH =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front
+12:47:35.348 › isDev =  true
+12:47:35.349 › directory =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front/app
+12:47:35.349 › process.cwd() =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front
+12:47:35.349 › __dirname =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front/electron/dist
+12:47:35.365 › scriptFilename =  run.sh
+12:47:35.366 › runScriptPath =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front/electron/backend/run.sh
+12:47:59.801 › mainWindow, close
+12:47:59.802 › killCpnServer()
+12:47:59.803 › killCpnServer(), findProcess(), shellRunner.pid =  17756
+12:47:59.818 › mainWindow, close, killCpnServer() complete!, result =  NO CPN Server process DETECTED!

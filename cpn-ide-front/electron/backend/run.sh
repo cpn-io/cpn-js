@@ -1,5 +1,4 @@
+DIRNAME=`dirname "$0"`
+echo dir=$DIRNAME
 
-DIR="$(dirname $(readlink -f $0))"
-echo "DIR = $DIR"
-cd $DIR
-java -jar -Xms512m $DIR/cpn-ide-back-1.24-SNAPSHOT.jar
+java -jar -server -DPROP_FILE=$DIRNAME/application.properties $DIRNAME/cpn-ide-back-1.24-SNAPSHOT.jar

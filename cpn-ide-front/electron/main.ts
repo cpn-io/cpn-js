@@ -56,13 +56,17 @@ function createWindow() {
   });
 
   // App close handler
-  app.on('before-quit', function () {
-    log.info('app, before-quit');
-    killCpnServer().then();
-  });
-  mainWindow.on('close', function (code) {
-    log.info('mainWindow, close, code = ', code);;
-    killCpnServer().then();
+  // app.on('before-quit', function () {
+  //   log.info('app, before-quit');
+  //   killCpnServer().then(() => {
+  //     log.info('app, before-quit, killCpnServer() complete!');
+  //   });
+  // });
+  mainWindow.on('close', function (data) {
+    log.info('mainWindow, close');
+    killCpnServer().then((result) => {
+      log.info('mainWindow, close, killCpnServer() complete!, result = ', result);
+    });
   });
 
   log.info('APP PATH = ', app.getAppPath());
@@ -118,6 +122,8 @@ function createLoadingScreen() {
 
 function runCpnServer() {
   const isWin = process.platform === "win32";
+  const isMac = process.platform === "darwin";
+
   const scriptFilename = isWin ? 'run.bat' : 'run.sh';
 
   log.info('scriptFilename = ', scriptFilename);
@@ -132,10 +138,13 @@ function runCpnServer() {
 
   log.info('runScriptPath = ', runScriptPath);
 
-  shellRunner = isWin ?
-    // spawn('cmd', ['start', runScriptPath], { detached: true }) :
-    spawn('cmd', ['/c', runScriptPath], { detached: true }) :
-    spawn('gnome-terminal', ['--', runScriptPath], { detached: true });
+  if (isWin) {
+    shellRunner = spawn('cmd', ['/c', runScriptPath], { detached: true });
+  } else if (isMac) {
+    shellRunner = spawn('xterm', ['-e', runScriptPath], { detached: true });
+  } else {
+    shellRunner = spawn('gnome-terminal', ['--', runScriptPath], { detached: true });
+  }
 
   shellRunner.on('error', (error) => {
     log.error('runCpnServer, error = ', error);
@@ -164,9 +173,10 @@ function killCpnServer() {
           process.kill(list[0].pid);
           shellRunner = undefined;
         }
-        resolve();
+        resolve('CPN Server process KILLED!');
       });
     }
+    resolve('NO CPN Server process DETECTED!');
   });
 }
 

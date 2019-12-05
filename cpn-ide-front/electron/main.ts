@@ -168,7 +168,7 @@ function killCpnServer() {
       log.info('killCpnServer(), findProcess(), shellRunner.pid = ', shellRunner.pid);
 
       findProcess('name', 'cpn-ide-back').then((list) => {
-        log.info('killCpnServer(), findProcess(), data = ', list);
+        log.info('killCpnServer(), findProcess(), list = ', list);
         if (list && list[0] && list[0].pid) {
           process.kill(list[0].pid);
           shellRunner = undefined;

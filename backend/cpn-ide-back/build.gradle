@@ -35,16 +35,15 @@ task createRunScript(type: Copy) {
     mkdir "${buildDir}/libs"
 
     new File("${buildDir}/libs", "run.sh").text = """
-DIR="\$(dirname \$(readlink -f \$0))"
-echo "DIR = \$DIR"
-cd \$DIR
-java -jar -Xms512m \$DIR/cpn-ide-back-${version}.jar
+DIRNAME=`dirname "\$0"`
+echo dir=\$DIRNAME
+java -jar -server -DPROP_FILE=\$DIRNAME/application.properties \$DIRNAME/cpn-ide-back-1.24-SNAPSHOT.jar
 """
 
     new File("${buildDir}/libs", "run.bat").text = """
 setlocal
 cd /d %~dp0
-java -jar -Xms512m cpn-ide-back-${version}.jar
+java -jar -server cpn-ide-back-${version}.jar
 """
 }
 

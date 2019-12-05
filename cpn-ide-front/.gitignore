@@ -37,6 +37,7 @@ yarn-error.log
 testem.log
 typings
 src/app/app.version.ts
+electron-app.log
 
 # System Files
 .DS_Store

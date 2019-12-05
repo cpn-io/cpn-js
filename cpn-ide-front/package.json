@@ -124,6 +124,7 @@
     "ngx-json-viewer-scrolling": "^2.3.1",
     "ngx-xml2json": "^1.0.2",
     "popper.js": "^1.16.0",
+    "ps-node": "^0.1.6",
     "rxjs": "^6.3.3",
     "rxjs-compat": "^6.3.3",
     "rxjs-observe": "^2.1.4",

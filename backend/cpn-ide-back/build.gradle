@@ -1,4 +1,3 @@
-
 plugins {
     id 'java'
     id 'io.spring.dependency-management' version '1.0.7.RELEASE'
@@ -22,9 +21,9 @@ sourceSets {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-bootJar{
-    exclude ("src/main/resources/application.properties")
-    exclude ("src/main/resources/logback.xml")
+bootJar {
+    exclude("src/main/resources/application.properties")
+    exclude("src/main/resources/logback.xml")
 }
 
 build {
@@ -34,26 +33,47 @@ build {
 task createRunScript(type: Copy) {
     mkdir "${buildDir}/libs"
 
+    // create run script for linux
     new File("${buildDir}/libs", "run.sh").text = """
 DIRNAME=`dirname "\$0"`
 echo dir=\$DIRNAME
 java -jar -server -DPROP_FILE=\$DIRNAME/application.properties \$DIRNAME/cpn-ide-back-1.24-SNAPSHOT.jar
 """
 
+    // create run script for windows
     new File("${buildDir}/libs", "run.bat").text = """
 setlocal
 cd /d %~dp0
 java -jar -server cpn-ide-back-${version}.jar
 """
+
+    println "projectDir = ${projectDir}"
+    println "buildDir = ${buildDir}"
+
+    // copy property files to build directory
+    from "${buildDir}/resources/main"
+    into "${buildDir}/libs"
+    include "*.*"
+
+    project.exec {
+        commandLine('chmod', '+x', "${buildDir}/libs/run.sh")
+    }
+
+     // copy build to front-end electron directory
+    delete "${projectDir}/../../cpn-ide-front/electron/backend"
+
+    from "${buildDir}/libs"
+    into "${projectDir}/../../cpn-ide-front/electron/backend"
+    include "*.*"
 }
 
-task changeRunScriptPermission {
-    doLast {
-        project.exec {
-            commandLine('chmod',  '+x', "${buildDir}/libs/run.sh")
-        }
-    }
-}
+//task changeRunScriptPermission {
+//    doLast {
+//        project.exec {
+//            commandLine('chmod', '+x', "${buildDir}/libs/run.sh")
+//        }
+//    }
+//}
 
 dependencies {
 
@@ -67,7 +87,7 @@ dependencies {
     compile 'com.jayway.jsonpath:json-path:2.4.0'
     compile 'io.springfox:springfox-swagger2:2.7.0'
     compile 'io.springfox:springfox-swagger-ui:2.7.0'
-    compile ('org.springframework.boot:spring-boot-starter-web:2.1.1.RELEASE') {
+    compile('org.springframework.boot:spring-boot-starter-web:2.1.1.RELEASE') {
         exclude module: "spring-boot-starter-tomcat"
     }
     compile 'org.springframework.boot:spring-boot-starter-jetty:2.1.1.RELEASE'
@@ -92,7 +112,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.4'
 // https://mvnrepository.com/artifact/junit/junit
     //testCompile group: 'junit', name: 'junit', version: '4.4'
-   // testCompile group: 'org.mockito', name: 'mockito-core', version: '1.9.5'
+    // testCompile group: 'org.mockito', name: 'mockito-core', version: '1.9.5'
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test
     //testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '1.5.2.RELEASE'
 
@@ -103,5 +123,5 @@ dependencies {
 
 jar {
     baseName = 'cpn-ide-server'
-    version =  '0.5.0'
+    version = '0.5.0'
 }

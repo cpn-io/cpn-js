@@ -1,8 +1,0 @@
-
-22:09:18.580 > APP PATH =  C:\INDEV\development\tue\cpn-js\cpn-ide-front
-22:09:18.595 > isDev =  true
-22:09:18.595 > directory =  C:\INDEV\development\tue\cpn-js\cpn-ide-front/app
-22:09:18.596 > process.cwd() =  C:\INDEV\development\tue\cpn-js\cpn-ide-front
-22:09:18.597 > __dirname =  C:\INDEV\development\tue\cpn-js\cpn-ide-front\electron\dist
-22:09:18.639 > scriptFilename =  run.bat
-22:09:18.640 > runScriptPath =  C:\INDEV\development\tue\cpn-js\cpn-ide-front\electron\backend\run.bat

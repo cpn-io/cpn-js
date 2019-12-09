@@ -1,3 +1,5 @@
+import org.gradle.internal.os.OperatingSystem;
+
 plugins {
     id 'java'
     id 'io.spring.dependency-management' version '1.0.7.RELEASE'
@@ -55,8 +57,10 @@ java -jar -server cpn-ide-back-${version}.jar
     into "${buildDir}/libs"
     include "*.*"
 
-    project.exec {
-        commandLine('chmod', '+x', "${buildDir}/libs/run.sh")
+    if (OperatingSystem.current().isLinux()) {
+        project.exec {
+            commandLine('chmod', '+x', "${buildDir}/libs/run.sh")
+        }
     }
 
      // copy build to front-end electron directory

@@ -1,26 +1,8 @@
-21:22:04.558 › APP PATH =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front
-21:22:04.568 › isDev =  true
-21:22:04.569 › directory =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front/app
-21:22:04.570 › process.cwd() =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front
-21:22:04.570 › __dirname =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front/electron/dist
-21:22:04.586 › scriptFilename =  run.sh
-21:22:04.587 › runScriptPath =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front/electron/backend/run.sh
-21:22:22.346 › killCpnServer()
-21:22:22.347 › killCpnServer(), findProcess(), shellRunner.pid =  12190
-PID: 700, COMMAND: /usr/lib/jvm/jdk1.8.0_221/bin/java, ARGUMENTS: -XX:+HeapDumpOnOutOfMemoryError,-Xmx1024m,-Dfile.encoding=UTF-8,-Duser.country=US,-Duser.language=en,-Duser.variant,-cp,/usr/share/gradle/lib/gradle-launcher-4.4.1.jar,org.gradle.launcher.daemon.bootstrap.GradleDaemon,4.4.1
-PID: 10491, COMMAND: /usr/lib/jvm/jdk1.8.0_221/bin/java, ARGUMENTS: -XX:+HeapDumpOnOutOfMemoryError,-Xmx1024m,-Dfile.encoding=UTF-8,-Duser.country=US,-Duser.language=en,-Duser.variant,-cp,/home/user/.gradle/wrapper/dists/gradle-4.10.3-all/81msde2dx9p4vji0mjgtvxkcb/gradle-4.10.3/lib/gradle-launcher-4.10.3.jar,org.gradle.launcher.daemon.bootstrap.GradleDaemon,4.10.3
-PID: 12214, COMMAND: java, ARGUMENTS: -jar,-server,-DPROP_FILE=/home/user/INDEV/development/tue/cpn-js/cpn-ide-front/electron/backend/application.properties,/home/user/INDEV/development/tue/cpn-js/cpn-ide-front/electron/backend/cpn-ide-back-1.24-SNAPSHOT.jar
-PID: 24095, COMMAND: /home/user/ideaIU-2019.2.2/jbr/bin/java, ARGUMENTS: -classpath,/home/user/ideaIU-2019.2.2/lib/bootstrap.jar:/home/user/ideaIU-2019.2.2/lib/extensions.jar:/home/user/ideaIU-2019.2.2/lib/util.jar:/home/user/ideaIU-2019.2.2/lib/jdom.jar:/home/user/ideaIU-2019.2.2/lib/log4j.jar:/home/user/ideaIU-2019.2.2/lib/trove4j.jar:/home/user/ideaIU-2019.2.2/lib/jna.jar:/home/user/ideaIU-2019.2.2/jbr/lib/tools.jar,-Xms128m,-Xmx1989m,-XX:ReservedCodeCacheSize=240m,-XX:+UseConcMarkSweepGC,-XX:SoftRefLRUPolicyMSPerMB=50,-ea,-XX:CICompilerCount=2,-Dsun.io.useCanonPrefixCache=false,-Djava.net.preferIPv4Stack=true,-Djdk.http.auth.tunneling.disabledSchemes="",-XX:+HeapDumpOnOutOfMemoryError,-XX:-OmitStackTraceInFastThrow,-Djdk.attach.allowAttachSelf,-Dkotlinx.coroutines.debug=off,-Djdk.module.illegalAccess.silent=true,-Dawt.useSystemAAFontSettings=lcd,-Dsun.java2d.renderer=sun.java2d.marlin.MarlinRenderingEngine,-Dsun.tools.attach.tmp.only=true,-javaagent:/home/user/Distribs/jetbrains-agent.jar,-XX:ErrorFile=/home/user/java_error_in_IDEA_%p.log,-XX:HeapDumpPath=/home/user/java_error_in_IDEA.hprof,-Didea.paths.selector=IntelliJIdea2019.2,-Djb.vmOptionsFile=/home/user/.IntelliJIdea2019.2/config/idea64.vmoptions,-Didea.jre.check=true,com.intellij.idea.Main
-21:22:22.681 › scriptFilename =  run.sh
-21:22:22.682 › runScriptPath =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front/electron/backend/run.sh
-21:22:22.697 › killCpnServer(), findProcess(), list =  [ { pid: 12214,
-    ppid: 12212,
-    uid: 1000,
-    gid: 1000,
-    name: 'java',
-    bin: 'java',
-    cmd:
-     'java -jar -server -DPROP_FILE=/home/user/INDEV/development/tue/cpn-js/cpn-ide-front/electron/backend/application.properties /home/user/INDEV/development/tue/cpn-js/cpn-ide-front/electron/backend/cpn-ide-back-1.24-SNAPSHOT.jar' } ]
-21:22:36.463 › mainWindow, close
-21:22:36.474 › killCpnServer()
-21:22:36.475 › mainWindow, close, killCpnServer() complete!, result =  NO CPN Server process DETECTED!
+
+22:09:18.580 > APP PATH =  C:\INDEV\development\tue\cpn-js\cpn-ide-front
+22:09:18.595 > isDev =  true
+22:09:18.595 > directory =  C:\INDEV\development\tue\cpn-js\cpn-ide-front/app
+22:09:18.596 > process.cwd() =  C:\INDEV\development\tue\cpn-js\cpn-ide-front
+22:09:18.597 > __dirname =  C:\INDEV\development\tue\cpn-js\cpn-ide-front\electron\dist
+22:09:18.639 > scriptFilename =  run.bat
+22:09:18.640 > runScriptPath =  C:\INDEV\development\tue\cpn-js\cpn-ide-front\electron\backend\run.bat

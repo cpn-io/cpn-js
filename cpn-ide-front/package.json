@@ -15,14 +15,15 @@
     "docs": "typedoc --options typedoc.json ./src/app/ ",
     "compodoc": "compodoc -p tsconfig.json",
 
-    "buildBackend": "./../backend/gradlew -p ./../backend/ build",
+    "buildBackendLinux": "./../backend/gradlew -p ./../backend build",
+    "buildBackendWin": ".\\..\\backend\\gradlew -p .\\..\\backend build",
 
     "electronBuild": "tsc --p electron",
     
     "electronCleanLinux": "rm -rf ./electron/dist && rm -rf ./dist",
-    "electronCleanWin": "rmdir /S /Q \"./electron/dist\" && rmdir /S /Q \"./dist\"",
-    "electronBuildAllLinux": "npm run buildBackend && npm run electronCleanLinux && npm run buildProd && npm run electronBuild",
-    "electronBuildAllWin": "npm run buildBackend && npm run electronCleanWin && npm run buildProd && npm run electronBuild",
+    "electronCleanWin": "rmdir /S /Q \".\\electron\\dist\" 2>NULL && rmdir /S /Q \".\\dist\" 2>NULL",
+    "electronBuildAllLinux": "npm run electronCleanLinux --silent || npm run buildBackendLinux && npm run buildProd && npm run electronBuild",
+    "electronBuildAllWin": "npm run electronCleanWin --silent || npm run buildBackendWin && npm run buildProd && npm run electronBuild",
 
     "electronRun": "electron . > electron-app.log",
     "electronInstaller": "electron-builder"

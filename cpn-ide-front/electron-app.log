@@ -1,3 +1,16 @@
+<<<<<<< HEAD
+22:13:58.451 › APP PATH =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front
+22:13:58.459 › isDev =  true
+22:13:58.461 › directory =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front/app
+22:13:58.461 › process.cwd() =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front
+22:13:58.462 › __dirname =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front/electron/dist
+22:13:58.482 › scriptFilename =  run.sh
+22:13:58.483 › runScriptPath =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front/electron/backend/run.sh
+22:14:10.289 › mainWindow, close
+22:14:10.313 › killCpnServer()
+22:14:10.314 › killCpnServer(), findProcess(), shellRunner.pid =  15184
+22:14:10.327 › mainWindow, close, killCpnServer() complete!, result =  NO CPN Server process DETECTED!
+=======
 
 22:25:25.078 > APP PATH =  C:\INDEV\development\tue\cpn-js\cpn-ide-front
 22:25:25.091 > isDev =  true
@@ -27,3 +40,4 @@ PID: 3520, COMMAND: java, ARGUMENTS: -jar,-server,cpn-ide-back-1.24-SNAPSHOT.jar
 22:25:58.597 > mainWindow, close
 22:25:58.611 > killCpnServer()
 22:25:58.612 > mainWindow, close, killCpnServer() complete!, result =  NO CPN Server process DETECTED!
+>>>>>>> 8ed19f1e288307713fdb079f5590e11e5f0d1a43

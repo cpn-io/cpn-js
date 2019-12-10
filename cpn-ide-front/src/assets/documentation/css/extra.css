@@ -1,0 +1,18 @@
+.navbar {
+    background-image: none;
+}
+
+strong {
+    color: darkred;
+}
+
+footer {
+    display: none;
+}
+
+li {
+    padding-left: 10pt;
+}
+li.main {
+    padding-left: 0;
+}

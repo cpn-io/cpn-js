@@ -39,7 +39,7 @@
     ],
     "extraResources": [
       {
-        "from": "../backend/cpn-ide-back/build/libs/",
+        "from": "./electron/backend",
         "to": "backend",
         "filter": [
           "**/*"

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="img/favicon.ico">
+        <title>Editor view - CPN IDE User Guide</title>
+        <link href="css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="css/font-awesome.min.css" rel="stylesheet">
+        <link href="css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <link href="css/bootstrap-3.3.7.min.css" rel="stylesheet">
+        <link href="css/extra.css" rel="stylesheet">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="js/jquery-1.10.2.min.js" defer></script>
+        <script src="js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="index.html">CPN IDE User Guide</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="index.html">Home</a>
+                            </li>
+                            <li >
+                                <a href="about.html">About</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#editor-view">Editor View</a></li>
+        <li class="main "><a href="#tools">Tools</a></li>
+            <li><a href="#creating-objects">Creating objects</a></li>
+            <li><a href="#creating-new-subpage">Creating new subpage</a></li>
+            <li><a href="#deleting-objects">Deleting objects</a></li>
+        <li class="main "><a href="#inscriptions">Inscriptions</a></li>
+            <li><a href="#adding-inscriptions">Adding inscriptions</a></li>
+            <li><a href="#place-inscriptions">Place inscriptions</a></li>
+            <li><a href="#transition-inscriptions">Transition inscriptions</a></li>
+            <li><a href="#arc-inscriptions">Arc inscriptions</a></li>
+        <li class="main "><a href="#ml-editor">ML editor</a></li>
+        <li class="main "><a href="#tabs">Tabs</a></li>
+            <li><a href="#diagram-zooming">Diagram zooming</a></li>
+            <li><a href="#resizing-objects">Resizing objects</a></li>
+            <li><a href="#diagram-moving">Diagram moving</a></li>
+        <li class="main "><a href="#monitors">Monitors</a></li>
+            <li><a href="#create-a-monitor">Create a monitor</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h2 id="editor-view">Editor View</h2>
+<hr />
+<p>Editor View is a workspace for creating a net. You can either load an existing net or create a new one.</p>
+<p><img alt="Screenshot" src="img/editor-view.png" /></p>
+<p>To create a new net, click on <strong>New Project</strong>.</p>
+<p>To load a net, click on <strong>Open project</strong> and select the desired net.</p>
+<p><img alt="Screenshot" src="img/head.png" /></p>
+<h2 id="tools">Tools</h2>
+<h3 id="creating-objects">Creating objects</h3>
+<p>One of the instruments for creating net objects is the mouse right-click button menu. You can bring it up by clicking the right mouse button in the editor area.</p>
+<p><img alt="Screenshot" src="img/mouse-menu.png" /></p>
+<p>To create a new <strong>place</strong> or <strong>transition</strong>, select the corresponding option of the menu.</p>
+<p>Having created an object, you can create the next one by putting the cursor on the first object and bringing up the menu with the right mouse button click. A place can be related only to a transition and a transition can be related only to a place. It's impossible to make an arc between two transitions or two places.</p>
+<p>To create an <strong>arc</strong>: 
+<br>
+- click on a place or transition to bring up the menu </p>
+<p><img alt="Screenshot" src="img/menu2.png" /></p>
+<ul>
+<li>select the arrow icon</li>
+<li>draw the arc to the object you wish to connect to.</li>
+</ul>
+<h3 id="creating-new-subpage">Creating new subpage</h3>
+<p>When a CP-net uses a substitution transition the logic that the transition represents must be kept somewhere. It is kept on a page called a <strong>subpage</strong>.
+A page that contains a substitution transition is called a <strong>superpage</strong>. </p>
+<p>To create a <strong>new subpage</strong>, select the corresponding option in the right-click menu. A new page is created. It is set as a subpage in the Project Tree panel.</p>
+<p><img alt="Screenshot" src="img/mouse-menu.png" /></p>
+<p>The subpage has a blue mark, it looks as follows:</p>
+<p><img alt="Screenshot" src="img/subpage3.png" /></p>
+<p>You can move this mark to any place of the workspace.</p>
+<p>To connect a subpage to other objects of the net, use arcs.</p>
+<h4 id="creating-diagram-on-subpage">Creating diagram on subpage</h4>
+<p>Having made a subpage, create new objects on it. You can also move already existing objects from the superpage to the subpage. To move a group of existing objects, use the menu:</p>
+<p><img alt="Screenshot" src="img/lasso.png" /></p>
+<ul>
+<li>Press the lasso icon (the top icon)</li>
+<li>Select objects to be replaced to the subpage by drawing the lasso with the pointer</li>
+<li>Press the icon in the middle ("Move selected objects to subpage")</li>
+</ul>
+<h4 id="selecting-port-type">Selecting port type</h4>
+<p>When creating a diagram on the subpage, places at the ends of the diagram must be set as <strong>ports</strong>. Ports can be of 3 types: <strong>In</strong> | <strong>Out</strong> | <strong>In/Out</strong>. To set a port:</p>
+<ul>
+<li>click on the place at the left end of the diagram</li>
+<li>select a port type in the corresponding line of the Properties panel</li>
+</ul>
+<p><img alt="Screenshot" src="img/porttype.png" /></p>
+<p>Repeat the same with the right end place.</p>
+<p>In the picture below the places at the ends of the diagram are <strong>ports</strong>. They can be labeled as <strong>In</strong> / <strong>Out</strong> / <strong>In/Out</strong> according to the selected port type.</p>
+<p><img alt="Screenshot" src="img/ports.png" /></p>
+<p>A substitution transition having been created, places surrounding the substitution transition become <strong>sockets</strong>. On the picture below sockets are places <strong>CVert</strong> and <strong>P3</strong>.</p>
+<p><img alt="Screenshot" src="img/sockets.png" /> </p>
+<h4 id="selecting-port-bind">Selecting port bind</h4>
+<p>When creating a subpage, arcs surrounding the substitution transition must get a port bind.
+To get a port bind for an arc:
+- click on the arc
+- select a port bind in the corresponding line of the Properties panel</p>
+<p><img alt="Screenshot" src="img/portbind.png" /></p>
+<p><strong>If you don't set port types and port binds for places and arcs surrounding a substitution transition, mistakes occur</strong>. (see an example in the picture below)</p>
+<p><img alt="Screenshot" src="img/binderror.png" /></p>
+<h3 id="deleting-objects">Deleting objects</h3>
+<p>To delete a place, an arc or a transition put the cursor on the object to be removed, bring up the right-click menu and select the bin icon.</p>
+<p>You can also remove several objects at once using the menu in the upper left corner of the Editor View. </p>
+<p><img alt="Screenshot" src="img/lasso.png" /></p>
+<p>To delete a group of objects:
+<br>
+- Press the lasso icon (the top icon)
+<br>
+- Select objects to be removed by drawing the lasso with the pointer
+<br>
+- Press the bin icon</p>
+<h2 id="inscriptions">Inscriptions</h2>
+<h3 id="adding-inscriptions">Adding inscriptions</h3>
+<p>To add an inscription, click on the place, transition, or arc where you want to add the inscription. This activates the text edit mode for the object you have clicked on.</p>
+<p>Immediately after creating a place, transition, or arc you are also in the text edit mode, and can add the first inscription right away.</p>
+<p>To switch between inscriptions of an object, put the cursor on the object and use the <strong>Tab</strong> key.</p>
+<h3 id="place-inscriptions">Place inscriptions</h3>
+<p>Place inscriptions are created when you add/edit inscriptions for places. There are three inscriptions that may be associated with a place.</p>
+<ul>
+<li>Place name inscription – optional. The place name inscription is an optional label that identifies the place, and it may contain any sequence of characters.</li>
+</ul>
+<p><img alt="Screenshot" src="img/place-name.png" /></p>
+<ul>
+<li>Color set inscription – required. The color set inscription determines the color set, i.e. the type of all the tokens that can be put in the place. </li>
+</ul>
+<p><em>Default color set inscription</em></p>
+<p><img alt="Screenshot" src="img/place-unit.png" /> </p>
+<ul>
+<li>Initial marking inscription – optional. The initial marking inscription is a multiset expression that specifies the initial tokens for a place. </li>
+</ul>
+<p><em>Default initial marking inscription</em></p>
+<p><img alt="Screenshot" src="img/place-initial-marking.png" /></p>
+<h3 id="transition-inscriptions">Transition inscriptions</h3>
+<p>Transition inscriptions are created when you add/edit inscriptions for transitions.
+There are five inscriptions that may be associated with a transition. All are optional:</p>
+<ul>
+<li>Transition name inscription</li>
+</ul>
+<p><img alt="Screenshot" src="img/transition-name.png" /></p>
+<ul>
+<li>Condition inscription</li>
+</ul>
+<p><em>Default condition inscription</em></p>
+<p><img alt="Screenshot" src="img/transition-condition.png" /></p>
+<ul>
+<li>Time inscription</li>
+</ul>
+<p><em>Default time inscription</em></p>
+<p><img alt="Screenshot" src="img/transition-time.png" /></p>
+<ul>
+<li>Code segment inscription</li>
+</ul>
+<p><em>Default code inscription</em></p>
+<p><img alt="Screenshot" src="img/transition-code.png" /></p>
+<ul>
+<li>Priority inscription</li>
+</ul>
+<p><em>Default priority inscription</em></p>
+<p><img alt="Screenshot" src="img/transition-priority.png" /></p>
+<h3 id="arc-inscriptions">Arc inscriptions</h3>
+<p>Arcs have only one inscription — the arc inscription. An arc inscription is a CPN ML expression that evaluates to a multiset or a single object.</p>
+<p><em>Default arc inscription</em></p>
+<p><img alt="Screenshot" src="img/arc.png" /></p>
+<h2 id="ml-editor">ML editor</h2>
+<p>ML editor is a tab for creating declarations using ML code. It's easier to write a declaration in the <strong>ML editor</strong> if the declaration is very complex.</p>
+<p><img alt="Screenshot" src="img/ml_editor.png" /></p>
+<h2 id="tabs">Tabs</h2>
+<p>The number of tabs related to the Editor View depends on how many pages have been created. Clicking on a page in the Project tree (block "Pages") opens the corresponding tab in the Editor View. You can switch between the pages either by clicking on the names of pages in the Project tree </p>
+<p><img alt="Screenshot" src="img/pages1.png" /></p>
+<p>or by clicking on the tabs in the Editor View</p>
+<p><img alt="Screenshot" src="img/tabpages3.png" /></p>
+<h3 id="diagram-zooming">Diagram zooming</h3>
+<p>To zoom in or out, hold the <strong>Ctrl</strong> key and scroll the mouse wheel.</p>
+<h3 id="resizing-objects">Resizing objects</h3>
+<p>To resize an object: 
+<br>
+- put the pointer on any corner of the object
+<br>
+- when you see the pointer as two-way arrow, drag the corner of the object to get desired size and form.</p>
+<h3 id="diagram-moving">Diagram moving</h3>
+<p>To move a diagram across the Editor View, set the pointer in the free space of the Editor View, hold down the left mouse key and move the pointer. The diagram will repeat the movements of the pointer.</p>
+<p>To move a particular object, put the cursor in the object, hold down the left mouse key and move the pointer.</p>
+<p>While moving the object, you can see <strong>magnetic guidelines</strong> (orange lines in the picture below). </p>
+<p>Magnetic guidelines are horizontal and vertical lines which can be used for aligning your objects during the graphical editing of the net.</p>
+<p><img alt="Screenshot" src="img/guidelines.png" /></p>
+<h2 id="monitors">Monitors</h2>
+<p>A monitor is a mechanism in CPN Tools that is used to observe, inspect, control, or modify a simulation of a CP-net. Many different monitors can be defined for a given net. Monitors can inspect both the markings of places and the occurring binding elements during a simulation, and they can take appropriate actions based on the observations.</p>
+<h3 id="create-a-monitor">Create a monitor</h3>
+<p>To create a monitor </p>
+<ul>
+<li>select the objects to be monitored. It can be done either by applying the <strong>lasso tool</strong> from the panel</li>
+</ul>
+<p><img alt="Screenshot" src="img/lasso.png" /></p>
+<p>or by pressing <strong>CTRL + right mouse button click</strong> (use the same combination to deselect an object).</p>
+<p>As a result, the selected objects get highlighted in green and a new green tab called <strong>+ New monitor</strong> appears in the Editor View. </p>
+<ul>
+<li>Having selected the objects, click on <strong>+ New monitor</strong> tab and choose a monitor type by one-click. </li>
+</ul>
+<p><img alt="Screenshot" src="img/view-monitor.png" /></p>
+<p>There are 4 types of monitors that are common for any selected object/group of objects:</p>
+<ul>
+<li>
+<p><strong>Breakpoint monitors</strong> are used to stop a simulation when certain conditions are fulfilled.</p>
+</li>
+<li>
+<p><strong>Data collection monitors</strong> are used to extract numerical data from a net. The numerical data is then used to calculate statistics, and the data can be saved in log files. The log files can then be post-processed, e.g. by importing them into spreadsheet programs or plotting them in graphs.</p>
+</li>
+<li>
+<p><strong>Write-in-file monitors</strong> are used to update files during simulations.</p>
+</li>
+<li>
+<p><strong>User-defined monitors</strong> are generic monitors that can be used for any purposes that are not covered by the other kinds of monitors. For example, a user-defined monitor could be used to update a message sequence chart (MSC) or to check that a particular property holds during the simulation.</p>
+</li>
+</ul>
+<h4 id="monitor-types-for-a-place">Monitor types for a place</h4>
+<p>If you select just one place, a list of available monitor types looks as follows:</p>
+<p><img alt="Screenshot" src="img/place-monitors.png" /></p>
+<p>In addition to the common monitor types described above, there are two more types that are available only for a place.</p>
+<ul>
+<li>
+<p>A <strong>Marking size</strong> monitor extracts the number of tokens on a particular place during a simulation, and it is used to calculate, e.g. the average number of tokens on the place during a simulation.</p>
+</li>
+<li>
+<p>A <strong>Place content break point</strong> monitor checks the number of tokens on a place to determine if a simulation should be stopped. The simulation can be stopped when the place is either empty – that is, when there are no tokens on the place – or not empty – that is, when there is at least one token on the place.</p>
+</li>
+</ul>
+<p>To create a desired monitor, click on the corresponding option in the <strong>+ New monitor</strong> menu. </p>
+<h4 id="monitor-types-for-a-transition">Monitor types for a transition</h4>
+<p>If you select just one transition, a list of monitor types available looks as follows:</p>
+<p><img alt="Screenshot" src="img/transition-monitors.png" /></p>
+<p>In addition to the common monitor types described above, there are two more types that are available only for a transition.</p>
+<p>A <strong>Count transition occurence</strong> monitor is used to calculate the number of times a particular transition occurs during a simulation.</p>
+<p>A <strong>Transition enabled</strong> monitor checks whether the appropriate transition is enabled after every step in a simulation. If at least one place in the net has a timed color set, then the Transition enabled monitor will also check if the transition is enabled whenever the model time is increased. A Transition enabled monitor will not check if the transition is enabled before the first step in a simulation.</p>
+<p>To create a desired monitor, click on the corresponding option in the <strong>+ New monitor</strong> menu. </p></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = ".",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="js/base.js" defer></script>
+        <script src="search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

@@ -169,8 +169,9 @@ public class PetriNetContainer {
             // checker.localCheck();
             CleanOutputPathContent(sessionId);
 
+            String file = Paths.get(FilenameUtils.concat(OUTPUT_MODEL_PATH, sessionId)).toAbsolutePath().toString();
 
-            checker.checkInitializing("", Paths.get(FilenameUtils.concat(OUTPUT_MODEL_PATH, sessionId)).toAbsolutePath().toString());
+            checker.checkInitializing(file, file);
             checker.checkDeclarations();
             checker.generateSerializers();
             checker.checkPages();

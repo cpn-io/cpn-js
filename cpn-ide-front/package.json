@@ -19,8 +19,8 @@
     "electronBuild": "tsc --p electron",
     "electronCleanLinux": "rm -rf ./electron/dist && rm -rf ./dist",
     "electronCleanWin": "rmdir /S /Q \".\\electron\\dist\" 2>NULL && rmdir /S /Q \".\\dist\" 2>NULL",
-    "electronBuildAllLinux": "npm run electronCleanLinux --silent || npm run buildBackendLinux && npm run buildProd && npm run electronBuild",
-    "electronBuildAllWin": "npm run electronCleanWin --silent || npm run buildBackendWin && npm run buildProd && npm run electronBuild",
+    "electronBuildAllLinux": "npm run electronCleanLinux --silent && npm run buildBackendLinux && npm run buildProd && npm run electronBuild",
+    "electronBuildAllWin": "npm run electronCleanWin --silent && npm run buildBackendWin && npm run buildProd && npm run electronBuild",
     "electronRun": "electron . > electron-app.log",
     "electronInstaller": "electron-builder"
   },

@@ -5,6 +5,8 @@ dist
 tmp
 out-tsc
 # documentation
+electron/backend/
+model_out
 
 # dependencies
 node_modules

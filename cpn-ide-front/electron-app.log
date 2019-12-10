@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 22:13:58.451 › APP PATH =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front
 22:13:58.459 › isDev =  true
 22:13:58.461 › directory =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front/app
@@ -9,3 +10,34 @@
 22:14:10.313 › killCpnServer()
 22:14:10.314 › killCpnServer(), findProcess(), shellRunner.pid =  15184
 22:14:10.327 › mainWindow, close, killCpnServer() complete!, result =  NO CPN Server process DETECTED!
+=======
+
+22:25:25.078 > APP PATH =  C:\INDEV\development\tue\cpn-js\cpn-ide-front
+22:25:25.091 > isDev =  true
+22:25:25.092 > directory =  C:\INDEV\development\tue\cpn-js\cpn-ide-front/app
+22:25:25.093 > process.cwd() =  C:\INDEV\development\tue\cpn-js\cpn-ide-front
+22:25:25.093 > __dirname =  C:\INDEV\development\tue\cpn-js\cpn-ide-front\electron\dist
+22:25:25.156 > scriptFilename =  run.bat
+22:25:25.157 > runScriptPath =  C:\INDEV\development\tue\cpn-js\cpn-ide-front\electron\backend\run.bat
+22:25:40.749 > killCpnServer()
+22:25:40.750 > killCpnServer(), findProcess(), shellRunner.pid =  4156
+22:25:40.864 > scriptFilename =  run.bat
+22:25:40.865 > runScriptPath =  C:\INDEV\development\tue\cpn-js\cpn-ide-front\electron\backend\run.bat
+22:25:44.004 > killCpnServer(), findProcess(), list =  [ { pid: 3912,
+    ppid: 4156,
+    bin:
+     'C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath\\java.exe',
+    name: 'java.exe',
+    cmd: 'java  -jar -server cpn-ide-back-1.24-SNAPSHOT.jar' },
+  { pid: 3520,
+    ppid: 1680,
+    bin:
+     'C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath\\java.exe',
+    name: 'java.exe',
+    cmd: 'java  -jar -server cpn-ide-back-1.24-SNAPSHOT.jar' } ]
+PID: 3912, COMMAND: java, ARGUMENTS: -jar,-server,cpn-ide-back-1.24-SNAPSHOT.jar
+PID: 3520, COMMAND: java, ARGUMENTS: -jar,-server,cpn-ide-back-1.24-SNAPSHOT.jar
+22:25:58.597 > mainWindow, close
+22:25:58.611 > killCpnServer()
+22:25:58.612 > mainWindow, close, killCpnServer() complete!, result =  NO CPN Server process DETECTED!
+>>>>>>> 8ed19f1e288307713fdb079f5590e11e5f0d1a43

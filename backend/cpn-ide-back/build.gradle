@@ -81,9 +81,10 @@ java -jar -server cpn-ide-back-${version}.jar
 
 dependencies {
 
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
     compile fileTree(include: ['*.jar'], dir: 'lib/')
 
-    compile group: 'commons-io', name: 'commons-io', version: '2.6'
+
 
     compile 'org.apache.commons:commons-lang3:3.5'
     compile 'com.google.code.gson:gson:2.8.2'

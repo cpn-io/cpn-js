@@ -35,7 +35,7 @@ export class ProjectDeclarationsOldComponent implements OnInit, OnDestroy {
   // globref, colset, var, val, fun, monitors
 
   tabList = [
-    { id: 'all', name: 'BatchOrdering' },
+    { id: 'all', name: 'All' },
     { id: 'globref', name: 'Globref' },
     { id: 'colset', name: 'Color' },
     { id: 'var', name: 'Var' },

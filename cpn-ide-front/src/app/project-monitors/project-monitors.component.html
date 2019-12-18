@@ -121,6 +121,7 @@
         <tr>
           <td *ngIf="node.page">{{ node.page.pageattr._name }}</td>
           <td *ngIf="node.element">{{ node.element.text }} ({{ node.elementType }})</td>
+          <td>{{ node.instanceId }}</td>
 
           <ng-container>
             <td class="tableButton">

@@ -92,7 +92,8 @@ export class MainToolbarComponent implements OnInit {
     this.onStopSimulation();
 
     this.eventService.send(Message.PROJECT_LOAD, { project: this.modelService.getProject() });
-    this.validationService.validate();
+
+    setTimeout(() => this.validationService.validate(), 500);
   }
 
   fullScreen() {

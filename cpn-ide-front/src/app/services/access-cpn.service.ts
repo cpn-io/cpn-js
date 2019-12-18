@@ -15,7 +15,6 @@ export class AccessCpnService {
 
   public isSimulation = false;
 
-
   public errorData = [];
   public errorIds = [];
   public errorPagesIds = [];

@@ -1,0 +1,25 @@
+CPN Tools report for simulation replications
+Net: /home/semenov-k/Project/git/cpn-js/backend/model_out/CPN_IDE_SESSION_1576677894697/CPN_IDE_SESSION_1576677894697
+Output directory: /home/semenov-k/Project/git/cpn-js/backend/model_out/CPN_IDE_SESSION_1576677894697/reps_1
+
+Simulation no.: 1
+Steps.........: 58008
+Model time....: 38988.1508923
+Stop reason...: No more enabled transitions!
+Time to run simulation: 1 seconds
+
+
+Simulation no.: 2
+Steps.........: 58264
+Model time....: 40074.3489006
+Stop reason...: No more enabled transitions!
+Time to run simulation: 1 seconds
+
+
+Simulation no.: 3
+Steps.........: 58270
+Model time....: 39831.5071287
+Stop reason...: No more enabled transitions!
+Time to run simulation: 1 seconds
+
+

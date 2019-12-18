@@ -1,0 +1,14 @@
+#name, percent, n, avrg, half length, lower ci endpoint, upper ci endpoint
+
+List_length_dc_gas_station_queue_1_avrg_iid 99 3 0.877976 0.078459 0.956435 0.799517
+List_length_dc_gas_station_queue_1_count_iid 99 3 19159.000000 65.082577 19224.082577 19093.917423
+List_length_dc_gas_station_queue_1_max_iid 99 3 3.000000 0.000000 3.000000 3.000000
+List_length_dc_gas_station_queue_1_min_iid 99 3 0.000000 0.000000 0.000000 0.000000
+Marking_size_gas_station_fill_up_1_avrg_iid 99 3 0.792262 0.008390 0.800652 0.783872
+Marking_size_gas_station_fill_up_1_count_iid 99 3 18316.000000 130.165155 18446.165155 18185.834845
+Marking_size_gas_station_fill_up_1_max_iid 99 3 1.000000 0.000000 1.000000 1.000000
+Marking_size_gas_station_fill_up_1_min_iid 99 3 0.000000 0.000000 0.000000 0.000000
+Marking_size_gas_station_pump_free_1_avrg_iid 99 3 0.207738 0.008390 0.216128 0.199348
+Marking_size_gas_station_pump_free_1_count_iid 99 3 18316.000000 130.165155 18446.165155 18185.834845
+Marking_size_gas_station_pump_free_1_max_iid 99 3 1.000000 0.000000 1.000000 1.000000
+Marking_size_gas_station_pump_free_1_min_iid 99 3 0.000000 0.000000 0.000000 0.000000

@@ -47,12 +47,12 @@ public class PetriNetContainer {
     HighLevelSimulator _sim;
     private final static Object lock = new Object();
 
-
     private static final String OUTPUT_MODEL_PATH = "model_out";
 
     @PostConstruct
     void Init() throws Exception {
-        //_sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
+        // _sim =
+        // HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
     }
 
     public void CreateNewNet(String sessionId, String xml, boolean restartSim) throws Exception {
@@ -61,17 +61,17 @@ public class PetriNetContainer {
             log.debug("After Lock: CreateNewNet");
             PetriNet net = DOMParser.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)), sessionId);
 
-
-//            String fileName = "/home/semenov-k/Downloads/fuelstation_4c.cpn";
-//            File file1 = new File(fileName);
-//            FileInputStream in = new FileInputStream(file1);
-//            PetriNet net = org.cpntools.accesscpn.model.importer.DOMParser.parse(in, sessionId);
+            // String fileName = "/home/semenov-k/Downloads/fuelstation_4c.cpn";
+            // File file1 = new File(fileName);
+            // FileInputStream in = new FileInputStream(file1);
+            // PetriNet net = org.cpntools.accesscpn.model.importer.DOMParser.parse(in,
+            // sessionId);
             usersNets.put(sessionId, net);
-//
+            //
             // HighLevelSimulator sim = usersSimulator.get(sessionId);
             // if (sim == null)
-            //    sim = _sim;
-            //HighLevelSimulator sim = usersSimulator.get(sessionId);
+            // sim = _sim;
+            // HighLevelSimulator sim = usersSimulator.get(sessionId);
             if (restartSim) {
                 if (_sim != null)
                     _sim.destroy();
@@ -79,7 +79,6 @@ public class PetriNetContainer {
                 _sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
             } else if (_sim == null)
                 _sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
-
 
             Checker checker = new Checker(net, null, _sim);
             String file = Paths.get(FilenameUtils.concat(OUTPUT_MODEL_PATH, sessionId)).toAbsolutePath().toString();
@@ -100,7 +99,6 @@ public class PetriNetContainer {
 
         return issList;
     }
-
 
     public String exportNetToXml(String sessionId) throws Exception {
         synchronized (lock) {
@@ -140,15 +138,12 @@ public class PetriNetContainer {
         }
 
         MonitorTemplate template = MonitorTemplateFactory.createMonitorTemplate(MonitorTypes.valueOf(descr.getType()));
-        return NewMonitorDescr.builder()
-                .defaultInit(template.defaultInit(sim, net, nodes))
+        return NewMonitorDescr.builder().defaultInit(template.defaultInit(sim, net, nodes))
                 .defaultObserver(template.defaultObserver(sim, net, nodes))
                 .defaultPredicate(template.defaultPredicate(sim, net, nodes))
-                .defaultStop(template.defaultStop(sim, net, nodes))
-                .defaultTimed(template.defaultTimed(sim, net, nodes))
+                .defaultStop(template.defaultStop(sim, net, nodes)).defaultTimed(template.defaultTimed(sim, net, nodes))
                 .build();
     }
-
 
     public void InitSimulator(String sessionId) throws Exception {
         synchronized (lock) {
@@ -156,27 +151,26 @@ public class PetriNetContainer {
             if (net == null)
                 throw new NotFoundException("Session object not found");
 
-
             HighLevelSimulator sim = usersSimulator.get(sessionId);
-//            if (sim != null) {
-//                sim.destroy();
-//            }
-////
-//            sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
+            // if (sim != null) {
+            // sim.destroy();
+            // }
+            ////
+            // sim =
+            // HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
 
-            //usersSimulator.put(sessionId, sim);
+            // usersSimulator.put(sessionId, sim);
 
+            Checker checker = usersCheckers.get(sessionId);// new Checker(net, null, sim);
 
-            Checker checker = usersCheckers.get(sessionId);//new Checker(net, null, sim);
-
-
-            //checker.checkEntireModel();
+            // checker.checkEntireModel();
 
             // checker.localCheck();
             CleanOutputPathContent(sessionId);
 
-            //String file = Paths.get(FilenameUtils.concat(OUTPUT_MODEL_PATH, sessionId)).toAbsolutePath().toString();
-            //checker.checkInitializing(file, file);
+            // String file = Paths.get(FilenameUtils.concat(OUTPUT_MODEL_PATH,
+            // sessionId)).toAbsolutePath().toString();
+            // checker.checkInitializing(file, file);
             checker.checkDeclarations();
             checker.generateSerializers();
             checker.checkPages();
@@ -193,12 +187,9 @@ public class PetriNetContainer {
             sim.initialState();
             sim.refreshViews();
 
+            // checker.instantiateSMLInterface();
 
-//            checker.instantiateSMLInterface();
-
-
-            //usersSimulator.put(sessionId, sim);
-
+            // usersSimulator.put(sessionId, sim);
 
         }
 
@@ -206,7 +197,8 @@ public class PetriNetContainer {
 
     String getOutputPathContent(String sessionId) throws Exception {
         final StringBuilder sb = new StringBuilder();
-        List<Path> files = Files.walk(Paths.get(FilenameUtils.concat(OUTPUT_MODEL_PATH, sessionId)).toAbsolutePath()).filter(Files::isRegularFile).filter(p -> p.toString().endsWith(".html")).collect(Collectors.toList());
+        List<Path> files = Files.walk(Paths.get(FilenameUtils.concat(OUTPUT_MODEL_PATH, sessionId)).toAbsolutePath())
+                .filter(Files::isRegularFile).filter(p -> p.toString().endsWith(".html")).collect(Collectors.toList());
 
         for (Path f : files) {
             sb.append("\n\nFilename: " + f.toString() + "\n");
@@ -217,7 +209,8 @@ public class PetriNetContainer {
     }
 
     void CleanOutputPathContent(String sessionId) throws Exception {
-        FileUtils.deleteDirectory(new File(Paths.get(FilenameUtils.concat(OUTPUT_MODEL_PATH, sessionId)).toAbsolutePath().toString()));
+        FileUtils.deleteDirectory(
+                new File(Paths.get(FilenameUtils.concat(OUTPUT_MODEL_PATH, sessionId)).toAbsolutePath().toString()));
     }
 
     List<String> getEnableTransitionsImpl(String sessionId) throws Exception {
@@ -225,7 +218,7 @@ public class PetriNetContainer {
             HighLevelSimulator s = usersSimulator.get(sessionId);
             if (s == null)
                 throw new NotFoundException("Session object not found");
-            //Checker checker = new Checker(net, new File("C:\\tmp\\cpn.file"), sim);
+            // Checker checker = new Checker(net, new File("C:\\tmp\\cpn.file"), sim);
             List<String> arr = new ArrayList<>();
             while (true) {
                 List<Instance<Transition>> tis = s.getAllTransitionInstances();
@@ -237,15 +230,15 @@ public class PetriNetContainer {
                 }
                 if (arr.isEmpty()) {
                     String res = s.increaseTime();
-                    if (res != null) //sim ended
+                    if (res != null) // sim ended
                         return arr;
-                } else break;
+                } else
+                    break;
             }
 
             return arr;
         }
     }
-
 
     public List<String> getEnableTransitions(String sessionId) throws Exception {
         return getEnableTransitionsImpl(sessionId);
@@ -255,23 +248,23 @@ public class PetriNetContainer {
         NetInfo netInf = this.netInf.get(sessionId);
         if (netInf != null)
             return this.netInf.get(sessionId).getEnableTrans();
-        else return getEnableTransitions(sessionId);
+        else
+            return getEnableTransitions(sessionId);
     }
 
     public List<PlaceMark> returnTokensAndMarking(String sessionId) throws Exception {
         NetInfo netInf = this.netInf.get(sessionId);
         if (netInf != null)
             return this.netInf.get(sessionId).getTokensAndMark();
-        else return getTokensAndMarking(sessionId);
+        else
+            return getTokensAndMarking(sessionId);
     }
-
 
     public List<PlaceMark> getTokensAndMarking(String sessionId) throws Exception {
         synchronized (lock) {
             HighLevelSimulator s = usersSimulator.get(sessionId);
             if (s == null)
                 throw new NotFoundException("Session object not found");
-
 
             List<PlaceMark> result = new ArrayList<>();
             for (Instance<PlaceNode> p : s.getAllPlaceInstances()) {
@@ -295,8 +288,8 @@ public class PetriNetContainer {
 
         try {
             //
-            //checker.checkEntireModel();
-            //checker.checkInitializing("", "");
+            // checker.checkEntireModel();
+            // checker.checkInitializing("", "");
             checker.checkDeclarations();
             checker.generateSerializers();
             checker.checkPages();
@@ -309,18 +302,16 @@ public class PetriNetContainer {
             checker.generateNonPlaceInstances();
             checker.initialiseSimulationScheduler();
 
-            //sim.setTarget((org.cpntools.accesscpn.model.impl.PetriNetImpl) net);
-            //sim.refreshViews();
+            // sim.setTarget((org.cpntools.accesscpn.model.impl.PetriNetImpl) net);
+            // sim.refreshViews();
 
-            //     checker.instantiateSMLInterface();
+            // checker.instantiateSMLInterface();
         } catch (CheckerException ex) {
             SplitMessageForIssues(ex, issues);
         }
 
-
         return issues;
     }
-
 
     void SplitMessageForIssues(CheckerException ex, Map<String, List<IssueDescription>> issues) {
         String[] lines = ex.getMessage().split("\\n");
@@ -328,10 +319,12 @@ public class PetriNetContainer {
             String[] pair = ll.split(":");
             if (pair.length == 2) {
                 List<IssueDescription> issList = getOrCreateIssueList(pair[0], issues);
-                issList.add(IssueDescription.builder().type(IssueTypes.PAGE.getType()).id(pair[0]).description(pair[1]).build());
+                issList.add(IssueDescription.builder().type(IssueTypes.PAGE.getType()).id(pair[0]).description(pair[1])
+                        .build());
             } else {
                 List<IssueDescription> issList = getOrCreateIssueList(ex.getId(), issues);
-                issList.add(IssueDescription.builder().type(IssueTypes.PAGE.getType()).id(ex.getId()).description(ll).build());
+                issList.add(IssueDescription.builder().type(IssueTypes.PAGE.getType()).id(ex.getId()).description(ll)
+                        .build());
             }
         }
     }
@@ -339,17 +332,15 @@ public class PetriNetContainer {
     public Map<String, List<IssueDescription>> PerfomEntireCheckingFast(String sessionId) throws Exception {
         synchronized (lock) {
             Checker checker = usersCheckers.get(sessionId);
-            //HighLevelSimulator ss = usersSimulator.get(sessionId);
+            // HighLevelSimulator ss = usersSimulator.get(sessionId);
             PetriNet net = usersNets.get(sessionId);
             if (net == null || checker == null)
                 throw new NotFoundException("Session object not found");
-
 
             Map<String, List<IssueDescription>> issues = new HashMap<>();
 
             for (final HLDeclaration decl : net.declaration())
                 CheckDelaration(checker, decl, issues);
-
 
             final PageSorter ps = new PageSorter(net.getPage());
             for (final Page page : ps)
@@ -392,7 +383,6 @@ public class PetriNetContainer {
             decltToDelete.setParent(null);
         }
     }
-
 
     public Map<String, List<IssueDescription>> CheckPageByID(String sessionId, String id) throws Exception {
         synchronized (lock) {
@@ -452,28 +442,33 @@ public class PetriNetContainer {
         }
     }
 
-    private void CheckMonitor(Checker checker, Monitor m, Map<String, List<IssueDescription>> issues) throws IOException {
+    private void CheckMonitor(Checker checker, Monitor m, Map<String, List<IssueDescription>> issues)
+            throws IOException {
         synchronized (lock) {
             try {
                 checker.checkMonitor(m);
             } catch (SyntaxCheckerException ex) {
                 List<IssueDescription> issList = getOrCreateIssueList(m.getId(), issues);
-                issList.add(IssueDescription.builder().type(IssueTypes.MONITOR.getType()).id(ex.getId()).description(ex.getMessage()).build());
+                issList.add(IssueDescription.builder().type(IssueTypes.MONITOR.getType()).id(ex.getId())
+                        .description(ex.getMessage()).build());
             }
         }
     }
 
-    private void CheckDelaration(Checker checker, HLDeclaration decl, Map<String, List<IssueDescription>> issues) throws IOException {
+    private void CheckDelaration(Checker checker, HLDeclaration decl, Map<String, List<IssueDescription>> issues)
+            throws IOException {
         log.debug("After lock: CheckDelaration");
         try {
             checker.checkDeclaration(decl);
         } catch (DeclarationCheckerException ex) {
             List<IssueDescription> issList = getOrCreateIssueList(decl.getId(), issues);
-            issList.add(IssueDescription.builder().id(ex.getId()).type(IssueTypes.DECLARATION.getType()).description(ex.getMessage()).build());
+            issList.add(IssueDescription.builder().id(ex.getId()).type(IssueTypes.DECLARATION.getType())
+                    .description(ex.getMessage()).build());
         }
     }
 
-    private void CheckPage(Checker checker, Page page, boolean prime, Map<String, List<IssueDescription>> issues) throws IOException {
+    private void CheckPage(Checker checker, Page page, boolean prime, Map<String, List<IssueDescription>> issues)
+            throws IOException {
         try {
             checker.checkPage(page, prime);
         } catch (CheckerException ex) {
@@ -482,10 +477,12 @@ public class PetriNetContainer {
                 String[] pair = ll.split(":");
                 if (pair.length == 2) {
                     List<IssueDescription> issList = getOrCreateIssueList(pair[0], issues);
-                    issList.add(IssueDescription.builder().type(IssueTypes.PAGE.getType()).id(pair[0]).description(pair[1]).build());
+                    issList.add(IssueDescription.builder().type(IssueTypes.PAGE.getType()).id(pair[0])
+                            .description(pair[1]).build());
                 } else {
                     List<IssueDescription> issList = getOrCreateIssueList(page.getId(), issues);
-                    issList.add(IssueDescription.builder().type(IssueTypes.PAGE.getType()).id(ex.getId()).description(ll).build());
+                    issList.add(IssueDescription.builder().type(IssueTypes.PAGE.getType()).id(ex.getId())
+                            .description(ll).build());
                 }
             }
         }
@@ -535,7 +532,7 @@ public class PetriNetContainer {
     }
 
     public String makeStep(String sessionId, String transId) throws Exception {
-        //String type = requestBody.get(0).get("type").toString();
+        // String type = requestBody.get(0).get("type").toString();
         Binding b = null;
         if (transId.equals("multistep")) {
             HighLevelSimulator s = usersSimulator.get(sessionId);
@@ -548,13 +545,13 @@ public class PetriNetContainer {
     }
 
     public SimInfo getState(String sessionId) throws Exception {
-        //String type = requestBody.get(0).get("type").toString();
+        // String type = requestBody.get(0).get("type").toString();
         HighLevelSimulator s = usersSimulator.get(sessionId);
         return SimInfo.builder().step(s.getStep().longValueExact()).time(s.getTime()).build();
     }
 
     public void makeStepWithBinding(String sessionId, String bindingId, String transId) throws Exception {
-        //String type = requestBody.get(0).get("type").toString();
+        // String type = requestBody.get(0).get("type").toString();
         HighLevelSimulator s = usersSimulator.get(sessionId);
         Map<String, Binding> binds = getBindingForTransiton(s, transId);
         s.execute(binds.get(bindingId));
@@ -569,7 +566,7 @@ public class PetriNetContainer {
     }
 
     public String makeStepFastForward(String sessionId, MultiStep stepParam) throws Exception {
-        //String type = requestBody.get(0).get("type").toString();
+        // String type = requestBody.get(0).get("type").toString();
         HighLevelSimulator sim = usersSimulator.get(sessionId);
         int i = 0;
         String simulationEnded = "";
@@ -595,6 +592,5 @@ public class PetriNetContainer {
 
         return getOutputPathContent(sessionId);
     }
-
 
 }

@@ -353,6 +353,11 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
       : { value: '' };
   }
 
+  getInstanceId(cpnElement) {
+    const inst = this.modelService.getInstance(this.pageId);
+    return inst ? inst._id : 'not defined';
+  }
+
   updatePortType(event) {
     // console.log(this.constructor.name, 'updatePortType(), event = ', event);
 

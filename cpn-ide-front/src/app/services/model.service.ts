@@ -368,35 +368,6 @@ export class ModelService {
   updateBinders(rootInstanceId = null) {
     const cpnet = this.getCpn();
 
-    // const binders = {
-    //   cpnbinder: {
-    //     sheets: {
-    //       cpnsheet: {
-    //         zorder: {
-    //           position: {
-    //             _value: '0'
-    //           }
-    //         },
-    //         _id: getNextId(),
-    //         _panx: '0.000000',
-    //         _pany: '0.000000',
-    //         _zoom: '1.000000',
-    //         _instance: rootInstanceId
-    //       }
-    //     },
-    //     zorder: {
-    //       position: {
-    //         _value: '0'
-    //       }
-    //     },
-    //     _id: getNextId(),
-    //     _x: '300',
-    //     _y: '50',
-    //     _width: '1200',
-    //     _height: '600'
-    //   }
-    // };
-
     cpnet.binders = {}; // binders;
   }
 
@@ -435,6 +406,42 @@ export class ModelService {
     }
 
     // this.updateBinders(rootInstanceId);
+
+    this.updateMonitorInstances();
+  }
+
+  updateMonitorInstances(monitorblock = this.getCpn().monitorblock) {
+    if (monitorblock) {
+
+      // iterate all monitors
+      for (const monitor of nodeToArray(monitorblock.monitor)) {
+
+        // iterate all monitor nodes
+        for (const node of nodeToArray(monitor.node)) {
+
+          // if node refer to element
+          if (node._idref) {
+
+            // try to get page for element
+            const nodePage = this.getPageByElementId(node._idref);
+
+            // if page defined
+            if (nodePage) {
+
+              // try to get instance for page
+              const inst = this.getInstance(nodePage._id);
+
+              // if instance defined
+              if (inst) {
+                // set new instance id reference
+                node._pageinstanceidref = inst._id;
+              }
+            }
+          }
+        }
+      }
+
+    }
   }
 
   /**
@@ -449,25 +456,22 @@ export class ModelService {
 
     const instances = [];
 
-    if (page.trans) {
-      const transArray = page.trans instanceof Array ? page.trans : [page.trans];
-      for (const t of transArray) {
-        if (t && t.subst) {
-          const instance: any = {
-            _id: t._id + 'ia',
-            _trans: t._id
-          };
+    for (const t of nodeToArray(page.trans)) {
+      if (t && t.subst) {
+        const instance: any = {
+          _id: t._id + 'ia',
+          _trans: t._id
+        };
 
-          const subpage = this.getPageById(t.subst._subpage);
-          if (subpage) {
-            const subinstances = this.getSubInstances(subpage);
-            if (subinstances) {
-              instance.instance = subinstances;
-            }
+        const subpage = this.getPageById(t.subst._subpage);
+        if (subpage) {
+          const subinstances = this.getSubInstances(subpage);
+          if (subinstances) {
+            instance.instance = subinstances;
           }
-
-          instances.push(instance);
         }
+
+        instances.push(instance);
       }
     }
 
@@ -478,6 +482,31 @@ export class ModelService {
       return instances[0];
     }
     return instances;
+  }
+
+  getInstance(pageId, instances = this.getCpn().instances) {
+    console.log(this.constructor.name, 'getInstance(), pageId, instances = ', pageId, instances);
+
+    for (const inst of nodeToArray(instances)) {
+      if (inst._page === pageId) {
+        return inst;
+      }
+
+      if (inst._trans) {
+        const trans = this.getTransById(inst._trans);
+        if (trans && trans.subst && trans.subst._subpage === pageId) {
+          return inst;
+        }
+      }
+
+      if (inst.instance) {
+        const inst2 = this.getInstance(pageId, inst.instance);
+        if (inst2) {
+          return inst2;
+        }
+      }
+    }
+    return undefined;
   }
 
   moveNonModelJsonElement(element, parent, target, index, type) {
@@ -676,12 +705,15 @@ export class ModelService {
   }
 
   getMonitorNodeList(cpnElement) {
-    const cpnElementList = cpnElement instanceof Array ? cpnElement : [cpnElement];
     const nodeList = [];
-    for (const e of cpnElementList) {
+
+    for (const e of nodeToArray(cpnElement)) {
+      const nodePage = this.getPageByElementId(e._id);
+      const inst = this.getInstance(nodePage._id);
+
       nodeList.push({
         _idref: e._id,
-        _pageinstanceidref: 'PAGEINSTANCEID' // TODO: add page instance ID
+        _pageinstanceidref: inst ? inst._id : ''
       });
     }
     if (nodeList.length === 0) {
@@ -699,7 +731,7 @@ export class ModelService {
     //   "defaultPredicate": "string",
     //   "defaultStop": "string",
     //   "defaultTimed": true
-    // }    
+    // }
 
     let newMonitorCpnElement;
     switch (monitorType) {
@@ -713,6 +745,9 @@ export class ModelService {
       case this.monitorType.UD: newMonitorCpnElement = this.createCpnMonitorUD(cpnElementList, monitorDefaults); break;
       case this.monitorType.WIF: newMonitorCpnElement = this.createCpnMonitorWIF(cpnElementList, monitorDefaults); break;
     }
+
+    // this.updateInstances();
+
     return newMonitorCpnElement;
   }
 
@@ -1754,10 +1789,10 @@ export class ModelService {
 
   /**
    * Create new declaration
-   * 
+   *
    * @param parentBlock
-   * @param declaration 
-   * @param declarationType 
+   * @param declaration
+   * @param declarationType
    */
   newDeclaration(parentBlock, declarationType) {
     if (parentBlock && declarationType) {
@@ -1898,10 +1933,10 @@ export class ModelService {
 
   /**
    * Move cpn element up or down in it's parent array
-   * @param cpnParentElement 
-   * @param cpnElement 
-   * @param cpnType 
-   * @param direction - direction how to move: ['up','down'] 
+   * @param cpnParentElement
+   * @param cpnElement
+   * @param cpnType
+   * @param direction - direction how to move: ['up','down']
    */
   moveCpnElement(cpnParentElement, cpnElement, cpnType, direction) {
     try {
@@ -1971,7 +2006,8 @@ export class ModelService {
         nodeList.push({
           page: page,
           element: element.element,
-          elementType: element.type
+          elementType: element.type,
+          instanceId: node._pageinstanceidref
         });
       }
     }

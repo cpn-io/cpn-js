@@ -27,6 +27,13 @@
               <app-text-edit-row name="Id" [object]="cpnElement" field="_id" readonly="true">
               </app-text-edit-row>
 
+              <!-- Instance ID -->
+              <!-- <div class="valueRow bordered">
+                <div class="valueName">Instance Id</div>
+                <div class="value" [textContent]="getInstanceId(cpnElement)">
+                </div>
+              </div> -->
+
               <!-- Name (if no arc) -->
               <app-text-edit-row *ngIf="!cpnElement._orientation" type="text" name="Name" [object]="cpnElement"
                 field="text" [readonly]="accessCpnService.isSimulation" (changed)="updateChanges()">

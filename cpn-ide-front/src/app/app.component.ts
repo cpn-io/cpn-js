@@ -3,6 +3,9 @@ import { ElectronService } from 'ngx-electron';
 import { SettingsService } from './services/settings.service';
 import { AccessCpnService } from './services/access-cpn.service';
 
+// import { } from 'electron';
+// import Fs from 'fs';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -15,6 +18,16 @@ export class AppComponent implements OnInit, OnDestroy {
     private electronService: ElectronService,
     private settings: SettingsService,
     public accessCpnService: AccessCpnService) {
+
+    // //check if platform is electron
+    // let isElectron: boolean = window && window['process'] && window['process'].type;
+
+    // if (isElectron) {
+    //   let fs: typeof Fs = window['require']('fs');
+    //   let app: Electron.App = window['require']('electron').remote;
+    //   console.log(fs, app, window['process']);
+    // }
+
 
     // const p = new Place({ x: 1, y: 2 });
     // p._z = 234;

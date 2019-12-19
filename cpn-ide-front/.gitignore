@@ -4,7 +4,9 @@
 dist
 tmp
 out-tsc
-documentation
+# documentation
+electron/backend/
+model_out
 
 # dependencies
 node_modules
@@ -36,6 +38,12 @@ npm-debug.log
 yarn-error.log
 testem.log
 typings
+src/app/app.version.ts
+*.log
+*.lock
+
+# electron
+electron/backend
 
 # System Files
 .DS_Store

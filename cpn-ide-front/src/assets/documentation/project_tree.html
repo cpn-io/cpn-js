@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="img/favicon.ico">
+        <title>Project tree - CPN IDE User Guide</title>
+        <link href="css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="css/font-awesome.min.css" rel="stylesheet">
+        <link href="css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <link href="css/bootstrap-3.3.7.min.css" rel="stylesheet">
+        <link href="css/extra.css" rel="stylesheet">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="js/jquery-1.10.2.min.js" defer></script>
+        <script src="js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="index.html">CPN IDE User Guide</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="index.html">Home</a>
+                            </li>
+                            <li >
+                                <a href="about.html">About</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#project-tree">Project Tree</a></li>
+        <li class="main "><a href="#options">Options</a></li>
+            <li><a href="#real-timestamp">Real Timestamp</a></li>
+            <li><a href="#binding-element-fairness">Binding Element Fairness</a></li>
+            <li><a href="#global-be-fairness">Global BE Fairness</a></li>
+            <li><a href="#output-directory">Output directory</a></li>
+            <li><a href="#performance-report-statistics">Performance report statistics</a></li>
+            <li><a href="#extensions">Extensions</a></li>
+        <li class="main "><a href="#declarations">Declarations</a></li>
+        <li class="main "><a href="#monitors">Monitors</a></li>
+        <li class="main "><a href="#pages">Pages</a></li>
+        <li class="main "><a href="#application-settings">Application settings</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h2 id="project-tree">Project Tree</h2>
+<hr />
+<p>Project tree is labeled with the name of the net. In the picture below, the net is named <strong>mynet-for-sim-sub.cpn</strong>. </p>
+<p><img alt="Screenshot" src="img/project-tree.png" /></p>
+<p>There are two more points below the name of the net:</p>
+<p><strong>Step</strong> means the number of steps that have executed in a simulation.</p>
+<p><strong>Time</strong> means the current model time.</p>
+<p>Project tree contains a number of entries that provide some information about a net and tools for creating and editing it. Click on the black triangle next to the name to open the entry, if it is not already opened.</p>
+<h2 id="options">Options</h2>
+<p>The <strong>Options</strong> entry in the Project tree provides an overview of the options that are related to a particular net.</p>
+<p><img alt="Screenshot" src="img/options.png" /></p>
+<p>You may choose an option by putting a tick on it.</p>
+<h4 id="real-timestamp">Real Timestamp</h4>
+<h4 id="binding-element-fairness">Binding Element Fairness</h4>
+<h4 id="global-be-fairness">Global BE Fairness</h4>
+<p>Fix a bug which caused instances of the first enabled transition instance to have slightly higher probability of being chosen and instances of the last slightly lower when using global binding element fairness. Especially visible if you have just two transitions with one enabled binding, where one would be starved if the other was always enabled.</p>
+<p>When using global binding element fairness, sometimes the transition would appear more than once in the simulation report.</p>
+<h4 id="output-directory">Output directory</h4>
+<p>The Output directory option determines where various kinds of output files will be saved. The default output directory is indicated by the text <strong>same as model</strong>, but the default output directory is actually <strong>model-dir/output/</strong> where <strong>model-dir</strong> is the directory in which the model is saved.</p>
+<p>To change the output directory for a net, edit the text of the option. To enter text edit mode, simply click on the text.</p>
+<h3 id="performance-report-statistics">Performance report statistics</h3>
+<p>The Performance report statistics options are used to determine which statistics should be included in different kinds of performance output. A check mark next to a statistic indicates that the statistic will be included in the report.</p>
+<p><img alt="Screenshot" src="img/simulation.png" /></p>
+<p>The <strong>Simulation performance report</strong> entry provides an overview of the statistics that are calculated during one simulation for the data collection monitors in a net.</p>
+<p>To select the statistics, put check marks next to the names of statistics.</p>
+<p>A set of statistics that can be included in the report depends on whether they are <strong>timed</strong> or <strong>untimed</strong>. </p>
+<p>To open the list of statistics, click on the triangle next to <strong>Timed</strong> / <strong>Untimed</strong>.</p>
+<p>The <strong>Replication performance report</strong> entry provides an overview of the statistics that are calculated for the data values that are found in replication log files. </p>
+<h3 id="extensions">Extensions</h3>
+<p>Put ticks on extensions you would like to choose.</p>
+<p><img alt="Screenshot" src="img/extensions.png" /></p>
+<h2 id="declarations">Declarations</h2>
+<p>In the picture below the Declarations entry consists of two blocks:
+<br>
+- Standard priorities
+<br>
+- Standard declarations</p>
+<p><img alt="Screenshot" src="img/right-click-menu.png" /></p>
+<p>You can add or delete declarations and declaration blocks by right-clicking and selecting the appropriate option or by using the buttons <strong>+ New</strong> | <strong>- Delete</strong> on the top of the Project tree.
+<br></p>
+<p><img alt="Screenshot" src="img/buttons.png" /></p>
+<p>To add a declaration or a declaration block, you can also use <strong>Shift+Insert</strong>.</p>
+<p>To delete a declaration or a declaration block, you can use <strong>Shift+Delete</strong>.</p>
+<p>To edit a declaration or block, open it by clicking on the triangle next to it, and then click on the declaration or block text. </p>
+<p>Navigating within the elements of Declarations blocks is possible by:
+<br> 
+- clicking with the mouse to choose a specific position 
+<br>
+- using the hot-key combinations <strong>Shift+Up</strong> / <strong>Shift+Down</strong>
+<br>
+- pressing keys on the top of the Project tree
+<br></p>
+<p><img alt="Screenshot" src="img/buttons.png" /></p>
+<p>The added declaration will appear either at the bottom of the list of declarations or below the declaration where you added it. 
+The declaration will be in text edit mode when it appears, so it can be modified right away.</p>
+<h2 id="monitors">Monitors</h2>
+<p>The Monitors entry of the Project Tree provides information about the monitors applied to the net. To open the subentries of the Monitors entry,click on the black triangle next to the name of a particular monitor. Edititing of the monitors subentries is available within the Monitor tab of the Properties Panel.</p>
+<p><img alt="Screenshot" src="img/tree-monitors.png" /></p>
+<h2 id="pages">Pages</h2>
+<p>All <strong>pages</strong> in a net are accessible through the <strong>Project tree</strong>. </p>
+<p><img alt="Screenshot" src="img/pages.png" /></p>
+<p>The hierarchical structure of a net is reflected in the Project tree. The entry for a subpage appears under the entry for its superpage, and the entry for the subpage is indented with respect to the entry for its superpage. Subpage entries are visible in the Project tree when the corresponding superpage entry has been opened.</p>
+<p>If you have created a new net instead of loading one, there will be only one page. This page is created automatically with the new net, and is empty so you can start creating net objects on it.</p>
+<p>You can create or delete new pages (subpages) by bringing up the right-click menu and selecting the appropriate option or by using the buttons <strong>+ New</strong> | <strong>- Delete</strong> on the top of the Project tree.</p>
+<p><img alt="Screenshot" src="img/buttons.png" /></p>
+<h2 id="application-settings">Application settings</h2>
+<p><img alt="Screenshot" src="img/settings.png" /></p>
+<p>The Application settings tab shows the default settings for declarations, pages and objects created. To change the settings, click on the text you wish to edit.</p></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = ".",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="js/base.js" defer></script>
+        <script src="search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

@@ -132,15 +132,15 @@ export class ProjectService {
     // const modelFile = 'test-1.cpn';
     // const modelFile = 'test-2.cpn';
 
-    // const modelFile = 'mynet.cpn';
+    const modelFile = 'mynet.cpn';
     // const modelFile = 'mynet2.cpn';
     // const modelFile = 'mynet-sub-1.cpn';
 
     // const modelFile = 'mynet-colset.cpn';
 
     // const modelFile = 'mynet-for-sim.cpn';
-    
-    const modelFile = 'mynet-for-sim-sub.cpn';
+
+    // const modelFile = 'mynet-for-sim-sub.cpn';
     // const modelFile = 'mynet-for-sim-sub-2.cpn';
     // const modelFile = 'mynet-for-sim-sub-sub.cpn';
 

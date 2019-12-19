@@ -46,7 +46,6 @@ public class NetController {
 
             Map<String, List<IssueDescription>> issues = body.isComplex_verify() ? _netConatiner.PerfomEntireChecking(sessionId) : _netConatiner.PerfomEntireCheckingFast(sessionId);
 
-            log.debug("HEREEEE");
             return ResponseEntity.status(HttpStatus.OK).body(VerifyResp.builder().isSuccess(issues.size() == 0).issues(issues).build());
 
         });

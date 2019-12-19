@@ -1,8 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, AfterViewInit } from '@angular/core';
 import { Message } from '../common/message';
 import { EventService } from '../services/event.service';
 import { ModelService } from '../services/model.service';
 import { AccessCpnService } from '../services/access-cpn.service';
+import { IpcService } from '../services/ipc.service';
 
 @Component({
   selector: 'app-main-frame',
@@ -10,7 +11,7 @@ import { AccessCpnService } from '../services/access-cpn.service';
   templateUrl: './main-frame.component.html',
   styleUrls: ['./main-frame.component.scss'],
 })
-export class MainFrameComponent implements OnInit, OnDestroy {
+export class MainFrameComponent implements OnInit, OnDestroy, AfterViewInit {
   localStorageName = 'angular-split-ws';
 
   explorerWidth = 25;
@@ -26,7 +27,12 @@ export class MainFrameComponent implements OnInit, OnDestroy {
 
   constructor(private eventService: EventService, 
     public modelService: ModelService,
-    public accessCpnService: AccessCpnService) {
+    public accessCpnService: AccessCpnService,
+    private ipcService: IpcService) {
+  }
+
+  ngAfterViewInit(): void {
+    this.ipcService.send('app.init.complete');
   }
 
   ngOnInit() {

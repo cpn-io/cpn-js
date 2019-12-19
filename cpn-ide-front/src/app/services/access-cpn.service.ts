@@ -8,12 +8,12 @@ import { CpnServerUrl } from 'src/cpn-server-url';
 import { cloneObject, clearArray } from '../common/utils';
 import { ModelService } from './model.service';
 import { SettingsService } from './settings.service';
+import { IpcService } from './ipc.service';
 
 @Injectable()
 export class AccessCpnService {
 
   public isSimulation = false;
-
 
   public errorData = [];
   public errorIds = [];
@@ -43,7 +43,8 @@ export class AccessCpnService {
   constructor(private http: HttpClient,
     private eventService: EventService,
     private modelService: ModelService,
-    private settingsService: SettingsService) {
+    private settingsService: SettingsService,
+    private ipcService: IpcService) {
 
     this.eventService.on(Message.SERVER_INIT_NET, (event) => {
       console.log('AccessCpnService(), SERVER_INIT_NET, data = ', event);
@@ -181,8 +182,8 @@ export class AccessCpnService {
    * Generate new user session
    */
   generateUserSession() {
-    this.userSessionId = 'CPN-USER-SESSION-' + new Date().getTime();
-    console.log('generateUserSession - new id -', this.userSessionId);
+    this.userSessionId = 'CPN_USER_SESSION_' + new Date().getTime();
+    console.log('generateUserSession(), this.userSessionId = ', this.userSessionId);
     return this.userSessionId;
   }
 
@@ -206,7 +207,7 @@ export class AccessCpnService {
     }
 
     if (!this.sessionId) {
-      this.sessionId = 'CPN-IDE-SESSION-' + new Date().getTime();
+      this.sessionId = 'CPN_IDE_SESSION_' + new Date().getTime();
     }
 
     console.log('AccessCpnService, initNet(), START, this.sessionId = ', this.sessionId);
@@ -248,13 +249,22 @@ export class AccessCpnService {
           // if (!this.simInitialized) {
           //   this.initSim();
           // }
+
+          this.reportReady();
         },
         (error) => {
           console.error('AccessCpnService, initNet(), ERROR, data = ', error);
           this.initNetProcessing = false;
           this.eventService.send(Message.SERVER_INIT_NET_ERROR, { data: error });
+
+          // run again if error (DEBUG)
+          // setTimeout(() => this.initNet(cpnJson, complexVerify, restartSimulator), 1000);
         }
       );
+  }
+
+  reportReady() {
+    this.ipcService.send('app.init.complete');
   }
 
   // saveErrorData(data) {
@@ -303,7 +313,7 @@ export class AccessCpnService {
     this.stateData = undefined;
 
     if (!this.sessionId) {
-      this.sessionId = 'CPN-IDE-SESSION-' + new Date().getTime();
+      this.sessionId = 'CPN_IDE_SESSION_' + new Date().getTime();
     }
 
     this.initSimProcessing = true;
@@ -460,8 +470,8 @@ export class AccessCpnService {
    *    "untilStep": "string",
    *    "untilTime": "string"
    *  }
-   * 
-   * @param options 
+   *
+   * @param options
    */
   doMultiStepFF(options) {
     this.simulationReport = '';
@@ -513,7 +523,7 @@ export class AccessCpnService {
    * {
    *  "repeat": "string"
    * }
-   * @param options 
+   * @param options
    */
   doReplication(options) {
     this.simulationReport = '';
@@ -667,8 +677,8 @@ export class AccessCpnService {
    *    ],
    *    "type": 0
    * }
-   * 
-   * @param transId 
+   *
+   * @param transId
    */
   getMonitorDefaults(options) {
     return new Promise((resolve, reject) => {

@@ -4,9 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +14,17 @@ import static org.junit.Assert.assertEquals;
 
 
 public class Test {
+
+    // @org.junit.Test
+    public void test_write_access() throws Exception
+    {
+        byte[] data = new byte[10];
+        try(OutputStream os = new FileOutputStream("/home/semenov-k/Project/git/cpn-js/backend/model_out/CPN-IDE-SESSION-1575971724891/output/111111.txt"))
+        {
+            os.write(data);
+        }
+    }
+
     /*@org.junit.Test
     public static void main(String[] args) throws Exception {
         System.out.println("Access/CPN test started!");

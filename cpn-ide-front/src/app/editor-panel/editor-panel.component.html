@@ -3,7 +3,8 @@
 
   <div style="width:100%; height:100%; z-index: -1; background: white; border: 0px solid red"
     [style.display]="applicationService.isShowDocumentation ? 'block' : 'none'">
-    <iframe #documentationIFrame [src]="documentationHref" width="100%" height="100%" target="_self" style="border: none"></iframe>
+    <iframe #documentationIFrame [src]="documentationHref" width="100%" height="100%" target="_self"
+      style="border: none"></iframe>
   </div>
 
   <tabs #tabsComponent class="cpn-tabs" style="background: #999 !important"
@@ -23,6 +24,19 @@
         <app-model-editor id="model_editor_{{tab.id}}"></app-model-editor>
       </tab>
     </ng-container>
+
+    <!-- <ng-container *ngIf="accessCpnService.isSimulation === true">
+      <ng-container *ngIf="accessCpnService.simulationReport && accessCpnService.simulationReport !== ''">
+        <tab tabTitle="Simulation report" [ready]="true">
+          <div class="tab-container" id="logScrollPane">
+            <div class="logConsole">
+              <div class="report" [innerHTML]="accessCpnService.simulationReport | simulationReport | safeHtml">
+              </div>
+            </div>
+          </div>
+        </tab>
+      </ng-container>
+    </ng-container> -->
 
   </tabs>
 

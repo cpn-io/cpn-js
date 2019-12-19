@@ -15,7 +15,6 @@ export class AccessCpnService {
 
   public isSimulation = false;
 
-
   public errorData = [];
   public errorIds = [];
   public errorPagesIds = [];
@@ -208,7 +207,7 @@ export class AccessCpnService {
     }
 
     if (!this.sessionId) {
-      this.sessionId = 'CPN-IDE-SESSION-' + new Date().getTime();
+      this.sessionId = 'CPN_IDE_SESSION_' + new Date().getTime();
     }
 
     console.log('AccessCpnService, initNet(), START, this.sessionId = ', this.sessionId);
@@ -314,7 +313,7 @@ export class AccessCpnService {
     this.stateData = undefined;
 
     if (!this.sessionId) {
-      this.sessionId = 'CPN-IDE-SESSION-' + new Date().getTime();
+      this.sessionId = 'CPN_IDE_SESSION_' + new Date().getTime();
     }
 
     this.initSimProcessing = true;
@@ -471,8 +470,8 @@ export class AccessCpnService {
    *    "untilStep": "string",
    *    "untilTime": "string"
    *  }
-   * 
-   * @param options 
+   *
+   * @param options
    */
   doMultiStepFF(options) {
     this.simulationReport = '';
@@ -524,7 +523,7 @@ export class AccessCpnService {
    * {
    *  "repeat": "string"
    * }
-   * @param options 
+   * @param options
    */
   doReplication(options) {
     this.simulationReport = '';
@@ -678,8 +677,8 @@ export class AccessCpnService {
    *    ],
    *    "type": 0
    * }
-   * 
-   * @param transId 
+   *
+   * @param transId
    */
   getMonitorDefaults(options) {
     return new Promise((resolve, reject) => {

@@ -25,7 +25,7 @@ export class ProjectDeclarationsComponent implements OnInit, AfterViewInit {
   public tree = this.getDefaultTree();
 
   tabList = [
-    { id: 'all', name: 'BatchOrdering', declarationType: 'all' },
+    { id: 'all', name: 'All', declarationType: 'all' },
     { id: 'globref', name: 'Globref', declarationType: 'globref' },
     { id: 'color', name: 'Color', declarationType: 'color' },
     { id: 'var', name: 'Var', declarationType: 'var' },
@@ -105,7 +105,7 @@ export class ProjectDeclarationsComponent implements OnInit, AfterViewInit {
 
   onFilterChanged(event) {
     console.log(this.constructor.name, 'onFilterChanged(), event = ', event);
-    this.tree.filter = event; 
+    this.tree.filter = event;
   }
 
 }

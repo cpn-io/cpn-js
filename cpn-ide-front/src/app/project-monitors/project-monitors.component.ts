@@ -123,10 +123,13 @@ export class ProjectMonitorsComponent implements OnInit {
       //   }
       // }
 
+      const nodePage = this.modelService.getPageByElementId(element.cpnElement._id);
+      const inst = this.modelService.getInstance(nodePage._id);
+
       const monitorNodeList = nodeToArray(this.monitor.node) || [];
       monitorNodeList.push({
         _idref: element.cpnElement._id,
-        _pageinstanceidref: 'id251437332ia'
+        _pageinstanceidref: inst ? inst._id : ''
       });
       this.monitor.node = monitorNodeList.length === 1 ? monitorNodeList[0] : monitorNodeList;
       this.onLoadMonitor(this.monitor);

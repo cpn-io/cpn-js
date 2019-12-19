@@ -387,7 +387,7 @@
               }
             ],
             "block": {
-              "id": "BatchOrdering declarations",
+              "id": "All declarations",
               "ml": [
                 {
                   "layout": "fun getProducts( [] ) = []\n                            | getProducts( (it, xs, t)::its ) = it::getProducts(its);",
@@ -7464,7 +7464,7 @@
                 "_colour": "Green",
                 "_bold": "false"
               },
-              "text": "BatchOrdering",
+              "text": "All",
               "box": {
                 "_w": "123.000000",
                 "_h": "40.000000"
@@ -7490,7 +7490,7 @@
                     "_bold": "false"
                   },
                   "_id": "ID1437657297",
-                  "_name": "BatchOrdering"
+                  "_name": "All"
                 },
                 "_subpage": "ID1437657209",
                 "_portsock": "(ID1437657251,ID1437586039)(ID1437657258,ID1437052880)"
@@ -10584,7 +10584,7 @@
         },
         {
           "pageattr": {
-            "_name": "BatchOrdering"
+            "_name": "All"
           },
           "place": [
             {

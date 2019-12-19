@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 
 public class Test {
 
-    @org.junit.Test
+    // @org.junit.Test
     public void test_write_access() throws Exception
     {
         byte[] data = new byte[10];

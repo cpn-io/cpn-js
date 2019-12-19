@@ -272,7 +272,7 @@ public class ExampleAccessCPN2 {
 		}
 	}
 
-	@Test
+	// @Test
 	public void testAccessCpn() throws Exception {
 		//String fileName = "./model/hoponhopoff-color.cpn";
 		//String fileName = "./model/mscProtocol.cpn";

@@ -90,7 +90,7 @@ Navigating within the elements of Declarations blocks is possible by:
 - using the hot-key combinations **Shift+Up** / **Shift+Down**
 <br>
 
-- pressing **Up/Down** keys on the top of the Project tree allows to move an entry to a different position in its group:
+Pressing **Up/Down** keys on the top of the Project tree allows to move an entry to a different position in its group:
 <br>
 
 ![Screenshot](img/buttons.png)

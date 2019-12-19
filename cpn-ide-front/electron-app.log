@@ -1,12 +1,11 @@
-
-18:51:54.396 > APP PATH =  C:\INDEV\development\tue\cpn-js\cpn-ide-front
-18:51:54.418 > isDev =  true
-18:51:54.419 > directory =  C:\INDEV\development\tue\cpn-js\cpn-ide-front/app
-18:51:54.420 > process.cwd() =  C:\INDEV\development\tue\cpn-js\cpn-ide-front
-18:51:54.423 > __dirname =  C:\INDEV\development\tue\cpn-js\cpn-ide-front\electron\dist
-18:51:54.474 > scriptFilename =  run.bat
-18:51:54.475 > runScriptPath =  C:\INDEV\development\tue\cpn-js\cpn-ide-front\electron\backend\run.bat
-18:54:25.273 > mainWindow, close
-18:54:25.327 > killCpnServer()
-18:54:25.328 > killCpnServer(), findProcess(), shellRunner.pid =  2620
-18:54:25.346 > mainWindow, close, killCpnServer() complete!, result =  NO CPN Server process DETECTED!
+12:24:33.138 › APP PATH =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front
+12:24:33.144 › isDev =  true
+12:24:33.145 › directory =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front/app
+12:24:33.145 › process.cwd() =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front
+12:24:33.146 › __dirname =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front/electron/dist
+12:24:33.156 › scriptFilename =  run.sh
+12:24:33.157 › runScriptPath =  /home/user/INDEV/development/tue/cpn-js/cpn-ide-front/electron/backend/run.sh
+12:25:26.253 › mainWindow, close
+12:25:26.280 › killCpnServer()
+12:25:26.281 › killCpnServer(), findProcess(), shellRunner.pid =  20671
+12:25:26.292 › mainWindow, close, killCpnServer() complete!, result =  NO CPN Server process DETECTED!

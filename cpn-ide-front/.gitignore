@@ -37,7 +37,11 @@ yarn-error.log
 testem.log
 typings
 src/app/app.version.ts
-electron-app.log
+*.log
+*.lock
+
+# electron
+electron/backend
 
 # System Files
 .DS_Store

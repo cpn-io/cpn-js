@@ -29,7 +29,7 @@ Operations for creating, deleting and editing declarations contained in these ta
   ![Screenshot](img/filter.png)
 <br>
 
-- Pressing **Up/Down** keys on the top of the declaration panel to move an entry to a different position in its group:
+- Pressing **Up/Down** keys on the top of the declaration panel allows to move an entry to a different position in its group:
 <br>
 
   ![Screenshot](img/buttons.png)

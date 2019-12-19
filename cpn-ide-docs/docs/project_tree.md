@@ -81,7 +81,6 @@ To add a declaration or a declaration block, you can also use **Shift+Insert**.
 To delete a declaration or a declaration block, you can use **Shift+Delete**.
 
 
-
 To edit a declaration or block, open it by clicking on the triangle next to it, and then click on the declaration or block text. 
 
 Navigating within the elements of Declarations blocks is possible by:
@@ -90,7 +89,8 @@ Navigating within the elements of Declarations blocks is possible by:
 <br>
 - using the hot-key combinations **Shift+Up** / **Shift+Down**
 <br>
-- pressing keys on the top of the Project tree
+
+- pressing **Up/Down** keys on the top of the Project tree allows to move an entry to a different position in its group:
 <br>
 
 ![Screenshot](img/buttons.png)

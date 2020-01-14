@@ -648,8 +648,9 @@ export class ModelService {
     const newPage = cloneObject(DEFAULT_PAGE);
     newPage.pageattr._name = name + ' ' + (pageList.length + 1);
     newPage._id = id || getNextId();
-    newPage.place._id = getNextId();
-    newPage.place.text = "P" + (placeList.length + 1);
+
+    // newPage.place._id = getNextId();
+    // newPage.place.text = "P" + (placeList.length + 1);
 
     // this.updateInstances();
     return newPage;

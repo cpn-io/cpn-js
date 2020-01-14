@@ -215,6 +215,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     console.log('CpnUpdater(), mousedown ', event);
     // console.log('CpnUpdater(), domEvent, mousedown, event = ', event);
     // console.log('CpnUpdater(), mousedown, container = ', container);
+    // console.log('CpnUpdater(), canvas.getRootElement() = ', canvas.getRootElement());
 
     if (event.button === 2) {
       const position = toPoint(event);
@@ -222,11 +223,11 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
       const gfx = getGfx(target);
       var element;
       if (gfx) {
-        element = elementRegistry.get(gfx);
+        element = elementRegistry.get(gfx) || canvas.getRootElement();
       }
 
-      console.log('CpnUpdater(), domEvent, mousedown, target = ', target);
-      console.log('CpnUpdater(), domEvent, mousedown, gfx = ', gfx);
+      // console.log('CpnUpdater(), domEvent, mousedown, target = ', target);
+      // console.log('CpnUpdater(), domEvent, mousedown, gfx = ', gfx);
       console.log('CpnUpdater(), mousedown, element = ', element);
 
       if (element && element === canvas.getRootElement()) {
@@ -532,7 +533,7 @@ CpnUpdater.prototype.animateArcList = function (arcIdList, speedMs) {
   //       }
 
   //     }
-  //   } 
+  //   }
   //   else {
   //     resolve('complete.all');
   //   }

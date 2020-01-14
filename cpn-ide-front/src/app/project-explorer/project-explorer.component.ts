@@ -138,228 +138,121 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    const self = this;
+    // const self = this;
 
-    this.eventService.on(Message.PROJECT_LOAD, (event) => {
-      if (event.project) {
-        this.treeState = {};
-        this.loadProject(event.project);
-      }
-    });
+    // this.eventService.on(Message.PROJECT_LOAD, (event) => {
+    //   if (event.project) {
+    //     this.treeState = {};
+    //     this.loadProject(event.project);
+    //   }
+    // });
 
-    this.eventService.on(Message.MODEL_RELOAD, () => {
-      const project = this.modelService.getProject();
-      console.log('MODEL_RELOAD, project = ', project);
-      if (project) {
-        this.loadProject(project);
-      }
-      this.treeState = localStorage.treeState && JSON.parse(localStorage.treeState);
-    });
+    // this.eventService.on(Message.MODEL_RELOAD, () => {
+    //   const project = this.modelService.getProject();
+    //   console.log('MODEL_RELOAD, project = ', project);
+    //   if (project) {
+    //     this.loadProject(project);
+    //   }
+    //   this.treeState = localStorage.treeState && JSON.parse(localStorage.treeState);
+    // });
 
-    this.eventService.on(Message.DECLARATION_CHANGED, (event) => {
-      if (event.cpnElement && event.newTextValue) {
-        this.updateTreeNodeByCpnElement(event.cpnElement, event.newTextValue);
-      }
-    });
+    // this.eventService.on(Message.DECLARATION_CHANGED, (event) => {
+    //   if (event.cpnElement && event.newTextValue) {
+    //     this.updateTreeNodeByCpnElement(event.cpnElement, event.newTextValue);
+    //   }
+    // });
 
-    this.eventService.on(Message.TREE_UPDATE_PAGES, (event) => {
-      this.updatePagesNode(event.currentPageId);
-    });
+    // this.eventService.on(Message.TREE_UPDATE_PAGES, (event) => {
+    //   this.updatePagesNode(event.currentPageId);
+    // });
 
-    this.eventService.on(Message.PAGE_CREATE_SUBST, (event) => {
-      const subpageCpnElement = this.modelService.createSubpage(event.cpnElement, event.subPageName, event.subPageId);
-      this.updatePagesNode(event.currentPageId);
+    // this.eventService.on(Message.PAGE_CREATE_SUBST, (event) => {
+    //   const subpageCpnElement = this.modelService.createSubpage(event.cpnElement, event.subPageName, event.subPageId);
+    //   this.updatePagesNode(event.currentPageId);
 
-      this.eventService.send(Message.PAGE_UPDATE_SUBST, {
-        cpnElement: event.cpnElement,
-        subpageName: subpageCpnElement.pageattr._name
-      });
-    });
+    //   this.eventService.send(Message.PAGE_UPDATE_SUBST, {
+    //     cpnElement: event.cpnElement,
+    //     subpageName: subpageCpnElement.pageattr._name
+    //   });
+    // });
 
-    this.eventService.on(Message.SHAPE_HOVER, (data) => {
-      this.underlineRelations(data.element);
-    });
+    // this.eventService.on(Message.SHAPE_HOVER, (data) => {
+    //   this.underlineRelations(data.element);
+    // });
 
-    this.eventService.on(Message.SHAPE_OUT, (data) => {
-      this.doUnderlineNodeLabel(false);
-    });
+    // this.eventService.on(Message.SHAPE_OUT, (data) => {
+    //   this.doUnderlineNodeLabel(false);
+    // });
 
-    this.eventService.on(Message.SHAPE_SELECT, (data) => {
-      const element = data.element.labelTarget ?
-        data.element.labelTarget.labelTarget || data.element.labelTarget :
-        data.element;
+    // this.eventService.on(Message.SHAPE_SELECT, (data) => {
+    //   const element = data.element.labelTarget ?
+    //     data.element.labelTarget.labelTarget || data.element.labelTarget :
+    //     data.element;
 
-      // if (this.createMonitorIntent) {
-      //   console.log('SHAPE_SELECT, element = ', element);
-      //   let newCpnElement, newNode, cpnType;
-      //   switch (this.createMonitorIntent) {
-      //     case this.monitorType.BP: {
-      //       if (element.type === this.cpnElementType.place || element.type === this.cpnElementType.transition) {
-      //         newCpnElement = this.modelService.createCpnMonitorBP(element.cpnElement);
-      //       }
-      //       break;
-      //     }
-      //     case this.monitorType.CTODC: {
-      //       if (element.type === this.cpnElementType.transition) {
-      //         newCpnElement = this.modelService.createMonitorCTODC(element.cpnElement);
-      //       }
-      //       break;
-      //     }
-      //     case this.monitorType.DC: {
-      //       if (element.type === this.cpnElementType.place || element.type === this.cpnElementType.transition) {
-      //         newCpnElement = this.modelService.createCpnMonitorDC(element.cpnElement);
-      //       }
-      //       break;
-      //     }
-      //     case this.monitorType.LLDC: {
-      //       if (element.type === this.cpnElementType.place) {
-      //         newCpnElement = this.modelService.createCpnMonitorLLDC(element.cpnElement);
-      //       }
-      //       break;
-      //     }
-      //     case this.monitorType.MS: {
-      //       if (element.type === this.cpnElementType.place) {
-      //         newCpnElement = this.modelService.createCpnMonitorMS(element.cpnElement);
-      //       }
-      //       break;
-      //     }
-      //     case this.monitorType.PCBP: {
-      //       if (element.type === this.cpnElementType.place) {
-      //         newCpnElement = this.modelService.createCpnMonitorPCBP(element.cpnElement);
-      //       }
-      //       break;
-      //     }
-      //     case this.monitorType.TEBP: {
-      //       if (element.type === this.cpnElementType.transition) {
-      //         newCpnElement = this.modelService.createCpnMonitorTEBP(element.cpnElement);
-      //       }
-      //       break;
-      //     }
-      //     case this.monitorType.UD: {
-      //       if (element.type === this.cpnElementType.place || element.type === this.cpnElementType.transition) {
-      //         newCpnElement = this.modelService.createCpnMonitorUD(element.cpnElement);
-      //       }
-      //       break;
-      //     }
-      //     case this.monitorType.WIF: {
-      //       if (element.type === this.cpnElementType.place || element.type === this.cpnElementType.transition) {
-      //         newCpnElement = this.modelService.createCpnMonitorWIF(element.cpnElement);
-      //       }
-      //       break;
-      //     }
-      //   }
-      //   if (newCpnElement) {
-      //     console.log('Monitor: newCpnElement = ', newCpnElement);
-      //     newNode = this.createMonitorNode(newCpnElement);
-      //     console.log('Monitor: newNode = ', newNode);
-      //     cpnType = newNode.type;
-      //     this.clearCreateMonitorIntent();
-      //     let monitorsRootNode;
-      //     // console.log('Monitor: this.nodes[0].children = ', this.nodes[0].children);
-      //     for (const monitors of this.nodes[0].children) {
-      //       if (monitors.id === 'Monitors') {
-      //         monitorsRootNode = monitors;
-      //         break;
-      //       }
-      //     }
+    // });
 
-      //     if (monitorsRootNode) {
-      //       console.log('Monitor: monitorsRootNode = ', monitorsRootNode);
+    // // Update monitors
+    // this.eventService.on(Message.MONITOR_CREATED, (event) => {
+    //   if (event.newMonitorCpnElement) {
+    //     this.loadProject(this.modelService.getProject());
 
-      //       if (monitorsRootNode.cpnElement) {
-      //         const monitorList = nodeToArray(monitorsRootNode.cpnElement.monitor);
-      //         monitorList.push(newCpnElement);
-      //         monitorsRootNode.cpnElement.monitor = monitorList.length === 1 ? monitorList[0] : monitorList;
-      //       }
+    //     const nodeId = event.newMonitorCpnElement._id;
+    //     this.expandNode(nodeId);
+    //     this.gotoNode(nodeId);
+    //   }
+    // });
 
-      //       // TODO: дописать эту функция для добавления мониторов
-      //       // this.addCreatedNode(monitorsRootNode, newNode, newCpnElement, cpnType, monitorsRootNode.cpnElement, false);
-      //       monitorsRootNode.children.push(newNode);
-      //       this.updateTree();
-      //     }
-      //   }
-      // }
-    });
+    // // Update monitors
+    // this.eventService.on(Message.MONITOR_CHANGED, (event) => {
+    //   if (event.monitorCpnElement) {
+    //     this.loadProject(this.modelService.getProject());
+    //     const nodeId = event.monitorCpnElement._id;
+    //     this.expandNode(nodeId);
+    //     this.gotoNode(nodeId);
+    //   }
+    // });
 
-    // Update monitors
-    this.eventService.on(Message.MONITOR_CREATED, (event) => {
-      if (event.newMonitorCpnElement) {
+    // // Update monitors
+    // this.eventService.on(Message.MONITOR_DELETED, (event) => {
+    //   this.loadProject(this.modelService.getProject());
+    //   const nodeId = 'Monitors';
+    //   this.expandNode(nodeId);
+    //   this.gotoNode(nodeId);
+    // });
 
-        // let monitorsRootNode;
-        // for (const monitors of this.nodes[0].children) {
-        //   if (monitors.id === 'Monitors') {
-        //     monitorsRootNode = monitors;
-        //     break;
-        //   }
-        // }
-        // if (monitorsRootNode) {
-        //   this.createMonitorsRootNode('Monitors', cpnet.monitorblock);
-        // }
+    // // Get error identificators
+    // this.eventService.on(Message.SERVER_INIT_NET_DONE, (event) => {
+    //   this.errorIds = [];
+    //   for (const id of Object.keys(this.accessCpnService.getErrorData())) {
+    //     this.errorIds.push(id);
+    //   }
 
-        this.loadProject(this.modelService.getProject());
+    //   // expand error nodes
+    //   for (const id of this.errorIds) {
+    //     this.expandParentNode(id);
+    //   }
+    // });
 
-        const nodeId = event.newMonitorCpnElement._id;
-        this.expandNode(nodeId);
-        this.gotoNode(nodeId);
-      }
-    });
+    // this.eventService.on(Message.SIMULATION_UPDATE_STATE, (event) => {
+    //   const stateData = this.accessCpnService.getStateData();
+    //   if (stateData) {
+    //     this.stepNode.name = 'Step: ' + stateData.step;
+    //     this.timeNode.name = 'Time: ' + stateData.time;
+    //   } else {
+    //     this.stepNode.name = 'Step: 0';
+    //     this.timeNode.name = 'Time: 0';
+    //   }
+    //   this.updateTree();
+    // });
 
-    // Update monitors
-    this.eventService.on(Message.MONITOR_CHANGED, (event) => {
-      if (event.monitorCpnElement) {
-        this.loadProject(this.modelService.getProject());
-        const nodeId = event.monitorCpnElement._id;
-        this.expandNode(nodeId);
-        this.gotoNode(nodeId);
-      }
-    });
-
-    // Update monitors
-    this.eventService.on(Message.MONITOR_DELETED, (event) => {
-      this.loadProject(this.modelService.getProject());
-      const nodeId = 'Monitors';
-      this.expandNode(nodeId);
-      this.gotoNode(nodeId);
-    });
-
-    // Get error identificators
-    this.eventService.on(Message.SERVER_INIT_NET_DONE, (event) => {
-      this.errorIds = [];
-      for (const id of Object.keys(this.accessCpnService.getErrorData())) {
-        this.errorIds.push(id);
-      }
-
-      // expand error nodes
-      for (const id of this.errorIds) {
-        this.expandParentNode(id);
-      }
-    });
-
-    this.eventService.on(Message.SIMULATION_UPDATE_STATE, (event) => {
-      const stateData = this.accessCpnService.getStateData();
-      if (stateData) {
-        this.stepNode.name = 'Step: ' + stateData.step;
-        this.timeNode.name = 'Time: ' + stateData.time;
-      } else {
-        this.stepNode.name = 'Step: 0';
-        this.timeNode.name = 'Time: 0';
-      }
-      this.updateTree();
-    });
-
-    this.eventService.on(Message.TREE_SELECT_DECLARATION_NODE, (event) => {
-      console.log(self.constructor.name, 'SELECT_DECLARATION_NODE, event = ', event);
-      if (event && event.sender !== self) {
-        if (event.cpnElement) {
-          this.gotoNode(event.cpnElement._id);
-          // const node = this.getNodeByCpnElement(event.cpnElement);
-          // if (node) {
-          //   console.log(self.constructor.name, 'SELECT_DECLARATION_NODE, node = ', node);
-          //   this.gotoNode(node.id);
-          // }
-        }
-      }
-    });
+    // this.eventService.on(Message.TREE_SELECT_DECLARATION_NODE, (event) => {
+    //   console.log(self.constructor.name, 'SELECT_DECLARATION_NODE, event = ', event);
+    //   if (event && event.sender !== self) {
+    //     if (event.cpnElement) {
+    //       this.gotoNode(event.cpnElement._id);
+    //     }
+    //   }
+    // });
   }
 
   ngOnDestroy() {

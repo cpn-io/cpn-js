@@ -44,9 +44,7 @@
           </app-tree-node>
 
 
-          <!-- Monitors -->
-          <app-project-tree-monitorblock-node [tree]="tree" [monitorblock]="cpnet.monitorblock">
-          </app-project-tree-monitorblock-node>
+
 
           <!-- Pages -->
           <app-tree-node [tree]="tree" id="pages" type="pages" title="Pages"
@@ -61,6 +59,10 @@
             </ng-container>
 
           </app-tree-node>
+
+          <!-- Monitors -->
+          <app-project-tree-monitorblock-node [tree]="tree" [monitorblock]="cpnet.monitorblock">
+          </app-project-tree-monitorblock-node>
 
         </app-tree-node>
 

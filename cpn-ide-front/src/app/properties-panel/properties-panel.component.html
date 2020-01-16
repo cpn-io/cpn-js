@@ -55,7 +55,7 @@
               </app-text-edit-row>
 
               <!-- Subst Labels -->
-              <app-text-edit-row *ngIf="cpnElement.box" type="select" name="Suppage" [object]="getSubst(cpnElement)"
+              <app-text-edit-row *ngIf="cpnElement.box" type="select" name="Subpage" [object]="getSubst(cpnElement)"
                 field="value" (changed)="updateSubst($event)" [options]="getSubstPages(cpnElement)"
                 [readonly]="accessCpnService.isSimulation">
               </app-text-edit-row>

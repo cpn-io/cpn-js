@@ -19,7 +19,7 @@
       [type]="'options-sim-performance-timed'" [cpnElement]="undefined">
 
       <ng-container *ngFor="let option of optionList">
-        <ng-container *ngIf="!['realtimestamp', 'fair_be', 'global_fairness', 'outputdirectory'].includes(option._name) && 
+        <ng-container *ngIf="!['realtimestamp', 'fair_be', 'global_fairness', 'outputdirectory'].includes(option._name) &&
           !option._name.startsWith('untimed') &&
           !option._name.startsWith('rep') &&
           !option._name.startsWith('extensions')">
@@ -61,7 +61,7 @@
 </app-tree-node>
 
 <!-- Extentions -->
-<app-tree-node [tree]="tree" id="options-extentions" title="Extentions" [type]="'options-extentions'"
+<app-tree-node [tree]="tree" id="options-extentions" title="Extensions" [type]="'options-extentions'"
   [cpnElement]="undefined">
 
   <ng-container *ngFor="let option of optionList">

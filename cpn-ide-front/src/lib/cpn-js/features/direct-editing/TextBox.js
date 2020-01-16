@@ -84,7 +84,7 @@ export default function TextBox(options) {
  *
  * @return {DOMElement} The created content DOM element
  */
-TextBox.prototype.create = function (bounds, style, value, options) {
+TextBox.prototype.create = function (bounds, style, value, options, shapeType) {
   var self = this;
 
   // console.log('TextBox.prototype.create(), options = ', options);
@@ -116,15 +116,25 @@ TextBox.prototype.create = function (bounds, style, value, options) {
     'transform'
   ]);
 
+  var newHeight = bounds.height;
+  var newTop = bounds.y;
+
+  if (shapeType === 'cpn:Place' || shapeType === 'cpn:Transition'){
+    newHeight = 1;
+    newTop = bounds.y + bounds.height/2;
+  }
+
   assign(parent.style, {
     width: bounds.width + 'px',
-    height: bounds.height + 'px',
+    // height: bounds.height + 'px',
+    height: newHeight + 'px',
     maxWidth: bounds.maxWidth + 'px',
     maxHeight: bounds.maxHeight + 'px',
     minWidth: bounds.minWidth + 'px',
     minHeight: bounds.minHeight + 'px',
     left: bounds.x + 'px',
-    top: bounds.y + 'px',
+    // top: bounds.y + 'px',
+    top: newTop + 'px',
     backgroundColor: '#00000',
     position: 'absolute',
     overflow: 'visible',

@@ -215,7 +215,8 @@ DirectEditing.prototype.activate = function (element) {
       context.bounds,
       context.style,
       context.text,
-      context.options
+      context.options,
+      element.type
     );
 
 

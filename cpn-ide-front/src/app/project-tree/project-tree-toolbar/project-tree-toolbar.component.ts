@@ -40,6 +40,7 @@ export class ProjectTreeToolbarComponent implements OnInit {
   onChangeFilter(value) {
     this.filterText = value;
     console.log(this.constructor.name, 'onChangeFilter(), this.filterText = ', this.filterText);
+
     this.filterChanged.emit(value);
   }
 }

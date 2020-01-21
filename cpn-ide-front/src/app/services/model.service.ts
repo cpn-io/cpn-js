@@ -1795,7 +1795,7 @@ export class ModelService {
    * @param declaration
    * @param declarationType
    */
-  newDeclaration(parentBlock, declarationType) {
+  newDeclaration(parentBlock, declarationType, insertAfterElement?) {
     if (parentBlock && declarationType) {
       let parentCpnElement = parentBlock;
 
@@ -1828,7 +1828,7 @@ export class ModelService {
           newDeclaration._id = getNextId();
 
           // add declaration cpn element to declaration group
-          this.addCpnElement(parentCpnElement, newDeclaration, newCpnDeclarartionType);
+          this.addCpnElement(parentCpnElement, newDeclaration, newCpnDeclarartionType, insertAfterElement);
 
           return newDeclaration;
         }
@@ -1856,8 +1856,16 @@ export class ModelService {
       }
 
       const nodeList = nodeToArray(cpnParentElement[cpnType]);
-      nodeList.push(cpnElement);
-
+      if (insertAfterElement) {
+        const find = nodeList.indexOf(insertAfterElement);
+        if (find > -1) {
+          nodeList.splice(find + 1, 0, cpnElement);
+        } else {
+          console.error('insertAfterElement not found');
+        }
+      } else {
+        nodeList.push(cpnElement);
+      }
       cpnParentElement[cpnType] = nodeList.length === 1 ? nodeList[0] : nodeList;
     } catch (ex) {
       console.error(this.constructor.name, 'addCpnElement(). ERROR: ', ex);

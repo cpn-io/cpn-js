@@ -98,7 +98,7 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, I
   onNewDeclaration() {
     console.log(this.constructor.name, 'onNewDeclaration(), declaration = ', this.declaration);
 
-    const newDeclaration = this.modelService.newDeclaration(this.parentBlock, this.type);
+    const newDeclaration = this.modelService.newDeclaration(this.parentBlock, this.type, this.tree.selected.cpnElement);
     if (newDeclaration) {
       this.focus(newDeclaration._id);
     }

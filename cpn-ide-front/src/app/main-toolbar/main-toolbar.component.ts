@@ -68,6 +68,10 @@ export class MainToolbarComponent implements OnInit {
     this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData(), complexVerify: true });
   }
 
+  onValidateAuto() {
+    this.validationService.isAutoValidation = this.validationService.isAutoValidation ? false : true;
+  }
+
   onTest() {
     const modelEditor = this.editorPanelService.getSelectedModelEditor();
     console.log(this.constructor.name, 'onTest(), page = ', modelEditor);

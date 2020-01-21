@@ -16,6 +16,8 @@ export class ValidationService implements OnDestroy {
   timeTimer: Observable<number>;
   timeTimerSubscribtion;
 
+  public isAutoValidation = false;
+
   geometryKeyList = [
     'aux',
     'token',
@@ -152,7 +154,7 @@ export class ValidationService implements OnDestroy {
       console.log('END checkValidation(), validationTime = ', validationTime);
     }
 
-    if (this.needValidation) {
+    if (this.needValidation && this.isAutoValidation) {
       this.needValidation = false;
       this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData(), complexVerify: false });
     }

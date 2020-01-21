@@ -163,7 +163,7 @@ export class SimulationService {
 
   /**
    * Get real fired transition id even subst transition clicked
-   * 
+   *
    * @param transId - selected transition id
    */
   getRealFiredId(transId) {
@@ -321,7 +321,14 @@ export class SimulationService {
       addTime: config.time_step,
       amount: config.steps
     };
-    this.accessCpnService.doMultiStepFF(options);
+    this.accessCpnService.doMultiStepFF(options).then(
+      () => {
+        const modelEditorList = this.editorPanelService.getModelEditorList() || [];
+        for (const modelEditor of modelEditorList) {
+          modelEditor.updateElementStatus(false);
+        }
+      }
+    );
   }
 
   runReplication() {
@@ -331,7 +338,14 @@ export class SimulationService {
     const options = {
       repeat: '' + config.repeat,
     };
-    this.accessCpnService.doReplication(options);
+    this.accessCpnService.doReplication(options).then(
+      () => {
+        const modelEditorList = this.editorPanelService.getModelEditorList() || [];
+        for (const modelEditor of modelEditorList) {
+          modelEditor.updateElementStatus(false);
+        }
+      }
+    );
   }
 
 }

@@ -34,6 +34,7 @@ export class AccessCpnService {
   public initSimProcessing;
   public fastforwardProcessing = false;
   public replicationProcessing = false;
+  public complexVerify = false;
 
   public simInitialized = false;
 
@@ -200,6 +201,7 @@ export class AccessCpnService {
   initNet(cpnJson, complexVerify = false, restartSimulator = false) {
     this.simulationReport = '';
 
+    this.complexVerify = complexVerify;
     console.log('AccessCpnService, initNet(), START, this.initNetProcessing = ', this.initNetProcessing);
 
     if (this.initNetProcessing) {
@@ -443,11 +445,8 @@ export class AccessCpnService {
               data.firedTrans = [transId];
             }
             this.updateFiredTrans(data.firedTrans);
-
             this.eventService.send(Message.SIMULATION_STEP_DONE);
-
             this.getSimState();
-
             resolve();
           }
         },
@@ -501,9 +500,7 @@ export class AccessCpnService {
             this.simulationReport = data.extraInfo;
 
             this.eventService.send(Message.SIMULATION_STEP_DONE);
-
             this.getSimState();
-
             this.fastforwardProcessing = false;
             resolve();
           }

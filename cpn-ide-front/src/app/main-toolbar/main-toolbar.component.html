@@ -69,12 +69,12 @@
     </li>
 
     <!-- Reload -->
-    <li class="nav-item">
+    <!-- <li class="nav-item">
       <div class="nav-link mb-0" (click)="reloadProject()">
         <i class="fas fa-sync-alt"></i>
         <span>Reload</span>
       </div>
-    </li>
+    </li> -->
 
     <div class="divider"></div>
 
@@ -94,6 +94,13 @@
         <i class="fas fa-check-double"></i>
         <span>Validate</span>
       </div>
+    </li>
+
+    <li class="nav-item">
+      <a (click)="onValidateAuto()" class="nav-link" [ngClass]="validationService.isAutoValidation ? 'red' : 'grey'" href="#">
+        <i [ngClass]="validationService.isAutoValidation ? 'far fa-check-square' : 'far fa-square'"></i>
+        <span>Auto</span>
+      </a>
     </li>
 
     <div class="divider"></div>

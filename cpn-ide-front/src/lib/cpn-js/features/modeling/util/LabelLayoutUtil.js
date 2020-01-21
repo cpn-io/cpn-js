@@ -23,7 +23,7 @@ export function findNewLabelLineStartIndex(oldWaypoints, newWaypoints, attachmen
   if (hints.segmentMove) {
 
     var oldSegmentStartIndex = hints.segmentMove.segmentStartIndex,
-        newSegmentStartIndex = hints.segmentMove.newSegmentStartIndex;
+      newSegmentStartIndex = hints.segmentMove.newSegmentStartIndex;
 
     // if label was on moved segment return new segment index
     if (index === oldSegmentStartIndex) {
@@ -32,7 +32,7 @@ export function findNewLabelLineStartIndex(oldWaypoints, newWaypoints, attachmen
 
     // label is after new segment index
     if (index >= newSegmentStartIndex) {
-      return (index+offset < newSegmentStartIndex) ? newSegmentStartIndex : index+offset;
+      return (index + offset < newSegmentStartIndex) ? newSegmentStartIndex : index + offset;
     }
 
     // if label is before new segment index
@@ -43,8 +43,8 @@ export function findNewLabelLineStartIndex(oldWaypoints, newWaypoints, attachmen
   if (hints.bendpointMove) {
 
     var insert = hints.bendpointMove.insert,
-        bendpointIndex = hints.bendpointMove.bendpointIndex,
-        newIndex;
+      bendpointIndex = hints.bendpointMove.bendpointIndex,
+      newIndex;
 
     // waypoints length didnt change
     if (offset === 0) {
@@ -62,7 +62,7 @@ export function findNewLabelLineStartIndex(oldWaypoints, newWaypoints, attachmen
       newIndex = index;
 
       // decide label should take right or left segment
-      if (insert && attachment.type !== 'bendpoint' && bendpointIndex-1 === index) {
+      if (insert && attachment.type !== 'bendpoint' && bendpointIndex - 1 === index) {
 
         var rel = relativePositionMidWaypoint(newWaypoints, bendpointIndex);
 
@@ -107,14 +107,18 @@ export function findNewLabelLineStartIndex(oldWaypoints, newWaypoints, attachmen
 export function getLabelAdjustment(label, newWaypoints, oldWaypoints, hints) {
 
   var x = 0,
-      y = 0;
+    y = 0;
 
   var labelPosition = getLabelMid(label);
 
   // get closest attachment
-  var attachment = getAttachment(labelPosition, oldWaypoints),
-      oldLabelLineIndex = attachment.segmentIndex,
-      newLabelLineIndex = findNewLabelLineStartIndex(oldWaypoints, newWaypoints, attachment, hints);
+  var attachment = getAttachment(labelPosition, oldWaypoints);
+  if (!attachment) {
+    return { x: x, y: y };
+  }
+
+  var oldLabelLineIndex = attachment.segmentIndex,
+    newLabelLineIndex = findNewLabelLineStartIndex(oldWaypoints, newWaypoints, attachment, hints);
 
   if (newLabelLineIndex === null) {
     return { x: x, y: y };
@@ -123,23 +127,23 @@ export function getLabelAdjustment(label, newWaypoints, oldWaypoints, hints) {
   // should never happen
   // TODO(@janstuemmel): throw an error here when connectionSegmentMove is refactored
   if (newLabelLineIndex < 0 ||
-      newLabelLineIndex > newWaypoints.length - 2) {
+    newLabelLineIndex > newWaypoints.length - 2) {
     return { x: x, y: y };
   }
 
   var oldLabelLine = getLine(oldWaypoints, oldLabelLineIndex),
-      newLabelLine = getLine(newWaypoints, newLabelLineIndex),
-      oldFoot = attachment.position;
+    newLabelLine = getLine(newWaypoints, newLabelLineIndex),
+    oldFoot = attachment.position;
 
   var relativeFootPosition = getRelativeFootPosition(oldLabelLine, oldFoot),
-      angleDelta = getAngleDelta(oldLabelLine, newLabelLine);
+    angleDelta = getAngleDelta(oldLabelLine, newLabelLine);
 
   // special rule if label on bendpoint
   if (attachment.type === 'bendpoint') {
 
     var offset = newWaypoints.length - oldWaypoints.length,
-        oldBendpointIndex = attachment.bendpointIndex,
-        oldBendpoint = oldWaypoints[oldBendpointIndex];
+      oldBendpointIndex = attachment.bendpointIndex,
+      oldBendpoint = oldWaypoints[oldBendpointIndex];
 
     // bendpoint position hasnt changed, return same position
     if (newWaypoints.indexOf(oldBendpoint) !== -1) {
@@ -188,8 +192,8 @@ export function getLabelAdjustment(label, newWaypoints, oldWaypoints, hints) {
 
 function relativePositionMidWaypoint(waypoints, idx) {
 
-  var distanceSegment1 = getDistancePointPoint(waypoints[idx-1], waypoints[idx]),
-      distanceSegment2 = getDistancePointPoint(waypoints[idx], waypoints[idx+1]);
+  var distanceSegment1 = getDistancePointPoint(waypoints[idx - 1], waypoints[idx]),
+    distanceSegment2 = getDistancePointPoint(waypoints[idx], waypoints[idx + 1]);
 
   var relativePosition = distanceSegment1 / (distanceSegment1 + distanceSegment2);
 
@@ -205,18 +209,18 @@ function getLabelMid(label) {
 
 function getAngleDelta(l1, l2) {
   var a1 = getAngle(l1),
-      a2 = getAngle(l2);
+    a2 = getAngle(l2);
   return a2 - a1;
 }
 
 function getLine(waypoints, idx) {
-  return [ waypoints[idx], waypoints[idx+1] ];
+  return [waypoints[idx], waypoints[idx + 1]];
 }
 
 function getRelativeFootPosition(line, foot) {
 
   var length = getDistancePointPoint(line[0], line[1]),
-      lengthToFoot = getDistancePointPoint(line[0], foot);
+    lengthToFoot = getDistancePointPoint(line[0], foot);
 
   return length === 0 ? 0 : lengthToFoot / length;
 }

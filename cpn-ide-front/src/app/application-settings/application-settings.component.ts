@@ -31,14 +31,14 @@ export class ApplicationSettingsComponent implements OnInit {
 
     if (event.target) {
       const value = event.target.textContent;
-      
+
       if (this.settings.appSettings[key] instanceof Object) {
         this.settings.appSettings[key] = JSON.parse(value);
       } else {
         this.settings.appSettings[key] = value;
       }
 
-      this.settings.saveLocalSettings();
+      this.settings.saveLocalSettings(key);
     }
   }
 

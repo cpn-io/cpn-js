@@ -187,6 +187,9 @@ export class ValidationService implements OnDestroy {
     if (this.history.models.length > this.history.currentModelIndex) {
       this.history.models.splice(this.history.currentModelIndex);
     }
+    if (this.history.models.length > 99) {
+      this.history.models.splice(0, 1);
+    }
 
     this.history.models.push(model);
     this.history.currentModelIndex++;

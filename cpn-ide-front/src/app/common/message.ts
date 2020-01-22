@@ -25,6 +25,7 @@ export class Message {
   static TREE_SELECT_MONITOR = 'tree.select.monitor';
 
   static DECLARATION_CHANGED = 'declaration.changed';
+  static SETTING_CHANGED = 'setting.changed';
 
   static SERVER_INIT_NET = 'server.init.net';
   static SERVER_INIT_NET_START = 'server.init.net.start';

@@ -2,12 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { cloneObject } from '../common/utils';
 import { DEFAULT_SETTINGS } from '../common/default-settings';
+import {EventService} from './event.service';
+import {Message} from '../common/message';
 
 @Injectable()
 export class SettingsService {
   public appSettings;
 
-  constructor() {
+  constructor(private eventService: EventService) {
     this.loadLocalSettings();
 
     this.saveLocalSettings();
@@ -27,9 +29,9 @@ export class SettingsService {
     console.log(this.constructor.name, 'loadLocalSettings(), this.appSettings = ', this.appSettings);
   }
 
-  public saveLocalSettings() {
+  public saveLocalSettings(key?) {
     console.log(this.constructor.name, 'saveLocalSettings(), this.appSettings = ', this.appSettings);
-
+    this.eventService.send(Message.SETTING_CHANGED, {key: key, value: this.appSettings[key]});
     localStorage.setItem('applicationSettings', JSON.stringify(this.appSettings));
   }
 

@@ -92,7 +92,11 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
+    this.eventService.on(Message.SETTING_CHANGED, ({key, value}) => {
+      this.modeling.setDefaultValue(key, value);
+    });
   }
+
 
   ngAfterViewInit() {
     console.log(this.constructor.name, 'ngAfterViewInit(), this = ', this);
@@ -668,9 +672,9 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   /**
    * Load page to ModelEditorComponent
-   * 
-   * @param pageObject 
-   * @param alignToCenter 
+   *
+   * @param pageObject
+   * @param alignToCenter
    */
   loadPage(pageObject, alignToCenter = true) {
     return new Promise((resolve, reject) => {

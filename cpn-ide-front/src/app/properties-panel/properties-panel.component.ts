@@ -218,6 +218,8 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     // console.log('getSubstPages()');
     const pageList = this.modelService.getAllPages();
 
+    console.log('getSubstPages(), pageList = ', pageList);
+
     const subPageIdList = [];
     const parentPageIdList = [];
 
@@ -236,7 +238,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
       }
     }
 
-    // console.log('getSubstPages(), supPageIdList = ', subPageIdList);
+    console.log('getSubstPages(), supPageIdList = ', subPageIdList);
 
     const pageNames = ['-- empty --'];
     for (const page of pageList) {

@@ -92,7 +92,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
-    this.eventService.on(Message.SETTING_CHANGED, ({key, value}) => {
+    this.eventService.on(Message.SETTING_CHANGED, ({ key, value }) => {
       this.modeling.setDefaultValue(key, value);
     });
   }

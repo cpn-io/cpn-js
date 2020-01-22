@@ -65,6 +65,16 @@ export class ModelService {
     //   // this.loadProject(this.getProject());
     // });
 
+    this.eventService.on(Message.PAGE_CREATE_SUBST, (event) => {
+      console.log('Message.PAGE_CREATE_SUBST, event = ', event);
+
+      const subpageCpnElement = this.createSubpage(event.cpnElement, event.subPageName, event.subPageId);
+
+      this.eventService.send(Message.PAGE_UPDATE_SUBST, {
+        cpnElement: event.cpnElement,
+        subpageName: subpageCpnElement.pageattr._name
+      });
+    });
   }
 
   markNewModel() {

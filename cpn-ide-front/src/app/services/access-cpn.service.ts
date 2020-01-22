@@ -189,6 +189,12 @@ export class AccessCpnService {
     return this.userSessionId;
   }
 
+  generateSessionId() {
+    // return 'CPN_IDE_SESSION_' + new Date().getTime();
+    return '' + new Date().getTime();
+  }
+
+
   /**
    * Get current user session
    */
@@ -210,7 +216,7 @@ export class AccessCpnService {
     }
 
     if (!this.sessionId) {
-      this.sessionId = 'CPN_IDE_SESSION_' + new Date().getTime();
+      this.sessionId = this.generateSessionId();
     }
 
     console.log('AccessCpnService, initNet(), START, this.sessionId = ', this.sessionId);
@@ -316,7 +322,7 @@ export class AccessCpnService {
     this.stateData = undefined;
 
     if (!this.sessionId) {
-      this.sessionId = 'CPN_IDE_SESSION_' + new Date().getTime();
+      this.sessionId = this.generateSessionId();
     }
 
     this.initSimProcessing = true;

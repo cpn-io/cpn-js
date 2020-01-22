@@ -26,7 +26,7 @@ export class MainToolbarComponent implements OnInit {
   constructor(
     private projectService: ProjectService,
     private eventService: EventService,
-    private validationService: ValidationService,
+    public validationService: ValidationService,
     public accessCpnService: AccessCpnService,
     public modelService: ModelService,
     private editorPanelService: EditorPanelService,

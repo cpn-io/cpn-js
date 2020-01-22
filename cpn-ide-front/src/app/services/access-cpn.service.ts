@@ -183,7 +183,8 @@ export class AccessCpnService {
    * Generate new user session
    */
   generateUserSession() {
-    this.userSessionId = 'CPN_USER_SESSION_' + new Date().getTime();
+    // this.userSessionId = 'CPN_USER_SESSION_' + new Date().getTime();
+    this.userSessionId = '' + new Date().getTime();
     console.log('generateUserSession(), this.userSessionId = ', this.userSessionId);
     return this.userSessionId;
   }

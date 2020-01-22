@@ -82,6 +82,9 @@ public class PetriNetContainer {
 
             Checker checker = new Checker(net, null, _sim);
             String file = Paths.get(FilenameUtils.concat(OUTPUT_MODEL_PATH, sessionId)).toAbsolutePath().toString();
+            log.debug("Prepare path for writing reports to: " + file);
+            File fileObj = new File(file);
+            fileObj.mkdirs();
             checker.checkInitializing(file, file);
 
             usersCheckers.put(sessionId, checker);

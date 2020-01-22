@@ -50,6 +50,13 @@ export class ValidationService implements OnDestroy {
   checkValidationBusy = false;
   checkValidationScheduled = false;
 
+  history = {
+    models: [],
+    currentModelIndex: 0,
+    backupBusy : false,
+    undoRedoBusy: false
+  };
+
   constructor(
     private eventService: EventService,
     private modelService: ModelService,
@@ -136,7 +143,11 @@ export class ValidationService implements OnDestroy {
         }
 
         if (backupChangeList.length > 0) {
-          this.eventService.send(Message.MODEL_SAVE_BACKUP, { lastProjectData: this.lastProjectData });
+          if (Object.keys(this.lastProjectData).length !== 0) {
+            // console.log('HISTORY SAVE 2');
+            this.archiveModelToHistory(this.lastProjectData);
+            this.eventService.send(Message.MODEL_SAVE_BACKUP);
+          }
         }
 
         for (const dif of differences) {
@@ -156,9 +167,89 @@ export class ValidationService implements OnDestroy {
 
     if (this.needValidation && this.isAutoValidation) {
       this.needValidation = false;
-      this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData(), complexVerify: false });
+      this.eventService.send(Message.SERVER_INIT_NET, {projectData: this.modelService.getProjectData(), complexVerify: false});
     }
 
     this.checkValidationBusy = false;
   }
+
+  archiveModelToHistory(model: any, hiddenPush?) {
+    if (hiddenPush) {
+      this.history.models.push(model);
+      return;
+    }
+
+    if (this.history.backupBusy) {
+      return;
+    }
+    this.history.backupBusy = true;
+    // console.log('HISTORY ARCH', model);
+    if (this.history.models.length > this.history.currentModelIndex) {
+      this.history.models.splice(this.history.currentModelIndex);
+    }
+
+    this.history.models.push(model);
+    this.history.currentModelIndex++;
+    if (this.history.models.length !== this.history.currentModelIndex) {
+      console.error(`History index is wrong! index:${this.history.currentModelIndex} and history.array size is: ${this.history.models.length}`);
+    }
+    this.history.backupBusy = false;
+  }
+
+  undo() {
+    if (this.history.undoRedoBusy) {
+      return;
+    }
+    if (this.history.currentModelIndex === this.history.models.length) {
+      if (Object.keys(this.lastProjectData).length !== 0) {
+        this.archiveModelToHistory(cloneObject(this.lastProjectData), true);
+      }
+    }
+    this.history.undoRedoBusy = true;
+    const model = this.getPreviousModelFromHistory();
+    // console.log('HISTORY UNDO', model);
+    if (model) {
+      this.modelService.projectData = model;
+      this.modelService.project = {data: model, name: this.modelService.projectName};
+      this.eventService.send(Message.MODEL_RELOAD);
+    }
+    this.history.undoRedoBusy = false;
+  }
+
+  redo() {
+    if (this.history.undoRedoBusy) {
+      return;
+    }
+    this.history.undoRedoBusy = true;
+
+    const model = this.getNextModelFromHistory();
+    // console.log('HISTORY REDO', model);
+    if (model) {
+      this.modelService.projectData = model;
+      this.modelService.project = {data: model, name: this.modelService.projectName};
+      this.eventService.send(Message.MODEL_RELOAD);
+    }
+    this.history.undoRedoBusy = false;
+  }
+
+  getPreviousModelFromHistory() {
+    if (this.history.models[this.history.currentModelIndex - 1]) {
+      if (this.history.models[this.history.currentModelIndex - 2]) {
+        this.lastProjectData = this.history.models[this.history.currentModelIndex - 2];
+      } else {
+        this.lastProjectData = this.history.models[this.history.currentModelIndex - 1];
+      }
+      return this.history.models[--this.history.currentModelIndex];
+    }
+    return null;
+  }
+
+  getNextModelFromHistory() {
+    if (this.history.models[this.history.currentModelIndex + 1]) {
+      this.lastProjectData = this.history.models[this.history.currentModelIndex];
+      return this.history.models[++this.history.currentModelIndex];
+    }
+    return null;
+  }
+
 }

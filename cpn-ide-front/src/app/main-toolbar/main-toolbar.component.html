@@ -47,23 +47,23 @@
 
     <!-- Undo -->
     <li class="nav-item">
-      <div class="nav-link mb-0" [ngClass]="{'disabled': modelService.getUndoCount() === 0 }"
-        (click)="modelService.undoChanges()">
+      <div class="nav-link mb-0" [ngClass]="{'disabled': undo === 0 }"
+        (click)="getUndo()">
         <i class="fas fa-undo"></i>
         <!-- <span>Undo</span>&nbsp;<span *ngIf="modelService.getUndoCount() > 0">({{ modelService.getUndoCount() }})</span> -->
-        <span *ngIf="modelService.getUndoCount() > 0; else elseUndoBlock">Undo
-          ({{ modelService.getUndoCount() }})</span>
+        <span *ngIf="undo > 0; else elseUndoBlock">Undo
+          ({{ undo }})</span>
         <ng-template #elseUndoBlock><span>Undo</span></ng-template>
       </div>
     </li>
 
     <!-- Redo -->
     <li class="nav-item">
-      <div class="nav-link mb-0" [ngClass]="{'disabled': modelService.getRedoCount() === 0 }"
-        (click)="modelService.redoChanges()">
+      <div class="nav-link mb-0" [ngClass]="{'disabled': redo === 0 }"
+        (click)="getRedo()">
         <i class="fas fa-redo"></i>
-        <span *ngIf="modelService.getRedoCount() > 0; else elseRedoBlock">Redo
-          ({{ modelService.getRedoCount() }})</span>
+        <span *ngIf="redo > 0; else elseRedoBlock">Redo
+          ({{ redo }})</span>
         <ng-template #elseRedoBlock><span>Redo</span></ng-template>
       </div>
     </li>

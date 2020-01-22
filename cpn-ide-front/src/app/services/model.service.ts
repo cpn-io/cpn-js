@@ -34,14 +34,6 @@ export class ModelService {
   countNewItems = 0;
   paramsTypes = ['ml', 'color', 'var', 'globref'];
 
-
-  undoHistory = [];
-  redoHistory = [];
-  skipBackup = false;
-
-  backupBusy = false;
-  undoRedoBusy = false;
-
   constructor(private eventService: EventService,
     private settings: SettingsService,
   ) {
@@ -73,13 +65,6 @@ export class ModelService {
     //   // this.loadProject(this.getProject());
     // });
 
-    // MODEL SAVE BACKUP
-    this.eventService.on(Message.MODEL_SAVE_BACKUP, (event) => {
-      if (event && event.lastProjectData) {
-        this.saveBackup(event.lastProjectData);
-      }
-    });
-
   }
 
   markNewModel() {
@@ -100,9 +85,6 @@ export class ModelService {
   public loadProject(project) {
     console.log('ModelService.loadProject(), project = ', project);
 
-    this.undoHistory = [];
-    this.redoHistory = [];
-
     this.project = project;
     this.projectData = project.data;
     this.projectName = project.name;
@@ -112,80 +94,6 @@ export class ModelService {
     this.updateBinders();
 
     localStorage.setItem('projectJson', JSON.stringify(this.projectData));
-  }
-
-  getUndoCount() {
-    // console.log('getUndoCount()');
-    return this.undoHistory.length;
-  }
-
-  getRedoCount() {
-    return this.redoHistory.length;
-  }
-
-  saveBackup(model) {
-    if (this.backupBusy) {
-      return;
-    }
-    this.backupBusy = true;
-
-    if (Object.keys(model).length > 0) {
-      // if (!this.skipBackup) {
-      this.undoHistory.push(model);
-      this.redoHistory = [];
-
-      if (this.undoHistory.length > 100) {
-        this.undoHistory.splice(0, 1);
-      }
-      // }
-    }
-    this.skipBackup = false;
-
-    this.backupBusy = false;
-  }
-
-  undoChanges() {
-    if (this.undoRedoBusy) {
-      return;
-    }
-    this.undoRedoBusy = true;
-
-    if (this.undoHistory.length > 0) {
-      // add current model to redo history
-      this.redoHistory.push(this.projectData);
-
-      // get model from redo history
-      this.projectData = this.undoHistory.pop();
-      this.project = { data: this.projectData, name: this.projectName };
-      this.skipBackup = true;
-      this.eventService.send(Message.MODEL_RELOAD);
-    }
-
-    this.undoRedoBusy = false;
-
-    // this.eventService.send(Message.MODEL_CHANGED);
-  }
-
-  redoChanges() {
-    if (this.undoRedoBusy) {
-      return;
-    }
-    this.undoRedoBusy = true;
-
-    if (this.redoHistory.length > 0) {
-      // get model from undo history
-      this.projectData = this.redoHistory.pop();
-      this.project = { data: this.projectData, name: this.projectName };
-      this.skipBackup = true;
-      this.eventService.send(Message.MODEL_RELOAD);
-
-      // add current model to undo history
-      this.undoHistory.push(this.projectData);
-    }
-
-    this.undoRedoBusy = false;
-
-    // this.eventService.send(Message.MODEL_CHANGED);
   }
 
   public getProject() {

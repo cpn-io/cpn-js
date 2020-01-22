@@ -20,6 +20,8 @@ export class MainToolbarComponent implements OnInit {
 
   version = AppVersion.buildVersion;
   isStart;
+  undo = 0;
+  redo = 0;
 
   constructor(
     private projectService: ProjectService,
@@ -40,6 +42,8 @@ export class MainToolbarComponent implements OnInit {
     this.ipcService.on(Message.MAIN_MENU_NEW_PROJECT, () => this.onNewProject());
     this.ipcService.on(Message.MAIN_MENU_OPEN_PROJECT, () => this.openProject());
     // this.ipcService.on(Message.MAIN_MENU_SAVE_PROJECT, () => this.onSaveProject());
+    this.eventService.on(Message.MODEL_SAVE_BACKUP, () => this.refreshHistorySteps());
+    this.eventService.on(Message.MODEL_RELOAD, () => this.refreshHistorySteps());
   }
 
   onDoStep() {
@@ -106,5 +110,18 @@ export class MainToolbarComponent implements OnInit {
 
   openProject() {
     this.onStopSimulation();
+  }
+
+  getUndo() {
+    this.validationService.undo();
+  }
+
+  getRedo() {
+    this.validationService.redo();
+  }
+
+  refreshHistorySteps() {
+    this.undo = this.validationService.history.currentModelIndex;
+    this.redo = this.validationService.history.models.length - 1 - this.validationService.history.currentModelIndex;
   }
 }

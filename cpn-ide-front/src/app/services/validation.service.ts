@@ -1,10 +1,10 @@
-import { Injectable, OnInit, OnDestroy } from '@angular/core';
-import { EventService } from './event.service';
-import { ModelService } from './model.service';
-import { Message } from '../common/message';
-import { AccessCpnService } from '../services/access-cpn.service';
-import { cloneObject, objectsEqual } from '../common/utils';
-import { Observable, timer } from 'rxjs';
+import {Injectable, OnInit, OnDestroy} from '@angular/core';
+import {EventService} from './event.service';
+import {ModelService} from './model.service';
+import {Message} from '../common/message';
+import {AccessCpnService} from '../services/access-cpn.service';
+import {cloneObject, objectsEqual} from '../common/utils';
+import {Observable, timer} from 'rxjs';
 
 const deepEqual = require('deep-equal');
 const diff = require('deep-diff').diff;
@@ -53,7 +53,7 @@ export class ValidationService implements OnDestroy {
   history = {
     models: [],
     currentModelIndex: 0,
-    backupBusy : false,
+    backupBusy: false,
     undoRedoBusy: false
   };
 
@@ -66,12 +66,11 @@ export class ValidationService implements OnDestroy {
       this.init();
       this.validate();
     });
-    this.eventService.on(Message.MODEL_RELOAD, () => {
-      this.init();
-    });
+    this.eventService.on(Message.MODEL_RELOAD, () => this.init());
 
     this.timeTimer = timer(this.VALIDATION_TIMEOUT, this.VALIDATION_TIMEOUT);
     this.timeTimerSubscribtion = this.timeTimer.subscribe(() => this.checkValidation());
+    this.eventService.on(Message.PROJECT_SAVED, () => this.clearHistory());
   }
 
   ngOnDestroy() {
@@ -151,7 +150,7 @@ export class ValidationService implements OnDestroy {
         }
 
         for (const dif of differences) {
-          this.eventService.send(Message.MODEL_CHANGED_DETAILS, { changesPath: JSON.stringify(dif.path) });
+          this.eventService.send(Message.MODEL_CHANGED_DETAILS, {changesPath: JSON.stringify(dif.path)});
         }
 
         this.lastProjectData = cloneObject(projectData);
@@ -189,6 +188,7 @@ export class ValidationService implements OnDestroy {
     }
     if (this.history.models.length > 99) {
       this.history.models.splice(0, 1);
+      --this.history.currentModelIndex;
     }
 
     this.history.models.push(model);
@@ -253,6 +253,22 @@ export class ValidationService implements OnDestroy {
       return this.history.models[++this.history.currentModelIndex];
     }
     return null;
+  }
+
+  clearHistory() {
+    const interval = setInterval(() => {
+      if (!this.history.undoRedoBusy) {
+        this.history.models = [];
+        this.history.currentModelIndex = 0;
+        clearInterval(interval);
+        this.eventService.send(Message.MODEL_SAVE_BACKUP);
+      }
+    }, 100);
+    setTimeout(() => {
+      clearInterval(interval);
+      // console.error('Can`t clear history buffer', interval);
+    }, 60000);
+
   }
 
 }

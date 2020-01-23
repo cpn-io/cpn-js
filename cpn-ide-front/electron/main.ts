@@ -1,5 +1,5 @@
-import { app, BrowserWindow, Menu, ipcMain, ipcRenderer } from 'electron';
-import { spawn } from 'child_process';
+import {app, BrowserWindow, Menu, ipcMain, ipcRenderer} from 'electron';
+import {spawn} from 'child_process';
 import * as log from 'electron-log';
 import * as path from 'path';
 import * as url from 'url';
@@ -59,26 +59,36 @@ function createWindow() {
   //   });
   // });
 
-  mainWindow.on('close', (data) => {
-    //  ---Prompt to quit
-    // const choice = require('electron').dialog.showMessageBox(this,
-    //   {
-    //     type: 'question',
-    //     buttons: ['Yes', 'No'],
-    //     title: 'Confirm',
-    //     message: 'Are you sure you want to quit?'
-    //   });
-    // if(choice === 1){
-    //   data.preventDefault();
-    // }
+  let realyClosed = false;
+  mainWindow.on('close', function (data) {
+    if (realyClosed) {
+      return;
+    }
+
+    //  ---Prompt to save
+    const choice = require('electron').dialog.showMessageBox(this,
+      {
+        type: 'question',
+        buttons: ['Yes', 'No'],
+        title: 'Confirm',
+        message: 'There are unsaved changes on the current model. Exit?'
+      });
+    if (choice === 1) {
+      data.preventDefault();
+      return;
+    }
 
     log.info('mainWindow, close');
     killCpnServer().then(
       (result) => {
         log.info('mainWindow, close, killCpnServer() COMPLETE: ', result);
+        realyClosed = true;
+        mainWindow.close();
       },
       (error) => {
         log.error('mainWindow, close, killCpnServer() ERROR: ', error);
+        realyClosed = true;
+        mainWindow.close();
       }
     );
     data.preventDefault();
@@ -111,7 +121,7 @@ function createWindow() {
         {
           label: 'Restart CPN server', click() {
             killCpnServer().then(
-              (success) => runCpnServer(), 
+              (success) => runCpnServer(),
               (error) => runCpnServer()
               );
           }

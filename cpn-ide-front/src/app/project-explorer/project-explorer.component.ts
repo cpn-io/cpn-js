@@ -138,17 +138,17 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    window.onbeforeunload = (evt)=> {
-      const message = 'Did you remember to download your form?';
-      if (typeof evt === 'undefined') {
-        evt = window.event;
-      }
-      if (evt && this.validationService.history.models.length > 0) {
-        evt.returnValue = message;
-      }
-
-      return message;
-    }
+    // window.onbeforeunload = (evt)=> {
+    //   const message = 'Did you remember to download your form?';
+    //   if (typeof evt === 'undefined') {
+    //     evt = window.event;
+    //   }
+    //   if (evt && this.validationService.history.models.length > 0) {
+    //     evt.returnValue = message;
+    //   }
+    //
+    //   return message;
+    // }
 
     // const self = this;
 

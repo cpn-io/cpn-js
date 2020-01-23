@@ -1,15 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { ProjectService } from '../services/project.service';
-import { AppVersion } from '../app.version';
-import { ModelService } from '../services/model.service';
-import { EventService } from '../services/event.service';
-import { Message } from '../common/message';
-import { ValidationService } from '../services/validation.service';
-import { AccessCpnService } from '../services/access-cpn.service';
-import { EditorPanelService } from '../services/editor-panel.service';
-import { ApplicationService } from '../services/application.service';
-import { ElectronService } from 'ngx-electron';
-import { IpcService } from '../services/ipc.service';
+import {Component, OnInit} from '@angular/core';
+import {ProjectService} from '../services/project.service';
+import {AppVersion} from '../app.version';
+import {ModelService} from '../services/model.service';
+import {EventService} from '../services/event.service';
+import {Message} from '../common/message';
+import {ValidationService} from '../services/validation.service';
+import {AccessCpnService} from '../services/access-cpn.service';
+import {EditorPanelService} from '../services/editor-panel.service';
+import {ApplicationService} from '../services/application.service';
+import {ElectronService} from 'ngx-electron';
+import {IpcService} from '../services/ipc.service';
 
 @Component({
   selector: 'app-main-toolbar',
@@ -69,7 +69,7 @@ export class MainToolbarComponent implements OnInit {
 
   onValidate() {
     // this.validationService.validate();
-    this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData(), complexVerify: true });
+    this.eventService.send(Message.SERVER_INIT_NET, {projectData: this.modelService.getProjectData(), complexVerify: true});
   }
 
   onValidateAuto() {
@@ -91,7 +91,12 @@ export class MainToolbarComponent implements OnInit {
     this.applicationService.isShowDocumentation = !this.applicationService.isShowDocumentation;
   }
 
+
   onNewProject() {
+    const message = 'There are unsaved changes on the current model';
+    if (!confirm(message)){
+      return;
+    }
     this.onStopSimulation();
     this.projectService.loadEmptyProject();
   }
@@ -99,7 +104,7 @@ export class MainToolbarComponent implements OnInit {
   reloadProject() {
     this.onStopSimulation();
 
-    this.eventService.send(Message.PROJECT_LOAD, { project: this.modelService.getProject() });
+    this.eventService.send(Message.PROJECT_LOAD, {project: this.modelService.getProject()});
 
     setTimeout(() => this.validationService.validate(), 500);
   }

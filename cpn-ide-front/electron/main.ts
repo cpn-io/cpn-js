@@ -16,19 +16,15 @@ var loadingScreen: BrowserWindow;
 var shellRunner = undefined;
 
 app.on('ready', () => {
-  createWindow();
-  createLoadingScreen();
   runCpnServer();
+  setTimeout(() => createLoadingScreen(), 1000);
+  setTimeout(() => createWindow(), 5000);
 });
-
-function initCpnServerUrl() {
-  // CpnServerUrl.set('http://95.161.178.222:42020');
-}
 
 function createWindow() {
   const directory = isDev ? process.cwd().concat('/app') : process.env.APP_PATH;
 
-  mainWindow = new BrowserWindow({ width: 1400, height: 900, show: false });
+  mainWindow = new BrowserWindow({ width: 1920, height: 1080, show: false });
   mainWindow.setMenuBarVisibility(true);
   // mainWindow.setFullScreen(true);
 
@@ -62,8 +58,8 @@ function createWindow() {
   //     log.info('app, before-quit, killCpnServer() complete!');
   //   });
   // });
-  mainWindow.on('close', function (data) {
 
+  mainWindow.on('close', (data) => {
     //  ---Prompt to quit
     // const choice = require('electron').dialog.showMessageBox(this,
     //   {
@@ -77,9 +73,15 @@ function createWindow() {
     // }
 
     log.info('mainWindow, close');
-    killCpnServer().then((result) => {
-      log.info('mainWindow, close, killCpnServer() complete!, result = ', result);
-    });
+    killCpnServer().then(
+      (result) => {
+        log.info('mainWindow, close, killCpnServer() COMPLETE: ', result);
+      },
+      (error) => {
+        log.error('mainWindow, close, killCpnServer() ERROR: ', error);
+      }
+    );
+    data.preventDefault();
   });
 
   log.info('APP PATH = ', app.getAppPath());
@@ -97,9 +99,9 @@ function createWindow() {
       submenu: [
         { label: 'New project', click() { newProject() } },
         { type: 'separator' },
-        // { label: 'Open project', click() { openProject() }, accelerator: 'Ctrl+O' },
-        // { label: 'Save project', click() { saveProject() }, accelerator: 'Ctrl+S' },
-        // { type: 'separator' },
+        { label: 'Open project', click() { openProject() }, accelerator: 'Ctrl+O' },
+        { label: 'Save project', click() { saveProject() }, accelerator: 'Ctrl+S' },
+        { type: 'separator' },
         { label: 'Exit', click() { app.quit() }, accelerator: 'Alt+F4' }
       ]
     },
@@ -108,7 +110,10 @@ function createWindow() {
       submenu: [
         {
           label: 'Restart CPN server', click() {
-            killCpnServer().then(() => setTimeout(() => runCpnServer(), 100));
+            killCpnServer().then(
+              (success) => runCpnServer(), 
+              (error) => runCpnServer()
+              );
           }
         },
         { type: 'separator' },
@@ -164,9 +169,9 @@ function runCpnServer() {
   });
 
   shellRunner.on('close', function (code) {
-    log.error('killCpnServer, close, code = ', code);;
+    // log.error('killCpnServer, close, code = ', code);;
     // shellRunner = undefined;
-    // log.info('SERVER Process has been killed!');
+    log.info('cpn-ide-back SERVER Process has been killed!');
   });
 
   // shellRunner.kill();
@@ -174,39 +179,61 @@ function runCpnServer() {
 
 function killCpnServer() {
 
-  var ps = require('ps-node');
-  ps.lookup(
-    { command: 'java' },
-    function (err, resultList) {
-      if (err) {
-        throw new Error(err);
-      }
+  // var ps = require('ps-node');
+  // ps.lookup(
+  //   { command: 'java' },
+  //   function (err, resultList) {
+  //     if (err) {
+  //       throw new Error(err);
+  //     }
+  //     resultList.forEach(function (process) {
+  //       if (process) {
 
-      resultList.forEach(function (process) {
-        if (process) {
+  //         console.log('PID: %s, COMMAND: %s, ARGUMENTS: %s', process.pid, process.command, process.arguments);
+  //       }
+  //     });
+  //   }
+  // );
 
-          console.log('PID: %s, COMMAND: %s, ARGUMENTS: %s', process.pid, process.command, process.arguments);
-        }
-      });
-    }
-  );
-
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     log.info('killCpnServer()');
 
     if (shellRunner) {
       log.info('killCpnServer(), findProcess(), shellRunner.pid = ', shellRunner.pid);
+      log.info('killCpnServer(), findProcess(), shellRunner.ppid = ', shellRunner.ppid);
 
-      findProcess('name', 'cpn-ide-back').then((list) => {
-        log.info('killCpnServer(), findProcess(), list = ', list);
-        if (list && list[0] && list[0].pid) {
-          process.kill(list[0].pid);
-          shellRunner = undefined;
-        }
-        resolve('CPN Server process KILLED!');
-      });
+      // kill simulator processes
+      findProcess('name', 'cpnmld.x86').then(
+        (list) => {
+          for (const p of list) {
+            if (p.pid) {
+              log.info('killCpnServer(), findProcess(\'cpnmld.x86\'), p = ', p.pid, p.name);
+              process.kill(p.pid);
+            }
+          }
+        });
+
+      // kill cpn-ide-back server process
+      findProcess('name', 'cpn-ide-back').then(
+        (list) => {
+          if (list && list.length) {
+            for (const p of list) {
+              if (p.pid) {
+                log.info('killCpnServer(), findProcess(\'cpn-ide-back\'), p = ', p.pid, p.name);
+                process.kill(p.pid);
+              }
+            }
+            resolve('CPN Server process KILLED!');
+          } else {
+            reject('NO CPN Server process DETECTED (1)!');
+          }
+        },
+        (error) => {
+          reject('NO CPN Server process DETECTED (2)!');
+        });
+    } else {
+      reject('NO CPN Server process DETECTED (3)!');
     }
-    resolve('NO CPN Server process DETECTED!');
   });
 }
 

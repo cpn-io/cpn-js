@@ -81,11 +81,12 @@ public class PetriNetContainer {
                 _sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
 
             Checker checker = new Checker(net, null, _sim);
-            String file = Paths.get(FilenameUtils.concat(OUTPUT_MODEL_PATH, sessionId)).toAbsolutePath().toString();
-            log.debug("Prepare path for writing reports to: " + file);
-            File fileObj = new File(file);
-            fileObj.mkdirs();
-            checker.checkInitializing(file, file);
+
+            String pathStr = Paths.get(FilenameUtils.concat(OUTPUT_MODEL_PATH, sessionId)).toAbsolutePath().toString();
+            // String pathStr = "c:\\tmp";
+
+            log.debug("Prepare path for writing reports to: " + pathStr);            
+            checker.checkInitializing(pathStr, pathStr);
 
             usersCheckers.put(sessionId, checker);
             usersSimulator.put(sessionId, _sim);
@@ -169,7 +170,7 @@ public class PetriNetContainer {
             // checker.checkEntireModel();
 
             // checker.localCheck();
-            CleanOutputPathContent(sessionId);
+            // CleanOutputPathContent(sessionId);
 
             // String file = Paths.get(FilenameUtils.concat(OUTPUT_MODEL_PATH,
             // sessionId)).toAbsolutePath().toString();
@@ -200,8 +201,13 @@ public class PetriNetContainer {
 
     String getOutputPathContent(String sessionId) throws Exception {
         final StringBuilder sb = new StringBuilder();
-        List<Path> files = Files.walk(Paths.get(FilenameUtils.concat(OUTPUT_MODEL_PATH, sessionId)).toAbsolutePath())
-                .filter(Files::isRegularFile).filter(p -> p.toString().endsWith(".html")).collect(Collectors.toList());
+        String pathStr = Paths.get(FilenameUtils.concat(OUTPUT_MODEL_PATH, sessionId)).toAbsolutePath().toString();
+        // String pathStr = "c:\\tmp";
+        List<Path> files = Files
+            .walk(Paths.get(pathStr).toAbsolutePath())
+            .filter(Files::isRegularFile)
+            .filter(p -> p.toString().endsWith(".html"))
+            .collect(Collectors.toList());
 
         for (Path f : files) {
             sb.append("\n\nFilename: " + f.toString() + "\n");
@@ -212,8 +218,9 @@ public class PetriNetContainer {
     }
 
     void CleanOutputPathContent(String sessionId) throws Exception {
-        FileUtils.deleteDirectory(
-                new File(Paths.get(FilenameUtils.concat(OUTPUT_MODEL_PATH, sessionId)).toAbsolutePath().toString()));
+        String pathStr = Paths.get(FilenameUtils.concat(OUTPUT_MODEL_PATH, sessionId)).toAbsolutePath().toString();
+        // String pathStr = "c:\\tmp";
+        FileUtils.deleteDirectory(new File(pathStr));
     }
 
     List<String> getEnableTransitionsImpl(String sessionId) throws Exception {
@@ -563,6 +570,8 @@ public class PetriNetContainer {
     public String makeReplication(String sessionId, Replication stepParam) throws Exception {
         HighLevelSimulator sim = usersSimulator.get(sessionId);
         log.debug("Writing report to " + sim.getOutputDir());
+        File fileObj = new File(sim.getOutputDir());
+        fileObj.mkdirs();
         sim.evaluate("CPN'Replications.nreplications " + stepParam.getRepeat());
         log.debug("Written report to " + sim.getOutputDir());
         return getOutputPathContent(sessionId);

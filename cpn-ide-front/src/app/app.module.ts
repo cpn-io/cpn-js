@@ -67,6 +67,7 @@ import { ProjectDeclarationsOldComponent } from './project-declarations-old/proj
 import { ProjectDeclarationsComponent } from './project-declarations/project-declarations.component';
 import { ProjectDeclarationsBlockNodeComponent } from './project-declarations/project-declarations-block-node/project-declarations-block-node.component';
 import { SimulationReportPipe } from './pipes/simulation-report.pipe';
+import {FileService} from './services/file.service';
 
 require('typeface-droid-sans-mono');
 
@@ -147,7 +148,8 @@ require('typeface-droid-sans-mono');
     ProjectService,
     EventService,
     ModelService,
-    ValidationService
+    ValidationService,
+    FileService
   ],
   bootstrap: [AppComponent]
 })

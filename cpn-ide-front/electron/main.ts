@@ -63,6 +63,19 @@ function createWindow() {
   //   });
   // });
   mainWindow.on('close', function (data) {
+
+    //  ---Prompt to quit
+    // const choice = require('electron').dialog.showMessageBox(this,
+    //   {
+    //     type: 'question',
+    //     buttons: ['Yes', 'No'],
+    //     title: 'Confirm',
+    //     message: 'Are you sure you want to quit?'
+    //   });
+    // if(choice === 1){
+    //   data.preventDefault();
+    // }
+
     log.info('mainWindow, close');
     killCpnServer().then((result) => {
       log.info('mainWindow, close, killCpnServer() complete!, result = ', result);

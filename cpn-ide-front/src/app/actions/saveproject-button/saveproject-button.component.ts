@@ -1,11 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {Component, OnInit} from '@angular/core';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as FileSaver from 'file-saver';
-import { ModelService } from '../../services/model.service';
+import {ModelService} from '../../services/model.service';
 import * as X2JS from '../../../lib/x2js/xml2json';
-import { AccessCpnService } from 'src/app/services/access-cpn.service';
-import { xmlBeautify } from '../../../lib/xml-beautifier/xml-beautifier.js';
-import { cloneObject } from 'src/app/common/utils';
+import {AccessCpnService} from 'src/app/services/access-cpn.service';
+import {xmlBeautify} from '../../../lib/xml-beautifier/xml-beautifier.js';
+import {cloneObject} from 'src/app/common/utils';
+import {EventService} from '../../services/event.service';
+import {Message} from '../../common/message';
+import {FileService} from '../../services/file.service';
 
 @Component({
   selector: 'app-saveproject-button',
@@ -14,20 +17,22 @@ import { cloneObject } from 'src/app/common/utils';
 })
 export class SaveprojectButtonComponent implements OnInit {
 
+  xmlPrefix = '<?xml version="1.0" encoding="iso-8859-1"?>\n<!DOCTYPE workspaceElements PUBLIC "-//CPN//DTD CPNXML 1.0//EN" "http://cpntools.org/DTD/6/cpn.dtd">\n';
   fileNameModel: string;
 
-  xmlPrefix = '<?xml version="1.0" encoding="iso-8859-1"?>\n<!DOCTYPE workspaceElements PUBLIC "-//CPN//DTD CPNXML 1.0//EN" "http://cpntools.org/DTD/6/cpn.dtd">\n';
 
   constructor(private modal: NgbModal,
-    private modelService: ModelService,
-    private accessCpnService: AccessCpnService) {
+              private modelService: ModelService,
+              private accessCpnService: AccessCpnService,
+              private eventService: EventService,
+              private fileService: FileService) {
   }
 
   ngOnInit() {
   }
 
   open(modalName) {
-    console.log('app-saveproject-button', modalName)
+    console.log('app-saveproject-button', modalName);
     let idx = this.modelService.projectName.lastIndexOf('.');
     if (idx > 0) {
       this.fileNameModel = this.modelService.projectName.substr(0, idx);
@@ -35,7 +40,7 @@ export class SaveprojectButtonComponent implements OnInit {
       this.fileNameModel = this.modelService.projectName;
     }
 
-    this.modal.open(modalName, { ariaLabelledBy: 'modal-basic-title', centered: true }).result.then((result) => {
+    this.modal.open(modalName, {ariaLabelledBy: 'modal-basic-title', centered: true}).result.then((result) => {
       const x2js = new X2JS();
       let xml = (x2js.json2xml_str(cloneObject(this.modelService.getProjectData()))); /// netJson
       xml = `${this.xmlPrefix}\n${xml}`;
@@ -62,8 +67,11 @@ export class SaveprojectButtonComponent implements OnInit {
   }
 
   private saveAsText(charArray: string, fileName: string) {
-    const blob = new Blob([charArray], { type: 'application/xml; charset=iso-8859-1' });
-    FileSaver.saveAs(blob, fileName);
+    //   const blob = new Blob([charArray], {type: 'application/xml; charset=iso-8859-1'});
+    //   FileSaver.saveAs(blob, fileName);
+    //   this.eventService.send(Message.PROJECT_SAVED);
+    // }
+    this.fileService.saveAsText(charArray, fileName);
   }
 
 }

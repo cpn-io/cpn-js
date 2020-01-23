@@ -1,5 +1,6 @@
 export class Message {
   static PROJECT_LOAD = 'project.load';
+  static PROJECT_SAVED = 'project.saved';
 
   static MODEL_CHANGED = 'model.changed';
   static MODEL_CHANGED_DETAILS = 'model.changed.details';

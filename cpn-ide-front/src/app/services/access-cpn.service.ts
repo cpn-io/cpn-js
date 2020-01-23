@@ -191,7 +191,10 @@ export class AccessCpnService {
 
   generateSessionId() {
     // return 'CPN_IDE_SESSION_' + new Date().getTime();
-    return '' + new Date().getTime();
+    let id = '' + new Date().getTime();
+    // id = 'S' + id.substr(id.length - 6);
+    id = 'SESSION';
+    return id;
   }
 
 

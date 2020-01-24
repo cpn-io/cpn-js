@@ -67,22 +67,22 @@ function createWindow() {
     }
 
     //  ---Prompt to save
-    if (unSaved) {
-      const choice = require('electron').dialog.showMessageBox(this,
-        {
-          type: 'question',
-          buttons: ['Exit', 'Back', 'Save As' ],
-          title: 'Confirm',
-          message: 'Save the changes to file before closing?'
-        });
-      if (choice !== 0) {
-        data.preventDefault();
-        if (choice === 2){
-          mainWindow.webContents.send('main.menu.save.project');
-        }
-        return;
-      }
-    }
+    // if (unSaved) {
+    //   const choice = require('electron').dialog.showMessageBox(this,
+    //     {
+    //       type: 'question',
+    //       buttons: ['Exit', 'Back', 'Save As' ],
+    //       title: 'Confirm',
+    //       message: 'Save the changes to file before closing?'
+    //     });
+    //   if (choice !== 0) {
+    //     data.preventDefault();
+    //     if (choice === 2){
+    //       mainWindow.webContents.send('main.menu.save.project');
+    //     }
+    //     return;
+    //   }
+    // }
 
 
     log.info('mainWindow, close');

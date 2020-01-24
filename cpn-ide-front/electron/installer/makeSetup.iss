@@ -19,4 +19,5 @@ Source: "win-unpacked\resources\*"; DestDir: "{app}\resources"
 Source: "win-unpacked\resources\backend\*"; DestDir: "{app}\resources\backend"
 
 [Icons]
-Name: "{group}\CPN IDE"; Filename: "{app}\cpn-ide.exe"
+Name: "{group}\Run CPN IDE"; Filename: "{app}\cpn-ide.exe"
+Name: "{group}\Uninstall CPN IDE"; Filename: "{app}\unins000.exe"

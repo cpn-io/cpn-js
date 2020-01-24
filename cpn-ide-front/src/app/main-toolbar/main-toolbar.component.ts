@@ -40,7 +40,6 @@ export class MainToolbarComponent implements OnInit {
     this.accessCpnService.setIsSimulation(false);
 
     this.ipcService.on(Message.MAIN_MENU_NEW_PROJECT, () => this.onNewProject());
-    this.ipcService.on(Message.MAIN_MENU_OPEN_PROJECT, () => this.openProject());
     // this.ipcService.on(Message.MAIN_MENU_SAVE_PROJECT, () => this.onSaveProject());
     this.eventService.on(Message.MODEL_SAVE_BACKUP, () => this.refreshHistorySteps());
     this.eventService.on(Message.MODEL_RELOAD, () => this.refreshHistorySteps());
@@ -93,8 +92,9 @@ export class MainToolbarComponent implements OnInit {
 
 
   onNewProject() {
-    const message = 'There are unsaved changes on the current model';
-    if (!confirm(message)){
+    const message = 'Do you want to save your changes';
+    if (confirm(message)) {
+      this.eventService.send(Message.MAIN_MENU_SAVE_PROJECT);
       return;
     }
     this.onStopSimulation();

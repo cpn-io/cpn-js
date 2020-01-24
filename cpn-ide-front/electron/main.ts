@@ -71,12 +71,15 @@ function createWindow() {
       const choice = require('electron').dialog.showMessageBox(this,
         {
           type: 'question',
-          buttons: ['Yes', 'No'],
+          buttons: ['Exit', 'Back', 'Save As' ],
           title: 'Confirm',
-          message: 'There are unsaved changes on the current model. Exit?'
+          message: 'Save the changes to file before closing?'
         });
-      if (choice === 1) {
+      if (choice !== 0) {
         data.preventDefault();
+        if (choice === 2){
+          mainWindow.webContents.send('main.menu.save.project');
+        }
         return;
       }
     }

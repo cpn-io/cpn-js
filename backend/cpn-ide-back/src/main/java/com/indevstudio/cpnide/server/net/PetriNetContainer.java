@@ -94,8 +94,10 @@ public class PetriNetContainer {
     }
 
     private String getOutputFullPathStr(String sessionId) {
-        String outputPathStr = FilenameUtils.concat(OUTPUT_MODEL_PATH, sessionId);
-        outputPathStr = FilenameUtils.concat(System.getProperty("user.home"), outputPathStr);
+        String outputPathStr = FilenameUtils.concat(System.getProperty("user.home"), "CPN_IDE");
+        outputPathStr = FilenameUtils.concat(outputPathStr, OUTPUT_MODEL_PATH);
+        outputPathStr = FilenameUtils.concat(outputPathStr, sessionId);
+
         String pathStr = Paths.get(outputPathStr).toAbsolutePath().toString();
         return pathStr;
     }

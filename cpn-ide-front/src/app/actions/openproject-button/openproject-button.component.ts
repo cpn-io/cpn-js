@@ -1,5 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {ProjectService} from '../../services/project.service';
+import {IpcService} from '../../services/ipc.service';
+import {Message} from '../../common/message';
+import {EventService} from '../../services/event.service';
 
 @Component({
   selector: 'app-openproject-button',
@@ -8,15 +11,21 @@ import {ProjectService} from '../../services/project.service';
 })
 export class OpenprojectButtonComponent implements OnInit {
 
-  constructor(private projectService: ProjectService) {
+  constructor(private projectService: ProjectService,
+              private ipcService: IpcService,
+              private eventService: EventService) {
   }
 
   ngOnInit() {
+    this.ipcService.on(Message.MAIN_MENU_OPEN_PROJECT, () => {
+      document.getElementById('imageOpen').click();
+    });
   }
 
   uploadFile(event) {
-    const message = 'There are unsaved changes on the current model';
-    if (!confirm(message)){
+    const message = 'Do you want to save your changes';
+    if (confirm(message)) {
+      this.eventService.send(Message.MAIN_MENU_SAVE_PROJECT);
       return;
     }
 

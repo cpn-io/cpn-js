@@ -9,6 +9,7 @@ import {cloneObject} from 'src/app/common/utils';
 import {EventService} from '../../services/event.service';
 import {Message} from '../../common/message';
 import {FileService} from '../../services/file.service';
+import {IpcService} from '../../services/ipc.service';
 
 @Component({
   selector: 'app-saveproject-button',
@@ -25,10 +26,13 @@ export class SaveprojectButtonComponent implements OnInit {
               private modelService: ModelService,
               private accessCpnService: AccessCpnService,
               private eventService: EventService,
-              private fileService: FileService) {
+              private fileService: FileService,
+              private ipcService: IpcService) {
   }
 
   ngOnInit() {
+    this.ipcService.on(Message.MAIN_MENU_SAVE_PROJECT, () => document.getElementById('saveButton').click());
+    this.eventService.on(Message.MAIN_MENU_SAVE_PROJECT, () => document.getElementById('saveButton').click());
   }
 
   open(modalName) {

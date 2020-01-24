@@ -14,6 +14,7 @@ var mainWindow: BrowserWindow;
 var loadingScreen: BrowserWindow;
 
 var shellRunner = undefined;
+let unSaved = false;
 
 app.on('ready', () => {
   runCpnServer();
@@ -66,17 +67,20 @@ function createWindow() {
     }
 
     //  ---Prompt to save
-    const choice = require('electron').dialog.showMessageBox(this,
-      {
-        type: 'question',
-        buttons: ['Yes', 'No'],
-        title: 'Confirm',
-        message: 'There are unsaved changes on the current model. Exit?'
-      });
-    if (choice === 1) {
-      data.preventDefault();
-      return;
+    if (unSaved) {
+      const choice = require('electron').dialog.showMessageBox(this,
+        {
+          type: 'question',
+          buttons: ['Yes', 'No'],
+          title: 'Confirm',
+          message: 'There are unsaved changes on the current model. Exit?'
+        });
+      if (choice === 1) {
+        data.preventDefault();
+        return;
+      }
     }
+
 
     log.info('mainWindow, close');
     killCpnServer().then(
@@ -132,6 +136,9 @@ function createWindow() {
     }
   ])
   Menu.setApplicationMenu(menu);
+
+  ipcMain.on('model.save.backup',() => unSaved = true);
+  ipcMain.on('project.saved',() => unSaved = false);
 }
 
 function createLoadingScreen() {

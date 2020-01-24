@@ -5,6 +5,7 @@ import {Message} from '../common/message';
 import {AccessCpnService} from '../services/access-cpn.service';
 import {cloneObject, objectsEqual} from '../common/utils';
 import {Observable, timer} from 'rxjs';
+import {IpcService} from './ipc.service';
 
 const deepEqual = require('deep-equal');
 const diff = require('deep-diff').diff;
@@ -60,17 +61,21 @@ export class ValidationService implements OnDestroy {
   constructor(
     private eventService: EventService,
     private modelService: ModelService,
-    private accessCpnService: AccessCpnService) {
+    private accessCpnService: AccessCpnService,
+    private ipcService: IpcService) {
 
     this.eventService.on(Message.PROJECT_LOAD, (event) => {
       this.init();
       this.validate();
+      this.clearHistory();
     });
     this.eventService.on(Message.MODEL_RELOAD, () => this.init());
+    this.eventService.on(Message.PROJECT_SAVED, () => this.clearHistory());
+    this.eventService.on(Message.MAIN_MENU_NEW_PROJECT, () => this.clearHistory());
 
     this.timeTimer = timer(this.VALIDATION_TIMEOUT, this.VALIDATION_TIMEOUT);
     this.timeTimerSubscribtion = this.timeTimer.subscribe(() => this.checkValidation());
-    this.eventService.on(Message.PROJECT_SAVED, () => this.clearHistory());
+
   }
 
   ngOnDestroy() {
@@ -196,6 +201,7 @@ export class ValidationService implements OnDestroy {
     if (this.history.models.length !== this.history.currentModelIndex) {
       console.error(`History index is wrong! index:${this.history.currentModelIndex} and history.array size is: ${this.history.models.length}`);
     }
+    this.ipcService.send(Message.MODEL_SAVE_BACKUP)
     this.history.backupBusy = false;
   }
 
@@ -262,6 +268,7 @@ export class ValidationService implements OnDestroy {
         this.history.currentModelIndex = 0;
         clearInterval(interval);
         this.eventService.send(Message.MODEL_SAVE_BACKUP);
+        this.ipcService.send(Message.PROJECT_SAVED);
       }
     }, 100);
     setTimeout(() => {

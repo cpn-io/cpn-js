@@ -91,11 +91,13 @@ function createWindow() {
         log.info('mainWindow, close, killCpnServer() COMPLETE: ', result);
         realyClosed = true;
         mainWindow.close();
+        app.quit();
       },
       (error) => {
         log.error('mainWindow, close, killCpnServer() ERROR: ', error);
         realyClosed = true;
         mainWindow.close();
+        app.quit();
       }
     );
     data.preventDefault();

@@ -76,13 +76,13 @@ export class TextEditRowComponent {
 
   onChange(event) {
     if (this.type === 'text') {
-      this.object[this.field] = event.target.textContent;
+      this.object[this.field] = event.target.textContent || ' ';
     }
     if (this.type === 'ml') {
       this.object[this.field] = event.target.textContent;
     }
     if (this.type === 'int') {
-      this.object[this.field] = parseInt(event.target.textContent, 0);
+      this.object[this.field] = parseInt(event.target.textContent, 0) || ' ';
     }
     if (this.type === 'color') {
       this.object[this.field] = this.color2name(event.target.value);

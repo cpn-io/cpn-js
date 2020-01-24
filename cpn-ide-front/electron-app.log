@@ -1,22 +1,23 @@
-15:14:25.982 › scriptFilename =  run.sh
-15:14:25.987 › runScriptPath =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/electron/backend/run.sh
-15:14:26.354 › cpn-ide-back SERVER Process has been killed!
-15:14:31.028 › APP PATH =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front
-15:14:31.029 › isDev =  true
-15:14:31.029 › directory =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/app
-15:14:31.030 › process.cwd() =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front
-15:14:31.030 › __dirname =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/electron/dist
-15:21:58.720 › killCpnServer()
-15:21:58.721 › killCpnServer(), findProcess(), shellRunner.pid =  316
-15:21:58.722 › killCpnServer(), findProcess(), shellRunner.ppid =  undefined
-15:21:58.768 › scriptFilename =  run.sh
-15:21:58.769 › runScriptPath =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/electron/backend/run.sh
-15:21:59.202 › cpn-ide-back SERVER Process has been killed!
-15:26:57.828 › mainWindow, close
-15:26:57.828 › killCpnServer()
-15:26:57.829 › killCpnServer(), findProcess(), shellRunner.pid =  1587
-15:26:57.829 › killCpnServer(), findProcess(), shellRunner.ppid =  undefined
-15:26:57.857 › killCpnServer(), findProcess('cpnmld.x86'), p =  1887 run.x86-linux
-15:26:57.859 › killCpnServer(), findProcess('cpnmld.x86'), p =  1891 run.x86-linux
-15:26:57.864 › killCpnServer(), findProcess('cpn-ide-back'), p =  1664 java
-15:26:57.866 › mainWindow, close, killCpnServer() COMPLETE:  CPN Server process KILLED!
+18:09:53.707 › scriptFilename =  run.sh
+18:09:53.712 › runScriptPath =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/electron/backend/run.sh
+18:09:54.067 › cpn-ide-back SERVER Process has been killed!
+18:09:58.754 › APP PATH =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front
+18:09:58.755 › isDev =  true
+18:09:58.755 › directory =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/app
+18:09:58.756 › process.cwd() =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front
+18:09:58.756 › __dirname =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/electron/dist
+18:15:11.078 › killCpnServer()
+18:15:11.079 › killCpnServer(), findProcess(), shellRunner.pid =  17609
+18:15:11.080 › killCpnServer(), findProcess(), shellRunner.ppid =  undefined
+18:15:11.125 › killCpnServer(), findProcess('cpn-ide-back'), p =  18225 java
+18:15:11.126 › scriptFilename =  run.sh
+18:15:11.127 › runScriptPath =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/electron/backend/run.sh
+18:15:11.565 › cpn-ide-back SERVER Process has been killed!
+18:17:51.899 › mainWindow, close
+18:17:51.900 › killCpnServer()
+18:17:51.900 › killCpnServer(), findProcess(), shellRunner.pid =  18319
+18:17:51.901 › killCpnServer(), findProcess(), shellRunner.ppid =  undefined
+18:17:51.932 › killCpnServer(), findProcess('cpnmld.x86'), p =  18501 run.x86-linux
+18:17:51.934 › killCpnServer(), findProcess('cpnmld.x86'), p =  18550 run.x86-linux
+18:17:51.942 › killCpnServer(), findProcess('cpn-ide-back'), p =  18396 java
+18:17:51.943 › mainWindow, close, killCpnServer() COMPLETE:  CPN Server process KILLED!

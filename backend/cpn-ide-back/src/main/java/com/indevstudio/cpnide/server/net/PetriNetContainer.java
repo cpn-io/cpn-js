@@ -82,8 +82,7 @@ public class PetriNetContainer {
 
             Checker checker = new Checker(net, null, _sim);
 
-            String pathStr = Paths.get(FilenameUtils.concat(OUTPUT_MODEL_PATH, sessionId)).toAbsolutePath().toString();
-            // String pathStr = "c:\\tmp";
+            String pathStr = getOutputFullPathStr(sessionId);
 
             log.debug("Prepare path for writing reports to: " + pathStr);            
             checker.checkInitializing(pathStr, pathStr);
@@ -92,6 +91,15 @@ public class PetriNetContainer {
             usersSimulator.put(sessionId, _sim);
 
         }
+    }
+
+    private String getOutputFullPathStr(String sessionId) {
+        String outputPathStr = FilenameUtils.concat(System.getProperty("user.home"), "CPN_IDE");
+        outputPathStr = FilenameUtils.concat(outputPathStr, OUTPUT_MODEL_PATH);
+        outputPathStr = FilenameUtils.concat(outputPathStr, sessionId);
+
+        String pathStr = Paths.get(outputPathStr).toAbsolutePath().toString();
+        return pathStr;
     }
 
     private List<IssueDescription> getOrCreateIssueList(String id, Map<String, List<IssueDescription>> issues) {
@@ -200,9 +208,10 @@ public class PetriNetContainer {
     }
 
     String getOutputPathContent(String sessionId) throws Exception {
+        String pathStr = getOutputFullPathStr(sessionId);
+
         final StringBuilder sb = new StringBuilder();
-        String pathStr = Paths.get(FilenameUtils.concat(OUTPUT_MODEL_PATH, sessionId)).toAbsolutePath().toString();
-        // String pathStr = "c:\\tmp";
+
         List<Path> files = Files
             .walk(Paths.get(pathStr).toAbsolutePath())
             .filter(Files::isRegularFile)
@@ -218,8 +227,8 @@ public class PetriNetContainer {
     }
 
     void CleanOutputPathContent(String sessionId) throws Exception {
-        String pathStr = Paths.get(FilenameUtils.concat(OUTPUT_MODEL_PATH, sessionId)).toAbsolutePath().toString();
-        // String pathStr = "c:\\tmp";
+        String pathStr = getOutputFullPathStr(sessionId);
+
         FileUtils.deleteDirectory(new File(pathStr));
     }
 

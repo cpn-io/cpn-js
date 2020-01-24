@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.cpntools.accesscpn.model/src" modelPluginID="org.cpntools.accesscpn.model"
+    templateDirectory="" redirection="" modelName="Model" rootExtendsInterface=""
+    rootImplementsInterface="" suppressEMFTypes="true" suppressEMFMetaData="true"
+    featureMapWrapperInterface="" featureMapWrapperInternalInterface="" featureMapWrapperClass=""
+    booleanFlagsField="" importerID="org.eclipse.emf.importer.java" complianceLevel="6.0"
+    copyrightFields="false">
+  <foreignModel>@model</foreignModel>
+  <genPackages prefix="Model" basePackage="org.cpntools.accesscpn" disposableProviderFactory="true"
+      generateExampleClass="false" ecorePackage="model.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="model.ecore#//HLArcType">
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//HLArcType/Normal"/>
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//HLArcType/Test"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="model.ecore#//TimeType">
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//TimeType/Integer"/>
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//TimeType/Real"/>
+    </genEnums>
+    <genClasses image="false" ecoreClass="model.ecore#//Annotation"/>
+    <genClasses ecoreClass="model.ecore#//Arc">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//Arc/source"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//Arc/target"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//Arc/page"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="model.ecore#//Attribute"/>
+    <genClasses image="false" ecoreClass="model.ecore#//CPNToolsTransitionAddin">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//CPNToolsTransitionAddin/code"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//CPNToolsTransitionAddin/time"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//CPNToolsTransitionAddin/priority"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//Code"/>
+    <genClasses ecoreClass="model.ecore#//Condition"/>
+    <genClasses ecoreClass="model.ecore#//FusionGroup">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference model.ecore#//FusionGroup/petriNet"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//HLAnnotation"/>
+    <genClasses ecoreClass="model.ecore#//HLAnnotationAddin">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//HLAnnotationAddin/text"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="model.ecore#//HLArcAddin">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//HLArcAddin/hlinscription"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//HLArcAddin/kind"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="model.ecore#//HLDeclaration">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//HLDeclaration/structure"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//HLMarking"/>
+    <genClasses image="false" ecoreClass="model.ecore#//HLPlaceAddin">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//HLPlaceAddin/sort"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//HLPlaceAddin/initialMarking"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="model.ecore#//HLTransitionAddin">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//HLTransitionAddin/condition"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="model.ecore#//HasId">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//HasId/id"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="model.ecore#//HasLabel">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//HasLabel/label"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="model.ecore#//HasName">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//HasName/name"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="model.ecore#//HasToolInfo">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//HasToolInfo/toolinfo"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//Instance">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//Instance/parameterAssignment"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Instance/subPageID"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="model.ecore#//Label">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference model.ecore#//Label/parent"/>
+      <genOperations ecoreOperation="model.ecore#//Label/asString"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//Name"/>
+    <genClasses image="false" ecoreClass="model.ecore#//Node">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//Node/sourceArc"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//Node/targetArc"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="model.ecore#//Object">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//Object/page"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//Page">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//Page/petriNet"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//Page/object"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//Page/arc"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//ParameterAssignment">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EAttribute model.ecore#//ParameterAssignment/parameter"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EAttribute model.ecore#//ParameterAssignment/value"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference model.ecore#//ParameterAssignment/instance"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//PetriNet">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//PetriNet/kind"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//PetriNet/page"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//PetriNet/monitors"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//PetriNet/fusionGroups"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute model.ecore#//PetriNet/timeType"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//Place">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//Place/references"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="model.ecore#//PlaceNode"/>
+    <genClasses ecoreClass="model.ecore#//Priority"/>
+    <genClasses ecoreClass="model.ecore#//RefPlace">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//RefPlace/ref"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//RefTrans">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//RefTrans/ref"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//Sort"/>
+    <genClasses ecoreClass="model.ecore#//Time"/>
+    <genClasses ecoreClass="model.ecore#//ToolInfo">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//ToolInfo/tool"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//ToolInfo/version"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference model.ecore#//ToolInfo/parent"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//Transition"/>
+    <genClasses image="false" ecoreClass="model.ecore#//TransitionNode"/>
+  </genPackages>
+  <genPackages prefix="Auxgraphics" basePackage="org.cpntools.accesscpn.model" disposableProviderFactory="true"
+      ecorePackage="auxgraphics.ecore#/">
+    <genClasses image="false" ecoreClass="auxgraphics.ecore#//AuxGraphics"/>
+    <genClasses ecoreClass="auxgraphics.ecore#//Text">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute auxgraphics.ecore#//Text/text"/>
+    </genClasses>
+  </genPackages>
+  <genPackages prefix="Cpntypes" basePackage="org.cpntools.accesscpn.model" disposableProviderFactory="true"
+      generateExampleClass="false" ecorePackage="cpntypes.ecore#/">
+    <genClasses ecoreClass="cpntypes.ecore#//CPNAlias">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNAlias/sort"/>
+    </genClasses>
+    <genClasses ecoreClass="cpntypes.ecore#//CPNBool">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNBool/trueValue"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNBool/falseValue"/>
+    </genClasses>
+    <genClasses ecoreClass="cpntypes.ecore#//CPNEnum">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNEnum/values"/>
+    </genClasses>
+    <genClasses ecoreClass="cpntypes.ecore#//CPNIndex">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNIndex/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNIndex/low"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNIndex/high"/>
+    </genClasses>
+    <genClasses ecoreClass="cpntypes.ecore#//CPNInt">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNInt/low"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNInt/high"/>
+    </genClasses>
+    <genClasses ecoreClass="cpntypes.ecore#//CPNIntInf">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNIntInf/low"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNIntInf/high"/>
+    </genClasses>
+    <genClasses ecoreClass="cpntypes.ecore#//CPNList">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNList/sort"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNList/low"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNList/high"/>
+    </genClasses>
+    <genClasses ecoreClass="cpntypes.ecore#//CPNProduct">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNProduct/types"/>
+    </genClasses>
+    <genClasses ecoreClass="cpntypes.ecore#//CPNReal">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNReal/low"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNReal/high"/>
+    </genClasses>
+    <genClasses ecoreClass="cpntypes.ecore#//CPNRecord">
+      <genFeatures createChild="false" ecoreFeature="ecore:EReference cpntypes.ecore#//CPNRecord/values"/>
+    </genClasses>
+    <genClasses ecoreClass="cpntypes.ecore#//CPNString">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNString/rangeLow"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNString/rangeHigh"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNString/lengthLow"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNString/lengthHigh"/>
+    </genClasses>
+    <genClasses ecoreClass="cpntypes.ecore#//CPNSubset">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNSubset/sort"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNSubset/by"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNSubset/with"/>
+    </genClasses>
+    <genClasses ecoreClass="cpntypes.ecore#//CPNTime"/>
+    <genClasses image="false" ecoreClass="cpntypes.ecore#//CPNType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNType/timed"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNType/declares"/>
+    </genClasses>
+    <genClasses ecoreClass="cpntypes.ecore#//CPNUnion">
+      <genFeatures createChild="false" ecoreFeature="ecore:EReference cpntypes.ecore#//CPNUnion/values"/>
+    </genClasses>
+    <genClasses ecoreClass="cpntypes.ecore#//CPNUnit">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//CPNUnit/id"/>
+    </genClasses>
+    <genClasses ecoreClass="cpntypes.ecore#//NameTypePair">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//NameTypePair/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cpntypes.ecore#//NameTypePair/sort"/>
+    </genClasses>
+  </genPackages>
+  <genPackages prefix="Declaration" basePackage="org.cpntools.accesscpn.model" disposableProviderFactory="true"
+      generateExampleClass="false" ecorePackage="declaration.ecore#/">
+    <genClasses image="false" ecoreClass="declaration.ecore#//DeclarationStructure"/>
+    <genClasses ecoreClass="declaration.ecore#//GlobalReferenceDeclaration">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute declaration.ecore#//GlobalReferenceDeclaration/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute declaration.ecore#//GlobalReferenceDeclaration/value"/>
+    </genClasses>
+    <genClasses ecoreClass="declaration.ecore#//MLDeclaration">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute declaration.ecore#//MLDeclaration/code"/>
+    </genClasses>
+    <genClasses ecoreClass="declaration.ecore#//TypeDeclaration">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute declaration.ecore#//TypeDeclaration/typeName"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference declaration.ecore#//TypeDeclaration/sort"/>
+    </genClasses>
+    <genClasses ecoreClass="declaration.ecore#//UseDeclaration">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute declaration.ecore#//UseDeclaration/fileName"/>
+    </genClasses>
+    <genClasses ecoreClass="declaration.ecore#//VariableDeclaration">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute declaration.ecore#//VariableDeclaration/typeName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute declaration.ecore#//VariableDeclaration/variables"/>
+    </genClasses>
+  </genPackages>
+  <genPackages prefix="Graphics" basePackage="org.cpntools.accesscpn.model" disposableProviderFactory="true"
+      generateExampleClass="false" ecorePackage="graphics.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="graphics.ecore#//Align">
+      <genEnumLiterals ecoreEnumLiteral="graphics.ecore#//Align/Left"/>
+      <genEnumLiterals ecoreEnumLiteral="graphics.ecore#//Align/Right"/>
+      <genEnumLiterals ecoreEnumLiteral="graphics.ecore#//Align/Center"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="graphics.ecore#//Shape">
+      <genEnumLiterals ecoreEnumLiteral="graphics.ecore#//Shape/Line"/>
+      <genEnumLiterals ecoreEnumLiteral="graphics.ecore#//Shape/Curve"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="graphics.ecore#//Style">
+      <genEnumLiterals ecoreEnumLiteral="graphics.ecore#//Style/Solid"/>
+      <genEnumLiterals ecoreEnumLiteral="graphics.ecore#//Style/Dash"/>
+      <genEnumLiterals ecoreEnumLiteral="graphics.ecore#//Style/Dot"/>
+    </genEnums>
+    <genDataTypes ecoreDataType="graphics.ecore#//CSS2Color"/>
+    <genDataTypes ecoreDataType="graphics.ecore#//CSS2FontFamily"/>
+    <genDataTypes ecoreDataType="graphics.ecore#//CSS2FontStyle"/>
+    <genDataTypes ecoreDataType="graphics.ecore#//CSS2FontWeight"/>
+    <genDataTypes ecoreDataType="graphics.ecore#//CSS2FontSize"/>
+    <genDataTypes ecoreDataType="graphics.ecore#//NonNegativeDecimal"/>
+    <genDataTypes ecoreDataType="graphics.ecore#//URL"/>
+    <genDataTypes ecoreDataType="graphics.ecore#//Rotation"/>
+    <genDataTypes ecoreDataType="graphics.ecore#//Decoration"/>
+    <genClasses ecoreClass="graphics.ecore#//AnnotationGraphics">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference graphics.ecore#//AnnotationGraphics/fill"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference graphics.ecore#//AnnotationGraphics/offset"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference graphics.ecore#//AnnotationGraphics/line"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference graphics.ecore#//AnnotationGraphics/font"/>
+    </genClasses>
+    <genClasses ecoreClass="graphics.ecore#//ArcGraphics">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference graphics.ecore#//ArcGraphics/line"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference graphics.ecore#//ArcGraphics/position"/>
+    </genClasses>
+    <genClasses ecoreClass="graphics.ecore#//Coordinate">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphics.ecore#//Coordinate/x"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphics.ecore#//Coordinate/y"/>
+    </genClasses>
+    <genClasses ecoreClass="graphics.ecore#//Fill">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphics.ecore#//Fill/color"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphics.ecore#//Fill/image"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphics.ecore#//Fill/gradientColor"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphics.ecore#//Fill/gradientRotation"/>
+    </genClasses>
+    <genClasses ecoreClass="graphics.ecore#//Font">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphics.ecore#//Font/family"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphics.ecore#//Font/style"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphics.ecore#//Font/weight"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphics.ecore#//Font/size"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphics.ecore#//Font/decoration"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphics.ecore#//Font/align"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphics.ecore#//Font/rotation"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="graphics.ecore#//Graphics">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference graphics.ecore#//Graphics/parent"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="graphics.ecore#//HasGraphics">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference graphics.ecore#//HasGraphics/graphics"/>
+    </genClasses>
+    <genClasses ecoreClass="graphics.ecore#//Line">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphics.ecore#//Line/shape"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphics.ecore#//Line/color"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphics.ecore#//Line/width"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphics.ecore#//Line/style"/>
+    </genClasses>
+    <genClasses ecoreClass="graphics.ecore#//NodeGraphics">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference graphics.ecore#//NodeGraphics/position"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference graphics.ecore#//NodeGraphics/dimension"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference graphics.ecore#//NodeGraphics/line"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference graphics.ecore#//NodeGraphics/fill"/>
+    </genClasses>
+  </genPackages>
+  <genPackages prefix="Monitors" basePackage="org.cpntools.accesscpn.model" disposableProviderFactory="true"
+      ecorePackage="monitors.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="monitors.ecore#//MonitorType">
+      <genEnumLiterals ecoreEnumLiteral="monitors.ecore#//MonitorType/MARKING_SIZE"/>
+      <genEnumLiterals ecoreEnumLiteral="monitors.ecore#//MonitorType/BREAKPOINT"/>
+      <genEnumLiterals ecoreEnumLiteral="monitors.ecore#//MonitorType/USER_DEFINED"/>
+      <genEnumLiterals ecoreEnumLiteral="monitors.ecore#//MonitorType/DATA_COLLECTION"/>
+      <genEnumLiterals ecoreEnumLiteral="monitors.ecore#//MonitorType/WRITE_IN_FILE"/>
+      <genEnumLiterals ecoreEnumLiteral="monitors.ecore#//MonitorType/LIST_LENGTH"/>
+      <genEnumLiterals ecoreEnumLiteral="monitors.ecore#//MonitorType/COUNT_TRANSITION"/>
+      <genEnumLiterals ecoreEnumLiteral="monitors.ecore#//MonitorType/PLACE_CONTENT"/>
+      <genEnumLiterals ecoreEnumLiteral="monitors.ecore#//MonitorType/TRANSTION_ENABLED"/>
+    </genEnums>
+    <genClasses ecoreClass="monitors.ecore#//Monitor">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference monitors.ecore#//Monitor/petriNet"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute monitors.ecore#//Monitor/disabled"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute monitors.ecore#//Monitor/empty"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute monitors.ecore#//Monitor/enabled"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute monitors.ecore#//Monitor/extension"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute monitors.ecore#//Monitor/kind"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference monitors.ecore#//Monitor/init"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference monitors.ecore#//Monitor/stop"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference monitors.ecore#//Monitor/predicate"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference monitors.ecore#//Monitor/observer"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference monitors.ecore#//Monitor/action"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference monitors.ecore#//Monitor/nodes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute monitors.ecore#//Monitor/timed"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute monitors.ecore#//Monitor/logging"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="monitors.ecore#//Object"/>
+  </genPackages>
+</genmodel:GenModel>

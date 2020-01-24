@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="graphics" nsURI="http:///org/cpntools/accesscpn/model/graphics.ecore"
+    nsPrefix="org.cpntools.accesscpn.model.graphics">
+  <eClassifiers xsi:type="ecore:EEnum" name="Align">
+    <eLiterals name="Left"/>
+    <eLiterals name="Right" value="1"/>
+    <eLiterals name="Center" value="2"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AnnotationGraphics" eSuperTypes="#//Graphics">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="fill" eType="#//Fill" containment="true"
+        resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="offset" eType="#//Coordinate"
+        containment="true" resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="line" eType="#//Line" containment="true"
+        resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="font" eType="#//Font" containment="true"
+        resolveProxies="false"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ArcGraphics" eSuperTypes="#//Graphics">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="line" eType="#//Line" containment="true"
+        resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="position" upperBound="-1"
+        eType="#//Coordinate" containment="true" resolveProxies="false"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Coordinate">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="x" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="y" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Fill">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="color" eType="#//CSS2Color"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="image" eType="#//URL"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="gradientColor" eType="#//CSS2Color"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="gradientRotation" eType="#//Rotation"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Font">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="family" lowerBound="1"
+        eType="#//CSS2FontFamily"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="style" lowerBound="1" eType="#//CSS2FontStyle"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="weight" lowerBound="1"
+        eType="#//CSS2FontWeight"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="size" lowerBound="1" eType="#//CSS2FontSize"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="decoration" eType="#//Decoration"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="align" lowerBound="1" eType="#//Align"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="rotation" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Graphics" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" lowerBound="1"
+        eType="#//HasGraphics" eOpposite="#//HasGraphics/graphics"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="HasGraphics" abstract="true" interface="true">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="graphics" eType="#//Graphics"
+        containment="true" resolveProxies="false" eOpposite="#//Graphics/parent"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Line">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="shape" lowerBound="1" eType="#//Shape"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="color" lowerBound="1" eType="#//CSS2Color"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="width" lowerBound="1" eType="#//NonNegativeDecimal"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="style" lowerBound="1" eType="#//Style"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NodeGraphics" eSuperTypes="#//Graphics">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="position" eType="#//Coordinate"
+        containment="true" resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="dimension" eType="#//Coordinate"
+        containment="true" resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="line" eType="#//Line" containment="true"
+        resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="fill" eType="#//Fill" containment="true"
+        resolveProxies="false"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="Shape">
+    <eLiterals name="Line"/>
+    <eLiterals name="Curve" value="1"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="Style">
+    <eLiterals name="Solid"/>
+    <eLiterals name="Dash" value="1"/>
+    <eLiterals name="Dot" value="2"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="CSS2Color" instanceClassName="java.lang.String"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="CSS2FontFamily" instanceClassName="java.lang.String"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="CSS2FontStyle" instanceClassName="java.lang.String"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="CSS2FontWeight" instanceClassName="java.lang.String"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="CSS2FontSize" instanceClassName="java.lang.String"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="NonNegativeDecimal" instanceClassName="double"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="URL" instanceClassName="java.net.URL"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="Rotation" instanceClassName="org.cpntools.accesscpn.model.graphics.Rotation"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="Decoration" instanceClassName="org.cpntools.accesscpn.model.graphics.Decoration"/>
+</ecore:EPackage>

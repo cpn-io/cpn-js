@@ -4,9 +4,8 @@
 dist
 tmp
 out-tsc
+
 # documentation
-electron/backend/
-model_out
 
 # dependencies
 node_modules
@@ -38,12 +37,17 @@ npm-debug.log
 yarn-error.log
 testem.log
 typings
-src/app/app.version.ts
 *.log
 *.lock
 
+src/app/app.version.ts
+
+model_out
+
 # electron
 electron/backend
+electron/installer/win-unpacked/
+electron/installer/cpn-ide-setup.exe
 
 # System Files
 .DS_Store

@@ -24,7 +24,8 @@
     "electronRun": "electron . > electron-app.log",
     "electronCopyWinUnpacked": "xcopy \".\\dist\\win-unpacked\\*\" \".\\electron\\installer\\win-unpacked\\*\" /s /e /y",
     "electronMakeSetupLinux": "electron-builder",
-    "electronMakeSetupWin": "electron-builder & electronCopyWinUnpacked"
+    "electronMakeSetupWin": "electron-builder & npm run electronCopyWinUnpacked",
+    "electronBuildAndMakeSetupWin": "npm run electronBuildAllWin & npm run electronMakeSetupWin"
   },
   "build": {
     "appId": "cpn-ide",

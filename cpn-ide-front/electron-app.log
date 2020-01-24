@@ -1,22 +1,8 @@
-15:14:25.982 › scriptFilename =  run.sh
-15:14:25.987 › runScriptPath =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/electron/backend/run.sh
-15:14:26.354 › cpn-ide-back SERVER Process has been killed!
-15:14:31.028 › APP PATH =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front
-15:14:31.029 › isDev =  true
-15:14:31.029 › directory =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/app
-15:14:31.030 › process.cwd() =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front
-15:14:31.030 › __dirname =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/electron/dist
-15:21:58.720 › killCpnServer()
-15:21:58.721 › killCpnServer(), findProcess(), shellRunner.pid =  316
-15:21:58.722 › killCpnServer(), findProcess(), shellRunner.ppid =  undefined
-15:21:58.768 › scriptFilename =  run.sh
-15:21:58.769 › runScriptPath =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/electron/backend/run.sh
-15:21:59.202 › cpn-ide-back SERVER Process has been killed!
-15:26:57.828 › mainWindow, close
-15:26:57.828 › killCpnServer()
-15:26:57.829 › killCpnServer(), findProcess(), shellRunner.pid =  1587
-15:26:57.829 › killCpnServer(), findProcess(), shellRunner.ppid =  undefined
-15:26:57.857 › killCpnServer(), findProcess('cpnmld.x86'), p =  1887 run.x86-linux
-15:26:57.859 › killCpnServer(), findProcess('cpnmld.x86'), p =  1891 run.x86-linux
-15:26:57.864 › killCpnServer(), findProcess('cpn-ide-back'), p =  1664 java
-15:26:57.866 › mainWindow, close, killCpnServer() COMPLETE:  CPN Server process KILLED!
+16:18:24.562 › scriptFilename =  run.sh
+16:18:24.566 › runScriptPath =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/electron/backend/run.sh
+16:18:24.915 › cpn-ide-back SERVER Process has been killed!
+16:18:29.603 › APP PATH =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front
+16:18:29.604 › isDev =  true
+16:18:29.604 › directory =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/app
+16:18:29.605 › process.cwd() =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front
+16:18:29.605 › __dirname =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/electron/dist

@@ -584,7 +584,14 @@ public class PetriNetContainer {
         String simulationEnded = "";
         int maxSteps = stepParam.getAmount();
         while (i < maxSteps) {
-            List<Instance<Transition>> enabled = sim.getAllTransitionInstances();
+            List<Instance<Transition>> enabled = new ArrayList<>();
+            List<Instance<Transition>> all = sim.getAllTransitionInstances();
+
+            for (Instance<Transition> ti : all) {
+
+                if (sim.isEnabled(ti))
+                    enabled.add(ti);
+            }
 
             if (enabled.isEmpty()) {
                 String result = sim.increaseTime();

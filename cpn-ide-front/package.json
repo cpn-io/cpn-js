@@ -77,7 +77,8 @@
     "replace-in-file": "^3.4.4",
     "ts-node": "~7.0.0",
     "tslint": "~5.11.0",
-    "typedoc": "^0.15.8"
+    "typedoc": "^0.15.8",
+    "typescript": "^3.5.1"
   },
   "dependencies": {
     "@angular/animations": "~8.2.5",
@@ -132,7 +133,6 @@
     "rxjs-observe": "^2.1.5",
     "ts-helpers": "^1.1.2",
     "typeface-droid-sans-mono": "0.0.44",
-    "typescript": "^3.7.5",
     "xml-js": "^1.6.11",
     "xmldom": "^0.1.31",
     "zone.js": "^0.8.29"

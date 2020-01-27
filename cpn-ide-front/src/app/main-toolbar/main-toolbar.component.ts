@@ -92,7 +92,7 @@ export class MainToolbarComponent implements OnInit {
 
 
   onNewProject() {
-    const message = 'Do you want to save your changes';
+    const message = 'Save the changes to file before closing?';
     if (confirm(message)) {
       this.eventService.send(Message.MAIN_MENU_SAVE_PROJECT);
       return;

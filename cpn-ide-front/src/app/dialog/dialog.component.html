@@ -1,0 +1,30 @@
+<div id="modalDialog" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+
+            <div *ngIf="title" class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">{{ title }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <table *ngIf="formData" class="table">
+                    <tr *ngFor="let item of formData">
+                        <td class="title"> {{ item.name }} </td>
+                        <td contenteditable='true' (input)="item.value=$event.target.textContent"
+                            [textContent]="item.value"></td>
+                    </tr>
+                </table>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="onAction('cancel')">Отмена</button>
+                <button type="button" class="btn btn-primary" (click)="onAction('ok')">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -68,6 +68,7 @@ import { ProjectDeclarationsComponent } from './project-declarations/project-dec
 import { ProjectDeclarationsBlockNodeComponent } from './project-declarations/project-declarations-block-node/project-declarations-block-node.component';
 import { SimulationReportPipe } from './pipes/simulation-report.pipe';
 import {FileService} from './services/file.service';
+import { DialogComponent } from './dialog/dialog.component';
 
 require('typeface-droid-sans-mono');
 
@@ -99,6 +100,7 @@ require('typeface-droid-sans-mono');
     PropertiesPanelComponent,
     MlEditorComponent,
     SaveprojectButtonComponent,
+    DialogComponent,
 
     BlockHeaderComponent,
     TextEditRowComponent,

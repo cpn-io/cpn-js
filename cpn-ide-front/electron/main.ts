@@ -1,5 +1,5 @@
-import {app, BrowserWindow, Menu, ipcMain, ipcRenderer} from 'electron';
-import {spawn} from 'child_process';
+import { app, BrowserWindow, Menu, ipcMain, ipcRenderer } from 'electron';
+import { spawn } from 'child_process';
 import * as log from 'electron-log';
 import * as path from 'path';
 import * as url from 'url';
@@ -67,23 +67,21 @@ function createWindow() {
     }
 
     //  ---Prompt to save
-    // if (unSaved) {
-    //   const choice = require('electron').dialog.showMessageBox(this,
-    //     {
-    //       type: 'question',
-    //       buttons: ['Exit', 'Back', 'Save As' ],
-    //       title: 'Confirm',
-    //       message: 'Save the changes to file before closing?'
-    //     });
-    //   if (choice !== 0) {
-    //     data.preventDefault();
-    //     if (choice === 2){
-    //       mainWindow.webContents.send('main.menu.save.project');
-    //     }
-    //     return;
-    //   }
-    // }
-
+    if (unSaved) {
+      const choice = require('electron').dialog.showMessageBox(this, {
+        type: 'question',
+        buttons: ['Exit', 'Back', 'Save As'],
+        title: 'Confirm',
+        message: 'Save the changes to file before closing?'
+      });
+      if (choice !== 0) {
+        data.preventDefault();
+        if (choice === 2) {
+          mainWindow.webContents.send('main.menu.save.project');
+        }
+        return;
+      }
+    }
 
     log.info('mainWindow, close');
     killCpnServer().then(
@@ -132,7 +130,7 @@ function createWindow() {
             killCpnServer().then(
               (success) => runCpnServer(),
               (error) => runCpnServer()
-              );
+            );
           }
         },
         { type: 'separator' },
@@ -142,8 +140,8 @@ function createWindow() {
   ])
   Menu.setApplicationMenu(menu);
 
-  ipcMain.on('model.save.backup',() => unSaved = true);
-  ipcMain.on('project.saved',() => unSaved = false);
+  ipcMain.on('model.save.backup', () => unSaved = true);
+  ipcMain.on('project.saved', () => unSaved = false);
 }
 
 function createLoadingScreen() {

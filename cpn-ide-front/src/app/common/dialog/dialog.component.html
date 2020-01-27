@@ -1,0 +1,20 @@
+<div class="dialog-content">
+
+  <div mat-dialog-content>
+    <p class="title">{{ data.title }}</p>
+
+    <ng-container *ngIf="data.input">
+      <ng-container *ngFor="let item of data.input">
+        <mat-form-field>
+          <input matInput [placeholder]="item.title" [(ngModel)]="item.value">
+        </mat-form-field>
+      </ng-container>
+    </ng-container>
+  </div>
+
+  <div mat-dialog-actions align="end">
+    <button mat-button (click)="onNoClick()" [mat-dialog-close]="data">No</button>
+    <button mat-button (click)="onYesClick()" [mat-dialog-close]="data" cdkFocusInitial color="primary">Save</button>
+  </div>
+
+</div>

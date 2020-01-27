@@ -8,11 +8,21 @@ import { AccessCpnService } from './access-cpn.service';
 import { ModelService } from './model.service';
 import { CpnServerUrl } from 'src/cpn-server-url.js';
 
+import { xmlBeautify } from '../../lib/xml-beautifier/xml-beautifier.js';
+import { FileService } from './file.service.js';
+
+import { cloneObject } from 'src/app/common/utils';
+import { MatDialog } from '@angular/material';
+import { DialogComponent } from '../common/dialog/dialog.component.js';
+
+
 /**
  * Common service for getting access to project data from all application
  */
 @Injectable()
 export class ProjectService {
+
+  xmlPrefix = '<?xml version="1.0" encoding="iso-8859-1"?>\n<!DOCTYPE workspaceElements PUBLIC "-//CPN//DTD CPNXML 1.0//EN" "http://cpntools.org/DTD/6/cpn.dtd">\n';
 
   public modelName = '';
   public project = undefined;
@@ -22,8 +32,10 @@ export class ProjectService {
   constructor(private eventService: EventService,
     private http: HttpClient,
     private modelService: ModelService,
-    private accessCpnService: AccessCpnService
-    ) {
+    private accessCpnService: AccessCpnService,
+    private fileService: FileService,
+    public dialog: MatDialog
+  ) {
 
     // console.log('ProjectService instance CREATED!');
 
@@ -112,7 +124,7 @@ export class ProjectService {
     this.modelService.markNewModel();
 
     // load new project
-    this.eventService.send(Message.PROJECT_LOAD, { project: this.project } );
+    this.eventService.send(Message.PROJECT_LOAD, { project: this.project });
   }
 
   loadEmptyProject() {
@@ -160,5 +172,23 @@ export class ProjectService {
           console.error('GET ' + url + ', error = ' + JSON.stringify(error));
         }
       );
+  }
+
+  /**
+   * Save current project to file
+   * @filename - name of file
+   */
+  public saveToFile(filename: string) {
+    if (!filename.toLowerCase().includes('.cpn')) {
+      filename += '.cpn';
+    }
+
+    const x2js = new X2JS();
+    let xml = (x2js.json2xml_str(cloneObject(this.modelService.getProjectData())));
+    xml = `${this.xmlPrefix}\n${xml}`;
+
+    xml = xmlBeautify(xml);
+
+    this.fileService.saveAsText(xml, filename);
   }
 }

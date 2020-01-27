@@ -1,15 +1,19 @@
-import {Component, OnInit} from '@angular/core';
-import {ProjectService} from '../services/project.service';
-import {AppVersion} from '../app.version';
-import {ModelService} from '../services/model.service';
-import {EventService} from '../services/event.service';
-import {Message} from '../common/message';
-import {ValidationService} from '../services/validation.service';
-import {AccessCpnService} from '../services/access-cpn.service';
-import {EditorPanelService} from '../services/editor-panel.service';
-import {ApplicationService} from '../services/application.service';
-import {ElectronService} from 'ngx-electron';
-import {IpcService} from '../services/ipc.service';
+import { Component, OnInit } from '@angular/core';
+import { ProjectService } from '../services/project.service';
+import { AppVersion } from '../app.version';
+import { ModelService } from '../services/model.service';
+import { EventService } from '../services/event.service';
+import { Message } from '../common/message';
+import { ValidationService } from '../services/validation.service';
+import { AccessCpnService } from '../services/access-cpn.service';
+import { EditorPanelService } from '../services/editor-panel.service';
+import { ApplicationService } from '../services/application.service';
+import { ElectronService } from 'ngx-electron';
+import { IpcService } from '../services/ipc.service';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogComponent } from '../common/dialog/dialog.component';
+
+const fileDialog = require('file-dialog');
 
 @Component({
   selector: 'app-main-toolbar',
@@ -32,7 +36,8 @@ export class MainToolbarComponent implements OnInit {
     private editorPanelService: EditorPanelService,
     public applicationService: ApplicationService,
     private electronService: ElectronService,
-    private ipcService: IpcService
+    private ipcService: IpcService,
+    public dialog: MatDialog
   ) {
   }
 
@@ -68,7 +73,7 @@ export class MainToolbarComponent implements OnInit {
 
   onValidate() {
     // this.validationService.validate();
-    this.eventService.send(Message.SERVER_INIT_NET, {projectData: this.modelService.getProjectData(), complexVerify: true});
+    this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData(), complexVerify: true });
   }
 
   onValidateAuto() {
@@ -92,19 +97,97 @@ export class MainToolbarComponent implements OnInit {
 
 
   onNewProject() {
-    const message = 'Save the changes to file before closing?';
-    if (confirm(message)) {
-      this.eventService.send(Message.MAIN_MENU_SAVE_PROJECT);
-      return;
-    }
-    this.onStopSimulation();
-    this.projectService.loadEmptyProject();
+    // const message = 'Save the changes to file before closing?';
+    // if (confirm(message)) {
+    //   this.eventService.send(Message.MAIN_MENU_SAVE_PROJECT);
+    //   return;
+    // }
+    // this.onStopSimulation();
+    // this.projectService.loadEmptyProject();
+
+    this.checkSaveChanges().then((resolve) => {
+      this.onStopSimulation();
+      this.projectService.loadEmptyProject();
+    });
+  }
+
+  onOpenProject() {
+    this.checkSaveChanges().then((resolve) => {
+      fileDialog({ accept: '.cpn, .CPN' })
+        .then(files => {
+          console.log(this.constructor.name, 'onTest(), files = ', files);
+
+          if (files.length > 0) {
+            const file: File = files[0];
+            this.projectService.loadProjectFile(file);
+          } else {
+            console.error(this.constructor.name, 'NO FILE SELECTED!');
+            return;
+          }
+        });
+    });
+  }
+
+  onSaveProject() {
+    const dialogRef = this.dialog.open(DialogComponent, {
+      width: '500px',
+      data: {
+        title: 'Save the changes to file',
+        input: [{ title: 'Filename', value: this.modelService.projectName }]
+      }
+    });
+    dialogRef.afterClosed().subscribe(data => {
+      if (data && data.result === DialogComponent.YES) {
+        console.log(this.constructor.name, 'onSaveProject(), YES clicked, data = ', data);
+
+        // Save to file
+        this.projectService.saveToFile(data.input[0].value);
+      }
+    });
+  }
+
+  checkSaveChanges() {
+    return new Promise((resolve, reject) => {
+
+      // if Undo buffer is empty just return
+      if (this.validationService.history.currentModelIndex === 0) {
+        resolve();
+        return;
+      }
+
+      // else open save dialog
+      const dialogRef = this.dialog.open(DialogComponent, {
+        width: '500px',
+        data: {
+          title: 'Save the changes to file before closing?',
+          input: [{ title: 'Filename', value: this.modelService.projectName }]
+        }
+      });
+
+      dialogRef.afterClosed().subscribe(data => {
+        if (data) {
+          console.log(this.constructor.name, 'checkSaveChanges(), data = ', data);
+
+          switch (data.result) {
+            case DialogComponent.YES:
+              // Save to file
+              this.projectService.saveToFile(data.input[0].value);
+              resolve();
+              break;
+
+            case DialogComponent.NO:
+              resolve();
+              break;
+          }
+        }
+      });
+    });
   }
 
   reloadProject() {
     this.onStopSimulation();
 
-    this.eventService.send(Message.PROJECT_LOAD, {project: this.modelService.getProject()});
+    this.eventService.send(Message.PROJECT_LOAD, { project: this.modelService.getProject() });
 
     setTimeout(() => this.validationService.validate(), 500);
   }

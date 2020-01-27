@@ -34,21 +34,33 @@
     <!--</li>-->
 
     <!-- Open -->
-    <li class="nav-item">
+    <!-- <li class="nav-item">
       <app-openproject-button (click)="openProject()"></app-openproject-button>
+    </li> -->
+    <li class="nav-item" (click)="onOpenProject()">
+      <div class="nav-link mb-0">
+        <i class="far fa-folder-open"></i>
+        <span>Open project</span>
+      </div>
     </li>
 
     <!-- Save -->
-    <li class="nav-item">
+    <!-- <li class="nav-item">
       <app-saveproject-button></app-saveproject-button>
+    </li> -->
+
+    <li class="nav-item" (click)="onSaveProject()">
+      <div class="nav-link mb-0">
+        <i class="far fa-save"></i>
+        <span>Save project</span>
+      </div>
     </li>
 
     <div class="divider"></div>
 
     <!-- Undo -->
     <li class="nav-item">
-      <div class="nav-link mb-0" [ngClass]="{'disabled': undo === 0 }"
-        (click)="getUndo()">
+      <div class="nav-link mb-0" [ngClass]="{'disabled': undo === 0 }" (click)="getUndo()">
         <i class="fas fa-undo"></i>
         <!-- <span>Undo</span>&nbsp;<span *ngIf="modelService.getUndoCount() > 0">({{ modelService.getUndoCount() }})</span> -->
         <span *ngIf="undo > 0; else elseUndoBlock">Undo
@@ -59,8 +71,7 @@
 
     <!-- Redo -->
     <li class="nav-item">
-      <div class="nav-link mb-0" [ngClass]="{'disabled': redo === 0 }"
-        (click)="getRedo()">
+      <div class="nav-link mb-0" [ngClass]="{'disabled': redo === 0 }" (click)="getRedo()">
         <i class="fas fa-redo"></i>
         <span *ngIf="redo > 0; else elseRedoBlock">Redo
           ({{ redo }})</span>
@@ -97,7 +108,8 @@
     </li>
 
     <li class="nav-item">
-      <a (click)="onValidateAuto()" class="nav-link" [ngClass]="validationService.isAutoValidation ? 'red' : 'grey'" href="#">
+      <a (click)="onValidateAuto()" class="nav-link" [ngClass]="validationService.isAutoValidation ? 'red' : 'grey'"
+        href="#">
         <i [ngClass]="validationService.isAutoValidation ? 'far fa-check-square' : 'far fa-square'"></i>
         <span>Auto</span>
       </a>
@@ -134,14 +146,13 @@
 
   <ul class="navbar-nav ml-auto">
 
-    <!-- Test animation -->
+    <!-- Test button -->
     <!-- <li class="nav-item">
       <div (click)="onTest()" class="nav-link mb-0">
         <i class="fas fa-step-forward"></i>
-        <span>Test animation</span>
+        <span>Test</span>
       </div>
     </li>
-
     <div class="divider"></div> -->
 
     <!-- Show documentation -->

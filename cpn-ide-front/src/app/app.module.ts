@@ -1,3 +1,10 @@
+import {
+  MatDialogModule,
+  MatButtonModule,
+  MatFormFieldModule,
+  MatInputModule
+} from '@angular/material';
+
 import { MonitorNamePipe } from './pipes/monitor-name.pipe';
 import { TreeNodeComponent } from './project-tree/tree-node/tree-node';
 import { RegexPipe } from './pipes/regex.pipe';
@@ -24,7 +31,6 @@ import { AppComponent } from './app.component';
 import { MainFrameComponent } from './main-frame/main-frame.component';
 import { AccessCpnService } from './services/access-cpn.service';
 import { MainToolbarComponent } from './main-toolbar/main-toolbar.component';
-import { OpenprojectButtonComponent } from './actions/openproject-button/openproject-button.component';
 
 import { ModelEditorToolbarComponent } from './model-editor/model-editor-toolbar/model-editor-toolbar.component';
 import { ModelEditorComponent } from './model-editor/model-editor.component';
@@ -38,10 +44,10 @@ import { PropertiesPanelComponent } from './properties-panel/properties-panel.co
 
 import { MlEditorComponent } from './ml-editor/ml-editor.component';
 import { ProjectService } from './services/project.service';
+import { FileService } from './services/file.service';
 import { ModelService } from './services/model.service';
 import { EventService } from './services/event.service';
 import { ReplaceSpacesPipe } from './pipes/replace-spaces.pipe';
-import { SaveprojectButtonComponent } from './actions/saveproject-button/saveproject-button.component';
 import { BlockHeaderComponent } from './common/block-header';
 import { TextEditRowComponent } from './properties-panel/components/text-edit-row';
 import { ColorDeclarationsPipe } from './pipes/color-declarations.pipe';
@@ -57,7 +63,6 @@ import { ProjectTreeComponent } from './project-tree/project-tree.component';
 import { ProjectTreeBlockNodeComponent } from './project-tree/project-tree-block-node/project-tree-block-node.component';
 import { ProjectTreePageNodeComponent } from './project-tree/project-tree-page-node/project-tree-page-node.component';
 import { ProjectTreeMonitorNodeComponent } from './project-tree/project-tree-monitor-node/project-tree-monitor-node.component';
-import { ProjectTreeMonitorblockNodeComponent } from './project-tree/project-tree-monitorblock-node/project-tree-monitorblock-node.component';
 import { ProjectTreeOptionsNodeComponent } from './project-tree/project-tree-options-node/project-tree-options-node.component';
 import { ProjectTreeOptionNodeComponent } from './project-tree/project-tree-option-node/project-tree-option-node.component';
 import { ProjectTreeDeclarationNodeComponent } from './project-tree/project-tree-declaration-node/project-tree-declaration-node.component';
@@ -65,10 +70,10 @@ import { ProjectTreeToolbarComponent } from './project-tree/project-tree-toolbar
 import { ContextMenuComponent } from './context-menu/context-menu.component';
 import { ProjectDeclarationsOldComponent } from './project-declarations-old/project-declarations-old.component';
 import { ProjectDeclarationsComponent } from './project-declarations/project-declarations.component';
+import { ProjectTreeMonitorblockNodeComponent } from './project-tree/project-tree-monitorblock-node/project-tree-monitorblock-node.component';
 import { ProjectDeclarationsBlockNodeComponent } from './project-declarations/project-declarations-block-node/project-declarations-block-node.component';
 import { SimulationReportPipe } from './pipes/simulation-report.pipe';
-import {FileService} from './services/file.service';
-import { DialogComponent } from './dialog/dialog.component';
+import { DialogComponent } from './common/dialog/dialog.component';
 
 require('typeface-droid-sans-mono');
 
@@ -91,7 +96,6 @@ require('typeface-droid-sans-mono');
     MainFrameComponent,
     ProjectExplorerComponent,
     MainToolbarComponent,
-    OpenprojectButtonComponent,
     ModelEditorComponent,
     ModelEditorToolbarComponent,
     ProjectConsoleComponent,
@@ -99,7 +103,6 @@ require('typeface-droid-sans-mono');
     ProjectDetailsComponent,
     PropertiesPanelComponent,
     MlEditorComponent,
-    SaveprojectButtonComponent,
     DialogComponent,
 
     BlockHeaderComponent,
@@ -142,8 +145,16 @@ require('typeface-droid-sans-mono');
 
     // Ngb
     NgbModule,
+
+    // Material
+    MatDialogModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
   ],
-  entryComponents: [],
+  entryComponents: [
+    DialogComponent
+  ],
   providers: [
     SettingsService,
     AccessCpnService,

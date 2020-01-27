@@ -77,11 +77,10 @@
     "replace-in-file": "^3.4.4",
     "ts-node": "~7.0.0",
     "tslint": "~5.11.0",
-    "typedoc": "^0.15.8",
-    "typescript": "^3.5.1"
+    "typedoc": "^0.15.8"
   },
   "dependencies": {
-    "@angular/animations": "~8.2.5",
+    "@angular/animations": "^8.2.14",
     "@angular/cdk": "^8.2.3",
     "@angular/common": "~8.2.5",
     "@angular/compiler": "~8.2.5",
@@ -111,6 +110,7 @@
     "electron-is-dev": "^1.1.0",
     "electron-log": "^3.0.9",
     "electron-splashscreen": "^1.0.0",
+    "file-dialog": "0.0.8",
     "file-saver": "^1.3.8",
     "find-process": "^1.4.3",
     "flex-layout": "^1.0.1",
@@ -133,6 +133,7 @@
     "rxjs-observe": "^2.1.5",
     "ts-helpers": "^1.1.2",
     "typeface-droid-sans-mono": "0.0.44",
+    "typescript": "^3.5.1",
     "xml-js": "^1.6.11",
     "xmldom": "^0.1.31",
     "zone.js": "^0.8.29"

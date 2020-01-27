@@ -14,6 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from '../common/dialog/dialog.component';
 
 const fileDialog = require('file-dialog');
+// const fs = require('fs');
 
 @Component({
   selector: 'app-main-toolbar',
@@ -45,9 +46,16 @@ export class MainToolbarComponent implements OnInit {
     this.accessCpnService.setIsSimulation(false);
 
     this.ipcService.on(Message.MAIN_MENU_NEW_PROJECT, () => this.onNewProject());
-    // this.ipcService.on(Message.MAIN_MENU_SAVE_PROJECT, () => this.onSaveProject());
+    this.ipcService.on(Message.MAIN_MENU_OPEN_PROJECT, () => this.onOpenProject());
+    this.ipcService.on(Message.MAIN_MENU_SAVE_PROJECT, () => this.onSaveProject());
+
     this.eventService.on(Message.MODEL_SAVE_BACKUP, () => this.refreshHistorySteps());
     this.eventService.on(Message.MODEL_RELOAD, () => this.refreshHistorySteps());
+
+    // ipcRenderer.on(Message.MAIN_MENU_OPEN_PROJECT, (event, arg) => {
+    //   console.log('Message.MAIN_MENU_OPEN_PROJECT', arg);
+    //   this.onOpenProject();
+    // });
   }
 
   onDoStep() {
@@ -81,14 +89,30 @@ export class MainToolbarComponent implements OnInit {
   }
 
   onTest() {
-    const modelEditor = this.editorPanelService.getSelectedModelEditor();
-    console.log(this.constructor.name, 'onTest(), page = ', modelEditor);
+    // const modelEditor = this.editorPanelService.getSelectedModelEditor();
+    // console.log(this.constructor.name, 'onTest(), page = ', modelEditor);
 
-    if (modelEditor) {
-      modelEditor.testAnimation().then(() => {
-        console.log(this.constructor.name, 'onTest(), modelEditor.testAnimation(), COMPLETE');
-      });
-    }
+    // if (modelEditor) {
+    //   modelEditor.testAnimation().then(() => {
+    //     console.log(this.constructor.name, 'onTest(), modelEditor.testAnimation(), COMPLETE');
+    //   });
+    // }
+
+    // if (this.electronService.isElectronApp) {
+    //   this.electronService.remote.dialog.showOpenDialog({
+    //     properties: ['openFile'],
+    //     filters: [{ name: 'CPN models', extensions: ['cpn', 'CPN'] }]
+    //   }, (files) => {
+    //     if (files !== undefined) {
+    //       console.log(this.constructor.name, 'onTest(), electron dialog files, files = ', files);
+    //     }
+
+    //     const fs = this.electronService.remote.require('fs');
+    //     fs.readFile(files[0], 'utf-8', function (err, data) {
+    //       console.log(this.constructor.name, 'onTest(), file data = ', data);
+    //     });
+    //   });
+    // }
   }
 
   onDocumentation() {
@@ -97,14 +121,6 @@ export class MainToolbarComponent implements OnInit {
 
 
   onNewProject() {
-    // const message = 'Save the changes to file before closing?';
-    // if (confirm(message)) {
-    //   this.eventService.send(Message.MAIN_MENU_SAVE_PROJECT);
-    //   return;
-    // }
-    // this.onStopSimulation();
-    // this.projectService.loadEmptyProject();
-
     this.checkSaveChanges().then((resolve) => {
       this.onStopSimulation();
       this.projectService.loadEmptyProject();
@@ -112,19 +128,46 @@ export class MainToolbarComponent implements OnInit {
   }
 
   onOpenProject() {
-    this.checkSaveChanges().then((resolve) => {
-      fileDialog({ accept: '.cpn, .CPN' })
-        .then(files => {
-          console.log(this.constructor.name, 'onTest(), files = ', files);
+    console.log(this.constructor.name, 'onOpenProject(), this = ', this);
 
-          if (files.length > 0) {
-            const file: File = files[0];
-            this.projectService.loadProjectFile(file);
-          } else {
-            console.error(this.constructor.name, 'NO FILE SELECTED!');
-            return;
+    this.checkSaveChanges().then((resolve) => {
+
+      if (this.electronService.isElectronApp) {
+
+        this.electronService.remote.dialog.showOpenDialog({
+          properties: ['openFile'],
+          filters: [{ name: 'CPN models', extensions: ['cpn', 'CPN'] }]
+        }, (files) => {
+          if (files !== undefined) {
+            console.log(this.constructor.name, 'onTest(), electron dialog files, files = ', files);
           }
+
+          let filename = files[0];
+
+          // TODO: выделить имя файла без пути!
+
+          const fs = this.electronService.remote.require('fs');
+          fs.readFile(filename, 'utf-8', (err, data) => {
+            console.log(this.constructor.name, 'onTest(), file data = ', data);
+            this.projectService.loadProjectXml(filename, data);
+          });
         });
+
+      } else {
+
+        fileDialog({ accept: '.cpn, .CPN' })
+          .then(files => {
+            console.log(this.constructor.name, 'onOpenProject(), files = ', files);
+
+            if (files.length > 0) {
+              const file: File = files[0];
+              this.projectService.loadProjectFile(file);
+            } else {
+              console.error(this.constructor.name, 'NO FILE SELECTED!');
+              return;
+            }
+          });
+      }
     });
   }
 
@@ -173,10 +216,12 @@ export class MainToolbarComponent implements OnInit {
               // Save to file
               this.projectService.saveToFile(data.input[0].value);
               resolve();
+              return;
               break;
 
             case DialogComponent.NO:
               resolve();
+              return;
               break;
           }
         }

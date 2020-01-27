@@ -114,12 +114,12 @@ function createWindow() {
     {
       label: 'File',
       submenu: [
-        { label: 'New project', click() { newProject() } },
+        { label: 'New project', click() { newProject(); } },
         { type: 'separator' },
-        { label: 'Open project', click() { openProject() }, accelerator: 'Ctrl+O' },
-        { label: 'Save project', click() { saveProject() }, accelerator: 'Ctrl+S' },
+        { label: 'Open project', click() { openProject(); }, accelerator: 'Ctrl+O' },
+        { label: 'Save project', click() { saveProject(); }, accelerator: 'Ctrl+S' },
         { type: 'separator' },
-        { label: 'Exit', click() { app.quit() }, accelerator: 'Alt+F4' }
+        { label: 'Exit', click() { app.quit(); }, accelerator: 'Alt+F4' }
       ]
     },
     {

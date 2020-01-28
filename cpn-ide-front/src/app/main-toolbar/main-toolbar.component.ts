@@ -89,6 +89,11 @@ export class MainToolbarComponent implements OnInit {
   }
 
   onTest() {
+    // const regex = /[^\/]+$/gm;
+    // const filename = regex.exec('/home/s-egorov/Downloads/myne skdj fsldkfj  ыврпа ыовра t.cpn');
+    // console.log(this.constructor.name, 'onTest(), filename = ', filename);
+    // console.log(this.constructor.name, 'onTest(), filename[0] = ', filename[0]);
+
     // const modelEditor = this.editorPanelService.getSelectedModelEditor();
     // console.log(this.constructor.name, 'onTest(), page = ', modelEditor);
 
@@ -139,18 +144,25 @@ export class MainToolbarComponent implements OnInit {
           filters: [{ name: 'CPN models', extensions: ['cpn', 'CPN'] }]
         }, (files) => {
           if (files !== undefined) {
-            console.log(this.constructor.name, 'onTest(), electron dialog files, files = ', files);
+            console.log(this.constructor.name, 'onOpenProject(), electron dialog files, files = ', files);
           }
 
-          let filename = files[0];
+          const fullFilePath = files[0];
 
           // TODO: выделить имя файла без пути!
+          const regex = /[^\/]+$/gm;
+          const r = regex.exec(fullFilePath);
+          const filename = r ? r[0] : undefined;
 
-          const fs = this.electronService.remote.require('fs');
-          fs.readFile(filename, 'utf-8', (err, data) => {
-            console.log(this.constructor.name, 'onTest(), file data = ', data);
-            this.projectService.loadProjectXml(filename, data);
-          });
+          if (filename) {
+            const fs = this.electronService.remote.require('fs');
+            fs.readFile(fullFilePath, 'utf-8', (err, data) => {
+              console.log(this.constructor.name, 'onOpenProject(), file data = ', data);
+              this.projectService.loadProjectXml(filename, data);
+            });
+          } else {
+            console.error(this.constructor.name, 'onOpenProject(), ERROR filename, f = ', r);
+          }
         });
 
       } else {

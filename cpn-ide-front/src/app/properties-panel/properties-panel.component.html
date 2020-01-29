@@ -41,11 +41,21 @@
 
               <!-- Shape Labels -->
               <div *ngFor="let labelKey of ['initmark', 'type', 'cond', 'time', 'code', 'priority', 'annot']">
-                <!-- {{ JSON.stringify(cpnElement[labelKey]) }}<br> -->
-                <app-text-edit-row *ngIf="cpnElement[labelKey]" type="text" [name]="names[labelKey] || labelKey"
-                  [object]="cpnElement[labelKey].text" field="__text" (changed)="updateLabel($event)"
-                  [readonly]="accessCpnService.isSimulation">
-                </app-text-edit-row>
+                <ng-container *ngIf="labelKey === 'type'">
+                  <!-- Colorset -->
+                  <app-text-edit-row *ngIf="cpnElement.ellipse" type="select" [name]="names[labelKey] || labelKey"
+                                     [object]="cpnElement[labelKey].text" field="__text" (changed)="updateColorset($event)"
+                                     [options]="getColorsetList()"
+                                     [readonly]="accessCpnService.isSimulation">
+                  </app-text-edit-row>
+                </ng-container>
+
+                <ng-container *ngIf="labelKey !== 'type'">
+                  <app-text-edit-row *ngIf="cpnElement[labelKey]" type="text" [name]="names[labelKey] || labelKey"
+                    [object]="cpnElement[labelKey].text" field="__text" (changed)="updateLabel($event)"
+                    [readonly]="accessCpnService.isSimulation">
+                  </app-text-edit-row>
+                </ng-container>
               </div>
 
               <!-- Port Labels -->

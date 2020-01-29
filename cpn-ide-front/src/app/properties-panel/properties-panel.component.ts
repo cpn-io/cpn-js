@@ -85,8 +85,8 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   public layoutPartOpened: boolean[] = [];
 
   constructor(private eventService: EventService,
-    private modelService: ModelService,
-    public accessCpnService: AccessCpnService) {
+              private modelService: ModelService,
+              public accessCpnService: AccessCpnService) {
 
   }
 
@@ -270,6 +270,15 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
       portNames.push(port.text);
     }
     return portNames;
+  }
+
+  getColorsetList() {
+    return this.modelService.getStandardDeclarations()
+      .map(el => el.id);
+  }
+
+  updateColorset(event) {
+    this.updateChanges();
   }
 
 

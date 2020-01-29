@@ -1,48 +1,36 @@
-import { Injectable, EventEmitter } from '@angular/core';
-import { Message } from '../common/message';
-import { Subject, Observable } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs/Subject';
+import { Subscription } from 'rxjs/Subscription';
+import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/map';
+
+interface Message {
+  id: String;
+  data: any;
+}
+
+type MessageCallback = (data: any) => void;
 
 @Injectable()
 export class EventService {
+  private handler = new Subject<Message>();
 
-  listeners = {};
-  eventsSubject = new Subject();
-  events;
+  constructor() { }
 
-  constructor() {
-    this.listeners = {};
-    this.eventsSubject = new Subject();
-
-    this.events = Observable.from(this.eventsSubject);
-
-    this.events.subscribe(
-      ({ name, args }) => {
-        if (this.listeners[name]) {
-          for (let listener of this.listeners[name]) {
-            listener(...args);
-          }
-        }
-      });
+  /**
+   * Broadcasts message to subscribers
+   */
+  send(id: String, data?: any) {
+    this.handler.next({ id, data });
   }
 
-  on(name, listener) {
-    if (!this.listeners[name]) {
-      this.listeners[name] = [];
-    }
-
-    this.listeners[name].push(listener);
-  }
-
-  off(name, listener) {
-    this.listeners[name] = this.listeners[name].filter(x => x != listener);
-  }
-
-  send(name, ...args) {
-    this.eventsSubject.next({
-      name,
-      args
-    });
+  /**
+   * Handles subscription to messages
+   */
+  on(id: String, callback: MessageCallback): Subscription {
+    return this.handler
+      .filter(message => message.id === id)
+      .map(message => message.data)
+      .subscribe(callback);
   }
 }
-
-

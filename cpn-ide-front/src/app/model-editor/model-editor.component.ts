@@ -296,8 +296,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           subPageName: transCpnElement.subst.subpageinfo._name,
           subPageId: transCpnElement.subst._subpage,
           cpnElement: transCpnElement
-        },
-        true // wait event handlers finish
+        }
       );
 
       const subPageId = transCpnElement.subst._subpage;

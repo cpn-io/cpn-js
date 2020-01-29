@@ -1683,7 +1683,7 @@ export class ModelService {
       if (page && page.place) {
         // console.log('getAllPorts(), page = ', page);
 
-        for (const place of page.place) {
+        for (const place of nodeToArray(page.place)) {
           // console.log('getAllPorts(), place = ', place);
           // console.log('getAllPorts(), place.port = ', place.port);
           if (place.port

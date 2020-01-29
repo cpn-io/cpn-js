@@ -17,13 +17,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgxElectronModule } from 'ngx-electron';
 import { AngularSplitModule } from 'angular-split';
 import { TreeModule } from 'angular-tree-component';
-import { JsonEditorModule } from 'ng2-json-editor';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { NgxJsonViewerModule } from 'ngx-json-viewer-scrolling';
-// import { AgmJsonViewerModule } from 'agm-json-viewer';
-// import { JsonTree } from 'ng2-json-view'
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -133,15 +129,11 @@ require('typeface-droid-sans-mono');
     HttpClientModule,
     NgxElectronModule,
     TreeModule.forRoot(),
-    JsonEditorModule,
     FontAwesomeModule,
     AngularSplitModule,
     TabModule,
     FormsModule,
     CommonModule,
-    NgxJsonViewerModule,
-    // AgmJsonViewerModule,
-    // JsonTree,
 
     // Ngb
     NgbModule,

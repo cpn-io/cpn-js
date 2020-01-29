@@ -1959,6 +1959,32 @@ export class ModelService {
     return nodeList;
   }
 
+  getStandardDeclarations() {
+
+    const buffer = [];
+    let result = [];
+
+    this.projectData.workspaceElements.cpnet.globbox.block.forEach(el => buffer.push(el));
+
+    while (buffer.length > 0) {
+      const pop = buffer.pop();
+      if (pop.block) {
+        if (Array.isArray(pop.block)) {
+          pop.block.forEach(el => buffer.push(el));
+        } else {
+          buffer.push(pop.block);
+        }
+      }
+      if (pop.color) {
+        if (Array.isArray(pop.color)) {
+          result = result.concat(pop.color);
+        } else {
+          result.push(pop.color);
+        }
+      }
+    }
+    return result;
+  }
 
 
 }

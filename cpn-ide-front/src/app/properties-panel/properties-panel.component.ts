@@ -41,9 +41,9 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     'initmark': 'Initial marking',
     'type': 'Colorset',
     'port': 'Port type',
-    'cond': 'Condition',
+    'cond': 'Guard',
     'time': 'Time',
-    'code': 'Code',
+    'code': 'Action',
     'priority': 'Priority',
     'subst': 'Subpage',
     'annot': 'Annotation'

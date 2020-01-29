@@ -1308,6 +1308,24 @@ export class ModelService {
     return undefined;
   }
 
+  public getTransListBySubpageId(id) {
+    const result = [];
+
+    const pages = this.getAllPages();
+
+    for (const page of pages) {
+      // search in trans
+      for (const trans of nodeToArray(page.trans)) {
+        if (trans.subst && trans.subst._subpage === id) {
+          // return trans;
+          result.push(trans);
+        }
+      }
+    }
+
+    return result;
+  }
+
   public getArcById(id) {
     const pages = this.getAllPages();
 

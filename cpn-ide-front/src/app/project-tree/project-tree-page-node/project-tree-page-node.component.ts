@@ -133,6 +133,12 @@ export class ProjectTreePageNodeComponent implements OnInit, ITreeNode {
   }
   onUpdate(event: any) {
     this.page.pageattr._name = event.target.textContent;
+    const transitionsArray = this.modelService.getTransListBySubpageId(this.page._id);
+    transitionsArray.forEach(elem => {
+      elem.subst.subpageinfo.text = event.target.textContent;
+      elem.subst.subpageinfo._name = event.target.textContent;
+      this.eventService.send(Message.MODEL_UPDATE_DIAGRAM, { cpnElement: elem });
+    });
   }
   onNew(event: any = undefined) {
     const defValue = this.settings.appSettings['page'];

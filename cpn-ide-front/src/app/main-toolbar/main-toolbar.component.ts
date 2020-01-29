@@ -94,14 +94,14 @@ export class MainToolbarComponent implements OnInit {
     // console.log(this.constructor.name, 'onTest(), filename = ', filename);
     // console.log(this.constructor.name, 'onTest(), filename[0] = ', filename[0]);
 
-    // const modelEditor = this.editorPanelService.getSelectedModelEditor();
-    // console.log(this.constructor.name, 'onTest(), page = ', modelEditor);
+    const modelEditor = this.editorPanelService.getSelectedModelEditor();
+    console.log(this.constructor.name, 'onTest(), page = ', modelEditor);
 
-    // if (modelEditor) {
-    //   modelEditor.testAnimation().then(() => {
-    //     console.log(this.constructor.name, 'onTest(), modelEditor.testAnimation(), COMPLETE');
-    //   });
-    // }
+    if (modelEditor) {
+      modelEditor.testAnimation().then(() => {
+        console.log(this.constructor.name, 'onTest(), modelEditor.testAnimation(), COMPLETE');
+      });
+    }
 
     // if (this.electronService.isElectronApp) {
     //   this.electronService.remote.dialog.showOpenDialog({

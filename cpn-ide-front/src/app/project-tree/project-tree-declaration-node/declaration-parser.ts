@@ -1,7 +1,7 @@
 /**
  * Clear declaration layout: remove line breaks, multiple spaces, comments
- * 
- * @param layout 
+ *
+ * @param layout
  */
 export function clearDeclarationLayout(layout) {
     // remove line break
@@ -18,7 +18,7 @@ export function clearDeclarationLayout(layout) {
 
 export function parseUiDeclarartionType(layout) {
     const regex = /^(?<declarationType>\w+)/g;
-    let m = regex.exec(layout);
+    const m = regex.exec(layout);
 
     if (m && m.groups && m.groups.declarationType) {
         return m.groups.declarationType;
@@ -61,14 +61,14 @@ export function detectCpnDeclarartionType(cpnElement) {
 
 /**
  * Parse declaration layout: extract declaration type
- * 
- * @param layout 
+ *
+ * @param layout
  */
 export function parseDeclarartion(layout) {
-    let result:any = {};
+    const result: any = {};
 
     const regex = /^(?<declarationType>\w+)/g;
-    let m = regex.exec(layout);
+    const m = regex.exec(layout);
 
     const declarationType = parseUiDeclarartionType(layout);
 
@@ -95,10 +95,10 @@ export function parseDeclarartion(layout) {
 
 
 function parseGlobrefDeclaration(layout) {
-    let result = undefined;
+    let result;
 
-    let regex = /globref\s+(?<id>\w+)\s*=\s*(?<exp>[^;]+)/g;
-    let m = regex.exec(layout);
+    const regex = /globref\s+(?<id>\w+)\s*=\s*(?<exp>[^;]+)/g;
+    const m = regex.exec(layout);
 
     console.log('onParse(), parseGlobrefDeclaration(), layout = ', layout);
 
@@ -110,8 +110,8 @@ function parseGlobrefDeclaration(layout) {
             id: m.groups.id,
             ml: m.groups.exp
         };
-        if (layout.includes("timed")) {
-            result.timed = "";
+        if (layout.includes('timed')) {
+            result.timed = '';
         }
     }
 
@@ -119,10 +119,10 @@ function parseGlobrefDeclaration(layout) {
 }
 
 function parseVarDeclaration(layout) {
-    let result = undefined;
+    let result;
 
-    let regex = /var\s+(?<id>[^:]+)\s*:\s*(?<name>\w+)/g;
-    let m = regex.exec(layout);
+    const regex = /var\s+(?<id>[^:]+)\s*:\s*(?<name>\w+)/g;
+    const m = regex.exec(layout);
 
     console.log('onParse(), parseVarDeclaration(), layout = ', layout);
 
@@ -140,8 +140,8 @@ function parseVarDeclaration(layout) {
             type: { id: m.groups.name },
             id: idList && idList.length === 1 ? idList[0] : idList
         };
-        if (layout.includes("timed")) {
-            result.timed = "";
+        if (layout.includes('timed')) {
+            result.timed = '';
         }
     }
 
@@ -149,7 +149,7 @@ function parseVarDeclaration(layout) {
 }
 
 function parseMlDeclaration(layout) {
-    let result = undefined;
+    let result;
 
     console.log('onParse(), parseMlDeclaration(), layout = ', layout);
 
@@ -162,20 +162,19 @@ function parseMlDeclaration(layout) {
 
 
 /**
- * Parse colset declaration: extract name, type and extentions (with, and, timed)
- * 
- * @param layout 
+ * Parse colset declaration: extract name, type and extensions (with, and, timed)
+ *
+ * @param layout
  */
 function parseColsetDeclaration(layout) {
-    let result = undefined;
+    let result;
 
     const originalLayout = layout;
 
     layout = clearDeclarationLayout(layout);
 
-    let regex = /colset\s+(?<name>\w+)\s*=\s*(?<type>\w+)/g;
-    let m = regex.exec(layout);
-    let m2;
+    const regex = /colset\s+(?<name>\w+)\s*=\s*(?<type>\w+)/g;
+    const m = regex.exec(layout);
 
     console.log('onParse(), parseColsetDeclaration(), layout = ', layout);
 
@@ -206,7 +205,7 @@ function parseColsetDeclaration(layout) {
                 break;
             case 'with':
                 type = parseEnumDeclarartion(layout);
-                typeName = "enum";
+                typeName = 'enum';
                 break;
             case 'index':
                 type = parseIndexDeclarartion(layout);
@@ -232,8 +231,8 @@ function parseColsetDeclaration(layout) {
         result = {
             id: m.groups.name
         };
-        if (layout.includes("timed")) {
-            result.timed = "";
+        if (layout.includes('timed')) {
+            result.timed = '';
         }
         if (type !== undefined) {
             // typed declaration
@@ -251,11 +250,11 @@ function parseColsetDeclaration(layout) {
 
 /**
  * Parse unit declaration
- * 
- * @param layout 
+ *
+ * @param layout
  */
 function parseUnitDeclarartion(layout) {
-    let type: any = "";
+    let type: any = '';
 
     const regex = /with\s+(?<new_unit>\w+)/g;
     const m = regex.exec(layout);
@@ -272,11 +271,11 @@ function parseUnitDeclarartion(layout) {
 
 /**
  * Parse boolean declaration
- * 
- * @param layout 
+ *
+ * @param layout
  */
 function parseBoolDeclarartion(layout) {
-    let type: any = "";
+    let type: any = '';
 
     const regex = /with\s*\(\s*(?<new_false>\w+)\s*\,\s*(?<new_true>\w+)\s*\)/g;
     const m = regex.exec(layout);
@@ -293,11 +292,11 @@ function parseBoolDeclarartion(layout) {
 
 /**
  * Parse numeric and time declaration
- * 
- * @param layout 
+ *
+ * @param layout
  */
 function parseNumericDeclarartion(layout) {
-    let type: any = "";
+    let type: any = '';
 
     const regex = /with\s+(?<exp1>[\w\.]+)\s*\.\.\s*(?<exp2>[\w\.]+)/g;
     const m = regex.exec(layout);
@@ -314,11 +313,11 @@ function parseNumericDeclarartion(layout) {
 
 /**
  * Parse string declaration
- * 
- * @param layout 
+ *
+ * @param layout
  */
 function parseStringDeclarartion(layout) {
-    let type: any = "";
+    let type: any = '';
 
     const stringExpList = [];
     const intExpList = [];
@@ -358,11 +357,11 @@ function parseStringDeclarartion(layout) {
 
 /**
  * Parse index declaration
- * 
- * @param layout 
+ *
+ * @param layout
  */
 function parseIndexDeclarartion(layout) {
-    let type: any = "";
+    let type: any = '';
 
     const regex = /(?<id>\w+)\s+with\s+(?<int_exp1>\w+)\s*\.\.\s*(?<int_exp2>\w+)/g;
     const m = regex.exec(layout);
@@ -378,11 +377,11 @@ function parseIndexDeclarartion(layout) {
 
 /**
  * Parse enum declaration
- * 
- * @param layout 
+ *
+ * @param layout
  */
 function parseEnumDeclarartion(layout) {
-    let type: any = "";
+    let type: any = '';
 
     const regex = /(with\s+(?<id>\w+))|(\|\s*(?<id2>\w+))/g;
     let m;
@@ -414,11 +413,11 @@ function parseEnumDeclarartion(layout) {
 
 /**
  * Parse product declaration
- * 
- * @param layout 
+ *
+ * @param layout
  */
 function parseProductDeclarartion(layout) {
-    let type: any = "";
+    let type: any = '';
 
     const regex = /(product\s+(?<name>\w+))|(\*\s*(?<name2>\w+))/g;
     let m;
@@ -450,11 +449,11 @@ function parseProductDeclarartion(layout) {
 
 /**
  * Parse record declaration
- * 
- * @param layout 
+ *
+ * @param layout
  */
 function parseRecordDeclarartion(layout) {
-    let type: any = "";
+    let type: any = '';
 
     const regex = /(record\s+(?<id>\w+)\s*:\s*(?<name>\w+))|(\*\s*(?<id2>\w+)\s*:\s*(?<name2>\w+))/g;
     let m;
@@ -486,11 +485,11 @@ function parseRecordDeclarartion(layout) {
 
 /**
  * Parse union declaration
- * 
- * @param layout 
+ *
+ * @param layout
  */
 function parseUnionDeclarartion(layout) {
-    let type: any = "";
+    let type: any = '';
 
     const regex = /(union\s+(?<id>\w+)\s*(:\s*(?<name>\w+))*)|(\+\s*(?<id2>\w+)\s*(:\s*(?<name2>\w+))*)/g;
     let m;
@@ -530,11 +529,11 @@ function parseUnionDeclarartion(layout) {
 
 /**
  * Parse list declaration
- * 
- * @param layout 
+ *
+ * @param layout
  */
 function parseListDeclarartion(layout) {
-    let type: any = "";
+    let type: any = '';
 
     const regex = /list\s+(?<id>\w+)(\s+with\s+(?<int_exp1>\w+)\s*\.\.\s*(?<int_exp2>\w+))*/g;
     const m = regex.exec(layout);
@@ -552,11 +551,11 @@ function parseListDeclarartion(layout) {
 
 /**
  * Parse subset declaration
- * 
- * @param layout 
+ *
+ * @param layout
  */
 function parseSubsetDeclarartion(layout) {
-    let type: any = "";
+    let type: any = '';
 
     const regex = /(subset\s+(?<id>\w+))|(by\s+(?<subset_function>\w+))|(with\s+(?<subset_list>\[.+\]))/g;
     let m;
@@ -590,12 +589,12 @@ function parseSubsetDeclarartion(layout) {
         if (subset_function) {
             type.by = {
                 ml: subset_function
-            }
+            };
         }
         if (subset_list) {
             type.with = {
                 ml: subset_list
-            }
+            };
         }
     }
 

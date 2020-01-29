@@ -470,7 +470,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   }
 }
 
-CpnUpdater.prototype.animateArcList = function (arcIdList, speedMs) {
+CpnUpdater.prototype.animateArcList = function (arcIdList, speedMs, income = true) {
 
   const updater = this;
   const modeling = this._modeling;
@@ -484,9 +484,21 @@ CpnUpdater.prototype.animateArcList = function (arcIdList, speedMs) {
     }
 
     for (const arcId of arcIdList) {
-      const element = modeling.getElementById(arcId);
-      if (element) {
-        renderer.drawArcAnimation(element, speedMs).then((result) => {
+      const arc = modeling.getElementById(arcId);
+      if (arc) {
+        let reverse = false;
+
+        // arc._orientation === 'BOTHDIR'
+
+        if (income && is(arc.source, CPN_TRANSITION)) {
+          reverse = true;
+        }
+
+        if (!income && is(arc.source, CPN_PLACE)) {
+          reverse = true;
+        }
+
+        renderer.drawArcAnimation(arc, speedMs, reverse).then((result) => {
           console.log('TOKEN ANIMATION COMPLETE, Promise complete!, result.id = ', result.id, arcIdCount);
 
           arcIdCount--;

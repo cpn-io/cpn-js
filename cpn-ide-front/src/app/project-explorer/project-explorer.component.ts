@@ -1257,7 +1257,7 @@ export class ProjectExplorerComponent implements OnInit, OnDestroy {
     perfrepNode.children.push(simperfrepNode);
     perfrepNode.children.push(replperfrepNode);
 
-    const extName = 'Extentions';
+    const extName = 'Extensions';
     const extNode = this.createTreeNode(extName);
 
     if (cpnElement.option instanceof Array) {

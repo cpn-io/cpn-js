@@ -485,10 +485,10 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.stateProvider.setFiredState(transIdList);
       this.modeling.repaintElements();
 
-      this.cpnUpdater.animateArcList(incomeArcIdList, speedMs).then(() => {
+      this.cpnUpdater.animateArcList(incomeArcIdList, speedMs, true).then(() => {
         console.log(this.constructor.name, 'testAnimation(), Promise complete!, incomeArcIdList = ', incomeArcIdList);
 
-        this.cpnUpdater.animateArcList(outcomeArcIdList, speedMs).then(() => {
+        this.cpnUpdater.animateArcList(outcomeArcIdList, speedMs, false).then(() => {
           console.log(this.constructor.name, 'testAnimation(), Promise complete!, outcomeArcIdList = ', outcomeArcIdList);
 
           this.stateProvider.clear();
@@ -561,7 +561,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           console.log('TOKEN ANIMATION, updateElementStatus(), Promise complete!, incomeArcIdList = ', incomeArcIdList);
           console.log('TOKEN ANIMATION, updateElementStatus(), INCOME ANIMATION COMPLETE, timeMs = ', new Date().getTime() - startTime);
 
-          this.cpnUpdater.animateArcList(outcomeArcIdList, speedMs).then(() => {
+          this.cpnUpdater.animateArcList(outcomeArcIdList, speedMs, true).then(() => {
             console.log('TOKEN ANIMATION, updateElementStatus(), Promise complete!, outcomeArcIdList = ', outcomeArcIdList);
             console.log('TOKEN ANIMATION, updateElementStatus(), OUTCOME ANIMATION COMPLETE, timeMs = ', new Date().getTime() - startTime);
 

@@ -1355,7 +1355,7 @@ export class ModelService {
     return arcs;
   }
 
-  public getTransitionOutcomeArcs(transId, placeId = undefined) {
+  public getTransitionOutcomeArcs(transId, placeId?) {
     const arcs = [];
     const pages = this.getAllPages();
     for (const page of pages) {

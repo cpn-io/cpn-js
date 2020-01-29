@@ -238,7 +238,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
       }
     }
 
-    console.log('getSubstPages(), supPageIdList = ', subPageIdList);
+    console.log('getSubstPages(), subPageIdList = ', subPageIdList);
 
     const pageNames = ['-- empty --'];
     for (const page of pageList) {
@@ -273,8 +273,17 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   }
 
   getColorsetList() {
-    return this.modelService.getStandardDeclarations()
-      .map(el => el.id);
+    let list = this.modelService.getStandardDeclarations().map(el => el.id);
+    list = list.sort((a, b) => {
+      if (a < b) {
+        return -1;
+      }
+      if (a > b) {
+        return 1;
+      }
+      return 0;
+    });
+    return list;
   }
 
   updateColorset(event) {

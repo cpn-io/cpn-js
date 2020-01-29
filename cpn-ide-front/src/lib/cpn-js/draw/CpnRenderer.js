@@ -1065,7 +1065,7 @@ CpnRenderer.prototype.getShapePath = function (element) {
 /**
  * Animate token movement for element (connection)
  */
-CpnRenderer.prototype.drawArcAnimation = function (connection, speedMs = 500) {
+CpnRenderer.prototype.drawArcAnimation = function (connection, speedMs = 500, reverse = false) {
 
   const renderer = this;
 
@@ -1083,7 +1083,7 @@ CpnRenderer.prototype.drawArcAnimation = function (connection, speedMs = 500) {
       let waypoints = connection.waypoints;
       let firstPoint = waypoints[0];
 
-      let pathValue = renderer.createPathFromConnection(connection, { x: -firstPoint.x, y: -firstPoint.y });
+      let pathValue = renderer.createPathFromConnection(connection, { x: -firstPoint.x, y: -firstPoint.y }, reverse);
 
       const container = renderer._canvas._svg;
 
@@ -1144,8 +1144,12 @@ CpnRenderer.prototype.drawArcAnimation = function (connection, speedMs = 500) {
   });
 }
 
-CpnRenderer.prototype.createPathFromConnection = function (connection, offset = { x: 0, y: 0 }) {
-  let waypoints = connection.waypoints;
+CpnRenderer.prototype.createPathFromConnection = function (connection, offset = { x: 0, y: 0 }, reverse = false) {
+  let waypoints = connection.waypoints.slice();
+
+  if (reverse) {
+    waypoints = waypoints.reverse();
+  }
 
   let D = 15;
 

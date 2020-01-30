@@ -36,10 +36,11 @@ export class Message {
   static SERVER_INIT_SIM = 'server.init.sim';
   static SERVER_INIT_SIM_START = 'server.init.sim.start';
   static SERVER_INIT_SIM_DONE = 'server.init.sim.done';
-  static SERVER_INIT_SIM_ERROR = 'server.init.sim.error';
 
   static SERVER_GET_BINDINGS = 'server.get.bindings';
   static SERVER_GET_SIM_STATE = 'server.get.sim.state';
+
+  static SERVER_ERROR = 'server.error';
 
   static SIMULATION_STARTED = 'simulation.started';
   static SIMULATION_STOPED = 'simulation.stoped';

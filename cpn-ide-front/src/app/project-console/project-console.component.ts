@@ -93,7 +93,7 @@ export class ProjectConsoleComponent implements OnInit {
       this.logSuccess('Simulator initialized in ' + this.timeConversion(elapsed) + '.');
     });
 
-    this.eventService.on(Message.SERVER_INIT_SIM_ERROR, (event) => {
+    this.eventService.on(Message.SERVER_ERROR, (event) => {
       if (event && event.data) {
         if (event.data.error && event.data.error.description) {
           this.logError('Simulator initializing error: ' + event.data.error.description);

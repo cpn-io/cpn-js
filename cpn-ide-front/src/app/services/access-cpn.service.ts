@@ -354,7 +354,7 @@ export class AccessCpnService {
         this.initSimProcessing = false;
         console.error('AccessCpnService, initSim(), ERROR, data = ', error);
 
-        this.eventService.send(Message.SERVER_INIT_SIM_ERROR, { data: error });
+        this.eventService.send(Message.SERVER_ERROR, { data: error });
       }
     );
   }
@@ -422,6 +422,7 @@ export class AccessCpnService {
         (error) => {
           console.error('AccessCpnService, doStep(), ERROR, data = ', error);
 
+          this.eventService.send(Message.SERVER_ERROR, { data: error });
           reject(error);
         }
       );
@@ -463,6 +464,7 @@ export class AccessCpnService {
         (error) => {
           console.error('AccessCpnService, doStepWithBinding(), ERROR, data = ', error);
 
+          this.eventService.send(Message.SERVER_ERROR, { data: error });
           reject(error);
         }
       );
@@ -519,6 +521,8 @@ export class AccessCpnService {
           console.error('AccessCpnService, doMultiStepFF(), ERROR, data = ', error);
 
           this.fastforwardProcessing = false;
+
+          this.eventService.send(Message.SERVER_ERROR, { data: error });
           reject(error);
         }
       );
@@ -571,6 +575,8 @@ export class AccessCpnService {
           console.error('AccessCpnService, doReplication(), ERROR, data = ', error);
 
           this.replicationProcessing = false;
+
+          this.eventService.send(Message.SERVER_ERROR, { data: error });
           reject(error);
         }
       );
@@ -602,6 +608,7 @@ export class AccessCpnService {
         (error) => {
           console.error('AccessCpnService, getBindings(), ERROR, data = ', error);
 
+          this.eventService.send(Message.SERVER_ERROR, { data: error });
           reject(error);
         }
       );
@@ -626,6 +633,7 @@ export class AccessCpnService {
       },
       (error) => {
         console.error('AccessCpnService, getSimState(), ERROR, data = ', error);
+        this.eventService.send(Message.SERVER_ERROR, { data: error });
       }
     );
   }
@@ -668,6 +676,8 @@ export class AccessCpnService {
         },
         (error) => {
           console.error('AccessCpnService, getXmlFromServer(), ERROR, data = ', error);
+
+          this.eventService.send(Message.SERVER_ERROR, { data: error });
           reject(error);
         }
       );
@@ -706,6 +716,8 @@ export class AccessCpnService {
         },
         (error) => {
           console.error('AccessCpnService, getMonitorDefaults(), ERROR, data = ', error);
+
+          this.eventService.send(Message.SERVER_ERROR, { data: error });
           reject(error);
         }
       );

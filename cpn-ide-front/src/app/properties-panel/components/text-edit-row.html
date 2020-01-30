@@ -18,7 +18,7 @@
 <!-- Color input -->
 <div class="valueRow" [ngClass]="{'bordered': bordered}" *ngIf="object && type === 'color'">
   <div class="valueName">{{name}}</div>
-  <div class="value">
+  <div class="selector">
     <input type="color" list="color" class="colorSelector" [value]="name2color(object[field])"
       (input)="onChange($event);" />
     <datalist id="colorCommon">
@@ -30,7 +30,7 @@
 <!-- Select input -->
 <div class="valueRow" [ngClass]="{'bordered': bordered}" *ngIf="object && type === 'select'">
   <div class="valueName">{{name}}</div>
-  <div class="value">
+  <div class="selector">
     <select class="typeSelector" required [(ngModel)]='object[field]' (ngModelChange)='onChange($event);'>
       <option class='option' *ngFor='let option of options' [value]="option">{{option}}</option>
     </select>

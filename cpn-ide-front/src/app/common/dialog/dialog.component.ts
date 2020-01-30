@@ -19,13 +19,17 @@ export class DialogComponent implements OnInit {
   ngOnInit() {
   }
 
-  onYesClick(): void {
+  onYes(): void {
     this.data.result = DialogComponent.YES;
   }
 
-  onNoClick(): void {
+  onNo(): void {
     this.data.result = DialogComponent.NO;
     // this.dialogRef.close();
+  }
+
+  onCancel(): void {
+    this.dialogRef.close();
   }
 
 }

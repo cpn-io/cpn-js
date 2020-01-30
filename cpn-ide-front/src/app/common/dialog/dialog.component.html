@@ -13,8 +13,9 @@
   </div>
 
   <div mat-dialog-actions align="end">
-    <button mat-button (click)="onNoClick()" [mat-dialog-close]="data">No</button>
-    <button mat-button (click)="onYesClick()" [mat-dialog-close]="data" cdkFocusInitial color="primary">Save</button>
+    <button mat-button (click)="onCancel()">Cancel</button>
+    <button mat-button (click)="onNo()" [mat-dialog-close]="data">No</button>
+    <button mat-button (click)="onYes()" [mat-dialog-close]="data" cdkFocusInitial color="primary">Save</button>
   </div>
 
 </div>

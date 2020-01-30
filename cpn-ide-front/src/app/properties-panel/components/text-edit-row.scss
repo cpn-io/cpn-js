@@ -29,19 +29,28 @@ div.value {
   padding: 5px 10px;
 }
 
+div.selector {
+  display: table-cell;
+  vertical-align: middle;
+  width: 50%;
+  padding: 2pt 1pt;
+}
+
 div.value-readonly {
   color: grey;
 }
 
 .typeSelector {
+  padding: 3pt;
   border: none;
-  // background: none;
+  background: #eee;
   width: 100%;
 }
 
 .colorSelector {
+  padding: 0;
   border: none;
-  // background: none;
+  background: #eee;
   width: 100%;
 }
 

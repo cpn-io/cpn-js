@@ -1,17 +1,12 @@
-17:15:09.942 › scriptFilename =  run.sh
-17:15:09.948 › runScriptPath =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/electron/backend/run.sh
-17:15:10.263 › cpn-ide-back SERVER Process has been killed!
-17:15:14.986 › APP PATH =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front
-17:15:14.987 › isDev =  true
-17:15:14.988 › directory =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/app
-17:15:14.988 › process.cwd() =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front
-17:15:14.989 › __dirname =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/electron/dist
-17:16:36.891 › mainWindow, close
-17:16:36.892 › killCpnServer()
-17:16:36.892 › killCpnServer(), findProcess(), shellRunner.pid =  27405
-17:16:36.893 › killCpnServer(), findProcess(), shellRunner.ppid =  undefined
-17:16:36.916 › killCpnServer(), findProcess('cpnmld.x86'), p =  27528 run.x86-linux
-17:16:36.917 › killCpnServer(), findProcess('cpnmld.x86'), p =  27582 run.x86-linux
-17:16:36.918 › killCpnServer(), findProcess('cpnmld.x86'), p =  27603 run.x86-linux
-17:16:36.923 › killCpnServer(), findProcess('cpn-ide-back'), p =  27430 java
-17:16:36.924 › mainWindow, close, killCpnServer() COMPLETE:  CPN Server process KILLED!
+12:22:38.838 › scriptFilename =  run.sh
+12:22:38.844 › runScriptPath =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/electron/backend/run.sh
+12:22:39.080 › cpn-ide-back SERVER Process has been killed!
+12:22:43.886 › APP PATH =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front
+12:22:43.887 › isDev =  true
+12:22:43.889 › directory =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/app
+12:22:43.889 › process.cwd() =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front
+12:22:43.890 › __dirname =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/electron/dist
+12:23:58.704 › mainWindow, close
+12:23:58.704 › killCpnServer()
+12:23:58.705 › killCpnServer(), findProcess(), shellRunner.pid =  30798
+12:23:58.705 › killCpnServer(), findProcess(), shellRunner.ppid =  undefined

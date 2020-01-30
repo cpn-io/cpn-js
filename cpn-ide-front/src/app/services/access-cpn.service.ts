@@ -253,6 +253,7 @@ export class AccessCpnService {
           console.log('AccessCpnService, initNet(), SUCCESS, data = ', data);
           this.initNetProcessing = false;
 
+          this.frontSideValidation(data);
           this.updateErrorData(data);
 
           this.eventService.send(Message.SERVER_INIT_NET_DONE, { data: data, errorIssues: data.issues });
@@ -273,6 +274,65 @@ export class AccessCpnService {
           // setTimeout(() => this.initNet(cpnJson, complexVerify, restartSimulator), 1000);
         }
       );
+  }
+
+  frontSideValidation(data) {
+    const nullError = 'Name can`t be empty';
+    const sameError = 'Nodes have the same name';
+
+    const places = this.modelService.getAllPlaces();
+    const transitions = this.modelService.getAllTrans();
+    this.joinErrors(data, this.checkNullText(places, 'place', nullError));
+    this.joinErrors(data, this.checkNullText(transitions, 'transition', nullError));
+    this.joinErrors(data, this.checkSameNames(places.concat(transitions), 'page', sameError));
+
+  }
+
+  private joinErrors(data, errors: any[]){
+    if (errors.length > 0) {
+      data.success = false;
+      errors.forEach(err => {
+        data.success = false;
+        if (!data.issues[err.id]){
+          data.issues[err.id] = [];
+        }
+        data.issues[err.id].push(err);
+      });
+    }
+  }
+
+  private checkSameNames(checkArray: any[], shapeType: string, error: string): any[] {
+    const list = [];
+    if (checkArray.length > 0) {
+      const map = new Map();
+      checkArray.forEach(el => {
+        if (map.has(el.text)) {
+          const obj = map.get(el.text);
+          obj.push(el);
+          map.set(el.text, obj);
+        } else {
+          map.set(el.text, [el]);
+        }
+      });
+
+      map.forEach((v, k) => {
+        if (v.length > 1){
+          v.forEach ( el => list.push({id: el._id, type: shapeType, description: error}));
+        }
+      });
+    }
+    return list;
+  }
+
+  private checkNullText(shapes: any[], shapeType: string, error: string): any[] {
+    const list = [];
+    if (shapes.length > 0) {
+      const err = shapes.filter(place => place.text === '');
+      if (err.length > 0) {
+       err.forEach(el => list.push({id: el._id, type: shapeType, description: error}));
+      }
+    }
+    return list;
   }
 
   reportReady() {

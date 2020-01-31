@@ -5,7 +5,7 @@ import { EventService } from './event.service';
 import { Message } from '../common/message';
 import { xmlBeautify } from '../../lib/xml-beautifier/xml-beautifier.js';
 import { CpnServerUrl } from 'src/cpn-server-url';
-import { cloneObject, clearArray } from '../common/utils';
+import {cloneObject, clearArray, nodeToArray} from '../common/utils';
 import { ModelService } from './model.service';
 import { SettingsService } from './settings.service';
 import { IpcService } from './ipc.service';
@@ -284,7 +284,12 @@ export class AccessCpnService {
     const transitions = this.modelService.getAllTrans();
     this.joinErrors(data, this.checkNullText(places, 'place', nullError));
     this.joinErrors(data, this.checkNullText(transitions, 'transition', nullError));
-    this.joinErrors(data, this.checkSameNames(places.concat(transitions), 'page', sameError));
+
+    const pages = this.modelService.getAllPages();
+    nodeToArray(pages).forEach(page => {
+      const list = nodeToArray(page.place).concat(nodeToArray(page.trans))
+      this.joinErrors(data, this.checkSameNames(list, 'page', sameError));
+    })  ;
 
   }
 

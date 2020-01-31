@@ -1,8 +1,11 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { AccessCpnService } from '../services/access-cpn.service';
-import { Message } from '../common/message';
-import { EventService } from '../services/event.service';
-import { DatePipe } from '@angular/common';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {AccessCpnService} from '../services/access-cpn.service';
+import {Message} from '../common/message';
+import {EventService} from '../services/event.service';
+import {DatePipe} from '@angular/common';
+import {MatDialog} from '@angular/material';
+import {DialogComponent} from '../common/dialog/dialog.component';
+import {DialogLogComponent} from '../common/dialog-log/dialog-log.component';
 
 @Component({
   selector: 'app-project-console',
@@ -25,7 +28,8 @@ export class ProjectConsoleComponent implements OnInit {
   timeSimStart;
 
   constructor(private eventService: EventService,
-    public accessCpnService: AccessCpnService) {
+              public accessCpnService: AccessCpnService,
+              public dialog: MatDialog) {
   }
 
   ngOnInit() {
@@ -110,9 +114,9 @@ export class ProjectConsoleComponent implements OnInit {
 
     // TOKENS
     this.eventService.on(Message.SIMULATION_STEP_DONE, () => {
-        this.logSuccess('Tokens: ' + JSON.stringify(this.accessCpnService.tokenData));
-        this.logSuccess('Fired transitions: ' + JSON.stringify(this.accessCpnService.getFiredData()));
-        this.logSuccess('Ready transitions: ' + JSON.stringify(this.accessCpnService.getReadyData()));
+      this.logSuccess('Tokens: ' + JSON.stringify(this.accessCpnService.tokenData));
+      this.logSuccess('Fired transitions: ' + JSON.stringify(this.accessCpnService.getFiredData()));
+      this.logSuccess('Ready transitions: ' + JSON.stringify(this.accessCpnService.getReadyData()));
     });
 
 
@@ -154,7 +158,7 @@ export class ProjectConsoleComponent implements OnInit {
     this.changesHtml.push({
       date: new Date(),
       class: 'normal',
-      text: text
+      text: textь
     });
 
     setTimeout(() => {
@@ -180,5 +184,22 @@ export class ProjectConsoleComponent implements OnInit {
       return days + ' days';
     }
   }
+
+  openDialog(text){
+    const dialogRef = this.dialog.open(DialogLogComponent, {
+      width: '600px',
+      data: {
+        title: 'Message',
+        text: { title: 'Error', value: text }
+      }
+    });
+    dialogRef.afterClosed().subscribe(data => {
+      if (data && data.result === DialogComponent.YES) {
+        // console.log(this.constructor.name, 'onSaveProject(), YES clicked, data = ', data);
+      }
+    });
+    return false;
+  }
+
 
 }

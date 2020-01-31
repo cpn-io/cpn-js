@@ -1,0 +1,16 @@
+<div class="dialog-content">
+
+  <div mat-dialog-content>
+    <p class="title">{{ data.title }}</p>
+
+        <mat-form-field>
+          <textarea matInput [placeholder]="data.text.title" readonly="true" >{{data.text.value}}</textarea>
+        </mat-form-field>
+  </div>
+
+  <div mat-dialog-actions align="end">
+    <button mat-button (click)="onCopy()" >Copy</button>
+    <button mat-button (click)="onClose()">Close</button>
+  </div>
+
+</div>

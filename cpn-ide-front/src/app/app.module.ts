@@ -70,6 +70,7 @@ import { ProjectTreeMonitorblockNodeComponent } from './project-tree/project-tre
 import { ProjectDeclarationsBlockNodeComponent } from './project-declarations/project-declarations-block-node/project-declarations-block-node.component';
 import { SimulationReportPipe } from './pipes/simulation-report.pipe';
 import { DialogComponent } from './common/dialog/dialog.component';
+import { DialogLogComponent } from './common/dialog-log/dialog-log.component';
 
 require('typeface-droid-sans-mono');
 
@@ -120,6 +121,7 @@ require('typeface-droid-sans-mono');
     ProjectDeclarationsOldComponent,
     ProjectDeclarationsComponent,
     ProjectDeclarationsBlockNodeComponent,
+    DialogLogComponent,
   ],
   imports: [
     BrowserModule,
@@ -145,7 +147,8 @@ require('typeface-droid-sans-mono');
     MatInputModule,
   ],
   entryComponents: [
-    DialogComponent
+    DialogComponent,
+    DialogLogComponent
   ],
   providers: [
     SettingsService,

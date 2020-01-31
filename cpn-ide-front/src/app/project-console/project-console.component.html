@@ -58,7 +58,7 @@
     <div class="tab-container" id="logScrollPane">
       <div class="logConsole">
         <ng-container *ngFor="let id of accessCpnService.errorIds">
-          <div class="error">{{ id }} : {{ accessCpnService.errorData[id] }}</div>
+          <div class="error"><a href="" (click)="openDialog(accessCpnService.errorData[id])">{{ id }}</a> : {{ accessCpnService.errorData[id] }}</div>
         </ng-container>
       </div>
     </div>

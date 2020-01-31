@@ -158,7 +158,7 @@ export class ProjectConsoleComponent implements OnInit {
     this.changesHtml.push({
       date: new Date(),
       class: 'normal',
-      text: textь
+      text: text
     });
 
     setTimeout(() => {

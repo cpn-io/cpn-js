@@ -1395,8 +1395,8 @@ export class ModelService {
     if (allPages && allPages.length > 0) {
       for (const page of allPages) {
         if (page) {
-          const place = page.place instanceof Array ? page.place : [page.place];
-          for (const p of place) {
+          const places = nodeToArray(page.place);
+          for (const p of places) {
             if (p) {
               allPlaces.push(p);
             }
@@ -1964,7 +1964,9 @@ export class ModelService {
     const buffer = [];
     let result = [];
 
-    this.projectData.workspaceElements.cpnet.globbox.block.forEach(el => buffer.push(el));
+    const blockList = nodeToArray(this.projectData.workspaceElements.cpnet.globbox.block);
+
+    blockList.forEach(el => buffer.push(el));
 
     while (buffer.length > 0) {
       const pop = buffer.pop();

@@ -392,6 +392,8 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       self.updateAvailableMonitorList(selectedElements);
     });
 
+    this.eventService.on('editing.cancel', () => eventBus.fire('editing.cancel'));
+
 
 
 
@@ -622,7 +624,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log(this.constructor.name, 'MODEL_UPDATE_DIAGRAM, event = ', event);
 
       if (event.cpnElement) {
-        const e = this.modeling.getElementByCpnElement(event.cpnElement);
+        let e = this.modeling.getElementByCpnElement(event.cpnElement);
 
         this.modeling.updateElement(e, true);
       }

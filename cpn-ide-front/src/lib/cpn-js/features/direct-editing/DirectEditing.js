@@ -22,6 +22,8 @@ export default function DirectEditing(eventBus, canvas) {
     keyHandler: bind(this._handleKey, this),
     resizeHandler: bind(this._handleResize, this)
   });
+  this._eventBus.on('editing.cancel', ()=> this.cancel())
+
 }
 
 DirectEditing.$inject = ['eventBus', 'canvas'];

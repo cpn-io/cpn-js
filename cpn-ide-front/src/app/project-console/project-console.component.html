@@ -18,8 +18,10 @@
     <div class="tab-container-with-toolbar" id="logScrollPane">
 
       <div class="logConsole">
-        <div *ngFor="let item of logHtml" [ngClass]="item.class">
-          {{ item.date | date: 'yyyy-MM-dd HH:mm:ss' }} : {{ item.text }}
+        <div *ngFor="let item of logHtml" [ngClass]="item.class" >
+        <a href="" (click)="openDialog(item.text,item.class )">  {{ item.date | date: 'yyyy-MM-dd HH:mm:ss' }}</a> :
+          <a class="idLink" *ngIf="item.id" href="" (click)="selectNode(item.id)">{{item.id}}</a>:
+          {{ item.text }}
         </div>
       </div>
 
@@ -58,7 +60,7 @@
     <div class="tab-container" id="logScrollPane">
       <div class="logConsole">
         <ng-container *ngFor="let id of accessCpnService.errorIds">
-          <div class="error"><a href="" (click)="openDialog(accessCpnService.errorData[id])">{{ id }}</a> : {{ accessCpnService.errorData[id] }}</div>
+          <div class="error"><a href="" (click)="openDialog(accessCpnService.errorData[id],'error')">{{ id }}</a> : {{ accessCpnService.errorData[id] }}</div>
         </ng-container>
       </div>
     </div>

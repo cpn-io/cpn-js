@@ -65,7 +65,7 @@ export class ProjectConsoleComponent implements OnInit {
           console.log('errorData: ', errorData);
           if (Object.keys(errorData).length > 0) {
             for (const id of Object.keys(errorData)) {
-              this.logError(id + ': ' + errorData[id]);
+              this.logError(errorData[id], id);
             }
           }
         }
@@ -129,11 +129,12 @@ export class ProjectConsoleComponent implements OnInit {
 
   }
 
-  logColor(text, className) {
+  logColor(text, className, id?) {
     this.logHtml.push({
       date: new Date(),
       class: className,
-      text: text
+      text: text,
+      id: id
     });
 
     setTimeout(() => {
@@ -146,8 +147,8 @@ export class ProjectConsoleComponent implements OnInit {
     this.logColor(text, 'normal');
   }
 
-  logError(text) {
-    this.logColor(text, 'error');
+  logError(text, id?) {
+    this.logColor(text, 'error', id);
   }
 
   logSuccess(text) {
@@ -185,12 +186,12 @@ export class ProjectConsoleComponent implements OnInit {
     }
   }
 
-  openDialog(text){
+  openDialog(text, type) {
     const dialogRef = this.dialog.open(DialogLogComponent, {
       width: '600px',
       data: {
         title: 'Message',
-        text: { title: 'Error', value: text }
+        text: {title: type || 'normal', value: text}
       }
     });
     dialogRef.afterClosed().subscribe(data => {
@@ -198,6 +199,11 @@ export class ProjectConsoleComponent implements OnInit {
         // console.log(this.constructor.name, 'onSaveProject(), YES clicked, data = ', data);
       }
     });
+    return false;
+  }
+
+  selectNode(id) {
+    this.eventService.send(Message.SHAPE_HIGHLIGHT, id)
     return false;
   }
 

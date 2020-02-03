@@ -1,15 +1,15 @@
-import { Component, ElementRef, Input, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import {Component, ElementRef, Input, OnInit, ViewChild, AfterViewInit, OnDestroy} from '@angular/core';
 
 import Diagram from 'diagram-js';
 import CpnDiagramModule from '../../lib/cpn-js/core';
 
-import { Message } from '../common/message';
-import { EventService } from '../services/event.service';
-import { ModelService } from '../services/model.service';
-import { SettingsService } from '../services/settings.service';
-import { ValidationService } from '../services/validation.service';
+import {Message} from '../common/message';
+import {EventService} from '../services/event.service';
+import {ModelService} from '../services/model.service';
+import {SettingsService} from '../services/settings.service';
+import {ValidationService} from '../services/validation.service';
 
-import { importCpnPage } from '../../lib/cpn-js/import/Importer';
+import {importCpnPage} from '../../lib/cpn-js/import/Importer';
 
 import {
   getNextId,
@@ -24,13 +24,13 @@ import {
   isCpn,
 } from '../../lib/cpn-js/util/ModelUtil';
 
-import { AccessCpnService } from '../services/access-cpn.service';
-import { MonitorType, getMonitorTypeList, getMonitorTypeId } from '../common/monitors';
-import { addNode, nodeToArray } from '../common/utils';
-import { SimulationService } from '../services/simulation.service';
-import { TEST_TOKEN_DATA } from '../test/test-data';
-import { EditorPanelService } from '../services/editor-panel.service';
-import { IpcService } from '../services/ipc.service';
+import {AccessCpnService} from '../services/access-cpn.service';
+import {MonitorType, getMonitorTypeList, getMonitorTypeId} from '../common/monitors';
+import {addNode, nodeToArray} from '../common/utils';
+import {SimulationService} from '../services/simulation.service';
+import {TEST_TOKEN_DATA} from '../test/test-data';
+import {EditorPanelService} from '../services/editor-panel.service';
+import {IpcService} from '../services/ipc.service';
 
 @Component({
   selector: 'app-model-editor',
@@ -39,8 +39,8 @@ import { IpcService } from '../services/ipc.service';
 })
 export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  @ViewChild('container', { static: false }) containerElementRef: ElementRef;
-  @ViewChild('popup', { static: false }) popupElementRef: ElementRef;
+  @ViewChild('container', {static: false}) containerElementRef: ElementRef;
+  @ViewChild('popup', {static: false}) popupElementRef: ElementRef;
 
   @Input() id: string;
 
@@ -75,11 +75,11 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   instanseId;
 
   constructor(private eventService: EventService,
-    private settings: SettingsService,
-    private modelService: ModelService,
-    private accessCpnService: AccessCpnService,
-    public simulationService: SimulationService,
-    public editorPanelService: EditorPanelService) {
+              private settings: SettingsService,
+              private modelService: ModelService,
+              private accessCpnService: AccessCpnService,
+              public simulationService: SimulationService,
+              public editorPanelService: EditorPanelService) {
   }
 
   ngOnDestroy() {
@@ -92,9 +92,11 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
-    this.eventService.on(Message.SETTING_CHANGED, ({ key, value }) => {
+    this.eventService.on(Message.SETTING_CHANGED, ({key, value}) => {
       this.modeling.setDefaultValue(key, value);
     });
+    this.eventService.on(Message.SHAPE_HIGHLIGHT, (id) => this.selectNodeById(id));
+
   }
 
 
@@ -105,7 +107,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onClose() {
-    this.eventService.send(Message.PAGE_TAB_CLOSE, { id: this.pageId });
+    this.eventService.send(Message.PAGE_TAB_CLOSE, {id: this.pageId});
   }
 
   init() {
@@ -156,15 +158,15 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // eventBus.on('element.changed', (event) => {
     eventBus.on([
-      'shape.move.end',
-      'create.end',
-      'connect.end',
-      'resize.end',
-      'bendpoint.move.end',
-      'connectionSegment.move.end',
-      'directEditing.complete',
-      'shape.delete'
-    ],
+        'shape.move.end',
+        'create.end',
+        'connect.end',
+        'resize.end',
+        'bendpoint.move.end',
+        'connectionSegment.move.end',
+        'directEditing.complete',
+        'shape.delete'
+      ],
       (event) => {
         console.log(self.constructor.name, 'MODEL_CHANGED event = ', event);
 
@@ -186,7 +188,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     // BINDINGS
-    this.eventService.on(Message.SERVER_GET_BINDINGS, (event) => eventBus.fire('bindingsMenu.open', { data: event.data }));
+    this.eventService.on(Message.SERVER_GET_BINDINGS, (event) => eventBus.fire('bindingsMenu.open', {data: event.data}));
 
     // SIM STATUS
     this.eventService.on(Message.SIMULATION_STARTED, () => {
@@ -217,13 +219,13 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     eventBus.on('element.hover', (event) => {
       if (event.element.type === 'cpn:Transition' || event.element.type === 'cpn:Place') {
-        this.eventService.send(Message.SHAPE_HOVER, { element: event.element });
+        this.eventService.send(Message.SHAPE_HOVER, {element: event.element});
       }
       // console.log('element.hover', event.element);
     });
     eventBus.on('element.out', (event) => {
       if (event.element.type === 'cpn:Transition' || event.element.type === 'cpn:Place') {
-        this.eventService.send(Message.SHAPE_OUT, { element: event.element });
+        this.eventService.send(Message.SHAPE_OUT, {element: event.element});
       }
     });
 
@@ -395,8 +397,6 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.eventService.on('editing.cancel', () => eventBus.fire('editing.cancel'));
 
 
-
-
   }
 
   updateAvailableMonitorList(selectedElements) {
@@ -498,7 +498,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           const tokenData = TEST_TOKEN_DATA; // this.accessCpnService.getTokenData();
           // localStorage.setItem('tokenData', JSON.stringify(tokenData));
 
-          this.eventBus.fire('model.update.tokens', { data: tokenData });
+          this.eventBus.fire('model.update.tokens', {data: tokenData});
           this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
           this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
           this.checkPorts();
@@ -568,7 +568,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
             console.log('TOKEN ANIMATION, updateElementStatus(), OUTCOME ANIMATION COMPLETE, timeMs = ', new Date().getTime() - startTime);
 
             this.stateProvider.clear();
-            this.eventBus.fire('model.update.tokens', { data: this.accessCpnService.getTokenData() });
+            this.eventBus.fire('model.update.tokens', {data: this.accessCpnService.getTokenData()});
             this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
             this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
             this.checkPorts();
@@ -584,7 +584,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
         setTimeout(() => {
           this.stateProvider.clear();
-          this.eventBus.fire('model.update.tokens', { data: this.accessCpnService.getTokenData() });
+          this.eventBus.fire('model.update.tokens', {data: this.accessCpnService.getTokenData()});
           this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
           this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
           this.checkPorts();
@@ -650,7 +650,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   changeSubPageName(subpage) {
-    this.eventService.send(Message.PAGE_CHANGE_NAME, { id: subpage.subpageid, name: subpage.name, changedElement: 'tran' });
+    this.eventService.send(Message.PAGE_CHANGE_NAME, {id: subpage.subpageid, name: subpage.name, changedElement: 'tran'});
   }
 
   /**
@@ -664,7 +664,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.openPropPanel(event.element);
     }
 
-    this.eventService.send(Message.SHAPE_SELECT, { element: event.element });
+    this.eventService.send(Message.SHAPE_SELECT, {element: event.element});
   }
 
   log(obj) {
@@ -762,9 +762,20 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       const newMonitorCpnElement = this.modelService.createCpnMonitor(monitorType, cpnElementList, monitorDefaults);
       if (newMonitorCpnElement) {
         addNode(monitorsCpnParentElement, 'monitor', newMonitorCpnElement);
-        this.eventService.send(Message.MONITOR_CREATED, { newMonitorCpnElement: newMonitorCpnElement });
+        this.eventService.send(Message.MONITOR_CREATED, {newMonitorCpnElement: newMonitorCpnElement});
       }
       console.log('model-editor onCreateNewMonitor(), monitorsCpnParentElement = ', monitorsCpnParentElement);
     });
+  }
+
+  selectNodeById(id: string) {
+    const element = this.modeling.getElementById(id);
+    if (element) {
+      this.eventService.send(Message.SHAPE_SELECT, {element});
+      // this.eventService.send(Message.SHAPE_HOVER, {element});
+      const pageByElementId = this.modelService.getPageByElementId(id);
+      this.editorPanelService.getEditorPanelComponent().openModelEditor(pageByElementId).then();
+
+    }
   }
 }

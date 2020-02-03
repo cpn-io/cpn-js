@@ -150,7 +150,7 @@ export class MainToolbarComponent implements OnInit {
           const fullFilePath = files[0];
 
           // TODO: выделить имя файла без пути!
-          const regex = /[^\/]+$/gm;
+          const regex = /[^\/^\\]+$/gm;
           const r = regex.exec(fullFilePath);
           const filename = r ? r[0] : undefined;
 

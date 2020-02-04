@@ -772,10 +772,10 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     const element = this.modeling.getElementById(id);
     if (element) {
       this.eventService.send(Message.SHAPE_SELECT, {element});
-      // this.eventService.send(Message.SHAPE_HOVER, {element});
       const pageByElementId = this.modelService.getPageByElementId(id);
       this.editorPanelService.getEditorPanelComponent().openModelEditor(pageByElementId).then();
-
+      this.eventBus.fire('element.click', { element: element });
+      this.eventBus.fire('editing.cancel');
     }
   }
 }

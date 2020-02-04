@@ -586,6 +586,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           this.stateProvider.clear();
           this.eventBus.fire('model.update.tokens', {data: this.accessCpnService.getTokenData()});
           this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
+          this.stateProvider.setWarningState(this.accessCpnService.getWarningData())
           this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
           this.checkPorts();
           this.modeling.repaintElements();

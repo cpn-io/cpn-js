@@ -18,6 +18,7 @@ export class AccessCpnService {
   public errorData = [];
   public errorIds = [];
   public errorPagesIds = [];
+  public warnings = [];
 
   public stateData = undefined;
   public readyData = [];
@@ -118,6 +119,13 @@ export class AccessCpnService {
     return this.firedTransIdList;
   }
 
+  getWarningData() {
+    const arr = [];
+    Object.keys(this.warnings).forEach(el => {
+      arr[el] = this.warnings[el][0].description;
+    })
+    return arr;
+  }
 
   updateErrorData(data) {
     clearArray(this.errorIds);
@@ -255,8 +263,8 @@ export class AccessCpnService {
 
           this.frontSideValidation(data);
           this.updateErrorData(data);
-
-          this.eventService.send(Message.SERVER_INIT_NET_DONE, { data: data, errorIssues: data.issues });
+          this.warnings =  data.warnings || []
+          this.eventService.send(Message.SERVER_INIT_NET_DONE, { data: data, errorIssues: data.issues, warningIssues: data.warnings });
 
           // Init simulator
           // if (!this.simInitialized) {
@@ -282,26 +290,28 @@ export class AccessCpnService {
 
     const places = this.modelService.getAllPlaces();
     const transitions = this.modelService.getAllTrans();
-    this.joinErrors(data, this.checkNullText(places, 'place', nullError));
-    this.joinErrors(data, this.checkNullText(transitions, 'transition', nullError));
+    this.addWarnings(data, this.checkNullText(places, 'place', nullError));
+    this.addWarnings(data, this.checkNullText(transitions, 'transition', nullError));
 
     const pages = this.modelService.getAllPages();
     nodeToArray(pages).forEach(page => {
       const list = nodeToArray(page.place).concat(nodeToArray(page.trans))
-      this.joinErrors(data, this.checkSameNames(list, 'page', sameError));
+      this.addWarnings(data, this.checkSameNames(list, 'page', sameError));
     })  ;
 
   }
 
-  private joinErrors(data, errors: any[]){
+  private addWarnings(data, errors: any[]){
     if (errors.length > 0) {
       data.success = false;
+      if (!data.warnings) {
+        data['warnings'] = {};
+      }
       errors.forEach(err => {
-        data.success = false;
-        if (!data.issues[err.id]){
-          data.issues[err.id] = [];
+        if (!data.warnings[err.id]){
+          data.warnings[err.id] = [];
         }
-        data.issues[err.id].push(err);
+        data.warnings[err.id].push(err);
       });
     }
   }

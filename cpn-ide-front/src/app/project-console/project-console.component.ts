@@ -68,6 +68,12 @@ export class ProjectConsoleComponent implements OnInit {
               this.logError(errorData[id], id);
             }
           }
+          if (event.warningIssues) {
+            console.log('EVENT! ',event.warningIssues)
+            for (const id of Object.keys(event.warningIssues)) {
+              this.logError(event.warningIssues[id][0].description, id);
+            }
+          }
         }
       }
     });

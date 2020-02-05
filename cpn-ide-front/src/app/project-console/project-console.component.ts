@@ -6,6 +6,8 @@ import {DatePipe} from '@angular/common';
 import {MatDialog} from '@angular/material';
 import {DialogComponent} from '../common/dialog/dialog.component';
 import {DialogLogComponent} from '../common/dialog-log/dialog-log.component';
+import {EditorPanelService} from '../services/editor-panel.service';
+import {ModelService} from '../services/model.service';
 
 @Component({
   selector: 'app-project-console',
@@ -29,7 +31,9 @@ export class ProjectConsoleComponent implements OnInit {
 
   constructor(private eventService: EventService,
               public accessCpnService: AccessCpnService,
-              public dialog: MatDialog) {
+              public dialog: MatDialog,
+              public editorPanelService: EditorPanelService,
+              private modelService: ModelService) {
   }
 
   ngOnInit() {
@@ -209,7 +213,10 @@ export class ProjectConsoleComponent implements OnInit {
   }
 
   selectNode(id) {
-    this.eventService.send(Message.SHAPE_HIGHLIGHT, id)
+    const pageByElementId = this.modelService.getPageByElementId(id);
+    this.editorPanelService.getEditorPanelComponent().openModelEditor(pageByElementId).then(() => {
+      this.eventService.send(Message.SHAPE_HIGHLIGHT, id);
+    });
     return false;
   }
 

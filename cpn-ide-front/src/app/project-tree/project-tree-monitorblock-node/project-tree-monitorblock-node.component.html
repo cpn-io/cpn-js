@@ -1,8 +1,13 @@
 <app-tree-node [tree]="tree" [id]="monitorblock._name" [title]="monitorblock._name" [type]="'monitorblock'"
   [cpnElement]="monitorblock">
 
-  <ng-container *ngIf="monitorblock.monitorblock">
+  <!-- <ng-container *ngIf="monitorblock.monitorblock">
     <app-project-tree-monitorblock-node [tree]="tree" [monitorblock]="monitorblock.monitorblock">
+    </app-project-tree-monitorblock-node>
+  </ng-container> -->
+
+  <ng-container *ngFor="let monitorblock of nodeToArray(monitorblock.monitorblock)">
+    <app-project-tree-monitorblock-node [tree]="tree" [monitorblock]="monitorblock">
     </app-project-tree-monitorblock-node>
   </ng-container>
 

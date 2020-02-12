@@ -61,9 +61,23 @@
           </app-tree-node>
 
           <!-- Monitors -->
-          <app-project-tree-monitorblock-node [tree]="tree" [monitorblock]="cpnet.monitorblock">
-          </app-project-tree-monitorblock-node>
 
+          <app-tree-node [tree]="tree" id="Monitors" title="Monitors" type="monitorblock"
+                         (contextmenuAction)="onContextMenu($event,'monitorblock')" [cpnElement]="cpnet.monitorblock">
+
+            <ng-container *ngFor="let monitor of nodeToArray(cpnet.monitorblock.monitorblock)">
+              <app-project-tree-monitorblock-node [tree]="tree" [monitorblock]="monitor"
+                                                  (contextmenuAction)="onContextMenu($event.event,$event.type)"  >
+              </app-project-tree-monitorblock-node>
+            </ng-container>
+            <ng-container *ngFor="let monitor of nodeToArray(cpnet.monitorblock.monitor)">
+              <app-project-tree-monitor-node [tree]="tree" [monitor]="monitor" (contextmenuAction)="onContextMenu($event,'monitor')">
+              </app-project-tree-monitor-node>
+            </ng-container>
+
+<!--          <app-project-tree-monitorblock-node [tree]="tree" [monitorblock]="cpnet.monitorblock">-->
+<!--          </app-project-tree-monitorblock-node>-->
+          </app-tree-node>
         </app-tree-node>
 
       </div>

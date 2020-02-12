@@ -1,4 +1,4 @@
-import { Input, OnChanges, SimpleChanges, DoCheck, KeyValueDiffers } from '@angular/core';
+import {Input, OnChanges, SimpleChanges, DoCheck, KeyValueDiffers, EventEmitter, Output} from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { nodeToArray } from '../../common/utils';
 import { ModelService } from '../../services/model.service';
@@ -17,6 +17,7 @@ export class ProjectTreeMonitorNodeComponent implements OnInit, DoCheck, ITreeNo
   @Input() public monitor: any;
 
   @Input() public tree: TreeData;
+  @Output() contextmenuAction = new EventEmitter();
 
   public nodeList = [];
 
@@ -81,7 +82,7 @@ export class ProjectTreeMonitorNodeComponent implements OnInit, DoCheck, ITreeNo
     throw new Error("Method not implemented.");
   }
   onContextMenu(event: any) {
-    throw new Error("Method not implemented.");
+   this.contextmenuAction.emit(event);
   }
   onKeydown(event: any) {
     throw new Error("Method not implemented.");

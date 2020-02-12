@@ -1,18 +1,21 @@
 <app-tree-node [tree]="tree" [id]="monitorblock._name" [title]="monitorblock._name" [type]="'monitorblock'"
-  [cpnElement]="monitorblock">
+               [cpnElement]="monitorblock" (contextmenuAction)="onContextMenu({event:$event, type:'monitorblock'})"
+               [editable]="!accessCpnService.isSimulation" (selectAction)="onSelect()"
+               (keydownAction)="onKeydown($event)" (updateAction)="onUpdate($event)">
 
   <!-- <ng-container *ngIf="monitorblock.monitorblock">
     <app-project-tree-monitorblock-node [tree]="tree" [monitorblock]="monitorblock.monitorblock">
     </app-project-tree-monitorblock-node>
   </ng-container> -->
 
-  <ng-container *ngFor="let monitorblock of nodeToArray(monitorblock.monitorblock)">
-    <app-project-tree-monitorblock-node [tree]="tree" [monitorblock]="monitorblock">
+  <ng-container *ngFor="let monitor of nodeToArray(monitorblock.monitorblock)">
+    <app-project-tree-monitorblock-node [tree]="tree" [monitorblock]="monitor"
+                                        (contextmenuAction)="onContextMenu($event)"  [parentBlock]="monitorblock">
     </app-project-tree-monitorblock-node>
   </ng-container>
 
   <ng-container *ngFor="let monitor of nodeToArray(monitorblock.monitor)">
-    <app-project-tree-monitor-node [tree]="tree" [monitor]="monitor">
+    <app-project-tree-monitor-node [tree]="tree" [monitor]="monitor" (contextmenuAction)="onContextMenu({event:$event, type:'monitor'})">
     </app-project-tree-monitor-node>
   </ng-container>
 

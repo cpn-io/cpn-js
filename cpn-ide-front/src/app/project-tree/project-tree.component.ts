@@ -71,6 +71,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   public containerId = 'projectTreeComponentContainer';
 
   public newPageCount = 0;
+  public bufferNode;
 
   simulationState = { step: 0, time: 0 };
 
@@ -265,6 +266,26 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     }
   }
 
+
+  onNewBlockMonitor() {
+    if (this.tree.selected && this.tree.selected.type === 'monitorblock') {
+      const newBlock = {_name: this.settings.appSettings['block'], _id: getNextId()};
+      this.modelService.addCpnElement(this.tree.selected.cpnElement, newBlock, 'monitorblock');
+      this.focus(newBlock._id);
+    }
+  }
+
+  onCutNode() {
+    this.bufferNode = {...this.tree.selected.cpnElement};
+    this.modelService.deleteFromModel(this.tree.selected.cpnElement);
+    this.eventService.send(Message.MONITOR_DELETED, {monitorCpnElement: this.tree.selected.cpnElement});
+  }
+
+  onPasteNode() {
+    this.modelService.addCpnElement(this.tree.selected.cpnElement, this.bufferNode, 'monitor');
+    this.bufferNode = null;
+  }
+
   onNewPage() {
     console.log(this.constructor.name, 'onNewPage(), this.selected = ', this.tree.selected);
 
@@ -309,7 +330,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
   onFilterChanged(event) {
     console.log(this.constructor.name, 'onFilterChanged(), event = ', event);
-    this.tree.filter = event; 
+    this.tree.filter = event;
 
     if (this.tree.filter === '') {
       this.goToDeclaration(this.tree.selected.id);
@@ -328,6 +349,15 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
           break;
         case 'pages':
           entries.push({ title: 'New page', action: () => this.onNewPage(), iconClass: 'fas fa-project-diagram' });
+          break;
+        case 'monitorblock':
+          entries.push({title: 'New block', action: () => this.onNewBlockMonitor(), iconClass: 'fas fa-cube'});
+          if (this.bufferNode) {
+            entries.push({title: 'Paste', action: () => this.onPasteNode(), iconClass: 'fas fa-paste'});
+          }
+          break;
+        case 'monitor':
+          entries.push({title: 'Cut', action: () => this.onCutNode(), iconClass: 'fas fa-cut'});
           break;
       }
 

@@ -1,7 +1,8 @@
 <ng-container *ngIf="isFiltered()">
 
   <app-tree-node [tree]="tree" [id]="monitor._id" [title]="monitor._name" [bold]="false" color="darkblue"
-    [type]="'monitor'" [cpnElement]="monitor" [error]="accessCpnService.errorIds.includes(monitor._id)">
+    [type]="'monitor'" [cpnElement]="monitor" [error]="accessCpnService.errorIds.includes(monitor._id)"
+  (contextmenuAction)="onContextMenu($event)">
 
     <!-- Type -->
     <app-tree-node [tree]="tree" [id]="'monitorType_' + monitor._id" [title]="'Type: ' + monitor._typedescription"

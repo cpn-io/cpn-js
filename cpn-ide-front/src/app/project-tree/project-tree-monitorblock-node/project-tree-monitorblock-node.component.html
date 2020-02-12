@@ -1,7 +1,8 @@
 <app-tree-node [tree]="tree" [id]="monitorblock._name" [title]="monitorblock._name" [type]="'monitorblock'"
                [cpnElement]="monitorblock" (contextmenuAction)="onContextMenu($event)"
                [editable]="!accessCpnService.isSimulation" (selectAction)="onSelect()"
-               (keydownAction)="onKeydown($event)" (updateAction)="onUpdate($event)">
+               (keydownAction)="onKeydown($event)" (updateAction)="onUpdate($event)"
+               (deleteAction)="onDelete()">
 
   <!-- <ng-container *ngIf="monitorblock.monitorblock">
     <app-project-tree-monitorblock-node [tree]="tree" [monitorblock]="monitorblock.monitorblock">

@@ -5,6 +5,10 @@ import { ModelService } from '../../services/model.service';
 import { TreeData } from '../project-tree.component';
 import { ITreeNode } from '../tree-node/tree-node';
 import { AccessCpnService } from '../../services/access-cpn.service';
+import * as ts from 'typescript/lib/tsserverlibrary';
+import EventSender = ts.server.EventSender;
+import {EventService} from '../../services/event.service';
+import {Message} from '../../common/message';
 
 @Component({
   selector: 'app-project-tree-monitor-node',
@@ -26,7 +30,8 @@ export class ProjectTreeMonitorNodeComponent implements OnInit, DoCheck, ITreeNo
   constructor(
     public modelService: ModelService,
     private differs: KeyValueDiffers,
-    public accessCpnService: AccessCpnService) {
+    public accessCpnService: AccessCpnService,
+    private eventService: EventService) {
 
     this.differ = this.differs.find({}).create();
   }
@@ -82,7 +87,17 @@ export class ProjectTreeMonitorNodeComponent implements OnInit, DoCheck, ITreeNo
     throw new Error("Method not implemented.");
   }
   onContextMenu(event: any) {
-   this.contextmenuAction.emit(event);
+    if (this.tree && this.tree.contextMenu) {
+      event.preventDefault();
+
+      const entries = [];
+      entries.push({ title: 'Cut', action: () => this.onCutNode(), iconClass: 'fas fa-cut'});
+      entries.push({ title: 'separator' });
+      entries.push({ title: 'Delete', action: () => this.onDelete(), iconClass: 'fas fa-minus' });
+
+      this.tree.contextMenu.setEntries(entries);
+      this.tree.contextMenu.show({ x: event.clientX, y: event.clientY });
+    }
   }
   onKeydown(event: any) {
     throw new Error("Method not implemented.");
@@ -93,13 +108,19 @@ export class ProjectTreeMonitorNodeComponent implements OnInit, DoCheck, ITreeNo
   onNew(event: any) {
     throw new Error("Method not implemented.");
   }
-  onDelete(event: any) {
-    throw new Error("Method not implemented.");
+  onDelete() {
+    this.eventService.send(Message.MONITOR_CLICK_DELETE, this.monitor);
   }
   onUp(event: any) {
     throw new Error("Method not implemented.");
   }
   onDown(event: any) {
     throw new Error("Method not implemented.");
+  }
+
+  onCutNode() {
+    this.modelService.bufferNode = {...this.monitor};
+    this.modelService.deleteFromModel(this.monitor);
+    this.eventService.send(Message.MONITOR_DELETED, {monitorCpnElement: this.monitor});
   }
 }

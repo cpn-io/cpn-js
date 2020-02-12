@@ -274,16 +274,18 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
       this.focus(newBlock._id);
     }
   }
-
-  onCutNode() {
-    this.bufferNode = {...this.tree.selected.cpnElement};
-    this.modelService.deleteFromModel(this.tree.selected.cpnElement);
-    this.eventService.send(Message.MONITOR_DELETED, {monitorCpnElement: this.tree.selected.cpnElement});
-  }
+  //
+  // onCutNode() {
+  //
+  //   this.modelService.bufferNode = {...this.tree.selected.cpnElement};
+  //   // console.log('DELETE 11',this.bufferNode)
+  //   this.modelService.deleteFromModel(this.tree.selected.cpnElement);
+  //   this.eventService.send(Message.MONITOR_DELETED, {monitorCpnElement: this.tree.selected.cpnElement});
+  // }
 
   onPasteNode() {
-    this.modelService.addCpnElement(this.tree.selected.cpnElement, this.bufferNode, 'monitor');
-    this.bufferNode = null;
+    this.modelService.addCpnElement(this.tree.selected.cpnElement, this.modelService.bufferNode, 'monitor');
+    this.modelService.bufferNode = null;
   }
 
   onNewPage() {
@@ -352,12 +354,9 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
           break;
         case 'monitorblock':
           entries.push({title: 'New block', action: () => this.onNewBlockMonitor(), iconClass: 'fas fa-cube'});
-          if (this.bufferNode) {
+          if (this.modelService.bufferNode) {
             entries.push({title: 'Paste', action: () => this.onPasteNode(), iconClass: 'fas fa-paste'});
           }
-          break;
-        case 'monitor':
-          entries.push({title: 'Cut', action: () => this.onCutNode(), iconClass: 'fas fa-cut'});
           break;
       }
 

@@ -1,11 +1,11 @@
-import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
-import {nodeToArray} from '../../common/utils';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {getNextId, nodeToArray} from '../../common/utils';
 import {TreeData} from '../project-tree.component';
 import {AccessCpnService} from '../../services/access-cpn.service';
-import {Message} from '../../common/message';
 import {EventService} from '../../services/event.service';
 import {ITreeNode} from '../tree-node/tree-node';
-import {MAT_BUTTON_TOGGLE_DEFAULT_OPTIONS} from '@angular/material';
+import {ModelService} from '../../services/model.service';
+import {SettingsService} from '../../services/settings.service';
 
 @Component({
   selector: 'app-project-tree-monitorblock-node',
@@ -26,7 +26,9 @@ export class ProjectTreeMonitorblockNodeComponent implements OnInit, ITreeNode {
   type = 'monitorblock';
 
   constructor(private accessCpnService: AccessCpnService,
-              private eventService: EventService) {
+              private eventService: EventService,
+              private modelService: ModelService,
+              private settings: SettingsService) {
   }
 
   ngOnInit() {
@@ -80,22 +82,30 @@ export class ProjectTreeMonitorblockNodeComponent implements OnInit, ITreeNode {
     // });
   }
 
-  check():boolean{
-    console.log('MESSAGE 3',this.parentBlock)
-    console.log('MESSAGE 4',this.parentBlock && 1)
-
-    return false;
-  }
-
   onClick() {
 
   }
 
   onContextMenu(event) {
-    this.contextmenuAction.emit(event);
+    if (this.tree && this.tree.contextMenu) {
+
+      event.preventDefault();
+      const entries = [];
+
+      entries.push({ title: 'New block', action: () => this.onNew(), iconClass: 'fas fa-cube' });
+      if (this.modelService.bufferNode){
+        entries.push({ title: 'Paste', action: () => this.onPasteNode(), iconClass: 'fas fa-paste'});
+      }
+      entries.push({ title: 'separator' });
+      entries.push({ title: 'Delete', action: () => this.onDelete(), iconClass: 'fas fa-minus' });
+
+      this.tree.contextMenu.setEntries(entries);
+      this.tree.contextMenu.show({ x: event.clientX, y: event.clientY });
+    }
   }
 
-  onDelete(event) {
+  onDelete() {
+    this.modelService.deleteFromModel(this.monitorblock);
   }
 
   onDown(event) {
@@ -104,11 +114,17 @@ export class ProjectTreeMonitorblockNodeComponent implements OnInit, ITreeNode {
   onExpand() {
   }
 
-  onNew(event) {
+  onNew() {
+    const newBlock = {_name: this.settings.appSettings['block'], _id: getNextId()};
+    this.modelService.addCpnElement(this.monitorblock, newBlock, 'monitorblock');
+    // this.focus(newBlock._id);
   }
 
   onUp(event) {
   }
 
-
+  onPasteNode() {
+    this.modelService.addCpnElement(this.monitorblock, this.modelService.bufferNode, 'monitor');
+    this.modelService.bufferNode = null;
+  }
 }

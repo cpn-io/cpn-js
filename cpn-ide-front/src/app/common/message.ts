@@ -54,6 +54,7 @@ export class Message {
   static MONITOR_CHANGED = 'monitor.changed';
   static MONITOR_DELETED = 'monitor.deleted';
   static MONITOR_SET_AVAILABLE_NODES = 'monitor.set.available.nodes';
+  static MONITOR_CLICK_DELETE = 'monitor.click.delete';
 
   static MAIN_MENU_NEW_PROJECT = 'main.menu.new.project';
   static MAIN_MENU_OPEN_PROJECT = 'main.menu.open.project';

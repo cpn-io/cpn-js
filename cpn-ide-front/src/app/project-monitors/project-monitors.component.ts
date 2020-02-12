@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import { EventService } from '../services/event.service';
 import { Message } from '../common/message';
 import { ModelService } from '../services/model.service';
@@ -12,13 +12,15 @@ import {
   CPN_TRANSITION,
   is,
 } from '../../lib/cpn-js/util/ModelUtil';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-project-monitors',
   templateUrl: './project-monitors.component.html',
   styleUrls: ['./project-monitors.component.scss']
 })
-export class ProjectMonitorsComponent implements OnInit {
+export class ProjectMonitorsComponent implements OnInit, OnDestroy {
+
 
   JSON = JSON;
   nodeToArray = nodeToArray;
@@ -36,6 +38,7 @@ export class ProjectMonitorsComponent implements OnInit {
   ];
 
   createNodeIntent = false;
+  private subs: Subscription[] = [];
 
   constructor(private eventService: EventService,
     private modelService: ModelService,
@@ -49,7 +52,11 @@ export class ProjectMonitorsComponent implements OnInit {
     this.eventService.on(Message.SHAPE_SELECT, (event) => { if (this.createNodeIntent) { this.onCreateNode(event); } });
 
     this.eventService.on(Message.DECLARATION_CHANGED, (event) => this.onUpdateDeclaration(event));
+    this.subs.push(this.eventService.on(Message.MONITOR_CLICK_DELETE, event => this.onDeleteMonitor(event)));
 
+  }
+  ngOnDestroy(): void {
+    this.subs.forEach(x => x.unsubscribe());
   }
 
   getOption(name) {
@@ -253,8 +260,12 @@ export class ProjectMonitorsComponent implements OnInit {
     this.eventService.send(Message.MONITOR_CHANGED, { monitorCpnElement: this.monitor });
   }
 
-  onDeleteMonitor() {
-    if (this.monitor) {
+  onDeleteMonitor(data?) {
+    if (data) {
+      this.modelService.deleteFromModel(data);
+      this.onLoadMonitor(undefined);
+      this.eventService.send(Message.MONITOR_DELETED, { monitorCpnElement: data });
+    } else if (this.monitor) {
       this.modelService.deleteFromModel(this.monitor);
       this.onLoadMonitor(undefined);
       this.eventService.send(Message.MONITOR_DELETED, { monitorCpnElement: this.monitor });

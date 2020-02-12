@@ -27,6 +27,8 @@ export class ModelService {
   public projectData = undefined;
   public projectName = '';
 
+  public bufferNode;
+
   private backupModel = [];
   private redoBackupModel;
   private modelCase = [];

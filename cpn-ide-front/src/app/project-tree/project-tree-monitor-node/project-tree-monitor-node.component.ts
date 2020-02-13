@@ -120,7 +120,5 @@ export class ProjectTreeMonitorNodeComponent implements OnInit, DoCheck, ITreeNo
 
   onCutNode() {
     this.modelService.bufferNode = {...this.monitor};
-    this.modelService.deleteFromModel(this.monitor);
-    this.eventService.send(Message.MONITOR_DELETED, {monitorCpnElement: this.monitor});
   }
 }

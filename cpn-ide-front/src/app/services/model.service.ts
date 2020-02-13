@@ -1,16 +1,27 @@
-import { Injectable } from '@angular/core';
-import { EventService } from './event.service';
-import { Message } from '../common/message';
-import { SettingsService } from '../services/settings.service';
+import {Injectable} from '@angular/core';
+import {EventService} from './event.service';
+import {Message} from '../common/message';
+import {SettingsService} from '../services/settings.service';
 
 import {
   getDefText
 } from '../../lib/cpn-js/features/modeling/CpnElementFactory';
 
-import { nodeToArray, addNode, arrayMove, getNextId, cloneObject } from '../common/utils';
-import { DataCollectionMonitorTemplate, BreakpointMonitorTemplate, UserDefinedMonitorTemplate, WriteInFileMonitorTemplate, MarkingSizeMonitorTemplate, ListLengthDataCollectionMonitorTemplate, CountTransitionOccurrencesMonitorTemplate, PlaceContentBreakPointMonitorTemplate, TransitionEnabledBreakPointMonitorTemplate, MonitorType } from '../common/monitors';
-import { parseDeclarartion } from '../project-tree/project-tree-declaration-node/declaration-parser';
-import { DEFAULT_PAGE } from '../common/default-data';
+import {nodeToArray, addNode, arrayMove, getNextId, cloneObject} from '../common/utils';
+import {
+  DataCollectionMonitorTemplate,
+  BreakpointMonitorTemplate,
+  UserDefinedMonitorTemplate,
+  WriteInFileMonitorTemplate,
+  MarkingSizeMonitorTemplate,
+  ListLengthDataCollectionMonitorTemplate,
+  CountTransitionOccurrencesMonitorTemplate,
+  PlaceContentBreakPointMonitorTemplate,
+  TransitionEnabledBreakPointMonitorTemplate,
+  MonitorType
+} from '../common/monitors';
+import {parseDeclarartion} from '../project-tree/project-tree-declaration-node/declaration-parser';
+import {DEFAULT_PAGE} from '../common/default-data';
 
 
 /**
@@ -37,7 +48,7 @@ export class ModelService {
   paramsTypes = ['ml', 'color', 'var', 'globref'];
 
   constructor(private eventService: EventService,
-    private settings: SettingsService,
+              private settings: SettingsService,
   ) {
     console.log('ModelService instance CREATED!');
 
@@ -258,7 +269,7 @@ export class ModelService {
   }
 
   instaceForTransition(id, isRoot) {
-    return !isRoot ? { _id: getNextId(), _trans: id } : { _id: getNextId(), _page: id };
+    return !isRoot ? {_id: getNextId(), _trans: id} : {_id: getNextId(), _page: id};
   }
 
   /**
@@ -318,9 +329,9 @@ export class ModelService {
     }
 
     if (instances.length > 1) {
-      cpnet.instances = { instance: instances };
+      cpnet.instances = {instance: instances};
     } else if (instances.length === 1) {
-      cpnet.instances = { instance: instances[0] };
+      cpnet.instances = {instance: instances[0]};
     } else if (cpnet.instances) {
       delete cpnet.instances;
     }
@@ -656,15 +667,33 @@ export class ModelService {
 
     let newMonitorCpnElement;
     switch (monitorType) {
-      case this.monitorType.BP: newMonitorCpnElement = this.createCpnMonitorBP(cpnElementList, monitorDefaults); break;
-      case this.monitorType.CTODC: newMonitorCpnElement = this.createMonitorCTODC(cpnElementList, monitorDefaults); break;
-      case this.monitorType.DC: newMonitorCpnElement = this.createCpnMonitorDC(cpnElementList, monitorDefaults); break;
-      case this.monitorType.LLDC: newMonitorCpnElement = this.createCpnMonitorLLDC(cpnElementList, monitorDefaults); break;
-      case this.monitorType.MS: newMonitorCpnElement = this.createCpnMonitorMS(cpnElementList, monitorDefaults); break;
-      case this.monitorType.PCBP: newMonitorCpnElement = this.createCpnMonitorPCBP(cpnElementList, monitorDefaults); break;
-      case this.monitorType.TEBP: newMonitorCpnElement = this.createCpnMonitorTEBP(cpnElementList, monitorDefaults); break;
-      case this.monitorType.UD: newMonitorCpnElement = this.createCpnMonitorUD(cpnElementList, monitorDefaults); break;
-      case this.monitorType.WIF: newMonitorCpnElement = this.createCpnMonitorWIF(cpnElementList, monitorDefaults); break;
+      case this.monitorType.BP:
+        newMonitorCpnElement = this.createCpnMonitorBP(cpnElementList, monitorDefaults);
+        break;
+      case this.monitorType.CTODC:
+        newMonitorCpnElement = this.createMonitorCTODC(cpnElementList, monitorDefaults);
+        break;
+      case this.monitorType.DC:
+        newMonitorCpnElement = this.createCpnMonitorDC(cpnElementList, monitorDefaults);
+        break;
+      case this.monitorType.LLDC:
+        newMonitorCpnElement = this.createCpnMonitorLLDC(cpnElementList, monitorDefaults);
+        break;
+      case this.monitorType.MS:
+        newMonitorCpnElement = this.createCpnMonitorMS(cpnElementList, monitorDefaults);
+        break;
+      case this.monitorType.PCBP:
+        newMonitorCpnElement = this.createCpnMonitorPCBP(cpnElementList, monitorDefaults);
+        break;
+      case this.monitorType.TEBP:
+        newMonitorCpnElement = this.createCpnMonitorTEBP(cpnElementList, monitorDefaults);
+        break;
+      case this.monitorType.UD:
+        newMonitorCpnElement = this.createCpnMonitorUD(cpnElementList, monitorDefaults);
+        break;
+      case this.monitorType.WIF:
+        newMonitorCpnElement = this.createCpnMonitorWIF(cpnElementList, monitorDefaults);
+        break;
     }
 
     // this.updateInstances();
@@ -697,14 +726,14 @@ export class ModelService {
       _disabled: 'false',
       node: this.getMonitorNodeList(cpnElement),
       declaration: [
-        { _name: 'Predicate', ml: { _id: getNextId(), __text: monitorDefaults.defaultPredicate } },
-        { _name: 'Observer', ml: { _id: getNextId(), __text: monitorDefaults.defaultObserver } },
-        { _name: 'Init function', ml: { _id: getNextId(), __text: monitorDefaults.defaultInit } },
-        { _name: 'Stop', ml: { _id: getNextId(), __text: monitorDefaults.defaultStop } },
+        {_name: 'Predicate', ml: {_id: getNextId(), __text: monitorDefaults.defaultPredicate}},
+        {_name: 'Observer', ml: {_id: getNextId(), __text: monitorDefaults.defaultObserver}},
+        {_name: 'Init function', ml: {_id: getNextId(), __text: monitorDefaults.defaultInit}},
+        {_name: 'Stop', ml: {_id: getNextId(), __text: monitorDefaults.defaultStop}},
       ],
       option: [
-        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
-        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
+        {_name: 'Timed', _value: monitorDefaults.defaultTimed},
+        {_name: 'Logging', _value: monitorDefaults.defaultLogging}
       ]
     };
   }
@@ -723,14 +752,14 @@ export class ModelService {
       _disabled: 'false',
       node: this.getMonitorNodeList(cpnElement),
       declaration: [
-        { _name: 'Predicate', ml: { _id: getNextId(), __text: monitorDefaults.defaultPredicate } },
-        { _name: 'Observer', ml: { _id: getNextId(), __text: monitorDefaults.defaultObserver } },
-        { _name: 'Init function', ml: { _id: getNextId(), __text: monitorDefaults.defaultInit } },
-        { _name: 'Stop', ml: { _id: getNextId(), __text: monitorDefaults.defaultStop } },
+        {_name: 'Predicate', ml: {_id: getNextId(), __text: monitorDefaults.defaultPredicate}},
+        {_name: 'Observer', ml: {_id: getNextId(), __text: monitorDefaults.defaultObserver}},
+        {_name: 'Init function', ml: {_id: getNextId(), __text: monitorDefaults.defaultInit}},
+        {_name: 'Stop', ml: {_id: getNextId(), __text: monitorDefaults.defaultStop}},
       ],
       option: [
-        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
-        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
+        {_name: 'Timed', _value: monitorDefaults.defaultTimed},
+        {_name: 'Logging', _value: monitorDefaults.defaultLogging}
       ]
     };
   }
@@ -749,14 +778,14 @@ export class ModelService {
       _disabled: 'false',
       node: this.getMonitorNodeList(cpnElement),
       declaration: [
-        { _name: 'Predicate', ml: { _id: getNextId(), __text: monitorDefaults.defaultPredicate } },
-        { _name: 'Observer', ml: { _id: getNextId(), __text: monitorDefaults.defaultObserver } },
-        { _name: 'Init function', ml: { _id: getNextId(), __text: monitorDefaults.defaultInit } },
-        { _name: 'Stop', ml: { _id: getNextId(), __text: monitorDefaults.defaultStop } },
+        {_name: 'Predicate', ml: {_id: getNextId(), __text: monitorDefaults.defaultPredicate}},
+        {_name: 'Observer', ml: {_id: getNextId(), __text: monitorDefaults.defaultObserver}},
+        {_name: 'Init function', ml: {_id: getNextId(), __text: monitorDefaults.defaultInit}},
+        {_name: 'Stop', ml: {_id: getNextId(), __text: monitorDefaults.defaultStop}},
       ],
       option: [
-        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
-        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
+        {_name: 'Timed', _value: monitorDefaults.defaultTimed},
+        {_name: 'Logging', _value: monitorDefaults.defaultLogging}
       ]
     };
   }
@@ -775,14 +804,14 @@ export class ModelService {
       _disabled: 'false',
       node: this.getMonitorNodeList(cpnElement),
       declaration: [
-        { _name: 'Predicate', ml: { _id: getNextId(), __text: monitorDefaults.defaultPredicate } },
-        { _name: 'Observer', ml: { _id: getNextId(), __text: monitorDefaults.defaultObserver } },
-        { _name: 'Init function', ml: { _id: getNextId(), __text: monitorDefaults.defaultInit } },
-        { _name: 'Stop', ml: { _id: getNextId(), __text: monitorDefaults.defaultStop } },
+        {_name: 'Predicate', ml: {_id: getNextId(), __text: monitorDefaults.defaultPredicate}},
+        {_name: 'Observer', ml: {_id: getNextId(), __text: monitorDefaults.defaultObserver}},
+        {_name: 'Init function', ml: {_id: getNextId(), __text: monitorDefaults.defaultInit}},
+        {_name: 'Stop', ml: {_id: getNextId(), __text: monitorDefaults.defaultStop}},
       ],
       option: [
-        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
-        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
+        {_name: 'Timed', _value: monitorDefaults.defaultTimed},
+        {_name: 'Logging', _value: monitorDefaults.defaultLogging}
       ]
     };
   }
@@ -801,8 +830,8 @@ export class ModelService {
       _disabled: 'false',
       node: this.getMonitorNodeList(cpnElement),
       option: [
-        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
-        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
+        {_name: 'Timed', _value: monitorDefaults.defaultTimed},
+        {_name: 'Logging', _value: monitorDefaults.defaultLogging}
       ]
     };
   }
@@ -821,8 +850,8 @@ export class ModelService {
       _disabled: 'false',
       node: this.getMonitorNodeList(cpnElement),
       option: [
-        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
-        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
+        {_name: 'Timed', _value: monitorDefaults.defaultTimed},
+        {_name: 'Logging', _value: monitorDefaults.defaultLogging}
       ]
     };
   }
@@ -842,8 +871,8 @@ export class ModelService {
       _disabled: 'false',
       node: this.getMonitorNodeList(cpnElement),
       option: [
-        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
-        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
+        {_name: 'Timed', _value: monitorDefaults.defaultTimed},
+        {_name: 'Logging', _value: monitorDefaults.defaultLogging}
       ]
     };
   }
@@ -862,8 +891,8 @@ export class ModelService {
       _disabled: 'false',
       node: this.getMonitorNodeList(cpnElement),
       option: [
-        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
-        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
+        {_name: 'Timed', _value: monitorDefaults.defaultTimed},
+        {_name: 'Logging', _value: monitorDefaults.defaultLogging}
       ]
     };
   }
@@ -882,8 +911,8 @@ export class ModelService {
       _disabled: 'false',
       node: this.getMonitorNodeList(cpnElement),
       option: [
-        { _name: 'Timed', _value: monitorDefaults.defaultTimed },
-        { _name: 'Logging', _value: monitorDefaults.defaultLogging }
+        {_name: 'Timed', _value: monitorDefaults.defaultTimed},
+        {_name: 'Logging', _value: monitorDefaults.defaultLogging}
       ]
     };
   }
@@ -1020,8 +1049,8 @@ export class ModelService {
 
   trimChars(str, c) {
     str = str.trim();
-    var re = new RegExp("^[" + c + "]+|[" + c + "]+$", "g");
-    return str.replace(re, "");
+    var re = new RegExp('^[' + c + ']+|[' + c + ']+$', 'g');
+    return str.replace(re, '');
   }
 
   /**
@@ -1032,7 +1061,7 @@ export class ModelService {
   stringToCpnDeclarationElement(cpnElement, str) {
 
     let resultCpnType = 'ml';
-    let resultCpnElement: any = { _id: cpnElement._id };
+    let resultCpnElement: any = {_id: cpnElement._id};
 
     // const parser = str.match('^\\S+');
     // console.log('stringToCpnDeclarationElement(), parser = ', parser);
@@ -1092,7 +1121,7 @@ export class ModelService {
             }
 
             resultCpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
-            resultCpnElement.product = { id: productList.length === 1 ? productList[0] : productList };
+            resultCpnElement.product = {id: productList.length === 1 ? productList[0] : productList};
           } else if (testElem === 'list') {
             const productList = splitLayoutArray[1].slice(1).filter(e => e.trim() !== '*');
             for (const i in productList) {
@@ -1101,7 +1130,7 @@ export class ModelService {
             }
 
             resultCpnElement.id = splitLayoutArray[0].replace(/\s+/g, '');
-            resultCpnElement.list = { id: productList.length === 1 ? productList[0] : productList };
+            resultCpnElement.list = {id: productList.length === 1 ? productList[0] : productList};
           } else {
             testElem = testElem.replace(/\s+/g, '').replace(';', '');
             splitLayoutArray[1][0] = splitLayoutArray[1][0].replace(/\s+/g, '').replace(';', '');
@@ -1114,7 +1143,7 @@ export class ModelService {
               resultCpnElement[testElem.toLowerCase()] = '';
             } else {
               resultCpnElement.id = splitLayoutArray[0].trim();
-              resultCpnElement.alias = { id: testElem };
+              resultCpnElement.alias = {id: testElem};
             }
           }
         }
@@ -1145,7 +1174,7 @@ export class ModelService {
     // console.log('stringToCpnDeclarationElement(), declarationType = ', declarationType);
     // console.log('stringToCpnDeclarationElement(), cpnElement = ', cpnElement);
 
-    return { cpnType: resultCpnType, declarationType: resultDeclarationType, cpnElement: resultCpnElement };
+    return {cpnType: resultCpnType, declarationType: resultDeclarationType, cpnElement: resultCpnElement};
   }
 
   updateDeclaration(declarationCpnElement, declarationCpnType, parentBlockCpnElement, layout) {
@@ -1166,7 +1195,7 @@ export class ModelService {
       console.log('onUpdate(), oldCpnDeclarartionType = ', oldCpnDeclarartionType);
       console.log('onUpdate(), newCpnDeclarartionType = ', newCpnDeclarartionType);
 
-      this.copyDeclaration(newDeclaration, declarationCpnElement)
+      this.copyDeclaration(newDeclaration, declarationCpnElement);
 
       // move declaration cpn element from old declaration group to new, if needed
       if (newCpnDeclarartionType !== oldCpnDeclarartionType) {
@@ -1188,7 +1217,6 @@ export class ModelService {
       }
     }
   }
-
 
 
   /**
@@ -1234,7 +1262,9 @@ export class ModelService {
    * @param pageId - page id
    */
   public isSubpage(pageId) {
-    const transList = this.getAllTrans().filter((trans) => { return trans.subst && trans.subst._subpage === pageId });
+    const transList = this.getAllTrans().filter((trans) => {
+      return trans.subst && trans.subst._subpage === pageId;
+    });
     // console.log(this.constructor.name, 'isSubpage(), pageId, transList = ', pageId, transList)
     return (transList && transList.length > 0) ? true : false;
   }
@@ -1281,13 +1311,13 @@ export class ModelService {
       // search in transitions
       for (const t of nodeToArray(page.trans)) {
         if (t._id === id) {
-          return { element: t, type: 'Transition' };
+          return {element: t, type: 'Transition'};
         }
       }
       // search in places
       for (const p of nodeToArray(page.place)) {
         if (p._id === id) {
-          return { element: p, type: 'Place' };
+          return {element: p, type: 'Place'};
         }
       }
     }
@@ -1536,29 +1566,28 @@ export class ModelService {
 
       } else
 
-        // transition element
-        if (element.box) {
+      // transition element
+      if (element.box) {
 
-          // remove trans from old page
-          this.removeCpnElement(fromPage, element, 'trans');
-          // add trans to new page
-          this.addCpnElement(toPage, element, 'trans');
+        // remove trans from old page
+        this.removeCpnElement(fromPage, element, 'trans');
+        // add trans to new page
+        this.addCpnElement(toPage, element, 'trans');
 
-        } else
+      } else
 
-          // arc element
-          if (element.transend) {
+      // arc element
+      if (element.transend) {
 
-            // remove arc from old page
-            this.removeCpnElement(fromPage, element, 'arc');
-            // add arc to new page
-            this.addCpnElement(toPage, element, 'arc');
+        // remove arc from old page
+        this.removeCpnElement(fromPage, element, 'arc');
+        // add arc to new page
+        this.addCpnElement(toPage, element, 'arc');
 
-          }
+      }
 
     }
   }
-
 
 
   /**
@@ -1617,10 +1646,10 @@ export class ModelService {
     const h = Number(cpnElement.ellipse._h);
 
     return {
-      fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
-      lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
-      posattr: { _x: (x).toString(), _y: (y - h / 2).toString() },
-      textattr: { _colour: 'Black', _bold: 'false' },
+      fillattr: {_colour: 'White', _pattern: 'Solid', _filled: 'false'},
+      lineattr: {_colour: 'Black', _thick: '0', _type: 'Solid'},
+      posattr: {_x: (x).toString(), _y: (y - h / 2).toString()},
+      textattr: {_colour: 'Black', _bold: 'false'},
       text: portType,
       _id: cpnElement._id + 'e',
       _type: portType === 'In/Out' ? 'I/O' : portType
@@ -1646,10 +1675,10 @@ export class ModelService {
 
     return {
       subpageinfo: {
-        fillattr: { _colour: 'White', _pattern: 'Solid', _filled: 'false' },
-        lineattr: { _colour: 'Black', _thick: '0', _type: 'Solid' },
-        posattr: { _x: (x).toString(), _y: (y - h / 2).toString() },
-        textattr: { _colour: 'Black', _bold: 'false' },
+        fillattr: {_colour: 'White', _pattern: 'Solid', _filled: 'false'},
+        lineattr: {_colour: 'Black', _thick: '0', _type: 'Solid'},
+        posattr: {_x: (x).toString(), _y: (y - h / 2).toString()},
+        textattr: {_colour: 'Black', _bold: 'false'},
         _id: cpnElement._id + 'e',
         _name: name
       },
@@ -1668,7 +1697,7 @@ export class ModelService {
     const placeEnd = allPlaces.find(p => p._id === cpnElement.placeend._idref);
     const transEnd = allTrans.find(t => t._id === cpnElement.transend._idref);
 
-    return { place: placeEnd, trans: transEnd, orient: cpnElement._orientation };
+    return {place: placeEnd, trans: transEnd, orient: cpnElement._orientation};
   }
 
   /**
@@ -1866,7 +1895,9 @@ export class ModelService {
       }
 
       let nodeList = nodeToArray(cpnParentElement[cpnType]);
-      nodeList = nodeList.filter((e) => { return e._id !== cpnElement._id; });
+      nodeList = nodeList.filter((e) => {
+        return e._id !== cpnElement._id;
+      });
 
       if (!nodeList || nodeList.length === 0) {
         delete cpnParentElement[cpnType];
@@ -1915,10 +1946,12 @@ export class ModelService {
       switch (direction) {
         case 'up': {
           toIndex = fromIndex - 1;
-        } break;
+        }
+          break;
         case 'down': {
           toIndex = fromIndex + 1;
-        } break;
+        }
+          break;
       }
       console.log(this.constructor.name, 'moveCpnElement(). fromIndex, toIndex = ', fromIndex, toIndex);
       if (toIndex !== undefined && toIndex >= 0 && toIndex < nodeList.length) {
@@ -1990,7 +2023,28 @@ export class ModelService {
     return result;
   }
 
-
+  checkNumberOfMonitors(): number {
+    let max = 0;
+    const monitorsRoot = this.getMonitorsRoot();
+    const queue = [];
+    const monitorBlocks = [];
+    if (monitorsRoot.monitorblock) {
+      nodeToArray(monitorsRoot.monitorblock).forEach(el => queue.push(el));
+    }
+    while (queue.length > 0) {
+      const item = queue.pop();
+      if (item.monitorblock) {
+        nodeToArray(item.monitorblock).forEach(el => queue.push(el));
+      }
+      monitorBlocks.push(item._name);
+    }
+    monitorBlocks.forEach((block: string) => {
+      const matches = block.match(' \\d*$');
+      const idx = matches && matches.length > 0 ? +matches.pop().trim() : 0;
+      max = idx > max ? idx : max;
+    });
+    return max;
+  }
 }
 
 

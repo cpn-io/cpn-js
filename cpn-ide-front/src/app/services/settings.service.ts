@@ -1,13 +1,13 @@
-import { Injectable } from '@angular/core';
-import { HttpHeaders, HttpClient } from '@angular/common/http';
-import { cloneObject } from '../common/utils';
-import { DEFAULT_SETTINGS } from '../common/default-settings';
+import {Injectable} from '@angular/core';
+import {cloneObject} from '../common/utils';
+import {DEFAULT_SETTINGS} from '../common/default-settings';
 import {EventService} from './event.service';
 import {Message} from '../common/message';
 
 @Injectable()
 export class SettingsService {
   public appSettings;
+  private counter = 0;
 
   constructor(private eventService: EventService) {
     this.loadLocalSettings();
@@ -46,5 +46,13 @@ export class SettingsService {
     //   return '';
     // }
     return this.appSettings['serverAddress'];
+  }
+
+  public setCounter(number: number) {
+    this.counter = number;
+  }
+
+  public getMonitorBlockTitle() {
+    return `${this.appSettings['monitorblock']} ${this.counter++}`;
   }
 }

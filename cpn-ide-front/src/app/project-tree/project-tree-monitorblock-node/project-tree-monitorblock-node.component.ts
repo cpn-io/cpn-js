@@ -6,6 +6,7 @@ import {EventService} from '../../services/event.service';
 import {ITreeNode} from '../tree-node/tree-node';
 import {ModelService} from '../../services/model.service';
 import {SettingsService} from '../../services/settings.service';
+import {Message} from '../../common/message';
 
 @Component({
   selector: 'app-project-tree-monitorblock-node',
@@ -115,7 +116,7 @@ export class ProjectTreeMonitorblockNodeComponent implements OnInit, ITreeNode {
   }
 
   onNew() {
-    const newBlock = {_name: this.settings.appSettings['block'], _id: getNextId()};
+    const newBlock = {_name: this.settings.getMonitorBlockTitle(), _id: getNextId()};
     this.modelService.addCpnElement(this.monitorblock, newBlock, 'monitorblock');
     // this.focus(newBlock._id);
   }
@@ -124,6 +125,9 @@ export class ProjectTreeMonitorblockNodeComponent implements OnInit, ITreeNode {
   }
 
   onPasteNode() {
+    this.modelService.deleteFromModel(this.modelService.bufferNode);
+    this.eventService.send(Message.MONITOR_DELETED, {monitorCpnElement: this.modelService.bufferNode});
+
     this.modelService.addCpnElement(this.monitorblock, this.modelService.bufferNode, 'monitor');
     this.modelService.bufferNode = null;
   }

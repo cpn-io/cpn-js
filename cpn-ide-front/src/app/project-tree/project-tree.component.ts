@@ -130,6 +130,8 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
     // setTimeout(() => this.goToDeclaration('ID1438190116'), 100);
     setTimeout(() => this.goToFirstPage(), 100);
+
+    this.settings.setCounter(this.modelService.checkNumberOfMonitors() + 1);
   }
 
   updateErrors() {
@@ -269,7 +271,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
   onNewBlockMonitor() {
     if (this.tree.selected && this.tree.selected.type === 'monitorblock') {
-      const newBlock = {_name: this.settings.appSettings['block'], _id: getNextId()};
+      const newBlock = {_name: this.settings.getMonitorBlockTitle(), _id: getNextId()};
       this.modelService.addCpnElement(this.tree.selected.cpnElement, newBlock, 'monitorblock');
       this.focus(newBlock._id);
     }
@@ -284,6 +286,9 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   // }
 
   onPasteNode() {
+    this.modelService.deleteFromModel(this.modelService.bufferNode);
+    this.eventService.send(Message.MONITOR_DELETED, {monitorCpnElement: this.modelService.bufferNode});
+
     this.modelService.addCpnElement(this.tree.selected.cpnElement, this.modelService.bufferNode, 'monitor');
     this.modelService.bufferNode = null;
   }

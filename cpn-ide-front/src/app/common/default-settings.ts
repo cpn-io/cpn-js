@@ -6,7 +6,7 @@ export const DEFAULT_SETTINGS = {
   color: 'colset TYPE = unit;',
   var: 'var v:UNIT;',
   fun: 'fun Fun1() = [];',
-  
+
   type: 'UNIT',
   initmark: 'empty',
   code: 'input();\noutput();\naction();',
@@ -16,6 +16,7 @@ export const DEFAULT_SETTINGS = {
   annot: '1`()',
 
   block: 'New block',
+  monitorblock: 'New monitor block',
   declaration: '(* New declaration *)',
   page: 'New page',
 

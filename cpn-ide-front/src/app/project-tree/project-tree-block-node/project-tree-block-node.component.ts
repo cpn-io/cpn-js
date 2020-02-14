@@ -1,12 +1,13 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { nodeToArray, getNextId } from '../../common/utils';
-import { AccessCpnService } from '../../services/access-cpn.service';
-import { EventService } from '../../services/event.service';
-import { ModelService } from '../../services/model.service';
-import { Message } from '../../common/message';
-import { TreeData } from '../project-tree.component';
-import { ITreeNode } from '../tree-node/tree-node';
-import { DataTypes } from '../../common/constants';
+import {Component, OnInit, Input} from '@angular/core';
+import {nodeToArray, getNextId} from '../../common/utils';
+import {AccessCpnService} from '../../services/access-cpn.service';
+import {EventService} from '../../services/event.service';
+import {ModelService} from '../../services/model.service';
+import {Message} from '../../common/message';
+import {TreeData} from '../project-tree.component';
+import {ITreeNode} from '../tree-node/tree-node';
+import {DataTypes} from '../../common/constants';
+import {BufferService} from '../../services/buffer.service';
 
 @Component({
   selector: 'app-project-tree-block-node',
@@ -25,8 +26,10 @@ export class ProjectTreeBlockNodeComponent implements OnInit, ITreeNode {
   type = 'block';
 
   constructor(private eventService: EventService,
-    private modelService: ModelService,
-    public accessCpnService: AccessCpnService) { }
+              private modelService: ModelService,
+              public accessCpnService: AccessCpnService,
+              private bufferService: BufferService) {
+  }
 
   ngOnInit() {
     if (this.tree && this.block && this.parentBlock) {
@@ -68,7 +71,7 @@ export class ProjectTreeBlockNodeComponent implements OnInit, ITreeNode {
 
     let parentElement = this.block;
     if (parentElement) {
-      const newBlock = { id: 'New block', _id: getNextId() };
+      const newBlock = {id: 'New block', _id: getNextId()};
       this.modelService.addCpnElement(parentElement, newBlock, 'block');
 
       // set selected to new block
@@ -86,18 +89,18 @@ export class ProjectTreeBlockNodeComponent implements OnInit, ITreeNode {
     if (this.tree && this.tree.contextMenu) {
       event.preventDefault();
 
-      const entries = []
-      entries.push({ title: 'New declaration', action: () => this.onNewDeclaration(), iconClass: 'fas fa-code' });
-      entries.push({ title: 'New block', action: () => this.onNewBlock(), iconClass: 'fas fa-cube' });
-      if (this.modelService.bufferNode.type && this.modelService.bufferNode.type !== DataTypes.monitor) {
+      const entries = [];
+      entries.push({title: 'New declaration', action: () => this.onNewDeclaration(), iconClass: 'fas fa-code'});
+      entries.push({title: 'New block', action: () => this.onNewBlock(), iconClass: 'fas fa-cube'});
+      if (!this.bufferService.isEmpty() && !this.bufferService.isEqualTo(DataTypes.monitor)) {
         entries.push({ title: 'separator' });
-        entries.push({ title: 'Paste', action: () => this.onPasteNode(), iconClass: 'fas fa-paste' });
+        entries.push({title: 'Paste', action: () => this.bufferService.pasteObject(this.block), iconClass: 'fas fa-paste'});
       }
-      entries.push({ title: 'separator' });
-      entries.push({ title: 'Delete', action: () => this.onDeleteBlock(), iconClass: 'fas fa-minus' });
+      entries.push({title: 'separator'});
+      entries.push({title: 'Delete', action: () => this.onDeleteBlock(), iconClass: 'fas fa-minus'});
 
       this.tree.contextMenu.setEntries(entries);
-      this.tree.contextMenu.show({ x: event.clientX, y: event.clientY });
+      this.tree.contextMenu.show({x: event.clientX, y: event.clientY});
     }
   }
 
@@ -123,14 +126,17 @@ export class ProjectTreeBlockNodeComponent implements OnInit, ITreeNode {
   onSelect() {
     this.setSelected(this.parentBlock, this.block, this.type);
   }
+
   onClick() {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
+
   onExpand() {
     if (this.tree && this.tree.expanded) {
       this.tree.expanded[this.block._id] = true;
     }
   }
+
   onKeydown(event: KeyboardEvent) {
     console.log(this.constructor.name, 'onKeydown(), event = ', event);
 
@@ -163,23 +169,27 @@ export class ProjectTreeBlockNodeComponent implements OnInit, ITreeNode {
   onNew(event: any) {
     this.onNewDeclaration();
   }
+
   onDelete(event: any) {
     this.onDeleteBlock();
   }
+
   onUp(event: any = undefined) {
     this.modelService.moveCpnElement(this.parentBlock, this.block, this.type, 'up');
     this.focus(this.block._id);
   }
+
   onDown(event: any = undefined) {
     this.modelService.moveCpnElement(this.parentBlock, this.block, this.type, 'down');
     this.focus(this.block._id);
   }
 
-  onPasteNode() {
-    this.modelService.deleteFromModel(this.modelService.bufferNode.object);
-    this.modelService.addCpnElement(this.block, this.modelService.bufferNode.object, this.modelService.bufferNode.type);
-    this.modelService.bufferNode = { object: null, type: null };
-  }
+  // onPasteNode() {
+  //   // this.modelService.deleteFromModel(this.modelService.bufferNode.object);
+  //   // this.modelService.addCpnElement(this.block, this.modelService.bufferNode.object, this.modelService.bufferNode.type);
+  //   // this.modelService.bufferNode = {object: null, type: null, cut:null};
+  //   this.bufferService.pasteObject(this.block);
+  // }
 
 
 }

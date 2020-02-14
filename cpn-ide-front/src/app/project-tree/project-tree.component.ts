@@ -9,6 +9,7 @@ import { SettingsService } from '../services/settings.service';
 import { ContextMenuComponent } from '../context-menu/context-menu.component';
 import { SelectedNode } from './tree-node/tree-node';
 import {DataTypes} from '../common/constants';
+import {BufferService} from '../services/buffer.service';
 
 export class TreeData {
   expanded = [];
@@ -79,7 +80,8 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   constructor(public eventService: EventService,
     public modelService: ModelService,
     private accessCpnService: AccessCpnService,
-    private settings: SettingsService) {
+    private settings: SettingsService,
+              private bufferService: BufferService) {
   }
 
   ngOnInit() {
@@ -277,13 +279,14 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     }
   }
 
-  onPasteNode() {
-    this.modelService.deleteFromModel(this.modelService.bufferNode.object);
-    this.eventService.send(Message.MONITOR_DELETED, {monitorCpnElement: this.modelService.bufferNode.object});
-
-    this.modelService.addCpnElement(this.tree.selected.cpnElement, this.modelService.bufferNode.object, DataTypes.monitor);
-    this.modelService.bufferNode = {object: null, type: null};
-  }
+  // onPasteNode() {
+  //   this.bufferService.pasteObject(this.tree.selected.cpnElement)
+  //   this.modelService.deleteFromModel(this.modelService.bufferNode.object);
+  //   this.eventService.send(Message.MONITOR_DELETED, {monitorCpnElement: this.modelService.bufferNode.object});
+  //
+  //   this.modelService.addCpnElement(this.tree.selected.cpnElement, this.modelService.bufferNode.object, DataTypes.monitor);
+  //   this.modelService.bufferNode = {object: null, type: null, cut:null};
+  // }
 
   onNewPage() {
     console.log(this.constructor.name, 'onNewPage(), this.selected = ', this.tree.selected);
@@ -351,8 +354,8 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
           break;
         case DataTypes.monitorblock:
           entries.push({title: 'New block', action: () => this.onNewBlockMonitor(), iconClass: 'fas fa-cube'});
-          if (this.modelService.bufferNode.type === DataTypes.monitor) {
-            entries.push({title: 'Paste', action: () => this.onPasteNode(), iconClass: 'fas fa-paste'});
+          if (!this.bufferService.isEmpty() && this.bufferService.isEqualTo(DataTypes.monitor)) {
+            entries.push({title: 'Paste', action: () => this.bufferService.pasteObject(this.tree.selected.cpnElement), iconClass: 'fas fa-paste'});
           }
           break;
       }

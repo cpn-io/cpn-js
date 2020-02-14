@@ -10,6 +10,7 @@ import EventSender = ts.server.EventSender;
 import {EventService} from '../../services/event.service';
 import {Message} from '../../common/message';
 import {DataTypes} from '../../common/constants';
+import {BufferService} from '../../services/buffer.service';
 
 @Component({
   selector: 'app-project-tree-monitor-node',
@@ -32,7 +33,8 @@ export class ProjectTreeMonitorNodeComponent implements OnInit, DoCheck, ITreeNo
     public modelService: ModelService,
     private differs: KeyValueDiffers,
     public accessCpnService: AccessCpnService,
-    private eventService: EventService) {
+    private eventService: EventService,
+    private bufferService: BufferService) {
 
     this.differ = this.differs.find({}).create();
   }
@@ -92,7 +94,7 @@ export class ProjectTreeMonitorNodeComponent implements OnInit, DoCheck, ITreeNo
       event.preventDefault();
 
       const entries = [];
-      entries.push({ title: 'Cut', action: () => this.onCutNode(), iconClass: 'fas fa-cut'});
+      entries.push({ title: 'Cut', action: () =>  this.bufferService.cutObject(this.monitor, DataTypes.monitor), iconClass: 'fas fa-cut'});
       entries.push({ title: 'separator' });
       entries.push({ title: 'Delete', action: () => this.onDelete(), iconClass: 'fas fa-minus' });
 
@@ -117,10 +119,5 @@ export class ProjectTreeMonitorNodeComponent implements OnInit, DoCheck, ITreeNo
   }
   onDown(event: any) {
     throw new Error("Method not implemented.");
-  }
-
-  onCutNode() {
-    this.modelService.bufferNode.object = { ...this.monitor};
-    this.modelService.bufferNode.type = DataTypes.monitor;
   }
 }

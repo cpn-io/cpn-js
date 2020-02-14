@@ -71,6 +71,7 @@ import { ProjectDeclarationsBlockNodeComponent } from './project-declarations/pr
 import { SimulationReportPipe } from './pipes/simulation-report.pipe';
 import { DialogComponent } from './common/dialog/dialog.component';
 import { DialogLogComponent } from './common/dialog-log/dialog-log.component';
+import {BufferService} from './services/buffer.service';
 
 require('typeface-droid-sans-mono');
 
@@ -157,7 +158,8 @@ require('typeface-droid-sans-mono');
     EventService,
     ModelService,
     ValidationService,
-    FileService
+    FileService,
+    BufferService
   ],
   bootstrap: [AppComponent]
 })

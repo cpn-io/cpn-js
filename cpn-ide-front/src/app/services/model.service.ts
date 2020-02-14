@@ -38,7 +38,10 @@ export class ModelService {
   public projectData = undefined;
   public projectName = '';
 
-  public bufferNode;
+  public bufferNode = {
+    type: null,
+    object: null
+  };
 
   private backupModel = [];
   private redoBackupModel;

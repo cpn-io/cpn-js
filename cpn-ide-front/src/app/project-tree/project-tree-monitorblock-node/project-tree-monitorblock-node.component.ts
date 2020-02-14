@@ -7,6 +7,7 @@ import {ITreeNode} from '../tree-node/tree-node';
 import {ModelService} from '../../services/model.service';
 import {SettingsService} from '../../services/settings.service';
 import {Message} from '../../common/message';
+import {DataTypes} from '../../common/constants';
 
 @Component({
   selector: 'app-project-tree-monitorblock-node',
@@ -94,7 +95,7 @@ export class ProjectTreeMonitorblockNodeComponent implements OnInit, ITreeNode {
       const entries = [];
 
       entries.push({ title: 'New block', action: () => this.onNew(), iconClass: 'fas fa-cube' });
-      if (this.modelService.bufferNode){
+      if (this.modelService.bufferNode.type === DataTypes.monitor){
         entries.push({ title: 'Paste', action: () => this.onPasteNode(), iconClass: 'fas fa-paste'});
       }
       entries.push({ title: 'separator' });
@@ -117,7 +118,7 @@ export class ProjectTreeMonitorblockNodeComponent implements OnInit, ITreeNode {
 
   onNew() {
     const newBlock = {_name: this.settings.getMonitorBlockTitle(), _id: getNextId()};
-    this.modelService.addCpnElement(this.monitorblock, newBlock, 'monitorblock');
+    this.modelService.addCpnElement(this.monitorblock, newBlock, DataTypes.monitorblock);
     // this.focus(newBlock._id);
   }
 
@@ -125,10 +126,10 @@ export class ProjectTreeMonitorblockNodeComponent implements OnInit, ITreeNode {
   }
 
   onPasteNode() {
-    this.modelService.deleteFromModel(this.modelService.bufferNode);
-    this.eventService.send(Message.MONITOR_DELETED, {monitorCpnElement: this.modelService.bufferNode});
+    this.modelService.deleteFromModel(this.modelService.bufferNode.object);
+    this.eventService.send(Message.MONITOR_DELETED, {monitorCpnElement: this.modelService.bufferNode.object});
 
-    this.modelService.addCpnElement(this.monitorblock, this.modelService.bufferNode, 'monitor');
-    this.modelService.bufferNode = null;
+    this.modelService.addCpnElement(this.monitorblock, this.modelService.bufferNode.object, DataTypes.monitor);
+    this.modelService.bufferNode = {object: null, type: null};
   }
 }

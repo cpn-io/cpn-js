@@ -9,6 +9,7 @@ import * as ts from 'typescript/lib/tsserverlibrary';
 import EventSender = ts.server.EventSender;
 import {EventService} from '../../services/event.service';
 import {Message} from '../../common/message';
+import {DataTypes} from '../../common/constants';
 
 @Component({
   selector: 'app-project-tree-monitor-node',
@@ -119,6 +120,7 @@ export class ProjectTreeMonitorNodeComponent implements OnInit, DoCheck, ITreeNo
   }
 
   onCutNode() {
-    this.modelService.bufferNode = {...this.monitor};
+    this.modelService.bufferNode.object = { ...this.monitor};
+    this.modelService.bufferNode.type = DataTypes.monitor;
   }
 }

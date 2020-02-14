@@ -6,6 +6,7 @@ import { ModelService } from '../../services/model.service';
 import { Message } from '../../common/message';
 import { TreeData } from '../project-tree.component';
 import { ITreeNode } from '../tree-node/tree-node';
+import {DataTypes} from '../../common/constants';
 
 @Component({
   selector: 'app-project-tree-block-node',
@@ -85,12 +86,14 @@ export class ProjectTreeBlockNodeComponent implements OnInit, ITreeNode {
     if (this.tree && this.tree.contextMenu) {
       event.preventDefault();
 
-      const entries = [
-        { title: 'New declaration', action: () => this.onNewDeclaration(), iconClass: 'fas fa-code' },
-        { title: 'New block', action: () => this.onNewBlock(), iconClass: 'fas fa-cube' },
-        { title: 'separator' },
-        { title: 'Delete', action: () => this.onDeleteBlock(), iconClass: 'fas fa-minus' },
-      ];
+      const entries = []
+      entries.push({ title: 'New declaration', action: () => this.onNewDeclaration(), iconClass: 'fas fa-code' });
+      entries.push(  { title: 'New block', action: () => this.onNewBlock(), iconClass: 'fas fa-cube' });
+      if (this.modelService.bufferNode.type && this.modelService.bufferNode.type !== DataTypes.monitor){
+        entries.push({ title: 'Paste', action: () => this.onPasteNode(), iconClass: 'fas fa-paste' })
+      }
+      entries.push(   { title: 'separator' });
+      entries.push(   { title: 'Delete', action: () => this.onDeleteBlock(), iconClass: 'fas fa-minus' });
 
       this.tree.contextMenu.setEntries(entries);
       this.tree.contextMenu.show({ x: event.clientX, y: event.clientY });
@@ -169,6 +172,12 @@ export class ProjectTreeBlockNodeComponent implements OnInit, ITreeNode {
   onDown(event: any = undefined) {
     this.modelService.moveCpnElement(this.parentBlock, this.block, this.type, 'down');
     this.focus(this.block._id);
+  }
+
+  onPasteNode() {
+    this.modelService.deleteFromModel(this.modelService.bufferNode.object);
+    this.modelService.addCpnElement(this.block, this.modelService.bufferNode.object, this.modelService.bufferNode.type);
+    this.modelService.bufferNode = {object: null, type: null};
   }
 
 

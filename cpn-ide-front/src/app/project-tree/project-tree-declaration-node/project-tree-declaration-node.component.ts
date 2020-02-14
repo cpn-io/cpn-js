@@ -8,6 +8,7 @@ import { ContextMenuComponent } from '../../context-menu/context-menu.component'
 import { getNextId } from '../../common/utils';
 import { ITreeNode } from '../tree-node/tree-node';
 import { TreeData } from '../project-tree.component';
+import {DataTypes} from '../../common/constants';
 
 @Component({
   selector: 'app-project-tree-declaration-node',
@@ -162,6 +163,10 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, I
       if (this.tree && this.tree.treeType === 'tree') {
         entries.push({ title: 'New block', action: () => this.onNewBlock(), iconClass: 'fas fa-cube' });
       }
+      entries.push({ title: 'Cut', action: () => this.onCutNode(), iconClass: 'fas fa-cut' })
+      if (this.modelService.bufferNode.type && this.modelService.bufferNode.type !== DataTypes.monitor){
+        entries.push({ title: 'Paste', action: () => this.onPasteNode(), iconClass: 'fas fa-paste' })
+      }
       entries.push({ title: 'separator' });
       entries.push({ title: 'Delete', action: () => this.onDelete(), iconClass: 'fas fa-minus' });
 
@@ -215,6 +220,16 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, I
   onDown(event: any = undefined) {
     this.modelService.moveCpnElement(this.parentBlock, this.declaration, this.type, 'down');
     this.focus(this.declaration._id);
+  }
+
+  onCutNode() {
+    this.modelService.bufferNode.object = { ...this.declaration};
+    this.modelService.bufferNode.type = this.type;
+  }
+  onPasteNode() {
+    this.modelService.deleteFromModel(this.modelService.bufferNode.object);
+    this.modelService.addCpnElement(this.parentBlock, this.modelService.bufferNode.object, this.modelService.bufferNode.type);
+    this.modelService.bufferNode = {object: null, type: null};
   }
 
 }

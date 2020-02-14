@@ -8,6 +8,7 @@ import { AccessCpnService } from '../services/access-cpn.service';
 import { SettingsService } from '../services/settings.service';
 import { ContextMenuComponent } from '../context-menu/context-menu.component';
 import { SelectedNode } from './tree-node/tree-node';
+import {DataTypes} from '../common/constants';
 
 export class TreeData {
   expanded = [];
@@ -71,7 +72,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   public containerId = 'projectTreeComponentContainer';
 
   public newPageCount = 0;
-  public bufferNode;
+  // public bufferNode;
 
   simulationState = { step: 0, time: 0 };
 
@@ -268,29 +269,20 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     }
   }
 
-
   onNewBlockMonitor() {
-    if (this.tree.selected && this.tree.selected.type === 'monitorblock') {
+    if (this.tree.selected && this.tree.selected.type === DataTypes.monitorblock) {
       const newBlock = {_name: this.settings.getMonitorBlockTitle(), _id: getNextId()};
-      this.modelService.addCpnElement(this.tree.selected.cpnElement, newBlock, 'monitorblock');
+      this.modelService.addCpnElement(this.tree.selected.cpnElement, newBlock, DataTypes.monitorblock);
       this.focus(newBlock._id);
     }
   }
-  //
-  // onCutNode() {
-  //
-  //   this.modelService.bufferNode = {...this.tree.selected.cpnElement};
-  //   // console.log('DELETE 11',this.bufferNode)
-  //   this.modelService.deleteFromModel(this.tree.selected.cpnElement);
-  //   this.eventService.send(Message.MONITOR_DELETED, {monitorCpnElement: this.tree.selected.cpnElement});
-  // }
 
   onPasteNode() {
-    this.modelService.deleteFromModel(this.modelService.bufferNode);
-    this.eventService.send(Message.MONITOR_DELETED, {monitorCpnElement: this.modelService.bufferNode});
+    this.modelService.deleteFromModel(this.modelService.bufferNode.object);
+    this.eventService.send(Message.MONITOR_DELETED, {monitorCpnElement: this.modelService.bufferNode.object});
 
-    this.modelService.addCpnElement(this.tree.selected.cpnElement, this.modelService.bufferNode, 'monitor');
-    this.modelService.bufferNode = null;
+    this.modelService.addCpnElement(this.tree.selected.cpnElement, this.modelService.bufferNode.object, DataTypes.monitor);
+    this.modelService.bufferNode = {object: null, type: null};
   }
 
   onNewPage() {
@@ -357,9 +349,9 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
         case 'pages':
           entries.push({ title: 'New page', action: () => this.onNewPage(), iconClass: 'fas fa-project-diagram' });
           break;
-        case 'monitorblock':
+        case DataTypes.monitorblock:
           entries.push({title: 'New block', action: () => this.onNewBlockMonitor(), iconClass: 'fas fa-cube'});
-          if (this.modelService.bufferNode) {
+          if (this.modelService.bufferNode.type === DataTypes.monitor) {
             entries.push({title: 'Paste', action: () => this.onPasteNode(), iconClass: 'fas fa-paste'});
           }
           break;

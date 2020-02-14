@@ -38,11 +38,6 @@ export class ModelService {
   public projectData = undefined;
   public projectName = '';
 
-  public bufferNode = {
-    type: null,
-    object: null
-  };
-
   private backupModel = [];
   private redoBackupModel;
   private modelCase = [];
@@ -2048,6 +2043,8 @@ export class ModelService {
     });
     return max;
   }
+
+
 }
 
 

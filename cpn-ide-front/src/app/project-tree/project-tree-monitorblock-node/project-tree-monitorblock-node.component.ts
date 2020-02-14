@@ -8,6 +8,7 @@ import {ModelService} from '../../services/model.service';
 import {SettingsService} from '../../services/settings.service';
 import {Message} from '../../common/message';
 import {DataTypes} from '../../common/constants';
+import {BufferService} from '../../services/buffer.service';
 
 @Component({
   selector: 'app-project-tree-monitorblock-node',
@@ -30,7 +31,8 @@ export class ProjectTreeMonitorblockNodeComponent implements OnInit, ITreeNode {
   constructor(private accessCpnService: AccessCpnService,
               private eventService: EventService,
               private modelService: ModelService,
-              private settings: SettingsService) {
+              private settings: SettingsService,
+              private bufferService: BufferService) {
   }
 
   ngOnInit() {
@@ -69,7 +71,7 @@ export class ProjectTreeMonitorblockNodeComponent implements OnInit, ITreeNode {
   }
 
   setSelected(cpnParentElement, cpnElement, type) {
-  // todo
+    // todo
     // this.tree.selected.treeNodeComponent = this;
     //
     // this.tree.selected.parentCpnElement = cpnParentElement;
@@ -94,15 +96,15 @@ export class ProjectTreeMonitorblockNodeComponent implements OnInit, ITreeNode {
       event.preventDefault();
       const entries = [];
 
-      entries.push({ title: 'New block', action: () => this.onNew(), iconClass: 'fas fa-cube' });
-      if (this.modelService.bufferNode.type === DataTypes.monitor){
-        entries.push({ title: 'Paste', action: () => this.onPasteNode(), iconClass: 'fas fa-paste'});
+      entries.push({title: 'New block', action: () => this.onNew(), iconClass: 'fas fa-cube'});
+      if (!this.bufferService.isEmpty() && this.bufferService.isEqualTo(DataTypes.monitor)) {
+        entries.push({title: 'Paste', action: () => this.bufferService.pasteObject(this.monitorblock), iconClass: 'fas fa-paste'});
       }
-      entries.push({ title: 'separator' });
-      entries.push({ title: 'Delete', action: () => this.onDelete(), iconClass: 'fas fa-minus' });
+      entries.push({title: 'separator'});
+      entries.push({title: 'Delete', action: () => this.onDelete(), iconClass: 'fas fa-minus'});
 
       this.tree.contextMenu.setEntries(entries);
-      this.tree.contextMenu.show({ x: event.clientX, y: event.clientY });
+      this.tree.contextMenu.show({x: event.clientX, y: event.clientY});
     }
   }
 
@@ -125,11 +127,13 @@ export class ProjectTreeMonitorblockNodeComponent implements OnInit, ITreeNode {
   onUp(event) {
   }
 
-  onPasteNode() {
-    this.modelService.deleteFromModel(this.modelService.bufferNode.object);
-    this.eventService.send(Message.MONITOR_DELETED, {monitorCpnElement: this.modelService.bufferNode.object});
-
-    this.modelService.addCpnElement(this.monitorblock, this.modelService.bufferNode.object, DataTypes.monitor);
-    this.modelService.bufferNode = {object: null, type: null};
-  }
+  // onPasteNode() {
+  //
+  //   this.bufferService.pasteObject(this.monitorblock);
+  //   // this.modelService.deleteFromModel(this.modelService.bufferNode.object);
+  //   // this.eventService.send(Message.MONITOR_DELETED, {monitorCpnElement: this.modelService.bufferNode.object});
+  //
+  //   // this.modelService.addCpnElement(this.monitorblock, this.modelService.bufferNode.object, DataTypes.monitor);
+  //   // this.modelService.bufferNode = {object: null, type: null, cut: null};
+  // }
 }

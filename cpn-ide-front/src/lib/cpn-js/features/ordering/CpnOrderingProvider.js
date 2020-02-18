@@ -96,6 +96,10 @@ export default function CpnOrderingProvider(eventBus, canvas, translate) {
 
     // newParent = findActualParent(element, newParent);
 
+    if (!newParent || !newParent.children) {
+      return rootOrdering;
+    }
+
     var currentIndex = newParent.children.indexOf(element);
 
     var insertIndex = findIndex(newParent.children, function (child) {

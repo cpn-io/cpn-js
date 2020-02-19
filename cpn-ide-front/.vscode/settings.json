@@ -1,4 +1,5 @@
 {
     "editor.lineHeight": 24,
-    "editor.fontSize": 15
+    "editor.fontSize": 15,
+    "explorer.compactFolders": false
 }

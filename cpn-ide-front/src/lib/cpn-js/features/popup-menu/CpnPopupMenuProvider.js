@@ -63,6 +63,14 @@ CpnPopupMenuProvider.prototype.open = function (element, position) {
   this._element = element;
   this._position = position.cursor;
 
+  console.log('CpnPopupMenuProvider, open(), element, _position = ', element, position);
+
+  if (element.id.includes('root')) {
+    position.cursor.y += 90;
+  } else {
+    position.cursor.y += 40;
+  }
+
   this._popupMenu.open(element, 'cpnPopupMenu', position);
 };
 

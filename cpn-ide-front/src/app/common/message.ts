@@ -13,6 +13,7 @@ export class Message {
   static SHAPE_HOVER = 'shape.hover';
   static SHAPE_OUT = 'shape.out';
   static SHAPE_HIGHLIGHT = 'shape.highlight';
+  static SHAPE_RUN_SCRIPT = 'shape.run.script';
 
   static PAGE_TAB_OPEN = 'page.tab.open';
   static PAGE_TAB_CLOSE = 'page.tab.close';

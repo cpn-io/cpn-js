@@ -125,6 +125,16 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
     action: function () { self._createShape(event, CPN_TEXT_ANNOTATION) }
   };
 
+  var runScriptOnServer = {
+    id: '_menuItem_script',
+    label: 'Run script',
+    // className: 'popup-menu-icon-delete',
+    className: 'bpmn-icon-trash',
+    action: ()=> {
+      self._popupMenu.close();
+      this._eventBus.fire('aux.run');
+    }
+  };
 
   var deleteMenuEntry = {
     id: '_menuItem_delete',
@@ -167,6 +177,7 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
   // }
 
   if (element.type===CPN_LABEL && element.labelType==='aux'){
+    entries.push(runScriptOnServer);
     entries.push(deleteMenuEntry);
   }
 

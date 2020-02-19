@@ -2,7 +2,7 @@ import {
   forEach,
   filter
 } from 'min-dash';
-import { is, CPN_PLACE, CPN_TRANSITION, CPN_TEXT_ANNOTATION } from '../../util/ModelUtil';
+import {is, CPN_PLACE, CPN_TRANSITION, CPN_TEXT_ANNOTATION, CPN_LABEL} from '../../util/ModelUtil';
 import { getNextId } from '../modeling/CpnElementFactory';
 
 import {
@@ -118,15 +118,16 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
   };
 
 
-  // var deleteMenuEntry = {
-  //   id: '_menuItem_delete',
-  //   label: 'Delete',
-  //   className: 'popup-menu-icon-delete',
-  //   action: function () {
-  //     self._popupMenu.close();
-  //     self._modeling.removeElements([element]);
-  //   }
-  // };
+  var deleteMenuEntry = {
+    id: '_menuItem_delete',
+    label: 'Delete',
+    // className: 'popup-menu-icon-delete',
+    className: 'bpmn-icon-trash',
+    action: function () {
+      self._popupMenu.close();
+      self._modeling.removeElements([element]);
+    }
+  };
 
   // var connectMenuEntry = {
   //   id: '_menuItem_connect',
@@ -156,6 +157,10 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
   //   entries.push(connectMenuEntry);
   //   entries.push(deleteMenuEntry);
   // }
+
+  if (element.type===CPN_LABEL && element.labelType==='aux'){
+    entries.push(deleteMenuEntry);
+  }
 
   return entries;
 };

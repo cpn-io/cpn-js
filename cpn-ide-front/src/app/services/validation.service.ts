@@ -51,6 +51,7 @@ export class ValidationService implements OnDestroy {
   checkValidationBusy = false;
   checkValidationScheduled = false;
 
+  private MAX_SIZE = 10;
   history = {
     models: [],
     currentModelIndex: 0,
@@ -191,7 +192,7 @@ export class ValidationService implements OnDestroy {
     if (this.history.models.length > this.history.currentModelIndex) {
       this.history.models.splice(this.history.currentModelIndex);
     }
-    if (this.history.models.length > 99) {
+    if (this.history.models.length > this.MAX_SIZE -1) {
       this.history.models.splice(0, 1);
       --this.history.currentModelIndex;
     }

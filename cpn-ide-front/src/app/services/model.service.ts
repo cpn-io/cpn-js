@@ -53,7 +53,7 @@ export class ModelService {
     this.modelCase['cpn:Place'] = 'place';
     this.modelCase['cpn:Transition'] = 'trans';
     this.modelCase['cpn:Connection'] = 'arc';
-    this.modelCase['cpn:Label'] = 'label';
+    this.modelCase['cpn:Label'] = 'Aux';
     this.modelCase['bpmn:Process'] = 'trans';
     this.modelCase['place'] = 'place';
     this.modelCase['trans'] = 'trans';

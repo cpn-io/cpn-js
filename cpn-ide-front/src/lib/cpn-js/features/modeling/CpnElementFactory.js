@@ -173,8 +173,8 @@ export function getDefAux(text = undefined, position = undefined) {
 export function updateLabelsPosition(textRenderer, cpnElement) {
   var x = Number(cpnElement.posattr._x);
   var y = Number(cpnElement.posattr._y);
-  var w = Number(cpnElement.ellipse ? cpnElement.ellipse._w : cpnElement.box._w);
-  var h = Number(cpnElement.ellipse ? cpnElement.ellipse._h : cpnElement.box._h);
+  var w = Number(cpnElement.ellipse ? cpnElement.ellipse._w : cpnElement.ellipse? cpnElement.box._w: 10);
+  var h = Number(cpnElement.ellipse ? cpnElement.ellipse._h : cpnElement.box?  cpnElement.box._h: 10);
 
   let pos = [];
 

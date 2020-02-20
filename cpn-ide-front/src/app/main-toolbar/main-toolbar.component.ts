@@ -135,6 +135,8 @@ export class MainToolbarComponent implements OnInit {
   onOpenProject() {
     console.log(this.constructor.name, 'onOpenProject(), this = ', this);
 
+    this.onStopSimulation();
+
     this.checkSaveChanges().then((resolve) => {
 
       if (this.electronService.isElectronApp) {
@@ -184,6 +186,7 @@ export class MainToolbarComponent implements OnInit {
   }
 
   onSaveProject() {
+    this.onStopSimulation();
     const dialogRef = this.dialog.open(DialogComponent, {
       width: '500px',
       data: {

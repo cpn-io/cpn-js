@@ -128,8 +128,8 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
   var runScriptOnServer = {
     id: '_menuItem_script',
     label: 'Run script',
-    // className: 'popup-menu-icon-delete',
-    className: 'bpmn-icon-trash',
+    // className: 'fas fa-cogs',
+    className: 'bpmn-icon-service',
     action: ()=> {
       self._popupMenu.close();
       this._eventBus.fire('aux.run');

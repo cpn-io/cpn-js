@@ -2,20 +2,20 @@
 
 <div class="split-container" style="overflow-y:hidden;">
 
-  <as-split direction="horizontal" style="overflow-y:hidden" [gutterSize]="gutterSize" useTransition=true>
+  <as-split direction="horizontal" style="overflow-y:hidden" [gutterSize]="gutterSize" useTransition=true (dragEnd)="changeSplitSize($event, panelsSize.row_main)">
 
-    <as-split-area style="overflow-y:hidden" [size]="leftSplitPaneSize">
+    <as-split-area style="overflow-y:hidden" [size]="panelsSize.row_main.size[0]">
 
       <!-- Project explorer -->
       <!-- <app-project-explorer></app-project-explorer> -->
 
-      <as-split direction="vertical" [gutterSize]="gutterSize" useTransition=true>
+      <as-split direction="vertical" [gutterSize]="gutterSize" useTransition=true (dragEnd)="changeSplitSize($event,panelsSize.column_1)">
 
-        <as-split-area [size]="50" style="overflow-y:hidden">
+        <as-split-area [size]="panelsSize.column_1.size[0]" style="overflow-y:hidden">
           <app-project-explorer></app-project-explorer>
         </as-split-area>
 
-        <as-split-area [size]="50" style="overflow-y:hidden">
+        <as-split-area [size]="panelsSize.column_1.size[1]" style="overflow-y:hidden">
           <app-project-details></app-project-details>
         </as-split-area>
 
@@ -23,18 +23,18 @@
 
     </as-split-area>
 
-    <as-split-area style="overflow-y:hidden" [size]="centerSplitPaneSize">
+    <as-split-area  style="overflow-y:hidden" [size]="panelsSize.row_main.size[1]" >
 
-      <as-split direction="vertical" [gutterSize]="gutterSize" useTransition=true>
+      <as-split direction="vertical" [gutterSize]="gutterSize" useTransition=true (dragEnd)="changeSplitSize($event, panelsSize.column_2)">
 
         <!-- Editor -->
-        <as-split-area style="overflow-y:hidden" [size]="editorSplitPaneSize">
+        <as-split-area style="overflow-y:hidden" [size]="panelsSize.column_2.size[0]">
           <app-editor-panel [readyPagesIds]="accessCpnService.readyPagesIds"
             [errorPagesIds]="accessCpnService.errorPagesIds"></app-editor-panel>
         </as-split-area>
 
         <!-- Console -->
-        <as-split-area style="overflow-y:hidden" [size]="consoleSplitPaneSize">
+        <as-split-area style="overflow-y:hidden" [size]="panelsSize.column_2.size[1]" >
           <app-project-console></app-project-console>
         </as-split-area>
 
@@ -42,7 +42,7 @@
 
     </as-split-area>
 
-    <as-split-area style="overflow-y:hidden;" [size]="rightSplitPaneSize">
+    <as-split-area style="overflow-y:hidden;" [size]="panelsSize.row_main.size[2]" >
       <app-properties-panel></app-properties-panel>
     </as-split-area>
   </as-split>

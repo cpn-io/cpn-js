@@ -129,7 +129,7 @@
               </app-text-edit-row>
 
               <!-- Fill color -->
-              <app-text-edit-row *ngIf="!cpnElement._orientation" type="color" name="Fill color"
+              <app-text-edit-row *ngIf="!cpnElement._orientation && elementType !== 'cpn:Label'" type="color" name="Fill color"
                 [object]="cpnElement.fillattr" field="_colour" (changed)="updateChanges()" [colors]="colors"
                 [readonly]="accessCpnService.isSimulation">
               </app-text-edit-row>

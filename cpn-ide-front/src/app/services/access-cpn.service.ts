@@ -801,9 +801,16 @@ export class AccessCpnService {
   }
 
   runScriptOnServer(script) {
+    this.simulationReport = '';
 
     return new Promise((resolve, reject) => {
-      this.isRunningScriptOnServer = true;
+
+      if (!this.simInitialized || !this.sessionId) {
+        resolve();
+        return;
+      }
+
+      this.replicationProcessing = true;
 
       console.log('AccessCpnService, doReplication(), postData = ', script);
 
@@ -821,7 +828,7 @@ export class AccessCpnService {
         },
         (error) => {
           console.error('AccessCpnService, requestRunScript(), ERROR, data = ', error);
-          this.isRunningScriptOnServer = false;
+          this.replicationProcessing = false;
           // this.eventService.send(Message.SERVER_ERROR, { data: error });
           reject(error);
         }

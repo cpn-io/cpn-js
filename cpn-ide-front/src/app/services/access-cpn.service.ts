@@ -55,7 +55,6 @@ export class AccessCpnService {
         this.initNet(event.projectData, event.complexVerify || false, event.restartSimulator || false);
       }
     });
-    this.eventService.on(Message.SHAPE_RUN_SCRIPT , script => this.runScriptOnServer(script));
   }
 
   getErrorData() {
@@ -801,48 +800,28 @@ export class AccessCpnService {
     });
   }
 
-  runScriptOnServer(data) {
-    // this.simulationReport = '';
-
-    return console.error('Method runScriptOnServer() not implemented');
+  runScriptOnServer(script) {
 
     return new Promise((resolve, reject) => {
-
-      // if (!this.simInitialized || !this.sessionId) {
-      //   resolve();
-      //   return;
-      // }
-
       this.isRunningScriptOnServer = true;
 
-      // const postData = data;
+      console.log('AccessCpnService, doReplication(), postData = ', script);
 
-      console.log('AccessCpnService, doReplication(), postData = ', data);
-
-      const url = this.settingsService.getServerUrl() + '/api/v2/cpn/sim/serverScript';
-      this.http.post(url, data, { headers: { 'X-SessionId': this.sessionId } }).subscribe (
+      const url = this.settingsService.getServerUrl() + '/api/v2/cpn/sim/script';
+      this.http.post(url, script, { headers: { 'X-SessionId': this.sessionId } }).subscribe (
         (response: any) => {
           console.log('AccessCpnService, requestRunScript(), SUCCESS, data = ', response);
           if (response) {
-            // this.updateTokenData(data.tokensAndMark);
-            // this.updateReadyData(data.enableTrans);
-            // this.updateFiredTrans(data.firedTrans);
-
-            // this.simulationReport = data.extraInfo;
-
-            // this.eventService.send(Message.SIMULATION_STEP_DONE);
-
-            // this.getSimState();
-
-            this.isRunningScriptOnServer = false;
+            this.simulationReport = response.extraInfo;
+            this.eventService.send(Message.SIMULATION_STEP_DONE);
+            this.getSimState();
+            this.replicationProcessing = false;
             resolve();
           }
         },
         (error) => {
           console.error('AccessCpnService, requestRunScript(), ERROR, data = ', error);
-
           this.isRunningScriptOnServer = false;
-
           // this.eventService.send(Message.SERVER_ERROR, { data: error });
           reject(error);
         }

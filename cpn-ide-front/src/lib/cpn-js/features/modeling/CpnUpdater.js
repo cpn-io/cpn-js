@@ -43,7 +43,7 @@ import {
 } from 'min-dom';
 
 import Modeling from "./Modeling";
-import { assign } from 'min-dash';
+import {assign} from 'min-dash';
 
 
 import {
@@ -54,7 +54,7 @@ import {
   getDefText,
   getNextId
 } from './CpnElementFactory';
-import { getDistance } from '../../draw/CpnRenderUtil';
+import {getDistance} from '../../draw/CpnRenderUtil';
 
 
 /**
@@ -62,8 +62,8 @@ import { getDistance } from '../../draw/CpnRenderUtil';
  * once changes on the diagram happen
  */
 export default function CpnUpdater(eventBus, modeling, elementRegistry,
-  connectionDocking, selection, popupMenuProvider, contextPad, canvas,
-  bindingsMenuProvider, layouter, cpnRenderer, textRenderer) {
+                                   connectionDocking, selection, popupMenuProvider, contextPad, canvas,
+                                   bindingsMenuProvider, layouter, cpnRenderer, textRenderer) {
 
   this._canvas = canvas;
   this._modeling = modeling;
@@ -253,7 +253,17 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
             contextPad.open(element);
           } else {
             contextPad.close();
-            popupMenuProvider.open(element, { cursor: { x: position.x, y: position.y } });
+            popupMenuProvider.open(element, {cursor: {x: position.x, y: position.y}, editable: true});
+          }
+        }
+      } else {
+        if (element) {
+          if (isAny(element, [CPN_PLACE, CPN_TRANSITION, CPN_CONNECTION])) {
+            // popupMenuProvider.close();
+            // contextPad.open(element);
+          } else {
+            contextPad.close();
+            popupMenuProvider.open(element, {cursor: {x: position.x, y: position.y}, editable: false});
           }
         }
       }
@@ -343,7 +353,6 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   }
 
 
-
   function updateCpnElement(element) {
     // export  const modelCase = {
     //   'cpn:Place': { form: 'ellipse', entry: ['initmark', 'type'] },
@@ -420,8 +429,8 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
           // // sort by distance from first point
           bendpoints = bendpoints.sort((a, b) => {
-            let d_a = getDistance(wp0, { x: a.posattr._x, y: -1 * a.posattr._y });
-            let d_b = getDistance(wp0, { x: b.posattr._x, y: -1 * b.posattr._y });
+            let d_a = getDistance(wp0, {x: a.posattr._x, y: -1 * a.posattr._y});
+            let d_b = getDistance(wp0, {x: b.posattr._x, y: -1 * b.posattr._y});
             return reverse ? d_a - d_b : d_b - d_a;
           });
 

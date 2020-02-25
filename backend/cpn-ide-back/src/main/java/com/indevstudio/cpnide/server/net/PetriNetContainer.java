@@ -586,6 +586,16 @@ public class PetriNetContainer {
         return getOutputPathContent(sessionId);
     }
 
+    public String runScript(String sessionId, Replication stepParam) throws Exception {
+        HighLevelSimulator sim = usersSimulator.get(sessionId);
+        log.debug("Writing report to " + sim.getOutputDir());
+        File fileObj = new File(sim.getOutputDir());
+        fileObj.mkdirs();
+        sim.evaluate(stepParam.getRepeat());
+        log.debug("Written report to " + sim.getOutputDir());
+        return getOutputPathContent(sessionId);
+    }
+
     public String makeStepFastForward(String sessionId, MultiStep stepParam) throws Exception {
         // String type = requestBody.get(0).get("type").toString();
         HighLevelSimulator sim = usersSimulator.get(sessionId);

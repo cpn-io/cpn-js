@@ -359,7 +359,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
     });
-    eventBus.on('aux.run', () => this.eventService.send(Message.SHAPE_RUN_SCRIPT))
+    eventBus.on('aux.run', script => this.eventService.send(Message.SHAPE_RUN_SCRIPT, script))
 
     // eventBus.on('element.hover', (event) => {
     //   const element = event.element;

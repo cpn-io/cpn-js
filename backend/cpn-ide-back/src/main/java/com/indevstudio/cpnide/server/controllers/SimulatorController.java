@@ -137,6 +137,22 @@ public class SimulatorController {
         });
     }
 
+    @PostMapping(value = "/sim/script")
+    @ApiOperation(nickname = "Replication", value = "Replication - long running op (from mins to hours)")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Step success", response = Replication.class),
+                    @ApiResponse(code = 400, message = "Incorrect Request", response = ErrorDescription.class),
+                    @ApiResponse(code = 500, message = "Internal error. Object with description", response = ErrorDescription.class)
+            })
+    public ResponseEntity doScript(@RequestHeader(value = "X-SessionId") String sessionId, @RequestBody Replication script) {
+        return RequestBaseLogic.HandleRequest(sessionId, () -> {
+            ReplicationResp resp = new ReplicationResp();
+            resp.setExtraInfo(_netConatiner.runScript(sessionId,script));
+            return RequestBaseLogic.HandleRequest(sessionId, () -> ResponseEntity.status(HttpStatus.OK).body(resp));
+        });
+    }
+
     @PostMapping(value = "/sim/step_with_binding/{transId}")
     @ApiOperation(nickname = "Step using binding", value = "Do simulation step")
     @ApiResponses(

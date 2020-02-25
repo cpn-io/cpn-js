@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
-import { EventService } from './event.service';
-import { AccessCpnService } from './access-cpn.service';
-import { ModelService } from './model.service';
-import { Message } from '../common/message';
-import { EditorPanelService } from './editor-panel.service';
+import {Injectable} from '@angular/core';
+import {EventService} from './event.service';
+import {AccessCpnService} from './access-cpn.service';
+import {ModelService} from './model.service';
+import {Message} from '../common/message';
+import {EditorPanelService} from './editor-panel.service';
 
 @Injectable({
   providedIn: 'root'
@@ -47,21 +47,24 @@ export class SimulationService {
   public isAutoswitchPage = true;
 
   constructor(private eventService: EventService,
-    public accessCpnService: AccessCpnService,
-    public modelService: ModelService,
-    private editorPanelService: EditorPanelService) {
+              public accessCpnService: AccessCpnService,
+              public modelService: ModelService,
+              private editorPanelService: EditorPanelService) {
 
     this.initEvents();
   }
 
   initEvents() {
-    this.eventService.on(Message.SIMULATION_STARTED, () => { });
+    this.eventService.on(Message.SIMULATION_STARTED, () => {
+    });
     this.eventService.on(Message.SIMULATION_STOPED, () => this.onStopSimulation());
     this.eventService.on(Message.SERVER_INIT_SIM_DONE, () => this.onInitSimDone());
 
     this.eventService.on(Message.SHAPE_HOVER, (event) => this.onShapeHover(event));
     this.eventService.on(Message.SHAPE_SELECT, (event) => this.onShapeSelect(event));
     this.eventService.on(Message.SIMULATION_SELECT_BINDING, (event) => this.onSimulationSelectBinding(event));
+    this.eventService.on(Message.SHAPE_RUN_SCRIPT, message => this.runscript(message.script));
+
   }
 
   public setMode(mode) {
@@ -152,7 +155,7 @@ export class SimulationService {
           case this.SINGLE_STEP_CHOOSE_BINDING:
             this.accessCpnService.getBindings(this.firedId).then((data: any) => {
               if (data) {
-                this.eventService.send(Message.SERVER_GET_BINDINGS, { data: data });
+                this.eventService.send(Message.SERVER_GET_BINDINGS, {data: data});
               }
             });
             break;
@@ -339,6 +342,19 @@ export class SimulationService {
       repeat: '' + config.repeat,
     };
     this.accessCpnService.doReplication(options).then(
+      () => {
+        const modelEditorList = this.editorPanelService.getModelEditorList() || [];
+        for (const modelEditor of modelEditorList) {
+          modelEditor.updateElementStatus(false);
+        }
+      }
+    );
+  }
+
+  runscript(script) {
+    console.log('runscript(script)', script);
+    const options = {repeat: script};
+    this.accessCpnService.runScriptOnServer(options).then(
       () => {
         const modelEditorList = this.editorPanelService.getModelEditorList() || [];
         for (const modelEditor of modelEditorList) {

@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, DoCheck } from '@angular/core';
 import { EventService } from '../services/event.service';
 import { ModelService } from '../services/model.service';
 
@@ -12,7 +12,7 @@ import { TreeData } from '../project-tree/project-tree.component';
   templateUrl: './project-declarations.component.html',
   styleUrls: ['./project-declarations.component.scss']
 })
-export class ProjectDeclarationsComponent implements OnInit, AfterViewInit {
+export class ProjectDeclarationsComponent implements OnInit, AfterViewInit, DoCheck {
 
   @ViewChild('contextMenu', {static: false}) contextMenu: ContextMenuComponent;
 
@@ -45,6 +45,13 @@ export class ProjectDeclarationsComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.loadProject();
+  }
+
+  ngDoCheck() {
+    if (this.tree.selectedOld.id !== this.tree.selected.id) {
+      this.tree.selectedOld = this.tree.selected.clone();
+      this.onSelectedChange();
+    }
   }
 
   reset() {
@@ -106,6 +113,14 @@ export class ProjectDeclarationsComponent implements OnInit, AfterViewInit {
   onFilterChanged(event) {
     console.log(this.constructor.name, 'onFilterChanged(), event = ', event);
     this.tree.filter = event;
+  }
+
+  onSelectedChange() {
+    switch (this.tree.selected.type) {
+      case 'monitor':
+        this.eventService.send(Message.MONITOR_OPEN, { monitorObject: this.tree.selected.cpnElement });
+        break;
+    }
   }
 
 }

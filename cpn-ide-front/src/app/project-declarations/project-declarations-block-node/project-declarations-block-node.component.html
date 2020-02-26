@@ -5,6 +5,16 @@
   <i *ngIf="parentBlock" class="fas fa-arrow-right arrow"></i>
   <span>{{ block.id }}</span>
 </div>
+
+<div *ngIf="declarationType === 'monitorblock'" class="blockHeader">
+  <!-- {{ (parentBlock ? parentBlock.id  + '  >  ' : '') + block.id }} -->
+
+  <span *ngIf="parentBlock">{{ parentBlock._name }}</span>
+  <i *ngIf="parentBlock" class="fas fa-arrow-right arrow"></i>
+  <span>{{ block._name }}</span>
+</div>
+
+
 <!-- <div class="blockHeader">
   {{ (parentBlock ? parentBlock.id  + '  >  ' : '') + block.id }}
 </div> -->
@@ -13,18 +23,36 @@
   <ng-container *ngFor="let subblock of nodeToArray(block.block)">
     <div style="padding-left: 20px; background-color: lightgray;">
       <app-project-declarations-block-node [containerId]="containerId" [tree]="tree" [parentBlock]="block"
-        [block]="subblock" [declarationType]="declarationType">
+                                           [block]="subblock" [declarationType]="declarationType">
       </app-project-declarations-block-node>
     </div>
   </ng-container>
 </ng-container>
+
+
+<ng-container *ngIf="this.block.monitorblock && this.declarationType === 'monitorblock'">
+  <ng-container *ngFor="let subblock of nodeToArray(block.monitorblock)">
+    <div style="padding-left: 20px; background-color: lightgray;">
+      <app-project-declarations-block-node [containerId]="containerId" [tree]="tree" [parentBlock]="block"
+                                           [block]="subblock" [declarationType]="declarationType">
+      </app-project-declarations-block-node>
+    </div>
+  </ng-container>
+</ng-container>
+<div *ngIf="this.block.monitor" style="padding: 5px; background-color: white; border-bottom: 1px solid lightgray;">
+  <ng-container *ngFor="let monitor of nodeToArray(block.monitor)">
+    <app-project-tree-declaration-node [containerId]="containerId" [tree]="tree" [parentBlock]="block"
+                                       [declaration]="monitor" [type]="'monitor'">
+    </app-project-tree-declaration-node>
+  </ng-container>
+</div>
 
 <div *ngIf="hasDeclarations()" style="padding: 5px; background-color: white; border-bottom: 1px solid lightgray;">
 
   <ng-container *ngIf="declarationType === 'all' || declarationType === 'globref'">
     <ng-container *ngFor="let globref of nodeToArray(block.globref)">
       <app-project-tree-declaration-node [containerId]="containerId" [tree]="tree" [parentBlock]="block"
-        [declaration]="globref" type="globref">
+                                         [declaration]="globref" type="globref">
       </app-project-tree-declaration-node>
     </ng-container>
   </ng-container>
@@ -32,7 +60,7 @@
   <ng-container *ngIf="declarationType === 'all' || declarationType === 'color'">
     <ng-container *ngFor="let color of nodeToArray(block.color)">
       <app-project-tree-declaration-node [containerId]="containerId" [tree]="tree" [parentBlock]="block"
-        [declaration]="color" type="color">
+                                         [declaration]="color" type="color">
       </app-project-tree-declaration-node>
     </ng-container>
   </ng-container>
@@ -40,7 +68,7 @@
   <ng-container *ngIf="declarationType === 'all' || declarationType === 'var'">
     <ng-container *ngFor="let variable of nodeToArray(block.var)">
       <app-project-tree-declaration-node [containerId]="containerId" [tree]="tree" [parentBlock]="block"
-        [declaration]="variable" type="var">
+                                         [declaration]="variable" type="var">
       </app-project-tree-declaration-node>
     </ng-container>
   </ng-container>
@@ -48,9 +76,19 @@
   <ng-container *ngIf="declarationType === 'all' || declarationType === 'ml'">
     <ng-container *ngFor="let ml of nodeToArray(block.ml)">
       <app-project-tree-declaration-node [containerId]="containerId" [tree]="tree" [parentBlock]="block"
-        [declaration]="ml" type="ml">
+                                         [declaration]="ml" type="ml">
       </app-project-tree-declaration-node>
     </ng-container>
   </ng-container>
+
+  <ng-container *ngIf="declarationType === 'all' || declarationType === 'monitor'">
+    <ng-container *ngFor="let monitor of nodeToArray(block.monitorblock)">
+      <app-project-tree-declaration-node [containerId]="containerId" [tree]="tree" [parentBlock]="block"
+                                         [declaration]="monitor" type="monitor">
+      </app-project-tree-declaration-node>
+    </ng-container>
+  </ng-container>
+
+
 
 </div>

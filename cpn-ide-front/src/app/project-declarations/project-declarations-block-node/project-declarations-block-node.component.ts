@@ -27,6 +27,8 @@ export class ProjectDeclarationsBlockNodeComponent implements OnInit, ITreeNode 
   hasBlocks() {
     if (nodeToArray(this.block.block).length > 0) {
       return true;
+    } else if (nodeToArray(this.block.monitorblock).length > 0) {
+      return true;
     }
   }
 

@@ -935,6 +935,9 @@ export class ModelService {
       case 'ml':
         layout = this.cpnMlToString(cpnElement);
         break;
+      case 'monitor':
+        layout = this.cpnMonitorToString(cpnElement);
+        break;
       default:
         return cpnElement.layout || JSON.stringify(cpnElement);
     }
@@ -1030,6 +1033,9 @@ export class ModelService {
     }
   }
 
+  private cpnMonitorToString(cpnElement: any): string {
+    return cpnElement._name;
+  }
 
   /**
    * Parse declaration type from string

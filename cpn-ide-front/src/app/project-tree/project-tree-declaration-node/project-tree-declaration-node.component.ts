@@ -206,7 +206,11 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, I
   }
 
   onUpdate(layout) {
-    this.modelService.updateDeclaration(this.declaration, this.type, this.parentBlock, layout);
+    if (this.type !== 'monitor') {
+      this.modelService.updateDeclaration(this.declaration, this.type, this.parentBlock, layout);
+    } else {
+
+    }
   }
 
   onNew(event: any = undefined) {

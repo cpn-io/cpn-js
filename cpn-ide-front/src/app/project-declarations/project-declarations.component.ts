@@ -30,7 +30,7 @@ export class ProjectDeclarationsComponent implements OnInit, AfterViewInit {
     { id: 'color', name: 'Color', declarationType: 'color' },
     { id: 'var', name: 'Var', declarationType: 'var' },
     { id: 'ml', name: 'ML', declarationType: 'ml' },
-    // { id: 'monitor', name: 'Monitors', declarationType: 'monitor' },
+    { id: 'monitor', name: 'Monitors', declarationType: 'monitor' },
   ];
 
   constructor(public eventService: EventService,

@@ -22,6 +22,29 @@
                 </ng-container>
               </ng-container>
             </ng-container>
+            <ng-container *ngIf="['monitor'].includes(tab.id)">
+              <div class="blockHeader">
+                <!-- {{ (parentBlock ? parentBlock.id  + '  >  ' : '') + block.id }} -->
+
+<!--                <span >{{ parentBlock._name }}</span>-->
+<!--                <i *ngIf="parentBlock" class="fas fa-arrow-right arrow"></i>-->
+                <span>Monitors</span>
+              </div>
+              <ng-container *ngFor="let monitorBlock of nodeToArray(cpnet.monitorblock.monitorblock)">
+                <div style="padding-left: 20px; background-color: lightgray;">
+                  <app-project-declarations-block-node [containerId]="tab.id" [tree]="tree" [block]="monitorBlock"
+                                                       [declarationType]="'monitorblock'" [parentBlock]="cpnet.monitorblock" >
+                  </app-project-declarations-block-node>
+                </div>
+              </ng-container>
+              <ng-container *ngFor="let monitor of nodeToArray(cpnet.monitorblock.monitor)">
+                <div  style="padding: 5px; background-color: white; border-bottom: 1px solid lightgray;">
+                    <app-project-tree-declaration-node [containerId]="tab.id" [tree]="tree" [parentBlock]="cpnet.monitorblock"
+                                                       [declaration]="monitor" [type]="'monitor'">
+                    </app-project-tree-declaration-node>
+                </div>
+              </ng-container>
+            </ng-container>
           </ng-container>
 
         </div>

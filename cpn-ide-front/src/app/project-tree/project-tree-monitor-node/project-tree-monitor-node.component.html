@@ -2,7 +2,7 @@
 
   <app-tree-node [tree]="tree" [id]="monitor._id" [title]="monitor._name" [bold]="false" color="darkblue"
     [type]="'monitor'" [cpnElement]="monitor" [error]="accessCpnService.errorIds.includes(monitor._id)"
-  (contextmenuAction)="onContextMenu($event)" (deleteAction)="onDelete()">
+  (contextmenuAction)="onContextMenu($event)" (deleteAction)="onDelete()" [editable]="true" (focusout)="onUpdate($event)">
 
     <!-- Type -->
     <app-tree-node [tree]="tree" [id]="'monitorType_' + monitor._id" [title]="'Type: ' + monitor._typedescription"

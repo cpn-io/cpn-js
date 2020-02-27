@@ -106,7 +106,7 @@ export class ProjectTreeMonitorNodeComponent implements OnInit, DoCheck, ITreeNo
     throw new Error("Method not implemented.");
   }
   onUpdate(event: any) {
-    throw new Error("Method not implemented.");
+    this.monitor._name = event.target.textContent;
   }
   onNew(event: any) {
     throw new Error("Method not implemented.");

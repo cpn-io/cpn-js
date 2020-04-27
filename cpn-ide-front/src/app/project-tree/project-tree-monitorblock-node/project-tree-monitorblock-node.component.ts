@@ -28,7 +28,7 @@ export class ProjectTreeMonitorblockNodeComponent implements OnInit, ITreeNode {
 
   type = 'monitorblock';
 
-  constructor(private accessCpnService: AccessCpnService,
+  constructor(public accessCpnService: AccessCpnService,
               private eventService: EventService,
               private modelService: ModelService,
               private settings: SettingsService,

@@ -1,1 +1,1 @@
-export class AppVersion { public static readonly buildVersion = '1.1.20200226'; }
+export class AppVersion { public static readonly buildVersion = '1.1.20200427'; }

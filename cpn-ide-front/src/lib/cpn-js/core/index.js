@@ -6,7 +6,7 @@ import ModelingModule from 'diagram-js/lib/features/modeling';
 import MoveModule from 'diagram-js/lib/features/move';
 import OutlineModule from 'diagram-js/lib/features/outline';
 import LassoToolModule from 'diagram-js/lib/features/lasso-tool';
-import PaletteModule from 'diagram-js/lib/features/palette';
+// import PaletteModule from 'diagram-js/lib/features/palette';
 import CreateModule from 'diagram-js/lib/features/create';
 import PopupMenuModule from 'diagram-js/lib/features/popup-menu';
 import ConnectModule from 'diagram-js/lib/features/connect';
@@ -49,7 +49,7 @@ export default {
     MoveModule,
     OutlineModule,
     LassoToolModule,
-    PaletteModule,
+    // PaletteModule,
     CreateModule,
     PopupMenuModule,
     ConnectModule,
@@ -82,13 +82,13 @@ export default {
 
     'popupMenuProvider',
     'bindingsMenuProvider',
-    'paletteProvider',
+    // 'paletteProvider',
     'cpnOrderingProvider'
   ],
 
   connectionDocking: ['type', CroppingConnectionDocking],
   popupMenuProvider: ['type', CpnPopupMenuProvider],
   bindingsMenuProvider: ['type', CpnBindingsMenuProvider],
-  paletteProvider: ['type', CpnPaletteProvider],
+  // paletteProvider: ['type', CpnPaletteProvider],
   cpnOrderingProvider: [ 'type', CpnOrderingProvider ]
 };

@@ -154,7 +154,15 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
   updateChanges() {
     console.log('updateChanges(), this = ', this);
-    this.eventService.send('editing.cancel')
+
+    if (this.cpnElement && this.cpnElement.type) {
+      this.modelService.fixPlaceInitmark(this.cpnElement);
+    }
+    if (this.cpnElement && this.cpnElement.annot) {
+      this.modelService.fixArcAnnot(this.cpnElement);
+    }
+
+    this.eventService.send('editing.cancel');
     this.eventService.send(Message.MODEL_UPDATE_DIAGRAM, { cpnElement: this.cpnElement });
     // this.eventService.send(Message.MODEL_CHANGED);
   }

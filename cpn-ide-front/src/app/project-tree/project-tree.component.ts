@@ -8,8 +8,8 @@ import { AccessCpnService } from '../services/access-cpn.service';
 import { SettingsService } from '../services/settings.service';
 import { ContextMenuComponent } from '../context-menu/context-menu.component';
 import { SelectedNode } from './tree-node/tree-node';
-import {DataTypes} from '../common/constants';
-import {BufferService} from '../services/buffer.service';
+import { DataTypes } from '../common/constants';
+import { BufferService } from '../services/buffer.service';
 
 export class TreeData {
   expanded = [];
@@ -58,7 +58,7 @@ export class TreeData {
 })
 export class ProjectTreeComponent implements OnInit, DoCheck {
 
-  @ViewChild('contextMenu', {static: false}) contextMenu: ContextMenuComponent;
+  @ViewChild('contextMenu', { static: false }) contextMenu: ContextMenuComponent;
 
   public nodeToArray = nodeToArray;
   public JSON = JSON;
@@ -81,7 +81,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     public modelService: ModelService,
     private accessCpnService: AccessCpnService,
     private settings: SettingsService,
-              private bufferService: BufferService) {
+    private bufferService: BufferService) {
   }
 
   ngOnInit() {
@@ -147,7 +147,9 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   }
 
   loadPages() {
-    this.tree.pages = nodeToArray(this.cpnet.page);
+    if (this.cpnet) {
+      this.tree.pages = nodeToArray(this.cpnet.page);
+    }
   }
 
   onSimulationState() {
@@ -273,7 +275,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
   onNewBlockMonitor() {
     if (this.tree.selected && this.tree.selected.type === DataTypes.monitorblock) {
-      const newBlock = {_name: this.settings.getMonitorBlockTitle(), _id: getNextId()};
+      const newBlock = { _name: this.settings.getMonitorBlockTitle(), _id: getNextId() };
       this.modelService.addCpnElement(this.tree.selected.cpnElement, newBlock, DataTypes.monitorblock);
       this.focus(newBlock._id);
     }
@@ -353,9 +355,9 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
           entries.push({ title: 'New page', action: () => this.onNewPage(), iconClass: 'fas fa-project-diagram' });
           break;
         case DataTypes.monitorblock:
-          entries.push({title: 'New block', action: () => this.onNewBlockMonitor(), iconClass: 'fas fa-cube'});
+          entries.push({ title: 'New block', action: () => this.onNewBlockMonitor(), iconClass: 'fas fa-cube' });
           if (!this.bufferService.isEmpty() && this.bufferService.isEqualTo(DataTypes.monitor)) {
-            entries.push({title: 'Paste', action: () => this.bufferService.pasteObject(this.tree.selected.cpnElement), iconClass: 'fas fa-paste'});
+            entries.push({ title: 'Paste', action: () => this.bufferService.pasteObject(this.tree.selected.cpnElement), iconClass: 'fas fa-paste' });
           }
           break;
       }

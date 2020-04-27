@@ -1,15 +1,15 @@
-import {Component, ElementRef, Input, OnInit, ViewChild, AfterViewInit, OnDestroy} from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 
 import Diagram from 'diagram-js';
 import CpnDiagramModule from '../../lib/cpn-js/core';
 
-import {Message} from '../common/message';
-import {EventService} from '../services/event.service';
-import {ModelService} from '../services/model.service';
-import {SettingsService} from '../services/settings.service';
-import {ValidationService} from '../services/validation.service';
+import { Message } from '../common/message';
+import { EventService } from '../services/event.service';
+import { ModelService } from '../services/model.service';
+import { SettingsService } from '../services/settings.service';
+import { ValidationService } from '../services/validation.service';
 
-import {importCpnPage} from '../../lib/cpn-js/import/Importer';
+import { importCpnPage } from '../../lib/cpn-js/import/Importer';
 
 import {
   getNextId,
@@ -24,14 +24,14 @@ import {
   isCpn,
 } from '../../lib/cpn-js/util/ModelUtil';
 
-import {AccessCpnService} from '../services/access-cpn.service';
-import {MonitorType, getMonitorTypeList, getMonitorTypeId} from '../common/monitors';
-import {addNode, nodeToArray} from '../common/utils';
-import {SimulationService} from '../services/simulation.service';
-import {TEST_TOKEN_DATA} from '../test/test-data';
-import {EditorPanelService} from '../services/editor-panel.service';
-import {IpcService} from '../services/ipc.service';
-import {Subscription} from 'rxjs';
+import { AccessCpnService } from '../services/access-cpn.service';
+import { MonitorType, getMonitorTypeList, getMonitorTypeId } from '../common/monitors';
+import { addNode, nodeToArray } from '../common/utils';
+import { SimulationService } from '../services/simulation.service';
+import { TEST_TOKEN_DATA } from '../test/test-data';
+import { EditorPanelService } from '../services/editor-panel.service';
+import { IpcService } from '../services/ipc.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-model-editor',
@@ -41,15 +41,15 @@ import {Subscription} from 'rxjs';
 export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(private eventService: EventService,
-              private settings: SettingsService,
-              private modelService: ModelService,
-              private accessCpnService: AccessCpnService,
-              public simulationService: SimulationService,
-              public editorPanelService: EditorPanelService) {
+    private settings: SettingsService,
+    private modelService: ModelService,
+    private accessCpnService: AccessCpnService,
+    public simulationService: SimulationService,
+    public editorPanelService: EditorPanelService) {
   }
 
-  @ViewChild('container', {static: false}) containerElementRef: ElementRef;
-  @ViewChild('popup', {static: false}) popupElementRef: ElementRef;
+  @ViewChild('container', { static: false }) containerElementRef: ElementRef;
+  @ViewChild('popup', { static: false }) popupElementRef: ElementRef;
 
   @Input() id: string;
 
@@ -68,6 +68,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   stateProvider;
   selectionProvider;
   cpnUpdater;
+  lassoTool;
 
   // subscription: Subscription;
   placeShapes = [];
@@ -79,7 +80,9 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   loading = false;
 
+  selectedElements = [];
   availableMonitorList = [];
+  selectedElementsForMonitors = [];
 
   instanseId;
 
@@ -96,7 +99,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
-    this.eventService.on(Message.SETTING_CHANGED, ({key, value}) => {
+    this.eventService.on(Message.SETTING_CHANGED, ({ key, value }) => {
       this.modeling.setDefaultValue(key, value);
     });
     this.subs = this.eventService.on(Message.SHAPE_HIGHLIGHT, (id) => this.selectNodeById(id));
@@ -110,7 +113,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onClose() {
-    this.eventService.send(Message.PAGE_TAB_CLOSE, {id: this.pageId});
+    this.eventService.send(Message.PAGE_TAB_CLOSE, { id: this.pageId });
   }
 
   init() {
@@ -147,6 +150,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.stateProvider = this.diagram.get('stateProvider');
     this.selectionProvider = this.diagram.get('selectionProvider');
     this.cpnUpdater = this.diagram.get('cpnUpdater');
+    this.lassoTool = this.diagram.get('lassoTool');
 
     const eventBus = this.eventBus;
 
@@ -160,21 +164,47 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     // eventBus.on('element.changed', (event) => {
-    eventBus.on([
-        'shape.move.end',
-        'create.end',
-        'connect.end',
-        'resize.end',
-        'bendpoint.move.end',
-        'connectionSegment.move.end',
-        'directEditing.complete',
-        'shape.delete'
-      ],
-      (event) => {
-        console.log(self.constructor.name, 'MODEL_CHANGED event = ', event);
+    // eventBus.on([
+    //   'shape.move.end',
+    //   'create.end',
+    //   'connect.end',
+    //   'resize.end',
+    //   'bendpoint.move.end',
+    //   'connectionSegment.move.end',
+    //   'directEditing.complete',
+    //   'shape.delete'
+    // ],
+    //   (event) => {
+    //     console.log(self.constructor.name, 'MODEL_CHANGED event = ', event);
 
-        // this.eventService.send(Message.MODEL_CHANGED);
-      });
+    //     // this.eventService.send(Message.MODEL_CHANGED);
+    //   });
+
+    eventBus.on('directEditing.complete', (event) => {
+      if (event && event.active && event.active.element) {
+        const element = event.active.element;
+        // console.log('DIRECTEDITING.COMPLETE, element = ', element);
+
+        if (element.labelType === "initmark") {
+          const placeElement = element.labelTarget;
+          if (this.modelService.fixPlaceInitmark(placeElement.cpnElement)) {
+            this.modeling.updateElement(placeElement, true);
+          }
+        }
+
+        if (element.labelType === "annot") {
+          // console.log('DIRECTEDITING.COMPLETE, ANNOTATION, text = ', element.text);
+          // console.log('DIRECTEDITING.COMPLETE, INITMARK, labelTarget = ', element.labelTarget);
+
+          const connectionElement = element.labelTarget;
+          if (this.modelService.fixArcAnnot(connectionElement.cpnElement)) {
+            this.modeling.updateElement(connectionElement, true);
+          }
+
+        }
+      }
+    });
+
 
     this.eventService.on(Message.MODEL_RELOAD, () => {
       this.log('Reload page diagram...');
@@ -191,7 +221,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     // BINDINGS
-    this.eventService.on(Message.SERVER_GET_BINDINGS, (event) => eventBus.fire('bindingsMenu.open', {data: event.data}));
+    this.eventService.on(Message.SERVER_GET_BINDINGS, (event) => eventBus.fire('bindingsMenu.open', { data: event.data }));
 
     // SIM STATUS
     this.eventService.on(Message.SIMULATION_STARTED, () => {
@@ -222,13 +252,13 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     eventBus.on('element.hover', (event) => {
       if (event.element.type === 'cpn:Transition' || event.element.type === 'cpn:Place') {
-        this.eventService.send(Message.SHAPE_HOVER, {element: event.element});
+        this.eventService.send(Message.SHAPE_HOVER, { element: event.element });
       }
       // console.log('element.hover', event.element);
     });
     eventBus.on('element.out', (event) => {
       if (event.element.type === 'cpn:Transition' || event.element.type === 'cpn:Place') {
-        this.eventService.send(Message.SHAPE_OUT, {element: event.element});
+        this.eventService.send(Message.SHAPE_OUT, { element: event.element });
       }
     });
 
@@ -249,6 +279,9 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     eventBus.on('element.click', (event) => {
       this.fireSelectionEvent(event);
+      if (event.element) {
+        this.updateAvailableMonitorList([event.element]);
+      }
     });
 
     eventBus.on('shape.create.end', (event) => {
@@ -396,6 +429,8 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log('model-editor element.selection.changed, selectedElements = ', selectedElements);
 
       self.updateAvailableMonitorList(selectedElements);
+
+      self.selectedElements = selectedElements;
     });
 
     this.eventService.on('editing.cancel', () => eventBus.fire('editing.cancel'));
@@ -404,6 +439,8 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   updateAvailableMonitorList(selectedElements) {
+
+    this.selectedElementsForMonitors = selectedElements;
 
     this.availableMonitorList = [];
 
@@ -502,7 +539,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           const tokenData = TEST_TOKEN_DATA; // this.accessCpnService.getTokenData();
           // localStorage.setItem('tokenData', JSON.stringify(tokenData));
 
-          this.eventBus.fire('model.update.tokens', {data: tokenData});
+          this.eventBus.fire('model.update.tokens', { data: tokenData });
           this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
           this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
           this.checkPorts();
@@ -572,7 +609,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
             console.log('TOKEN ANIMATION, updateElementStatus(), OUTCOME ANIMATION COMPLETE, timeMs = ', new Date().getTime() - startTime);
 
             this.stateProvider.clear();
-            this.eventBus.fire('model.update.tokens', {data: this.accessCpnService.getTokenData()});
+            this.eventBus.fire('model.update.tokens', { data: this.accessCpnService.getTokenData() });
             this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
             this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
             this.checkPorts();
@@ -588,7 +625,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
         setTimeout(() => {
           this.stateProvider.clear();
-          this.eventBus.fire('model.update.tokens', {data: this.accessCpnService.getTokenData()});
+          this.eventBus.fire('model.update.tokens', { data: this.accessCpnService.getTokenData() });
           this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
           this.stateProvider.setWarningState(this.accessCpnService.getWarningData());
           this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
@@ -655,7 +692,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   changeSubPageName(subpage) {
-    this.eventService.send(Message.PAGE_CHANGE_NAME, {id: subpage.subpageid, name: subpage.name, changedElement: 'tran'});
+    this.eventService.send(Message.PAGE_CHANGE_NAME, { id: subpage.subpageid, name: subpage.name, changedElement: 'tran' });
   }
 
   /**
@@ -669,7 +706,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.openPropPanel(event.element);
     }
 
-    this.eventService.send(Message.SHAPE_SELECT, {element: event.element});
+    this.eventService.send(Message.SHAPE_SELECT, { element: event.element });
   }
 
   log(obj) {
@@ -735,8 +772,37 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     return text;
   }
 
+  onSelectShapes() {
+    this.lassoTool.activateSelection();
+  }
+
+  onClearSelection() {
+    this.selectionProvider.deselectAll();
+    this.selectedElements = this.selectionProvider.getSelectedElements();
+    this.updateAvailableMonitorList(this.selectedElements);
+  }
+
+  onCreateSubst() {
+    this.cpnFactory.extractSubpage();
+    this.selectionProvider.deselectAll();
+    this.selectedElements = this.selectionProvider.getSelectedElements();
+    this.updateAvailableMonitorList(this.selectedElements);
+  }
+
+  onDeleteShapes() {
+    this.modeling.removeSelectedElements();
+    this.selectionProvider.deselectAll();
+    this.selectedElements = this.selectionProvider.getSelectedElements();
+    this.updateAvailableMonitorList(this.selectedElements);
+  }
+
   onCreateNewMonitor(monitorType: string) {
-    const selectedElements = this.selectionProvider.getSelectedElements();
+    let selectedElements = this.selectionProvider.getSelectedElements();
+
+    if (selectedElements.length < 1) {
+      selectedElements = this.selectedElementsForMonitors;
+    }
+    
     console.log('model-editor onCreateNewMonitor(), monitorType, selectedElements = ', monitorType, selectedElements);
 
     if (selectedElements.length < 1) {
@@ -767,7 +833,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       const newMonitorCpnElement = this.modelService.createCpnMonitor(monitorType, cpnElementList, monitorDefaults);
       if (newMonitorCpnElement) {
         addNode(monitorsCpnParentElement, 'monitor', newMonitorCpnElement);
-        this.eventService.send(Message.MONITOR_CREATED, {newMonitorCpnElement: newMonitorCpnElement});
+        this.eventService.send(Message.MONITOR_CREATED, { newMonitorCpnElement: newMonitorCpnElement });
       }
       console.log('model-editor onCreateNewMonitor(), monitorsCpnParentElement = ', monitorsCpnParentElement);
     });
@@ -776,8 +842,8 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   selectNodeById(id: string) {
     const element = this.modeling.getElementById(id);
     if (element) {
-      this.eventService.send(Message.SHAPE_SELECT, {element});
-      this.eventBus.fire('element.click', {element: element});
+      this.eventService.send(Message.SHAPE_SELECT, { element });
+      this.eventBus.fire('element.click', { element: element });
       this.eventBus.fire('editing.cancel');
     }
   }

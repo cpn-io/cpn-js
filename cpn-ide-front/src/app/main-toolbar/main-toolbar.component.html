@@ -58,36 +58,40 @@
 
     <div class="divider"></div>
 
-    <!-- Undo -->
-    <li class="nav-item">
-      <div class="nav-link mb-0" [ngClass]="{'disabled': undo === 0 }" (click)="getUndo()">
-        <i class="fas fa-undo"></i>
-        <!-- <span>Undo</span>&nbsp;<span *ngIf="modelService.getUndoCount() > 0">({{ modelService.getUndoCount() }})</span> -->
-        <span *ngIf="undo > 0; else elseUndoBlock">Undo
-          ({{ undo }})</span>
-        <ng-template #elseUndoBlock><span>Undo</span></ng-template>
-      </div>
-    </li>
 
-    <!-- Redo -->
-    <li class="nav-item">
-      <div class="nav-link mb-0" [ngClass]="{'disabled': redo === 0 }" (click)="getRedo()">
-        <i class="fas fa-redo"></i>
-        <span *ngIf="redo > 0; else elseRedoBlock">Redo
-          ({{ redo }})</span>
-        <ng-template #elseRedoBlock><span>Redo</span></ng-template>
-      </div>
-    </li>
+    <ng-container *ngIf="!accessCpnService.isSimulation">
 
-    <!-- Reload -->
-    <!-- <li class="nav-item">
+      <!-- Undo -->
+      <li class="nav-item">
+        <div class="nav-link mb-0" [ngClass]="{'disabled': undo === 0 }" (click)="getUndo()">
+          <i class="fas fa-undo"></i>
+          <!-- <span>Undo</span>&nbsp;<span *ngIf="modelService.getUndoCount() > 0">({{ modelService.getUndoCount() }})</span> -->
+          <span *ngIf="undo > 0; else elseUndoBlock">Undo
+            ({{ undo }})</span>
+          <ng-template #elseUndoBlock><span>Undo</span></ng-template>
+        </div>
+      </li>
+
+      <!-- Redo -->
+      <li class="nav-item">
+        <div class="nav-link mb-0" [ngClass]="{'disabled': redo === 0 }" (click)="getRedo()">
+          <i class="fas fa-redo"></i>
+          <span *ngIf="redo > 0; else elseRedoBlock">Redo
+            ({{ redo }})</span>
+          <ng-template #elseRedoBlock><span>Redo</span></ng-template>
+        </div>
+      </li>
+
+      <!-- Reload -->
+      <!-- <li class="nav-item">
       <div class="nav-link mb-0" (click)="reloadProject()">
         <i class="fas fa-sync-alt"></i>
         <span>Reload</span>
       </div>
     </li> -->
 
-    <div class="divider"></div>
+      <div class="divider"></div>
+    </ng-container>
 
     <!-- Expand diagram -->
     <li class="nav-item">
@@ -99,23 +103,28 @@
 
     <div class="divider"></div>
 
-    <!-- Validate -->
-    <li class="nav-item">
-      <div (click)="onValidate()" class="nav-link mb-0">
-        <i class="fas fa-check-double"></i>
-        <span>Validate</span>
-      </div>
-    </li>
+    <ng-container *ngIf="!accessCpnService.isSimulation">
 
-    <li class="nav-item">
-      <a (click)="onValidateAuto()" class="nav-link" [ngClass]="validationService.isAutoValidation ? 'red' : 'grey'"
-        href="#">
-        <i [ngClass]="validationService.isAutoValidation ? 'far fa-check-square' : 'far fa-square'"></i>
-        <span>Auto</span>
-      </a>
-    </li>
+      <!-- Validate -->
+      <li class="nav-item">
+        <div (click)="onValidate()" class="nav-link mb-0">
+          <i class="fas fa-check-double"></i>
+          <span>Validate</span>
+        </div>
+      </li>
 
-    <div class="divider"></div>
+      <li class="nav-item">
+        <a (click)="onValidateAuto()" class="nav-link" [ngClass]="validationService.isAutoValidation ? 'red' : 'grey'"
+          href="#">
+          <i [ngClass]="validationService.isAutoValidation ? 'far fa-check-square' : 'far fa-square'"></i>
+          <span>Auto</span>
+        </a>
+      </li>
+
+      <div class="divider"></div>
+
+    </ng-container>
+
 
     <!-- <li class="nav-item disabled">
       <div class="nav-link mb-0 disabled">
@@ -146,22 +155,33 @@
 
   <ul class="navbar-nav ml-auto">
 
-    <!-- Test button -->
-    <li class="nav-item">
-      <div (click)="onTest()" class="nav-link mb-0">
-        <i class="fas fa-step-forward"></i>
-        <span>Test</span>
-      </div>
-    </li>
-    <div class="divider"></div>
+    <ng-container *ngIf="!accessCpnService.isSimulation">
+      <!-- Test button -->
+      <!-- <li class="nav-item">
+        <div (click)="onTest()" class="nav-link mb-0">
+          <i class="fas fa-step-forward"></i>
+          <span>Test</span>
+        </div>
+      </li>
+      <div class="divider"></div> -->
 
-    <!-- Show documentation -->
-    <li class="nav-item">
-      <div (click)="onDocumentation()" class="nav-link mb-0">
-        <i class="fas fa-book"></i>
-        <span>User Guide</span>
-      </div>
-    </li>
+      <!-- Show documentation -->
+      <li class="nav-item">
+        <div (click)="onDocumentation()" class="nav-link mb-0">
+          <ng-container *ngIf="!applicationService.isShowDocumentation">
+            <i class="fas fa-book"></i>
+            <span>User Guide</span>
+          </ng-container>
+          <ng-container *ngIf="applicationService.isShowDocumentation">
+            <div class="red">
+              <i class="fas fa-book-open"></i>
+              <span>Close User Guide</span>
+            </div>
+          </ng-container>
+        </div>
+      </li>
+
+    </ng-container>
 
     <div class="divider"></div>
 

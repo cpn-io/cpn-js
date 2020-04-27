@@ -70,6 +70,7 @@ export class ValidationService implements OnDestroy {
       this.validate();
       this.clearHistory();
     });
+    this.eventService.on(Message.PROJECT_LOAD, () => this.init());
     this.eventService.on(Message.MODEL_RELOAD, () => this.init());
     this.eventService.on(Message.PROJECT_SAVED, () => this.clearHistory());
     this.eventService.on(Message.MAIN_MENU_NEW_PROJECT, () => this.clearHistory());

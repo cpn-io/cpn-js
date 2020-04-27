@@ -95,6 +95,11 @@ export class ProjectService {
     // const parser = new DOMParser();
     // const xml = parser.parseFromString(projectXml, 'text/xml');
 
+    // clear project
+    this.modelService.loadProject({});
+    this.eventService.send(Message.PROJECT_LOAD, { project: this.modelService.getProject() });
+    this.project = this.modelService.getProject();
+
     const xml = this.parseXml(projectXml);
 
     if (!xml) {
@@ -183,6 +188,8 @@ export class ProjectService {
       filename += '.cpn';
     }
 
+    this.modelService.fixShapeNames();
+        
     const x2js = new X2JS();
     let xml = (x2js.json2xml_str(cloneObject(this.modelService.getProjectData())));
     xml = `${this.xmlPrefix}\n${xml}`;

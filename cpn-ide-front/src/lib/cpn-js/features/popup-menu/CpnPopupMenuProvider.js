@@ -220,6 +220,7 @@ CpnPopupMenuProvider.prototype._createShape = function (event, type) {
   let element = this._cpnFactory.createShape(undefined, undefined, type, position, true);
 
   setTimeout(() => {
+    this._eventBus.fire('element.click', {element: element});
     this._eventBus.fire('shape.create.end', {elements: [element]});
     this._eventBus.fire('shape.editing.activate', {shape: element});
     this._eventBus.fire('shape.contextpad.activate', {shape: element});

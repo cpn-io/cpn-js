@@ -1,17 +1,13 @@
-import inherits from 'inherits';
+import inherits from "inherits";
 
-import CommandInterceptor from 'diagram-js/lib/command/CommandInterceptor';
+import CommandInterceptor from "diagram-js/lib/command/CommandInterceptor";
 
-import {
-  toPoint
-} from 'diagram-js/lib/util/Event';
+import { toPoint } from "diagram-js/lib/util/Event";
 
-import {
-  closest as domClosest
-} from 'min-dom';
+import { closest as domClosest } from "min-dom";
 
 function getGfx(target) {
-  var node = domClosest(target, 'svg, .djs-element', true);
+  var node = domClosest(target, "svg, .djs-element", true);
   // var node = domClosest(target, 'rect, .djs-hit', true);
   return node;
 }
@@ -19,32 +15,37 @@ function getGfx(target) {
 inherits(CpnUpdater, CommandInterceptor);
 
 import {
-  is, isCpn, isAny,
-  CPN_CONNECTION, CPN_LABEL, CPN_PLACE, CPN_TOKEN_LABEL, CPN_MARKING_LABEL, CPN_TRANSITION, modelCase
-} from '../../util/ModelUtil';
+  is,
+  isCpn,
+  isAny,
+  CPN_CONNECTION,
+  CPN_LABEL,
+  CPN_PLACE,
+  CPN_TOKEN_LABEL,
+  CPN_MARKING_LABEL,
+  CPN_TRANSITION,
+  modelCase,
+} from "../../util/ModelUtil";
 
 CpnUpdater.$inject = [
-  'eventBus',
-  'modeling',
-  'elementRegistry',
-  'connectionDocking',
-  'selection',
-  'popupMenuProvider',
-  'contextPad',
-  'canvas',
-  'bindingsMenuProvider',
-  'layouter',
-  'cpnRenderer',
-  'textRenderer'
+  "eventBus",
+  "modeling",
+  "elementRegistry",
+  "connectionDocking",
+  "selection",
+  "popupMenuProvider",
+  "contextPad",
+  "canvas",
+  "bindingsMenuProvider",
+  "layouter",
+  "cpnRenderer",
+  "textRenderer",
 ];
 
-import {
-  event as domEvent
-} from 'min-dom';
+import { event as domEvent } from "min-dom";
 
 import Modeling from "./Modeling";
-import {assign} from 'min-dash';
-
+import { assign } from "min-dash";
 
 import {
   getDefPosattr,
@@ -52,19 +53,28 @@ import {
   getDefLineattr,
   getDefTextattr,
   getDefText,
-  getNextId
-} from './CpnElementFactory';
-import {getDistance} from '../../draw/CpnRenderUtil';
-
+  getNextId,
+} from "./CpnElementFactory";
+import { getDistance } from "../../draw/CpnRenderUtil";
 
 /**
  * A handler responsible for updating
  * once changes on the diagram happen
  */
-export default function CpnUpdater(eventBus, modeling, elementRegistry,
-                                   connectionDocking, selection, popupMenuProvider, contextPad, canvas,
-                                   bindingsMenuProvider, layouter, cpnRenderer, textRenderer) {
-
+export default function CpnUpdater(
+  eventBus,
+  modeling,
+  elementRegistry,
+  connectionDocking,
+  selection,
+  popupMenuProvider,
+  contextPad,
+  canvas,
+  bindingsMenuProvider,
+  layouter,
+  cpnRenderer,
+  textRenderer
+) {
   this._canvas = canvas;
   this._modeling = modeling;
   this._elementRegistry = elementRegistry;
@@ -78,21 +88,19 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
   CommandInterceptor.call(this, eventBus);
 
-  this.executed([
-    'connection.create',
-  ], updateNewConnection);
+  this.executed(["connection.create"], updateNewConnection);
 
-  this.executed([
-    'connection.create',
-    'connection.layout',
-    'connection.reconnectEnd',
-    'connection.reconnectStart'
-  ], cropConnection);
+  this.executed(
+    [
+      "connection.create",
+      "connection.layout",
+      "connection.reconnectEnd",
+      "connection.reconnectStart",
+    ],
+    cropConnection
+  );
 
-  this.executed([
-    'shape.create',
-  ], updateNewShape);
-
+  this.executed(["shape.create"], updateNewShape);
 
   // this.reverted(['connection.layout'], function (e) {
   //   delete e.context.cropped;
@@ -100,20 +108,26 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
   let animateArcIdList = [];
 
-  eventBus.on('token.animate', function (event) {
-    console.log('TOKEN ANIMATION, token.animate, modeling.getInstanseId() = ', self._modeling.getInstanseId());
+  eventBus.on("token.animate", function (event) {
+    console.log(
+      "TOKEN ANIMATION, token.animate, modeling.getInstanseId() = ",
+      self._modeling.getInstanseId()
+    );
 
     animateArcIdList = [];
     for (const arcId of event.arcIdList) {
       animateArcIdList.push(arcId);
     }
 
-    console.log('TOKEN ANIMATION, token.animate, animateArcIdList = ', animateArcIdList);
+    console.log(
+      "TOKEN ANIMATION, token.animate, animateArcIdList = ",
+      animateArcIdList
+    );
 
     animateArcList(animateArcIdList);
   });
 
-  eventBus.on('shape.changed', function (event) {
+  eventBus.on("shape.changed", function (event) {
     // updateLabels(e.element);
     // console.log('CpnUpdater(), shape.changed, event.element = ', event.element);
     // updateBounds({ context: { shape: event.element } });
@@ -121,7 +135,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     updateCpnElement(event.element);
   });
 
-  eventBus.on('connection.changed', function (event) {
+  eventBus.on("connection.changed", function (event) {
     // console.log('CpnUpdater(), connection.changed, event = ', event);
     // layouter.layoutConnections();
 
@@ -151,7 +165,16 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   //     }
   //   });
 
-  eventBus.on('shape.create.end', (event) => {
+  // eventBus.on('directEditing.complete', (event) => {
+  //   if (event && event.active && event.active.element) {
+  //     const element = event.active.element;
+  //     console.log('DIRECTEDITING.COMPLETE, element = ', element);
+  //     if (element.labelType === "initmark") {
+  //     }
+  //   }
+  // });
+
+  eventBus.on("shape.create.end", (event) => {
     // console.log('CpnUpdater(), shape.create.end, event = ', event);
 
     // updateCpnElement(event.element);
@@ -159,24 +182,28 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
     modeling.updateElement(event.element, true);
   });
-  eventBus.on('connection.create', (event) => {
+  eventBus.on("connection.create", (event) => {
     // console.log('CpnUpdater(), connection.create, event = ', event);
     // updateCpnElement(event.element);
   });
 
-  eventBus.on('element.hover', function (event) {
+  eventBus.on("element.hover", function (event) {
     var element = event.element;
     // console.log('CpnUpdater(), element.hover, element = ', element);
 
     // eventBus.fire('element.click', { element: element });
-    if (isCpn(element) && !is(element, CPN_LABEL) && !is(element, CPN_CONNECTION)) {
+    if (
+      isCpn(element) &&
+      !is(element, CPN_LABEL) &&
+      !is(element, CPN_CONNECTION)
+    ) {
       popupMenuProvider.close();
 
       selection.select(element);
     }
   });
 
-  eventBus.on('element.click', function (event) {
+  eventBus.on("element.click", function (event) {
     // console.log('CpnUpdater(), element.click, event = ', event);
 
     popupMenuProvider.close();
@@ -197,11 +224,11 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     // }
   });
 
-  eventBus.on('popupMenu.open', function (event) {
+  eventBus.on("popupMenu.open", function (event) {
     // console.log('CpnUpdater(), popupMenu.open, event = ', event);
   });
 
-  eventBus.on('element.mousedown', function (event) {
+  eventBus.on("element.mousedown", function (event) {
     // console.log('CpnUpdater(), element.mousedown, event = ', event);
   });
 
@@ -211,8 +238,8 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
   // object.addEventListener("click", myScript);
 
-  domEvent.bind(container, 'mousedown', function (event) {
-    console.log('CpnUpdater(), mousedown ', event);
+  domEvent.bind(container, "mousedown", function (event) {
+    console.log("CpnUpdater(), mousedown ", event);
     // console.log('CpnUpdater(), domEvent, mousedown, event = ', event);
     // console.log('CpnUpdater(), mousedown, container = ', container);
     // console.log('CpnUpdater(), canvas.getRootElement() = ', canvas.getRootElement());
@@ -228,7 +255,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
       // console.log('CpnUpdater(), domEvent, mousedown, target = ', target);
       // console.log('CpnUpdater(), domEvent, mousedown, gfx = ', gfx);
-      console.log('CpnUpdater(), mousedown, element = ', element);
+      console.log("CpnUpdater(), mousedown, element = ", element);
 
       if (element && element === canvas.getRootElement()) {
         popupMenuProvider.close();
@@ -253,7 +280,10 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
             contextPad.open(element);
           } else {
             contextPad.close();
-            popupMenuProvider.open(element, {cursor: {x: position.x, y: position.y}, editable: true});
+            popupMenuProvider.open(element, {
+              cursor: { x: position.x, y: position.y },
+              editable: true,
+            });
           }
         }
       } else {
@@ -263,18 +293,27 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
             // contextPad.open(element);
           } else {
             contextPad.close();
-            popupMenuProvider.open(element, {cursor: {x: position.x, y: position.y}, editable: false});
+            popupMenuProvider.open(element, {
+              cursor: { x: position.x, y: position.y },
+              editable: false,
+            });
           }
         }
       }
     }
   });
 
-
   function showHideMarking(tokenElement) {
-    console.log('CpnUpdater(), showHideMarking(), tokenElement = ', tokenElement);
+    console.log(
+      "CpnUpdater(), showHideMarking(), tokenElement = ",
+      tokenElement
+    );
 
-    if (!tokenElement || !tokenElement.label || !is(tokenElement.label, CPN_MARKING_LABEL))
+    if (
+      !tokenElement ||
+      !tokenElement.label ||
+      !is(tokenElement.label, CPN_MARKING_LABEL)
+    )
       return;
 
     const markingElement = tokenElement.label;
@@ -335,7 +374,7 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
       x: shape.x,
       y: shape.y,
       width: shape.width,
-      height: shape.height
+      height: shape.height,
     });
   }
 
@@ -352,7 +391,6 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     // }
   }
 
-
   function updateCpnElement(element) {
     // export  const modelCase = {
     //   'cpn:Place': { form: 'ellipse', entry: ['initmark', 'type'] },
@@ -360,20 +398,43 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
     //   'cpn:Connection': { entry: ['annot'] }
     // }
 
-    // console.log('CpnUpdater().updateCpnElement(), element = ', element);
+    console.log("CpnUpdater().updateCpnElement(), element = ", element);
 
     var shape = element;
     let elemCase = modelCase[element.type];
     const cpnElement = shape.cpnElement;
 
     if (cpnElement) {
-
       // update shapes
       if (shape.x && shape.y && shape.width && shape.height) {
+
+        // if token label
+        if (is(element, CPN_TOKEN_LABEL)) {
+          const placeElement = element.labelTarget;
+          if (placeElement && is(placeElement, CPN_PLACE)) {
+            console.log(
+              "CpnUpdater().updateCpnElement(), cpnElement._x,_y (0) = ",
+              cpnElement._x, cpnElement._y
+            );
+
+            cpnElement._x = Math.round(shape.x - (placeElement.x + placeElement.width)).toFixed(6);
+            cpnElement._y = Math.round(shape.y - (placeElement.y - placeElement.height/2)).toFixed(6);
+
+            console.log(
+              "CpnUpdater().updateCpnElement(), cpnElement._x,_y (1) = ",
+              cpnElement._x, cpnElement._y
+            );
+          }
+        }
+
         // if element is any shape object
         if (cpnElement.posattr) {
-          cpnElement.posattr._x = Math.round((shape.x + shape.width / 2)).toFixed(6); // .toString();
-          cpnElement.posattr._y = Math.round((shape.y + shape.height / 2) * -1).toFixed(6); // .toString();
+          cpnElement.posattr._x = Math.round(shape.x + shape.width / 2).toFixed(
+            6
+          ); // .toString();
+          cpnElement.posattr._y = Math.round(
+            (shape.y + shape.height / 2) * -1
+          ).toFixed(6); // .toString();
         }
         // if element is Place object
         if (cpnElement.ellipse) {
@@ -409,18 +470,16 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
             lineattr: getDefLineattr(),
             textattr: getDefTextattr(),
             _id: getNextId(),
-            _serial: (1).toString()
+            _serial: (1).toString(),
           });
           // }
         }
 
-
         if (bendpoints.length > 0) {
-
           const wp0 = shape.waypoints[0];
 
           let reverse = false;
-          if (cpnElement._orientation && cpnElement._orientation == 'TtoP') {
+          if (cpnElement._orientation && cpnElement._orientation == "TtoP") {
             reverse = true;
           }
 
@@ -429,8 +488,14 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
           // // sort by distance from first point
           bendpoints = bendpoints.sort((a, b) => {
-            let d_a = getDistance(wp0, {x: a.posattr._x, y: -1 * a.posattr._y});
-            let d_b = getDistance(wp0, {x: b.posattr._x, y: -1 * b.posattr._y});
+            let d_a = getDistance(wp0, {
+              x: a.posattr._x,
+              y: -1 * a.posattr._y,
+            });
+            let d_b = getDistance(wp0, {
+              x: b.posattr._x,
+              y: -1 * b.posattr._y,
+            });
             return reverse ? d_a - d_b : d_b - d_a;
           });
 
@@ -438,19 +503,16 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
 
           cpnElement.bendpoint = bendpoints;
         }
-
-
       }
 
-
-      let text = shape.text || shape.name || '';
+      let text = shape.text || shape.name || "";
       // let text = shape.text || shape.name;
       text = text.trim();
       // if (shape.defaultValue && text === shape.defaultValue) {
       //   text = '';
       // }
 
-      if (typeof cpnElement.text === 'object') {
+      if (typeof cpnElement.text === "object") {
         cpnElement.text.__text = text;
       } else {
         cpnElement.text = text;
@@ -479,14 +541,16 @@ export default function CpnUpdater(eventBus, modeling, elementRegistry,
   }
 }
 
-CpnUpdater.prototype.animateArcList = function (arcIdList, speedMs, income = true) {
-
+CpnUpdater.prototype.animateArcList = function (
+  arcIdList,
+  speedMs,
+  income = true
+) {
   const updater = this;
   const modeling = this._modeling;
   const renderer = this._cpnRenderer;
 
   return new Promise(function (resolve, reject) {
-
     let arcIdCount = arcIdList.length;
     if (arcIdCount === 0) {
       resolve();
@@ -508,18 +572,21 @@ CpnUpdater.prototype.animateArcList = function (arcIdList, speedMs, income = tru
         }
 
         renderer.drawArcAnimation(arc, speedMs, reverse).then((result) => {
-          console.log('TOKEN ANIMATION COMPLETE, Promise complete!, result.id = ', result.id, arcIdCount);
+          console.log(
+            "TOKEN ANIMATION COMPLETE, Promise complete!, result.id = ",
+            result.id,
+            arcIdCount
+          );
 
           arcIdCount--;
           if (arcIdCount === 0) {
-            console.log('TOKEN ANIMATION COMPLETE, RESOLVE ALL');
+            console.log("TOKEN ANIMATION COMPLETE, RESOLVE ALL");
             resolve();
           }
         });
       }
     }
   });
-
 
   // return new Promise(function (resolve, reject) {
 
@@ -560,4 +627,4 @@ CpnUpdater.prototype.animateArcList = function (arcIdList, speedMs, income = tru
   //   }
 
   // });
-}
+};

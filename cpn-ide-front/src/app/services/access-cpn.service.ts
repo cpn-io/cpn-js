@@ -222,14 +222,21 @@ export class AccessCpnService {
 
     this.complexVerify = complexVerify;
     console.log('AccessCpnService, initNet(), START, this.initNetProcessing = ', this.initNetProcessing);
+    console.log('AccessCpnService, initNet(), START, cpnJson = ', cpnJson);
 
     if (this.initNetProcessing) {
+      return;
+    }
+
+    if (!cpnJson) {
       return;
     }
 
     if (!this.sessionId) {
       this.sessionId = this.generateSessionId();
     }
+
+    this.modelService.fixShapeNames();
 
     console.log('AccessCpnService, initNet(), START, this.sessionId = ', this.sessionId);
     console.log('AccessCpnService, initNet(), START, complexVerify = ', complexVerify);
@@ -239,6 +246,8 @@ export class AccessCpnService {
 
     cpnXml = cpnXml.toString('iso-8859-1');
     cpnXml = xmlBeautify(cpnXml);
+
+    // console.log('AccessCpnService, initNet(), START, cpnXml = ', cpnXml);
 
     this.initNetProcessing = true;
     this.eventService.send(Message.SERVER_INIT_NET_START, {});

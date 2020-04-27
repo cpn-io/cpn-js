@@ -280,7 +280,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     eventBus.on('element.click', (event) => {
       this.fireSelectionEvent(event);
       if (event.element) {
-        this.updateAvailableMonitorList([event.element]);
+        this.updateAvailableMonitorList([event.element, ...this.selectedElements]);
       }
     });
 

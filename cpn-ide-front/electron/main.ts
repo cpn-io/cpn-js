@@ -116,7 +116,7 @@ function createWindow() {
       submenu: [
         { label: 'New project', click() { newProject(); } },
         { type: 'separator' },
-        { label: 'Open project', click() { openProject(); }, accelerator: 'Ctrl+O' },
+        { label: 'Load project', click() { openProject(); }, accelerator: 'Ctrl+O' },
         { label: 'Save project', click() { saveProject(); }, accelerator: 'Ctrl+S' },
         { type: 'separator' },
         { label: 'Exit', click() { app.quit(); }, accelerator: 'Alt+F4' }

@@ -22,7 +22,8 @@
     "electronBuildAllLinux": "npm run -s electronCleanLinux & npm run buildBackendLinux & npm run buildProd & npm run electronBuild",
     "electronBuildAllWin": "npm run -s electronCleanWin & npm run buildBackendWin & npm run buildProd & npm run electronBuild",
     "electronRun": "electron . > electron-app.log",
-    "electronCopyWinUnpacked": "xcopy \".\\dist\\win-unpacked\\*\" \".\\electron\\installer\\win-unpacked\\*\" /s /e /y",
+    "electronRenameWinUnpacked": "rename \".\\dist\\win-ia32-unpacked\" \"win-unpacked\"",
+    "electronCopyWinUnpacked": "npm run electronRenameWinUnpacked & xcopy \".\\dist\\win-unpacked\\*\" \".\\electron\\installer\\win-unpacked\\*\" /s /e /y",
     "electronMakeSetupLinux": "electron-builder",
     "electronMakeSetupWin": "electron-builder & npm run electronCopyWinUnpacked",
     "electronBuildAndMakeSetupWin": "npm run electronBuildAllWin & npm run electronMakeSetupWin"

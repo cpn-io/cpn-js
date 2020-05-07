@@ -5,7 +5,7 @@ import { EventService } from './event.service';
 import { Message } from '../common/message';
 import { xmlBeautify } from '../../lib/xml-beautifier/xml-beautifier.js';
 import { CpnServerUrl } from 'src/cpn-server-url';
-import {cloneObject, clearArray, nodeToArray} from '../common/utils';
+import { cloneObject, clearArray, nodeToArray } from '../common/utils';
 import { ModelService } from './model.service';
 import { SettingsService } from './settings.service';
 import { IpcService } from './ipc.service';
@@ -218,80 +218,81 @@ export class AccessCpnService {
    * Access/CPN API
    */
   initNet(cpnJson, complexVerify = false, restartSimulator = false) {
-    this.simulationReport = '';
+    return new Promise((resolve, reject) => {
 
-    this.complexVerify = complexVerify;
-    console.log('AccessCpnService, initNet(), START, this.initNetProcessing = ', this.initNetProcessing);
-    console.log('AccessCpnService, initNet(), START, cpnJson = ', cpnJson);
+      this.simulationReport = '';
 
-    if (this.initNetProcessing) {
-      return;
-    }
+      this.complexVerify = complexVerify;
+      console.log('AccessCpnService, initNet(), START, this.initNetProcessing = ', this.initNetProcessing);
+      console.log('AccessCpnService, initNet(), START, cpnJson = ', cpnJson);
 
-    if (!cpnJson) {
-      return;
-    }
+      if (this.initNetProcessing) {
+        resolve();
+        return;
+      }
 
-    if (!this.sessionId) {
-      this.sessionId = this.generateSessionId();
-    }
+      if (!cpnJson) {
+        resolve();
+        return;
+      }
 
-    this.modelService.fixShapeNames();
+      if (!this.sessionId) {
+        this.sessionId = this.generateSessionId();
+      }
 
-    console.log('AccessCpnService, initNet(), START, this.sessionId = ', this.sessionId);
-    console.log('AccessCpnService, initNet(), START, complexVerify = ', complexVerify);
+      this.modelService.fixShapeNames();
 
-    const x2js = new X2JS();
-    let cpnXml = x2js.json2xml_str(cloneObject(cpnJson));
+      console.log('AccessCpnService, initNet(), START, this.sessionId = ', this.sessionId);
+      console.log('AccessCpnService, initNet(), START, complexVerify = ', complexVerify);
 
-    cpnXml = cpnXml.toString('iso-8859-1');
-    cpnXml = xmlBeautify(cpnXml);
+      const x2js = new X2JS();
+      let cpnXml = x2js.json2xml_str(cloneObject(cpnJson));
 
-    // console.log('AccessCpnService, initNet(), START, cpnXml = ', cpnXml);
+      cpnXml = cpnXml.toString('iso-8859-1');
+      cpnXml = xmlBeautify(cpnXml);
 
-    this.initNetProcessing = true;
-    this.eventService.send(Message.SERVER_INIT_NET_START, {});
+      // console.log('AccessCpnService, initNet(), START, cpnXml = ', cpnXml);
 
-    localStorage.setItem('cpnXml', JSON.stringify(cpnXml));
+      this.initNetProcessing = true;
+      this.eventService.send(Message.SERVER_INIT_NET_START, {});
 
-    complexVerify = true;
-    restartSimulator = true;
+      localStorage.setItem('cpnXml', JSON.stringify(cpnXml));
 
-    localStorage.setItem('cpnXml', cpnXml);
+      complexVerify = true;
+      restartSimulator = true;
 
-    const url = this.settingsService.getServerUrl() + '/api/v2/cpn/init';
-    const body = {
-      xml: cpnXml,
-      complex_verify: complexVerify,
-      need_sim_restart: restartSimulator
-    };
-    this.http.post(url, body, { headers: { 'X-SessionId': this.sessionId } })
-      .subscribe(
-        (data: any) => {
-          console.log('AccessCpnService, initNet(), SUCCESS, data = ', data);
-          this.initNetProcessing = false;
+      localStorage.setItem('cpnXml', cpnXml);
 
-          this.frontSideValidation(data);
-          this.updateErrorData(data);
-          this.warnings =  data.warnings || []
-          this.eventService.send(Message.SERVER_INIT_NET_DONE, { data: data, errorIssues: data.issues, warningIssues: data.warnings });
+      const url = this.settingsService.getServerUrl() + '/api/v2/cpn/init';
+      const body = {
+        xml: cpnXml,
+        complex_verify: complexVerify,
+        need_sim_restart: restartSimulator
+      };
+      this.http.post(url, body, { headers: { 'X-SessionId': this.sessionId } })
+        .subscribe(
+          (data: any) => {
+            console.log('AccessCpnService, initNet(), SUCCESS, data = ', data);
+            this.initNetProcessing = false;
 
-          // Init simulator
-          // if (!this.simInitialized) {
-          //   this.initSim();
-          // }
+            this.frontSideValidation(data);
+            this.updateErrorData(data);
+            this.warnings = data.warnings || []
+            this.eventService.send(Message.SERVER_INIT_NET_DONE, { data: data, errorIssues: data.issues, warningIssues: data.warnings });
 
-          this.reportReady();
-        },
-        (error) => {
-          console.error('AccessCpnService, initNet(), ERROR, data = ', error);
-          this.initNetProcessing = false;
-          this.eventService.send(Message.SERVER_INIT_NET_ERROR, { data: error });
+            this.reportReady();
+            
+            resolve();
+          },
+          (error) => {
+            console.error('AccessCpnService, initNet(), ERROR, data = ', error);
+            this.initNetProcessing = false;
+            this.eventService.send(Message.SERVER_INIT_NET_ERROR, { data: error });
 
-          // run again if error (DEBUG)
-          // setTimeout(() => this.initNet(cpnJson, complexVerify, restartSimulator), 1000);
-        }
-      );
+            reject();
+          }
+        );
+    });
   }
 
   frontSideValidation(data) {
@@ -307,18 +308,18 @@ export class AccessCpnService {
     nodeToArray(pages).forEach(page => {
       const list = nodeToArray(page.place).concat(nodeToArray(page.trans))
       this.addWarnings(data, this.checkSameNames(list, 'page', sameError));
-    })  ;
+    });
 
   }
 
-  private addWarnings(data, errors: any[]){
+  private addWarnings(data, errors: any[]) {
     if (errors.length > 0) {
       data.success = false;
       if (!data.warnings) {
         data['warnings'] = {};
       }
       errors.forEach(err => {
-        if (!data.warnings[err.id]){
+        if (!data.warnings[err.id]) {
           data.warnings[err.id] = [];
         }
         data.warnings[err.id].push(err);
@@ -341,8 +342,8 @@ export class AccessCpnService {
       });
 
       map.forEach((v, k) => {
-        if (v.length > 1){
-          v.forEach ( el => list.push({id: el._id, type: shapeType, description: error}));
+        if (v.length > 1) {
+          v.forEach(el => list.push({ id: el._id, type: shapeType, description: error }));
         }
       });
     }
@@ -354,7 +355,7 @@ export class AccessCpnService {
     if (shapes.length > 0) {
       const err = shapes.filter(place => place.text === '');
       if (err.length > 0) {
-       err.forEach(el => list.push({id: el._id, type: shapeType, description: error}));
+        err.forEach(el => list.push({ id: el._id, type: shapeType, description: error }));
       }
     }
     return list;
@@ -824,7 +825,7 @@ export class AccessCpnService {
       console.log('AccessCpnService, doReplication(), postData = ', script);
 
       const url = this.settingsService.getServerUrl() + '/api/v2/cpn/sim/script';
-      this.http.post(url, script, { headers: { 'X-SessionId': this.sessionId } }).subscribe (
+      this.http.post(url, script, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
         (response: any) => {
           console.log('AccessCpnService, requestRunScript(), SUCCESS, data = ', response);
           if (response) {

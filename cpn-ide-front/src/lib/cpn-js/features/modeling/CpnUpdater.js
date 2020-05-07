@@ -319,6 +319,7 @@ export default function CpnUpdater(
     const markingElement = tokenElement.label;
 
     markingElement.hidden = !markingElement.hidden;
+    markingElement.cpnElement._hidden = markingElement.hidden ? "true" : "false";
 
     // if (!markingElement.hidden) {
     //   var newBounds = textRenderer.getExternalLabelBounds(markingElement, markingElement.text);
@@ -392,70 +393,104 @@ export default function CpnUpdater(
   }
 
   function updateCpnElement(element) {
-    // export  const modelCase = {
-    //   'cpn:Place': { form: 'ellipse', entry: ['initmark', 'type'] },
-    //   'cpn:Transition': { form: 'box', entry: ['time', 'code', 'priority', 'cond'] },
-    //   'cpn:Connection': { entry: ['annot'] }
-    // }
-
     console.log("CpnUpdater().updateCpnElement(), element = ", element);
 
-    var shape = element;
-    let elemCase = modelCase[element.type];
-    const cpnElement = shape.cpnElement;
+    const cpnElement = element.cpnElement;
 
     if (cpnElement) {
       // update shapes
-      if (shape.x && shape.y && shape.width && shape.height) {
-
+      if (element.x && element.y && element.width && element.height) {
         // if token label
         if (is(element, CPN_TOKEN_LABEL)) {
-          const placeElement = element.labelTarget;
-          if (placeElement && is(placeElement, CPN_PLACE)) {
-            console.log(
-              "CpnUpdater().updateCpnElement(), cpnElement._x,_y (0) = ",
-              cpnElement._x, cpnElement._y
-            );
+          const labelTarget = element.labelTarget;
+          if (labelTarget && is(labelTarget, CPN_PLACE)) {
+            
+            // console.log(
+            //   "CpnUpdater().updateCpnElement(), CPN_TOKEN_LABEL, element = ",
+            //   element
+            // );
+            // console.log(
+            //   "CpnUpdater().updateCpnElement(), CPN_TOKEN_LABEL, x, y (1) = ",
+            //   cpnElement._x,
+            //   cpnElement._y
+            // );
 
-            cpnElement._x = Math.round(shape.x - (placeElement.x + placeElement.width)).toFixed(6);
-            cpnElement._y = Math.round(shape.y - (placeElement.y - placeElement.height/2)).toFixed(6);
+            cpnElement._x = Math.round(
+              element.x - (labelTarget.x + labelTarget.width)
+            ).toFixed(6);
+            cpnElement._y = Math.round(
+              -1 * (element.y - (labelTarget.y + labelTarget.height / 2))
+            ).toFixed(6);
 
-            console.log(
-              "CpnUpdater().updateCpnElement(), cpnElement._x,_y (1) = ",
-              cpnElement._x, cpnElement._y
-            );
+            // console.log(
+            //   "CpnUpdater().updateCpnElement(), CPN_TOKEN_LABEL, x, y (2) = ",
+            //   cpnElement._x,
+            //   cpnElement._y
+            // );
+          }
+        }
+
+        // if marking label
+        if (is(element, CPN_MARKING_LABEL)) {
+          const labelTarget = element.labelTarget;
+          if (labelTarget && is(labelTarget, CPN_TOKEN_LABEL)) {
+            // console.log(
+            //   "CpnUpdater().updateCpnElement(), CPN_MARKING_LABEL, element = ",
+            //   element
+            // );
+
+            // console.log(
+            //   "CpnUpdater().updateCpnElement(), CPN_MARKING_LABEL, (1), x,y = ",
+            //   cpnElement._x,
+            //   cpnElement._y
+            // );
+
+            cpnElement._x = Math.round(
+              element.x - (labelTarget.x + labelTarget.width + 15)
+            ).toFixed(6);
+            cpnElement._y = Math.round(
+              -1 *
+                (element.y -
+                  (labelTarget.y))
+            ).toFixed(6);
+
+            // console.log(
+            //   "CpnUpdater().updateCpnElement(), CPN_MARKING_LABEL, (2), x,y = ",
+            //   cpnElement._x,
+            //   cpnElement._y
+            // );
           }
         }
 
         // if element is any shape object
         if (cpnElement.posattr) {
-          cpnElement.posattr._x = Math.round(shape.x + shape.width / 2).toFixed(
-            6
-          ); // .toString();
+          cpnElement.posattr._x = Math.round(
+            element.x + element.width / 2
+          ).toFixed(6); // .toString();
           cpnElement.posattr._y = Math.round(
-            (shape.y + shape.height / 2) * -1
+            (element.y + element.height / 2) * -1
           ).toFixed(6); // .toString();
         }
         // if element is Place object
         if (cpnElement.ellipse) {
-          cpnElement.ellipse._w = Math.round(shape.width).toFixed(6); // .toString();
-          cpnElement.ellipse._h = Math.round(shape.height).toFixed(6); // .toString();
+          cpnElement.ellipse._w = Math.round(element.width).toFixed(6); // .toString();
+          cpnElement.ellipse._h = Math.round(element.height).toFixed(6); // .toString();
         }
         // if element is Transition object
         if (cpnElement.box) {
-          cpnElement.box._w = Math.round(shape.width).toFixed(6); // .toString();
-          cpnElement.box._h = Math.round(shape.height).toFixed(6); // .toString();
+          cpnElement.box._w = Math.round(element.width).toFixed(6); // .toString();
+          cpnElement.box._h = Math.round(element.height).toFixed(6); // .toString();
         }
       }
 
       // update connections
-      if (shape.waypoints instanceof Array && shape.waypoints.length > 2) {
+      if (element.waypoints instanceof Array && element.waypoints.length > 2) {
         // console.log('CpnUpdater().updateCpnElement(), connection, element = ', element);
 
         // let bendpoints = cpnElement.bendpoint || [];
         let bendpoints = [];
-        for (let i = 1; i < shape.waypoints.length - 1; i++) {
-          const wp = shape.waypoints[i];
+        for (let i = 1; i < element.waypoints.length - 1; i++) {
+          const wp = element.waypoints[i];
 
           // if (!updateBendpoints(cpnElement, wp)) {
           // create new bendpoint item for cpnElement
@@ -476,7 +511,7 @@ export default function CpnUpdater(
         }
 
         if (bendpoints.length > 0) {
-          const wp0 = shape.waypoints[0];
+          const wp0 = element.waypoints[0];
 
           let reverse = false;
           if (cpnElement._orientation && cpnElement._orientation == "TtoP") {
@@ -505,7 +540,7 @@ export default function CpnUpdater(
         }
       }
 
-      let text = shape.text || shape.name || "";
+      let text = element.text || element.name || "";
       // let text = shape.text || shape.name;
       text = text.trim();
       // if (shape.defaultValue && text === shape.defaultValue) {
@@ -587,44 +622,4 @@ CpnUpdater.prototype.animateArcList = function (
       }
     }
   });
-
-  // return new Promise(function (resolve, reject) {
-
-  //   if (arcIdList.length > 0) {
-  //     const arcId = arcIdList[0];
-
-  //     const element = modeling.getElementById(arcId);
-  //     if (element) {
-
-  //       renderer.drawArcAnimation(element, speedMs).then(() => {
-  //         console.log('TOKEN ANIMATION, drawArcAnimation(), Promise complete!');
-
-  //         if (arcIdList.length > 1) {
-  //           arcIdList.shift();
-  //           updater.animateArcList(arcIdList, speedMs).then(() => {
-  //             resolve('complete');
-  //           });
-  //         } else {
-  //           resolve('complete.all');
-  //         }
-  //       });
-
-  //     } else {
-
-  //       if (arcIdList.length > 1) {
-  //         arcIdList.shift();
-  //         updater.animateArcList(arcIdList).then(() => {
-  //           resolve('complete');
-  //         });
-  //       } else {
-  //         resolve('complete.all');
-  //       }
-
-  //     }
-  //   }
-  //   else {
-  //     resolve('complete.all');
-  //   }
-
-  // });
 };

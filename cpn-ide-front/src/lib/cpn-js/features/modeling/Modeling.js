@@ -735,10 +735,7 @@ Modeling.prototype.getLabelAttrs = function (
     attrs.defaultValue = defaultValue;
   }
 
-  if (text.trim() === "" || text === defaultValue) attrs.hidden = true;
-
-  // if (labelType === 'port')
-  //   console.log('Modeling.prototype.getLabelAttrs(), text = ', text);
+  attrs.hidden = ["", defaultValue].includes(text.trim());
 
   return attrs;
 };
@@ -757,32 +754,28 @@ Modeling.prototype.getTokenLabelAttrs = function (
   var x = 1 * (+cpnTokenLabelElement._x || 0);
   var y = -1 * (+cpnTokenLabelElement._y || 0);
 
-  // var text = '8';
-  var text = "";
+  var text = cpnTokenLabelElement.text || "";
 
   var bounds = { x: x, y: y, width: 200, height: 20 };
-  bounds = this._textRenderer.getExternalLabelBounds(bounds, text);
+  bounds = this._textRenderer.getExternalLabelBounds(bounds, text || "0");
+  bounds.width = Math.max(bounds.width, 10);
 
-  // if (x === 0) {
-  //   x -= bounds.width / 2;
-  // }
-  // if (y === 0) {
-  //   y -= bounds.height / 2;
-  // }
   x += 1 * (labelTarget.x + labelTarget.width);
   y += 1 * (labelTarget.y + labelTarget.height / 2);
+
+  const hidden = +text === 0;
 
   var attrs = {
     type: CPN_TOKEN_LABEL,
     id: CPN_TOKEN_LABEL + "_" + labelTarget.id,
     cpnElement: cpnTokenLabelElement,
-    text: text,
+    text,
     x: x,
     y: y,
     width: bounds.width,
     height: bounds.height,
 
-    hidden: true,
+    hidden: true 
   };
 
   if (labelTarget) {
@@ -797,35 +790,38 @@ Modeling.prototype.getMarkingLabelAttrs = function (
   cpnMarkingLabelElement,
   labelType
 ) {
-  var x = 1 * cpnMarkingLabelElement._x;
-  var y = -1 * cpnMarkingLabelElement._y;
+  console.log(
+    "getMarkingLabelAttrs(), labelTarget, cpnMarkingLabelElement = ",
+    labelTarget,
+    cpnMarkingLabelElement
+  );
 
-  // var text = '2`0@0,0\n2`0@0,0\n2`0@0,0\n2`0@0,0';
-  var text = "";
+  var x = 1 * (+cpnMarkingLabelElement._x || 0);
+  var y = -1 * (+cpnMarkingLabelElement._y || 0);
+
+  var text = cpnMarkingLabelElement.text || "";
 
   var bounds = { x: x, y: y, width: 200, height: 20 };
-  bounds = this._textRenderer.getExternalLabelBounds(bounds, text);
+  bounds = this._textRenderer.getExternalLabelBounds(bounds, text || "00000");
 
-  y -= bounds.height / 2;
+  x += 1 * (labelTarget.x + labelTarget.width + 15);
+  y += 1 * (labelTarget.y);
 
-  x += 1 * (labelTarget.x + labelTarget.width * 3);
-  y += 1 * (labelTarget.y + labelTarget.height / 2);
+  const hidden =
+    cpnMarkingLabelElement._hidden !== "false" || ["", "empty"].includes(text);
 
-  // var hidden = text === '' || text === 'empty' || !(cpnMarkingLabelElement._hidden === 'false');
-  var hidden = text === "" || text === "empty";
-
-  var attrs = {
+  const attrs = {
     type: CPN_MARKING_LABEL,
     id: CPN_MARKING_LABEL + "_" + labelTarget.labelTarget.id,
     cpnElement: cpnMarkingLabelElement,
-    text: text,
+    text,
 
     x: x,
     y: y,
     width: bounds.width,
     height: bounds.height,
 
-    hidden: hidden,
+    hidden: true
   };
 
   if (labelTarget) {

@@ -64,14 +64,13 @@ import { ProjectTreeOptionNodeComponent } from './project-tree/project-tree-opti
 import { ProjectTreeDeclarationNodeComponent } from './project-tree/project-tree-declaration-node/project-tree-declaration-node.component';
 import { ProjectTreeToolbarComponent } from './project-tree/project-tree-toolbar/project-tree-toolbar.component';
 import { ContextMenuComponent } from './context-menu/context-menu.component';
-import { ProjectDeclarationsOldComponent } from './project-declarations-old/project-declarations-old.component';
 import { ProjectDeclarationsComponent } from './project-declarations/project-declarations.component';
 import { ProjectTreeMonitorblockNodeComponent } from './project-tree/project-tree-monitorblock-node/project-tree-monitorblock-node.component';
 import { ProjectDeclarationsBlockNodeComponent } from './project-declarations/project-declarations-block-node/project-declarations-block-node.component';
 import { SimulationReportPipe } from './pipes/simulation-report.pipe';
 import { DialogComponent } from './common/dialog/dialog.component';
 import { DialogLogComponent } from './common/dialog-log/dialog-log.component';
-import {BufferService} from './services/buffer.service';
+import { BufferService } from './services/buffer.service';
 
 require('typeface-droid-sans-mono');
 
@@ -119,7 +118,6 @@ require('typeface-droid-sans-mono');
     ProjectTreeDeclarationNodeComponent,
     ProjectTreeToolbarComponent,
     ContextMenuComponent,
-    ProjectDeclarationsOldComponent,
     ProjectDeclarationsComponent,
     ProjectDeclarationsBlockNodeComponent,
     DialogLogComponent,

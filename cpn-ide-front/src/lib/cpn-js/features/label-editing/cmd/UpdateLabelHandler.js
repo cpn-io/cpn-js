@@ -1,14 +1,11 @@
-import {
-  setLabel,
-  getLabel
-} from '../LabelEditingUtil';
+import { setLabel, getLabel } from "../LabelEditingUtil";
 
 import {
   getExternalLabelMid,
   isLabelExternal,
   hasExternalLabel,
-  isLabel
-} from '../../../util/LabelUtil';
+  isLabel,
+} from "../../../util/LabelUtil";
 
 import {
   CPN_LABEL,
@@ -16,20 +13,18 @@ import {
   getBusinessObject,
   is,
   CPN_MARKING_LABEL,
-  getText
-} from '../../../util/ModelUtil';
+  getText,
+} from "../../../util/ModelUtil";
 
 var NULL_DIMENSIONS = {
   width: 0,
-  height: 0
+  height: 0,
 };
-
 
 /**
  * A handler that updates the text of a CPN element.
  */
 export default function UpdateLabelHandler(modeling, textRenderer) {
-
   /**
    * Set the label and return the changed elements.
    *
@@ -39,7 +34,6 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
    * @param {String} text
    */
   function setText(element, text) {
-
     // external label if present
     // var label = element.label || element;
     var label = is(element, CPN_LABEL) ? element.label || element : element;
@@ -52,7 +46,6 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
   }
 
   function setNameText(element, text) {
-
     // external label if present
     var label = is(element, CPN_LABEL) ? element.label : element;
 
@@ -68,11 +61,12 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
       businessObject = element.businessObject,
       newLabel = ctx.newLabel;
 
-    if (!isLabel(element)
-      && isLabelExternal(element)
-      && !hasExternalLabel(element)
-      && !isEmptyText(newLabel)) {
-
+    if (
+      !isLabel(element) &&
+      isLabelExternal(element) &&
+      !hasExternalLabel(element) &&
+      !isEmptyText(newLabel)
+    ) {
       // create label
       var paddingTop = 7;
 
@@ -80,12 +74,12 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
 
       labelCenter = {
         x: labelCenter.x,
-        y: labelCenter.y + paddingTop
+        y: labelCenter.y + paddingTop,
       };
 
       modeling.createLabel(element, labelCenter, {
-        id: businessObject.id + '_label',
-        businessObject: businessObject
+        id: businessObject.id + "_label",
+        businessObject: businessObject,
       });
     }
   }
@@ -117,22 +111,24 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
     // }
 
     // ignore internal labels for elements except text annotations
-    if (!isLabelExternal(element)
-      && !is(element, CPN_TEXT_ANNOTATION)
-      && !is(element, CPN_LABEL)
-      && !is(element, CPN_MARKING_LABEL)) {
+    if (
+      !isLabelExternal(element) &&
+      !is(element, CPN_TEXT_ANNOTATION) &&
+      !is(element, CPN_LABEL) &&
+      !is(element, CPN_MARKING_LABEL)
+    ) {
       return;
     }
 
     var text = getText(label);
 
     // don't resize without text
-    if (!text || text.trim() === '') {
+    if (!text || text.trim() === "") {
       return;
     }
 
     // resize element based on label _or_ pre-defined bounds
-    if (typeof newBounds === 'undefined') {
+    if (typeof newBounds === "undefined") {
       newBounds = textRenderer.getExternalLabelBounds(label, text);
     }
 
@@ -146,12 +142,7 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
 
     // update visibility
     var hidden = element.hidden;
-    if (text.trim() !== '' && text.trim() !== element.defaultValue) {
-      element.hidden = false;
-    }
-    else {
-      element.hidden = true;
-    }
+    element.hidden = ["", element.defaultValue].includes(text.trim());
 
     if (hidden !== element.hidden) {
       modeling.updateElement(element, true);
@@ -166,15 +157,11 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
   this.postExecute = postExecute;
 }
 
-UpdateLabelHandler.$inject = [
-  'modeling',
-  'textRenderer'
-];
-
+UpdateLabelHandler.$inject = ["modeling", "textRenderer"];
 
 // helpers ///////////////////////
 
 function isEmptyText(label) {
-  if (typeof label === 'string') return !label || !label.trim(); else
-    return !label || !label.text.trim();
+  if (typeof label === "string") return !label || !label.trim();
+  else return !label || !label.text.trim();
 }

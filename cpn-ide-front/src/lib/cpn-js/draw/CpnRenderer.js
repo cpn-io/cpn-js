@@ -380,6 +380,10 @@ export default function CpnRenderer(
 
   function renderLabel(parentGfx, element, attrs) {
 
+    // if (['', 'empty'].includes(getText(element))) {
+    //   return '';
+    // }
+
     var defaultLabel = true;
 
     // render port label frame

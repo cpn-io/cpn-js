@@ -123,6 +123,13 @@ function createWindow() {
       ]
     },
     {
+      label: 'Edit',
+      submenu: [
+        { label: 'Undo', click() { undo(); }, accelerator: 'Ctrl+Z' },
+        { label: 'Redo', click() { redo(); }, accelerator: 'Ctrl+Y' },
+      ]
+    },
+    {
       label: 'Tools',
       submenu: [
         {
@@ -265,5 +272,11 @@ function openProject() {
 }
 function saveProject() {
   mainWindow.webContents.send('main.menu.save.project');
+}
+function undo() {
+  mainWindow.webContents.send('main.menu.undo');
+}
+function redo() {
+  mainWindow.webContents.send('main.menu.redo');
 }
 

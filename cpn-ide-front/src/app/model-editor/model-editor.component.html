@@ -6,59 +6,63 @@
     </li>
     <div class="divider"></div>
 
-    <li class="nav-item">
-      <a class="nav-link" href="#" (click)="onSelectShapes()">
-        <i class="far fa-square"></i>
-        <span>Select shapes</span>
-      </a>
-    </li>
-
-    <div class="divider"></div>
-
-    <ng-container *ngIf="selectedElements && selectedElements.length > 0">
+    <ng-container *ngIf="!accessCpnService.isSimulation">
 
       <li class="nav-item">
-        <a class="nav-link" href="#" (click)="onClearSelection()">
-          <i class="far fa-window-close"></i>
-          <span>Clear selection</span>
-        </a>
-      </li>
-  
-      <div class="divider"></div>
-
-      <li class="nav-item">
-        <a class="nav-link green" href="#" (click)="onCreateSubst()">
-          <i class="fas fa-paste"></i>
-          <span>Create subpage</span>
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link red" href="#" (click)="onDeleteShapes()">
-          <i class="far fa-trash-alt"></i>
-          <span>Delete shapes</span>
+        <a class="nav-link" href="#" (click)="onSelectShapes()">
+          <i class="far fa-square"></i>
+          <span>Select shapes</span>
         </a>
       </li>
 
       <div class="divider"></div>
 
+      <ng-container *ngIf="selectedElements && selectedElements.length > 0">
 
-    </ng-container>
+        <li class="nav-item">
+          <a class="nav-link" href="#" (click)="onClearSelection()">
+            <i class="far fa-window-close"></i>
+            <span>Clear selection</span>
+          </a>
+        </li>
 
-    <ng-container *ngIf="availableMonitorList.length > 0">
-      <li class="dropdown nav-item">
-        <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle nav-link monitor" data-toggle="dropdown"
-          href="#" id="navbarMonitorsDD">
-          <i class="fas fa-plus"></i>
-          <span>New monitor</span>
-        </a>
-        <div aria-labelledby="navbarDropdown" class="dropdown-menu shadow">
-          <ng-container *ngFor="let mt of availableMonitorList">
-            <a (click)="onCreateNewMonitor(mt)" class="dropdown-item" href="#">{{ mt }}</a>
-          </ng-container>
-        </div>
-      </li>
-      <div class="divider"></div>
+        <div class="divider"></div>
+
+        <li class="nav-item">
+          <a class="nav-link green" href="#" (click)="onCreateSubst()">
+            <i class="fas fa-paste"></i>
+            <span>Create subpage</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link red" href="#" (click)="onDeleteShapes()">
+            <i class="far fa-trash-alt"></i>
+            <span>Delete shapes</span>
+          </a>
+        </li>
+
+        <div class="divider"></div>
+
+
+      </ng-container>
+
+      <ng-container *ngIf="availableMonitorList.length > 0">
+        <li class="dropdown nav-item">
+          <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle nav-link monitor" data-toggle="dropdown"
+            href="#" id="navbarMonitorsDD">
+            <i class="fas fa-plus"></i>
+            <span>New monitor</span>
+          </a>
+          <div aria-labelledby="navbarDropdown" class="dropdown-menu shadow">
+            <ng-container *ngFor="let mt of availableMonitorList">
+              <a (click)="onCreateNewMonitor(mt)" class="dropdown-item" href="#">{{ mt }}</a>
+            </ng-container>
+          </div>
+        </li>
+        <div class="divider"></div>
+      </ng-container>
+
     </ng-container>
   </ul>
 

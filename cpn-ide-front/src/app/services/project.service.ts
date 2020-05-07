@@ -29,6 +29,8 @@ export class ProjectService {
   private currentSelectedElement;
   currentPageId;
 
+  public loadingProject = false;
+
   constructor(private eventService: EventService,
     private http: HttpClient,
     private modelService: ModelService,
@@ -100,36 +102,35 @@ export class ProjectService {
     this.eventService.send(Message.PROJECT_LOAD, { project: this.modelService.getProject() });
     this.project = this.modelService.getProject();
 
-    const xml = this.parseXml(projectXml);
+    this.loadingProject = true;
 
-    if (!xml) {
-      return;
-    }
+    setTimeout(() => {
+      const xml = this.parseXml(projectXml);
 
-    // localStorage.setItem('testProjectJson', '');
-    // const testProjectJson = xml2json(xml, '  ');
-    // localStorage.setItem('testProjectJson', testProjectJson);
+      if (xml) {
+        const x2js = new X2JS();
+        const json = x2js.xml_str2json(projectXml);
 
-    const x2js = new X2JS();
-    const json = x2js.xml_str2json(projectXml);
+        console.log('ProjectService, first convert -----> ', json);
+        if (json) {
 
-    console.log('ProjectService, first convert -----> ', json);
-    if (!json) {
-      return;
-    }
+          localStorage.setItem('projectJson-1', JSON.stringify(json));
 
-    localStorage.setItem('projectJson-1', JSON.stringify(json));
+          this.project = { data: json, name: filename };
 
-    this.project = { data: json, name: filename };
+          // reset simulator for new project file
+          this.accessCpnService.resetSim();
 
-    // reset simulator for new project file
-    this.accessCpnService.resetSim();
+          // reset model service
+          this.modelService.markNewModel();
 
-    // reset model service
-    this.modelService.markNewModel();
+          // load new project
+          this.eventService.send(Message.PROJECT_LOAD, { project: this.project });
+        }
+      }
 
-    // load new project
-    this.eventService.send(Message.PROJECT_LOAD, { project: this.project });
+      this.loadingProject = false;
+    }, 100);
   }
 
   loadEmptyProject() {
@@ -189,7 +190,7 @@ export class ProjectService {
     }
 
     this.modelService.fixShapeNames();
-        
+
     const x2js = new X2JS();
     let xml = (x2js.json2xml_str(cloneObject(this.modelService.getProjectData())));
     xml = `${this.xmlPrefix}\n${xml}`;

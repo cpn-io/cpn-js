@@ -3,12 +3,13 @@ import { CPN_CONNECTION, CPN_PLACE, CPN_TRANSITION, is, isAny } from '../../util
 /**
  * A example context pad provider.
  */
-export default function CpnContextPadProvider(connect, contextPad, modeling, cpnFactory, eventBus) {
+export default function CpnContextPadProvider(connect, contextPad, modeling, cpnFactory, eventBus, directEditing) {
   this._connect = connect;
   this._contextPad = contextPad;
   this._cpnFactory = cpnFactory;
   this._modeling = modeling;
   this._eventBus = eventBus;
+  this._directEditing = directEditing;
 
   this._currentElement = undefined;
 
@@ -26,7 +27,8 @@ CpnContextPadProvider.$inject = [
   'contextPad',
   'modeling',
   'cpnFactory',
-  'eventBus'
+  'eventBus',
+  'directEditing',
 ];
 
 
@@ -77,7 +79,7 @@ CpnContextPadProvider.prototype.getContextPadEntries = function (element) {
     className: 'bpmn-icon-start-event-none',
     title: 'New Place',
     action: {
-      click: function () { self._createShape(event, CPN_PLACE) },
+      click: () => setTimeout(() => self._createShape(event, CPN_PLACE), 100),
     }
   };
   const newTransitionEntry = {
@@ -85,7 +87,7 @@ CpnContextPadProvider.prototype.getContextPadEntries = function (element) {
     className: 'bpmn-icon-task',
     title: 'New Transition',
     action: {
-      click: function () { self._createShape(event, CPN_TRANSITION) },
+      click: () => setTimeout(() => self._createShape(event, CPN_TRANSITION), 100),
     }
   };
 
@@ -113,7 +115,11 @@ CpnContextPadProvider.prototype.getContextPadEntries = function (element) {
 };
 
 CpnContextPadProvider.prototype._createShape = function (event, type) {
-  console.log('CpnPopupMenuProvider.prototype._createPlace, this.position = ', this._position);
+  console.log('CpnContextPadProvider.prototype._createPlace, this.position = ', this._position);
+
+  if (this._directEditing.isActive()) {
+    this._directEditing.complete();
+  }
 
   const contextPad = this._contextPad;
   const currentElement = this._currentElement;

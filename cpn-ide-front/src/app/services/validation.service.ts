@@ -173,7 +173,8 @@ export class ValidationService implements OnDestroy {
 
     if (this.needValidation && this.isAutoValidation) {
       this.needValidation = false;
-      this.eventService.send(Message.SERVER_INIT_NET, {projectData: this.modelService.getProjectData(), complexVerify: false});
+      // this.eventService.send(Message.SERVER_INIT_NET, {projectData: this.modelService.getProjectData(), complexVerify: false});
+      this.accessCpnService.initNet(this.modelService.getProjectData());
     }
 
     this.checkValidationBusy = false;

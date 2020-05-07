@@ -1,3 +1,4 @@
+import { ProjectService } from './services/project.service';
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
 import { SettingsService } from './services/settings.service';
@@ -17,7 +18,8 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     private electronService: ElectronService,
     private settings: SettingsService,
-    public accessCpnService: AccessCpnService) {
+    public accessCpnService: AccessCpnService,
+    public projectService: ProjectService) {
 
     // //check if platform is electron
     // let isElectron: boolean = window && window['process'] && window['process'].type;

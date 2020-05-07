@@ -52,10 +52,22 @@ export class MainToolbarComponent implements OnInit {
     this.eventService.on(Message.MODEL_SAVE_BACKUP, () => this.refreshHistorySteps());
     this.eventService.on(Message.MODEL_RELOAD, () => this.refreshHistorySteps());
 
+    this.ipcService.on(Message.MAIN_MENU_UNDO, () => this.getUndo());
+    this.ipcService.on(Message.MAIN_MENU_REDO, () => this.getRedo());
+
+
     // ipcRenderer.on(Message.MAIN_MENU_OPEN_PROJECT, (event, arg) => {
     //   console.log('Message.MAIN_MENU_OPEN_PROJECT', arg);
     //   this.onOpenProject();
     // });
+
+    this.eventService.on(Message.SERVER_INIT_SIM_DONE, (data) => {
+      if (this.isStart) {
+        this.accessCpnService.setIsSimulation(true);
+        this.eventService.send(Message.SIMULATION_STARTED);
+      }
+      this.isStart = false;
+    });
   }
 
   onDoStep() {
@@ -64,13 +76,9 @@ export class MainToolbarComponent implements OnInit {
 
   onStartSimulation() {
     this.isStart = true;
-    this.accessCpnService.initSim();
-    this.eventService.on(Message.SERVER_INIT_SIM_DONE, (data) => {
-      if (this.isStart) {
-        this.accessCpnService.setIsSimulation(true);
-        this.eventService.send(Message.SIMULATION_STARTED);
-      }
-      this.isStart = false;
+
+    this.accessCpnService.initNet(this.modelService.getProjectData(), true).then(() => {
+      this.accessCpnService.initSim();
     });
   }
 
@@ -81,7 +89,8 @@ export class MainToolbarComponent implements OnInit {
 
   onValidate() {
     // this.validationService.validate();
-    this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData(), complexVerify: true });
+    // this.eventService.send(Message.SERVER_INIT_NET, { projectData: this.modelService.getProjectData(), complexVerify: true });
+    this.accessCpnService.initNet(this.modelService.getProjectData(), true);
   }
 
   onValidateAuto() {
@@ -126,14 +135,15 @@ export class MainToolbarComponent implements OnInit {
 
 
   onNewProject() {
+    this.onStopSimulation();
+
     this.checkSaveChanges().then((resolve) => {
-      this.onStopSimulation();
       this.projectService.loadEmptyProject();
     });
   }
 
   onOpenProject() {
-    console.log(this.constructor.name, 'onOpenProject(), this = ', this);
+    // console.log(this.constructor.name, 'onOpenProject(), this = ', this);
 
     this.onStopSimulation();
 

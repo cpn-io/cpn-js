@@ -43,7 +43,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(private eventService: EventService,
     private settings: SettingsService,
     private modelService: ModelService,
-    private accessCpnService: AccessCpnService,
+    public accessCpnService: AccessCpnService,
     public simulationService: SimulationService,
     public editorPanelService: EditorPanelService) {
   }
@@ -183,7 +183,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     eventBus.on('directEditing.complete', (event) => {
       if (event && event.active && event.active.element) {
         const element = event.active.element;
-        // console.log('DIRECTEDITING.COMPLETE, element = ', element);
+        console.log('DIRECTEDITING.COMPLETE, element = ', element);
 
         if (element.labelType === "initmark") {
           const placeElement = element.labelTarget;
@@ -219,6 +219,12 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.eventService.on(Message.SERVER_INIT_NET_DONE, () => {
       this.updateElementStatus();
     });
+
+    // VALIDATION STATUS
+    this.eventService.on(Message.SERVER_INIT_SIM_DONE, () => {
+      this.onClearSelection();
+    });
+
 
     // BINDINGS
     this.eventService.on(Message.SERVER_GET_BINDINGS, (event) => eventBus.fire('bindingsMenu.open', { data: event.data }));

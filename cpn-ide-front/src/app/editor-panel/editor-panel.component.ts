@@ -26,8 +26,8 @@ import { ElementRef, AfterViewInit } from '@angular/core';
 })
 export class EditorPanelComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  @ViewChild('documentationIFrame', {static: false}) documentationIFrame: ElementRef;
-  @ViewChild('tabsComponent', {static: false}) tabsComponent: TabsContainer;
+  @ViewChild('documentationIFrame', { static: false }) documentationIFrame: ElementRef;
+  @ViewChild('tabsComponent', { static: false }) tabsComponent: TabsContainer;
 
   @ViewChildren(ModelEditorComponent) modelEditorList: QueryList<ModelEditorComponent>;
 
@@ -56,7 +56,7 @@ export class EditorPanelComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.eventService.on(Message.PROJECT_LOAD, () => this.loadProject());
     this.eventService.on(Message.TREE_SELECT_DECLARATION_NODE, () => this.openMlEditor());
-    this.eventService.on(Message.PAGE_TAB_OPEN, (event) => this.openModelEditor(event.pageObject).then());
+    this.eventService.on(Message.PAGE_TAB_OPEN, (event) => setTimeout(() => this.openModelEditor(event.pageObject).then(), 1000));
     this.eventService.on(Message.PAGE_TAB_CLOSE, (event) => this.deleteTab(event.id));
     this.eventService.on(Message.PAGE_CHANGE_NAME, (event) => this.changeName(event.id, event.name));
   }

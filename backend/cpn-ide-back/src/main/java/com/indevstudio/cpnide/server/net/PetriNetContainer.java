@@ -157,7 +157,7 @@ public class PetriNetContainer {
                 .build();
     }
 
-    public void InitSimulator(String sessionId) throws Exception {
+    public void InitSimulator(String sessionId, Options options) throws Exception {
         synchronized (lock) {
             PetriNet net = usersNets.get(sessionId);
             if (net == null)
@@ -172,6 +172,15 @@ public class PetriNetContainer {
             // HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
 
             // usersSimulator.put(sessionId, sim);
+            boolean fairnessBE = false;
+            boolean fairnessGlobalBE = false;
+
+            try {
+                fairnessBE = Boolean.parseBoolean(options.getOptions().get("fair_be"));
+            }catch (Exception ignored){}
+            try {
+                fairnessGlobalBE = Boolean.parseBoolean(options.getOptions().get("global_fairness"));
+            }catch (Exception ignored){}
 
             Checker checker = usersCheckers.get(sessionId);// new Checker(net, null, sim);
 
@@ -195,6 +204,7 @@ public class PetriNetContainer {
             // checker.instantiateSMLInterface();
 
             sim.setTarget((org.cpntools.accesscpn.model.impl.PetriNetImpl) net);
+            sim.setFairnessOptions(fairnessBE, fairnessGlobalBE);
 
             sim.initialState();
             sim.refreshViews();

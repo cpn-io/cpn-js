@@ -281,7 +281,7 @@ export class AccessCpnService {
             this.eventService.send(Message.SERVER_INIT_NET_DONE, { data: data, errorIssues: data.issues, warningIssues: data.warnings });
 
             this.reportReady();
-            
+
             resolve();
           },
           (error) => {
@@ -404,6 +404,17 @@ export class AccessCpnService {
       return;
     }
 
+    const cpn = this.modelService.getCpn();
+    const fair_options_arr = cpn.options && cpn.options.option ? cpn.options.option.filter(o => o._name.includes('fair')) : [];
+    console.log('AccessCpnService, initSim(), fair_options_arr = ', fair_options_arr);
+
+    const fair_options = {};
+    fair_options_arr.forEach(o => fair_options[o._name] = o.value.boolean);
+    console.log('AccessCpnService, initSim(), fair_options = ', fair_options);
+
+    const body = { options: fair_options };
+    console.log('AccessCpnService, initSim(), body = ', body);
+
     this.simInitialized = false;
 
     // this.tokenData = [];
@@ -420,7 +431,7 @@ export class AccessCpnService {
     console.log('AccessCpnService, initSim(), START, this.sessionId = ', this.sessionId);
 
     const url = this.settingsService.getServerUrl() + '/api/v2/cpn/sim/init';
-    this.http.get(url, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
+    this.http.post(url, body, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
       (data: any) => {
         this.initSimProcessing = false;
         console.log('AccessCpnService, initSim(), SUCCESS, data = ', data);

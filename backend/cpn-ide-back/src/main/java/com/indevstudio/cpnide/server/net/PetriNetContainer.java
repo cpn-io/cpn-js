@@ -202,13 +202,13 @@ public class PetriNetContainer {
             checker.generateNonPlaceInstances();
             checker.initialiseSimulationScheduler();
             // checker.instantiateSMLInterface();
-
             sim.setTarget((org.cpntools.accesscpn.model.impl.PetriNetImpl) net);
-            sim.setFairnessOptions(fairnessBE, fairnessGlobalBE);
 
             sim.initialState();
             sim.refreshViews();
 
+            if(fairnessBE || fairnessGlobalBE)
+                sim.setFairnessOptions(fairnessBE, fairnessGlobalBE);
             // checker.instantiateSMLInterface();
 
             // usersSimulator.put(sessionId, sim);

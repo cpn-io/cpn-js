@@ -22,7 +22,7 @@ public class SimulatorController {
     @Autowired
     PetriNetContainer _netConatiner;
 
-    @GetMapping(value = "/sim/init")
+    @PostMapping(value = "/sim/init")
     @ApiOperation(nickname = "Initialize simulation", value = "Init (or ReInit) simulator")
     @ApiResponses(
             value = {
@@ -30,9 +30,9 @@ public class SimulatorController {
                     @ApiResponse(code = 400, message = "Incorrect Request", response = ErrorDescription.class),
                     @ApiResponse(code = 500, message = "Internal error. Object with description", response = ErrorDescription.class)
             })
-    public ResponseEntity simInit(@RequestHeader(value = "X-SessionId") String sessionId) {
+    public ResponseEntity simInit(@RequestHeader(value = "X-SessionId") String sessionId, @RequestBody Options options) {
         return RequestBaseLogic.HandleRequest(sessionId, () -> {
-            _netConatiner.InitSimulator(sessionId);
+            _netConatiner.InitSimulator(sessionId, options);
             NetInfo netInf = new NetInfo(Arrays.asList(),_netConatiner.getEnableTransitions(sessionId), _netConatiner.getTokensAndMarking(sessionId));
             return ResponseEntity.status(HttpStatus.OK).body(netInf);
         });

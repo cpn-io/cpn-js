@@ -87,9 +87,8 @@ dependencies {
 
     compile group: 'commons-io', name: 'commons-io', version: '2.6'
 
-
-    compile 'org.apache.commons:commons-lang3:3.5'
     compile 'com.google.code.gson:gson:2.8.2'
+    compile 'org.apache.commons:commons-lang3:3.5'
     compile 'org.springframework:spring-context-support:5.0.5.RELEASE'
     compile 'com.jayway.jsonpath:json-path:2.4.0'
     compile 'io.springfox:springfox-swagger2:2.7.0'

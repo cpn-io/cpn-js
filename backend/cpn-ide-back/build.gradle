@@ -9,7 +9,7 @@ plugins {
 println "java.home = " + System.getProperty("java.home")
 
 group 'com.indev.cpn.rest'
-version '1.25-SNAPSHOT'
+version '1.26-SNAPSHOT'
 
 sourceSets {
 

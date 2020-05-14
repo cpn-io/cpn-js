@@ -788,6 +788,11 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.updateAvailableMonitorList(this.selectedElements);
   }
 
+  onCopy() {
+  }
+  onPaste() {
+  }
+
   onCreateSubst() {
     this.cpnFactory.extractSubpage();
     this.selectionProvider.deselectAll();

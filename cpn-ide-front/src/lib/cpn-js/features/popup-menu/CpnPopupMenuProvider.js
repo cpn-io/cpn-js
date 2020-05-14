@@ -1,33 +1,41 @@
+import { forEach, filter } from "min-dash";
 import {
-  forEach,
-  filter
-} from 'min-dash';
-import {is, CPN_PLACE, CPN_TRANSITION, CPN_TEXT_ANNOTATION, CPN_LABEL} from '../../util/ModelUtil';
-import {getNextId} from '../modeling/CpnElementFactory';
+  is,
+  CPN_PLACE,
+  CPN_TRANSITION,
+  CPN_TEXT_ANNOTATION,
+  CPN_LABEL,
+} from "../../util/ModelUtil";
+import { getNextId } from "../modeling/CpnElementFactory";
 
-import {
-  event as domEvent
-} from 'min-dom';
+import { event as domEvent } from "min-dom";
 
 CpnPopupMenuProvider.$inject = [
-  'create',
-  'cpnFactory',
-  'canvas',
-  'popupMenu',
-  'modeling',
-  'connect',
-  'rules',
-  'translate',
-  'eventBus'
+  "create",
+  "cpnFactory",
+  "canvas",
+  "popupMenu",
+  "modeling",
+  "connect",
+  "rules",
+  "translate",
+  "eventBus",
 ];
-
 
 /**
  * This module is an element agnostic replace menu provider for the popup menu.
  */
-export default function CpnPopupMenuProvider(create, cpnFactory, canvas, popupMenu,
-                                             modeling, connect, rules, translate, eventBus) {
-
+export default function CpnPopupMenuProvider(
+  create,
+  cpnFactory,
+  canvas,
+  popupMenu,
+  modeling,
+  connect,
+  rules,
+  translate,
+  eventBus
+) {
   this._create = create;
   this._cpnFactory = cpnFactory;
   this._canvas = canvas;
@@ -44,19 +52,16 @@ export default function CpnPopupMenuProvider(create, cpnFactory, canvas, popupMe
   this._position = undefined;
   this._editable = undefined;
 
-
   // domEvent.bind(container, 'mousedown', function (event) {
   //   console.log('CpnPopupMenuProvider(), mousedown ', event);
   // });
-
 }
-
 
 /**
  * Register replace menu provider in the popup menu
  */
 CpnPopupMenuProvider.prototype.register = function () {
-  this._popupMenu.registerProvider('cpnPopupMenu', this);
+  this._popupMenu.registerProvider("cpnPopupMenu", this);
 };
 
 CpnPopupMenuProvider.prototype.open = function (element, position) {
@@ -64,22 +69,28 @@ CpnPopupMenuProvider.prototype.open = function (element, position) {
   this._position = position.cursor;
   this._editable = position.editable;
 
-  console.log('CpnPopupMenuProvider, open(), element, _position = ', element, position);
+  console.log(
+    "CpnPopupMenuProvider, open(), element, _position = ",
+    element,
+    position
+  );
 
-  if (element.id.includes('root')) {
+  if (element.id.includes("root")) {
     position.cursor.y += 90;
   } else {
     position.cursor.y += 40;
   }
 
-  this._popupMenu.open(element, 'cpnPopupMenu', position);
+  this._popupMenu.open(element, "cpnPopupMenu", position);
 };
 
 CpnPopupMenuProvider.prototype.close = function () {
-  if (this._popupMenu._current && this._popupMenu._current.className === 'cpnPopupMenu')
+  if (
+    this._popupMenu._current &&
+    this._popupMenu._current.className === "cpnPopupMenu"
+  )
     this._popupMenu.close();
 };
-
 
 /**
  * Get all entries from replaceOptions for the given element and apply filters
@@ -90,71 +101,79 @@ CpnPopupMenuProvider.prototype.close = function () {
  * @return {Array<Object>} a list of menu entry items
  */
 CpnPopupMenuProvider.prototype.getEntries = function (element) {
-
   const self = this;
 
   // console.log('CpnPopupMenuProvider.prototype.getEntries, element = ', element);
 
   var entries = [];
-  var event = new MouseEvent('contextmenu');
+  var event = new MouseEvent("contextmenu");
 
   var createPlaceMenuEntry = {
-    id: '_menuItem_createPlace',
-    label: 'New Place',
-    className: 'bpmn-icon-start-event-none',
+    id: "_menuItem_createPlace",
+    label: "New Place",
+    className: "bpmn-icon-start-event-none",
     action: function () {
-      self._createShape(event, CPN_PLACE)
-    }
+      self._createShape(event, CPN_PLACE);
+    },
   };
 
   var createTransitionMenuEntry = {
-    id: '_menuItem_createTransition',
-    label: 'New Transition',
-    className: 'bpmn-icon-task',
+    id: "_menuItem_createTransition",
+    label: "New Transition",
+    className: "bpmn-icon-task",
     action: function () {
-      self._createShape(event, CPN_TRANSITION)
-    }
+      self._createShape(event, CPN_TRANSITION);
+    },
   };
 
   var createSubpageMenuEntry = {
-    id: '_menuItem_createSubpage',
-    label: 'New Subpage',
-    className: 'bpmn-icon-subprocess-collapsed',
+    id: "_menuItem_createSubpage",
+    label: "New Subpage",
+    className: "bpmn-icon-subprocess-collapsed",
     action: function () {
-      self._createSubpage(event)
-    }
+      self._createSubpage(event);
+    },
   };
 
   var createAuxMenuEntry = {
-    id: '_menuItem_createAux',
-    label: 'New Aux',
-    className: 'bpmn-icon-script',
+    id: "_menuItem_createAux",
+    label: "New Aux",
+    className: "bpmn-icon-script",
     action: function () {
-      self._createShape(event, CPN_TEXT_ANNOTATION)
-    }
+      self._createShape(event, CPN_TEXT_ANNOTATION);
+    },
+  };
+
+  var createPasteMenuEntry = {
+    id: "_menuItem_paste",
+    label: "Paste",
+    className: "bpmn-icon-task",
+    action: function () {
+      self._paste(event);
+    },
   };
 
   var runScriptOnServer = {
-    id: '_menuItem_script',
-    label: 'Run script',
+    id: "_menuItem_script",
+    label: "Run script",
     // className: 'fas fa-cogs',
-    className: 'bpmn-icon-service',
+    className: "bpmn-icon-service",
     action: () => {
       self._popupMenu.close();
-      console.log('TEXT ',this._element.text)
-      this._eventBus.fire('aux.run',{script:this._element.text});
-    }
+      console.log("TEXT ", this._element.text);
+      this._eventBus.fire("aux.run", { script: this._element.text });
+    },
   };
 
   var deleteMenuEntry = {
-    id: '_menuItem_delete',
-    label: 'Delete',
+    id: "_menuItem_delete",
+    label: "Delete",
     // className: 'popup-menu-icon-delete',
-    className: 'bpmn-icon-trash',
+    className: "bpmn-icon-trash",
     action: function () {
       self._popupMenu.close();
       self._modeling.removeElements([element]);
-    }
+    },
   };
 
   // var connectMenuEntry = {
@@ -167,11 +186,12 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
   //   }
   // };
 
-  if (element.id === '__implicitroot' && this._editable) {
+  if (element.id === "__implicitroot" && this._editable) {
     entries.push(createPlaceMenuEntry);
     entries.push(createTransitionMenuEntry);
     entries.push(createSubpageMenuEntry);
     entries.push(createAuxMenuEntry);
+    // entries.push(createPasteMenuEntry);
   }
 
   // if (is(element, CPN_PLACE)) {
@@ -186,7 +206,7 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
   //   entries.push(deleteMenuEntry);
   // }
 
-  if (element.type === CPN_LABEL && element.labelType === 'aux') {
+  if (element.type === CPN_LABEL && element.labelType === "aux") {
     if (this._editable) {
       entries.push(deleteMenuEntry);
     } else {
@@ -196,7 +216,6 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
 
   return entries;
 };
-
 
 /**
  * Get a list of header items for the given element. This includes buttons
@@ -217,35 +236,57 @@ CpnPopupMenuProvider.prototype._createShape = function (event, type) {
   const position = toLocalPoint(this._canvas, this._position);
   position.y -= 90;
 
-  let element = this._cpnFactory.createShape(undefined, undefined, type, position, true);
+  let element = this._cpnFactory.createShape(
+    undefined,
+    undefined,
+    type,
+    position,
+    true
+  );
 
   setTimeout(() => {
-    this._eventBus.fire('element.click', {element: element});
-    this._eventBus.fire('shape.create.end', {elements: [element]});
-    this._eventBus.fire('shape.editing.activate', {shape: element});
-    this._eventBus.fire('shape.contextpad.activate', {shape: element});
+    this._eventBus.fire("element.click", { element: element });
+    this._eventBus.fire("shape.create.end", { elements: [element] });
+    this._eventBus.fire("shape.editing.activate", { shape: element });
+    this._eventBus.fire("shape.contextpad.activate", { shape: element });
   }, 1);
-}
+};
 
 CpnPopupMenuProvider.prototype._createSubpage = function (event) {
-  console.log('CpnPopupMenuProvider.prototype._createSubpage, this.position = ', this._position);
+  console.log(
+    "CpnPopupMenuProvider.prototype._createSubpage, this.position = ",
+    this._position
+  );
 
   this._popupMenu.close();
   const position = toLocalPoint(this._canvas, this._position);
 
-  let transCpnElement = this._modeling.createShapeCpnElement(position, CPN_TRANSITION);
+  let transCpnElement = this._modeling.createShapeCpnElement(
+    position,
+    CPN_TRANSITION
+  );
 
   setTimeout(() => {
-    transCpnElement = this._modeling.declareSubPage(transCpnElement, 'Subpage', getNextId());
+    transCpnElement = this._modeling.declareSubPage(
+      transCpnElement,
+      "Subpage",
+      getNextId()
+    );
 
-    let element = this._cpnFactory.createShape(undefined, transCpnElement, CPN_TRANSITION, position, true);
-    this._eventBus.fire('shape.create.end', {elements: [element]});
-    this._eventBus.fire('shape.editing.activate', {shape: element});
-    this._eventBus.fire('shape.contextpad.activate', {shape: element});
+    let element = this._cpnFactory.createShape(
+      undefined,
+      transCpnElement,
+      CPN_TRANSITION,
+      position,
+      true
+    );
+    this._eventBus.fire("shape.create.end", { elements: [element] });
+    this._eventBus.fire("shape.editing.activate", { shape: element });
+    this._eventBus.fire("shape.contextpad.activate", { shape: element });
 
     this._modeling.removeEmptyConnections();
   }, 1);
-}
+};
 
 /**
  * Convert a global event into local coordinates
@@ -257,7 +298,6 @@ function toLocalPoint(canvas, globalPosition) {
   var clientRect = canvas._container.getBoundingClientRect();
   return {
     x: viewbox.x + (globalPosition.x - clientRect.left) / viewbox.scale,
-    y: viewbox.y + (globalPosition.y - clientRect.top) / viewbox.scale
+    y: viewbox.y + (globalPosition.y - clientRect.top) / viewbox.scale,
   };
 }
-

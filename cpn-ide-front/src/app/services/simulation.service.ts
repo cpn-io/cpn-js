@@ -28,7 +28,7 @@ export class SimulationService {
   simulationConfig = {
     multi_step: {
       steps: 50,
-      delay: 1000
+      delay: 500
     },
 
     multi_step_ff: {

@@ -305,8 +305,16 @@ export class AccessCpnService {
     this.addWarnings(data, this.checkNullText(transitions, 'transition', nullError));
 
     const pages = this.modelService.getAllPages();
+    // nodeToArray(pages).forEach(page => {
+    //   const list = nodeToArray(page.place).concat(nodeToArray(page.trans))
+    //   this.addWarnings(data, this.checkSameNames(list, 'page', sameError));
+    // });
     nodeToArray(pages).forEach(page => {
-      const list = nodeToArray(page.place).concat(nodeToArray(page.trans))
+      const list = nodeToArray(page.place);
+      this.addWarnings(data, this.checkSameNames(list, 'page', sameError));
+    });
+    nodeToArray(pages).forEach(page => {
+      const list = nodeToArray(page.trans);
       this.addWarnings(data, this.checkSameNames(list, 'page', sameError));
     });
 

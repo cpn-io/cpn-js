@@ -608,35 +608,36 @@ public class PetriNetContainer {
 
     public String makeStepFastForward(String sessionId, MultiStep stepParam) throws Exception {
         // String type = requestBody.get(0).get("type").toString();
-        HighLevelSimulator sim = usersSimulator.get(sessionId);
-        int i = 0;
-        String simulationEnded = "";
-        int maxSteps = stepParam.getAmount();
-        while (i < maxSteps) {
-            List<Instance<Transition>> enabled = new ArrayList<>();
-            List<Instance<Transition>> all = sim.getAllTransitionInstances();
-
-            for (Instance<Transition> ti : all) {
-
-                if (sim.isEnabled(ti))
-                    enabled.add(ti);
-            }
-
-            if (enabled.isEmpty()) {
-                String result = sim.increaseTime();
-                if (result == null) {
-                    continue; // --> go back and check for enabled transitions
-                } else {
-                    simulationEnded = result;
-                    break; // end/stop simulation, report result to user
-                }
-            }
-
-            // fire the first enabled transition
-            Instance<Transition> ti = enabled.get(0);
-            sim.execute(ti);
-            i++;
-        }
+//        HighLevelSimulator sim = usersSimulator.get(sessionId);
+//        int i = 0;
+//        String simulationEnded = "";
+//        int maxSteps = stepParam.getAmount();
+//        while (i < maxSteps) {
+//            List<Instance<Transition>> enabled = new ArrayList<>();
+//            List<Instance<Transition>> all = sim.getAllTransitionInstances();
+//
+//            for (Instance<Transition> ti : all) {
+//
+//                if (sim.isEnabled(ti))
+//                    enabled.add(ti);
+//            }
+//
+//            if (enabled.isEmpty()) {
+//                String result = sim.increaseTime();
+//                if (result == null) {
+//                    continue; // --> go back and check for enabled transitions
+//                } else {
+//                    simulationEnded = result;
+//                    break; // end/stop simulation, report result to user
+//                }
+//            }
+//
+//            // fire the first enabled transition
+//            Instance<Transition> ti = enabled.get(0);
+//            sim.execute(ti);
+//            i++;
+//        }
+        _sim.execute(stepParam.getAmount());
 
         return getOutputPathContent(sessionId);
     }

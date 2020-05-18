@@ -132,7 +132,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     this.loadPages();
 
     // setTimeout(() => this.goToDeclaration('ID1438190116'), 100);
-    setTimeout(() => this.goToFirstPage(), 100);
+    setTimeout(() => this.goToFirstPage(), 1000);
 
     this.settings.setCounter(this.modelService.checkNumberOfMonitors() + 1);
   }

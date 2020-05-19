@@ -12,7 +12,7 @@ import { CPN_CONNECTION, CPN_PLACE, CPN_TEXT_ANNOTATION, CPN_TRANSITION, is } fr
 export function importCpnPage(diagram, cpnPageElement, alignToCenter) {
   return new Promise((resolve, reject) => {
 
-    // console.log('Importer.importCpnPage(), cpnPageElement = ', cpnPageElement);
+    console.log('Importer.importCpnPage(), cpnPageElement = ', cpnPageElement);
 
     var importer, eventBus, translate, canvas, elementRegistry, layouter;
 

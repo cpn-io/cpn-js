@@ -68,6 +68,10 @@ var SELECT_STROKE_COLOR = '#00cc00';
 var SELECT_FILL_COLOR = '#00ff0011';
 var SELECT_STROKE_THICK = 3;
 
+var HILIGHT_STROKE_COLOR = '#0000cc';
+var HILIGHT_FILL_COLOR = '#9999ff22';
+var HILIGHT_STROKE_THICK = 2;
+
 var DEFAULT_LABEL_FILL_COLOR = '#ebebeb00';
 
 var PORT_FILL_COLOR = '#e0e0fd';
@@ -607,6 +611,9 @@ export default function CpnRenderer(
     // Draw cpn status (error, warning, ready)
     drawCpnStatus(parentGfx, element, 'ellipse');
 
+    // Draw hilighted state
+    drawHilightedStatus(parentGfx, element);
+
     return ellipse;
   }
 
@@ -665,6 +672,9 @@ export default function CpnRenderer(
     // Draw cpn status (error, warning, ready)
     drawCpnStatus(parentGfx, element, 'rect');
 
+    // Draw hilighted state
+    drawHilightedStatus(parentGfx, element);
+
     return rect;
   }
 
@@ -693,6 +703,32 @@ export default function CpnRenderer(
       svgAppend(parentGfx, sel);
     }
   }
+
+  function drawHilightedStatus(parentGfx, element) {
+    if (element.hilighted) {
+      var box = getBox(element);
+
+      const cx = parseFloat(box.width / 2);
+      const cy = parseFloat(box.height / 2);
+
+      const d = 16;
+
+      const sel = svgCreate('rect');
+      svgAttr(sel, {
+        x: -d / 2,
+        y: -d / 2,
+        width: cx * 2 + d,
+        height: cy * 2 + d
+      });
+      svgAttr(sel, {
+        fill: HILIGHT_FILL_COLOR,
+        // stroke: HILIGHT_STROKE_COLOR,
+        // strokeWidth: HILIGHT_STROKE_THICK,
+      });
+      svgAppend(parentGfx, sel);
+    }
+  }
+
 
   function drawCpnStatus(parentGfx, element, type) {
     const strokeWidth = getStrokeWidth(element) + 1;

@@ -201,6 +201,15 @@ export default function CpnUpdater(
 
       selection.select(element);
     }
+
+    modeling.clearHilight();
+
+    if (element.labelTarget) {
+      element.hilighted = true;
+      modeling.repaintElement(element);
+      element.labelTarget.hilighted = true;
+      modeling.repaintElement(element.labelTarget);
+    }
   });
 
   eventBus.on("element.click", function (event) {
@@ -319,7 +328,9 @@ export default function CpnUpdater(
     const markingElement = tokenElement.label;
 
     markingElement.hidden = !markingElement.hidden;
-    markingElement.cpnElement._hidden = markingElement.hidden ? "true" : "false";
+    markingElement.cpnElement._hidden = markingElement.hidden
+      ? "true"
+      : "false";
 
     // if (!markingElement.hidden) {
     //   var newBounds = textRenderer.getExternalLabelBounds(markingElement, markingElement.text);
@@ -404,7 +415,6 @@ export default function CpnUpdater(
         if (is(element, CPN_TOKEN_LABEL)) {
           const labelTarget = element.labelTarget;
           if (labelTarget && is(labelTarget, CPN_PLACE)) {
-            
             // console.log(
             //   "CpnUpdater().updateCpnElement(), CPN_TOKEN_LABEL, element = ",
             //   element
@@ -449,9 +459,7 @@ export default function CpnUpdater(
               element.x - (labelTarget.x + labelTarget.width + 15)
             ).toFixed(6);
             cpnElement._y = Math.round(
-              -1 *
-                (element.y -
-                  (labelTarget.y))
+              -1 * (element.y - labelTarget.y)
             ).toFixed(6);
 
             // console.log(

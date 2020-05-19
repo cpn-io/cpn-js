@@ -1,9 +1,10 @@
-@import '@angular/material/prebuilt-themes/indigo-pink.css';
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
 
 @import "./../node_modules/angular-tree-component/dist/angular-tree-component.css";
 @import "./../node_modules/diagram-js/assets/diagram-js.css";
 
 @import "./lib/cpn-js/resources/bpmn-font/css/bpmn.css";
+@import "./assets/fontawesome/css/all.min.css";
 
 html {
   background: rgb(248, 249, 250);
@@ -307,4 +308,83 @@ body {
   .pane {
     z-index: 1;
   }
+}
+
+// cpn-js icons
+
+[class^="cpn-js-icon-"]:before,
+[class*=" cpn-js-icon-"]:before {
+  font-family: "Font Awesome 5 Free";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin: 0.1em;
+  text-align: center;
+  opacity: 0.8;
+
+  /* For safety - reset parent styles, that can break glyph codes*/
+  font-variant: normal;
+  text-transform: none;
+  transform: scale(1, 0.8);
+
+  /* fix buttons height, for twitter bootstrap */
+  line-height: 1em;
+
+  /* Animation center compensation - margins should be symmetric */
+  /* remove if not needed */
+  /* margin-left: .2em; */
+
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
+
+  /* Font smoothing. That was taken from TWBS */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Uncomment for 3D effect */
+  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+}
+
+.djs-context-pad {
+  [class^="cpn-js-icon-"]:before,
+  [class*=" cpn-js-icon-"]:before {
+    margin: 0;
+  }
+}
+
+.cpn-js-icon-transition:before {
+  // content: "\f0c8";
+  content: url("./assets/img/trans.png");
+}
+
+.cpn-js-icon-place:before {
+  content: "\f111";
+}
+
+.cpn-js-icon-aux:before {
+  content: "\f249";
+}
+
+.cpn-js-icon-run:before {
+  content: "\f144";
+}
+
+.cpn-js-icon-trash:before {
+  content: "\f2ed";
+}
+
+.cpn-js-icon-paste:before {
+  content: "\f0ea";
+}
+
+.cpn-js-icon-subpage:before {
+  content: "\f24d";
+}
+
+.cpn-js-icon-connection:before {
+  content: "\f35d";
 }

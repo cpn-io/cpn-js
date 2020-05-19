@@ -76,7 +76,7 @@ CpnPopupMenuProvider.prototype.open = function (element, position) {
   );
 
   if (element.id.includes("root")) {
-    position.cursor.y += 90;
+    position.cursor.y += 110;
   } else {
     position.cursor.y += 40;
   }
@@ -111,7 +111,7 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
   var createPlaceMenuEntry = {
     id: "_menuItem_createPlace",
     label: "New Place",
-    className: "bpmn-icon-start-event-none",
+    className: "cpn-js-icon-place",
     action: function () {
       self._createShape(event, CPN_PLACE);
     },
@@ -120,7 +120,7 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
   var createTransitionMenuEntry = {
     id: "_menuItem_createTransition",
     label: "New Transition",
-    className: "bpmn-icon-task",
+    className: "cpn-js-icon-transition",
     action: function () {
       self._createShape(event, CPN_TRANSITION);
     },
@@ -129,7 +129,7 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
   var createSubpageMenuEntry = {
     id: "_menuItem_createSubpage",
     label: "New Subpage",
-    className: "bpmn-icon-subprocess-collapsed",
+    className: "cpn-js-icon-subpage",
     action: function () {
       self._createSubpage(event);
     },
@@ -138,7 +138,7 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
   var createAuxMenuEntry = {
     id: "_menuItem_createAux",
     label: "New Aux",
-    className: "bpmn-icon-script",
+    className: "cpn-js-icon-aux",
     action: function () {
       self._createShape(event, CPN_TEXT_ANNOTATION);
     },
@@ -147,7 +147,7 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
   var createPasteMenuEntry = {
     id: "_menuItem_paste",
     label: "Paste",
-    className: "bpmn-icon-task",
+    className: "cpn-js-icon-paste",
     action: function () {
       self._paste(event);
     },
@@ -157,7 +157,7 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
     id: "_menuItem_script",
     label: "Run script",
     // className: 'fas fa-cogs',
-    className: "bpmn-icon-service",
+    className: "cpn-js-icon-run",
     action: () => {
       self._popupMenu.close();
       console.log("TEXT ", this._element.text);
@@ -169,7 +169,7 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
     id: "_menuItem_delete",
     label: "Delete",
     // className: 'popup-menu-icon-delete',
-    className: "bpmn-icon-trash",
+    className: "cpn-js-icon-trash",
     action: function () {
       self._popupMenu.close();
       self._modeling.removeElements([element]);

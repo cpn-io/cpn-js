@@ -626,6 +626,19 @@ Modeling.prototype.clearErrorMarking = function () {
   }
 };
 
+Modeling.prototype.clearHilight = function () {
+  const elements = this._canvas._elementRegistry._elements;
+
+  for (const key of Object.keys(elements)) {
+    const element = elements[key].element;
+    if (element.hilighted) {
+      element.hilighted = false;
+      this.repaintElement(element);
+    }
+  }
+};
+
+
 Modeling.prototype.setDefaultValue = function (key, value) {
   // console.log('Modeling.prototype.setDefaultValue(), defaultValues = ', defaultValues);
   setDefaultValue(key, value);

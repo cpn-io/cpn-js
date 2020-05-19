@@ -58,7 +58,7 @@ CpnContextPadProvider.prototype.getContextPadEntries = function (element) {
 
   const deleteEntry = {
     group: 'delete',
-    className: 'bpmn-icon-trash',
+    className: 'cpn-js-icon-trash',
     title: 'Remove',
     action: {
       click: removeElement,
@@ -76,7 +76,7 @@ CpnContextPadProvider.prototype.getContextPadEntries = function (element) {
   };
   const newPlaceEntry = {
     group: 'new-place',
-    className: 'bpmn-icon-start-event-none',
+    className: 'cpn-js-icon-place',
     title: 'New Place',
     action: {
       click: () => setTimeout(() => self._createShape(event, CPN_PLACE), 100),
@@ -84,7 +84,7 @@ CpnContextPadProvider.prototype.getContextPadEntries = function (element) {
   };
   const newTransitionEntry = {
     group: 'new-transition',
-    className: 'bpmn-icon-task',
+    className: 'cpn-js-icon-transition',
     title: 'New Transition',
     action: {
       click: () => setTimeout(() => self._createShape(event, CPN_TRANSITION), 100),

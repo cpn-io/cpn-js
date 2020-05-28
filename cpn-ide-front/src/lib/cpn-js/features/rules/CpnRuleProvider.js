@@ -14,17 +14,17 @@ import {
   isAny,
 } from "../../util/ModelUtil";
 
-export default function CpnRules(eventBus, modeling) {
+export default function CpnRuleProvider(eventBus, modeling) {
   RuleProvider.call(this, eventBus);
 
   this._modeling = modeling;
 }
 
-CpnRules.$inject = ["eventBus", "modeling"];
+CpnRuleProvider.$inject = ["eventBus", "modeling"];
 
-inherits(CpnRules, RuleProvider);
+inherits(CpnRuleProvider, RuleProvider);
 
-CpnRules.prototype.init = function () {
+CpnRuleProvider.prototype.init = function () {
   const self = this;
 
   this.addRule("shape.create", function (context) {
@@ -106,6 +106,23 @@ CpnRules.prototype.init = function () {
 
     return canAttach(context.target, context.shapes[0]);
   });
+
+  this.addRule("element.copy", function (context) {
+    console.log("RULE element.copy, context = ", context);
+    return true;
+  });
+  this.addRule("element.paste", function (context) {
+    console.log("RULE element.paste, context = ", context);
+    return true;
+  });
+  this.addRule("elements.copy", function (context) {
+    console.log("RULE elements.copy, context = ", context);
+    return true;
+  });
+  this.addRule("elements.paste", function (context) {
+    console.log("RULE elements.paste, context = ", context);
+    return true;
+  });
 };
 
 function canAttach(target, shape) {
@@ -117,7 +134,7 @@ function canCreate(target, shape) {
   return !isCpn(target);
 }
 
-CpnRules.prototype.canConnect = function (source, target) {
+CpnRuleProvider.prototype.canConnect = function (source, target) {
   if (!isAny(source, [CPN_PLACE, CPN_TRANSITION])) return false;
   if (!isAny(target, [CPN_PLACE, CPN_TRANSITION])) return false;
 
@@ -127,7 +144,7 @@ CpnRules.prototype.canConnect = function (source, target) {
   );
 };
 
-CpnRules.prototype.canStartConnect = function (source) {
+CpnRuleProvider.prototype.canStartConnect = function (source) {
   return is(source, CPN_PLACE) || is(source, CPN_TRANSITION);
 };
 

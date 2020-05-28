@@ -20,6 +20,8 @@ CpnPopupMenuProvider.$inject = [
   "rules",
   "translate",
   "eventBus",
+  "copyPaste",
+  "elementRegistry",
 ];
 
 /**
@@ -34,7 +36,9 @@ export default function CpnPopupMenuProvider(
   connect,
   rules,
   translate,
-  eventBus
+  eventBus,
+  copyPaste,
+  elementRegistry
 ) {
   this._create = create;
   this._cpnFactory = cpnFactory;
@@ -45,12 +49,16 @@ export default function CpnPopupMenuProvider(
   this._rules = rules;
   this._translate = translate;
   this._eventBus = eventBus;
+  this._elementRegistry = elementRegistry;
+  this._copyPaste = copyPaste;
 
   this.register();
 
   this._element = undefined;
   this._position = undefined;
   this._editable = undefined;
+
+  this._offsetY = 90;
 
   // domEvent.bind(container, 'mousedown', function (event) {
   //   console.log('CpnPopupMenuProvider(), mousedown ', event);
@@ -234,7 +242,7 @@ CpnPopupMenuProvider.prototype._createShape = function (event, type) {
 
   this._popupMenu.close();
   const position = toLocalPoint(this._canvas, this._position);
-  position.y -= 90;
+  position.y -= this._offsetY;
 
   let element = this._cpnFactory.createShape(
     undefined,
@@ -286,6 +294,32 @@ CpnPopupMenuProvider.prototype._createSubpage = function (event) {
 
     this._modeling.removeEmptyConnections();
   }, 1);
+};
+
+CpnPopupMenuProvider.prototype._paste = function (event) {
+  var root = this._canvas.getRootElement();
+
+  this._popupMenu.close();
+  const position = toLocalPoint(this._canvas, this._position);
+  position.y -= this._offsetY;
+
+  var selectedElements = this._elementRegistry.filter(function (element) {
+    return element.selected;
+  });
+
+  // console.log("paste, root.children.length = ", root.children.length);
+
+  selectedElements.forEach((element) => {
+    const newCpnElement = { ...element.cpnElement, _id: getNextId() };
+    console.log("paste, newCpnElement = ", newCpnElement);
+    const newElement = this._cpnFactory.createShape(
+      undefined,
+      newCpnElement,
+      element.type,
+      position,
+      true
+    );
+  });
 };
 
 /**

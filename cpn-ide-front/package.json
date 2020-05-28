@@ -1,6 +1,6 @@
 {
   "name": "cpn-ide",
-  "version": "1.0.1",
+  "version": "1.0.20202805",
   "author": "INDEV",
   "main": "electron/dist/main.js",
   "scripts": {
@@ -13,7 +13,6 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "docs": "typedoc --options typedoc.json ./src/app/ ",
-    "compodoc": "compodoc -p tsconfig.json",
     "buildBackendLinux": "./../backend/gradlew clean -p ./../backend & ./../backend/gradlew build -p ./../backend",
     "buildBackendWin": ".\\..\\backend\\gradlew clean -p .\\..\\backend & .\\..\\backend\\gradlew build -p .\\..\\backend",
     "electronBuild": "tsc --p electron",

@@ -16,7 +16,7 @@ import {
 
 
 import CommandInterceptor from 'diagram-js/lib/command/CommandInterceptor';
-import CpnRules from "../rules/CpnRules";
+import CpnRuleProvider from "../rules/CpnRuleProvider";
 import { is, CPN_CONNECTION } from '../../util/ModelUtil';
 
 CpnLayouter.$inject = [

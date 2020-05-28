@@ -1,15 +1,13 @@
 import RulesModule from 'diagram-js/lib/features/rules';
 
-import CpnRules from './CpnRules';
+import CpnRuleProvider from './CpnRuleProvider';
 
 export default {
   __depends__: [
     RulesModule
   ],
   __init__: [
-    // 'rules',
-    'cpnRules',
+    'cpnRuleProvider',
   ],
-  // rules: [ 'type', CpnRules ],
-  cpnRules: [ 'type', CpnRules ]
+  cpnRuleProvider: [ 'type', CpnRuleProvider ],
 };

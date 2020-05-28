@@ -40,6 +40,7 @@ CpnUpdater.$inject = [
   "layouter",
   "cpnRenderer",
   "textRenderer",
+  "stateProvider",
 ];
 
 import { event as domEvent } from "min-dom";
@@ -73,13 +74,15 @@ export default function CpnUpdater(
   bindingsMenuProvider,
   layouter,
   cpnRenderer,
-  textRenderer
+  textRenderer,
+  stateProvider
 ) {
   this._canvas = canvas;
   this._modeling = modeling;
   this._elementRegistry = elementRegistry;
   this._cpnRenderer = cpnRenderer;
   this._textRenderer = textRenderer;
+  this._stateProvider = stateProvider;
 
   const self = this;
   const container = self._canvas.getContainer();
@@ -202,13 +205,15 @@ export default function CpnUpdater(
       selection.select(element);
     }
 
-    modeling.clearHilight();
+    if (stateProvider.isHilighted()) {
+      modeling.clearHilight();
+      stateProvider.setHilightedState([]);
+      modeling.repaintElements();
+    }
 
     if (element.labelTarget) {
-      element.hilighted = true;
-      modeling.repaintElement(element);
-      element.labelTarget.hilighted = true;
-      modeling.repaintElement(element.labelTarget);
+      stateProvider.setHilightedState([element.id, element.labelTarget.id]);
+      modeling.repaintElements();
     }
   });
 

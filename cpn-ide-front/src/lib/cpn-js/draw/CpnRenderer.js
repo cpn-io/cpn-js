@@ -58,11 +58,13 @@ var STATUS_STROKE_COLOR_ERROR = '#ff666666';
 var STATUS_STROKE_COLOR_WARNING = '#cccc3366';
 var STATUS_STROKE_COLOR_READY = '#33cc3399';
 var STATUS_STROKE_COLOR_FIRED = '#ff3333'; // '#ff33cc99';
+var STATUS_STROKE_COLOR_HILIGHTED = '#0000ff33';
 
 var STATUS_TEXT_COLOR_ERROR = '#ff6666';
 var STATUS_TEXT_COLOR_WARNING = '#cccc33';
 var STATUS_TEXT_COLOR_READY = '#339933';
 var STATUS_TEXT_COLOR_FIRED = '#ff6666'; // '#CC0099';
+var STATUS_TEXT_COLOR_HILIGHTED = '#0000cc';
 
 var SELECT_STROKE_COLOR = '#00cc00';
 var SELECT_FILL_COLOR = '#00ff0011';
@@ -743,6 +745,7 @@ export default function CpnRenderer(
       const firedState = self._stateProvider.getFiredState(element.cpnElement._id);
       const warningState = self._stateProvider.getWarningState(element.cpnElement._id);
       const errorState = self._stateProvider.getErrorState(element.cpnElement._id);
+      const hilightedState = self._stateProvider.getHilightedState(element.cpnElement._id);
       let stateText;
       if (readyState) {
         strokeColor = STATUS_STROKE_COLOR_READY;
@@ -762,6 +765,11 @@ export default function CpnRenderer(
       if (errorState) {
         strokeColor = STATUS_STROKE_COLOR_ERROR;
         textColor = STATUS_TEXT_COLOR_ERROR;
+        stateText = self._stateProvider.getErrorText(element.cpnElement._id);;
+      }
+      if (hilightedState) {
+        strokeColor = STATUS_STROKE_COLOR_HILIGHTED;
+        textColor = STATUS_TEXT_COLOR_HILIGHTED;
         stateText = self._stateProvider.getErrorText(element.cpnElement._id);;
       }
 

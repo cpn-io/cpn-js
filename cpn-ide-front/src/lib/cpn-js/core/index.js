@@ -1,5 +1,6 @@
 import CommandModule from 'diagram-js/lib/command';
 import SelectionModule from 'diagram-js/lib/features/selection';
+import CopyPasteModule from 'diagram-js/lib/features/copy-paste';
 import ZoomScrollModule from 'diagram-js/lib/navigation/zoomscroll';
 import MoveCanvasModule from 'diagram-js/lib/navigation/movecanvas';
 import ModelingModule from 'diagram-js/lib/features/modeling';
@@ -43,6 +44,7 @@ export default {
   __depends__: [
     CommandModule,
     SelectionModule,
+    CopyPasteModule,
     ZoomScrollModule,
     MoveCanvasModule,
     ModelingModule,

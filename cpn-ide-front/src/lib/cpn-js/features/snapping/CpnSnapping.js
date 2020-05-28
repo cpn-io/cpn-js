@@ -40,7 +40,7 @@ var HIGH_PRIORITY = 1500;
  * @param {EventBus} eventBus
  * @param {Canvas} canvas
  */
-export default function CpnSnapping(eventBus, canvas, cpnRules, elementRegistry) {
+export default function CpnSnapping(eventBus, canvas, cpnRuleProvider, elementRegistry) {
 
   // instantiate super
   Snapping.call(this, eventBus, canvas);
@@ -66,12 +66,12 @@ export default function CpnSnapping(eventBus, canvas, cpnRules, elementRegistry)
 
 
   function canAttach(shape, target, position) {
-    // return cpnRules.canAttach([shape], target, null, position) === 'attach';
+    // return cpnRuleProvider.canAttach([shape], target, null, position) === 'attach';
     return true;
   }
 
   function canConnect(source, target) {
-    // return cpnRules.canConnect(source, target);
+    // return cpnRuleProvider.canConnect(source, target);
     return true;
   }
 
@@ -154,7 +154,7 @@ inherits(CpnSnapping, Snapping);
 CpnSnapping.$inject = [
   'eventBus',
   'canvas',
-  'cpnRules',
+  'cpnRuleProvider',
   'elementRegistry'
 ];
 

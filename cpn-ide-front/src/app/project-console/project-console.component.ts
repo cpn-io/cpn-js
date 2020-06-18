@@ -3,7 +3,7 @@ import {AccessCpnService} from '../services/access-cpn.service';
 import {Message} from '../common/message';
 import {EventService} from '../services/event.service';
 import {DatePipe} from '@angular/common';
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import {DialogComponent} from '../common/dialog/dialog.component';
 import {DialogLogComponent} from '../common/dialog-log/dialog-log.component';
 import {EditorPanelService} from '../services/editor-panel.service';

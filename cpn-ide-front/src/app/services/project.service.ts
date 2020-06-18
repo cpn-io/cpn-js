@@ -12,7 +12,7 @@ import { xmlBeautify } from '../../lib/xml-beautifier/xml-beautifier.js';
 import { FileService } from './file.service.js';
 
 import { cloneObject } from 'src/app/common/utils';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from '../common/dialog/dialog.component.js';
 
 

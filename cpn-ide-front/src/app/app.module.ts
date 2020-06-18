@@ -1,9 +1,7 @@
-import {
-  MatDialogModule,
-  MatButtonModule,
-  MatFormFieldModule,
-  MatInputModule
-} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 import { MonitorNamePipe } from './pipes/monitor-name.pipe';
 import { TreeNodeComponent } from './project-tree/tree-node/tree-node';

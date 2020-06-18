@@ -49,12 +49,11 @@ export class MainToolbarComponent implements OnInit {
     this.ipcService.on(Message.MAIN_MENU_OPEN_PROJECT, () => this.onOpenProject());
     this.ipcService.on(Message.MAIN_MENU_SAVE_PROJECT, () => this.onSaveProject());
 
-    this.eventService.on(Message.MODEL_SAVE_BACKUP, () => this.refreshHistorySteps());
-    this.eventService.on(Message.MODEL_RELOAD, () => this.refreshHistorySteps());
-
     this.ipcService.on(Message.MAIN_MENU_UNDO, () => this.getUndo());
     this.ipcService.on(Message.MAIN_MENU_REDO, () => this.getRedo());
 
+    this.eventService.on(Message.MODEL_SAVE_BACKUP, () => this.refreshHistorySteps());
+    this.eventService.on(Message.MODEL_RELOAD, () => this.refreshHistorySteps());
 
     // ipcRenderer.on(Message.MAIN_MENU_OPEN_PROJECT, (event, arg) => {
     //   console.log('Message.MAIN_MENU_OPEN_PROJECT', arg);

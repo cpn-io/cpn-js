@@ -50,7 +50,7 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, I
   }
 
   updateErrors() {
-    console.log(this.constructor.name, 'updateErrors()');
+    // console.log(this.constructor.name, 'updateErrors()');
   }
 
   getText() {

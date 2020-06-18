@@ -28,6 +28,9 @@ export class EventService {
    * Handles subscription to messages
    */
   on(id: String, callback: MessageCallback): Subscription {
+
+    // console.log('EventService.on(), this.handler = ', this.handler);
+
     return this.handler
       .filter(message => message.id === id)
       .map(message => message.data)

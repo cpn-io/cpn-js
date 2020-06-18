@@ -8,7 +8,6 @@ import { TreeNodeComponent } from './project-tree/tree-node/tree-node';
 import { RegexPipe } from './pipes/regex.pipe';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ScrollViewModule } from '@progress/kendo-angular-scrollview';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
@@ -17,7 +16,7 @@ import { AngularSplitModule } from 'angular-split';
 import { TreeModule } from 'angular-tree-component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FormsModule } from '@angular/forms';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { SafePipeModule } from 'safe-pipe';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -123,7 +122,6 @@ require('typeface-droid-sans-mono');
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    ScrollViewModule,
     AppRoutingModule,
     HttpClientModule,
     NgxElectronModule,
@@ -133,9 +131,7 @@ require('typeface-droid-sans-mono');
     TabModule,
     FormsModule,
     CommonModule,
-
-    // Ngb
-    NgbModule,
+    SafePipeModule,
 
     // Material
     MatDialogModule,

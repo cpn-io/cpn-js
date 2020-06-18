@@ -10,12 +10,12 @@ import {TabsContainer} from '../tabs-container/tabs.container';
   styleUrls: ['./tab.component.scss']
 })
 export class TabComponent {
-  @Input() active: boolean = false;
+  @Input() active = false;
   @Input() tabTitle: string;
   @Input() id: string;
-  @Input() isHidden: boolean = false;
-  @Input() error: boolean = false;
-  @Input() ready: boolean = false;
+  @Input() error = false;
+  @Input() ready = false;
+  // @Input() isHidden = false;
 
   public viewContainerRef;
 

@@ -40,15 +40,11 @@ export class EditorPanelComponent implements OnInit, OnDestroy, AfterViewInit {
 
   currentTab = undefined;
 
-  documentationHref = ''; // ../../assets/documentation/index.html
-
   constructor(private eventService: EventService,
     private modelService: ModelService,
     public accessCpnService: AccessCpnService,
     private editorPanelService: EditorPanelService,
     public applicationService: ApplicationService) {
-
-    // this.documentationHref = '../../assets/documentation/index.html';
   }
 
   ngOnInit() {
@@ -62,8 +58,9 @@ export class EditorPanelComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // this.documentationIFrame.nativeElement.src = '../../assets/documentation/index.html';
-    this.documentationIFrame.nativeElement.src = './assets/documentation/index.html';
+    if (this.documentationIFrame) {
+      this.documentationIFrame.nativeElement.src = './assets/documentation/index.html';
+    }
   }
 
   ngOnDestroy() {

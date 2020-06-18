@@ -2,7 +2,7 @@ const fs = require('fs');
 const dateFormat = require('dateformat');
 
 const now = new Date();
-const buildVersion = '1.1.' + dateFormat(now, "yyyymmdd");
+const buildVersion = '1.' + dateFormat(now, "yy") + '.' + dateFormat(now, "mmdd");
 
 try {
   console.log('Build version set: ' + buildVersion);

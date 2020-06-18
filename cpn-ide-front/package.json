@@ -120,7 +120,6 @@
     "mat-icon-import": "^0.1.1",
     "moddle": "^4.1.0",
     "moddle-xml": "^7.5.0",
-    "ng-bootstrap": "^1.6.3",
     "ngx-electron": "^1.0.4",
     "ngx-xml2json": "^1.0.2",
     "popper.js": "^1.16.1",

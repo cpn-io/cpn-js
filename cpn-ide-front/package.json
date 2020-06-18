@@ -129,6 +129,7 @@
     "rxjs-compat": "^6.5.4",
     "rxjs-observe": "^2.1.5",
     "ts-helpers": "^1.1.2",
+    "tslib": "^2.0.0",
     "typeface-droid-sans-mono": "0.0.44",
     "typescript": "^3.5.1",
     "xml-js": "^1.6.11",

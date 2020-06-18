@@ -125,7 +125,7 @@
     "ngx-xml2json": "^1.0.2",
     "popper.js": "^1.16.1",
     "ps-node": "^0.1.6",
-    "rxjs": "^6.5.4",
+    "rxjs": "^6.5.5",
     "rxjs-compat": "^6.5.4",
     "rxjs-observe": "^2.1.5",
     "ts-helpers": "^1.1.2",

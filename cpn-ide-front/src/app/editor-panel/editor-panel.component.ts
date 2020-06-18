@@ -26,8 +26,8 @@ import { ElementRef, AfterViewInit } from '@angular/core';
 })
 export class EditorPanelComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  @ViewChild('documentationIFrame', { static: false }) documentationIFrame: ElementRef;
-  @ViewChild('tabsComponent', { static: false }) tabsComponent: TabsContainer;
+  @ViewChild('documentationIFrame') documentationIFrame: ElementRef;
+  @ViewChild('tabsComponent') tabsComponent: TabsContainer;
 
   @ViewChildren(ModelEditorComponent) modelEditorList: QueryList<ModelEditorComponent>;
 

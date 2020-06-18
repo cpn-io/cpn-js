@@ -17,7 +17,7 @@ import { TabsContainer } from 'src/lib/tabs/tabs-container/tabs.container';
 })
 export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
-  @ViewChild('tabsComponent', {static: false}) tabsComponent: TabsContainer;
+  @ViewChild('tabsComponent') tabsComponent: TabsContainer;
 
   console = console;
   JSON = JSON;

@@ -58,7 +58,7 @@ export class TreeData {
 })
 export class ProjectTreeComponent implements OnInit, DoCheck {
 
-  @ViewChild('contextMenu', { static: false }) contextMenu: ContextMenuComponent;
+  @ViewChild('contextMenu') contextMenu: ContextMenuComponent;
 
   public nodeToArray = nodeToArray;
   public JSON = JSON;

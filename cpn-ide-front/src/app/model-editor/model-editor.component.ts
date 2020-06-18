@@ -48,8 +48,8 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     public editorPanelService: EditorPanelService) {
   }
 
-  @ViewChild('container', { static: false }) containerElementRef: ElementRef;
-  @ViewChild('popup', { static: false }) popupElementRef: ElementRef;
+  @ViewChild('container') containerElementRef: ElementRef;
+  @ViewChild('popup') popupElementRef: ElementRef;
 
   @Input() id: string;
 

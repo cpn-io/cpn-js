@@ -1823,7 +1823,7 @@ export class ModelService {
    * @param cpnElement
    * @param cpnType - new cpn type where cpn element should be placed
    */
-  addCpnElement(cpnParentElement, cpnElement, cpnType, insertAfterElement = undefined) {
+  addCpnElement(cpnParentElement, cpnElement, cpnType, insertAfterElement = undefined, insertFirst = false) {
     try {
       if (!cpnParentElement) {
         throw 'Undefined cpnParentElement element';
@@ -1844,15 +1844,36 @@ export class ModelService {
           console.error('insertAfterElement not found');
         }
       } else {
-        nodeList.push(cpnElement);
+        insertFirst ? nodeList.unshift(cpnElement) : nodeList.push(cpnElement);
       }
       cpnParentElement[cpnType] = nodeList.length === 1 ? nodeList[0] : nodeList;
+
+      // console.log('addCpnElement(), cpnType = ', cpnType);
+      // console.log('addCpnElement(), cpnParentElement = ', cpnParentElement);
+      if (cpnType === 'block') {
+        this.fixBlockOrder();
+      }
+
     } catch (ex) {
       console.error(this.constructor.name, 'addCpnElement(). ERROR: ', ex);
     }
 
     console.log(this.constructor.name, 'addCpnElement(), cpnParentElement, cpnElement = ', cpnParentElement, cpnElement);
   }
+
+  fixBlockOrder() {
+    const cpn = this.getCpn();
+    if (cpn && cpn.globbox) {
+      const blocks = nodeToArray(cpn.globbox.block);
+      blocks.forEach((block, i) => {
+        if (block.block) {
+          const newBlock = { id: block.id, block: block.block, ...block };
+          blocks[i] = newBlock;
+        }
+      });
+    }
+  }
+
 
   /**
    * Update cpn element in it's parent

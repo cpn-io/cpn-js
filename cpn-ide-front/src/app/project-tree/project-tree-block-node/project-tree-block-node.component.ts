@@ -69,7 +69,7 @@ export class ProjectTreeBlockNodeComponent implements OnInit, ITreeNode {
   onNewBlock() {
     console.log(this.constructor.name, 'onNewBlock(), block = ', this.block);
 
-    let parentElement = this.block;
+    const parentElement = this.block;
     if (parentElement) {
       const newBlock = {id: 'New block', _id: getNextId()};
       this.modelService.addCpnElement(parentElement, newBlock, 'block');

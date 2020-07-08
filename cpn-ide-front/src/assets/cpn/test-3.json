@@ -41,6 +41,7 @@
               {
                 "id": "BOOL",
                 "bool": "",
+                "layout": "colset BOOL = bool;",
                 "_id": "ID4"
               },
               {
@@ -80,6 +81,22 @@
               "layout": "var x: INT;",
               "_id": "ID1412330717"
             },
+            "block": [
+              {
+                "id": "New block",
+                "color": {
+                  "id": "UNIT2",
+                  "unit": "",
+                  "layout": "colset UNIT2 = unit;",
+                  "_id": "ID4213822833"
+                },
+                "_id": "ID4213817856"
+              },
+              {
+                "id": "New block 2",
+                "_id": "ID4213815801"
+              }
+            ],
             "_id": "ID1"
           }
         ]
@@ -114,8 +131,9 @@
               "_h": "70.000000"
             },
             "token": {
-              "_x": "-80.000000",
-              "_y": "-49.000000"
+              "text": "7",
+              "_x": "-6.000000",
+              "_y": "31.000000"
             },
             "marking": {
               "snap": {
@@ -123,6 +141,7 @@
                 "_anchor.horizontal": "1",
                 "_anchor.vertical": "3"
               },
+              "text": "3`2++\n4`3",
               "_x": "-4.000000",
               "_y": "-10.000000",
               "_hidden": "false"
@@ -206,8 +225,9 @@
               "_h": "40.000000"
             },
             "token": {
-              "_x": "-10.000000",
-              "_y": "0.000000"
+              "text": "1",
+              "_x": "-4.000000",
+              "_y": "17.000000"
             },
             "marking": {
               "snap": {
@@ -215,6 +235,7 @@
                 "_anchor.horizontal": "0",
                 "_anchor.vertical": "0"
               },
+              "text": "1`1",
               "_x": "0.000000",
               "_y": "0.000000",
               "_hidden": "false"
@@ -247,8 +268,8 @@
             },
             "initmark": {
               "posattr": {
-                "_x": "47.000000",
-                "_y": "169.000000"
+                "_x": "46.000000",
+                "_y": "157.000000"
               },
               "fillattr": {
                 "_colour": "White",
@@ -303,8 +324,8 @@
           },
           "cond": {
             "posattr": {
-              "_x": "-223.000000",
-              "_y": "177.000000"
+              "_x": "-197.000000",
+              "_y": "165.000000"
             },
             "fillattr": {
               "_colour": "White",
@@ -328,8 +349,8 @@
           },
           "time": {
             "posattr": {
-              "_x": "-139.500000",
-              "_y": "177.000000"
+              "_x": "-119.000000",
+              "_y": "165.000000"
             },
             "fillattr": {
               "_colour": "White",
@@ -353,8 +374,8 @@
           },
           "code": {
             "posattr": {
-              "_x": "-119.500000",
-              "_y": "94.000000"
+              "_x": "-112.000000",
+              "_y": "103.000000"
             },
             "fillattr": {
               "_colour": "White",
@@ -378,8 +399,8 @@
           },
           "priority": {
             "posattr": {
-              "_x": "-252.000000",
-              "_y": "115.000000"
+              "_x": "-256.000000",
+              "_y": "103.000000"
             },
             "fillattr": {
               "_colour": "White",
@@ -460,6 +481,7 @@
               },
               "_id": "ID1412328565"
             },
+            "text": "",
             "_id": "ID1412328564",
             "_orientation": "PtoT",
             "_order": "1"
@@ -519,6 +541,7 @@
               },
               "_id": "ID1412328606"
             },
+            "text": "",
             "_id": "ID1412328605",
             "_orientation": "TtoP",
             "_order": "1"
@@ -569,18 +592,6 @@
             "value": {
               "boolean": "true"
             },
-            "_name": "extensions.10005.enable"
-          },
-          {
-            "value": {
-              "boolean": "true"
-            },
-            "_name": "extensions.10002.enable"
-          },
-          {
-            "value": {
-              "boolean": "true"
-            },
             "_name": "extensions.10001.enable"
           },
           {
@@ -588,6 +599,18 @@
               "boolean": "true"
             },
             "_name": "extensions.10003.enable"
+          },
+          {
+            "value": {
+              "boolean": "true"
+            },
+            "_name": "extensions.10005.enable"
+          },
+          {
+            "value": {
+              "boolean": "true"
+            },
+            "_name": "extensions.10002.enable"
           },
           {
             "value": {
@@ -827,30 +850,6 @@
       },
       "binders": {},
       "monitorblock": {
-        "monitorblock": {
-          "monitorblock": {
-            "monitor": {
-              "node": {
-                "_idref": "ID1412328496",
-                "_pageinstanceidref": "ID6itop"
-              },
-              "option": {
-                "_name": "If is enabled",
-                "_value": "true"
-              },
-              "_id": "ID1412331881",
-              "_name": "Transition_enabled_bp_myNet'BTran_1",
-              "_type": "8",
-              "_typedescription": "Transition enabled break point",
-              "_disabled": "false"
-            },
-            "monitorblock": {
-              "_name": "New monitor block"
-            },
-            "_name": "New monitor block"
-          },
-          "_name": "New monitor block"
-        },
         "_name": "Monitors"
       },
       "IndexNode": {
@@ -1041,9 +1040,6 @@
             "_expanded": "false"
           },
           {
-            "IndexNode": {
-              "_expanded": "false"
-            },
             "_expanded": "false"
           },
           {
@@ -1095,38 +1091,7 @@
             "_expanded": "true"
           },
           {
-            "IndexNode": {
-              "IndexNode": {
-                "IndexNode": [
-                  {
-                    "IndexNode": [
-                      {
-                        "IndexNode": {
-                          "_expanded": "false"
-                        },
-                        "_expanded": "false"
-                      },
-                      {
-                        "IndexNode": {
-                          "IndexNode": {
-                            "_expanded": "false"
-                          },
-                          "_expanded": "true"
-                        },
-                        "_expanded": "false"
-                      }
-                    ],
-                    "_expanded": "false"
-                  },
-                  {
-                    "_expanded": "false"
-                  }
-                ],
-                "_expanded": "true"
-              },
-              "_expanded": "true"
-            },
-            "_expanded": "true"
+            "_expanded": "false"
           },
           {
             "_expanded": "true"

@@ -1496,6 +1496,30 @@ export class ModelService {
   }
 
   /**
+   * Get all blocks
+   */
+  getAllBlocks() {
+    const cpn = this.getCpn();
+    if (!cpn) {
+      return [];
+    }
+
+    let allBlocks = [];
+
+    nodeToArray(cpn.globbox.block).forEach(b => {
+      allBlocks.push(b);
+      nodeToArray(b.block).forEach(b2 => {
+        allBlocks.push(b2);
+        nodeToArray(b2.block).forEach(b3 => {
+          allBlocks.push(b3);
+        });
+      });
+    });
+
+    return allBlocks;
+  }
+
+  /**
    * Get all arcs, wich are connecting elements
    * @param cpnElements - array of elements
    */

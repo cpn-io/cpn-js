@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, HostListener } from '@angular/core';
+import { Component, OnInit, Input, HostListener, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-context-menu',
@@ -6,6 +6,9 @@ import { Component, OnInit, Input, HostListener } from '@angular/core';
   styleUrls: ['./context-menu.component.scss']
 })
 export class ContextMenuComponent implements OnInit {
+
+  // Sub menu
+  @ViewChild('subMenu') subMenu: ContextMenuComponent;
 
   @Input() x = 0;
   @Input() y = 0;
@@ -49,4 +52,33 @@ export class ContextMenuComponent implements OnInit {
   public setEntries(entries) {
     this.entries = entries;
   }
+
+  get hasSubMenu() {
+    return this.entries && this.entries.find(e => e.subEntries !== undefined) ? true : false;
+  }
+
+  onAction(entry) {
+    if (entry && entry.action)  {
+      entry.action()
+    }
+  }
+
+  onShowSubmenu(event, entry) {
+    // console.log('onShowSubmenu(), event = ', event);
+
+    if (this.subMenu) {
+      if (entry.subEntries) {
+        const br = event.target.getBoundingClientRect();
+
+        // const entries = [];
+        // entries.push({ title: 'Declarations', action: () => alert('Declarations'), iconClass: 'fas fa-cube' });
+
+        this.subMenu.setEntries(entry.subEntries);
+        this.subMenu.show({ x: br.right - 2, y: br.top - 6 });
+      } else {
+        this.subMenu.hide();
+      }
+    }
+  }
+
 }

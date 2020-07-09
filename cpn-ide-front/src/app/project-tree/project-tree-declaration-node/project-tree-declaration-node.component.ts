@@ -1,15 +1,15 @@
-import {Component, OnInit, Input, DoCheck, SimpleChanges, OnChanges, AfterViewInit, ViewChild, ElementRef} from '@angular/core';
-import {ModelService} from '../../services/model.service';
-import {EventService} from '../../services/event.service';
-import {Message} from '../../common/message';
-import {parseUiDeclarartionType} from './declaration-parser';
-import {AccessCpnService} from '../../services/access-cpn.service';
-import {ContextMenuComponent} from '../../context-menu/context-menu.component';
-import {getNextId} from '../../common/utils';
-import {ITreeNode} from '../tree-node/tree-node';
-import {TreeData} from '../project-tree.component';
-import {DataTypes} from '../../common/constants';
-import {BufferService} from '../../services/buffer.service';
+import { Component, OnInit, Input, DoCheck, SimpleChanges, OnChanges, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { ModelService } from '../../services/model.service';
+import { EventService } from '../../services/event.service';
+import { Message } from '../../common/message';
+import { parseUiDeclarartionType } from './declaration-parser';
+import { AccessCpnService } from '../../services/access-cpn.service';
+import { ContextMenuComponent } from '../../context-menu/context-menu.component';
+import { getNextId } from '../../common/utils';
+import { ITreeNode } from '../tree-node/tree-node';
+import { TreeData } from '../project-tree.component';
+import { DataTypes } from '../../common/constants';
+import { BufferService } from '../../services/buffer.service';
 
 @Component({
   selector: 'app-project-tree-declaration-node',
@@ -26,9 +26,9 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, I
   public focused = false;
 
   constructor(private eventService: EventService,
-              private modelService: ModelService,
-              public accessCpnService: AccessCpnService,
-              private bufferService: BufferService) {
+    private modelService: ModelService,
+    public accessCpnService: AccessCpnService,
+    private bufferService: BufferService) {
   }
 
   ngOnInit() {
@@ -113,7 +113,7 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, I
 
     let parentElement = this.parentBlock;
     if (parentElement) {
-      const newBlock = {id: 'New block', _id: getNextId()};
+      const newBlock = { id: 'New block', _id: getNextId() };
       this.modelService.addCpnElement(parentElement, newBlock, 'block');
 
       // set selected to new block
@@ -156,27 +156,45 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, I
     throw new Error('Method not implemented.');
   }
 
+  getMoveToSubEntries() {
+    const subEntries = [];
+    const allBlocks = this.modelService.getAllBlocks();
+    allBlocks.forEach(block => {
+      subEntries.push({ title: block.id, action: () => {
+        // alert('Move to block ' + b.id)
+        this.bufferService.cutObject(this.declaration, this.type);
+        this.bufferService.pasteObject(block)
+      }, iconClass: 'fas fa-cube' });
+    })
+    return subEntries;
+  }
+
   onContextMenu(event) {
     if (this.tree && this.tree.contextMenu) {
       event.preventDefault();
 
       const entries = [];
 
-      entries.push({title: 'New declaration', action: () => this.onNewDeclaration(), iconClass: 'fas fa-code'});
+      entries.push({ title: 'New declaration', action: () => this.onNewDeclaration(), iconClass: 'fas fa-code' });
       if (this.tree && this.tree.treeType === 'tree') {
-        entries.push({title: 'New block', action: () => this.onNewBlock(), iconClass: 'fas fa-cube'});
+        entries.push({ title: 'New block', action: () => this.onNewBlock(), iconClass: 'fas fa-cube' });
       }
-      entries.push({title: 'separator'});
-      entries.push({title: 'Cut', action: () => this.bufferService.cutObject(this.declaration, this.type), iconClass: 'fas fa-cut'});
-      entries.push({title: 'Copy', action: () => this.bufferService.copyObject(this.declaration, this.type), iconClass: 'fas fa-copy'});
+      entries.push({ title: 'separator' });
+      entries.push({ title: 'Cut', action: () => this.bufferService.cutObject(this.declaration, this.type), iconClass: 'fas fa-cut' });
+      entries.push({ title: 'Copy', action: () => this.bufferService.copyObject(this.declaration, this.type), iconClass: 'fas fa-copy' });
       if (!this.bufferService.isEmpty() && !this.bufferService.isEqualTo(DataTypes.monitor)) {
-        entries.push({title: 'Paste', action: () => this.bufferService.pasteObject(this.parentBlock), iconClass: 'fas fa-paste'});
+        entries.push({ title: 'Paste', action: () => this.bufferService.pasteObject(this.parentBlock), iconClass: 'fas fa-paste' });
       }
-      entries.push({title: 'separator'});
-      entries.push({title: 'Delete', action: () => this.onDelete(), iconClass: 'fas fa-minus'});
+      entries.push({ title: 'separator' });
+      // entries.push({title: 'Move to', action: () => this.bufferService.moveToObject(this.declaration, this.type), iconClass: 'fas fa-angle-double-right'});
+      entries.push({
+        title: 'Move to', subEntries: this.getMoveToSubEntries(), iconClass: 'fas fa-angle-double-right'
+      });
+      entries.push({ title: 'separator' });
+      entries.push({ title: 'Delete', action: () => this.onDelete(), iconClass: 'fas fa-minus' });
 
       this.tree.contextMenu.setEntries(entries);
-      this.tree.contextMenu.show({x: event.clientX, y: event.clientY});
+      this.tree.contextMenu.show({ x: event.clientX, y: event.clientY });
     }
   }
 

@@ -36,6 +36,11 @@ export class BufferService {
     this.bufferNode.cut = true;
   }
 
+  moveToObject(node, type): void {
+    this.copyObject(node, type);
+    this.bufferNode.cut = true;
+  }
+
   pasteObject(parent): void {
     if (this.bufferNode.cut) {
       this.modelService.deleteFromModel(this.bufferNode.object);

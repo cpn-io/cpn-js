@@ -29,8 +29,8 @@ export class AccessCpnService {
 
   public tokenData = [];
 
-  public simulationReport: string = '';
-
+  public simulationReport = '';
+  public simulationHtmlFiles = [];
   public initNetProcessing;
   public initSimProcessing;
   public fastforwardProcessing = false;
@@ -124,7 +124,7 @@ export class AccessCpnService {
     const arr = [];
     Object.keys(this.warnings).forEach(el => {
       arr[el] = this.warnings[el][0].description;
-    })
+    });
     return arr;
   }
 
@@ -199,7 +199,7 @@ export class AccessCpnService {
   }
 
   generateSessionId() {
-    let id = 'CPN_IDE_SESSION_' + new Date().getTime();
+    const id = 'CPN_IDE_SESSION_' + new Date().getTime();
     // let id = '' + new Date().getTime();
     // id = 'S' + id.substr(id.length - 6);
     // id = 'SESSION';
@@ -277,7 +277,7 @@ export class AccessCpnService {
 
             this.frontSideValidation(data);
             this.updateErrorData(data);
-            this.warnings = data.warnings || []
+            this.warnings = data.warnings || [];
             this.eventService.send(Message.SERVER_INIT_NET_DONE, { data: data, errorIssues: data.issues, warningIssues: data.warnings });
 
             this.reportReady();
@@ -334,6 +334,29 @@ export class AccessCpnService {
       });
     }
   }
+
+  private  getAllMatches(regex: RegExp, text: string) {
+    if (regex.constructor !== RegExp) {
+      throw new Error('not RegExp');
+    }
+
+    // tslint:disable-next-line:prefer-const
+    const res = [];
+    let match = null;
+
+    if (regex.global) {
+      while (match = regex.exec(text)) {
+        res.push(match);
+      }
+    }  else {
+      if (match = regex.exec(text)) {
+        res.push(match);
+      }
+    }
+
+    return res;
+  }
+
 
   private checkSameNames(checkArray: any[], shapeType: string, error: string): any[] {
     const list = [];
@@ -667,13 +690,36 @@ export class AccessCpnService {
             // this.updateFiredTrans(data.firedTrans);
 
             this.simulationReport = data.extraInfo;
+            this.simulationHtmlFiles = data.files;
+            const regexFindPaths = new RegExp('\\b:\\s.*.html', 'g');
+            const allPaths = this.simulationReport.match( regexFindPaths);
+            console.log(allPaths);
+            // tslint:disable-next-line:prefer-const
 
+            let count = 0;
+            for (const path of allPaths) {
+              this.simulationReport = this.simulationReport.replace(
+                  path.substr(2),
+                  '<a id="hrefOntResult' + count + '" href="#">' + path.substr(2) + '</a>'
+              );
+              count++;
+            }
             this.eventService.send(Message.SIMULATION_STEP_DONE);
 
             this.getSimState();
 
             this.replicationProcessing = false;
             resolve();
+            setTimeout(() => {
+              for (let i = 0; i < allPaths.length; i++) {
+                const lnk = document.getElementById('hrefOntResult' + i);
+                lnk.onclick = this.openAsPageInNewTab;
+                const file = this.simulationHtmlFiles.filter(value => value.fileName === allPaths[i].substr(2))[0];
+                lnk.simulationHtmlFile = file ? file.htmlContent : '';
+                console.log('doReplicationTest', lnk );
+              }
+
+            }, 1000);
           }
         },
         (error) => {
@@ -686,6 +732,21 @@ export class AccessCpnService {
         }
       );
     });
+  }
+
+
+
+
+
+
+
+  openAsPageInNewTab($event) {
+    // const htmlText = '<h2>This your report html</h2>';
+    let path = $event.currentTarget.innerHTML;
+    let htmlText =  this.simulationHtmlFile;
+    const win = window.open('about:blank', '_blank');
+    win.document.write(htmlText);
+    win.focus();
   }
 
 

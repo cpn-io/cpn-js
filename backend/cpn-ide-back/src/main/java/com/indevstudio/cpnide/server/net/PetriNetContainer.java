@@ -217,11 +217,11 @@ public class PetriNetContainer {
 
     }
 
-    String getOutputPathContent(String sessionId) throws Exception {
+    ReplicationResp getOutputPathContent(String sessionId) throws Exception {
         String pathStr = getOutputFullPathStr(sessionId);
 
         final StringBuilder sb = new StringBuilder();
-
+        final List<HtmlFileContent> htmlContent  = new ArrayList<>();
         List<Path> files = Files
             .walk(Paths.get(pathStr).toAbsolutePath())
             .filter(Files::isRegularFile)
@@ -230,11 +230,22 @@ public class PetriNetContainer {
 
         for (Path f : files) {
             sb.append("\n\nFilename: " + f.toString() + "\n");
-            Files.lines(f).forEach(s -> sb.append(s + "\n"));
-        }
+            final StringBuilder fileHtmlContent = new StringBuilder();
 
-        return sb.toString();
+            Files.lines(f).forEach(s -> {
+                sb.append(s + "\n");
+                fileHtmlContent.append(s + "\n");
+            });
+            htmlContent.add(new HtmlFileContent(f.toString(), fileHtmlContent.toString()));
+        }
+        ReplicationResp outputPathContent = new ReplicationResp();
+        outputPathContent.setExtraInfo(sb.toString());
+        outputPathContent.setFiles(htmlContent);
+        return outputPathContent;
     }
+
+
+
 
     void CleanOutputPathContent(String sessionId) throws Exception {
         String pathStr = getOutputFullPathStr(sessionId);
@@ -560,6 +571,9 @@ public class PetriNetContainer {
         return binds.keySet().stream().map(k -> new BindingMark(k)).toArray(BindingMark[]::new);
     }
 
+
+
+
     public String makeStep(String sessionId, String transId) throws Exception {
         // String type = requestBody.get(0).get("type").toString();
         Binding b = null;
@@ -586,7 +600,7 @@ public class PetriNetContainer {
         s.execute(binds.get(bindingId));
     }
 
-    public String makeReplication(String sessionId, Replication stepParam) throws Exception {
+    public ReplicationResp makeReplication(String sessionId, Replication stepParam) throws Exception {
         HighLevelSimulator sim = usersSimulator.get(sessionId);
         log.debug("Writing report to " + sim.getOutputDir());
         File fileObj = new File(sim.getOutputDir());
@@ -603,7 +617,7 @@ public class PetriNetContainer {
         fileObj.mkdirs();
         sim.evaluate(stepParam.getRepeat());
         log.debug("Written report to " + sim.getOutputDir());
-        return getOutputPathContent(sessionId);
+        return getOutputPathContent(sessionId).getExtraInfo();
     }
 
     public String makeStepFastForward(String sessionId, MultiStep stepParam) throws Exception {
@@ -639,7 +653,7 @@ public class PetriNetContainer {
 //        }
         _sim.execute(stepParam.getAmount());
 
-        return getOutputPathContent(sessionId);
+        return getOutputPathContent(sessionId).getExtraInfo();
     }
 
 }

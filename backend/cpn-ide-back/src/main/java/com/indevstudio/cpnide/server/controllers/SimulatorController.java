@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
-
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/api/v2/cpn")
 @RestController
 @Slf4j
@@ -131,11 +131,13 @@ public class SimulatorController {
             })
     public ResponseEntity doReplication(@RequestHeader(value = "X-SessionId") String sessionId, @RequestBody Replication replicationParams) {
         return RequestBaseLogic.HandleRequest(sessionId, () -> {
-            ReplicationResp resp = new ReplicationResp();
-            resp.setExtraInfo(_netConatiner.makeReplication(sessionId,replicationParams));
+            ReplicationResp resp = _netConatiner.makeReplication(sessionId,replicationParams);
             return RequestBaseLogic.HandleRequest(sessionId, () -> ResponseEntity.status(HttpStatus.OK).body(resp));
         });
     }
+
+
+
 
     @PostMapping(value = "/sim/script")
     @ApiOperation(nickname = "Replication", value = "Replication - long running op (from mins to hours)")

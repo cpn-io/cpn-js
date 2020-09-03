@@ -184,6 +184,22 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
     },
   };
 
+
+  var pastMenuEntry = {
+    id: "_menuItem_past",
+    label: "Past",
+    // className: 'popup-menu-icon-delete',
+    className: "fas fa-copy",
+    action: function () {
+      self._popupMenu.close();
+      let elementToPast  =  JSON.parse(localStorage.getItem('clipboardElement'));
+      console.log('Past ', elementToPast);
+       localStorage.removeItem('clipboardElement')
+      self._paste(event, elementToPast);
+
+    },
+  };
+
   // var connectMenuEntry = {
   //   id: '_menuItem_connect',
   //   label: 'Connect',
@@ -199,6 +215,10 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
     entries.push(createTransitionMenuEntry);
     entries.push(createSubpageMenuEntry);
     entries.push(createAuxMenuEntry);
+    if(localStorage.getItem('clipboardElement')){
+      entries.push(pastMenuEntry);
+    }
+
     // entries.push(createPasteMenuEntry);
   }
 
@@ -221,6 +241,8 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
       entries.push(runScriptOnServer);
     }
   }
+
+
 
   return entries;
 };
@@ -296,21 +318,54 @@ CpnPopupMenuProvider.prototype._createSubpage = function (event) {
   }, 1);
 };
 
-CpnPopupMenuProvider.prototype._paste = function (event) {
+// CpnPopupMenuProvider.prototype._paste = function (event) {
+//   var root = this._canvas.getRootElement();
+//
+//   this._popupMenu.close();
+//   const position = toLocalPoint(this._canvas, this._position);
+//   position.y -= this._offsetY;
+//
+//   var selectedElements = this._elementRegistry.filter(function (element) {
+//     return element.selected;
+//   });
+//
+//   // console.log("paste, root.children.length = ", root.children.length);
+//
+//   selectedElements.forEach((element) => {
+//     const newCpnElement = { ...element.cpnElement, _id: getNextId() };
+//     console.log("paste, newCpnElement = ", newCpnElement);
+//     const newElement = this._cpnFactory.createShape(
+//       undefined,
+//       newCpnElement,
+//       element.type,
+//       position,
+//       true
+//     );
+//   });
+// };
+
+
+CpnPopupMenuProvider.prototype._paste = function (event, elementToPast) {
   var root = this._canvas.getRootElement();
 
   this._popupMenu.close();
   const position = toLocalPoint(this._canvas, this._position);
   position.y -= this._offsetY;
 
-  var selectedElements = this._elementRegistry.filter(function (element) {
-    return element.selected;
-  });
-
-  // console.log("paste, root.children.length = ", root.children.length);
+  // var selectedElements = this._elementRegistry.filter(function (elementToPast) {
+  //   return elementToPast.selected;
+  // });
+  var selectedElements= [];
+  if(elementToPast instanceof Array )
+    selectedElements =  elementToPast;
+  else
+    selectedElements.push(elementToPast);
 
   selectedElements.forEach((element) => {
     const newCpnElement = { ...element.cpnElement, _id: getNextId() };
+    let id = Number.parseInt(newCpnElement['_id'].substr(1));
+    changeIdsForCopiedElement(newCpnElement, {id: id});
+    changePositionForCopiedElement(newCpnElement);
     console.log("paste, newCpnElement = ", newCpnElement);
     const newElement = this._cpnFactory.createShape(
       undefined,
@@ -318,9 +373,32 @@ CpnPopupMenuProvider.prototype._paste = function (event) {
       element.type,
       position,
       true
-    );
+    )
+
   });
 };
+
+
+function changeIdsForCopiedElement( obj, idObj ) {
+  for ( var prop in obj ) {
+    if ( obj[prop] === Object(obj[prop]) ) changeIdsForCopiedElement( obj[prop], idObj);
+    else if ( prop === '_id' ) {
+        obj[prop] = idObj['id'];
+        idObj['id'] = idObj['id'] + 1;
+    }
+  }
+};
+
+function changePositionForCopiedElement( obj ) {
+  for ( var prop in obj ) {
+    if ( obj[prop] === Object(obj[prop]) && prop !== 'posattr' ) changePositionForCopiedElement( obj[prop]);
+    else if ( prop === 'posattr' ) {
+      obj[prop]['_x'] = "" + (Number.parseFloat( obj[prop]['_x']) - 130);
+      obj[prop]['_y'] = "" + (Number.parseFloat( obj[prop]['_y']) - 133);
+    }
+  }
+};
+
 
 /**
  * Convert a global event into local coordinates

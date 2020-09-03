@@ -59,7 +59,7 @@ export class ContextMenuComponent implements OnInit {
 
   onAction(entry) {
     if (entry && entry.action)  {
-      entry.action()
+      entry.action();
     }
   }
 

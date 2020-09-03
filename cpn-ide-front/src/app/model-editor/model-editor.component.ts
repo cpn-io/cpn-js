@@ -806,6 +806,12 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.selectedElements = this.selectionProvider.getSelectedElements();
     this.updateAvailableMonitorList(this.selectedElements);
   }
+  onCopyShapes() {
+    this.selectedElements = this.selectionProvider.getSelectedElements();
+    localStorage.setItem('clipboardElement',  JSON.stringify(this.selectedElements));
+    this.selectionProvider.deselectAll();
+
+  }
 
   onCreateNewMonitor(monitorType: string) {
     let selectedElements = this.selectionProvider.getSelectedElements();
@@ -813,7 +819,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     if (selectedElements.length < 1) {
       selectedElements = this.selectedElementsForMonitors;
     }
-    
+
     console.log('model-editor onCreateNewMonitor(), monitorType, selectedElements = ', monitorType, selectedElements);
 
     if (selectedElements.length < 1) {

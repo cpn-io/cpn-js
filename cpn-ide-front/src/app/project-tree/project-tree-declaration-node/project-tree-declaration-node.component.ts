@@ -163,9 +163,9 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, I
       subEntries.push({ title: block.id, action: () => {
         // alert('Move to block ' + b.id)
         this.bufferService.cutObject(this.declaration, this.type);
-        this.bufferService.pasteObject(block)
+        this.bufferService.pasteObject(block);
       }, iconClass: 'fas fa-cube' });
-    })
+    });
     return subEntries;
   }
 

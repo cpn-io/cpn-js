@@ -715,7 +715,7 @@ export class AccessCpnService {
                 const lnk = document.getElementById('hrefOntResult' + i);
                 lnk.onclick = this.openAsPageInNewTab;
                 const file = this.simulationHtmlFiles.filter(value => value.fileName === allPaths[i].substr(2))[0];
-                lnk.simulationHtmlFile = file ? file.htmlContent : '';
+                lnk['simulationHtmlFile'] = file ? file.htmlContent : '';
                 console.log('doReplicationTest', lnk );
               }
 
@@ -743,7 +743,7 @@ export class AccessCpnService {
   openAsPageInNewTab($event) {
     // const htmlText = '<h2>This your report html</h2>';
     let path = $event.currentTarget.innerHTML;
-    let htmlText =  this.simulationHtmlFile;
+    let htmlText =  this['simulationHtmlFile'];
     const win = window.open('about:blank', '_blank');
     win.document.write(htmlText);
     win.focus();

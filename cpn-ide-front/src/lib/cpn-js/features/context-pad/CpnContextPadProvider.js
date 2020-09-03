@@ -56,6 +56,14 @@ CpnContextPadProvider.prototype.getContextPadEntries = function (element) {
     connect.start(event, element, autoActivate);
   }
 
+
+  function copyElement() {
+    contextPad.close();
+    console.log('CpnContextPadProvider.copyElement', this._currentElement);
+    // modeling.addElementToClipboard(this._currentElement);
+    localStorage.setItem('clipboardElement',  JSON.stringify(element));
+  }
+
   const deleteEntry = {
     group: 'delete',
     className: 'cpn-js-icon-trash',
@@ -65,6 +73,16 @@ CpnContextPadProvider.prototype.getContextPadEntries = function (element) {
       dragstart: removeElement
     }
   };
+
+  const copyEntry = {
+    group: 'Copy',
+    className: 'fas fa-copy',
+    title: 'Copy',
+    action: {
+      click: copyElement
+    }
+  }
+
   const connectEntry = {
     group: 'connect',
     className: 'bpmn-icon-connection',
@@ -94,13 +112,15 @@ CpnContextPadProvider.prototype.getContextPadEntries = function (element) {
 
   if (is(element, CPN_CONNECTION))
     return {
-      'delete': deleteEntry
+      'delete': deleteEntry,
+      'copy': copyEntry
     };
 
   if (is(element, CPN_PLACE))
     return {
       'new-transition': newTransitionEntry,
       'connect': connectEntry,
+      'copy': copyEntry,
       'delete': deleteEntry,
     };
 
@@ -108,11 +128,16 @@ CpnContextPadProvider.prototype.getContextPadEntries = function (element) {
     return {
       'new-place': newPlaceEntry,
       'connect': connectEntry,
+      'copy': copyEntry,
       'delete': deleteEntry,
     };
 
   return null;
 };
+
+
+
+
 
 CpnContextPadProvider.prototype._createShape = function (event, type) {
   console.log('CpnContextPadProvider.prototype._createPlace, this.position = ', this._position);

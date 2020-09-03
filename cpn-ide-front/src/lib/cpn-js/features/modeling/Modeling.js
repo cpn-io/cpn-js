@@ -72,6 +72,8 @@ export default function Modeling(
 
   this._isEditable = true;
 
+  this._clipboardElement = undefined;
+
   this._instanseId =
     Math.random().toString(36).substring(2).toUpperCase() +
     "-" +
@@ -122,6 +124,15 @@ Modeling.prototype.updateLabel = function (
     });
   }
 };
+
+
+Modeling.prototype.addElementToClipboard = function (element){
+    this._clipboardElement = element;
+}
+
+Modeling.prototype.getElementFromClipboard = function (element){
+    return this._clipboardElement
+}
 
 Modeling.prototype.updateElement = function (element, repaint = false) {
   // console.log('Modeling().updateElement(), element = ', element);
@@ -788,7 +799,7 @@ Modeling.prototype.getTokenLabelAttrs = function (
     width: bounds.width,
     height: bounds.height,
 
-    hidden: true 
+    hidden: true
   };
 
   if (labelTarget) {

@@ -112,8 +112,8 @@ CpnContextPadProvider.prototype.getContextPadEntries = function (element) {
 
   if (is(element, CPN_CONNECTION))
     return {
-      'delete': deleteEntry,
-      'copy': copyEntry
+      'delete': deleteEntry
+
     };
 
   if (is(element, CPN_PLACE))

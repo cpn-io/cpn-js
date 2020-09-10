@@ -360,12 +360,35 @@ CpnPopupMenuProvider.prototype._paste = function (event, elementToPast) {
     selectedElements =  elementToPast;
   else
     selectedElements.push(elementToPast);
-
+  var deltaPosition  =  undefined;
+  let arcsForCopy = [];
+  let copyOriginalMapping = new Map();
+  let idObj =  undefined;
   selectedElements.forEach((element) => {
-    const newCpnElement = { ...element.cpnElement, _id: getNextId() };
-    let id = Number.parseInt(newCpnElement['_id'].substr(1));
-    changeIdsForCopiedElement(newCpnElement, {id: id});
-    changePositionForCopiedElement(newCpnElement);
+   // let originalElement = this._modeling.getElementById(element.cpnElement._id)
+    let elementArcs = this._modeling.getShapeArcs(element);
+    elementArcs.forEach((arc) => {
+      if(!arcsForCopy.some(value => value.id === arc.id)) {
+        arcsForCopy.push({
+          id: arc.id,
+          cpnPlaceId: arc.cpnPlace._id,
+          cpnTransitionId: arc.cpnTransition._id,
+          orient: arc.cpnElement._orientation,
+          label: arc.labels[0]
+        })
+      }
+    })
+
+
+    let newCpnElement = element.cpnElement;//angular.copy({ ...element.cpnElement, _id: getNextId() };
+    let id = Number.parseInt(getNextId().substr(2));
+    idObj = {id: id};
+    changeIdsForCopiedElement(newCpnElement, idObj, copyOriginalMapping);
+    deltaPosition = deltaPosition || {
+      x: position.x - Number.parseFloat(newCpnElement['posattr']['_x']),
+      y: -position.y - Number.parseFloat(newCpnElement['posattr']['_y'])
+    };
+    changePositionForCopiedElement(newCpnElement, deltaPosition);
     console.log("paste, newCpnElement = ", newCpnElement);
     const newElement = this._cpnFactory.createShape(
       undefined,
@@ -376,25 +399,34 @@ CpnPopupMenuProvider.prototype._paste = function (event, elementToPast) {
     )
 
   });
+  if(selectedElements.length > 1)
+  arcsForCopy.forEach(arc => {
+    let cpnPlace = this._modeling.getElementById(copyOriginalMapping.get(arc.cpnPlaceId));
+    let cpnTransition = this._modeling.getElementById(copyOriginalMapping.get(arc.cpnTransitionId));
+    let connect = this._modeling.createNewConnection(cpnPlace, cpnTransition, arc.orient);
+    connect.cpnElement.annot.text = arc.label.text;
+    this._eventBus.fire('element.changed', { element: connect });
+  })
 };
 
 
-function changeIdsForCopiedElement( obj, idObj ) {
+function changeIdsForCopiedElement( obj, idObj, copyOriginalMapping ) {
   for ( var prop in obj ) {
-    if ( obj[prop] === Object(obj[prop]) ) changeIdsForCopiedElement( obj[prop], idObj);
+    if ( obj[prop] === Object(obj[prop]) ) changeIdsForCopiedElement( obj[prop], idObj, copyOriginalMapping);
     else if ( prop === '_id' ) {
-        obj[prop] = idObj['id'];
+        copyOriginalMapping.set(obj[prop], "ID" + idObj['id']);
+        obj[prop] = "ID" + idObj['id'];
         idObj['id'] = idObj['id'] + 1;
     }
   }
 };
 
-function changePositionForCopiedElement( obj ) {
+function changePositionForCopiedElement( obj, deltaPos ) {
   for ( var prop in obj ) {
-    if ( obj[prop] === Object(obj[prop]) && prop !== 'posattr' ) changePositionForCopiedElement( obj[prop]);
+    if ( obj[prop] === Object(obj[prop]) && prop !== 'posattr' ) changePositionForCopiedElement( obj[prop], deltaPos);
     else if ( prop === 'posattr' ) {
-      obj[prop]['_x'] = "" + (Number.parseFloat( obj[prop]['_x']) - 130);
-      obj[prop]['_y'] = "" + (Number.parseFloat( obj[prop]['_y']) - 133);
+      obj[prop]['_x'] = "" + (Number.parseFloat( obj[prop]['_x']) + deltaPos.x);
+      obj[prop]['_y'] = "" +  (Number.parseFloat( obj[prop]['_y']) + deltaPos.y);
     }
   }
 };

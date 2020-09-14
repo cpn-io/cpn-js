@@ -189,7 +189,7 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
     id: "_menuItem_past",
     label: "Past",
     // className: 'popup-menu-icon-delete',
-    className: "fas fa-copy",
+    className: "cpn-js-icon-paste",
     action: function () {
       self._popupMenu.close();
       let elementToPast  =  JSON.parse(localStorage.getItem('clipboardElement'));
@@ -405,7 +405,8 @@ CpnPopupMenuProvider.prototype._paste = function (event, elementToPast) {
     let cpnTransition = this._modeling.getElementById(copyOriginalMapping.get(arc.cpnTransitionId));
     let connect = this._modeling.createNewConnection(cpnPlace, cpnTransition, arc.orient);
     connect.cpnElement.annot.text = arc.label.text;
-    this._eventBus.fire('element.changed', { element: connect });
+    this._modeling.updateElement(connect, true);
+    // this._eventBus.fire('element.changed', { element: connect });
   })
 };
 

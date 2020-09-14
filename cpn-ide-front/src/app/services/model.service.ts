@@ -22,6 +22,7 @@ import {
 } from '../common/monitors';
 import { parseDeclarartion } from '../project-tree/project-tree-declaration-node/declaration-parser';
 import { DEFAULT_PAGE } from '../common/default-data';
+import {element} from 'protractor';
 
 
 /**
@@ -2138,7 +2139,8 @@ export class ModelService {
     let place;
 
     if (arc.placeend) {
-      place = this.getPlaceOrTransitionById(arc.placeend._idref).element;
+      const placeOrTransition = this.getPlaceOrTransitionById(arc.placeend._idref);
+      place = placeOrTransition ?  placeOrTransition.element : undefined;
     }
 
     if (place && place.type && place.type.text) {

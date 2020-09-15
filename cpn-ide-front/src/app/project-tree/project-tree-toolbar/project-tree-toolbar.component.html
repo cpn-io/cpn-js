@@ -7,11 +7,18 @@
 
       <!-- New action -->
       <li class="nav-item">
-        <a (click)="onNewNode()" class="nav-link" href="#" title="New">
-          <i class="fas fa-plus"></i>
-          <span>New</span>
-        </a>
+          <!--a (click)="onNewNode()" class="nav-link" href="#" title="New">
+            <i class="fas fa-plus"></i>
+            <span>New</span>
+          </a-->
+        <a (click)="onContextMenu($event)" class="nav-link" href="#" title="New">
+            <i class="fas fa-plus"></i>
+            <span>New</span>
+          </a>
+
       </li>
+
+
 
       <!-- Delete action -->
       <li class="nav-item">

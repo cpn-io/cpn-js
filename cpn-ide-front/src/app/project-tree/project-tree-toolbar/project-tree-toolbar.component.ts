@@ -14,6 +14,7 @@ export class ProjectTreeToolbarComponent implements OnInit {
 
   @Input() filterText = '';
   @Output() filterChanged = new EventEmitter();
+  @Output() contextMenu = new EventEmitter();
 
 
   constructor() { }
@@ -42,5 +43,9 @@ export class ProjectTreeToolbarComponent implements OnInit {
     console.log(this.constructor.name, 'onChangeFilter(), this.filterText = ', this.filterText);
 
     this.filterChanged.emit(value);
+  }
+
+  onContextMenu(event) {
+    this.contextMenu.emit(event);
   }
 }

@@ -148,6 +148,11 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, I
     this.setSelected(this.parentBlock, this.declaration, this.type);
   }
 
+  newSelect(parentBlock, declaration, type) {
+    this.setSelected(parentBlock, declaration, type);
+  }
+
+
   onClick() {
     this.onSelect();
   }

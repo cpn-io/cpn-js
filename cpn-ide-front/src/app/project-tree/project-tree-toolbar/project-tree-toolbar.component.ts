@@ -45,7 +45,8 @@ export class ProjectTreeToolbarComponent implements OnInit {
     this.filterChanged.emit(value);
   }
 
-  onContextMenu(event) {
-    this.contextMenu.emit(event);
+  onContextMenu(event, type) {
+    event.stopPropagation();
+    this.contextMenu.emit({event: event, type: type});
   }
 }

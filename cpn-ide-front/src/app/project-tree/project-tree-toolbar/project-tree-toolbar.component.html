@@ -11,10 +11,22 @@
             <i class="fas fa-plus"></i>
             <span>New</span>
           </a-->
-        <a (click)="onContextMenu($event)" class="nav-link" href="#" title="New">
+        <a class="nav-link" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="New">
+          <i class="fas fa-plus"></i>
+          <span>New</span>
+        </a>
+
+        <div class="dropdown-menu list-elements" aria-labelledby="dropdownMenuLink">
+         <a class="dropdown-item"  href="#" (click)="onContextMenu($event, 'color')"><i class="fas fa-plus"></i> Color</a>
+         <a class="dropdown-item" href="#" (click)="onContextMenu($event, 'var')" ><i class="fas fa-plus"></i> Var</a>
+         <a class="dropdown-item" href="#" (click)="onContextMenu($event, 'globref')"><i class="fas fa-plus"></i> Globref</a>
+         <a class="dropdown-item" href="#" (click)="onContextMenu($event, 'monitor')"><i class="fas fa-plus"></i> Monitor</a>
+         <a class="dropdown-item" href="#" (click)="onContextMenu($event, 'ml')" ><i class="fas fa-plus"></i> Ml</a>
+        </div>
+        <!--a (click)="onContextMenu($event)" class="nav-link" href="#" title="New">
             <i class="fas fa-plus"></i>
             <span>New</span>
-          </a>
+          </a-->
 
       </li>
 

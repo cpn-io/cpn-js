@@ -124,34 +124,22 @@ export class ProjectDeclarationsComponent implements OnInit, AfterViewInit, DoCh
     }
   }
 
-  onContextNewNode(block) {
+  onContextNewNode(block, type) {
     //  this.setSelected(block, block, 'var');
     // this.onNewNode();
-    const newDeclaration = this.modelService.newDeclaration(block, 'var', undefined);
-    if (newDeclaration) {
-      // this.focus(newDeclaration._id);
-    }
+    const newDeclaration = this.modelService.newDeclaration(block, type, undefined);
+
   }
 
 
-  setSelected(cpnParentElement, cpnElement, type) {
-    this.tree.selected.parentCpnElement = cpnParentElement;
-    // this.tree.selected.id = cpnElement._id;
-    // this.tree.selected.type = type;
-    // this.tree.selected.cpnElement = cpnElement;
 
-    this.eventService.send(Message.TREE_SELECT_DECLARATION_NODE_NEW, {
-      cpnType: type,
-      cpnElement: undefined,
-      cpnParentElement: cpnParentElement
-    });
-  }
 
-  onContextMenu(event) {
-
+  onContextMenu(newElemInfo) {
+      const event = newElemInfo.event;
+      const type = newElemInfo.type;
       const entries = [];
       for (const block of nodeToArray(this.cpnet.globbox.block)) {
-        entries.push({ title: block.id, action: () => this.onContextNewNode(block), iconClass: 'fas fa-cube' });
+        entries.push({ title: block.id, action: () => this.onContextNewNode(block, type), iconClass: 'fas fa-cube' });
       }
 
       // entries.push({ title: this, action: () => this. onNewNode(), iconClass: 'fas fa-cube' });

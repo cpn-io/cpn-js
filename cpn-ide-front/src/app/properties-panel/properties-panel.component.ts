@@ -21,8 +21,9 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
   console = console;
   JSON = JSON;
-
+  selectionProvider;
   projectData;
+
 
   tabList = [
     { id: 'propertiesPanel', name: 'Properties' },
@@ -101,15 +102,19 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
     this.eventService.on(Message.SHAPE_SELECT, (data) => {
       console.log(this.constructor.name, 'Message.SHAPE_SELECT, data = ', data);
-
+      console.log('selected element', this.modelService.selectedElements);
       // this.selectTab('propertiesPanel');
+      if (!data.element.length) {
+        const element = data.element.labelTarget ?
+          data.element.labelTarget.labelTarget || data.element.labelTarget :
+          data.element;
 
-      const element = data.element.labelTarget ?
-        data.element.labelTarget.labelTarget || data.element.labelTarget :
-        data.element;
-
-      this.showShapeAttrs(element);
+        this.showShapeAttrs(element);
+      } else {
+        console.log('selectGroup');
+      }
     });
+
 
     this.eventService.on(Message.MODEL_CHANGED, () => {
       console.log(this.constructor.name, 'Message.MODEL_CHANGED');
@@ -135,6 +140,11 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
   }
 
+
+  isSelectedElements() {
+    return (this.modelService.selectedElements.length > 0);
+  }
+
   selectTab(tabId) {
     setTimeout(() => {
       const tab = this.tabsComponent.getTabByID(tabId);
@@ -154,7 +164,6 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
 
   updateChanges() {
     console.log('updateChanges(), this = ', this);
-
     if (this.cpnElement && this.cpnElement.type) {
       this.modelService.fixPlaceInitmark(this.cpnElement);
     }
@@ -166,6 +175,26 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     this.eventService.send(Message.MODEL_UPDATE_DIAGRAM, { cpnElement: this.cpnElement });
     // this.eventService.send(Message.MODEL_CHANGED);
   }
+
+  updateGroupChanges(field, attr) {
+    const self = this;
+    const template = this.modelService.selectedElements[0].cpnElement;
+    this.modelService.selectedElements.forEach(value => {
+      value.cpnElement[field][attr] = template[field][attr];
+      self.cpnElement = value.cpnElement;
+      self.updateChanges();
+    });
+    this.cpnElement =  template;
+  }
+
+
+  getGroupColorValue(field) {
+    if (this.modelService.selectedElements) {
+      // @ts-ignore
+      return this.modelService.selectedElements[0].cpnElement[field];
+    } else { return undefined; }
+  }
+
 
   updateLabel(event) {
     console.log('updateLabel(), event, this.cpnElement = ', event, this.cpnElement);
@@ -226,7 +255,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     // console.log('getSubstPages()');
     const pageList = this.modelService.getAllPages();
 
-    console.log('getSubstPages(), pageList = ', pageList);
+    // console.log('getSubstPages(), pageList = ', pageList);
 
     const subPageIdList = [];
     const parentPageIdList = [];
@@ -246,7 +275,7 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
       }
     }
 
-    console.log('getSubstPages(), subPageIdList = ', subPageIdList);
+    // console.log('getSubstPages(), subPageIdList = ', subPageIdList);
 
     const pageNames = ['-- empty --'];
     for (const page of pageList) {

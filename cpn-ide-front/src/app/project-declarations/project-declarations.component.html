@@ -7,7 +7,7 @@
 
         <!-- Project tree toolbar -->
         <app-project-tree-toolbar (newNode)="onNewNode()" (deleteNode)="onDeleteNode()" (upNode)="onUpNode()"
-          (downNode)="onDownNode()" [filterText]="tree.filter" (filterChanged)="onFilterChanged($event)" (contextMenu)="onContextMenu($event)">
+          (downNode)="onDownNode()" [filterText]="tree.filter" (filterChanged)="onFilterChanged($event)" (contextMenu)="onContextMenu($event)" [tab] = "tab">
         </app-project-tree-toolbar>
 
         <div [id]="tab.id" class="tab-container-with-toolbar">
@@ -17,7 +17,7 @@
               <ng-container *ngFor="let globbox of nodeToArray(cpnet.globbox)">
                 <ng-container *ngFor="let block of nodeToArray(globbox.block)">
                   <app-project-declarations-block-node [containerId]="tab.id" [tree]="tree" [block]="block"
-                    [declarationType]="tab.declarationType">
+                    [declarationType]="tab.declarationType"  (contextMenu)="onContextMenu($event)"  [listener] = "onContextMenu">
                   </app-project-declarations-block-node>
                 </ng-container>
               </ng-container>
@@ -28,12 +28,20 @@
 
 <!--                <span >{{ parentBlock._name }}</span>-->
 <!--                <i *ngIf="parentBlock" class="fas fa-arrow-right arrow"></i>-->
-                <span>Monitors</span>
+
+                <a  style="color: black" href="#" id="dropdownMenuLinkMonitor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="New">
+                  <i class="fas fa-plus iconNew"></i>
+                  <span class="headerTitle" >Monitors</span>
+                </a>
+
+                <div class="dropdown-menu list-elements" aria-labelledby="dropdownMenuLinkMonitor">
+                  <a class="dropdown-item" href="#" (click)="onContextMenu({event: $event, type: 'monitor', block: cpnet.monitorblock.monitorblock})"><i class="fas fa-plus"></i> Monitor</a>
+                </div>
               </div>
               <ng-container *ngFor="let monitorBlock of nodeToArray(cpnet.monitorblock.monitorblock)">
                 <div style="padding-left: 20px; background-color: lightgray;">
                   <app-project-declarations-block-node [containerId]="tab.id" [tree]="tree" [block]="monitorBlock"
-                                                       [declarationType]="'monitorblock'" [parentBlock]="cpnet.monitorblock" >
+                                                       [declarationType]="'monitorblock'" [parentBlock]="cpnet.monitorblock" (contextMenu)="onContextMenu($event)" [listener] = "onContextMenu" >
                   </app-project-declarations-block-node>
                 </div>
               </ng-container>

@@ -13,6 +13,7 @@ export class ProjectTreeToolbarComponent implements OnInit {
   @Output() downNode = new EventEmitter();
 
   @Input() filterText = '';
+  @Input() tab = {id: 'dsddd'};
   @Output() filterChanged = new EventEmitter();
   @Output() contextMenu = new EventEmitter();
 

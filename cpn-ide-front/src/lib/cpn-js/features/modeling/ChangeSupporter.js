@@ -68,6 +68,7 @@ export default function ChangeSupporter(
 
               if (element) {
                 const tokenElement = modeling.getTokenLabelElement(element);
+                modeling.moveShape(tokenElement, {x: 0, y: 0});
                 // console.log('ChangeSupporter(), updateTokens(), tokenElement = ', tokenElement);
 
                 const markingElement = modeling.getMarkingLabelElement(

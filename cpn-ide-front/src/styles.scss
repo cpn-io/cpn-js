@@ -148,8 +148,11 @@ body {
 // Blocks
 // ---------------------------------------------------------------------------------
 
-.blockHeader {
+.iconNew{
   padding: 0 10px;
+}
+.blockHeader {
+  //padding: 0 10px;
   padding-top: 5px;
 
   background: #f3f3f3;
@@ -167,6 +170,14 @@ body {
   cursor: pointer;
 
   box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+.headerTitle {
+  padding: 0 10px;
+  color: black;
+  font-weight: bold;
+
 }
 
 .blockHeader .caret {
@@ -381,4 +392,9 @@ body {
 }
 .cpn-js-icon-connection:before {
   content: "\f35d";
+}
+
+
+.testClassForShape{
+  box-shadow: 10px 5px 5px red;
 }

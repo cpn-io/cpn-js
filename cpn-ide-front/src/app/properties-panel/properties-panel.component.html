@@ -167,6 +167,28 @@
         -->
           </div>
 
+          <div  *ngIf="isSelectedElements()">
+
+            <div class="blockHeader">
+              Common properties
+            </div>
+            <!-- Stroke thick -->
+            <app-text-edit-row type="int" name="Stroke thick" [object]="getGroupColorValue('lineattr')" field="_thick"
+                               (changed)="updateGroupChanges('lineattr', '_thick')" [readonly]="accessCpnService.isSimulation">
+            </app-text-edit-row>
+
+            <!-- Stroke color -->
+            <app-text-edit-row type="groupColor" name="Stroke color" [selectedElements]="modelService.selectedElements" [object]="getGroupColorValue('lineattr')" field="_colour"
+                               (changed)="updateGroupChanges('lineattr','_colour')" [colors]="colors" [readonly]="accessCpnService.isSimulation">
+            </app-text-edit-row>
+
+            <!-- Fill color -->
+            <app-text-edit-row *ngIf=" elementType !== 'cpn:Label'" type="color" name="Fill color"
+                               [object]="getGroupColorValue('fillattr')" field="_colour" (changed)="updateGroupChanges('fillattr', '_colour')" [colors]="colors"
+                               [readonly]="accessCpnService.isSimulation">
+            </app-text-edit-row>
+          </div>
+
         </div>
 
       </ng-container>

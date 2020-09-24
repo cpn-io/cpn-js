@@ -437,6 +437,9 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       self.updateAvailableMonitorList(selectedElements);
 
       self.selectedElements = selectedElements;
+      self.modelService.selectedElements = selectedElements;
+      // self.eventService.send(Message.SHAPE_SELECT, { element: selectedElements });
+
     });
 
     this.eventService.on('editing.cancel', () => eventBus.fire('editing.cancel'));
@@ -808,6 +811,23 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   onCopyShapes() {
     this.selectedElements = this.selectionProvider.getSelectedElements();
+    const arcsForCopy =  [];
+    this.selectedElements.forEach((element) => {
+      // let originalElement = this._modeling.getElementById(element.cpnElement._id)
+      const elementArcs = this.modeling.getShapeArcs(element);
+      elementArcs.forEach((arc) => {
+        if (!arcsForCopy.some(value => value.id === arc.id)) {
+          arcsForCopy.push({
+            id: arc.id,
+            cpnPlaceId: arc.cpnPlace._id,
+            cpnTransitionId: arc.cpnTransition._id,
+            orient: arc.cpnElement._orientation,
+            label: arc.labels[0]
+          });
+        }
+      });
+    });
+    localStorage.setItem('arcsForCopy',  JSON.stringify(arcsForCopy));
     localStorage.setItem('clipboardElement',  JSON.stringify(this.selectedElements));
     this.selectionProvider.deselectAll();
 

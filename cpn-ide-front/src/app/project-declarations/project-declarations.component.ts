@@ -137,16 +137,19 @@ export class ProjectDeclarationsComponent implements OnInit, AfterViewInit, DoCh
   onContextMenu(newElemInfo) {
       const event = newElemInfo.event;
       const type = newElemInfo.type;
-      const entries = [];
-      for (const block of nodeToArray(this.cpnet.globbox.block)) {
-        entries.push({ title: block.id, action: () => this.onContextNewNode(block, type), iconClass: 'fas fa-cube' });
-      }
-
-      // entries.push({ title: this, action: () => this. onNewNode(), iconClass: 'fas fa-cube' });
-      // entries.push({ title: 'New page', action: () => this.onNewNode(), iconClass: 'fas fa-project-diagram' });
-      if (entries.length > 0) {
-        this.tree.contextMenu.setEntries(entries);
-        this.tree.contextMenu.show({ x: event.clientX, y: event.clientY });
+      if (newElemInfo.block) {
+        this.onContextNewNode(newElemInfo.block, type);
+      } else {
+        const entries = [];
+        for (const block of nodeToArray(type === 'monitor' ? this.cpnet.monitorblock.monitorblock : this.cpnet.globbox.block)) {
+          entries.push({ title: block.id, action: () => this.onContextNewNode(block, type), iconClass: 'fas fa-cube' });
+        }
+        // entries.push({ title: this, action: () => this. onNewNode(), iconClass: 'fas fa-cube' });
+        // entries.push({ title: 'New page', action: () => this.onNewNode(), iconClass: 'fas fa-project-diagram' });
+        if (entries.length > 0) {
+          this.tree.contextMenu.setEntries(entries);
+          this.tree.contextMenu.show({ x: event.clientX, y: event.clientY });
+        }
       }
 
   }

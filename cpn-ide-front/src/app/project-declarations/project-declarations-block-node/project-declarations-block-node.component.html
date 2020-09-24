@@ -1,17 +1,39 @@
 <div *ngIf="hasDeclarations()" class="blockHeader">
   <!-- {{ (parentBlock ? parentBlock.id  + '  >  ' : '') + block.id }} -->
+  <a  style="color: black" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="New">
+    <i class="fas fa-plus iconNew"></i>
+    <span *ngIf="parentBlock">{{ parentBlock.id }}</span>
+    <i *ngIf="parentBlock" class="fas fa-arrow-right arrow"></i>
+    <span class="headerTitle">{{ block.id }}</span>
+  </a>
 
-  <span *ngIf="parentBlock">{{ parentBlock.id }}</span>
-  <i *ngIf="parentBlock" class="fas fa-arrow-right arrow"></i>
-  <span>{{ block.id }}</span>
+  <div class="dropdown-menu list-elements" aria-labelledby="dropdownMenuLink">
+    <a *ngIf="containerId === 'all' || containerId === 'color'" class="dropdown-item"  href="#" (click)="onNewElement($event, 'color', block)"><i class="fas fa-plus"></i> Color</a>
+    <a *ngIf="containerId === 'all' || containerId === 'var'" class="dropdown-item" href="#" (click)="onNewElement($event, 'var', block)" ><i class="fas fa-plus"></i> Var</a>
+    <a *ngIf="containerId === 'all' || containerId === 'globref'" class="dropdown-item" href="#" (click)="onNewElement($event, 'globref', block)"><i class="fas fa-plus"></i> Globref</a>
+    <a  *ngIf="containerId === 'all' || containerId === 'monitor'" class="dropdown-item" href="#" (click)="onNewElement($event, 'monitor', block)"><i class="fas fa-plus"></i> Monitor</a>
+    <a  *ngIf="containerId === 'all' || containerId === 'ml'" class="dropdown-item" href="#" (click)="onNewElement($event, 'ml', block)" ><i class="fas fa-plus"></i> Ml</a>
+  </div>
+
 </div>
 
 <div *ngIf="declarationType === 'monitorblock'" class="blockHeader">
   <!-- {{ (parentBlock ? parentBlock.id  + '  >  ' : '') + block.id }} -->
 
-  <span *ngIf="parentBlock">{{ parentBlock._name }}</span>
-  <i *ngIf="parentBlock" class="fas fa-arrow-right arrow"></i>
-  <span>{{ block._name }}</span>
+  <a  style="color: black" href="#" id="dropdownMenuLinkMonitor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="New">
+    <i class="fas fa-plus iconNew"></i>
+    <span *ngIf="parentBlock">{{ parentBlock._name }}</span>
+    <i *ngIf="parentBlock" class="fas fa-arrow-right arrow"></i>
+    <span  class="headerTitle">{{ block._name }}</span>
+  </a>
+
+  <div class="dropdown-menu list-elements" aria-labelledby="dropdownMenuLinkMonitor">
+    <a *ngIf="containerId === 'all' || containerId === 'color'" class="dropdown-item"  href="#" (click)="onNewElement($event, 'color', block)"><i class="fas fa-plus"></i> Color</a>
+    <a *ngIf="containerId === 'all' || containerId === 'var'" class="dropdown-item" href="#" (click)="onNewElement($event, 'var', block)" ><i class="fas fa-plus"></i> Var</a>
+    <a *ngIf="containerId === 'all' || containerId === 'globref'" class="dropdown-item" href="#" (click)="onNewElement($event, 'globref', block)"><i class="fas fa-plus"></i> Globref</a>
+    <a  *ngIf="containerId === 'all' || containerId === 'monitor'" class="dropdown-item" href="#" (click)="onNewElement($event, 'monitor', block)"><i class="fas fa-plus"></i> Monitor</a>
+    <a  *ngIf="containerId === 'all' || containerId === 'ml'" class="dropdown-item" href="#" (click)="onNewElement($event, 'ml', block)" ><i class="fas fa-plus"></i> Ml</a>
+  </div>
 </div>
 
 
@@ -23,7 +45,7 @@
   <ng-container *ngFor="let subblock of nodeToArray(block.block)">
     <div style="padding-left: 20px; background-color: lightgray;">
       <app-project-declarations-block-node [containerId]="containerId" [tree]="tree" [parentBlock]="block"
-                                           [block]="subblock" [declarationType]="declarationType">
+                                           [block]="subblock" [declarationType]="declarationType"   [listener] = "contextMenu" >
       </app-project-declarations-block-node>
     </div>
   </ng-container>
@@ -34,7 +56,7 @@
   <ng-container *ngFor="let subblock of nodeToArray(block.monitorblock)">
     <div style="padding-left: 20px; background-color: lightgray;">
       <app-project-declarations-block-node [containerId]="containerId" [tree]="tree" [parentBlock]="block"
-                                           [block]="subblock" [declarationType]="declarationType">
+                                           [block]="subblock" [declarationType]="declarationType"  [listener]="contextMenu" >
       </app-project-declarations-block-node>
     </div>
   </ng-container>

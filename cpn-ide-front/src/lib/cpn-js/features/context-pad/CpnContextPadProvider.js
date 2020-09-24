@@ -20,6 +20,15 @@ export default function CpnContextPadProvider(connect, contextPad, modeling, cpn
 
     this._currentElement = undefined;
   });
+
+  eventBus.on('create.connection.edit', function (event) {
+    console.log('test.event.for', event.element);
+    setTimeout(function(){
+      eventBus.fire('element.click', {element: event.element});
+       eventBus.fire('element.click', {element: event.element});
+    }, 100);
+  });
+
 }
 
 CpnContextPadProvider.$inject = [
@@ -175,11 +184,13 @@ CpnContextPadProvider.prototype._createShape = function (event, type) {
     let elemArr = [];
     elemArr.push(element);
     if (arcElement) elemArr.push(arcElement);
+      setTimeout(function () {
+        this._eventBus.fire('element.click', {element: element});
+        this._eventBus.fire('shape.create.end', { elements: elemArr });
+        this._eventBus.fire('shape.editing.activate', { shape: element });
+        this._eventBus.fire('shape.contextpad.activate', { shape: element });
+      }, 200);
 
-    this._eventBus.fire('element.click', {element: element});
-    this._eventBus.fire('shape.create.end', { elements: elemArr });
-    this._eventBus.fire('shape.editing.activate', { shape: element });
-    this._eventBus.fire('shape.contextpad.activate', { shape: element });
 
     modeling.updateElement(element, true);
   }

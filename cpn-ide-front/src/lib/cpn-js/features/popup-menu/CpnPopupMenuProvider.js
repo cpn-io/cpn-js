@@ -194,7 +194,7 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
       self._popupMenu.close();
       let elementToPast  =  JSON.parse(localStorage.getItem('clipboardElement'));
       console.log('Past ', elementToPast);
-       localStorage.removeItem('clipboardElement')
+      localStorage.removeItem('clipboardElement');
       self._paste(event, elementToPast);
 
     },
@@ -399,15 +399,20 @@ CpnPopupMenuProvider.prototype._paste = function (event, elementToPast) {
     )
 
   });
-  if(selectedElements.length > 1)
-  arcsForCopy.forEach(arc => {
-    let cpnPlace = this._modeling.getElementById(copyOriginalMapping.get(arc.cpnPlaceId));
-    let cpnTransition = this._modeling.getElementById(copyOriginalMapping.get(arc.cpnTransitionId));
-    let connect = this._modeling.createNewConnection(cpnPlace, cpnTransition, arc.orient);
-    connect.cpnElement.annot.text = arc.label.text;
-    this._modeling.updateElement(connect, true);
-    // this._eventBus.fire('element.changed', { element: connect });
-  })
+  if(selectedElements.length > 1) {
+    if (arcsForCopy.length === 0) {
+      arcsForCopy  =  JSON.parse(localStorage.getItem('arcsForCopy'));
+     }
+    arcsForCopy.forEach(arc => {
+      let cpnPlace = this._modeling.getElementById(copyOriginalMapping.get(arc.cpnPlaceId));
+      let cpnTransition = this._modeling.getElementById(copyOriginalMapping.get(arc.cpnTransitionId));
+      let connect = this._modeling.createNewConnection(cpnPlace, cpnTransition, arc.orient);
+      connect.cpnElement.annot.text = arc.label.text;
+      this._modeling.updateElement(connect, true);
+      // this._eventBus.fire('element.changed', { element: connect });
+    })
+  }
+  localStorage.removeItem('arcsForCopy');
 };
 
 

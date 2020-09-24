@@ -44,11 +44,21 @@ export class MainToolbarComponent implements OnInit {
 
   ngOnInit() {
     this.accessCpnService.setIsSimulation(false);
-
     this.ipcService.on(Message.MAIN_MENU_NEW_PROJECT, () => this.onNewProject());
     this.ipcService.on(Message.MAIN_MENU_OPEN_PROJECT, () => this.onOpenProject());
-    this.ipcService.on(Message.MAIN_MENU_SAVE_PROJECT, () => this.onSaveProject());
-
+    this.ipcService.on(Message.MAIN_MENU_SAVE_PROJECT, () => {
+      const fs =  this.accessCpnService.getFs();
+      if (fs) {
+        fs.fs.writeFile(fs.path, this.projectService.getStringProjectDataForSave(), err => {
+          console.log('Save project error');
+        });
+      } else {
+        this.onSaveProject();
+      }
+    });
+    this.ipcService.on(Message.MAIN_MENU_SAVE_AS_PROJECT, () => {
+        this.onSaveProject();
+    });
     this.ipcService.on(Message.MAIN_MENU_UNDO, () => this.getUndo());
     this.ipcService.on(Message.MAIN_MENU_REDO, () => this.getRedo());
 
@@ -142,7 +152,7 @@ export class MainToolbarComponent implements OnInit {
   }
 
   onOpenProject() {
-    // console.log(this.constructor.name, 'onOpenProject(), this = ', this);
+    console.log(this.constructor.name, 'onOpenProject(), this = ', this);
 
     this.onStopSimulation();
 
@@ -171,9 +181,11 @@ export class MainToolbarComponent implements OnInit {
               console.log(this.constructor.name, 'onOpenProject(), file data = ', data);
               this.projectService.loadProjectXml(filename, data);
             });
+            this.accessCpnService.setFc({fs: fs, path: fullFilePath});
           } else {
             console.error(this.constructor.name, 'onOpenProject(), ERROR filename, f = ', r);
           }
+
         });
 
       } else {
@@ -196,21 +208,28 @@ export class MainToolbarComponent implements OnInit {
 
   onSaveProject() {
     this.onStopSimulation();
-    const dialogRef = this.dialog.open(DialogComponent, {
-      width: '500px',
-      data: {
-        title: 'Save the changes to file',
-        input: [{ title: 'Filename', value: this.modelService.projectName }]
-      }
-    });
-    dialogRef.afterClosed().subscribe(data => {
-      if (data && data.result === DialogComponent.YES) {
-        console.log(this.constructor.name, 'onSaveProject(), YES clicked, data = ', data);
+    const fs =  this.accessCpnService.getFs();
+    if (fs) {
+      fs.fs.writeFile(fs.path, this.projectService.getStringProjectDataForSave(), err => {
+        console.log('Save project error', err);
+      });
+    } else {
+      const dialogRef = this.dialog.open(DialogComponent, {
+        width: '500px',
+        data: {
+          title: 'Save the changes to file',
+          input: [{title: 'Filename', value: this.modelService.projectName}]
+        }
+      });
+      dialogRef.afterClosed().subscribe(data => {
+        if (data && data.result === DialogComponent.YES) {
+          console.log(this.constructor.name, 'onSaveProject(), YES clicked, data = ', data);
 
-        // Save to file
-        this.projectService.saveToFile(data.input[0].value);
-      }
-    });
+          // Save to file
+          this.projectService.saveToFile(data.input[0].value);
+        }
+      });
+    }
   }
 
   checkSaveChanges() {

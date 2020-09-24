@@ -9,6 +9,7 @@ export class TextEditRowComponent {
   @Input() type = 'text';
   @Input() name: string;
   @Input() object: object;
+  @Input() selectedElements: [];
   @Input() field: string;
   @Input() colors = [];
   @Input() options = [];
@@ -51,6 +52,7 @@ export class TextEditRowComponent {
     return this.colorNames[name] || name;
   }
 
+
   onKeydown(e) {
     if (!e) {
       e = window.event;
@@ -84,12 +86,15 @@ export class TextEditRowComponent {
     if (this.type === 'int') {
       this.object[this.field] = parseInt(event.target.textContent, 0) || ' ';
     }
-    if (this.type === 'color') {
+    if (this.type === 'color' || this.type === 'groupColor') {
       this.object[this.field] = this.color2name(event.target.value);
     }
     if (this.type === 'select') {
       this.object[this.field] = event;
     }
+    // if (this.type === 'groupColor') {
+    //   this.object[this.field] =  this.color2name(event.target.value);
+    // }
     this.changed.emit(this.object[this.field]);
   }
 
@@ -102,6 +107,7 @@ export class TextEditRowComponent {
     if (isNaN(parsed)) { return base; }
     return parsed;
   }
+
 
 
   // getPortObject(cpnElement, text) {

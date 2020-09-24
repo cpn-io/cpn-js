@@ -527,9 +527,8 @@ Modeling.prototype.createNewConnection = function (
           modeling.moveShape(label, { x: -35, y: 10 });
         }
       }
-
+       this._eventBus.fire('create.connection.edit', {element: connection});
       // openPortMenu(this._eventBus, transShape, placeShape, connection, connection.cpnElement._orientation);
-
       return connection;
     }
   }

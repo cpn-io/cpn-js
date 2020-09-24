@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 import { nodeToArray } from '../../common/utils';
 import { ITreeNode } from '../../project-tree/tree-node/tree-node';
 import { TreeData } from '../../project-tree/project-tree.component';
@@ -11,6 +11,7 @@ import { TreeData } from '../../project-tree/project-tree.component';
 export class ProjectDeclarationsBlockNodeComponent implements OnInit, ITreeNode {
   public nodeToArray = nodeToArray;
 
+
   @Input() public tree: TreeData;
   @Input() public declarationType: any;
   @Input() public parentBlock: any;
@@ -18,10 +19,12 @@ export class ProjectDeclarationsBlockNodeComponent implements OnInit, ITreeNode 
   @Input() public containerId: any;
 
   @Input() showBullet = true;
-
+  @Input() listener: any;
+  @Output() contextMenu = new EventEmitter();
   constructor() { }
 
   ngOnInit() {
+
   }
 
   hasBlocks() {
@@ -93,6 +96,14 @@ export class ProjectDeclarationsBlockNodeComponent implements OnInit, ITreeNode 
   }
   onDown(event: any) {
     throw new Error("Method not implemented.");
+  }
+
+  onNewElement(event, type, block) {
+    console.log('onNewElement');
+    if (this.contextMenu.observers.length > 0)
+      this.contextMenu.emit({event: event, type: type, block: block});
+    else
+      this.listener.emit({event: event, type: type, block: block});
   }
 
 }

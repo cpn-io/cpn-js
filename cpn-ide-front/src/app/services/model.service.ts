@@ -38,6 +38,7 @@ export class ModelService {
   public project = undefined;
   public projectData = undefined;
   public projectName = '';
+  public selectedElements = [];
 
   private backupModel = [];
   private redoBackupModel;

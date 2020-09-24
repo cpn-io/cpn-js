@@ -199,4 +199,15 @@ export class ProjectService {
 
     this.fileService.saveAsText(xml, filename);
   }
+
+
+  public getStringProjectDataForSave() {
+    const x2js = new X2JS();
+    let xml = (x2js.json2xml_str(cloneObject(this.modelService.getProjectData())));
+    xml = `${this.xmlPrefix}\n${xml}`;
+
+    return xmlBeautify(xml);
+  }
+
 }
+

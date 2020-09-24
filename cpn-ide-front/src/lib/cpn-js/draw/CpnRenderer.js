@@ -579,6 +579,8 @@ export default function CpnRenderer(
       rx: cx,
       ry: cy
     });
+
+
     svgAttr(ellipse, {
       fill: getFillColor(element),
       stroke: getStrokeColor(element),
@@ -603,6 +605,7 @@ export default function CpnRenderer(
         fill: 'transparent',
         stroke: getStrokeColor(element),
         strokeWidth: strokeWidth,
+
       });
       svgAppend(parentGfx, ellipse);
     }

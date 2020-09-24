@@ -60,7 +60,7 @@ export class Message {
   static MAIN_MENU_NEW_PROJECT = 'main.menu.new.project';
   static MAIN_MENU_OPEN_PROJECT = 'main.menu.open.project';
   static MAIN_MENU_SAVE_PROJECT = 'main.menu.save.project';
-
+  static MAIN_MENU_SAVE_AS_PROJECT = 'main.menu.saveas.project';
   static MAIN_MENU_UNDO = 'main.menu.undo';
   static MAIN_MENU_REDO = 'main.menu.redo';
 

@@ -29,6 +29,8 @@ export class AccessCpnService {
 
   public tokenData = [];
 
+  public fs = undefined;
+
   public simulationReport = '';
   public simulationHtmlFiles = [];
   public initNetProcessing;
@@ -102,6 +104,8 @@ export class AccessCpnService {
       return [];
     }
 
+
+
     const firedData = [];
     for (const transId of this.firedTransIdList) {
       firedData.push(transId);
@@ -119,6 +123,18 @@ export class AccessCpnService {
     this.firedTransIdList = firedData;
     return this.firedTransIdList;
   }
+
+  getFs() {
+    console.log('electronTest get', this.fs);
+    return this.fs;
+  }
+
+  setFc(fs) {
+     console.log('electronTest set', fs);
+     this.fs = fs;
+     console.log('electronTest after set', this.fs);
+  }
+
 
   getWarningData() {
     const arr = [];

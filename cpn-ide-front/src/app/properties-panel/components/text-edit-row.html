@@ -27,6 +27,19 @@
   </div>
 </div>
 
+<!-- ColorGroup input -->
+<div class="valueRow" [ngClass]="{'bordered': bordered}" *ngIf="selectedElements && selectedElements.length > 0 && type === 'groupColor'">
+  <div class="valueName">{{name}}</div>
+  <div class="selector">
+    <input type="color" list="color" class="colorSelector" [value]="name2color(object[field])"
+           (input)="onChange($event);" />
+    <datalist id="colorCommon">
+      <option *ngFor="let color of colors">{{color}}</option>
+    </datalist>
+  </div>
+</div>
+
+
 <!-- Select input -->
 <div class="valueRow" [ngClass]="{'bordered': bordered}" *ngIf="object && type === 'select'">
   <div class="valueName">{{name}}</div>

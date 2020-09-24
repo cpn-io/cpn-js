@@ -118,6 +118,7 @@ function createWindow() {
         { type: 'separator' },
         { label: 'Load project', click() { openProject(); }, accelerator: 'Ctrl+O' },
         { label: 'Save project', click() { saveProject(); }, accelerator: 'Ctrl+S' },
+        { label: 'Save as..', click() { saveAsProject(); } },
         { type: 'separator' },
         { label: 'Exit', click() { app.quit(); }, accelerator: 'Alt+F4' }
       ]
@@ -272,6 +273,10 @@ function openProject() {
 }
 function saveProject() {
   mainWindow.webContents.send('main.menu.save.project');
+}
+
+function saveAsProject() {
+  mainWindow.webContents.send('main.menu.saveas.project');
 }
 function undo() {
   mainWindow.webContents.send('main.menu.undo');

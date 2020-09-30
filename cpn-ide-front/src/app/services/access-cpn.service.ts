@@ -19,6 +19,7 @@ export class AccessCpnService {
   public errorIds = [];
   public errorPagesIds = [];
   public warnings = [];
+  public replicationProcessingProgress = '0';
 
   public stateData = undefined;
   public readyData = [];
@@ -695,7 +696,7 @@ export class AccessCpnService {
       const postData = options;
 
       console.log('AccessCpnService, doReplication(), postData = ', postData);
-
+      this.gettingProgress(postData);
       const url = this.settingsService.getServerUrl() + '/api/v2/cpn/sim/replication';
       this.http.post(url, postData, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
         (data: any) => {
@@ -751,6 +752,19 @@ export class AccessCpnService {
   }
 
 
+  gettingProgress(options) {
+    const self = this;
+    const postData = options;
+    const url = this.settingsService.getServerUrl() + '/api/v2/cpn/sim/replication_progress';
+    this.http.post(url, postData, { headers: { 'X-SessionId': this.sessionId } }).subscribe(
+      (data: any) => {
+          self.replicationProcessingProgress = parseFloat(data.progress).toFixed(2);
+          console.log('processing', data);
+      });
+    if (this.replicationProcessing) {
+      setTimeout(function() { self.gettingProgress(options); }, 2000);
+    }
+  }
 
 
 

@@ -133,7 +133,6 @@ export class ProjectDeclarationsComponent implements OnInit, AfterViewInit, DoCh
 
 
 
-
   onContextMenu(newElemInfo) {
       const event = newElemInfo.event;
       const type = newElemInfo.type;

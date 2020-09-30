@@ -3,7 +3,7 @@
     <i class="fas fa-code"></i>
   </div>
 
-  <div [id]="declaration._id" [contentEditable]="!accessCpnService.isSimulation"
+  <div  draggable="true" [id]="declaration._id" [contentEditable]="!accessCpnService.isSimulation"
     [ngClass]="{'selected': tree.selected.id === declaration._id, 'error': accessCpnService.errorIds.includes(declaration._id), 'node': true, 'editablenode': true}"
     [innerHTML]="getText() | colorDeclarations | safeHtml" (mousedown)="onSelect()"
     (contextmenu)="onSelect(); onContextMenu($event)" (focus)="onSelect(); focused = true;"

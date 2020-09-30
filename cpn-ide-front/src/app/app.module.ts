@@ -68,6 +68,7 @@ import { SimulationReportPipe } from './pipes/simulation-report.pipe';
 import { DialogComponent } from './common/dialog/dialog.component';
 import { DialogLogComponent } from './common/dialog-log/dialog-log.component';
 import { BufferService } from './services/buffer.service';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 
 require('typeface-droid-sans-mono');
 
@@ -132,6 +133,7 @@ require('typeface-droid-sans-mono');
     FormsModule,
     CommonModule,
     SafePipeModule,
+    DragDropModule,
 
     // Material
     MatDialogModule,

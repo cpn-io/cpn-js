@@ -8,7 +8,7 @@
     text-align: center;
     z-index: 100000000;
   }
-  
+
   .loading-text {
     position: relative;
     top: 50%;
@@ -16,4 +16,9 @@
     font-size: 3em;
     color: green;
   }
-  
+
+.progress{
+  position: absolute;
+  left: 30%;
+  right: 30%;
+}

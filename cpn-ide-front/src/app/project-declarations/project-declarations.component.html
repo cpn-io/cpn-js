@@ -11,15 +11,14 @@
         </app-project-tree-toolbar>
 
         <div [id]="tab.id" class="tab-container-with-toolbar">
-
           <ng-container *ngIf="cpnet">
             <ng-container *ngIf="['all', 'globref', 'color', 'var', 'ml'].includes(tab.id)">
               <ng-container *ngFor="let globbox of nodeToArray(cpnet.globbox)">
-                <ng-container *ngFor="let block of nodeToArray(globbox.block)">
-                  <app-project-declarations-block-node [containerId]="tab.id" [tree]="tree" [block]="block"
-                    [declarationType]="tab.declarationType"  (contextMenu)="onContextMenu($event)"  [listener] = "onContextMenu">
-                  </app-project-declarations-block-node>
-                </ng-container>
+                  <ng-container *ngFor="let block of nodeToArray(globbox.block)" >
+                    <app-project-declarations-block-node  [containerId]="tab.id" [tree]="tree" [block]="block"
+                      [declarationType]="tab.declarationType"  (contextMenu)="onContextMenu($event)"  [listener] = "onContextMenu">
+                    </app-project-declarations-block-node>
+                  </ng-container>
               </ng-container>
             </ng-container>
             <ng-container *ngIf="['monitor'].includes(tab.id)">

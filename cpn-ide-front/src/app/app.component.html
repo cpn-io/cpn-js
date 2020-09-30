@@ -14,8 +14,12 @@
 
 <div *ngIf="accessCpnService.replicationProcessing" class="loading">
   <div class="loading-text">
-    Replication processing...
+    Replication processing... {{accessCpnService.replicationProcessingProgress}}%
+    <div class="progress">
+      <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar"  aria-valuemin="0" aria-valuemax="100"  [attr.aria-valuenow]="accessCpnService.replicationProcessingProgress"
+           [style.width.%]="accessCpnService.replicationProcessingProgress"></div>    </div>
   </div>
+
 </div>
 
 <div *ngIf="accessCpnService.initNetProcessing && accessCpnService.complexVerify" class="loading">

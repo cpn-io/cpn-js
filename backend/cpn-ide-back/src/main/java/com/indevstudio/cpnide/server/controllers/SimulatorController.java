@@ -136,6 +136,20 @@ public class SimulatorController {
         });
     }
 
+    @PostMapping(value = "/sim/replication_progress")
+    @ApiOperation(nickname = "Replication progress", value = "Replication - long running op (from mins to hours)")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Step success", response = Replication.class),
+                    @ApiResponse(code = 400, message = "Incorrect Request", response = ErrorDescription.class),
+                    @ApiResponse(code = 500, message = "Internal error. Object with description", response = ErrorDescription.class)
+            })
+    public ResponseEntity replicationProgress(@RequestHeader(value = "X-SessionId") String sessionId, @RequestBody Replication replicationParams) {
+        return RequestBaseLogic.HandleRequest(sessionId, () -> {
+            ReplicationProgressResp resp = _netConatiner.getFilesForReplicationProgress(sessionId,replicationParams);
+            return RequestBaseLogic.HandleRequest(sessionId, () -> ResponseEntity.status(HttpStatus.OK).body(resp));
+        });
+    }
 
 
 

@@ -366,18 +366,18 @@ CpnPopupMenuProvider.prototype._paste = function (event, elementToPast) {
   let idObj =  undefined;
   selectedElements.forEach((element) => {
    // let originalElement = this._modeling.getElementById(element.cpnElement._id)
-    let elementArcs = this._modeling.getShapeArcs(element);
-    elementArcs.forEach((arc) => {
-      if(!arcsForCopy.some(value => value.id === arc.id)) {
-        arcsForCopy.push({
-          id: arc.id,
-          cpnPlaceId: arc.cpnPlace._id,
-          cpnTransitionId: arc.cpnTransition._id,
-          orient: arc.cpnElement._orientation,
-          label: arc.labels[0]
-        })
-      }
-    })
+   //  let elementArcs = this._modeling.getShapeArcs(element);
+   //  elementArcs.forEach((arc) => {
+   //    if(!arcsForCopy.some(value => value.id === arc.id)) {
+   //      arcsForCopy.push({
+   //        id: arc.id,
+   //        cpnPlaceId: arc.cpnPlace._id,
+   //        cpnTransitionId: arc.cpnTransition._id,
+   //        orient: arc.cpnElement._orientation,
+   //        label: arc.labels[0]
+   //      })
+   //    }
+   //  })
 
 
     let newCpnElement = element.cpnElement;//angular.copy({ ...element.cpnElement, _id: getNextId() };
@@ -413,6 +413,7 @@ CpnPopupMenuProvider.prototype._paste = function (event, elementToPast) {
     })
   }
   localStorage.removeItem('arcsForCopy');
+
 };
 
 

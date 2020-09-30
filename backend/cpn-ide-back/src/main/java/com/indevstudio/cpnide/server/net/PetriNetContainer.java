@@ -34,6 +34,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Component
@@ -217,7 +218,7 @@ public class PetriNetContainer {
 
     }
 
-    ReplicationResp getOutputPathContent(String sessionId) throws Exception {
+     ReplicationResp getOutputPathContent(String sessionId) throws Exception {
         String pathStr = getOutputFullPathStr(sessionId);
 
         final StringBuilder sb = new StringBuilder();
@@ -242,6 +243,22 @@ public class PetriNetContainer {
         outputPathContent.setExtraInfo(sb.toString());
         outputPathContent.setFiles(htmlContent);
         return outputPathContent;
+    }
+
+
+    public ReplicationProgressResp getFilesForReplicationProgress(String sessionId, Replication replicationParams) throws Exception{
+        String pathStr = getOutputFullPathStr(sessionId);
+        ReplicationProgressResp replicationProgressResp = new ReplicationProgressResp();
+        String[] files = Arrays.stream(new File(pathStr).list()).filter(s -> s.startsWith("reps_")).toArray(String[]::new);
+        if(files.length > 0) {
+            String curReplicationFolderPath = files[files.length - 1];
+            String[] simfiles = Arrays.stream((new File(pathStr + "/" + curReplicationFolderPath)).list()).filter(s -> s.startsWith("sim_")).toArray(String[]::new);;
+            replicationProgressResp.setProgress("" + (100.0 * simfiles.length / Integer.valueOf(replicationParams.getRepeat())));
+            return replicationProgressResp;
+        } else {
+            replicationProgressResp.setProgress("0");
+            return replicationProgressResp;
+        }
     }
 
 

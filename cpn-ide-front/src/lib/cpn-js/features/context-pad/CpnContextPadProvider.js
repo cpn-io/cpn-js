@@ -62,6 +62,7 @@ CpnContextPadProvider.prototype.getContextPadEntries = function (element) {
 
   function startConnect(event, element, autoActivate) {
     contextPad.close();
+    event.singletoneCreate = true;
     connect.start(event, element, autoActivate);
   }
 
@@ -184,12 +185,12 @@ CpnContextPadProvider.prototype._createShape = function (event, type) {
     let elemArr = [];
     elemArr.push(element);
     if (arcElement) elemArr.push(arcElement);
-      setTimeout(function () {
-        this._eventBus.fire('element.click', {element: element});
-        this._eventBus.fire('shape.create.end', { elements: elemArr });
-        this._eventBus.fire('shape.editing.activate', { shape: element });
-        this._eventBus.fire('shape.contextpad.activate', { shape: element });
-      }, 200);
+
+    this._eventBus.fire('element.click', {element: element});
+    this._eventBus.fire('shape.create.end', { elements: elemArr });
+    this._eventBus.fire('shape.editing.activate', { shape: element });
+    this._eventBus.fire('shape.contextpad.activate', { shape: element });
+
 
 
     modeling.updateElement(element, true);

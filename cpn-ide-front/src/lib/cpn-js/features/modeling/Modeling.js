@@ -451,6 +451,7 @@ Modeling.prototype.connect = function (source, target, attrs, hints) {
 
       if (conElem) {
         this._eventBus.fire("shape.create.end", { elements: [conElem] });
+        this._eventBus.fire('create.connection.edit', {element: conElem});
       }
 
       // this._eventBus.fire('shape.editing.activate', {shape: conElem});
@@ -527,7 +528,7 @@ Modeling.prototype.createNewConnection = function (
           modeling.moveShape(label, { x: -35, y: 10 });
         }
       }
-       this._eventBus.fire('create.connection.edit', {element: connection});
+
       // openPortMenu(this._eventBus, transShape, placeShape, connection, connection.cpnElement._orientation);
       return connection;
     }

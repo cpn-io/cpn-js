@@ -1,5 +1,4 @@
 <nav class="navbar navbar-sm navbar-expand shadow-sm">
-
   <ul class="navbar-nav mr-auto">
     <li class="nav-item">
       <div class="header">Model diagram</div>
@@ -7,18 +6,16 @@
     <div class="divider"></div>
 
     <ng-container *ngIf="!accessCpnService.isSimulation">
-
       <li class="nav-item">
         <a class="nav-link" href="#" (click)="onSelectShapes()">
           <i class="far fa-square"></i>
-          <span>Select shapes</span>
+          <span>Select nodes</span>
         </a>
       </li>
 
       <div class="divider"></div>
 
       <ng-container *ngIf="selectedElements && selectedElements.length > 0">
-
         <li class="nav-item">
           <a class="nav-link" href="#" (click)="onClearSelection()">
             <i class="far fa-window-close"></i>
@@ -53,41 +50,47 @@
         <li class="nav-item">
           <a class="nav-link red" href="#" (click)="onDeleteShapes()">
             <i class="far fa-trash-alt"></i>
-            <span>Delete shapes</span>
+            <span>Delete nodes</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link green" href="#" (click)="onCopyShapes()">
             <i class="fas fa-copy"></i>
-            <span>Copy shapes</span>
+            <span>Copy nodes</span>
           </a>
         </li>
 
-
         <div class="divider"></div>
-
-
       </ng-container>
 
       <ng-container *ngIf="availableMonitorList.length > 0">
         <li class="dropdown nav-item">
-          <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle nav-link monitor" data-toggle="dropdown"
-            href="#" id="navbarMonitorsDD">
+          <a
+            aria-expanded="false"
+            aria-haspopup="true"
+            class="dropdown-toggle nav-link monitor"
+            data-toggle="dropdown"
+            href="#"
+            id="navbarMonitorsDD"
+          >
             <i class="fas fa-plus"></i>
             <span>New monitor</span>
           </a>
           <div aria-labelledby="navbarDropdown" class="dropdown-menu shadow">
             <ng-container *ngFor="let mt of availableMonitorList">
-              <a (click)="onCreateNewMonitor(mt)" class="dropdown-item" href="#">{{ mt }}</a>
+              <a
+                (click)="onCreateNewMonitor(mt)"
+                class="dropdown-item"
+                href="#"
+                >{{ mt }}</a
+              >
             </ng-container>
           </div>
         </li>
         <div class="divider"></div>
       </ng-container>
-
     </ng-container>
   </ul>
-
 
   <ul class="navbar-nav ml-auto">
     <div class="divider"></div>
@@ -98,21 +101,25 @@
         <span>Close</span>
       </div>
     </li>
-
   </ul>
-
 </nav>
 
 <div class="tab-container-with-toolbar">
   <!-- Container for cpn-js diagram -->
-  <div id="container" #container style="width:100%; height:100%; border: 0px solid red; background: #ebebeb"></div>
+  <div
+    id="container"
+    #container
+    style="
+      width: 100%;
+      height: 100%;
+      border: 0px solid red;
+      background: #ebebeb;
+    "
+  ></div>
 </div>
 
 <div class="loading" *ngIf="loading">
-  <div class="loading-text">
-    Loading CPN diagram...
-  </div>
+  <div class="loading-text">Loading CPN diagram...</div>
 </div>
 
-<div #popup class="popup errorPopup">
-</div>
+<div #popup class="popup errorPopup"></div>

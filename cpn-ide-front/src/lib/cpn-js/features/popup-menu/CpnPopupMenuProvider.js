@@ -184,19 +184,17 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
     },
   };
 
-
   var pastMenuEntry = {
     id: "_menuItem_past",
-    label: "Past",
+    label: "Paste",
     // className: 'popup-menu-icon-delete',
     className: "cpn-js-icon-paste",
     action: function () {
       self._popupMenu.close();
-      let elementToPast  =  JSON.parse(localStorage.getItem('clipboardElement'));
-      console.log('Past ', elementToPast);
-      localStorage.removeItem('clipboardElement');
+      let elementToPast = JSON.parse(localStorage.getItem("clipboardElement"));
+      console.log("Paste ", elementToPast);
+      localStorage.removeItem("clipboardElement");
       self._paste(event, elementToPast);
-
     },
   };
 
@@ -215,7 +213,7 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
     entries.push(createTransitionMenuEntry);
     entries.push(createSubpageMenuEntry);
     entries.push(createAuxMenuEntry);
-    if(localStorage.getItem('clipboardElement')){
+    if (localStorage.getItem("clipboardElement")) {
       entries.push(pastMenuEntry);
     }
 
@@ -241,8 +239,6 @@ CpnPopupMenuProvider.prototype.getEntries = function (element) {
       entries.push(runScriptOnServer);
     }
   }
-
-
 
   return entries;
 };
@@ -344,7 +340,6 @@ CpnPopupMenuProvider.prototype._createSubpage = function (event) {
 //   });
 // };
 
-
 CpnPopupMenuProvider.prototype._paste = function (event, elementToPast) {
   var root = this._canvas.getRootElement();
 
@@ -355,38 +350,35 @@ CpnPopupMenuProvider.prototype._paste = function (event, elementToPast) {
   // var selectedElements = this._elementRegistry.filter(function (elementToPast) {
   //   return elementToPast.selected;
   // });
-  var selectedElements= [];
-  if(elementToPast instanceof Array )
-    selectedElements =  elementToPast;
-  else
-    selectedElements.push(elementToPast);
-  var deltaPosition  =  undefined;
+  var selectedElements = [];
+  if (elementToPast instanceof Array) selectedElements = elementToPast;
+  else selectedElements.push(elementToPast);
+  var deltaPosition = undefined;
   let arcsForCopy = [];
   let copyOriginalMapping = new Map();
-  let idObj =  undefined;
+  let idObj = undefined;
   selectedElements.forEach((element) => {
-   // let originalElement = this._modeling.getElementById(element.cpnElement._id)
-   //  let elementArcs = this._modeling.getShapeArcs(element);
-   //  elementArcs.forEach((arc) => {
-   //    if(!arcsForCopy.some(value => value.id === arc.id)) {
-   //      arcsForCopy.push({
-   //        id: arc.id,
-   //        cpnPlaceId: arc.cpnPlace._id,
-   //        cpnTransitionId: arc.cpnTransition._id,
-   //        orient: arc.cpnElement._orientation,
-   //        label: arc.labels[0]
-   //      })
-   //    }
-   //  })
+    // let originalElement = this._modeling.getElementById(element.cpnElement._id)
+    //  let elementArcs = this._modeling.getShapeArcs(element);
+    //  elementArcs.forEach((arc) => {
+    //    if(!arcsForCopy.some(value => value.id === arc.id)) {
+    //      arcsForCopy.push({
+    //        id: arc.id,
+    //        cpnPlaceId: arc.cpnPlace._id,
+    //        cpnTransitionId: arc.cpnTransition._id,
+    //        orient: arc.cpnElement._orientation,
+    //        label: arc.labels[0]
+    //      })
+    //    }
+    //  })
 
-
-    let newCpnElement = element.cpnElement;//angular.copy({ ...element.cpnElement, _id: getNextId() };
+    let newCpnElement = element.cpnElement; //angular.copy({ ...element.cpnElement, _id: getNextId() };
     let id = Number.parseInt(getNextId().substr(2));
-    idObj = {id: id};
+    idObj = { id: id };
     changeIdsForCopiedElement(newCpnElement, idObj, copyOriginalMapping);
     deltaPosition = deltaPosition || {
-      x: position.x - Number.parseFloat(newCpnElement['posattr']['_x']),
-      y: -position.y - Number.parseFloat(newCpnElement['posattr']['_y'])
+      x: position.x - Number.parseFloat(newCpnElement["posattr"]["_x"]),
+      y: -position.y - Number.parseFloat(newCpnElement["posattr"]["_y"]),
     };
     changePositionForCopiedElement(newCpnElement, deltaPosition);
     console.log("paste, newCpnElement = ", newCpnElement);
@@ -396,48 +388,54 @@ CpnPopupMenuProvider.prototype._paste = function (event, elementToPast) {
       element.type,
       position,
       true
-    )
-
+    );
   });
-  if(selectedElements.length > 1) {
+  if (selectedElements.length > 1) {
     if (arcsForCopy.length === 0) {
-      arcsForCopy  =  JSON.parse(localStorage.getItem('arcsForCopy'));
-     }
-    arcsForCopy.forEach(arc => {
-      let cpnPlace = this._modeling.getElementById(copyOriginalMapping.get(arc.cpnPlaceId));
-      let cpnTransition = this._modeling.getElementById(copyOriginalMapping.get(arc.cpnTransitionId));
-      let connect = this._modeling.createNewConnection(cpnPlace, cpnTransition, arc.orient);
+      arcsForCopy = JSON.parse(localStorage.getItem("arcsForCopy"));
+    }
+    arcsForCopy.forEach((arc) => {
+      let cpnPlace = this._modeling.getElementById(
+        copyOriginalMapping.get(arc.cpnPlaceId)
+      );
+      let cpnTransition = this._modeling.getElementById(
+        copyOriginalMapping.get(arc.cpnTransitionId)
+      );
+      let connect = this._modeling.createNewConnection(
+        cpnPlace,
+        cpnTransition,
+        arc.orient
+      );
       connect.cpnElement.annot.text = arc.label.text;
       this._modeling.updateElement(connect, true);
       // this._eventBus.fire('element.changed', { element: connect });
-    })
+    });
   }
-  localStorage.removeItem('arcsForCopy');
-
+  localStorage.removeItem("arcsForCopy");
 };
 
-
-function changeIdsForCopiedElement( obj, idObj, copyOriginalMapping ) {
-  for ( var prop in obj ) {
-    if ( obj[prop] === Object(obj[prop]) ) changeIdsForCopiedElement( obj[prop], idObj, copyOriginalMapping);
-    else if ( prop === '_id' ) {
-        copyOriginalMapping.set(obj[prop], "ID" + idObj['id']);
-        obj[prop] = "ID" + idObj['id'];
-        idObj['id'] = idObj['id'] + 1;
+function changeIdsForCopiedElement(obj, idObj, copyOriginalMapping) {
+  for (var prop in obj) {
+    if (obj[prop] === Object(obj[prop]))
+      changeIdsForCopiedElement(obj[prop], idObj, copyOriginalMapping);
+    else if (prop === "_id") {
+      copyOriginalMapping.set(obj[prop], "ID" + idObj["id"]);
+      obj[prop] = "ID" + idObj["id"];
+      idObj["id"] = idObj["id"] + 1;
     }
   }
-};
+}
 
-function changePositionForCopiedElement( obj, deltaPos ) {
-  for ( var prop in obj ) {
-    if ( obj[prop] === Object(obj[prop]) && prop !== 'posattr' ) changePositionForCopiedElement( obj[prop], deltaPos);
-    else if ( prop === 'posattr' ) {
-      obj[prop]['_x'] = "" + (Number.parseFloat( obj[prop]['_x']) + deltaPos.x);
-      obj[prop]['_y'] = "" +  (Number.parseFloat( obj[prop]['_y']) + deltaPos.y);
+function changePositionForCopiedElement(obj, deltaPos) {
+  for (var prop in obj) {
+    if (obj[prop] === Object(obj[prop]) && prop !== "posattr")
+      changePositionForCopiedElement(obj[prop], deltaPos);
+    else if (prop === "posattr") {
+      obj[prop]["_x"] = "" + (Number.parseFloat(obj[prop]["_x"]) + deltaPos.x);
+      obj[prop]["_y"] = "" + (Number.parseFloat(obj[prop]["_y"]) + deltaPos.y);
     }
   }
-};
-
+}
 
 /**
  * Convert a global event into local coordinates

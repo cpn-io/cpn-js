@@ -1,43 +1,78 @@
 <nav class="navbar navbar-sm navbar-expand shadow-sm">
-
   <ul class="navbar-nav mr-auto">
-
     <!-- Action buttons -->
     <div style="display: contents">
-
       <!-- New action -->
       <li class="nav-item">
-          <!--a (click)="onNewNode()" class="nav-link" href="#" title="New">
+        <!--a (click)="onNewNode()" class="nav-link" href="#" title="New">
             <i class="fas fa-plus"></i>
             <span>New</span>
           </a-->
 
-        <a class="nav-link" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="New">
+        <a
+          class="nav-link"
+          href="#"
+          id="dropdownMenuLink"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+          title="New"
+        >
           <i class="fas fa-plus"></i>
           <span>New </span>
         </a>
 
-        <div class="dropdown-menu list-elements" aria-labelledby="dropdownMenuLink">
-         <a *ngIf="tab.id === 'all' || tab.id === 'color'" class="dropdown-item"  href="#" (click)="onContextMenu($event, 'color')"><i class="fas fa-plus"></i> Color</a>
-         <a *ngIf="tab.id === 'all' || tab.id === 'var'" class="dropdown-item" href="#" (click)="onContextMenu($event, 'var')" ><i class="fas fa-plus"></i> Var</a>
-         <a *ngIf="tab.id === 'all' || tab.id === 'globref'" class="dropdown-item" href="#" (click)="onContextMenu($event, 'globref')"><i class="fas fa-plus"></i> Globref</a>
-         <a *ngIf="tab.id === 'all' || tab.id === 'monitor'" class="dropdown-item" href="#" (click)="onContextMenu($event, 'monitor')"><i class="fas fa-plus"></i> Monitor</a>
-         <a *ngIf="tab.id === 'all' || tab.id === 'ml'" class="dropdown-item" href="#" (click)="onContextMenu($event, 'ml')" ><i class="fas fa-plus"></i> Ml</a>
+        <div
+          class="dropdown-menu list-elements"
+          aria-labelledby="dropdownMenuLink"
+        >
+          <a
+            *ngIf="tab.id === 'all' || tab.id === 'color'"
+            class="dropdown-item"
+            href="#"
+            (click)="onContextMenu($event, 'color')"
+            ><i class="fas fa-plus"></i> Color</a
+          >
+          <a
+            *ngIf="tab.id === 'all' || tab.id === 'var'"
+            class="dropdown-item"
+            href="#"
+            (click)="onContextMenu($event, 'var')"
+            ><i class="fas fa-plus"></i> Var</a
+          >
+          <a
+            *ngIf="tab.id === 'all' || tab.id === 'globref'"
+            class="dropdown-item"
+            href="#"
+            (click)="onContextMenu($event, 'globref')"
+            ><i class="fas fa-plus"></i> Globref</a
+          >
+          <a
+            *ngIf="tab.id === 'all' || tab.id === 'monitor'"
+            class="dropdown-item"
+            href="#"
+            (click)="onContextMenu($event, 'monitor')"
+            ><i class="fas fa-plus"></i> Monitor</a
+          >
+          <a
+            *ngIf="tab.id === 'all' || tab.id === 'ml'"
+            class="dropdown-item"
+            href="#"
+            (click)="onContextMenu($event, 'ml')"
+            ><i class="fas fa-plus"></i> ML</a
+          >
         </div>
         <!--a (click)="onContextMenu($event)" class="nav-link" href="#" title="New">
             <i class="fas fa-plus"></i>
             <span>New</span>
           </a-->
-
       </li>
-
-
 
       <!-- Delete action -->
       <li class="nav-item">
         <a (click)="onDeleteNode()" class="nav-link" href="#" title="Delete">
           <i class="fas fa-minus"></i>
-          <span >Delete</span>
+          <span>Delete</span>
         </a>
       </li>
 
@@ -62,13 +97,22 @@
   <!-- Project tree filter -->
   <ul class="navbar-nav ml-auto">
     <li>
-      <input (input)="onChangeFilter($event.target.value)" [value]="filterText" placeholder="Filter" type="text" />
+      <input
+        (input)="onChangeFilter($event.target.value)"
+        [value]="filterText"
+        placeholder="Filter"
+        type="text"
+      />
     </li>
     <li class="nav-item">
-      <a (click)="onChangeFilter('')" class="nav-link btn-close" href="#" title="Clear filter">
+      <a
+        (click)="onChangeFilter('')"
+        class="nav-link btn-close"
+        href="#"
+        title="Clear filter"
+      >
         <i class="fas fa-times"></i>
       </a>
     </li>
   </ul>
-
 </nav>

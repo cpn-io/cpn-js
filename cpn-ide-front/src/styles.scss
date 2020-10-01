@@ -148,12 +148,13 @@ body {
 // Blocks
 // ---------------------------------------------------------------------------------
 
-.iconNew{
+.iconNew {
   padding: 0 10px;
 }
 .blockHeader {
   //padding: 0 10px;
   padding-top: 5px;
+  padding-left: 10px;
 
   background: #f3f3f3;
   height: 27px;
@@ -172,12 +173,10 @@ body {
   box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);
 }
 
-
 .headerTitle {
-  padding: 0 10px;
+  // padding: 0 10px;
   color: black;
   font-weight: bold;
-
 }
 
 .blockHeader .caret {
@@ -394,7 +393,6 @@ body {
   content: "\f35d";
 }
 
-
-.testClassForShape{
+.testClassForShape {
   box-shadow: 10px 5px 5px red;
 }

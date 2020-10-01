@@ -1,10 +1,10 @@
 <div *ngIf="hasDeclarations()" class="blockHeader">
   <!-- {{ (parentBlock ? parentBlock.id  + '  >  ' : '') + block.id }} -->
   <a  style="color: black" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="New">
-    <i class="fas fa-plus iconNew"></i>
     <span *ngIf="parentBlock">{{ parentBlock.id }}</span>
     <i *ngIf="parentBlock" class="fas fa-arrow-right arrow"></i>
     <span class="headerTitle">{{ block.id }}</span>
+    <i class="fas fa-plus iconNew"></i>
   </a>
 
   <div class="dropdown-menu list-elements" aria-labelledby="dropdownMenuLink">
@@ -21,10 +21,10 @@
   <!-- {{ (parentBlock ? parentBlock.id  + '  >  ' : '') + block.id }} -->
 
   <a  style="color: black" href="#" id="dropdownMenuLinkMonitor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="New">
-    <i class="fas fa-plus iconNew"></i>
     <span *ngIf="parentBlock">{{ parentBlock._name }}</span>
     <i *ngIf="parentBlock" class="fas fa-arrow-right arrow"></i>
     <span  class="headerTitle">{{ block._name }}</span>
+    <i class="fas fa-plus iconNew"></i>
   </a>
 
   <div class="dropdown-menu list-elements" aria-labelledby="dropdownMenuLinkMonitor">

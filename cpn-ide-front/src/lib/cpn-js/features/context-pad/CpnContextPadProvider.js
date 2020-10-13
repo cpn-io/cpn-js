@@ -72,6 +72,8 @@ CpnContextPadProvider.prototype.getContextPadEntries = function (element) {
     console.log('CpnContextPadProvider.copyElement', this._currentElement);
     // modeling.addElementToClipboard(this._currentElement);
     localStorage.setItem('clipboardElement',  JSON.stringify(element));
+    self._eventBus.fire('element.copy', {element: element});
+
   }
 
   const deleteEntry = {

@@ -256,8 +256,7 @@ CpnPopupMenuProvider.prototype.getHeaderEntries = function (element) {
 };
 
 CpnPopupMenuProvider.prototype._createShape = function (event, type) {
-  // console.log('CpnPopupMenuProvider.prototype._createPlace, this.position = ', this._position);
-
+  console.log('CpnPopupMenuProvider.prototype._createPlace, this.position = ', this._position);
   this._popupMenu.close();
   const position = toLocalPoint(this._canvas, this._position);
   position.y -= this._offsetY;
@@ -380,6 +379,7 @@ CpnPopupMenuProvider.prototype._paste = function (event, elementToPast) {
       x: position.x - Number.parseFloat(newCpnElement["posattr"]["_x"]),
       y: -position.y - Number.parseFloat(newCpnElement["posattr"]["_y"]),
     };
+    console.log('test11 create', newCpnElement)
     changePositionForCopiedElement(newCpnElement, deltaPosition);
     console.log("paste, newCpnElement = ", newCpnElement);
     const newElement = this._cpnFactory.createShape(
@@ -419,9 +419,12 @@ function changeIdsForCopiedElement(obj, idObj, copyOriginalMapping) {
     if (obj[prop] === Object(obj[prop]))
       changeIdsForCopiedElement(obj[prop], idObj, copyOriginalMapping);
     else if (prop === "_id") {
-      copyOriginalMapping.set(obj[prop], "ID" + idObj["id"]);
-      obj[prop] = "ID" + idObj["id"];
-      idObj["id"] = idObj["id"] + 1;
+      // copyOriginalMapping.set(obj[prop], "ID" + idObj["id"]);
+      // obj[prop] = "ID" + idObj["id"];
+      // idObj["id"] = idObj["id"] + 1;
+      let id = getNextId();
+      copyOriginalMapping.set(obj[prop], id);
+      obj[prop] = id;
     }
   }
 }

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, ipcMain, ipcRenderer } from 'electron';
+import { app, BrowserWindow, Menu, ipcMain, ipcRenderer, session } from 'electron';
 import { spawn } from 'child_process';
 import * as log from 'electron-log';
 import * as path from 'path';
@@ -16,6 +16,9 @@ var loadingScreen: BrowserWindow;
 var shellRunner = undefined;
 let unSaved = false;
 
+// app.commandLine.appendSwitch('disable-site-isolation-trials');
+// app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');
+
 app.on('ready', () => {
   runCpnServer();
   setTimeout(() => createLoadingScreen(), 1000);
@@ -25,7 +28,19 @@ app.on('ready', () => {
 function createWindow() {
   const directory = isDev ? process.cwd().concat('/app') : process.env.APP_PATH;
 
-  mainWindow = new BrowserWindow({ width: 1920, height: 1080, show: false });
+  mainWindow = new BrowserWindow({ width: 1920, height: 1080, show: false});
+
+
+  //  const filter = {
+  //   urls: ['*://*.google.com/*']
+  // };
+  // // const session = electron.remote.session
+  // session.defaultSession.webRequest.onBeforeSendHeaders(filter, (details, callback) => {
+  //   details.requestHeaders['Origin'] = null;
+  //   // details.headers['Origin'] = null;
+  //   callback({ requestHeaders: details.requestHeaders });
+  // });
+
   mainWindow.setMenuBarVisibility(true);
   // mainWindow.setFullScreen(true);
 

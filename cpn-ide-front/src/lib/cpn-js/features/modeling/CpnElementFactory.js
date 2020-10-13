@@ -6,10 +6,11 @@ let lastId = 0;
 
 export function getNextId() {
   let id = new Date().getTime();
-  if (id <= lastId) {
+  while (id <= lastId) {
     id ++;
   }
   lastId = id;
+  console.log('test11: ' + "ID" + (id).toString().substr((id).toString().length - 10));
   return "ID" + (id).toString().substr((id).toString().length - 10);
 }
 

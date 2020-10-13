@@ -2,10 +2,11 @@
 let lastId = 0;
 export function getNextId() {
   let id = new Date().getTime();
-  if (id <= lastId) {
+  while (id <= lastId) {
     id++;
   }
   lastId = id;
+  console.log('test11: ' + "ID" + (id).toString().substr((id).toString().length - 10));
   return "ID" + (id).toString().substr((id).toString().length - 10);
 }
 
@@ -44,7 +45,7 @@ export function objectsEqual(a, b) {
 
 /**
  * Clear array without destroy array object
- * @param array 
+ * @param array
  */
 export function clearArray(array) {
   while (array.length) {
@@ -57,10 +58,10 @@ export function clearArray(array) {
 
 /**
  * Move element from index to index
- * 
- * @param arr 
- * @param fromIndex 
- * @param toIndex 
+ *
+ * @param arr
+ * @param fromIndex
+ * @param toIndex
  */
 export function arrayMove(arr, fromIndex, toIndex) {
   var element = arr[fromIndex];

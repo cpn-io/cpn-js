@@ -79,7 +79,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   transCount = 0;
 
   loading = false;
-
+  mouseMoveWhileConnStartListener;
   selectedElements = [];
   availableMonitorList = [];
   selectedElementsForMonitors = [];
@@ -203,6 +203,24 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
         }
       }
+    });
+
+
+    eventBus.on('connect.start', (event ) => {
+      console.log('model editor: connect.start', event);
+      this.onOutOfViewboxBounds();
+    });
+
+    eventBus.on(['connect.end', 'connect.cleanup'], (event ) => {
+      console.log('model editor: connect.start', event);
+      this.canvas._container.removeEventListener('mousemove', this.mouseMoveWhileConnStartListener, false);
+    });
+
+    eventBus.on('element.copy', (event) => {
+      const selectedElements =  this.selectionProvider.getSelectedElements();
+        if (selectedElements && selectedElements.length > 1) {
+          this.onCopyShapes();
+        }
     });
 
 
@@ -884,4 +902,37 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.eventBus.fire('editing.cancel');
     }
   }
+
+
+
+  onOutOfViewboxBounds() {
+    const self  = this;
+    const vb = this.canvas.viewbox();
+    const canvas = this.canvas;
+    this.mouseMoveWhileConnStartListener = function(evt) {
+      if (evt.offsetY < 3) {
+        vb.y =  vb.y - 20;
+        canvas.viewbox(vb);
+      }
+      if (evt.offsetY > self.canvas._container.getBoundingClientRect().height - 10) {
+        vb.y =  vb.y + 20;
+        canvas.viewbox(vb);
+      }
+      if (evt.offsetX < 10) {
+        vb.x =  vb.x - 20;
+        canvas.viewbox(vb);
+      }
+      if (evt.offsetX > self.canvas._container.getBoundingClientRect().width - 3) {
+        vb.x =  vb.x + 20;
+        canvas.viewbox(vb);
+      }
+      // console.log('change mouse pos', evt);
+      //  console.log('offsetX', evt.offsetX);
+      //  console.log('offsetY', evt.offsetY);
+      //  console.log('VB w,h ' + self.canvas._container.getBoundingClientRect().height + ' ' + self.canvas._container.getBoundingClientRect().width);
+    };
+
+    this.canvas._container.addEventListener('mousemove', this.mouseMoveWhileConnStartListener, false);
+  }
+
 }

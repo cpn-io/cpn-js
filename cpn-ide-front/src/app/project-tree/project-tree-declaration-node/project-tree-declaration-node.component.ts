@@ -38,6 +38,7 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, I
     }
 
     this.updateErrors();
+
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -253,5 +254,8 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, I
     this.modelService.moveCpnElement(this.parentBlock, this.declaration, this.type, 'down');
     this.focus(this.declaration._id);
   }
+
+
+
 
 }

@@ -8,7 +8,9 @@ import {
 } from "../../util/ModelUtil";
 import { getNextId } from "../modeling/CpnElementFactory";
 
-import { event as domEvent } from "min-dom";
+import {
+  domify as domify,
+  event as domEvent } from "min-dom";
 
 CpnPopupMenuProvider.$inject = [
   "create",

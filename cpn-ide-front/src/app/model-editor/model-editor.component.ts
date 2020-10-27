@@ -110,6 +110,14 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     console.log(this.constructor.name, 'ngAfterViewInit(), this = ', this);
 
     this.init();
+    setTimeout(function () {
+      const containerParent = document.getElementsByClassName('djs-container');
+      const elements = document.querySelectorAll('[data-element-id="__implicitroot"]');
+      const parentHeight = containerParent[0].clientHeight;
+      elements[0]['style'].height = parentHeight + 'px';
+      console.log('testQQQ');
+    }, 1000);
+
   }
 
   onClose() {

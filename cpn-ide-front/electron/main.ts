@@ -27,7 +27,7 @@ app.on('ready', () => {
 });
 
 function startingFront() {
-  let count = 19;
+  const waitParams = {count: 19};
   findProcess('name', 'cpn-ide-back').then(
     (list) => {
       if (list && list.length) {
@@ -35,28 +35,25 @@ function startingFront() {
         setTimeout(() => createWindow(), 5000);
       } else {
         log.info('no server');
-        if (count > 0) {
-          count--;
-          log.info('wait', count);
-          setTimeout(() => { startingFront(); }, 1000);
-        } else {
-          log.info('out of wait limit');
-          setTimeout(() => createWindow(), 5000);
-        }
+        waitingServer(waitParams);
       }
     },
     (error) => {
-      log.info('Error find', count);
-      if (count > 0) {
-        count--;
-        setTimeout(() => { startingFront(); }, 1000);
-      } else {
-        setTimeout(() => createWindow(), 5000);
-      }
+      log.info('Error find', waitParams.count);
+      waitingServer(waitParams);
   });
 
 }
-
+function waitingServer(waitingParams) {
+  if (waitingParams.count > 0) {
+    waitingParams.count--;
+    log.info('wait', waitingParams.count);
+    setTimeout(() => { startingFront(); }, 1000);
+  } else {
+    log.info('out of wait limit');
+    setTimeout(() => createWindow(), 5000);
+  }
+}
 
 
 function createWindow() {

@@ -22,8 +22,42 @@ let unSaved = false;
 app.on('ready', () => {
   runCpnServer();
   setTimeout(() => createLoadingScreen(), 1000);
-  setTimeout(() => createWindow(), 5000);
+  startingFront();
+  // setTimeout(() => createWindow(), 5000);
 });
+
+function startingFront() {
+  let count = 19;
+  findProcess('name', 'cpn-ide-back').then(
+    (list) => {
+      if (list && list.length) {
+        log.info('start main window');
+        setTimeout(() => createWindow(), 5000);
+      } else {
+        log.info('no server');
+        if (count > 0) {
+          count--;
+          log.info('wait', count);
+          setTimeout(() => { startingFront(); }, 1000);
+        } else {
+          log.info('out of wait limit');
+          setTimeout(() => createWindow(), 5000);
+        }
+      }
+    },
+    (error) => {
+      log.info('Error find', count);
+      if (count > 0) {
+        count--;
+        setTimeout(() => { startingFront(); }, 1000);
+      } else {
+        setTimeout(() => createWindow(), 5000);
+      }
+  });
+
+}
+
+
 
 function createWindow() {
   const directory = isDev ? process.cwd().concat('/app') : process.env.APP_PATH;
@@ -166,6 +200,9 @@ function createWindow() {
   ipcMain.on('model.save.backup', () => unSaved = true);
   ipcMain.on('project.saved', () => unSaved = false);
 }
+
+
+
 
 function createLoadingScreen() {
   loadingScreen = new BrowserWindow({ width: 600, height: 400, frame: false, show: true, parent: mainWindow });

@@ -914,23 +914,26 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   onOutOfViewboxBounds() {
+    console.log('onOutOfViewboxBounds');
     const self  = this;
-    const vb = this.canvas.viewbox();
+
     const canvas = this.canvas;
     this.mouseMoveWhileConnStartListener = function(evt) {
-      if (evt.offsetY < 3) {
+      const vb = self.canvas.viewbox();
+      console.log('onOutOfViewboxBounds', evt.offsetY);
+      if (evt.offsetY < 20) {
         vb.y =  vb.y - 20;
         canvas.viewbox(vb);
       }
-      if (evt.offsetY > self.canvas._container.getBoundingClientRect().height - 10) {
+      if (evt.offsetY > self.canvas._container.getBoundingClientRect().height - 20) {
         vb.y =  vb.y + 20;
         canvas.viewbox(vb);
       }
-      if (evt.offsetX < 10) {
+      if (evt.offsetX < 20) {
         vb.x =  vb.x - 20;
         canvas.viewbox(vb);
       }
-      if (evt.offsetX > self.canvas._container.getBoundingClientRect().width - 3) {
+      if (evt.offsetX > self.canvas._container.getBoundingClientRect().width - 20) {
         vb.x =  vb.x + 20;
         canvas.viewbox(vb);
       }

@@ -27,7 +27,7 @@ app.on('ready', () => {
 });
 
 function startingFront() {
-  const waitParams = {count: 19};
+  const waitParams = {count: 30};
   findProcess('name', 'cpn-ide-back').then(
     (list) => {
       if (list && list.length) {

@@ -925,8 +925,8 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         vb.y =  vb.y - 20;
         canvas.viewbox(vb);
       }
-      if (evt.offsetY > self.canvas._container.getBoundingClientRect().height - 20) {
-        vb.y =  vb.y + 40;
+      if (evt.offsetY > self.canvas._container.getBoundingClientRect().height - 40) {
+        vb.y =  vb.y + 20;
         canvas.viewbox(vb);
       }
       if (evt.offsetX < 40) {

@@ -1,16 +1,15 @@
-17:49:24.841 › scriptFilename =  run.sh
-17:49:24.846 › runScriptPath =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/electron/backend/run.sh
-17:49:25.037 › cpn-ide-back SERVER Process has been killed!
-17:49:29.878 › APP PATH =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front
-17:49:29.878 › isDev =  true
-17:49:29.879 › directory =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/app
-17:49:29.879 › process.cwd() =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front
-17:49:29.879 › __dirname =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/electron/dist
-17:49:59.279 › mainWindow, close
-17:49:59.281 › killCpnServer()
-17:49:59.282 › killCpnServer(), findProcess(), shellRunner.pid =  3064
-17:49:59.282 › killCpnServer(), findProcess(), shellRunner.ppid =  undefined
-17:49:59.310 › killCpnServer(), findProcess('cpnmld.x86'), p =  3196 run.x86-linux
-17:49:59.310 › killCpnServer(), findProcess('cpnmld.x86'), p =  3228 run.x86-linux
-17:49:59.320 › killCpnServer(), findProcess('cpn-ide-back'), p =  3083 java
-17:49:59.323 › mainWindow, close, killCpnServer() COMPLETE:  CPN Server process KILLED!
+
+14:05:54.060 > scriptFilename =  run.bat
+14:05:54.072 > runScriptPath =  C:\INDEV\development\tue\cpn-js\cpn-ide-front\electron\backend\run.bat
+14:05:56.111 > start main window
+14:06:01.159 > APP PATH =  C:\INDEV\development\tue\cpn-js\cpn-ide-front
+14:06:01.160 > isDev =  true
+14:06:01.161 > directory =  C:\INDEV\development\tue\cpn-js\cpn-ide-front/app
+14:06:01.161 > process.cwd() =  C:\INDEV\development\tue\cpn-js\cpn-ide-front
+14:06:01.162 > __dirname =  C:\INDEV\development\tue\cpn-js\cpn-ide-front\electron\dist
+14:07:48.600 > mainWindow, close
+14:07:48.601 > killCpnServer()
+14:07:48.602 > killCpnServer(), findProcess(), shellRunner.pid =  6524
+14:07:48.604 > killCpnServer(), findProcess(), shellRunner.ppid =  undefined
+14:07:49.643 > killCpnServer(), findProcess('cpn-ide-back'), p =  4180 java.exe
+14:07:49.644 > mainWindow, close, killCpnServer() COMPLETE:  CPN Server process KILLED!

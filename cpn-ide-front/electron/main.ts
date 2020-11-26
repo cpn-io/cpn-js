@@ -32,7 +32,7 @@ function startingFront() {
     (list) => {
       if (list && list.length) {
         log.info('start main window');
-        setTimeout(() => createWindow(), 5000);
+        setTimeout(() => createWindow(), 10000);
       } else {
         log.info('no server');
         waitingServer(waitParams);

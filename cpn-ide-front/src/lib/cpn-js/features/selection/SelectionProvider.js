@@ -1,7 +1,7 @@
 import { values, assign } from "min-dash";
 
 import { getEnclosedElements } from "diagram-js/lib/util/Elements";
-import { isAny, CPN_PLACE, CPN_TRANSITION } from "../../util/ModelUtil";
+import {isAny, is, CPN_PLACE, CPN_TRANSITION, CPN_CONNECTION} from "../../util/ModelUtil";
 import { getNextId } from "../modeling/CpnElementFactory";
 
 var LOW_PRIORITY = 500,
@@ -75,9 +75,10 @@ SelectionProvider.$inject = [
 ];
 
 SelectionProvider.prototype.selectElement = function (element, selected) {
-  if (isAny(element, [CPN_PLACE, CPN_TRANSITION])) {
+  if (isAny(element, [CPN_PLACE, CPN_TRANSITION, CPN_CONNECTION])) {
     if (element.selected !== selected) {
-      element.selected = selected;
+      if(!is(element, CPN_CONNECTION))
+          element.selected = selected;
       this._eventBus.fire("element.changed", { element: element });
       this._eventBus.fire("element.selection.changed", {});
     }

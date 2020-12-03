@@ -2161,6 +2161,33 @@ export class ModelService {
   }
 
 
+
+  checkPaintElement() {
+    const self  = this;
+    setTimeout(function () {
+      const containerParent = document.getElementsByClassName('djs-container');
+      let parentHeight = 577;
+      for (let i = 0; i < containerParent.length; i++) {
+        if (containerParent[i].clientHeight > 0 ) {
+          parentHeight = containerParent[i].clientHeight;
+          break;
+        }
+      }
+      for (let i = 0; i < containerParent.length; i++) {
+        const elements = containerParent[i].getElementsByTagName('svg');
+        for (let k = 0; k < elements.length; k++) {
+          elements[k]['style'].height = parentHeight + 'px';
+        }
+      }
+      // const elements = document.querySelectorAll('[data-element-id="__implicitroot"]');
+      // const parentHeight = containerParent[containerParent.length - 1].clientHeight;
+      // elements[0]['style'].height = parentHeight + 'px';
+      // console.log('testQQQ');
+    }, 1000);
+  }
+
+
+
 }
 
 

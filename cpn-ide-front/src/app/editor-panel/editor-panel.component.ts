@@ -136,7 +136,7 @@ export class EditorPanelComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log('openPage(), pageObject = ', pageObject);
 
       const tab = this.tabsComponent.getTabByID(pageObject._id);
-
+      this.modelService.checkPaintElement();
       if (tab) {
 
         this.tabsComponent.selectTab(tab);
@@ -155,7 +155,6 @@ export class EditorPanelComponent implements OnInit, OnDestroy, AfterViewInit {
             if (tab) {
               const modelEditor = this.modelEditorList.toArray().find(e => e.id === 'model_editor_' + tab.id);
               this.editorPanelService.setSelectedModelEditor(modelEditor);
-
               if (modelEditor) {
                 modelEditor.loadPage(pageObject).then(
                   () => {

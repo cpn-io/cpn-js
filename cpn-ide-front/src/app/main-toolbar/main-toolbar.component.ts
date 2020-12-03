@@ -53,11 +53,11 @@ export class MainToolbarComponent implements OnInit {
           console.log('Save project error');
         });
       } else {
-        this.onSaveProject();
+        this.onSaveProject(false);
       }
     });
     this.ipcService.on(Message.MAIN_MENU_SAVE_AS_PROJECT, () => {
-        this.onSaveProject();
+        this.onSaveProject(true);
     });
     this.ipcService.on(Message.MAIN_MENU_UNDO, () => this.getUndo());
     this.ipcService.on(Message.MAIN_MENU_REDO, () => this.getRedo());
@@ -206,10 +206,10 @@ export class MainToolbarComponent implements OnInit {
     });
   }
 
-  onSaveProject() {
+  onSaveProject(isSaveAs) {
     this.onStopSimulation();
     const fs =  this.accessCpnService.getFs();
-    if (fs) {
+    if (fs && !isSaveAs) {
       fs.fs.writeFile(fs.path, this.projectService.getStringProjectDataForSave(), err => {
         console.log('Save project error', err);
       });

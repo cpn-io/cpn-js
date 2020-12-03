@@ -182,8 +182,17 @@ export class PropertiesPanelComponent implements OnInit, OnDestroy {
     this.modelService.selectedElements.forEach(value => {
       value.cpnElement[field][attr] = template[field][attr];
       self.cpnElement = value.cpnElement;
-      self.updateChanges();
+      // self.updateChanges();
     });
+
+    const arcs = this.modelService.getArcsForElements(this.modelService.selectedElements.map(value => { return value.cpnElement;}));
+
+    arcs.forEach(value => {
+     const arc = value;
+     arc[field][attr] = template[field][attr];
+     // self.updateChanges();
+    });
+    self.updateChanges();
     this.cpnElement =  template;
   }
 

@@ -94,16 +94,18 @@ CpnRenderer.$inject = [
   'pathMap',
   'canvas',
   'textRenderer',
-  'stateProvider'
+  'stateProvider',
+  'elementRegistry'
 ];
 
 export default function CpnRenderer(
   config, eventBus, styles, pathMap,
-  canvas, textRenderer, stateProvider, priority) {
+  canvas, textRenderer, stateProvider,elementRegistry, priority ) {
 
   BaseRenderer.call(this, eventBus, priority);
 
   this._eventBus = eventBus;
+  this._elementRegistry = elementRegistry;
   this._stateProvider = stateProvider;
   this._canvas = canvas;
 
@@ -683,30 +685,64 @@ export default function CpnRenderer(
     return rect;
   }
 
-  function drawSelectedStatus(parentGfx, element) {
-    if (element.selected) {
-      var box = getBox(element);
+  function checkIsArcIsSelect(arc) {
+      const place = arc.cpnPlace;
+      const transition = arc.cpnTransition;
+      var selectedElements = undefined;
+      if(place && transition) {
+        var selectedElements = self._elementRegistry.filter(function (element) {
+          return element.selected && (element.id === place._id || element.id === transition._id);
+        });
 
-      const cx = parseFloat(box.width / 2);
-      const cy = parseFloat(box.height / 2);
+      }
+      return  selectedElements && selectedElements.length >= 2;
+  }
 
-      const d = 16;
 
-      const sel = svgCreate('rect');
-      svgAttr(sel, {
-        x: -d / 2,
-        y: -d / 2,
-        width: cx * 2 + d,
-        height: cy * 2 + d
-      });
-      svgAttr(sel, {
-        fill: SELECT_FILL_COLOR,
-        stroke: SELECT_STROKE_COLOR,
-        strokeWidth: SELECT_STROKE_THICK,
-        strokeDasharray: "2,2"
-      });
-      svgAppend(parentGfx, sel);
+  function drawSelectedStatus(parentGfx, element, type) {
+    if (element.selected || (type === 'connection' && checkIsArcIsSelect(element))) {
+      if(type === 'connection'){
+        var strokeColor = SELECT_STROKE_COLOR;
+
+        var pathData = self.createPathFromConnection(element);
+        var attrs = {
+          stroke: strokeColor,
+          strokeWidth: getStrokeWidth(element) + (3 * SELECT_STROKE_THICK / 2),
+          strokeDasharray: "5,10,5"
+        };
+        // connection end markers
+        drawPath(parentGfx, pathData, attrs);
+        console.log('drawSelectedStatus for arc', element);
+      } else{
+        var box = getBox(element);
+
+        const cx = parseFloat(box.width / 2);
+        const cy = parseFloat(box.height / 2);
+
+        const d = 16;
+
+        const sel = svgCreate('rect');
+        svgAttr(sel, {
+          x: -d / 2,
+          y: -d / 2,
+          width: cx * 2 + d,
+          height: cy * 2 + d
+        });
+        svgAttr(sel, {
+          fill: SELECT_FILL_COLOR,
+          stroke: SELECT_STROKE_COLOR,
+          strokeWidth: SELECT_STROKE_THICK,
+          strokeDasharray: "2,2"
+        });
+        svgAppend(parentGfx, sel);
+      }
     }
+  }
+
+
+  function drawSelectedStatustest(parentGfx, element) {
+
+
   }
 
   function drawHilightedStatus(parentGfx, element) {
@@ -876,6 +912,8 @@ export default function CpnRenderer(
 
     // connection end markers
     attrs = assign(attrs, getConnectionEndMarkerAttrs(element));
+
+    drawSelectedStatus(parentGfx, element, 'connection');
 
     // spn status
     drawCpnStatus(parentGfx, element, 'connection');

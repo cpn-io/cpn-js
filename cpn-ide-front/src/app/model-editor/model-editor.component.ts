@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import {Component, ElementRef, Input, OnInit, ViewChild, AfterViewInit, OnDestroy, HostListener} from '@angular/core';
 
 import Diagram from 'diagram-js';
 import CpnDiagramModule from '../../lib/cpn-js/core';
@@ -134,6 +134,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     // this.diagram = new Diagram({
     //   container: this.containerElementRef.nativeElement
     // });
+    this.containerElementRef.nativeElement.colorsList = this.getColorsetList();
 
     this.diagram = new Diagram({
       canvas: {
@@ -143,6 +144,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         CpnDiagramModule,
       ]
     });
+
 
     this.elementFactory = this.diagram.get('elementFactory');
     this.dragging = this.diagram.get('dragging');
@@ -167,6 +169,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     for (const key of ['type', 'initmark', 'cond', 'time', 'code', 'priority', 'annot', 'ellipse', 'box']) {
       this.modeling.setDefaultValue(key, this.settings.appSettings[key]);
     }
+
 
     // eventBus.on('element.changed', (event) => {
     // eventBus.on([
@@ -466,8 +469,6 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     this.eventService.on('editing.cancel', () => eventBus.fire('editing.cancel'));
-
-
   }
 
   updateAvailableMonitorList(selectedElements) {
@@ -947,4 +948,28 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.canvas._container.addEventListener('mousemove', this.mouseMoveWhileConnStartListener, false);
   }
 
+  getColorsetList() {
+    let list = this.modelService.getStandardDeclarations().map(el => el.id);
+    list = list.sort((a, b) => {
+      if (a < b) {
+        return -1;
+      }
+      if (a > b) {
+        return 1;
+      }
+      return 0;
+    });
+    return list;
+  }
+  // @HostListener('document:keydown.control.z', ['$event']) onKeydownCtrXHandler(event: KeyboardEvent) {
+  //   console.log('undo perform');
+  //   // this.getUndo();
+  //   event.preventDefault();
+  // }
+  //
+  // @HostListener('document:keydown.control.y', ['$event']) onKeydownCtrlYHandler(event: KeyboardEvent) {
+  //   console.log('redo perform');
+  //   // this.getRedo();
+  //   event.preventDefault();
+  // }
 }

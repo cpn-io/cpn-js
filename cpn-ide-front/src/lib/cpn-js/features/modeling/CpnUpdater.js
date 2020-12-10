@@ -331,7 +331,6 @@ export default function CpnUpdater(
       return;
 
     const markingElement = tokenElement.label;
-
     markingElement.hidden = !markingElement.hidden;
     markingElement.cpnElement._hidden = markingElement.hidden
       ? "true"
@@ -409,7 +408,7 @@ export default function CpnUpdater(
   }
 
   function updateCpnElement(element) {
-    console.log("CpnUpdater().updateCpnElement(), element = ", element);
+    // console.log("CpnUpdater().updateCpnElement(), element = ", element);
 
     const cpnElement = element.cpnElement;
 

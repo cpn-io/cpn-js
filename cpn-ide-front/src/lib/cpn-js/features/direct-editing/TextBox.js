@@ -51,7 +51,7 @@ export default function TextBox(options) {
 
   this.parent = domify(
     '<div class="djs-direct-editing-parent">' +
-    '<div id="editLabelId" class="djs-direct-editing-content" contenteditable="true"></div>' +
+    '<div id="editLabelId" class="djs-direct-editing-content autocomplete" contenteditable="true"></div>' +
     '</div>'
   );
 
@@ -61,6 +61,7 @@ export default function TextBox(options) {
   };
   this.resizeHandler = options.resizeHandler || function () {
   };
+
 
   this.autoResize = bind(this.autoResize, this);
   this.handlePaste = bind(this.handlePaste, this);
@@ -204,6 +205,11 @@ TextBox.prototype.create = function (bounds, style, value, options, shapeType) {
 
   // set selection to end of text
   this.setSelection(content.lastChild, content.lastChild && content.lastChild.length);
+
+
+  const domElem = domQuery('[contenteditable]', this.parent);
+  domElem.shapeType = shapeType;
+  autocomplete(domElem, container.parentElement.colorsList || [], this);
 
   return parent;
 };
@@ -499,3 +505,82 @@ TextBox.prototype.setSelection = function (container, offset) {
   selection.removeAllRanges();
   selection.addRange(range);
 };
+
+
+
+
+
+function autocomplete(inp, arr, self) {
+  if (inp.shapeType === 'cpn:Place' || inp.shapeType === 'cpn:Transition') return;
+  var currentFocus;
+   inp.addEventListener("input", function(e) {
+    var a, b, i, val = e.target.innerText;
+    closeAllLists();
+    if (!val) { return false;}
+    currentFocus = -1;
+
+    a = document.createElement("DIV");
+    a.setAttribute("id", this.id + "autocomplete-list");
+    a.setAttribute("class", "autocomplete-items");
+
+    this.parentNode.appendChild(a);
+
+    for (i = 0; i < arr.length; i++) {
+      if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+        b = document.createElement("DIV");
+        b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+        b.innerHTML += arr[i].substr(val.length);
+        b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+        b.addEventListener("click", function(e) {
+          inp.textContent = this.getElementsByTagName("input")[0].value;
+          self.autoResize();
+          closeAllLists();
+        });
+        a.appendChild(b);
+      }
+    }
+  });
+  /*execute a function presses a key on the keyboard:*/
+  inp.addEventListener("keydown", function(e) {
+    var x = document.getElementById(this.id + "autocomplete-list");
+    if (x) x = x.getElementsByTagName("div");
+    if (e.keyCode == 40) {
+      currentFocus++;
+      addActive(x);
+    } else if (e.keyCode == 38) {
+      currentFocus--;
+      addActive(x);
+    } else if (e.keyCode == 13) {
+      e.preventDefault();
+      if (currentFocus > -1) {
+        if (x) x[currentFocus].click();
+      }
+    }
+  });
+  function addActive(x) {
+    if (!x) return false;
+    removeActive(x);
+    if (currentFocus >= x.length) currentFocus = 0;
+    if (currentFocus < 0) currentFocus = (x.length - 1);
+    x[currentFocus].classList.add("autocomplete-active");
+  }
+  function removeActive(x) {
+    for (var i = 0; i < x.length; i++) {
+      x[i].classList.remove("autocomplete-active");
+    }
+  }
+  function closeAllLists(elmnt) {
+    var x = document.getElementsByClassName("autocomplete-items");
+    for (var i = 0; i < x.length; i++) {
+      if (elmnt != x[i] && elmnt != inp) {
+        x[i].parentNode.removeChild(x[i]);
+      }
+    }
+  }
+  /*execute a function when someone clicks in the document:*/
+  document.addEventListener("click", function (e) {
+    closeAllLists(e.target);
+  });
+}
+
+

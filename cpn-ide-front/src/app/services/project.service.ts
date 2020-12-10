@@ -198,6 +198,7 @@ export class ProjectService {
     xml = xmlBeautify(xml);
 
     this.fileService.saveAsText(xml, filename);
+
   }
 
 
@@ -208,6 +209,20 @@ export class ProjectService {
 
     return xmlBeautify(xml);
   }
+
+
+
+  public setModelName(projectName) {
+    this.getProject().name = projectName;
+    this.modelService.projectName = projectName;
+  }
+
+
+
+
+
+
+
 
 }
 

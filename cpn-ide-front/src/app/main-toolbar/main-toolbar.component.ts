@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, HostListener, OnInit} from '@angular/core';
 import { ProjectService } from '../services/project.service';
 import { AppVersion } from '../app.version';
 import { ModelService } from '../services/model.service';
@@ -76,6 +76,23 @@ export class MainToolbarComponent implements OnInit {
         this.eventService.send(Message.SIMULATION_STARTED);
       }
       this.isStart = false;
+    });
+
+
+    const self = this;
+    $(window).on('keypress', function (evt) {
+      if ((evt.ctrlKey || evt.metaKey) ) {
+        if (evt.key.charCodeAt(0) === 26) {
+          // evt.preventDefault();
+          console.log('ctr z');
+          self.getUndo();
+        } else if (evt.key.charCodeAt(0) === 25) {
+          // evt.preventDefault();
+          console.log('ctr y', evt.which);
+          self.getRedo();
+        }
+      }
+      return true;
     });
   }
 
@@ -227,6 +244,8 @@ export class MainToolbarComponent implements OnInit {
 
           // Save to file
           this.projectService.saveToFile(data.input[0].value);
+          this.projectService.setModelName(data.input[0].value);
+
         }
       });
     }
@@ -300,4 +319,9 @@ export class MainToolbarComponent implements OnInit {
     this.undo = this.validationService.history.currentModelIndex;
     this.redo = this.validationService.history.models.length - 1 - this.validationService.history.currentModelIndex;
   }
+
+
+
+
+
 }

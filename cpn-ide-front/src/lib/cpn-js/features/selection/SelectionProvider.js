@@ -76,7 +76,7 @@ SelectionProvider.$inject = [
 
 SelectionProvider.prototype.selectElement = function (element, selected) {
   if (isAny(element, [CPN_PLACE, CPN_TRANSITION, CPN_CONNECTION])) {
-    if (element.selected !== selected) {
+    if (element.selected !== selected || is(element, CPN_CONNECTION)) {
       if(!is(element, CPN_CONNECTION))
           element.selected = selected;
       this._eventBus.fire("element.changed", { element: element });

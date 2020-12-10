@@ -759,6 +759,7 @@ Modeling.prototype.getLabelAttrs = function (
     attrs.defaultValue = defaultValue;
   }
 
+  console.log('###mark');
   attrs.hidden = ["", defaultValue].includes(text.trim());
 
   return attrs;

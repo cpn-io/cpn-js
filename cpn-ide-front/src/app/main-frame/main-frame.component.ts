@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, HostListener, OnInit} from '@angular/core';
 import {Message} from '../common/message';
 import {EventService} from '../services/event.service';
 import {AccessCpnService} from '../services/access-cpn.service';
@@ -53,5 +53,6 @@ export class MainFrameComponent implements OnInit, AfterViewInit {
     panel.size = event.sizes;
     localStorage.setItem(this.localStorageName, JSON.stringify(this.panelsSize));
   }
+
 
 }

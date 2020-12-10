@@ -149,7 +149,7 @@ export default function LabelEditingProvider(
     }
 
     console.log('LabelEditingProvider, activateDirectEdit(), element = ', element);
-    
+
     if (force || isCpn(element)) {
       directEditing.activate(element);
     }

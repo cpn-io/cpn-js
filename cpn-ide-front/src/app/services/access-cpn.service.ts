@@ -9,7 +9,7 @@ import { cloneObject, clearArray, nodeToArray } from '../common/utils';
 import { ModelService } from './model.service';
 import { SettingsService } from './settings.service';
 import { IpcService } from './ipc.service';
-
+import { ElectronService } from 'ngx-electron';
 @Injectable()
 export class AccessCpnService {
 
@@ -50,7 +50,9 @@ export class AccessCpnService {
     private eventService: EventService,
     private modelService: ModelService,
     private settingsService: SettingsService,
-    private ipcService: IpcService) {
+    private ipcService: IpcService,
+    private electronService: ElectronService
+  ) {
 
     this.eventService.on(Message.SERVER_INIT_NET, (event) => {
       console.log('AccessCpnService(), SERVER_INIT_NET, data = ', event);
@@ -730,7 +732,11 @@ export class AccessCpnService {
             setTimeout(() => {
               for (let i = 0; i < allPaths.length; i++) {
                 const lnk = document.getElementById('hrefOntResult' + i);
-                lnk.onclick = this.openAsPageInNewTab;
+                if (this.electronService.isElectronApp) {
+                  lnk.onclick = this.openAsPageInNewTabElectron;
+                } else {
+                  lnk.onclick = this.openAsPageInNewTab;
+                }
                 const file = this.simulationHtmlFiles.filter(value => value.fileName === allPaths[i].substr(2))[0];
                 lnk['simulationHtmlFile'] = file ? file.htmlContent : '';
                 console.log('doReplicationTest', lnk );
@@ -767,6 +773,13 @@ export class AccessCpnService {
   }
 
 
+  loadHTML(html) {
+    const {BrowserWindow} = this.electronService.remote.require('electron');
+    const win = new BrowserWindow({width: 800, height: 600});
+    win.loadURL('file://' + html);
+
+  }
+
 
 
 
@@ -777,6 +790,15 @@ export class AccessCpnService {
     const win = window.open('about:blank', '_blank');
     win.document.write(htmlText);
     win.focus();
+
+  }
+
+
+  openAsPageInNewTabElectron($event) {
+    // const htmlText = '<h2>This your report html</h2>';
+    let path = $event.currentTarget.innerHTML;
+     const win = window.open('file://' + path, 'windowName', 'width=900,height=700', false);
+     win.focus();
   }
 
 

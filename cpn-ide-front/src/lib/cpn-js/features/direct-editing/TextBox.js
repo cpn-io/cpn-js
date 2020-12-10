@@ -511,9 +511,10 @@ TextBox.prototype.setSelection = function (container, offset) {
 
 
 function autocomplete(inp, arr, self) {
-  if (inp.shapeType === 'cpn:Place' || inp.shapeType === 'cpn:Transition') return;
+  // if (inp.shapeType === 'cpn:Place' || inp.shapeType === 'cpn:Transition') return;
   var currentFocus;
    inp.addEventListener("input", function(e) {
+    if (this.shapeType === 'cpn:Place' || this.shapeType === 'cpn:Transition') return;
     var a, b, i, val = e.target.innerText;
     closeAllLists();
     if (!val) { return false;}
@@ -555,6 +556,8 @@ function autocomplete(inp, arr, self) {
       if (currentFocus > -1) {
         if (x) x[currentFocus].click();
       }
+    } else if (e.keyCode == 9){
+      closeAllLists();
     }
   });
   function addActive(x) {

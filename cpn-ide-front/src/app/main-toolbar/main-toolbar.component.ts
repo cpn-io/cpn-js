@@ -80,7 +80,7 @@ export class MainToolbarComponent implements OnInit {
 
 
     const self = this;
-    $(window).on('keypress', function (evt) {
+    $(document).on('keypress', function (evt) {
       if ((evt.ctrlKey || evt.metaKey) ) {
         if (evt.key.charCodeAt(0) === 26) {
           // evt.preventDefault();

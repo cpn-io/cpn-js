@@ -197,7 +197,15 @@ export class ProjectService {
 
     xml = xmlBeautify(xml);
 
-    this.fileService.saveAsText(xml, filename);
+    this.fileService.saveAsText(xml, filename, (filePath) => {
+      console.log('fileService.saveAsText', filePath);
+
+      const regex = /[^\/^\\]+$/gm;
+      const r = regex.exec(filePath);
+      const newFileName = r ? r[0] : undefined;
+
+      this.setModelName(newFileName);
+    });
 
   }
 

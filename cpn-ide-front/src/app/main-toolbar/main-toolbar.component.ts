@@ -231,23 +231,27 @@ export class MainToolbarComponent implements OnInit {
         console.log('Save project error', err);
       });
     } else {
-      const dialogRef = this.dialog.open(DialogComponent, {
-        width: '500px',
-        data: {
-          title: 'Save the changes to file',
-          input: [{title: 'Filename', value: this.modelService.projectName}]
-        }
-      });
-      dialogRef.afterClosed().subscribe(data => {
-        if (data && data.result === DialogComponent.YES) {
-          console.log(this.constructor.name, 'onSaveProject(), YES clicked, data = ', data);
+      if (this.electronService.isElectronApp) {
+        this.projectService.saveToFile(this.modelService.projectName);
+      } else {
+        const dialogRef = this.dialog.open(DialogComponent, {
+          width: '500px',
+          data: {
+            title: 'Save the changes to file',
+            input: [{title: 'Filename', value: this.modelService.projectName}]
+          }
+        });
+        dialogRef.afterClosed().subscribe(data => {
+          if (data && data.result === DialogComponent.YES) {
+            console.log(this.constructor.name, 'onSaveProject(), YES clicked, data = ', data);
 
-          // Save to file
-          this.projectService.saveToFile(data.input[0].value);
-          this.projectService.setModelName(data.input[0].value);
+            // Save to file
+            this.projectService.saveToFile(data.input[0].value);
+            this.projectService.setModelName(data.input[0].value);
 
-        }
-      });
+          }
+        });
+      }
     }
   }
 

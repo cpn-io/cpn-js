@@ -269,7 +269,7 @@ export class MainToolbarComponent implements OnInit {
         width: '500px',
         data: {
           title: 'Save the changes to file before closing?',
-          input: [{ title: 'Filename', value: this.modelService.projectName }]
+          // input: [{ title: 'Filename', value: this.modelService.projectName }]
         }
       });
 
@@ -280,7 +280,9 @@ export class MainToolbarComponent implements OnInit {
           switch (data.result) {
             case DialogComponent.YES:
               // Save to file
-              this.projectService.saveToFile(data.input[0].value);
+              // this.projectService.saveToFile(data.input[0].value);
+              this.projectService.saveToFile(this.modelService.projectName);
+
               resolve();
               return;
               break;

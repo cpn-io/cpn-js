@@ -80,20 +80,20 @@ export class MainToolbarComponent implements OnInit {
 
 
     const self = this;
-    $(document).on('keypress', function (evt) {
-      if ((evt.ctrlKey || evt.metaKey) ) {
-        if (evt.key.charCodeAt(0) === 26) {
-          // evt.preventDefault();
-          console.log('ctr z');
-          self.getUndo();
-        } else if (evt.key.charCodeAt(0) === 25) {
-          // evt.preventDefault();
-          console.log('ctr y', evt.which);
-          self.getRedo();
-        }
-      }
-      return true;
-    });
+    // $(document).on('keypress', function (evt) {
+    //   if ((evt.ctrlKey || evt.metaKey) ) {
+    //     if (evt.key.charCodeAt(0) === 26) {
+    //       // evt.preventDefault();
+    //       console.log('ctr z');
+    //       self.getUndo();
+    //     } else if (evt.key.charCodeAt(0) === 25) {
+    //       // evt.preventDefault();
+    //       console.log('ctr y', evt.which);
+    //       self.getRedo();
+    //     }
+    //   }
+    //   return true;
+    // });
   }
 
   onDoStep() {

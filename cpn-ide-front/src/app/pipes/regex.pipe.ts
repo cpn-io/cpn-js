@@ -1,10 +1,8 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform } from "@angular/core";
 
-@Pipe({ name: 'regex' })
+@Pipe({ name: "regex" })
 export class RegexPipe implements PipeTransform {
-
   transform(value: string): string {
-
     let reg = new RegExp(/[^\s]+\s+[^\s^\(]+/);
 
     let transformed = reg.exec(value);

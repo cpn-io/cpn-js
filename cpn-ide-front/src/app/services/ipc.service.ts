@@ -1,12 +1,11 @@
-import { Injectable } from '@angular/core';
-import { ElectronService } from 'ngx-electron';
+import { Injectable } from "@angular/core";
+import { ElectronService } from "ngx-electron";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class IpcService {
-
-  constructor(private electronService: ElectronService) { }
+  constructor(private electronService: ElectronService) {}
 
   public on(channel: string, listener: Function): void {
     if (this.electronService.ipcRenderer) {

@@ -1,14 +1,19 @@
-import { Component, OnInit, Input, HostListener, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  HostListener,
+  ViewChild,
+} from "@angular/core";
 
 @Component({
-  selector: 'app-context-menu',
-  templateUrl: './context-menu.component.html',
-  styleUrls: ['./context-menu.component.scss']
+  selector: "app-context-menu",
+  templateUrl: "./context-menu.component.html",
+  styleUrls: ["./context-menu.component.scss"],
 })
 export class ContextMenuComponent implements OnInit {
-
   // Sub menu
-  @ViewChild('subMenu') subMenu: ContextMenuComponent;
+  @ViewChild("subMenu") subMenu: ContextMenuComponent;
 
   @Input() x = 0;
   @Input() y = 0;
@@ -17,22 +22,21 @@ export class ContextMenuComponent implements OnInit {
   entries = [];
   visible = false;
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
-  @HostListener('document:click', ['$event'])
+  @HostListener("document:click", ["$event"])
   onClick(e) {
     if (this.visible) {
-      console.log(this.constructor.name, 'onClick, e = ', e);
+      console.log(this.constructor.name, "onClick, e = ", e);
       this.visible = false;
     }
   }
-  @HostListener('document:contextmenu', ['$event'])
+  @HostListener("document:contextmenu", ["$event"])
   onContextMenu(e) {
     if (this.visible) {
-      console.log(this.constructor.name, 'onContextMenu, e = ', e);
+      console.log(this.constructor.name, "onContextMenu, e = ", e);
       this.visible = false;
     }
   }
@@ -42,11 +46,15 @@ export class ContextMenuComponent implements OnInit {
     this.x = point.x;
     this.y = point.y;
 
-    setTimeout(() => { this.visible = true; }, 100);
+    setTimeout(() => {
+      this.visible = true;
+    }, 100);
   }
 
   public hide() {
-    setTimeout(() => { this.visible = false; }, 100);
+    setTimeout(() => {
+      this.visible = false;
+    }, 100);
   }
 
   public setEntries(entries) {
@@ -54,11 +62,13 @@ export class ContextMenuComponent implements OnInit {
   }
 
   get hasSubMenu() {
-    return this.entries && this.entries.find(e => e.subEntries !== undefined) ? true : false;
+    return this.entries && this.entries.find((e) => e.subEntries !== undefined)
+      ? true
+      : false;
   }
 
   onAction(entry) {
-    if (entry && entry.action)  {
+    if (entry && entry.action) {
       entry.action();
     }
   }
@@ -80,5 +90,4 @@ export class ContextMenuComponent implements OnInit {
       }
     }
   }
-
 }

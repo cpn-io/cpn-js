@@ -1,18 +1,18 @@
-import {Component, OnInit, Input} from '@angular/core';
-import {nodeToArray, getNextId} from '../../common/utils';
-import {AccessCpnService} from '../../services/access-cpn.service';
-import {EventService} from '../../services/event.service';
-import {ModelService} from '../../services/model.service';
-import {Message} from '../../common/message';
-import {TreeData} from '../project-tree.component';
-import {ITreeNode} from '../tree-node/tree-node';
-import {DataTypes} from '../../common/constants';
-import {BufferService} from '../../services/buffer.service';
+import { Component, OnInit, Input } from "@angular/core";
+import { nodeToArray, getNextId } from "../../common/utils";
+import { AccessCpnService } from "../../services/access-cpn.service";
+import { EventService } from "../../services/event.service";
+import { ModelService } from "../../services/model.service";
+import { Message } from "../../common/message";
+import { TreeData } from "../project-tree.component";
+import { ITreeNode } from "../tree-node/tree-node";
+import { DataTypes } from "../../common/constants";
+import { BufferService } from "../../services/buffer.service";
 
 @Component({
-  selector: 'app-project-tree-block-node',
-  templateUrl: './project-tree-block-node.component.html',
-  styleUrls: ['./project-tree-block-node.component.scss']
+  selector: "app-project-tree-block-node",
+  templateUrl: "./project-tree-block-node.component.html",
+  styleUrls: ["./project-tree-block-node.component.scss"],
 })
 export class ProjectTreeBlockNodeComponent implements OnInit, ITreeNode {
   public nodeToArray = nodeToArray;
@@ -23,13 +23,14 @@ export class ProjectTreeBlockNodeComponent implements OnInit, ITreeNode {
   @Input() showBullet = true;
   @Input() public containerId: any;
 
-  type = 'block';
+  type = "block";
 
-  constructor(private eventService: EventService,
-              private modelService: ModelService,
-              public accessCpnService: AccessCpnService,
-              private bufferService: BufferService) {
-  }
+  constructor(
+    private eventService: EventService,
+    private modelService: ModelService,
+    public accessCpnService: AccessCpnService,
+    private bufferService: BufferService
+  ) {}
 
   ngOnInit() {
     if (this.tree && this.block && this.parentBlock) {
@@ -49,34 +50,37 @@ export class ProjectTreeBlockNodeComponent implements OnInit, ITreeNode {
     this.eventService.send(Message.TREE_SELECT_DECLARATION_NODE_NEW, {
       cpnType: type,
       cpnElement: cpnElement,
-      cpnParentElement: cpnParentElement
+      cpnParentElement: cpnParentElement,
     });
   }
 
   onNewDeclaration() {
-    console.log(this.constructor.name, 'onNewDeclaration(), block = ', this.block);
+    console.log(
+      this.constructor.name,
+      "onNewDeclaration(), block = ",
+      this.block
+    );
 
-    const newDeclaration = this.modelService.newDeclaration(this.block, 'ml');
+    const newDeclaration = this.modelService.newDeclaration(this.block, "ml");
     if (newDeclaration) {
-
       // set selected to new declaration
       this.onExpand();
-      this.setSelected(this.block, newDeclaration, 'ml');
+      this.setSelected(this.block, newDeclaration, "ml");
       this.focus(newDeclaration._id);
     }
   }
 
   onNewBlock() {
-    console.log(this.constructor.name, 'onNewBlock(), block = ', this.block);
+    console.log(this.constructor.name, "onNewBlock(), block = ", this.block);
 
     const parentElement = this.block;
     if (parentElement) {
-      const newBlock = {id: 'New block', _id: getNextId()};
-      this.modelService.addCpnElement(parentElement, newBlock, 'block');
+      const newBlock = { id: "New block", _id: getNextId() };
+      this.modelService.addCpnElement(parentElement, newBlock, "block");
 
       // set selected to new block
       this.onExpand();
-      this.setSelected(parentElement, newBlock, 'block');
+      this.setSelected(parentElement, newBlock, "block");
       this.focus(newBlock._id);
     }
   }
@@ -90,29 +94,46 @@ export class ProjectTreeBlockNodeComponent implements OnInit, ITreeNode {
       event.preventDefault();
 
       const entries = [];
-      entries.push({title: 'New declaration', action: () => this.onNewDeclaration(), iconClass: 'fas fa-code'});
-      entries.push({title: 'New block', action: () => this.onNewBlock(), iconClass: 'fas fa-cube'});
-      if (!this.bufferService.isEmpty() && !this.bufferService.isEqualTo(DataTypes.monitor)) {
-        entries.push({ title: 'separator' });
-        entries.push({title: 'Paste', action: () => this.bufferService.pasteObject(this.block), iconClass: 'fas fa-paste'});
+      entries.push({
+        title: "New declaration",
+        action: () => this.onNewDeclaration(),
+        iconClass: "fas fa-code",
+      });
+      entries.push({
+        title: "New block",
+        action: () => this.onNewBlock(),
+        iconClass: "fas fa-cube",
+      });
+      if (
+        !this.bufferService.isEmpty() &&
+        !this.bufferService.isEqualTo(DataTypes.monitor)
+      ) {
+        entries.push({ title: "separator" });
+        entries.push({
+          title: "Paste",
+          action: () => this.bufferService.pasteObject(this.block),
+          iconClass: "fas fa-paste",
+        });
       }
-      entries.push({title: 'separator'});
-      entries.push({title: 'Delete', action: () => this.onDeleteBlock(), iconClass: 'fas fa-minus'});
+      entries.push({ title: "separator" });
+      entries.push({
+        title: "Delete",
+        action: () => this.onDeleteBlock(),
+        iconClass: "fas fa-minus",
+      });
 
       this.tree.contextMenu.setEntries(entries);
-      this.tree.contextMenu.show({x: event.clientX, y: event.clientY});
+      this.tree.contextMenu.show({ x: event.clientX, y: event.clientY });
     }
   }
-
 
   focus(id) {
     setTimeout(() => {
       if (this.tree && this.containerId) {
-
         const container = document.getElementById(this.containerId);
 
         if (container) {
-          const inputElem: any = container.querySelector('#' + id);
+          const inputElem: any = container.querySelector("#" + id);
           if (inputElem) {
             inputElem.focus();
           }
@@ -128,7 +149,7 @@ export class ProjectTreeBlockNodeComponent implements OnInit, ITreeNode {
   }
 
   onClick() {
-    throw new Error('Method not implemented.');
+    throw new Error("Method not implemented.");
   }
 
   onExpand() {
@@ -138,23 +159,23 @@ export class ProjectTreeBlockNodeComponent implements OnInit, ITreeNode {
   }
 
   onKeydown(event: KeyboardEvent) {
-    console.log(this.constructor.name, 'onKeydown(), event = ', event);
+    console.log(this.constructor.name, "onKeydown(), event = ", event);
 
     if (event.shiftKey) {
       switch (event.code) {
-        case 'Insert':
+        case "Insert":
           event.preventDefault();
           this.onNewBlock();
           break;
-        case 'Delete':
+        case "Delete":
           event.preventDefault();
           this.onDeleteBlock();
           break;
-        case 'ArrowUp':
+        case "ArrowUp":
           event.preventDefault();
           this.onUp();
           break;
-        case 'ArrowDown':
+        case "ArrowDown":
           event.preventDefault();
           this.onDown();
           break;
@@ -175,12 +196,22 @@ export class ProjectTreeBlockNodeComponent implements OnInit, ITreeNode {
   }
 
   onUp(event: any = undefined) {
-    this.modelService.moveCpnElement(this.parentBlock, this.block, this.type, 'up');
+    this.modelService.moveCpnElement(
+      this.parentBlock,
+      this.block,
+      this.type,
+      "up"
+    );
     this.focus(this.block._id);
   }
 
   onDown(event: any = undefined) {
-    this.modelService.moveCpnElement(this.parentBlock, this.block, this.type, 'down');
+    this.modelService.moveCpnElement(
+      this.parentBlock,
+      this.block,
+      this.type,
+      "down"
+    );
     this.focus(this.block._id);
   }
 
@@ -190,6 +221,4 @@ export class ProjectTreeBlockNodeComponent implements OnInit, ITreeNode {
   //   // this.modelService.bufferNode = {object: null, type: null, cut:null};
   //   this.bufferService.pasteObject(this.block);
   // }
-
-
 }

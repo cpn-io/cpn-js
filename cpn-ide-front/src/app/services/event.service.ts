@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/map';
+import { Injectable } from "@angular/core";
+import { Subject } from "rxjs/Subject";
+import { Subscription } from "rxjs/Subscription";
+import "rxjs/add/operator/filter";
+import "rxjs/add/operator/map";
 
 interface Message {
   id: String;
@@ -15,7 +15,7 @@ type MessageCallback = (data: any) => void;
 export class EventService {
   private handler = new Subject<Message>();
 
-  constructor() { }
+  constructor() {}
 
   /**
    * Broadcasts message to subscribers
@@ -28,12 +28,11 @@ export class EventService {
    * Handles subscription to messages
    */
   on(id: String, callback: MessageCallback): Subscription {
-
     // console.log('EventService.on(), this.handler = ', this.handler);
 
     return this.handler
-      .filter(message => message.id === id)
-      .map(message => message.data)
+      .filter((message) => message.id === id)
+      .map((message) => message.data)
       .subscribe(callback);
   }
 }

@@ -1,12 +1,12 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 
 @Component({
-  selector: 'app-text-edit-row',
-  templateUrl: './text-edit-row.html',
-  styleUrls: ['./text-edit-row.scss']
+  selector: "app-text-edit-row",
+  templateUrl: "./text-edit-row.html",
+  styleUrls: ["./text-edit-row.scss"],
 })
 export class TextEditRowComponent {
-  @Input() type = 'text';
+  @Input() type = "text";
   @Input() name: string;
   @Input() object: object;
   @Input() selectedElements: [];
@@ -21,27 +21,30 @@ export class TextEditRowComponent {
   // @Output() dblclick = new EventEmitter();
 
   private colorNames = {
-    'Fucia': '#ff00ff',
-    'Maroon': '#800000',
-    'Yellow': '#ffff00',
-    'White': '#ffffff',
-    'Red': '#ff0000',
-    'Silver': '#c0c0c0',
-    'Teal': '#008080',
-    'Navy': '#000080',
-    'Aqua': '#00ffff',
-    'Black': '#000000',
-    'Olive': '#808000',
-    'Lime': '#00ff00',
-    'Gray': '#808080',
-    'Purple': '#800080',
-    'Green': '#008000',
-    'Blue': '#0000ff'
+    Fucia: "#ff00ff",
+    Maroon: "#800000",
+    Yellow: "#ffff00",
+    White: "#ffffff",
+    Red: "#ff0000",
+    Silver: "#c0c0c0",
+    Teal: "#008080",
+    Navy: "#000080",
+    Aqua: "#00ffff",
+    Black: "#000000",
+    Olive: "#808000",
+    Lime: "#00ff00",
+    Gray: "#808080",
+    Purple: "#800080",
+    Green: "#008000",
+    Blue: "#0000ff",
   };
 
   color2name(color) {
     for (const name of Object.keys(this.colorNames)) {
-      if (this.colorNames[name] && this.colorNames[name].toLowerCase() === color.toLowerCase()) {
+      if (
+        this.colorNames[name] &&
+        this.colorNames[name].toLowerCase() === color.toLowerCase()
+      ) {
         return name;
       }
     }
@@ -52,13 +55,12 @@ export class TextEditRowComponent {
     return this.colorNames[name] || name;
   }
 
-
   onKeydown(e) {
     if (!e) {
       e = window.event;
     }
 
-    console.log('keydown, e = ', e);
+    console.log("keydown, e = ", e);
 
     const keyCode = e.which || e.keyCode,
       target = e.target || e.srcElement;
@@ -77,19 +79,19 @@ export class TextEditRowComponent {
   }
 
   onChange(event) {
-    if (this.type === 'text') {
-      this.object[this.field] = event.target.textContent || ' ';
+    if (this.type === "text") {
+      this.object[this.field] = event.target.textContent || " ";
     }
-    if (this.type === 'ml') {
+    if (this.type === "ml") {
       this.object[this.field] = event.target.textContent;
     }
-    if (this.type === 'int') {
-      this.object[this.field] = parseInt(event.target.textContent, 0) || ' ';
+    if (this.type === "int") {
+      this.object[this.field] = parseInt(event.target.textContent, 0) || " ";
     }
-    if (this.type === 'color' || this.type === 'groupColor') {
+    if (this.type === "color" || this.type === "groupColor") {
       this.object[this.field] = this.color2name(event.target.value);
     }
-    if (this.type === 'select') {
+    if (this.type === "select") {
       this.object[this.field] = event;
     }
     // if (this.type === 'groupColor') {
@@ -104,11 +106,11 @@ export class TextEditRowComponent {
 
   parseInt(x, base) {
     const parsed = parseInt(x, base);
-    if (isNaN(parsed)) { return base; }
+    if (isNaN(parsed)) {
+      return base;
+    }
     return parsed;
   }
-
-
 
   // getPortObject(cpnElement, text) {
   //   const port = {
@@ -139,5 +141,4 @@ export class TextEditRowComponent {
 
   //   return cpnElement;
   // }
-
 }

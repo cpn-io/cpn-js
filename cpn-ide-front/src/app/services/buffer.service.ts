@@ -1,19 +1,17 @@
-import {Injectable} from '@angular/core';
-import {ModelService} from './model.service';
+import { Injectable } from "@angular/core";
+import { ModelService } from "./model.service";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class BufferService {
-
   private bufferNode = {
     type: null,
     object: null,
-    cut: null
+    cut: null,
   };
 
-  constructor(private modelService: ModelService) {
-  }
+  constructor(private modelService: ModelService) {}
 
   isEqualTo(dataTypes) {
     return this.bufferNode.object ? this.bufferNode.type === dataTypes : null;
@@ -24,7 +22,7 @@ export class BufferService {
   }
 
   copyObject(node, type): void {
-    this.bufferNode.object = {...node};
+    this.bufferNode.object = { ...node };
     this.bufferNode.type = type;
     this.bufferNode.cut = false;
   }
@@ -45,9 +43,11 @@ export class BufferService {
     if (this.bufferNode.cut) {
       this.modelService.deleteFromModel(this.bufferNode.object);
     }
-    this.modelService.addCpnElement(parent, this.bufferNode.object, this.bufferNode.type);
-    this.bufferNode = {object: null, type: null, cut: null};
+    this.modelService.addCpnElement(
+      parent,
+      this.bufferNode.object,
+      this.bufferNode.type
+    );
+    this.bufferNode = { object: null, type: null, cut: null };
   }
-
-
 }

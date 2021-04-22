@@ -1,144 +1,142 @@
-import {Pipe, PipeTransform} from '@angular/core';
+import { Pipe, PipeTransform } from "@angular/core";
 
-@Pipe({name: 'optionName'})
+@Pipe({ name: "optionName" })
 export class OptionsNamePipePipe implements PipeTransform {
-
   transform(value: string): string {
-
     let transformed = value;
-    if (value.startsWith('option_')) {
+    if (value.startsWith("option_")) {
       transformed = value.substring(7);
     }
 
     switch (transformed) {
-      case 'realtimestamp':
-        transformed = 'Real Timestamp';
+      case "realtimestamp":
+        transformed = "Real Timestamp";
         break;
-      case 'fair_be':
-        transformed = 'Binding Element Fairness';
+      case "fair_be":
+        transformed = "Binding Element Fairness";
         break;
-      case 'global_fairness':
-        transformed = 'Global BE Fairness';
+      case "global_fairness":
+        transformed = "Global BE Fairness";
         break;
-      case 'outputdirectory':
-        transformed = 'Output directory';
+      case "outputdirectory":
+        transformed = "Output directory";
         break;
-      case 'repavg':
-        transformed = 'Average';
+      case "repavg":
+        transformed = "Average";
         break;
-      case 'repciavg':
-        transformed = 'Confidence intervals for average';
+      case "repciavg":
+        transformed = "Confidence intervals for average";
         break;
-      case 'repcount':
-        transformed = 'Number of observations';
+      case "repcount":
+        transformed = "Number of observations";
         break;
-      case 'repfirstval':
-        transformed = 'First value observed';
+      case "repfirstval":
+        transformed = "First value observed";
         break;
-      case 'replastval':
-        transformed = 'Last value observed';
+      case "replastval":
+        transformed = "Last value observed";
         break;
-      case 'repmax':
-        transformed = 'Maximum';
+      case "repmax":
+        transformed = "Maximum";
         break;
-      case 'repmin':
-        transformed = 'Minimum';
+      case "repmin":
+        transformed = "Minimum";
         break;
-      case 'repssquare':
-        transformed = 'Sum of squares';
+      case "repssquare":
+        transformed = "Sum of squares";
         break;
-      case 'repssqdev':
-        transformed = 'Sum of squares of deviation';
+      case "repssqdev":
+        transformed = "Sum of squares of deviation";
         break;
-      case 'repstddev':
-        transformed = 'Standard deviation';
+      case "repstddev":
+        transformed = "Standard deviation";
         break;
-      case 'repsum':
-        transformed = 'Sum';
+      case "repsum":
+        transformed = "Sum";
         break;
-      case 'repvariance':
-        transformed = 'Variance';
+      case "repvariance":
+        transformed = "Variance";
         break;
-      case 'avg':
-        transformed = 'Average';
+      case "avg":
+        transformed = "Average";
         break;
-      case 'ciavg':
-        transformed = 'Confidence intervals for average';
+      case "ciavg":
+        transformed = "Confidence intervals for average";
         break;
-      case 'count':
-        transformed = 'Number of observations';
+      case "count":
+        transformed = "Number of observations";
         break;
-      case 'firstval':
-        transformed = 'First value observed';
+      case "firstval":
+        transformed = "First value observed";
         break;
-      case 'lastval':
-        transformed = 'Last value observed';
+      case "lastval":
+        transformed = "Last value observed";
         break;
-      case 'max':
-        transformed = 'Maximum';
+      case "max":
+        transformed = "Maximum";
         break;
-      case 'min':
-        transformed = 'Minimum';
+      case "min":
+        transformed = "Minimum";
         break;
-      case 'ssquare':
-        transformed = 'Sum of squares';
+      case "ssquare":
+        transformed = "Sum of squares";
         break;
-      case 'ssqdev':
-        transformed = 'Sum of squares of deviation';
+      case "ssqdev":
+        transformed = "Sum of squares of deviation";
         break;
-      case 'stddev':
-        transformed = 'Standard deviation';
+      case "stddev":
+        transformed = "Standard deviation";
         break;
-      case 'sum':
-        transformed = 'Sum';
+      case "sum":
+        transformed = "Sum";
         break;
-      case 'variance':
-        transformed = 'Variance';
+      case "variance":
+        transformed = "Variance";
         break;
-      case 'firstupdate':
-        transformed = 'Time of first update';
+      case "firstupdate":
+        transformed = "Time of first update";
         break;
-      case 'interval':
-        transformed = 'Time interval';
+      case "interval":
+        transformed = "Time interval";
         break;
-      case 'lastupdate':
-        transformed = 'Time of last update';
+      case "lastupdate":
+        transformed = "Time of last update";
         break;
-      case 'untimedavg':
-        transformed = 'Average';
+      case "untimedavg":
+        transformed = "Average";
         break;
-      case 'untimedciavg':
-        transformed = 'Confidence intervals for average';
+      case "untimedciavg":
+        transformed = "Confidence intervals for average";
         break;
-      case 'untimedcount':
-        transformed = 'Number of observations';
+      case "untimedcount":
+        transformed = "Number of observations";
         break;
-      case 'untimedfirstval':
-        transformed = 'First value observed';
+      case "untimedfirstval":
+        transformed = "First value observed";
         break;
-      case 'untimedlastval':
-        transformed = 'Last value observed';
+      case "untimedlastval":
+        transformed = "Last value observed";
         break;
-      case 'untimedmax':
-        transformed = 'Maximum';
+      case "untimedmax":
+        transformed = "Maximum";
         break;
-      case 'untimedmin':
-        transformed = 'Minimum';
+      case "untimedmin":
+        transformed = "Minimum";
         break;
-      case 'untimedssquare':
-        transformed = 'Sum of squares';
+      case "untimedssquare":
+        transformed = "Sum of squares";
         break;
-      case 'untimedssqdev':
-        transformed = 'Sum of squares of deviation';
+      case "untimedssqdev":
+        transformed = "Sum of squares of deviation";
         break;
-      case 'untimedstddev':
-        transformed = 'Standard deviation';
+      case "untimedstddev":
+        transformed = "Standard deviation";
         break;
-      case 'untimedsum':
-        transformed = 'Sum';
+      case "untimedsum":
+        transformed = "Sum";
         break;
-      case 'untimedvariance':
-        transformed = 'Variance';
+      case "untimedvariance":
+        transformed = "Variance";
         break;
     }
 

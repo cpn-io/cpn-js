@@ -1,38 +1,43 @@
-import {AfterViewInit, Component, HostListener, OnInit} from '@angular/core';
-import {Message} from '../common/message';
-import {EventService} from '../services/event.service';
-import {AccessCpnService} from '../services/access-cpn.service';
-import {IpcService} from '../services/ipc.service';
-import {getDefaultSplitSizes, getExpandedSplitSizes} from '../common/constants';
-import {SplitSizes} from '../common/model';
+import { AfterViewInit, Component, HostListener, OnInit } from "@angular/core";
+import { Message } from "../common/message";
+import { EventService } from "../services/event.service";
+import { AccessCpnService } from "../services/access-cpn.service";
+import { IpcService } from "../services/ipc.service";
+import {
+  getDefaultSplitSizes,
+  getExpandedSplitSizes,
+} from "../common/constants";
+import { SplitSizes } from "../common/model";
 
 @Component({
-  selector: 'app-main-frame',
+  selector: "app-main-frame",
   // changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './main-frame.component.html',
-  styleUrls: ['./main-frame.component.scss'],
+  templateUrl: "./main-frame.component.html",
+  styleUrls: ["./main-frame.component.scss"],
 })
 export class MainFrameComponent implements OnInit, AfterViewInit {
-
-  localStorageName = 'splitSettings';
+  localStorageName = "splitSettings";
   gutterSize = 3;
 
   expanded = false;
   panelsSize: SplitSizes;
 
-  constructor(private eventService: EventService,
-              public accessCpnService: AccessCpnService,
-              private ipcService: IpcService) {
-  }
+  constructor(
+    private eventService: EventService,
+    public accessCpnService: AccessCpnService,
+    private ipcService: IpcService
+  ) {}
 
   ngOnInit() {
-    this.eventService.on(Message.MODEL_EDITOR_FULLSCREEN, () => this.toggleExpand());
+    this.eventService.on(Message.MODEL_EDITOR_FULLSCREEN, () =>
+      this.toggleExpand()
+    );
 
     this.initSplitSizeSettings();
   }
 
   ngAfterViewInit(): void {
-    this.ipcService.send('app.init.complete');
+    this.ipcService.send("app.init.complete");
   }
 
   initSplitSizeSettings() {
@@ -51,8 +56,9 @@ export class MainFrameComponent implements OnInit, AfterViewInit {
 
   changeSplitSize(event, panel) {
     panel.size = event.sizes;
-    localStorage.setItem(this.localStorageName, JSON.stringify(this.panelsSize));
+    localStorage.setItem(
+      this.localStorageName,
+      JSON.stringify(this.panelsSize)
+    );
   }
-
-
 }

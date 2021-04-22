@@ -1,31 +1,37 @@
-import { Component, HostListener, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  Input,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from "@angular/core";
 // import {NgxXml2jsonService} from 'ngx-xml2json';
-import { EventService } from '../services/event.service';
-import { Message } from '../common/message';
-import { ProjectService } from '../services/project.service';
-import { TreeComponent, TREE_ACTIONS } from 'angular-tree-component';
-import { ModelService } from '../services/model.service';
-import { ColorDeclarationsPipe } from '../pipes/color-declarations.pipe';
-import { OptionsNamePipePipe } from '../pipes/options-name.pipe';
-import { AccessCpnService } from '../services/access-cpn.service';
-import { SettingsService } from '../services/settings.service';
-import { ValidationService } from '../services/validation.service';
-import { nodeToArray } from '../common/utils';
-import { MonitorType } from '../common/monitors';
+import { EventService } from "../services/event.service";
+import { Message } from "../common/message";
+import { ProjectService } from "../services/project.service";
+import { TreeComponent, TREE_ACTIONS } from "angular-tree-component";
+import { ModelService } from "../services/model.service";
+import { ColorDeclarationsPipe } from "../pipes/color-declarations.pipe";
+import { OptionsNamePipePipe } from "../pipes/options-name.pipe";
+import { AccessCpnService } from "../services/access-cpn.service";
+import { SettingsService } from "../services/settings.service";
+import { ValidationService } from "../services/validation.service";
+import { nodeToArray } from "../common/utils";
+import { MonitorType } from "../common/monitors";
 
 // import {TreeComponent} from 'angular-tree-component';
 @Component({
-  selector: 'app-project-explorer',
-  templateUrl: './project-explorer.component.html',
-  styleUrls: ['./project-explorer.component.scss'],
-  providers: [ColorDeclarationsPipe, OptionsNamePipePipe]
+  selector: "app-project-explorer",
+  templateUrl: "./project-explorer.component.html",
+  styleUrls: ["./project-explorer.component.scss"],
+  providers: [ColorDeclarationsPipe, OptionsNamePipePipe],
 })
 /**
  * class ProjectExplorerComponent
  */
-export class ProjectExplorerComponent
 // implements OnInit, OnDestroy
-{
+export class ProjectExplorerComponent {
   // @Input() message = 'Not set';
 
   /**
@@ -43,9 +49,9 @@ export class ProjectExplorerComponent
   // JSON = JSON;
 
   tabList = [
-    { id: 'projectTree', name: 'Project explorer' },
+    { id: "projectTree", name: "Project explorer" },
     // { id: 'explorerPanel', name: 'Project explorer (Old)' },
-    { id: 'applicationSettings', name: 'Application settings' },
+    { id: "applicationSettings", name: "Application settings" },
   ];
 
   // idNodeCounter = 0;
@@ -74,7 +80,6 @@ export class ProjectExplorerComponent
   // errorIds = [];
 
   // colorDeclarationsPipe;
-
 
   // nodes = [];
 
@@ -122,7 +127,6 @@ export class ProjectExplorerComponent
   //     }
   //   }
   // };
-
 
   // /**
   //  * Constructor
@@ -551,7 +555,6 @@ export class ProjectExplorerComponent
 
   // }
 
-
   // /**
   //  * Adding new node to the tree
   //  *
@@ -659,7 +662,6 @@ export class ProjectExplorerComponent
   //   //  this.moveNodeInTree(this.treeComponent, treeNode.parent, undefined, {from, to});
   // }
 
-
   // getDataForMoving(direction) {
   //   const treeNode = this.treeComponent.treeModel.getActiveNode();
   //   if (!treeNode) {
@@ -673,7 +675,6 @@ export class ProjectExplorerComponent
 
   //   // this.eventService.send(Message.MODEL_CHANGED);
   // }
-
 
   // /**
   //  * Deleting node from the tree
@@ -781,7 +782,6 @@ export class ProjectExplorerComponent
   // onNodeClick(event, node) {
   //   console.log(this.constructor.name, 'onNodeClick(), node = ', node);
 
-
   //   if (!this.openedLabel[node.id]) {
   //     this.onNodeArrowClick(event, node);
   //   } else {
@@ -805,7 +805,6 @@ export class ProjectExplorerComponent
   //     cpnElement: node.data.cpnElement
   //   });
   // }
-
 
   // /*
   //  * Edit node text by click on node handler or by context menu
@@ -887,7 +886,6 @@ export class ProjectExplorerComponent
   //     && node.data.cpnElement.value
   //     && node.data.cpnElement.value.text || '* empty *';
   // }
-
 
   // /**
   //  * Распарсить метку, чотбы выцепить оттуда и вернуть название функции или исключения или название переменной
@@ -1270,7 +1268,6 @@ export class ProjectExplorerComponent
   //   declarationNode.actions = ['block', 'declaration', 'delete'];
   //   return declarationNode;
   // }
-
 
   // /**
   //  * Creating project Globref node
@@ -1913,7 +1910,6 @@ export class ProjectExplorerComponent
   //     }
   //     // ---------------------------------------
 
-
   //     // Transitions
   //     if (page.trans) {
   //       const transitionNode = {
@@ -2000,7 +1996,6 @@ export class ProjectExplorerComponent
   //     this.treeComponent.treeModel.update();
   //   }
   // }
-
 
   // addNode(tree: any) {
   //   this.nodes[0].children.push({
@@ -2124,7 +2119,6 @@ export class ProjectExplorerComponent
   //   node.data.cpnElement.id = newValue; // update cpnElement
   // }
 
-
   // /**
   //  * Updating page node
   //  * @param node
@@ -2175,8 +2169,6 @@ export class ProjectExplorerComponent
   //   }
   // }
 
-
-
   // saveEditedData_OLD(event) {
   //   console.log('saveEditedData(), event = ', event);
 
@@ -2206,7 +2198,6 @@ export class ProjectExplorerComponent
   //     }
   //   }
   // }
-
 
   // canCreate(node): boolean {
   //   return node && ((node.id === 'Pages' || node.data.type === 'page' || node.id === 'Declarations')
@@ -2252,6 +2243,4 @@ export class ProjectExplorerComponent
   //     this.treeComponent.treeModel.clearFilter();
   //   }
   // }
-
 }
-

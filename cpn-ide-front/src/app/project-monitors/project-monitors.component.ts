@@ -1,27 +1,25 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import { EventService } from '../services/event.service';
-import { Message } from '../common/message';
-import { ModelService } from '../services/model.service';
-import { AccessCpnService } from '../services/access-cpn.service';
-import { nodeToArray } from '../common/utils';
-import { getMonitorNodeTypeList } from '../common/monitors';
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { EventService } from "../services/event.service";
+import { Message } from "../common/message";
+import { ModelService } from "../services/model.service";
+import { AccessCpnService } from "../services/access-cpn.service";
+import { nodeToArray } from "../common/utils";
+import { getMonitorNodeTypeList } from "../common/monitors";
 
 import {
   CPN_LABEL,
   CPN_PLACE,
   CPN_TRANSITION,
   is,
-} from '../../lib/cpn-js/util/ModelUtil';
-import {Subscription} from 'rxjs';
+} from "../../lib/cpn-js/util/ModelUtil";
+import { Subscription } from "rxjs";
 
 @Component({
-  selector: 'app-project-monitors',
-  templateUrl: './project-monitors.component.html',
-  styleUrls: ['./project-monitors.component.scss']
+  selector: "app-project-monitors",
+  templateUrl: "./project-monitors.component.html",
+  styleUrls: ["./project-monitors.component.scss"],
 })
 export class ProjectMonitorsComponent implements OnInit, OnDestroy {
-
-
   JSON = JSON;
   nodeToArray = nodeToArray;
 
@@ -32,38 +30,55 @@ export class ProjectMonitorsComponent implements OnInit, OnDestroy {
   nodeList = [];
   nodeTypeList = [];
 
-  boolValues = [
-    'true',
-    'false'
-  ];
+  boolValues = ["true", "false"];
 
   createNodeIntent = false;
   private subs: Subscription[] = [];
 
-  constructor(private eventService: EventService,
+  constructor(
+    private eventService: EventService,
     private modelService: ModelService,
-    public accessCpnService: AccessCpnService) { }
+    public accessCpnService: AccessCpnService
+  ) {}
 
   ngOnInit() {
-    this.eventService.on(Message.PROJECT_LOAD, () => this.onLoadMonitor(undefined));
-    this.eventService.on(Message.MODEL_RELOAD, () => this.onLoadMonitor(undefined));
+    this.eventService.on(Message.PROJECT_LOAD, () =>
+      this.onLoadMonitor(undefined)
+    );
+    this.eventService.on(Message.MODEL_RELOAD, () =>
+      this.onLoadMonitor(undefined)
+    );
 
-    this.eventService.on(Message.MONITOR_OPEN, (event) => this.onLoadMonitor(event.monitorObject));
-    this.eventService.on(Message.SHAPE_SELECT, (event) => { if (this.createNodeIntent) { this.onCreateNode(event); } });
+    this.eventService.on(Message.MONITOR_OPEN, (event) =>
+      this.onLoadMonitor(event.monitorObject)
+    );
+    this.eventService.on(Message.SHAPE_SELECT, (event) => {
+      if (this.createNodeIntent) {
+        this.onCreateNode(event);
+      }
+    });
 
-    this.eventService.on(Message.DECLARATION_CHANGED, (event) => this.onUpdateDeclaration(event));
-    this.subs.push(this.eventService.on(Message.MONITOR_CLICK_DELETE, event => this.onDeleteMonitor(event)));
-
+    this.eventService.on(Message.DECLARATION_CHANGED, (event) =>
+      this.onUpdateDeclaration(event)
+    );
+    this.subs.push(
+      this.eventService.on(Message.MONITOR_CLICK_DELETE, (event) =>
+        this.onDeleteMonitor(event)
+      )
+    );
   }
   ngOnDestroy(): void {
-    this.subs.forEach(x => x.unsubscribe());
+    this.subs.forEach((x) => x.unsubscribe());
   }
 
   getOption(name) {
     if (this.monitor && this.monitor.option) {
       // console.log('this.cpnElement.option = ', this.cpnElement.option);
 
-      const options = this.monitor.option instanceof Array ? this.monitor.option : [this.monitor.option];
+      const options =
+        this.monitor.option instanceof Array
+          ? this.monitor.option
+          : [this.monitor.option];
       const option = options.find((o) => o._name === name);
       if (option) {
         return option;
@@ -82,40 +97,42 @@ export class ProjectMonitorsComponent implements OnInit, OnDestroy {
 
   setCreateNodeIntent(enable) {
     this.createNodeIntent = enable;
-    document.body.style.cursor = enable ? 'crosshair' : 'default';
+    document.body.style.cursor = enable ? "crosshair" : "default";
   }
 
   onLoadMonitor(cpnElement) {
     this.monitor = cpnElement;
     this.nodeList = this.modelService.getMonitorNodeNamesList(this.monitor);
 
-    this.optionTimed = this.getOption('Timed');
-    this.optionLogging = this.getOption('Logging');
+    this.optionTimed = this.getOption("Timed");
+    this.optionLogging = this.getOption("Logging");
 
-    this.nodeTypeList = this.monitor ? getMonitorNodeTypeList(this.monitor._type) : [];
+    this.nodeTypeList = this.monitor
+      ? getMonitorNodeTypeList(this.monitor._type)
+      : [];
 
-    console.log('onLoadMonitor(), this.cpnElement = ', this.monitor);
-    console.log('onLoadMonitor(), this.nodeList = ', this.nodeList);
+    console.log("onLoadMonitor(), this.cpnElement = ", this.monitor);
+    console.log("onLoadMonitor(), this.nodeList = ", this.nodeList);
   }
 
   onCreateNode(event) {
     this.setCreateNodeIntent(false);
 
-    const element = event.element.labelTarget ?
-      event.element.labelTarget.labelTarget || event.element.labelTarget :
-      event.element;
+    const element = event.element.labelTarget
+      ? event.element.labelTarget.labelTarget || event.element.labelTarget
+      : event.element;
 
     if (element && element.cpnElement) {
-      console.log('onCreateNode(), element.cpnElement = ', element.cpnElement);
+      console.log("onCreateNode(), element.cpnElement = ", element.cpnElement);
 
       if (is(element, CPN_PLACE)) {
-        if (!this.nodeTypeList.includes('place')) {
+        if (!this.nodeTypeList.includes("place")) {
           return;
         }
       }
 
       if (is(element, CPN_TRANSITION)) {
-        if (!this.nodeTypeList.includes('transition')) {
+        if (!this.nodeTypeList.includes("transition")) {
           return;
         }
       }
@@ -130,15 +147,18 @@ export class ProjectMonitorsComponent implements OnInit, OnDestroy {
       //   }
       // }
 
-      const nodePage = this.modelService.getPageByElementId(element.cpnElement._id);
+      const nodePage = this.modelService.getPageByElementId(
+        element.cpnElement._id
+      );
       const inst = this.modelService.getInstance(nodePage._id);
 
       const monitorNodeList = nodeToArray(this.monitor.node) || [];
       monitorNodeList.push({
         _idref: element.cpnElement._id,
-        _pageinstanceidref: inst ? inst._id : ''
+        _pageinstanceidref: inst ? inst._id : "",
       });
-      this.monitor.node = monitorNodeList.length === 1 ? monitorNodeList[0] : monitorNodeList;
+      this.monitor.node =
+        monitorNodeList.length === 1 ? monitorNodeList[0] : monitorNodeList;
       this.onLoadMonitor(this.monitor);
       this.updateChanges();
     }
@@ -148,9 +168,13 @@ export class ProjectMonitorsComponent implements OnInit, OnDestroy {
     if (event.cpnElement && event.newTextValue) {
       const result = this.modelService.stringToCpnDeclarationElement(
         event.cpnElement,
-        event.newTextValue);
-      console.log('Message.DECLARATION_CHANGED, event.cpnElement = ', event.cpnElement);
-      console.log('Message.DECLARATION_CHANGED, result = ', result);
+        event.newTextValue
+      );
+      console.log(
+        "Message.DECLARATION_CHANGED, event.cpnElement = ",
+        event.cpnElement
+      );
+      console.log("Message.DECLARATION_CHANGED, result = ", result);
 
       event.cpnElement.__text = result.cpnElement.__text;
 
@@ -159,13 +183,10 @@ export class ProjectMonitorsComponent implements OnInit, OnDestroy {
     }
   }
 
-
   onDeclarationClick(event, declaration) {
     // if (this.selectedNode !== node) {
     //   this.selectedNode = node;
-
     //   this.goToEditNode(node.id);
-
     //   if (node.type === 'declaration') {
     //     this.sendSelectDeclarationNode(node, false);
     //   }
@@ -173,7 +194,7 @@ export class ProjectMonitorsComponent implements OnInit, OnDestroy {
   }
 
   onDeclarationDblClick(event, declaration) {
-    console.log('onDeclarationDblClick(), declaration = ', declaration);
+    console.log("onDeclarationDblClick(), declaration = ", declaration);
 
     this.onDeclarationClick(event, declaration);
 
@@ -184,8 +205,8 @@ export class ProjectMonitorsComponent implements OnInit, OnDestroy {
     this.eventService.send(Message.TREE_SELECT_DECLARATION_NODE_NEW, {
       sender: this,
       openEditorTab: true,
-      cpnType: 'ml',
-      cpnElement: declaration.ml
+      cpnType: "ml",
+      cpnElement: declaration.ml,
     });
   }
 
@@ -194,38 +215,43 @@ export class ProjectMonitorsComponent implements OnInit, OnDestroy {
   }
 
   onNewNode() {
-    console.log('onNewNode(), this.cpnElement = ', this.monitor);
-    console.log('onNewNode(), this.nodeTypeList = ', this.nodeTypeList);
+    console.log("onNewNode(), this.cpnElement = ", this.monitor);
+    console.log("onNewNode(), this.nodeTypeList = ", this.nodeTypeList);
     this.setCreateNodeIntent(true);
 
     const availableNodeIds = [];
 
-    if (this.nodeTypeList.includes('place')) {
+    if (this.nodeTypeList.includes("place")) {
       for (const p of this.modelService.getAllPlaces()) {
         availableNodeIds.push(p._id);
       }
     }
-    if (this.nodeTypeList.includes('transition')) {
+    if (this.nodeTypeList.includes("transition")) {
       for (const t of this.modelService.getAllTrans()) {
         availableNodeIds.push(t._id);
       }
     }
-    console.log('onNewNode(), availableNodeIds = ', availableNodeIds);
+    console.log("onNewNode(), availableNodeIds = ", availableNodeIds);
 
-    this.eventService.send(Message.MONITOR_SET_AVAILABLE_NODES, { availableNodeIds: availableNodeIds });
+    this.eventService.send(Message.MONITOR_SET_AVAILABLE_NODES, {
+      availableNodeIds: availableNodeIds,
+    });
   }
 
   onDeleteNode(node) {
     // console.log('onDeleteNode(), node = ', node);
 
     let monitorNodeList = nodeToArray(this.monitor.node);
-    const monitorNode = monitorNodeList.find(n => n._idref === node.element._id);
+    const monitorNode = monitorNodeList.find(
+      (n) => n._idref === node.element._id
+    );
 
     // console.log('onDeleteNode(), monitorNode = ', monitorNode);
 
     if (monitorNode) {
-      monitorNodeList = monitorNodeList.filter(n => n !== monitorNode);
-      this.monitor.node = monitorNodeList.length === 1 ? monitorNodeList[0] : monitorNodeList;
+      monitorNodeList = monitorNodeList.filter((n) => n !== monitorNode);
+      this.monitor.node =
+        monitorNodeList.length === 1 ? monitorNodeList[0] : monitorNodeList;
       this.onLoadMonitor(this.monitor);
       this.updateChanges();
     }
@@ -234,7 +260,9 @@ export class ProjectMonitorsComponent implements OnInit, OnDestroy {
   updateChanges() {
     // this.eventService.send(Message.MODEL_UPDATE_DIAGRAM, { cpnElement: this.cpnElement });
     // this.eventService.send(Message.MODEL_CHANGED);
-    this.eventService.send(Message.MONITOR_SET_AVAILABLE_NODES, { availableNodeIds: [] });
+    this.eventService.send(Message.MONITOR_SET_AVAILABLE_NODES, {
+      availableNodeIds: [],
+    });
   }
 
   updateOptionValue(event, name) {
@@ -252,23 +280,28 @@ export class ProjectMonitorsComponent implements OnInit, OnDestroy {
     this.updateChanges();
   }
 
-  onCloneMonitor() {
-  }
+  onCloneMonitor() {}
 
   onDisableMonitor(disable: boolean) {
     this.monitor._disabled = disable.toString();
-    this.eventService.send(Message.MONITOR_CHANGED, { monitorCpnElement: this.monitor });
+    this.eventService.send(Message.MONITOR_CHANGED, {
+      monitorCpnElement: this.monitor,
+    });
   }
 
   onDeleteMonitor(data?) {
     if (data) {
       this.modelService.deleteFromModel(data);
       this.onLoadMonitor(undefined);
-      this.eventService.send(Message.MONITOR_DELETED, { monitorCpnElement: data });
+      this.eventService.send(Message.MONITOR_DELETED, {
+        monitorCpnElement: data,
+      });
     } else if (this.monitor) {
       this.modelService.deleteFromModel(this.monitor);
       this.onLoadMonitor(undefined);
-      this.eventService.send(Message.MONITOR_DELETED, { monitorCpnElement: this.monitor });
+      this.eventService.send(Message.MONITOR_DELETED, {
+        monitorCpnElement: this.monitor,
+      });
     }
   }
 

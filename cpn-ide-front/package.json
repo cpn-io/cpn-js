@@ -5,6 +5,7 @@
   "main": "electron/dist/main.js",
   "scripts": {
     "ng": "ng",
+    "pretty": "prettier --write \"./**/*.ts\"",
     "start": "node ./version.build.js & ng serve --proxy-config proxy.conf.json",
     "updateBuild": "node ./replace.build.js",
     "build": "node ./version.build.js & ng build",
@@ -122,6 +123,7 @@
     "ngx-electron": "^1.0.4",
     "ngx-xml2json": "^1.0.2",
     "popper.js": "^1.16.1",
+    "prettier": "^2.2.1",
     "ps-node": "^0.1.6",
     "rxjs": "^6.5.5",
     "rxjs-compat": "^6.5.5",

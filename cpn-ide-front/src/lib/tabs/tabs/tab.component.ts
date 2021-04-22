@@ -1,13 +1,13 @@
-import {Component, Input} from '@angular/core';
-import {TabsContainer} from '../tabs-container/tabs.container';
+import { Component, Input } from "@angular/core";
+import { TabsContainer } from "../tabs-container/tabs.container";
 
 @Component({
-  selector: 'tab',
+  selector: "tab",
   host: {
-    '[class.hidden]': '!active'
+    "[class.hidden]": "!active",
   },
-  templateUrl: './tab.component.html',
-  styleUrls: ['./tab.component.scss']
+  templateUrl: "./tab.component.html",
+  styleUrls: ["./tab.component.scss"],
 })
 export class TabComponent {
   @Input() active = false;

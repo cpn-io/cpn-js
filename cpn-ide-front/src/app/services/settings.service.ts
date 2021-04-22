@@ -1,8 +1,8 @@
-import {Injectable} from '@angular/core';
-import {cloneObject} from '../common/utils';
-import {DEFAULT_SETTINGS} from '../common/default-settings';
-import {EventService} from './event.service';
-import {Message} from '../common/message';
+import { Injectable } from "@angular/core";
+import { cloneObject } from "../common/utils";
+import { DEFAULT_SETTINGS } from "../common/default-settings";
+import { EventService } from "./event.service";
+import { Message } from "../common/message";
 
 @Injectable()
 export class SettingsService {
@@ -16,9 +16,13 @@ export class SettingsService {
   }
 
   public loadLocalSettings() {
-    const localSettings = localStorage.getItem('applicationSettings');
+    const localSettings = localStorage.getItem("applicationSettings");
 
-    console.log(this.constructor.name, 'loadLocalSettings(), localSettings = ', localSettings);
+    console.log(
+      this.constructor.name,
+      "loadLocalSettings(), localSettings = ",
+      localSettings
+    );
 
     if (localSettings) {
       this.appSettings = JSON.parse(localSettings);
@@ -26,13 +30,27 @@ export class SettingsService {
       this.appSettings = cloneObject(DEFAULT_SETTINGS);
     }
 
-    console.log(this.constructor.name, 'loadLocalSettings(), this.appSettings = ', this.appSettings);
+    console.log(
+      this.constructor.name,
+      "loadLocalSettings(), this.appSettings = ",
+      this.appSettings
+    );
   }
 
   public saveLocalSettings(key?) {
-    console.log(this.constructor.name, 'saveLocalSettings(), this.appSettings = ', this.appSettings);
-    this.eventService.send(Message.SETTING_CHANGED, {key: key, value: this.appSettings[key]});
-    localStorage.setItem('applicationSettings', JSON.stringify(this.appSettings));
+    console.log(
+      this.constructor.name,
+      "saveLocalSettings(), this.appSettings = ",
+      this.appSettings
+    );
+    this.eventService.send(Message.SETTING_CHANGED, {
+      key: key,
+      value: this.appSettings[key],
+    });
+    localStorage.setItem(
+      "applicationSettings",
+      JSON.stringify(this.appSettings)
+    );
   }
 
   public reset() {
@@ -45,7 +63,7 @@ export class SettingsService {
     // if (this.appSettings['localServer'] == 1 || this.appSettings['localServer'] == 'true') {
     //   return '';
     // }
-    return this.appSettings['serverAddress'];
+    return this.appSettings["serverAddress"];
   }
 
   public setCounter(number: number) {
@@ -53,6 +71,6 @@ export class SettingsService {
   }
 
   public getMonitorBlockTitle() {
-    return `${this.appSettings['monitorblock']} ${this.counter++}`;
+    return `${this.appSettings["monitorblock"]} ${this.counter++}`;
   }
 }

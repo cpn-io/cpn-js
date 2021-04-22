@@ -1,15 +1,31 @@
-import { Message } from './../common/message';
-import { ModelService } from './../services/model.service';
-import { EventService } from './../services/event.service';
-import { Component, OnInit, OnChanges, SimpleChanges, DoCheck, HostListener, ViewChild } from '@angular/core';
-import { nodeToArray, cloneObject, getNextId, arrayToNode } from '../common/utils';
-import { clearDeclarationLayout, parseDeclarartion } from './project-tree-declaration-node/declaration-parser';
-import { AccessCpnService } from '../services/access-cpn.service';
-import { SettingsService } from '../services/settings.service';
-import { ContextMenuComponent } from '../context-menu/context-menu.component';
-import { SelectedNode } from './tree-node/tree-node';
-import { DataTypes } from '../common/constants';
-import { BufferService } from '../services/buffer.service';
+import { Message } from "./../common/message";
+import { ModelService } from "./../services/model.service";
+import { EventService } from "./../services/event.service";
+import {
+  Component,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+  DoCheck,
+  HostListener,
+  ViewChild,
+} from "@angular/core";
+import {
+  nodeToArray,
+  cloneObject,
+  getNextId,
+  arrayToNode,
+} from "../common/utils";
+import {
+  clearDeclarationLayout,
+  parseDeclarartion,
+} from "./project-tree-declaration-node/declaration-parser";
+import { AccessCpnService } from "../services/access-cpn.service";
+import { SettingsService } from "../services/settings.service";
+import { ContextMenuComponent } from "../context-menu/context-menu.component";
+import { SelectedNode } from "./tree-node/tree-node";
+import { DataTypes } from "../common/constants";
+import { BufferService } from "../services/buffer.service";
 
 export class TreeData {
   expanded = [];
@@ -18,7 +34,7 @@ export class TreeData {
   subpages = [];
   parents = [];
   cpnElements = [];
-  filter = '';
+  filter = "";
 
   selected: SelectedNode = new SelectedNode();
   selectedOld: SelectedNode = new SelectedNode();
@@ -50,15 +66,13 @@ export class TreeData {
   }
 }
 
-
 @Component({
-  selector: 'app-project-tree',
-  templateUrl: './project-tree.component.html',
-  styleUrls: ['./project-tree.component.scss']
+  selector: "app-project-tree",
+  templateUrl: "./project-tree.component.html",
+  styleUrls: ["./project-tree.component.scss"],
 })
 export class ProjectTreeComponent implements OnInit, DoCheck {
-
-  @ViewChild('contextMenu') contextMenu: ContextMenuComponent;
+  @ViewChild("contextMenu") contextMenu: ContextMenuComponent;
 
   public nodeToArray = nodeToArray;
   public JSON = JSON;
@@ -70,19 +84,20 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   public tree: TreeData = this.getDefaultTree();
   public mouseover = { id: undefined };
 
-  public containerId = 'projectTreeComponentContainer';
+  public containerId = "projectTreeComponentContainer";
 
   public newPageCount = 0;
   // public bufferNode;
 
   simulationState = { step: 0, time: 0 };
 
-  constructor(public eventService: EventService,
+  constructor(
+    public eventService: EventService,
     public modelService: ModelService,
     private accessCpnService: AccessCpnService,
     private settings: SettingsService,
-    private bufferService: BufferService) {
-  }
+    private bufferService: BufferService
+  ) {}
 
   ngOnInit() {
     this.reset();
@@ -90,10 +105,16 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     this.eventService.on(Message.PROJECT_LOAD, () => this.loadProject());
     this.eventService.on(Message.MODEL_RELOAD, () => this.loadProject());
 
-    this.eventService.on(Message.SERVER_INIT_NET_DONE, () => this.updateErrors());
-    this.eventService.on(Message.SIMULATION_UPDATE_STATE, () => this.onSimulationState());
+    this.eventService.on(Message.SERVER_INIT_NET_DONE, () =>
+      this.updateErrors()
+    );
+    this.eventService.on(Message.SIMULATION_UPDATE_STATE, () =>
+      this.onSimulationState()
+    );
 
-    this.eventService.on(Message.MONITOR_CREATED, (event) => this.goToMonitor(event.newMonitorCpnElement._id));
+    this.eventService.on(Message.MONITOR_CREATED, (event) =>
+      this.goToMonitor(event.newMonitorCpnElement._id)
+    );
   }
 
   ngDoCheck() {
@@ -106,8 +127,8 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   reset() {
     this.tree = this.getDefaultTree();
 
-    this.tree.expanded['pages'] = true;
-    this.tree.expanded['project'] = true;
+    this.tree.expanded["pages"] = true;
+    this.tree.expanded["project"] = true;
   }
 
   getDefaultTree(): TreeData {
@@ -119,7 +140,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
     // Tree component
     treeData.treeComponent = this;
-    treeData.treeType = 'tree';
+    treeData.treeType = "tree";
 
     return treeData;
   }
@@ -143,7 +164,11 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     //   this.errors.push(id);
     // }
 
-    console.log(this.constructor.name, 'updateErrors(), this.errors = ', this.tree.errors);
+    console.log(
+      this.constructor.name,
+      "updateErrors(), this.errors = ",
+      this.tree.errors
+    );
   }
 
   loadPages() {
@@ -168,31 +193,36 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
       // case 'page':
       //   this.eventService.send(Message.PAGE_OPEN, { pageObject: this.tree.selected.cpnElement });
       //   break;
-      case 'monitor':
-        this.eventService.send(Message.MONITOR_OPEN, { monitorObject: this.tree.selected.cpnElement });
+      case "monitor":
+        this.eventService.send(Message.MONITOR_OPEN, {
+          monitorObject: this.tree.selected.cpnElement,
+        });
         break;
     }
   }
 
   onChange(event) {
-    console.log(this.constructor.name, 'onChange(), event = ', event);
+    console.log(this.constructor.name, "onChange(), event = ", event);
   }
 
   goToFirstPage() {
     if (this.cpnet && this.cpnet.page) {
-
       const page = nodeToArray(this.cpnet.page)[0];
 
-      console.log(this.constructor.name, 'goToFirstPage(), page = ', page);
+      console.log(this.constructor.name, "goToFirstPage(), page = ", page);
 
       this.tree.selected.id = page._id;
-      this.tree.selected.type = 'page';
+      this.tree.selected.type = "page";
       this.tree.selected.cpnElement = page;
 
       this.tree.expanded[page._id] = true;
 
       const inputElem = document.getElementById(this.tree.selected.id);
-      console.log(this.constructor.name, 'goToFirstPage(), inputElem = ', inputElem);
+      console.log(
+        this.constructor.name,
+        "goToFirstPage(), inputElem = ",
+        inputElem
+      );
       if (inputElem) {
         inputElem.focus();
       }
@@ -201,21 +231,28 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
   goToMonitor(id) {
     if (this.cpnet && this.cpnet.monitorblock) {
-
       const monitorList = nodeToArray(this.cpnet.monitorblock.monitor);
       const monitor = monitorList.find((e) => e._id === id);
 
       if (monitor) {
-        console.log(this.constructor.name, 'goToMonitor(), monitor = ', monitor);
+        console.log(
+          this.constructor.name,
+          "goToMonitor(), monitor = ",
+          monitor
+        );
 
         this.tree.selected.id = monitor._id;
-        this.tree.selected.type = 'monitor';
+        this.tree.selected.type = "monitor";
         this.tree.selected.cpnElement = monitor;
 
         this.tree.expanded[this.cpnet.monitorblock._name] = true;
 
         const inputElem = document.getElementById(this.tree.selected.id);
-        console.log(this.constructor.name, 'goToMonitor(), inputElem = ', inputElem);
+        console.log(
+          this.constructor.name,
+          "goToMonitor(), inputElem = ",
+          inputElem
+        );
         if (inputElem) {
           inputElem.focus();
         }
@@ -224,8 +261,12 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   }
 
   goToDeclaration(id) {
-    console.log(this.constructor.name, 'goToDeclaration(), id = ', id);
-    console.log(this.constructor.name, 'goToDeclaration(), this.tree.parents[id] = ', this.tree.parents[id]);
+    console.log(this.constructor.name, "goToDeclaration(), id = ", id);
+    console.log(
+      this.constructor.name,
+      "goToDeclaration(), this.tree.parents[id] = ",
+      this.tree.parents[id]
+    );
 
     const path = [];
     let nodeId = id;
@@ -233,9 +274,9 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
       path.push(this.tree.parents[nodeId]);
       nodeId = this.tree.parents[nodeId];
     }
-    console.log(this.constructor.name, 'goToDeclaration(), path = ', path);
+    console.log(this.constructor.name, "goToDeclaration(), path = ", path);
 
-    this.tree.expanded['declarations'] = true;
+    this.tree.expanded["declarations"] = true;
     for (nodeId of path) {
       this.tree.expanded[nodeId] = true;
     }
@@ -250,11 +291,10 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   focus(id) {
     setTimeout(() => {
       if (this.tree && this.containerId) {
-
         const container = document.getElementById(this.containerId);
 
         if (container) {
-          const inputElem: any = container.querySelector('#' + id);
+          const inputElem: any = container.querySelector("#" + id);
           if (inputElem) {
             inputElem.focus();
           }
@@ -264,19 +304,36 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   }
 
   onNewBlock() {
-    console.log(this.constructor.name, 'onNewBlock(), this.selected = ', this.tree.selected);
+    console.log(
+      this.constructor.name,
+      "onNewBlock(), this.selected = ",
+      this.tree.selected
+    );
 
-    if (this.tree.selected && this.tree.selected.type === 'declarations') {
-      const newBlock = { id: this.settings.appSettings['block'], _id: getNextId() };
-      this.modelService.addCpnElement(this.cpnet.globbox, newBlock, 'block');
+    if (this.tree.selected && this.tree.selected.type === "declarations") {
+      const newBlock = {
+        id: this.settings.appSettings["block"],
+        _id: getNextId(),
+      };
+      this.modelService.addCpnElement(this.cpnet.globbox, newBlock, "block");
       this.focus(newBlock._id);
     }
   }
 
   onNewBlockMonitor() {
-    if (this.tree.selected && this.tree.selected.type === DataTypes.monitorblock) {
-      const newBlock = { _name: this.settings.getMonitorBlockTitle(), _id: getNextId() };
-      this.modelService.addCpnElement(this.tree.selected.cpnElement, newBlock, DataTypes.monitorblock);
+    if (
+      this.tree.selected &&
+      this.tree.selected.type === DataTypes.monitorblock
+    ) {
+      const newBlock = {
+        _name: this.settings.getMonitorBlockTitle(),
+        _id: getNextId(),
+      };
+      this.modelService.addCpnElement(
+        this.tree.selected.cpnElement,
+        newBlock,
+        DataTypes.monitorblock
+      );
       this.focus(newBlock._id);
     }
   }
@@ -291,12 +348,16 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
   // }
 
   onNewPage() {
-    console.log(this.constructor.name, 'onNewPage(), this.selected = ', this.tree.selected);
+    console.log(
+      this.constructor.name,
+      "onNewPage(), this.selected = ",
+      this.tree.selected
+    );
 
-    if (this.tree.selected && this.tree.selected.type === 'pages') {
-      const defValue = this.settings.appSettings['page'];
+    if (this.tree.selected && this.tree.selected.type === "pages") {
+      const defValue = this.settings.appSettings["page"];
       const newPage = this.modelService.createCpnPage(defValue);
-      this.modelService.addCpnElement(this.cpnet, newPage, 'page');
+      this.modelService.addCpnElement(this.cpnet, newPage, "page");
       this.modelService.updateInstances();
       this.focus(newPage._id);
     }
@@ -304,39 +365,54 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
   // Toolbar action handlers
   onNewNode() {
-    console.log(this.constructor.name, 'onNewNode(), this.selected = ', this.tree.selected);
+    console.log(
+      this.constructor.name,
+      "onNewNode(), this.selected = ",
+      this.tree.selected
+    );
     if (this.tree.selected && this.tree.selected.treeNodeComponent) {
       this.tree.selected.treeNodeComponent.onNew(undefined);
     }
   }
 
-
   onDeleteNode() {
-    console.log(this.constructor.name, 'onDeleteNode(), this.selected = ', this.tree.selected);
+    console.log(
+      this.constructor.name,
+      "onDeleteNode(), this.selected = ",
+      this.tree.selected
+    );
     if (this.tree.selected && this.tree.selected.treeNodeComponent) {
       this.tree.selected.treeNodeComponent.onDelete(undefined);
     }
   }
 
   onUpNode() {
-    console.log(this.constructor.name, 'onUpNode(), this.selected = ', this.tree.selected);
+    console.log(
+      this.constructor.name,
+      "onUpNode(), this.selected = ",
+      this.tree.selected
+    );
     if (this.tree.selected && this.tree.selected.treeNodeComponent) {
       this.tree.selected.treeNodeComponent.onUp(undefined);
     }
   }
 
   onDownNode() {
-    console.log(this.constructor.name, 'onDownNode(), this.selected = ', this.tree.selected);
+    console.log(
+      this.constructor.name,
+      "onDownNode(), this.selected = ",
+      this.tree.selected
+    );
     if (this.tree.selected && this.tree.selected.treeNodeComponent) {
       this.tree.selected.treeNodeComponent.onDown(undefined);
     }
   }
 
   onFilterChanged(event) {
-    console.log(this.constructor.name, 'onFilterChanged(), event = ', event);
+    console.log(this.constructor.name, "onFilterChanged(), event = ", event);
     this.tree.filter = event;
 
-    if (this.tree.filter === '') {
+    if (this.tree.filter === "") {
       this.goToDeclaration(this.tree.selected.id);
       this.focus(this.tree.selected.id);
     }
@@ -348,16 +424,36 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
 
       const entries = [];
       switch (type) {
-        case 'declarations':
-          entries.push({ title: 'New block', action: () => this.onNewBlock(), iconClass: 'fas fa-cube' });
+        case "declarations":
+          entries.push({
+            title: "New block",
+            action: () => this.onNewBlock(),
+            iconClass: "fas fa-cube",
+          });
           break;
-        case 'pages':
-          entries.push({ title: 'New page', action: () => this.onNewPage(), iconClass: 'fas fa-project-diagram' });
+        case "pages":
+          entries.push({
+            title: "New page",
+            action: () => this.onNewPage(),
+            iconClass: "fas fa-project-diagram",
+          });
           break;
         case DataTypes.monitorblock:
-          entries.push({ title: 'New block', action: () => this.onNewBlockMonitor(), iconClass: 'fas fa-cube' });
-          if (!this.bufferService.isEmpty() && this.bufferService.isEqualTo(DataTypes.monitor)) {
-            entries.push({ title: 'Paste', action: () => this.bufferService.pasteObject(this.tree.selected.cpnElement), iconClass: 'fas fa-paste' });
+          entries.push({
+            title: "New block",
+            action: () => this.onNewBlockMonitor(),
+            iconClass: "fas fa-cube",
+          });
+          if (
+            !this.bufferService.isEmpty() &&
+            this.bufferService.isEqualTo(DataTypes.monitor)
+          ) {
+            entries.push({
+              title: "Paste",
+              action: () =>
+                this.bufferService.pasteObject(this.tree.selected.cpnElement),
+              iconClass: "fas fa-paste",
+            });
           }
           break;
       }
@@ -368,6 +464,4 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
       }
     }
   }
-
-
 }

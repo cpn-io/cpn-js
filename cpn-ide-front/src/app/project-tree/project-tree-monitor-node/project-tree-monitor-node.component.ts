@@ -1,23 +1,32 @@
-import {Input, OnChanges, SimpleChanges, DoCheck, KeyValueDiffers, EventEmitter, Output} from '@angular/core';
-import { Component, OnInit } from '@angular/core';
-import { nodeToArray } from '../../common/utils';
-import { ModelService } from '../../services/model.service';
-import { TreeData } from '../project-tree.component';
-import { ITreeNode } from '../tree-node/tree-node';
-import { AccessCpnService } from '../../services/access-cpn.service';
-import * as ts from 'typescript/lib/tsserverlibrary';
+import {
+  Input,
+  OnChanges,
+  SimpleChanges,
+  DoCheck,
+  KeyValueDiffers,
+  EventEmitter,
+  Output,
+} from "@angular/core";
+import { Component, OnInit } from "@angular/core";
+import { nodeToArray } from "../../common/utils";
+import { ModelService } from "../../services/model.service";
+import { TreeData } from "../project-tree.component";
+import { ITreeNode } from "../tree-node/tree-node";
+import { AccessCpnService } from "../../services/access-cpn.service";
+import * as ts from "typescript/lib/tsserverlibrary";
 import EventSender = ts.server.EventSender;
-import {EventService} from '../../services/event.service';
-import {Message} from '../../common/message';
-import {DataTypes} from '../../common/constants';
-import {BufferService} from '../../services/buffer.service';
+import { EventService } from "../../services/event.service";
+import { Message } from "../../common/message";
+import { DataTypes } from "../../common/constants";
+import { BufferService } from "../../services/buffer.service";
 
 @Component({
-  selector: 'app-project-tree-monitor-node',
-  templateUrl: './project-tree-monitor-node.component.html',
-  styleUrls: ['./project-tree-monitor-node.component.scss']
+  selector: "app-project-tree-monitor-node",
+  templateUrl: "./project-tree-monitor-node.component.html",
+  styleUrls: ["./project-tree-monitor-node.component.scss"],
 })
-export class ProjectTreeMonitorNodeComponent implements OnInit, DoCheck, ITreeNode {
+export class ProjectTreeMonitorNodeComponent
+  implements OnInit, DoCheck, ITreeNode {
   public nodeToArray = nodeToArray;
 
   @Input() public monitor: any;
@@ -34,8 +43,8 @@ export class ProjectTreeMonitorNodeComponent implements OnInit, DoCheck, ITreeNo
     private differs: KeyValueDiffers,
     public accessCpnService: AccessCpnService,
     private eventService: EventService,
-    private bufferService: BufferService) {
-
+    private bufferService: BufferService
+  ) {
     this.differ = this.differs.find({}).create();
   }
 
@@ -47,17 +56,19 @@ export class ProjectTreeMonitorNodeComponent implements OnInit, DoCheck, ITreeNo
     // console.log(this.constructor.name, 'ngDoCheck()');
     const change = this.differ.diff(this.monitor);
     if (change) {
-      console.log('ngDoCheck(), change = ', change);
+      console.log("ngDoCheck(), change = ", change);
       this.nodeList = this.modelService.getMonitorNodeNamesList(this.monitor);
     }
   }
 
   isFiltered() {
-    if (!this.tree.filter || this.tree.filter === '') {
+    if (!this.tree.filter || this.tree.filter === "") {
       return true;
     }
 
-    if (this.monitor._name.toLowerCase().includes(this.tree.filter.toLowerCase())) {
+    if (
+      this.monitor._name.toLowerCase().includes(this.tree.filter.toLowerCase())
+    ) {
       return true;
     }
 
@@ -67,16 +78,16 @@ export class ProjectTreeMonitorNodeComponent implements OnInit, DoCheck, ITreeNo
   onSelectedOption(option) {
     this.tree.selected.treeNodeComponent = this;
 
-    this.tree.selected.id = 'monitorOption_' + option._name;
-    this.tree.selected.type = 'monitorOption';
+    this.tree.selected.id = "monitorOption_" + option._name;
+    this.tree.selected.type = "monitorOption";
     this.tree.selected.cpnElement = option;
   }
 
   onSelectedNode(node) {
     this.tree.selected.treeNodeComponent = this;
 
-    this.tree.selected.id = 'monitorNode_' + node.element._id;
-    this.tree.selected.type = 'monitorNode';
+    this.tree.selected.id = "monitorNode_" + node.element._id;
+    this.tree.selected.type = "monitorNode";
     this.tree.selected.cpnElement = node;
   }
 
@@ -94,9 +105,18 @@ export class ProjectTreeMonitorNodeComponent implements OnInit, DoCheck, ITreeNo
       event.preventDefault();
 
       const entries = [];
-      entries.push({ title: 'Cut', action: () =>  this.bufferService.cutObject(this.monitor, DataTypes.monitor), iconClass: 'fas fa-cut'});
-      entries.push({ title: 'separator' });
-      entries.push({ title: 'Delete', action: () => this.onDelete(), iconClass: 'fas fa-minus' });
+      entries.push({
+        title: "Cut",
+        action: () =>
+          this.bufferService.cutObject(this.monitor, DataTypes.monitor),
+        iconClass: "fas fa-cut",
+      });
+      entries.push({ title: "separator" });
+      entries.push({
+        title: "Delete",
+        action: () => this.onDelete(),
+        iconClass: "fas fa-minus",
+      });
 
       this.tree.contextMenu.setEntries(entries);
       this.tree.contextMenu.show({ x: event.clientX, y: event.clientY });

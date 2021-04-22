@@ -1,15 +1,14 @@
-import {Injectable} from '@angular/core';
-import {EventService} from './event.service';
-import {AccessCpnService} from './access-cpn.service';
-import {ModelService} from './model.service';
-import {Message} from '../common/message';
-import {EditorPanelService} from './editor-panel.service';
+import { Injectable } from "@angular/core";
+import { EventService } from "./event.service";
+import { AccessCpnService } from "./access-cpn.service";
+import { ModelService } from "./model.service";
+import { Message } from "../common/message";
+import { EditorPanelService } from "./editor-panel.service";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class SimulationService {
-
   SINGLE_STEP = 1;
   SINGLE_STEP_CHOOSE_BINDING = 2;
   MULTI_STEP = 3;
@@ -28,7 +27,7 @@ export class SimulationService {
   simulationConfig = {
     multi_step: {
       steps: 50,
-      delay: 500
+      delay: 500,
     },
 
     multi_step_ff: {
@@ -39,48 +38,59 @@ export class SimulationService {
     },
 
     replication: {
-      repeat: 30
-    }
+      repeat: 30,
+    },
   };
 
   public isAnimation = true;
   public isAutoswitchPage = true;
 
-  constructor(private eventService: EventService,
-              public accessCpnService: AccessCpnService,
-              public modelService: ModelService,
-              private editorPanelService: EditorPanelService) {
-
+  constructor(
+    private eventService: EventService,
+    public accessCpnService: AccessCpnService,
+    public modelService: ModelService,
+    private editorPanelService: EditorPanelService
+  ) {
     this.initEvents();
   }
 
   initEvents() {
-    this.eventService.on(Message.SIMULATION_STARTED, () => {
-    });
-    this.eventService.on(Message.SIMULATION_STOPED, () => this.onStopSimulation());
-    this.eventService.on(Message.SERVER_INIT_SIM_DONE, () => this.onInitSimDone());
+    this.eventService.on(Message.SIMULATION_STARTED, () => {});
+    this.eventService.on(Message.SIMULATION_STOPED, () =>
+      this.onStopSimulation()
+    );
+    this.eventService.on(Message.SERVER_INIT_SIM_DONE, () =>
+      this.onInitSimDone()
+    );
 
-    this.eventService.on(Message.SHAPE_HOVER, (event) => this.onShapeHover(event));
-    this.eventService.on(Message.SHAPE_SELECT, (event) => this.onShapeSelect(event));
-    this.eventService.on(Message.SIMULATION_SELECT_BINDING, (event) => this.onSimulationSelectBinding(event));
-    this.eventService.on(Message.SHAPE_RUN_SCRIPT, message => this.runscript(message.script));
-
+    this.eventService.on(Message.SHAPE_HOVER, (event) =>
+      this.onShapeHover(event)
+    );
+    this.eventService.on(Message.SHAPE_SELECT, (event) =>
+      this.onShapeSelect(event)
+    );
+    this.eventService.on(Message.SIMULATION_SELECT_BINDING, (event) =>
+      this.onSimulationSelectBinding(event)
+    );
+    this.eventService.on(Message.SHAPE_RUN_SCRIPT, (message) =>
+      this.runscript(message.script)
+    );
   }
 
   public setMode(mode) {
-    console.log(this.constructor.name, 'setMode(), mode = ', mode);
+    console.log(this.constructor.name, "setMode(), mode = ", mode);
 
     this.mode = mode;
 
     switch (this.mode) {
       case this.SINGLE_STEP:
-        document.body.style.cursor = 'crosshair';
+        document.body.style.cursor = "crosshair";
         break;
       case this.SINGLE_STEP_CHOOSE_BINDING:
-        document.body.style.cursor = 'crosshair';
+        document.body.style.cursor = "crosshair";
         break;
       default:
-        document.body.style.cursor = 'default';
+        document.body.style.cursor = "default";
     }
   }
 
@@ -98,11 +108,11 @@ export class SimulationService {
   onStopSimulation() {
     this.setMode(this.SINGLE_STEP);
     this.multiStepCount = 0;
-    document.body.style.cursor = 'default';
+    document.body.style.cursor = "default";
   }
 
   onShapeHover(event) {
-    console.log('onShapeHover(), event = ', event);
+    console.log("onShapeHover(), event = ", event);
 
     if (!this.accessCpnService.isSimulation) {
       return;
@@ -111,7 +121,7 @@ export class SimulationService {
     const element = event.element;
     let setCursor = false;
 
-    if (element && element.type && element.type === 'cpn:Transition') {
+    if (element && element.type && element.type === "cpn:Transition") {
       switch (this.mode) {
         case this.SINGLE_STEP:
         case this.SINGLE_STEP_CHOOSE_BINDING:
@@ -132,14 +142,18 @@ export class SimulationService {
     const element = event.element;
     this.firedTransitionIdList = [];
 
-    if (element && element.type && element.type === 'cpn:Transition') {
-
+    if (element && element.type && element.type === "cpn:Transition") {
       // console.log(this.constructor.name, 'onShapeSelect(), this.mode = ', this.mode);
 
       this.firedId = this.getRealFiredId(element.cpnElement._id);
 
       if (this.firedId) {
-        console.log(this.constructor.name, 'onShapeSelect(), firedId = ', this.firedId, ' IS READY');
+        console.log(
+          this.constructor.name,
+          "onShapeSelect(), firedId = ",
+          this.firedId,
+          " IS READY"
+        );
 
         switch (this.mode) {
           case this.SINGLE_STEP:
@@ -148,16 +162,24 @@ export class SimulationService {
                 this.animateModelEditor();
               },
               (error) => {
-                console.error(this.constructor.name, 'onShapeSelect(), doStep(), error = ', error);
+                console.error(
+                  this.constructor.name,
+                  "onShapeSelect(), doStep(), error = ",
+                  error
+                );
               }
             );
             break;
           case this.SINGLE_STEP_CHOOSE_BINDING:
-            this.accessCpnService.getBindings(this.firedId).then((data: any) => {
-              if (data) {
-                this.eventService.send(Message.SERVER_GET_BINDINGS, {data: data});
-              }
-            });
+            this.accessCpnService
+              .getBindings(this.firedId)
+              .then((data: any) => {
+                if (data) {
+                  this.eventService.send(Message.SERVER_GET_BINDINGS, {
+                    data: data,
+                  });
+                }
+              });
             break;
         }
       }
@@ -194,20 +216,25 @@ export class SimulationService {
   }
 
   animateModelEditor() {
-
     setTimeout(() => {
       const modelEditor = this.editorPanelService.getSelectedModelEditor();
-      console.log(this.constructor.name, 'animateModelEditor(), page = ', modelEditor);
+      console.log(
+        this.constructor.name,
+        "animateModelEditor(), page = ",
+        modelEditor
+      );
 
       if (modelEditor) {
         modelEditor.updateElementStatus(this.isAnimation).then(() => {
-          console.log(this.constructor.name, 'animateModelEditor(), modelEditor.updateElementStatus(), COMPLETE');
+          console.log(
+            this.constructor.name,
+            "animateModelEditor(), modelEditor.updateElementStatus(), COMPLETE"
+          );
           this.onSimulationAnimateComplete();
         });
       }
     }, 0);
   }
-
 
   onSimulationSelectBinding(event) {
     if (!this.accessCpnService.isSimulation) {
@@ -215,20 +242,30 @@ export class SimulationService {
     }
 
     if (this.firedId && event.binding) {
-      console.log(this.constructor.name, 'onSimulationSelectBinding(), this.firedId = ', this.firedId);
+      console.log(
+        this.constructor.name,
+        "onSimulationSelectBinding(), this.firedId = ",
+        this.firedId
+      );
 
-      this.accessCpnService.doStepWithBinding(this.firedId, event.binding.bind_id).then(
-        (success) => {
-          this.animateModelEditor();
-        },
-        (error) => {
-          console.error(this.constructor.name, 'onSimulationSelectBinding(), doStepWithBinding(), error = ', error);
-        });
+      this.accessCpnService
+        .doStepWithBinding(this.firedId, event.binding.bind_id)
+        .then(
+          (success) => {
+            this.animateModelEditor();
+          },
+          (error) => {
+            console.error(
+              this.constructor.name,
+              "onSimulationSelectBinding(), doStepWithBinding(), error = ",
+              error
+            );
+          }
+        );
     }
   }
 
   onSimulationAnimateComplete() {
-
     this.updateModelEditors();
 
     switch (this.mode) {
@@ -240,7 +277,6 @@ export class SimulationService {
 
   onSimulationStepDone() {
     return new Promise((resolve, reject) => {
-
       const firedData = this.accessCpnService.getFiredData();
 
       const readyData = this.accessCpnService.getReadyData();
@@ -262,23 +298,25 @@ export class SimulationService {
         // }
 
         if (page && this.isAutoswitchPage) {
-          this.editorPanelService.getEditorPanelComponent().openModelEditor(page).then(() => {
-            resolve();
-          });
+          this.editorPanelService
+            .getEditorPanelComponent()
+            .openModelEditor(page)
+            .then(() => {
+              resolve();
+            });
         } else {
           resolve();
         }
       } else {
         resolve();
       }
-
     });
   }
 
   public getAnimationDelay() {
     switch (this.mode) {
       case this.MULTI_STEP:
-        return (+this.simulationConfig.multi_step.delay);
+        return +this.simulationConfig.multi_step.delay;
       default:
         return 500;
     }
@@ -287,17 +325,21 @@ export class SimulationService {
   runMultiStep() {
     const timeFromLastStep = new Date().getTime() - this.multiStepLastTimeMs;
 
-    let delay = (+this.simulationConfig.multi_step.delay) - timeFromLastStep;
+    let delay = +this.simulationConfig.multi_step.delay - timeFromLastStep;
     if (delay < 0) {
       delay = 0;
     }
 
-    console.log(this.constructor.name, 'runMultiStep(), this.multiStepCount = ', this.multiStepCount);
-    console.log(this.constructor.name, 'runMultiStep(), delay = ', delay);
+    console.log(
+      this.constructor.name,
+      "runMultiStep(), this.multiStepCount = ",
+      this.multiStepCount
+    );
+    console.log(this.constructor.name, "runMultiStep(), delay = ", delay);
 
     setTimeout(() => {
       if (this.multiStepCount > 0) {
-        this.accessCpnService.doStep('multistep').then(
+        this.accessCpnService.doStep("multistep").then(
           (success) => {
             this.multiStepCount--;
             this.multiStepLastTimeMs = new Date().getTime();
@@ -306,7 +348,11 @@ export class SimulationService {
             });
           },
           (error) => {
-            console.error(this.constructor.name, 'runMultiStep(), doStep(\'multistep\'), error = ', error);
+            console.error(
+              this.constructor.name,
+              "runMultiStep(), doStep('multistep'), error = ",
+              error
+            );
           }
         );
       }
@@ -314,7 +360,11 @@ export class SimulationService {
   }
 
   runMultiStepFF() {
-    console.log(this.constructor.name, 'runMultiStepFF(), this.simulationConfig.multi_step_ff = ', this.simulationConfig.multi_step_ff);
+    console.log(
+      this.constructor.name,
+      "runMultiStepFF(), this.simulationConfig.multi_step_ff = ",
+      this.simulationConfig.multi_step_ff
+    );
 
     const config = this.simulationConfig.multi_step_ff;
     const options = {
@@ -322,46 +372,46 @@ export class SimulationService {
       untilStep: config.max_step,
       untilTime: config.max_time,
       addTime: config.time_step,
-      amount: config.steps
+      amount: config.steps,
     };
-    this.accessCpnService.doMultiStepFF(options).then(
-      () => {
-        const modelEditorList = this.editorPanelService.getModelEditorList() || [];
-        for (const modelEditor of modelEditorList) {
-          modelEditor.updateElementStatus(false);
-        }
+    this.accessCpnService.doMultiStepFF(options).then(() => {
+      const modelEditorList =
+        this.editorPanelService.getModelEditorList() || [];
+      for (const modelEditor of modelEditorList) {
+        modelEditor.updateElementStatus(false);
       }
-    );
+    });
   }
 
   runReplication() {
-    console.log(this.constructor.name, 'runReplication(), this.simulationConfig.replication = ', this.simulationConfig.replication);
+    console.log(
+      this.constructor.name,
+      "runReplication(), this.simulationConfig.replication = ",
+      this.simulationConfig.replication
+    );
 
     const config = this.simulationConfig.replication;
     const options = {
-      repeat: '' + config.repeat,
+      repeat: "" + config.repeat,
     };
-    this.accessCpnService.doReplication(options).then(
-      () => {
-        const modelEditorList = this.editorPanelService.getModelEditorList() || [];
-        for (const modelEditor of modelEditorList) {
-          modelEditor.updateElementStatus(false);
-        }
+    this.accessCpnService.doReplication(options).then(() => {
+      const modelEditorList =
+        this.editorPanelService.getModelEditorList() || [];
+      for (const modelEditor of modelEditorList) {
+        modelEditor.updateElementStatus(false);
       }
-    );
+    });
   }
 
   runscript(script) {
-    console.log('runscript(script)', script);
-    const options = {repeat: script};
-    this.accessCpnService.runScriptOnServer(options).then(
-      () => {
-        const modelEditorList = this.editorPanelService.getModelEditorList() || [];
-        for (const modelEditor of modelEditorList) {
-          modelEditor.updateElementStatus(false);
-        }
+    console.log("runscript(script)", script);
+    const options = { repeat: script };
+    this.accessCpnService.runScriptOnServer(options).then(() => {
+      const modelEditorList =
+        this.editorPanelService.getModelEditorList() || [];
+      for (const modelEditor of modelEditorList) {
+        modelEditor.updateElementStatus(false);
       }
-    );
+    });
   }
-
 }

@@ -1,22 +1,21 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform } from "@angular/core";
 
-@Pipe({ name: 'colorDeclarations' })
+@Pipe({ name: "colorDeclarations" })
 export class ColorDeclarationsPipe implements PipeTransform {
-
   colors = {
-    'globref': 'blue',
-    'colset': 'green',
-    'var': 'darkorange',
-    'val': 'magenta',
-    'fun': 'red',
-    'local': 'red',
-    'exception': 'red',
-    'end': 'red',
-    'let': 'brown',
-    'in': 'brown',
-    'if': 'brown',
-    'else': 'brown',
-    'then': 'brown',
+    globref: "blue",
+    colset: "green",
+    var: "darkorange",
+    val: "magenta",
+    fun: "red",
+    local: "red",
+    exception: "red",
+    end: "red",
+    let: "brown",
+    in: "brown",
+    if: "brown",
+    else: "brown",
+    then: "brown",
   };
 
   transform(value: string): string {
@@ -25,8 +24,10 @@ export class ColorDeclarationsPipe implements PipeTransform {
     if (value) {
       for (const key of Object.keys(this.colors)) {
         if (value.includes(key)) {
-          transformed = transformed.replace(new RegExp('\\b' + key + '\\b', 'gi'),
-            '<span style="color:' + this.colors[key] + '">' + key + '</span>');
+          transformed = transformed.replace(
+            new RegExp("\\b" + key + "\\b", "gi"),
+            '<span style="color:' + this.colors[key] + '">' + key + "</span>"
+          );
         }
       }
     }

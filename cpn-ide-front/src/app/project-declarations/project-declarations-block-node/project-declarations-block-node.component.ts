@@ -1,16 +1,16 @@
-import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
-import { nodeToArray } from '../../common/utils';
-import { ITreeNode } from '../../project-tree/tree-node/tree-node';
-import { TreeData } from '../../project-tree/project-tree.component';
+import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
+import { nodeToArray } from "../../common/utils";
+import { ITreeNode } from "../../project-tree/tree-node/tree-node";
+import { TreeData } from "../../project-tree/project-tree.component";
 
 @Component({
-  selector: 'app-project-declarations-block-node',
-  templateUrl: './project-declarations-block-node.component.html',
-  styleUrls: ['./project-declarations-block-node.component.scss']
+  selector: "app-project-declarations-block-node",
+  templateUrl: "./project-declarations-block-node.component.html",
+  styleUrls: ["./project-declarations-block-node.component.scss"],
 })
-export class ProjectDeclarationsBlockNodeComponent implements OnInit, ITreeNode {
+export class ProjectDeclarationsBlockNodeComponent
+  implements OnInit, ITreeNode {
   public nodeToArray = nodeToArray;
-
 
   @Input() public tree: TreeData;
   @Input() public declarationType: any;
@@ -21,11 +21,9 @@ export class ProjectDeclarationsBlockNodeComponent implements OnInit, ITreeNode 
   @Input() showBullet = true;
   @Input() listener: any;
   @Output() contextMenu = new EventEmitter();
-  constructor() { }
+  constructor() {}
 
-  ngOnInit() {
-
-  }
+  ngOnInit() {}
 
   hasBlocks() {
     if (nodeToArray(this.block.block).length > 0) {
@@ -37,24 +35,38 @@ export class ProjectDeclarationsBlockNodeComponent implements OnInit, ITreeNode 
 
   hasDeclarations() {
     if (this.declarationType) {
-      if (this.declarationType === 'all' &&
-        (nodeToArray(this.block.globref).length > 0
-          || nodeToArray(this.block.color).length > 0
-          || nodeToArray(this.block.var).length > 0
-          || nodeToArray(this.block.ml).length > 0)) {
+      if (
+        this.declarationType === "all" &&
+        (nodeToArray(this.block.globref).length > 0 ||
+          nodeToArray(this.block.color).length > 0 ||
+          nodeToArray(this.block.var).length > 0 ||
+          nodeToArray(this.block.ml).length > 0)
+      ) {
         return true;
       }
 
-      if (this.declarationType === 'globref' && nodeToArray(this.block.globref).length > 0) {
+      if (
+        this.declarationType === "globref" &&
+        nodeToArray(this.block.globref).length > 0
+      ) {
         return true;
       }
-      if (this.declarationType === 'color' && nodeToArray(this.block.color).length > 0) {
+      if (
+        this.declarationType === "color" &&
+        nodeToArray(this.block.color).length > 0
+      ) {
         return true;
       }
-      if (this.declarationType === 'var' && nodeToArray(this.block.var).length > 0) {
+      if (
+        this.declarationType === "var" &&
+        nodeToArray(this.block.var).length > 0
+      ) {
         return true;
       }
-      if (this.declarationType === 'ml' && nodeToArray(this.block.ml).length > 0) {
+      if (
+        this.declarationType === "ml" &&
+        nodeToArray(this.block.ml).length > 0
+      ) {
         return true;
       }
     }
@@ -66,7 +78,7 @@ export class ProjectDeclarationsBlockNodeComponent implements OnInit, ITreeNode 
     this.tree.selected.parentCpnElement = this.parentBlock;
     if (this.block) {
       this.tree.selected.id = this.block._id;
-      this.tree.selected.type = 'block';
+      this.tree.selected.type = "block";
       this.tree.selected.cpnElement = this.block;
     }
   }
@@ -99,11 +111,9 @@ export class ProjectDeclarationsBlockNodeComponent implements OnInit, ITreeNode 
   }
 
   onNewElement(event, type, block) {
-    console.log('onNewElement');
+    console.log("onNewElement");
     if (this.contextMenu.observers.length > 0)
-      this.contextMenu.emit({event: event, type: type, block: block});
-    else
-      this.listener.emit({event: event, type: type, block: block});
+      this.contextMenu.emit({ event: event, type: type, block: block });
+    else this.listener.emit({ event: event, type: type, block: block });
   }
-
 }

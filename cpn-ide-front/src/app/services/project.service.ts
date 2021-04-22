@@ -1,44 +1,43 @@
-import { Injectable } from '@angular/core';
-import * as X2JS from '../../lib/x2js/xml2json.js';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { EventService } from './event.service';
-import { Message } from '../common/message';
+import { Injectable } from "@angular/core";
+import * as X2JS from "../../lib/x2js/xml2json.js";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { EventService } from "./event.service";
+import { Message } from "../common/message";
 
-import { AccessCpnService } from './access-cpn.service';
-import { ModelService } from './model.service';
-import { CpnServerUrl } from 'src/cpn-server-url.js';
+import { AccessCpnService } from "./access-cpn.service";
+import { ModelService } from "./model.service";
+import { CpnServerUrl } from "src/cpn-server-url.js";
 
-import { xmlBeautify } from '../../lib/xml-beautifier/xml-beautifier.js';
-import { FileService } from './file.service.js';
+import { xmlBeautify } from "../../lib/xml-beautifier/xml-beautifier.js";
+import { FileService } from "./file.service.js";
 
-import { cloneObject } from 'src/app/common/utils';
-import { MatDialog } from '@angular/material/dialog';
-import { DialogComponent } from '../common/dialog/dialog.component.js';
-
+import { cloneObject } from "src/app/common/utils";
+import { MatDialog } from "@angular/material/dialog";
+import { DialogComponent } from "../common/dialog/dialog.component.js";
 
 /**
  * Common service for getting access to project data from all application
  */
 @Injectable()
 export class ProjectService {
+  xmlPrefix =
+    '<?xml version="1.0" encoding="iso-8859-1"?>\n<!DOCTYPE workspaceElements PUBLIC "-//CPN//DTD CPNXML 1.0//EN" "http://cpntools.org/DTD/6/cpn.dtd">\n';
 
-  xmlPrefix = '<?xml version="1.0" encoding="iso-8859-1"?>\n<!DOCTYPE workspaceElements PUBLIC "-//CPN//DTD CPNXML 1.0//EN" "http://cpntools.org/DTD/6/cpn.dtd">\n';
-
-  public modelName = '';
+  public modelName = "";
   public project = undefined;
   private currentSelectedElement;
   currentPageId;
 
   public loadingProject = false;
 
-  constructor(private eventService: EventService,
+  constructor(
+    private eventService: EventService,
     private http: HttpClient,
     private modelService: ModelService,
     private accessCpnService: AccessCpnService,
     private fileService: FileService,
     public dialog: MatDialog
   ) {
-
     // console.log('ProjectService instance CREATED!');
 
     this.loadEmptyProject();
@@ -49,14 +48,13 @@ export class ProjectService {
   }
 
   setCurrentElement(element) {
-    console.log('Selected element - ' + element.name);
+    console.log("Selected element - " + element.name);
     this.currentSelectedElement = element;
   }
 
   getCurrentElement() {
     return this.currentSelectedElement;
   }
-
 
   /**
    * Load project file to ProjectService instance for getting access from all application
@@ -66,7 +64,7 @@ export class ProjectService {
   loadProjectFile(file: File) {
     const reader: FileReader = new FileReader();
     reader.readAsText(file);
-    reader.onload = e => {
+    reader.onload = (e) => {
       const text: any = reader.result;
       // console.log('File text : ' + text);
 
@@ -77,7 +75,7 @@ export class ProjectService {
   parseXml(xml) {
     let dom = null;
     try {
-      dom = (new DOMParser()).parseFromString(xml, 'text/xml');
+      dom = new DOMParser().parseFromString(xml, "text/xml");
     } catch (e) {
       dom = null;
     }
@@ -99,7 +97,9 @@ export class ProjectService {
 
     // clear project
     this.modelService.loadProject({});
-    this.eventService.send(Message.PROJECT_LOAD, { project: this.modelService.getProject() });
+    this.eventService.send(Message.PROJECT_LOAD, {
+      project: this.modelService.getProject(),
+    });
     this.project = this.modelService.getProject();
 
     this.loadingProject = true;
@@ -111,10 +111,9 @@ export class ProjectService {
         const x2js = new X2JS();
         const json = x2js.xml_str2json(projectXml);
 
-        console.log('ProjectService, first convert -----> ', json);
+        console.log("ProjectService, first convert -----> ", json);
         if (json) {
-
-          localStorage.setItem('projectJson-1', JSON.stringify(json));
+          localStorage.setItem("projectJson-1", JSON.stringify(json));
 
           this.project = { data: json, name: filename };
 
@@ -125,7 +124,9 @@ export class ProjectService {
           this.modelService.markNewModel();
 
           // load new project
-          this.eventService.send(Message.PROJECT_LOAD, { project: this.project });
+          this.eventService.send(Message.PROJECT_LOAD, {
+            project: this.project,
+          });
         }
       }
 
@@ -135,8 +136,8 @@ export class ProjectService {
 
   loadEmptyProject() {
     const headers = new HttpHeaders()
-      .set('Access-Control-Allow-Origin', '*')
-      .set('Accept', 'application/xml');
+      .set("Access-Control-Allow-Origin", "*")
+      .set("Accept", "application/xml");
 
     // const modelFile = 'baseModel_ID1008016.cpn';
     // const modelFile = 'discretemodel_task1.cpn';
@@ -150,7 +151,7 @@ export class ProjectService {
     // const modelFile = 'test-1.cpn';
     // const modelFile = 'test-2.cpn';
 
-    const modelFile = 'mynet.cpn';
+    const modelFile = "mynet.cpn";
     // const modelFile = 'mynet2.cpn';
     // const modelFile = 'mynet-sub-1.cpn';
 
@@ -167,17 +168,16 @@ export class ProjectService {
 
     // const modelFile = 'monitors.cpn';
 
-    const url = './assets/cpn/' + modelFile;
-    this.http.get(url, { headers: headers, responseType: 'text' })
-      .subscribe(
-        (response: any) => {
-          // console.log('GET ' + url + ', response = ' + JSON.stringify(response));
-          this.loadProjectXml(modelFile, response);
-        },
-        (error) => {
-          console.error('GET ' + url + ', error = ' + JSON.stringify(error));
-        }
-      );
+    const url = "./assets/cpn/" + modelFile;
+    this.http.get(url, { headers: headers, responseType: "text" }).subscribe(
+      (response: any) => {
+        // console.log('GET ' + url + ', response = ' + JSON.stringify(response));
+        this.loadProjectXml(modelFile, response);
+      },
+      (error) => {
+        console.error("GET " + url + ", error = " + JSON.stringify(error));
+      }
+    );
   }
 
   /**
@@ -185,20 +185,22 @@ export class ProjectService {
    * @filename - name of file
    */
   public saveToFile(filename: string) {
-    if (!filename.toLowerCase().includes('.cpn')) {
-      filename += '.cpn';
+    if (!filename.toLowerCase().includes(".cpn")) {
+      filename += ".cpn";
     }
 
     this.modelService.fixShapeNames();
 
     const x2js = new X2JS();
-    let xml = (x2js.json2xml_str(cloneObject(this.modelService.getProjectData())));
+    let xml = x2js.json2xml_str(
+      cloneObject(this.modelService.getProjectData())
+    );
     xml = `${this.xmlPrefix}\n${xml}`;
 
     xml = xmlBeautify(xml);
 
     this.fileService.saveAsText(xml, filename, (filePath) => {
-      console.log('fileService.saveAsText', filePath);
+      console.log("fileService.saveAsText", filePath);
 
       const regex = /[^\/^\\]+$/gm;
       const r = regex.exec(filePath);
@@ -206,31 +208,20 @@ export class ProjectService {
 
       this.setModelName(newFileName);
     });
-
   }
-
 
   public getStringProjectDataForSave() {
     const x2js = new X2JS();
-    let xml = (x2js.json2xml_str(cloneObject(this.modelService.getProjectData())));
+    let xml = x2js.json2xml_str(
+      cloneObject(this.modelService.getProjectData())
+    );
     xml = `${this.xmlPrefix}\n${xml}`;
 
     return xmlBeautify(xml);
   }
 
-
-
   public setModelName(projectName) {
     this.getProject().name = projectName;
     this.modelService.projectName = projectName;
   }
-
-
-
-
-
-
-
-
 }
-

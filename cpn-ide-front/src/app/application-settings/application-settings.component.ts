@@ -1,21 +1,19 @@
-import { Component, OnInit } from '@angular/core';
-import { SettingsService } from '../services/settings.service';
+import { Component, OnInit } from "@angular/core";
+import { SettingsService } from "../services/settings.service";
 
 @Component({
-  selector: 'app-application-settings',
-  templateUrl: './application-settings.component.html',
-  styleUrls: ['./application-settings.component.scss']
+  selector: "app-application-settings",
+  templateUrl: "./application-settings.component.html",
+  styleUrls: ["./application-settings.component.scss"],
 })
 export class ApplicationSettingsComponent implements OnInit {
-
   Object = Object;
 
-  public showTable = 'not';
+  public showTable = "not";
 
-  constructor(public settings: SettingsService) { }
+  constructor(public settings: SettingsService) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   getValueText(key) {
     // console.log('getValueText(), key = ', key, typeof this.settings.appSettings[key]);
@@ -27,7 +25,7 @@ export class ApplicationSettingsComponent implements OnInit {
   }
 
   saveEditedData(event, key) {
-    console.log('saveEditedData(), event, item = ', event, key);
+    console.log("saveEditedData(), event, item = ", event, key);
 
     if (event.target) {
       const value = event.target.textContent;
@@ -43,15 +41,14 @@ export class ApplicationSettingsComponent implements OnInit {
   }
 
   getServerAddressList() {
-    const addressList = [''];
-    addressList.push('');
-    addressList.push('http://localhost:8080');
-    addressList.push('http://95.161.178.222:42020');
+    const addressList = [""];
+    addressList.push("");
+    addressList.push("http://localhost:8080");
+    addressList.push("http://95.161.178.222:42020");
     return addressList;
   }
 
   onReset() {
     this.settings.reset();
   }
-
 }

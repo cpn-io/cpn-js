@@ -1,28 +1,27 @@
-import {Component, HostListener, OnInit} from '@angular/core';
-import { ProjectService } from '../services/project.service';
-import { AppVersion } from '../app.version';
-import { ModelService } from '../services/model.service';
-import { EventService } from '../services/event.service';
-import { Message } from '../common/message';
-import { ValidationService } from '../services/validation.service';
-import { AccessCpnService } from '../services/access-cpn.service';
-import { EditorPanelService } from '../services/editor-panel.service';
-import { ApplicationService } from '../services/application.service';
-import { ElectronService } from 'ngx-electron';
-import { IpcService } from '../services/ipc.service';
-import { MatDialog } from '@angular/material/dialog';
-import { DialogComponent } from '../common/dialog/dialog.component';
+import { Component, HostListener, OnInit } from "@angular/core";
+import { ProjectService } from "../services/project.service";
+import { AppVersion } from "../app.version";
+import { ModelService } from "../services/model.service";
+import { EventService } from "../services/event.service";
+import { Message } from "../common/message";
+import { ValidationService } from "../services/validation.service";
+import { AccessCpnService } from "../services/access-cpn.service";
+import { EditorPanelService } from "../services/editor-panel.service";
+import { ApplicationService } from "../services/application.service";
+import { ElectronService } from "ngx-electron";
+import { IpcService } from "../services/ipc.service";
+import { MatDialog } from "@angular/material/dialog";
+import { DialogComponent } from "../common/dialog/dialog.component";
 
-const fileDialog = require('file-dialog');
+const fileDialog = require("file-dialog");
 // const fs = require('fs');
 
 @Component({
-  selector: 'app-main-toolbar',
-  templateUrl: './main-toolbar.component.html',
-  styleUrls: ['./main-toolbar.component.scss']
+  selector: "app-main-toolbar",
+  templateUrl: "./main-toolbar.component.html",
+  styleUrls: ["./main-toolbar.component.scss"],
 })
 export class MainToolbarComponent implements OnInit {
-
   version = AppVersion.buildVersion;
   isStart;
   undo = 0;
@@ -39,31 +38,42 @@ export class MainToolbarComponent implements OnInit {
     private electronService: ElectronService,
     private ipcService: IpcService,
     public dialog: MatDialog
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     this.accessCpnService.setIsSimulation(false);
-    this.ipcService.on(Message.MAIN_MENU_NEW_PROJECT, () => this.onNewProject());
-    this.ipcService.on(Message.MAIN_MENU_OPEN_PROJECT, () => this.onOpenProject());
+    this.ipcService.on(Message.MAIN_MENU_NEW_PROJECT, () =>
+      this.onNewProject()
+    );
+    this.ipcService.on(Message.MAIN_MENU_OPEN_PROJECT, () =>
+      this.onOpenProject()
+    );
     this.ipcService.on(Message.MAIN_MENU_SAVE_PROJECT, () => {
-      const fs =  this.accessCpnService.getFs();
+      const fs = this.accessCpnService.getFs();
       if (fs) {
-        fs.fs.writeFile(fs.path, this.projectService.getStringProjectDataForSave(), err => {
-          console.log('Save project error');
-        });
+        fs.fs.writeFile(
+          fs.path,
+          this.projectService.getStringProjectDataForSave(),
+          (err) => {
+            console.log("Save project error");
+          }
+        );
       } else {
         this.onSaveProject(false);
       }
     });
     this.ipcService.on(Message.MAIN_MENU_SAVE_AS_PROJECT, () => {
-        this.onSaveProject(true);
+      this.onSaveProject(true);
     });
     this.ipcService.on(Message.MAIN_MENU_UNDO, () => this.getUndo());
     this.ipcService.on(Message.MAIN_MENU_REDO, () => this.getRedo());
 
-    this.eventService.on(Message.MODEL_SAVE_BACKUP, () => this.refreshHistorySteps());
-    this.eventService.on(Message.MODEL_RELOAD, () => this.refreshHistorySteps());
+    this.eventService.on(Message.MODEL_SAVE_BACKUP, () =>
+      this.refreshHistorySteps()
+    );
+    this.eventService.on(Message.MODEL_RELOAD, () =>
+      this.refreshHistorySteps()
+    );
 
     // ipcRenderer.on(Message.MAIN_MENU_OPEN_PROJECT, (event, arg) => {
     //   console.log('Message.MAIN_MENU_OPEN_PROJECT', arg);
@@ -77,7 +87,6 @@ export class MainToolbarComponent implements OnInit {
       }
       this.isStart = false;
     });
-
 
     const self = this;
     // $(document).on('keypress', function (evt) {
@@ -103,9 +112,11 @@ export class MainToolbarComponent implements OnInit {
   onStartSimulation() {
     this.isStart = true;
 
-    this.accessCpnService.initNet(this.modelService.getProjectData(), true).then(() => {
-      this.accessCpnService.initSim();
-    });
+    this.accessCpnService
+      .initNet(this.modelService.getProjectData(), true)
+      .then(() => {
+        this.accessCpnService.initSim();
+      });
   }
 
   onStopSimulation() {
@@ -120,7 +131,10 @@ export class MainToolbarComponent implements OnInit {
   }
 
   onValidateAuto() {
-    this.validationService.isAutoValidation = this.validationService.isAutoValidation ? false : true;
+    this.validationService.isAutoValidation = this.validationService
+      .isAutoValidation
+      ? false
+      : true;
   }
 
   onTest() {
@@ -130,11 +144,14 @@ export class MainToolbarComponent implements OnInit {
     // console.log(this.constructor.name, 'onTest(), filename[0] = ', filename[0]);
 
     const modelEditor = this.editorPanelService.getSelectedModelEditor();
-    console.log(this.constructor.name, 'onTest(), page = ', modelEditor);
+    console.log(this.constructor.name, "onTest(), page = ", modelEditor);
 
     if (modelEditor) {
       modelEditor.testAnimation().then(() => {
-        console.log(this.constructor.name, 'onTest(), modelEditor.testAnimation(), COMPLETE');
+        console.log(
+          this.constructor.name,
+          "onTest(), modelEditor.testAnimation(), COMPLETE"
+        );
       });
     }
 
@@ -156,9 +173,9 @@ export class MainToolbarComponent implements OnInit {
   }
 
   onDocumentation() {
-    this.applicationService.isShowDocumentation = !this.applicationService.isShowDocumentation;
+    this.applicationService.isShowDocumentation = !this.applicationService
+      .isShowDocumentation;
   }
-
 
   onNewProject() {
     this.onStopSimulation();
@@ -169,86 +186,108 @@ export class MainToolbarComponent implements OnInit {
   }
 
   onOpenProject() {
-    console.log(this.constructor.name, 'onOpenProject(), this = ', this);
+    console.log(this.constructor.name, "onOpenProject(), this = ", this);
 
     this.onStopSimulation();
 
     this.checkSaveChanges().then((resolve) => {
-
       if (this.electronService.isElectronApp) {
-
-        this.electronService.remote.dialog.showOpenDialog({
-          properties: ['openFile'],
-          filters: [{ name: 'CPN models', extensions: ['cpn', 'CPN'] }]
-        }, (files) => {
-          if (files !== undefined) {
-            console.log(this.constructor.name, 'onOpenProject(), electron dialog files, files = ', files);
-          }
-
-          const fullFilePath = files[0];
-
-          // TODO: выделить имя файла без пути!
-          const regex = /[^\/^\\]+$/gm;
-          const r = regex.exec(fullFilePath);
-          const filename = r ? r[0] : undefined;
-
-          if (filename) {
-            const fs = this.electronService.remote.require('fs');
-            fs.readFile(fullFilePath, 'utf-8', (err, data) => {
-              console.log(this.constructor.name, 'onOpenProject(), file data = ', data);
-              this.projectService.loadProjectXml(filename, data);
-            });
-            this.accessCpnService.setFc({fs: fs, path: fullFilePath});
-          } else {
-            console.error(this.constructor.name, 'onOpenProject(), ERROR filename, f = ', r);
-          }
-
-        });
-
-      } else {
-
-        fileDialog({ accept: '.cpn, .CPN' })
-          .then(files => {
-            console.log(this.constructor.name, 'onOpenProject(), files = ', files);
-
-            if (files.length > 0) {
-              const file: File = files[0];
-              this.projectService.loadProjectFile(file);
-            } else {
-              console.error(this.constructor.name, 'NO FILE SELECTED!');
-              return;
+        this.electronService.remote.dialog.showOpenDialog(
+          {
+            properties: ["openFile"],
+            filters: [{ name: "CPN models", extensions: ["cpn", "CPN"] }],
+          },
+          (files) => {
+            if (files !== undefined) {
+              console.log(
+                this.constructor.name,
+                "onOpenProject(), electron dialog files, files = ",
+                files
+              );
             }
-          });
+
+            const fullFilePath = files[0];
+
+            // TODO: выделить имя файла без пути!
+            const regex = /[^\/^\\]+$/gm;
+            const r = regex.exec(fullFilePath);
+            const filename = r ? r[0] : undefined;
+
+            if (filename) {
+              const fs = this.electronService.remote.require("fs");
+              fs.readFile(fullFilePath, "utf-8", (err, data) => {
+                console.log(
+                  this.constructor.name,
+                  "onOpenProject(), file data = ",
+                  data
+                );
+                this.projectService.loadProjectXml(filename, data);
+              });
+              this.accessCpnService.setFc({ fs: fs, path: fullFilePath });
+            } else {
+              console.error(
+                this.constructor.name,
+                "onOpenProject(), ERROR filename, f = ",
+                r
+              );
+            }
+          }
+        );
+      } else {
+        fileDialog({ accept: ".cpn, .CPN" }).then((files) => {
+          console.log(
+            this.constructor.name,
+            "onOpenProject(), files = ",
+            files
+          );
+
+          if (files.length > 0) {
+            const file: File = files[0];
+            this.projectService.loadProjectFile(file);
+          } else {
+            console.error(this.constructor.name, "NO FILE SELECTED!");
+            return;
+          }
+        });
       }
     });
   }
 
   onSaveProject(isSaveAs) {
     this.onStopSimulation();
-    const fs =  this.accessCpnService.getFs();
+    const fs = this.accessCpnService.getFs();
     if (fs && !isSaveAs) {
-      fs.fs.writeFile(fs.path, this.projectService.getStringProjectDataForSave(), err => {
-        console.log('Save project error', err);
-      });
+      fs.fs.writeFile(
+        fs.path,
+        this.projectService.getStringProjectDataForSave(),
+        (err) => {
+          console.log("Save project error", err);
+        }
+      );
     } else {
       if (this.electronService.isElectronApp) {
         this.projectService.saveToFile(this.modelService.projectName);
       } else {
         const dialogRef = this.dialog.open(DialogComponent, {
-          width: '500px',
+          width: "500px",
           data: {
-            title: 'Save the changes to file',
-            input: [{title: 'Filename', value: this.modelService.projectName}]
-          }
+            title: "Save the changes to file",
+            input: [
+              { title: "Filename", value: this.modelService.projectName },
+            ],
+          },
         });
-        dialogRef.afterClosed().subscribe(data => {
+        dialogRef.afterClosed().subscribe((data) => {
           if (data && data.result === DialogComponent.YES) {
-            console.log(this.constructor.name, 'onSaveProject(), YES clicked, data = ', data);
+            console.log(
+              this.constructor.name,
+              "onSaveProject(), YES clicked, data = ",
+              data
+            );
 
             // Save to file
             this.projectService.saveToFile(data.input[0].value);
             this.projectService.setModelName(data.input[0].value);
-
           }
         });
       }
@@ -257,25 +296,28 @@ export class MainToolbarComponent implements OnInit {
 
   checkSaveChanges() {
     return new Promise((resolve, reject) => {
-
       // if Undo buffer is empty just return
       if (this.validationService.history.currentModelIndex === 0) {
-        resolve();
+        resolve(1);
         return;
       }
 
       // else open save dialog
       const dialogRef = this.dialog.open(DialogComponent, {
-        width: '500px',
+        width: "500px",
         data: {
-          title: 'Save the changes to file before closing?',
+          title: "Save the changes to file before closing?",
           // input: [{ title: 'Filename', value: this.modelService.projectName }]
-        }
+        },
       });
 
-      dialogRef.afterClosed().subscribe(data => {
+      dialogRef.afterClosed().subscribe((data) => {
         if (data) {
-          console.log(this.constructor.name, 'checkSaveChanges(), data = ', data);
+          console.log(
+            this.constructor.name,
+            "checkSaveChanges(), data = ",
+            data
+          );
 
           switch (data.result) {
             case DialogComponent.YES:
@@ -300,7 +342,9 @@ export class MainToolbarComponent implements OnInit {
   reloadProject() {
     this.onStopSimulation();
 
-    this.eventService.send(Message.PROJECT_LOAD, { project: this.modelService.getProject() });
+    this.eventService.send(Message.PROJECT_LOAD, {
+      project: this.modelService.getProject(),
+    });
 
     setTimeout(() => this.validationService.validate(), 500);
   }
@@ -323,11 +367,9 @@ export class MainToolbarComponent implements OnInit {
 
   refreshHistorySteps() {
     this.undo = this.validationService.history.currentModelIndex;
-    this.redo = this.validationService.history.models.length - 1 - this.validationService.history.currentModelIndex;
+    this.redo =
+      this.validationService.history.models.length -
+      1 -
+      this.validationService.history.currentModelIndex;
   }
-
-
-
-
-
 }

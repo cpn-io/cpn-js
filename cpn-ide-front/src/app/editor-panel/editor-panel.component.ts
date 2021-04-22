@@ -6,30 +6,29 @@ import {
   ViewChild,
   ViewChildren,
   Input,
-} from '@angular/core';
+} from "@angular/core";
 
-import { ModelService } from '../services/model.service';
-import { ModelEditorComponent } from '../model-editor/model-editor.component';
-import { TabsContainer } from '../../lib/tabs/tabs-container/tabs.container';
-import { Message } from '../common/message';
-import { EventService } from '../services/event.service';
-import { AccessCpnService } from '../services/access-cpn.service';
-import { EditorPanelService } from '../services/editor-panel.service';
-import { ApplicationService } from '../services/application.service';
-import { ElementRef, AfterViewInit } from '@angular/core';
-
+import { ModelService } from "../services/model.service";
+import { ModelEditorComponent } from "../model-editor/model-editor.component";
+import { TabsContainer } from "../../lib/tabs/tabs-container/tabs.container";
+import { Message } from "../common/message";
+import { EventService } from "../services/event.service";
+import { AccessCpnService } from "../services/access-cpn.service";
+import { EditorPanelService } from "../services/editor-panel.service";
+import { ApplicationService } from "../services/application.service";
+import { ElementRef, AfterViewInit } from "@angular/core";
 
 @Component({
-  selector: 'app-editor-panel',
-  templateUrl: './editor-panel.component.html',
-  styleUrls: ['./editor-panel.component.scss']
+  selector: "app-editor-panel",
+  templateUrl: "./editor-panel.component.html",
+  styleUrls: ["./editor-panel.component.scss"],
 })
 export class EditorPanelComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild("documentationIFrame") documentationIFrame: ElementRef;
+  @ViewChild("tabsComponent") tabsComponent: TabsContainer;
 
-  @ViewChild('documentationIFrame') documentationIFrame: ElementRef;
-  @ViewChild('tabsComponent') tabsComponent: TabsContainer;
-
-  @ViewChildren(ModelEditorComponent) modelEditorList: QueryList<ModelEditorComponent>;
+  @ViewChildren(ModelEditorComponent)
+  modelEditorList: QueryList<ModelEditorComponent>;
 
   @Input() public readyPagesIds: any;
   @Input() public errorPagesIds: any;
@@ -40,31 +39,40 @@ export class EditorPanelComponent implements OnInit, OnDestroy, AfterViewInit {
 
   currentTab = undefined;
 
-  constructor(private eventService: EventService,
+  constructor(
+    private eventService: EventService,
     private modelService: ModelService,
     public accessCpnService: AccessCpnService,
     private editorPanelService: EditorPanelService,
-    public applicationService: ApplicationService) {
-  }
+    public applicationService: ApplicationService
+  ) {}
 
   ngOnInit() {
     this.editorPanelService.setEditorPanelComponent(this);
 
     this.eventService.on(Message.PROJECT_LOAD, () => this.loadProject());
-    this.eventService.on(Message.TREE_SELECT_DECLARATION_NODE, () => this.openMlEditor());
-    this.eventService.on(Message.PAGE_TAB_OPEN, (event) => setTimeout(() => this.openModelEditor(event.pageObject).then(), 1000));
-    this.eventService.on(Message.PAGE_TAB_CLOSE, (event) => this.deleteTab(event.id));
-    this.eventService.on(Message.PAGE_CHANGE_NAME, (event) => this.changeName(event.id, event.name));
+    this.eventService.on(Message.TREE_SELECT_DECLARATION_NODE, () =>
+      this.openMlEditor()
+    );
+    this.eventService.on(Message.PAGE_TAB_OPEN, (event) =>
+      setTimeout(() => this.openModelEditor(event.pageObject).then(), 1000)
+    );
+    this.eventService.on(Message.PAGE_TAB_CLOSE, (event) =>
+      this.deleteTab(event.id)
+    );
+    this.eventService.on(Message.PAGE_CHANGE_NAME, (event) =>
+      this.changeName(event.id, event.name)
+    );
   }
 
   ngAfterViewInit() {
     if (this.documentationIFrame) {
-      this.documentationIFrame.nativeElement.src = './assets/documentation/index.html';
+      this.documentationIFrame.nativeElement.src =
+        "./assets/documentation/index.html";
     }
   }
 
-  ngOnDestroy() {
-  }
+  ngOnDestroy() {}
 
   loadProject() {
     this.pageTabArray = [];
@@ -79,12 +87,14 @@ export class EditorPanelComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   currentTabChange(event = undefined) {
-    console.log('currentTabChange(), event = ', event);
+    console.log("currentTabChange(), event = ", event);
 
     const tab = this.tabsComponent.getSelectedTab();
     if (tab && tab !== this.currentTab) {
-      const modelEditor = this.modelEditorList.toArray().find(e => e.id === 'model_editor_' + tab.id);
-      console.log('currentTabChange(), editor = ', modelEditor);
+      const modelEditor = this.modelEditorList
+        .toArray()
+        .find((e) => e.id === "model_editor_" + tab.id);
+      console.log("currentTabChange(), editor = ", modelEditor);
 
       this.editorPanelService.setSelectedModelEditor(modelEditor);
 
@@ -99,7 +109,11 @@ export class EditorPanelComponent implements OnInit, OnDestroy, AfterViewInit {
   deleteTab(id) {
     for (const i in this.pageTabArray) {
       if (this.pageTabArray[i].id === id) {
-        console.log('deleteTab(), i, this.modelTabArray[i] = ', i, this.pageTabArray[i]);
+        console.log(
+          "deleteTab(), i, this.modelTabArray[i] = ",
+          i,
+          this.pageTabArray[i]
+        );
         this.pageTabArray.splice(parseInt(i, 0), 1);
         break;
       }
@@ -133,36 +147,32 @@ export class EditorPanelComponent implements OnInit, OnDestroy, AfterViewInit {
     this.applicationService.isShowDocumentation = false;
 
     return new Promise((resolve, reject) => {
-      console.log('openPage(), pageObject = ', pageObject);
+      console.log("openPage(), pageObject = ", pageObject);
 
       const tab = this.tabsComponent.getTabByID(pageObject._id);
       this.modelService.checkPaintElement();
       if (tab) {
-
         this.tabsComponent.selectTab(tab);
         resolve();
-
       } else {
-
         const tabAttrs = { id: pageObject._id, pageObject: pageObject };
         this.pageTabArray.push(tabAttrs);
         this.selectTab(tabAttrs.id);
 
         setTimeout(() => {
           if (this.modelEditorList) {
-
             const tab = this.tabsComponent.getSelectedTab();
             if (tab) {
-              const modelEditor = this.modelEditorList.toArray().find(e => e.id === 'model_editor_' + tab.id);
+              const modelEditor = this.modelEditorList
+                .toArray()
+                .find((e) => e.id === "model_editor_" + tab.id);
               this.editorPanelService.setSelectedModelEditor(modelEditor);
               if (modelEditor) {
-                modelEditor.loadPage(pageObject).then(
-                  () => {
-                    modelEditor.updateElementStatus().then(() => {
-                      resolve();
-                    });
-                  }
-                );
+                modelEditor.loadPage(pageObject).then(() => {
+                  modelEditor.updateElementStatus().then(() => {
+                    resolve();
+                  });
+                });
               }
             } else {
               resolve();
@@ -171,7 +181,6 @@ export class EditorPanelComponent implements OnInit, OnDestroy, AfterViewInit {
             resolve();
           }
         }, 0);
-
       }
     });
   }
@@ -179,8 +188,8 @@ export class EditorPanelComponent implements OnInit, OnDestroy, AfterViewInit {
   openMlEditor() {
     this.applicationService.isShowDocumentation = false;
 
-    const pageId = 'ml-editor';
-    const pageName = 'ML editor';
+    const pageId = "ml-editor";
+    const pageName = "ML editor";
 
     let tab = this.tabsComponent.getTabByID(pageId);
     if (tab) {
@@ -192,8 +201,8 @@ export class EditorPanelComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   openDocumentation() {
-    const pageId = 'documentation';
-    const pageName = 'Documentation';
+    const pageId = "documentation";
+    const pageName = "Documentation";
 
     let tab = this.tabsComponent.getTabByID(pageId);
     if (tab) {
@@ -203,5 +212,4 @@ export class EditorPanelComponent implements OnInit, OnDestroy, AfterViewInit {
       this.selectTab(pageId);
     }
   }
-
 }

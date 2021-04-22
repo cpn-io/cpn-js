@@ -1,10 +1,10 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {TabComponent} from '../tabs/tab.component';
+import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { TabComponent } from "../tabs/tab.component";
 
 @Component({
-  selector: 'tabs',
-  templateUrl: './tabs.container.html',
-  styleUrls: ['./tabs.container.scss']
+  selector: "tabs",
+  templateUrl: "./tabs.container.html",
+  styleUrls: ["./tabs.container.scss"],
 })
 export class TabsContainer {
   @Input() disabled: boolean;
@@ -25,7 +25,7 @@ export class TabsContainer {
 
     this.selectedTab = undefined;
 
-    this.tabs.forEach(tab => {
+    this.tabs.forEach((tab) => {
       tab.active = false;
     });
     tab.active = true;
@@ -35,12 +35,12 @@ export class TabsContainer {
 
   isDisabled() {
     if (this.disabled) {
-      return 'block';
-    } else return 'none';
+      return "block";
+    } else return "none";
   }
 
   ngAfterViewInit() {
-    this.tabs.forEach(tab => {
+    this.tabs.forEach((tab) => {
       if (tab.active) {
         this.selectTab(tab);
         this.ifTabSelected = true;
@@ -53,7 +53,7 @@ export class TabsContainer {
 
   getTabByID(id: string) {
     var result = undefined;
-    this.tabs.forEach(tab => {
+    this.tabs.forEach((tab) => {
       // console.log('getTabByID(), tab.id, id = ', tab.id, id);
       if (tab.id === id) {
         result = tab;
@@ -64,7 +64,7 @@ export class TabsContainer {
 
   deleteTabById(id: string) {
     // @ts-ignore
-    this.tabs = this.tabs.filter(tab => tab.id !== id);
+    this.tabs = this.tabs.filter((tab) => tab.id !== id);
   }
 
   getSelectedTab() {
@@ -74,6 +74,4 @@ export class TabsContainer {
   clear() {
     this.tabs = [];
   }
-
-
 }

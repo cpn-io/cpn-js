@@ -1,48 +1,47 @@
-import {Injectable, OnInit, OnDestroy} from '@angular/core';
-import {EventService} from './event.service';
-import {ModelService} from './model.service';
-import {Message} from '../common/message';
-import {AccessCpnService} from '../services/access-cpn.service';
-import {cloneObject, objectsEqual} from '../common/utils';
-import {Observable, timer} from 'rxjs';
-import {IpcService} from './ipc.service';
+import { Injectable, OnInit, OnDestroy } from "@angular/core";
+import { EventService } from "./event.service";
+import { ModelService } from "./model.service";
+import { Message } from "../common/message";
+import { AccessCpnService } from "../services/access-cpn.service";
+import { cloneObject, objectsEqual } from "../common/utils";
+import { Observable, timer } from "rxjs";
+import { IpcService } from "./ipc.service";
 
-const deepEqual = require('deep-equal');
-const diff = require('deep-diff').diff;
+const deepEqual = require("deep-equal");
+const diff = require("deep-diff").diff;
 
 @Injectable()
 export class ValidationService implements OnDestroy {
-
-  VALIDATION_TIMEOUT = 1000;
+  VALIDATION_TIMEOUT = 200;
   timeTimer: Observable<number>;
   timeTimerSubscribtion;
 
   public isAutoValidation = false;
 
   geometryKeyList = [
-    'aux',
-    'token',
-    'marking',
-    'posattr',
-    'fillattr',
-    'lineattr',
-    'textattr',
-    'box',
-    'ellipse',
-    'bendpoint'
+    "aux",
+    "token",
+    "marking",
+    "posattr",
+    "fillattr",
+    "lineattr",
+    "textattr",
+    "box",
+    "ellipse",
+    "bendpoint",
   ];
 
   // workspaceElements.cpnet.page.pageattr._name.
 
   nobackupKeyList = [
-    'bendpoint',
-    'bendpoint.0._id',
-    'bendpoint.1._id',
-    'bendpoint.2._id',
-    'bendpoint.3._id',
-    'bendpoint.4._id',
-    'bendpoint.5._id',
-    'bendpoint.6._id',
+    "bendpoint",
+    "bendpoint.0._id",
+    "bendpoint.1._id",
+    "bendpoint.2._id",
+    "bendpoint.3._id",
+    "bendpoint.4._id",
+    "bendpoint.5._id",
+    "bendpoint.6._id",
   ];
 
   needValidation = false;
@@ -51,20 +50,20 @@ export class ValidationService implements OnDestroy {
   checkValidationBusy = false;
   checkValidationScheduled = false;
 
-  private MAX_SIZE = 10;
+  private MAX_SIZE = 1000;
   history = {
     models: [],
     currentModelIndex: 0,
     backupBusy: false,
-    undoRedoBusy: false
+    undoRedoBusy: false,
   };
 
   constructor(
     private eventService: EventService,
     private modelService: ModelService,
     private accessCpnService: AccessCpnService,
-    private ipcService: IpcService) {
-
+    private ipcService: IpcService
+  ) {
     this.eventService.on(Message.PROJECT_LOAD, (event) => {
       this.init();
       this.validate();
@@ -73,15 +72,18 @@ export class ValidationService implements OnDestroy {
     this.eventService.on(Message.PROJECT_LOAD, () => this.init());
     this.eventService.on(Message.MODEL_RELOAD, () => this.init());
     this.eventService.on(Message.PROJECT_SAVED, () => this.clearHistory());
-    this.eventService.on(Message.MAIN_MENU_NEW_PROJECT, () => this.clearHistory());
+    this.eventService.on(Message.MAIN_MENU_NEW_PROJECT, () =>
+      this.clearHistory()
+    );
 
     this.timeTimer = timer(this.VALIDATION_TIMEOUT, this.VALIDATION_TIMEOUT);
-    this.timeTimerSubscribtion = this.timeTimer.subscribe(() => this.checkValidation());
-
+    this.timeTimerSubscribtion = this.timeTimer.subscribe(() =>
+      this.checkValidation()
+    );
   }
 
   ngOnDestroy() {
-    console.log(this.constructor.name, 'ngOnDestroy()');
+    console.log(this.constructor.name, "ngOnDestroy()");
     this.timeTimerSubscribtion.unsubscribe();
   }
 
@@ -118,8 +120,11 @@ export class ValidationService implements OnDestroy {
       return;
     }
 
-    // console.log('checkValidation()');
+    console.log("checkValidation()");
 
+    if (this.history.undoRedoBusy) {
+      return;
+    }
     if (this.checkValidationBusy) {
       return;
     }
@@ -135,14 +140,32 @@ export class ValidationService implements OnDestroy {
 
     if (!deepEqualResult) {
       const differences = diff(this.lastProjectData, projectData);
-      console.log(this.constructor.name, 'differences = ', differences);
+      console.log(
+        this.constructor.name,
+        "checkValidation(), differences = ",
+        differences
+      );
 
       if (differences && differences.length > 0) {
-        const noGeometryChangeList = this.filterDifferences(differences, this.geometryKeyList);
-        const backupChangeList = this.filterDifferences(differences, this.nobackupKeyList);
+        const noGeometryChangeList = this.filterDifferences(
+          differences,
+          this.geometryKeyList
+        );
+        const backupChangeList = this.filterDifferences(
+          differences,
+          this.nobackupKeyList
+        );
 
-        console.log(this.constructor.name, 'differences, noGeometryChangeList = ', noGeometryChangeList);
-        console.log(this.constructor.name, 'differences, backupChangeList = ', backupChangeList);
+        console.log(
+          this.constructor.name,
+          "checkValidation(), differences, noGeometryChangeList = ",
+          noGeometryChangeList
+        );
+        console.log(
+          this.constructor.name,
+          "checkValidation(), differences, backupChangeList = ",
+          backupChangeList
+        );
 
         if (noGeometryChangeList.length > 0) {
           this.validate();
@@ -157,7 +180,9 @@ export class ValidationService implements OnDestroy {
         }
 
         for (const dif of differences) {
-          this.eventService.send(Message.MODEL_CHANGED_DETAILS, {changesPath: JSON.stringify(dif.path)});
+          this.eventService.send(Message.MODEL_CHANGED_DETAILS, {
+            changesPath: JSON.stringify(dif.path),
+          });
         }
 
         this.lastProjectData = cloneObject(projectData);
@@ -168,7 +193,7 @@ export class ValidationService implements OnDestroy {
 
     const validationTime = new Date().getTime() - startTime;
     if (validationTime > 10) {
-      console.log('END checkValidation(), validationTime = ', validationTime);
+      console.log("END checkValidation(), validationTime = ", validationTime);
     }
 
     if (this.needValidation && this.isAutoValidation) {
@@ -194,7 +219,7 @@ export class ValidationService implements OnDestroy {
     if (this.history.models.length > this.history.currentModelIndex) {
       this.history.models.splice(this.history.currentModelIndex);
     }
-    if (this.history.models.length > this.MAX_SIZE -1) {
+    if (this.history.models.length > this.MAX_SIZE - 1) {
       this.history.models.splice(0, 1);
       --this.history.currentModelIndex;
     }
@@ -202,9 +227,11 @@ export class ValidationService implements OnDestroy {
     this.history.models.push(model);
     this.history.currentModelIndex++;
     if (this.history.models.length !== this.history.currentModelIndex) {
-      console.error(`History index is wrong! index:${this.history.currentModelIndex} and history.array size is: ${this.history.models.length}`);
+      console.error(
+        `History index is wrong! index:${this.history.currentModelIndex} and history.array size is: ${this.history.models.length}`
+      );
     }
-    this.ipcService.send(Message.MODEL_SAVE_BACKUP)
+    this.ipcService.send(Message.MODEL_SAVE_BACKUP);
     this.history.backupBusy = false;
   }
 
@@ -222,7 +249,10 @@ export class ValidationService implements OnDestroy {
     // console.log('HISTORY UNDO', model);
     if (model) {
       this.modelService.projectData = model;
-      this.modelService.project = {data: model, name: this.modelService.projectName};
+      this.modelService.project = {
+        data: model,
+        name: this.modelService.projectName,
+      };
       this.eventService.send(Message.MODEL_RELOAD);
     }
     this.history.undoRedoBusy = false;
@@ -238,7 +268,10 @@ export class ValidationService implements OnDestroy {
     // console.log('HISTORY REDO', model);
     if (model) {
       this.modelService.projectData = model;
-      this.modelService.project = {data: model, name: this.modelService.projectName};
+      this.modelService.project = {
+        data: model,
+        name: this.modelService.projectName,
+      };
       this.eventService.send(Message.MODEL_RELOAD);
     }
     this.history.undoRedoBusy = false;
@@ -247,9 +280,13 @@ export class ValidationService implements OnDestroy {
   getPreviousModelFromHistory() {
     if (this.history.models[this.history.currentModelIndex - 1]) {
       if (this.history.models[this.history.currentModelIndex - 2]) {
-        this.lastProjectData = this.history.models[this.history.currentModelIndex - 2];
+        this.lastProjectData = this.history.models[
+          this.history.currentModelIndex - 2
+        ];
       } else {
-        this.lastProjectData = this.history.models[this.history.currentModelIndex - 1];
+        this.lastProjectData = this.history.models[
+          this.history.currentModelIndex - 1
+        ];
       }
       return this.history.models[--this.history.currentModelIndex];
     }
@@ -258,7 +295,9 @@ export class ValidationService implements OnDestroy {
 
   getNextModelFromHistory() {
     if (this.history.models[this.history.currentModelIndex + 1]) {
-      this.lastProjectData = this.history.models[this.history.currentModelIndex];
+      this.lastProjectData = this.history.models[
+        this.history.currentModelIndex
+      ];
       return this.history.models[++this.history.currentModelIndex];
     }
     return null;
@@ -278,7 +317,5 @@ export class ValidationService implements OnDestroy {
       clearInterval(interval);
       // console.error('Can`t clear history buffer', interval);
     }, 60000);
-
   }
-
 }

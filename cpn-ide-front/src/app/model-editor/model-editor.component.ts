@@ -1,19 +1,26 @@
-import {Component, ElementRef, Input, OnInit, ViewChild, AfterViewInit, OnDestroy, HostListener} from '@angular/core';
-
-import Diagram from 'diagram-js';
-import CpnDiagramModule from '../../lib/cpn-js/core';
-
-import { Message } from '../common/message';
-import { EventService } from '../services/event.service';
-import { ModelService } from '../services/model.service';
-import { SettingsService } from '../services/settings.service';
-import { ValidationService } from '../services/validation.service';
-
-import { importCpnPage } from '../../lib/cpn-js/import/Importer';
-
 import {
-  getNextId,
-} from '../../lib/cpn-js/features/modeling/CpnElementFactory';
+  Component,
+  ElementRef,
+  Input,
+  OnInit,
+  ViewChild,
+  AfterViewInit,
+  OnDestroy,
+  HostListener,
+} from "@angular/core";
+
+import Diagram from "diagram-js";
+import CpnDiagramModule from "../../lib/cpn-js/core";
+
+import { Message } from "../common/message";
+import { EventService } from "../services/event.service";
+import { ModelService } from "../services/model.service";
+import { SettingsService } from "../services/settings.service";
+import { ValidationService } from "../services/validation.service";
+
+import { importCpnPage } from "../../lib/cpn-js/import/Importer";
+
+import { getNextId } from "../../lib/cpn-js/features/modeling/CpnElementFactory";
 
 import {
   CPN_LABEL,
@@ -22,34 +29,39 @@ import {
   CPN_CONNECTION,
   is,
   isCpn,
-} from '../../lib/cpn-js/util/ModelUtil';
+} from "../../lib/cpn-js/util/ModelUtil";
 
-import { AccessCpnService } from '../services/access-cpn.service';
-import { MonitorType, getMonitorTypeList, getMonitorTypeId } from '../common/monitors';
-import { addNode, nodeToArray } from '../common/utils';
-import { SimulationService } from '../services/simulation.service';
-import { TEST_TOKEN_DATA } from '../test/test-data';
-import { EditorPanelService } from '../services/editor-panel.service';
-import { IpcService } from '../services/ipc.service';
-import { Subscription } from 'rxjs';
+import { AccessCpnService } from "../services/access-cpn.service";
+import {
+  MonitorType,
+  getMonitorTypeList,
+  getMonitorTypeId,
+} from "../common/monitors";
+import { addNode, nodeToArray } from "../common/utils";
+import { SimulationService } from "../services/simulation.service";
+import { TEST_TOKEN_DATA } from "../test/test-data";
+import { EditorPanelService } from "../services/editor-panel.service";
+import { IpcService } from "../services/ipc.service";
+import { Subscription } from "rxjs";
 
 @Component({
-  selector: 'app-model-editor',
-  templateUrl: './model-editor.component.html',
-  styleUrls: ['./model-editor.component.scss']
+  selector: "app-model-editor",
+  templateUrl: "./model-editor.component.html",
+  styleUrls: ["./model-editor.component.scss"],
 })
 export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
-
-  constructor(private eventService: EventService,
+  constructor(
+    private eventService: EventService,
     private settings: SettingsService,
     private modelService: ModelService,
     public accessCpnService: AccessCpnService,
     public simulationService: SimulationService,
-    public editorPanelService: EditorPanelService) {
-  }
+    public editorPanelService: EditorPanelService,
+    public validationService: ValidationService
+  ) {}
 
-  @ViewChild('container') containerElementRef: ElementRef;
-  @ViewChild('popup') popupElementRef: ElementRef;
+  @ViewChild("container") containerElementRef: ElementRef;
+  @ViewChild("popup") popupElementRef: ElementRef;
 
   @Input() id: string;
 
@@ -89,7 +101,11 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   subs: Subscription;
 
   ngOnDestroy() {
-    console.log(this.constructor.name, 'ngOnDestroy(), this.instanseId = ', this.instanseId);
+    console.log(
+      this.constructor.name,
+      "ngOnDestroy(), this.instanseId = ",
+      this.instanseId
+    );
 
     this.diagram.clear();
     this.diagram.destroy();
@@ -102,20 +118,17 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.eventService.on(Message.SETTING_CHANGED, ({ key, value }) => {
       this.modeling.setDefaultValue(key, value);
     });
-    this.subs = this.eventService.on(Message.SHAPE_HIGHLIGHT, (id) => this.selectNodeById(id));
+    this.subs = this.eventService.on(Message.SHAPE_HIGHLIGHT, (id) =>
+      this.selectNodeById(id)
+    );
   }
 
-
   ngAfterViewInit() {
-    console.log(this.constructor.name, 'ngAfterViewInit(), this = ', this);
+    console.log(this.constructor.name, "ngAfterViewInit(), this = ", this);
 
     this.init();
     this.modelService.checkPaintElement();
-
   }
-
-
-
 
   onClose() {
     this.eventService.send(Message.PAGE_TAB_CLOSE, { id: this.pageId });
@@ -124,12 +137,14 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   init() {
     this.editorPanelService.addModelEditor(this);
 
-    this.instanseId = Math.random().toString(36).substring(2).toUpperCase() + '-' + Date.now().toString(36).toUpperCase();
+    this.instanseId =
+      Math.random().toString(36).substring(2).toUpperCase() +
+      "-" +
+      Date.now().toString(36).toUpperCase();
 
     const self = this;
 
     this.subscripeToAppMessage();
-
 
     // this.diagram = new Diagram({
     //   container: this.containerElementRef.nativeElement
@@ -138,60 +153,74 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.diagram = new Diagram({
       canvas: {
-        container: this.containerElementRef.nativeElement
+        container: this.containerElementRef.nativeElement,
       },
-      modules: [
-        CpnDiagramModule,
-      ]
+      modules: [CpnDiagramModule],
     });
 
-
-    this.elementFactory = this.diagram.get('elementFactory');
-    this.dragging = this.diagram.get('dragging');
-    this.canvas = this.diagram.get('canvas');
-    this.modeling = this.diagram.get('modeling');
-    this.eventBus = this.diagram.get('eventBus');
-    this.labelEditingProvider = this.diagram.get('labelEditingProvider');
-    this.textRenderer = this.diagram.get('textRenderer');
-    this.cpnFactory = this.diagram.get('cpnFactory');
-    this.stateProvider = this.diagram.get('stateProvider');
-    this.selectionProvider = this.diagram.get('selectionProvider');
-    this.cpnUpdater = this.diagram.get('cpnUpdater');
-    this.lassoTool = this.diagram.get('lassoTool');
+    this.elementFactory = this.diagram.get("elementFactory");
+    this.dragging = this.diagram.get("dragging");
+    this.canvas = this.diagram.get("canvas");
+    this.modeling = this.diagram.get("modeling");
+    this.eventBus = this.diagram.get("eventBus");
+    this.labelEditingProvider = this.diagram.get("labelEditingProvider");
+    this.textRenderer = this.diagram.get("textRenderer");
+    this.cpnFactory = this.diagram.get("cpnFactory");
+    this.stateProvider = this.diagram.get("stateProvider");
+    this.selectionProvider = this.diagram.get("selectionProvider");
+    this.cpnUpdater = this.diagram.get("cpnUpdater");
+    this.lassoTool = this.diagram.get("lassoTool");
 
     const eventBus = this.eventBus;
 
-    console.log(this.constructor.name, 'ngOnInit(), this.instanseId = ', this.instanseId);
-    console.log(this.constructor.name, 'ngOnInit(), this.modeling.getInstanseId() = ', this.modeling.getInstanseId());
+    console.log(
+      this.constructor.name,
+      "ngOnInit(), this.instanseId = ",
+      this.instanseId
+    );
+    console.log(
+      this.constructor.name,
+      "ngOnInit(), this.modeling.getInstanseId() = ",
+      this.modeling.getInstanseId()
+    );
 
     // set defualt values to diagram
     // -----------------------------------------------------
-    for (const key of ['type', 'initmark', 'cond', 'time', 'code', 'priority', 'annot', 'ellipse', 'box']) {
+    for (const key of [
+      "type",
+      "initmark",
+      "cond",
+      "time",
+      "code",
+      "priority",
+      "annot",
+      "ellipse",
+      "box",
+    ]) {
       this.modeling.setDefaultValue(key, this.settings.appSettings[key]);
     }
 
+    // eventBus.on("element.changed", (event) => {
+    //   // eventBus.on([
+    //   //   'shape.move.end',
+    //   //   'create.end',
+    //   //   'connect.end',
+    //   //   'resize.end',
+    //   //   'bendpoint.move.end',
+    //   //   'connectionSegment.move.end',
+    //   //   'directEditing.complete',
+    //   //   'shape.delete'
+    //   // ],
+    //   //   (event) => {
+    //   // console.log(self.constructor.name, "MODEL_CHANGED event = ", event);
+    //   // this.eventService.send(Message.MODEL_CHANGED);
+    //   // this.validationService.checkValidation();
+    // });
 
-    // eventBus.on('element.changed', (event) => {
-    // eventBus.on([
-    //   'shape.move.end',
-    //   'create.end',
-    //   'connect.end',
-    //   'resize.end',
-    //   'bendpoint.move.end',
-    //   'connectionSegment.move.end',
-    //   'directEditing.complete',
-    //   'shape.delete'
-    // ],
-    //   (event) => {
-    //     console.log(self.constructor.name, 'MODEL_CHANGED event = ', event);
-
-    //     // this.eventService.send(Message.MODEL_CHANGED);
-    //   });
-
-    eventBus.on('directEditing.complete', (event) => {
+    eventBus.on("directEditing.complete", (event) => {
       if (event && event.active && event.active.element) {
         const element = event.active.element;
-        console.log('DIRECTEDITING.COMPLETE, element = ', element);
+        console.log("DIRECTEDITING.COMPLETE, element = ", element);
 
         if (element.labelType === "initmark") {
           const placeElement = element.labelTarget;
@@ -208,37 +237,38 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           if (this.modelService.fixArcAnnot(connectionElement.cpnElement)) {
             this.modeling.updateElement(connectionElement, true);
           }
-
         }
       }
     });
 
-
-    eventBus.on('connect.start', (event ) => {
-      console.log('model editor: connect.start', event);
+    eventBus.on("connect.start", (event) => {
+      console.log("model editor: connect.start", event);
       this.onOutOfViewboxBounds();
     });
 
-    eventBus.on(['connect.end', 'connect.cleanup'], (event ) => {
-      console.log('model editor: connect.start', event);
-      this.canvas._container.removeEventListener('mousemove', this.mouseMoveWhileConnStartListener, false);
+    eventBus.on(["connect.end", "connect.cleanup"], (event) => {
+      console.log("model editor: connect.start", event);
+      this.canvas._container.removeEventListener(
+        "mousemove",
+        this.mouseMoveWhileConnStartListener,
+        false
+      );
     });
 
-    eventBus.on('element.copy', (event) => {
-      const selectedElements =  this.selectionProvider.getSelectedElements();
-        if (selectedElements && selectedElements.length > 1) {
-          this.onCopyShapes();
-        }
+    eventBus.on("element.copy", (event) => {
+      const selectedElements = this.selectionProvider.getSelectedElements();
+      if (selectedElements && selectedElements.length > 1) {
+        this.onCopyShapes();
+      }
     });
-
 
     this.eventService.on(Message.MODEL_RELOAD, () => {
-      this.log('Reload page diagram...');
+      this.log("Reload page diagram...");
       this.reloadPage();
     });
 
     this.eventService.on(Message.SERVER_INIT_NET_START, () => {
-      this.log('Validation process...');
+      this.log("Validation process...");
     });
 
     // VALIDATION STATUS
@@ -251,9 +281,10 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.onClearSelection();
     });
 
-
     // BINDINGS
-    this.eventService.on(Message.SERVER_GET_BINDINGS, (event) => eventBus.fire('bindingsMenu.open', { data: event.data }));
+    this.eventService.on(Message.SERVER_GET_BINDINGS, (event) =>
+      eventBus.fire("bindingsMenu.open", { data: event.data })
+    );
 
     // SIM STATUS
     this.eventService.on(Message.SIMULATION_STARTED, () => {
@@ -277,31 +308,39 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
 
-    this.eventService.on(Message.MONITOR_SET_AVAILABLE_NODES, (event) => this.updateAlailableStatus(event.availableNodeIds));
+    this.eventService.on(Message.MONITOR_SET_AVAILABLE_NODES, (event) =>
+      this.updateAlailableStatus(event.availableNodeIds)
+    );
 
     // ----------------------------------------------------------------------------------
     // Diagram events
 
-    eventBus.on('element.hover', (event) => {
-      if (event.element.type === 'cpn:Transition' || event.element.type === 'cpn:Place') {
+    eventBus.on("element.hover", (event) => {
+      if (
+        event.element.type === "cpn:Transition" ||
+        event.element.type === "cpn:Place"
+      ) {
         this.eventService.send(Message.SHAPE_HOVER, { element: event.element });
       }
       // console.log('element.hover', event.element);
     });
-    eventBus.on('element.out', (event) => {
-      if (event.element.type === 'cpn:Transition' || event.element.type === 'cpn:Place') {
+    eventBus.on("element.out", (event) => {
+      if (
+        event.element.type === "cpn:Transition" ||
+        event.element.type === "cpn:Place"
+      ) {
         this.eventService.send(Message.SHAPE_OUT, { element: event.element });
       }
     });
 
-    eventBus.on('directEditing.cancel', function (e) {
+    eventBus.on("directEditing.cancel", function (e) {
       // console.log('model-editor directEditing.cancel - event', e);
 
       self.openPropPanel(e.active.element);
       self.selectedElement = undefined;
     });
 
-    eventBus.on('directEditing.complete', function (e) {
+    eventBus.on("directEditing.complete", function (e) {
       // console.log('model-editor directEditing.complete - event', e);
 
       if (e.active && e.active.element) {
@@ -309,21 +348,30 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
 
-    eventBus.on('element.click', (event) => {
+    eventBus.on("element.click", (event) => {
       this.fireSelectionEvent(event);
       if (event.element) {
-        this.updateAvailableMonitorList([event.element, ...this.selectedElements]);
+        this.updateAvailableMonitorList([
+          event.element,
+          ...this.selectedElements,
+        ]);
       }
     });
 
-    eventBus.on('shape.create.end', (event) => {
+    eventBus.on("shape.create.end", (event) => {
       // console.log('shape.create.end, event = ', event);
 
       if (event.elements) {
         // let allPagesId = this.modelService.getAllPages().map(p => {return p._id});
         for (const element of event.elements) {
-          if (element.cpnElement) { // if (element.cpnElement && allPagesId.includes(this.pageId)) {
-            this.modelService.addElementJsonOnPage(element.cpnElement, this.pageId, element.type, this.modeling);
+          if (element.cpnElement) {
+            // if (element.cpnElement && allPagesId.includes(this.pageId)) {
+            this.modelService.addElementJsonOnPage(
+              element.cpnElement,
+              this.pageId,
+              element.type,
+              this.modeling
+            );
 
             // Check if transition is subpage and create subpage
             if (element.type === CPN_TRANSITION && element.cpnElement.subst) {
@@ -343,14 +391,24 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
 
-    eventBus.on('extract.subpage', (event) => {
+    eventBus.on("extract.subpage", (event) => {
       const transCpnElement = event.transCpnElement;
       const places = event.places;
       const transitions = event.transitions;
 
-      self.modelService.addElementJsonOnPage(transCpnElement, self.pageId, CPN_TRANSITION, this.modeling);
+      self.modelService.addElementJsonOnPage(
+        transCpnElement,
+        self.pageId,
+        CPN_TRANSITION,
+        this.modeling
+      );
 
-      console.log(self.constructor.name, 'extract.subpage, places, transitions = ', places, transitions);
+      console.log(
+        self.constructor.name,
+        "extract.subpage, places, transitions = ",
+        places,
+        transitions
+      );
 
       let selectedElements = [];
       selectedElements = selectedElements.concat(places).concat(transitions);
@@ -358,16 +416,18 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         return;
       }
 
-      console.log(self.constructor.name, 'extract.subpage, selectedElements = ', selectedElements);
-
-      self.eventService.send(Message.PAGE_CREATE_SUBST,
-        {
-          currentPageId: self.pageId,
-          subPageName: transCpnElement.subst.subpageinfo._name,
-          subPageId: transCpnElement.subst._subpage,
-          cpnElement: transCpnElement
-        }
+      console.log(
+        self.constructor.name,
+        "extract.subpage, selectedElements = ",
+        selectedElements
       );
+
+      self.eventService.send(Message.PAGE_CREATE_SUBST, {
+        currentPageId: self.pageId,
+        subPageName: transCpnElement.subst.subpageinfo._name,
+        subPageId: transCpnElement.subst._subpage,
+        cpnElement: transCpnElement,
+      });
 
       const subPageId = transCpnElement.subst._subpage;
       const subpage = self.modelService.getPageById(subPageId);
@@ -375,15 +435,25 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         return;
       }
 
-      console.log(self.constructor.name, 'extract.subpage, subpage = ', subpage);
+      console.log(
+        self.constructor.name,
+        "extract.subpage, subpage = ",
+        subpage
+      );
 
       // console.log(self.constructor.name, 'extract.subpage, getAllArcs() = ', self.modelService.getAllArcs());
 
       const arcs = self.modelService.getArcsForElements(selectedElements);
-      const arcsToDelete = self.modelService.getExternalArcsForElements(selectedElements);
+      const arcsToDelete = self.modelService.getExternalArcsForElements(
+        selectedElements
+      );
 
-      console.log(self.constructor.name, 'extract.subpage, arcs = ', arcs);
-      console.log(self.constructor.name, 'extract.subpage, arcsToDelete = ', arcsToDelete);
+      console.log(self.constructor.name, "extract.subpage, arcs = ", arcs);
+      console.log(
+        self.constructor.name,
+        "extract.subpage, arcsToDelete = ",
+        arcsToDelete
+      );
 
       selectedElements = selectedElements.concat(arcs);
 
@@ -399,10 +469,8 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       self.reloadPage();
     });
 
-
-    eventBus.on('shape.delete', (event) => {
+    eventBus.on("shape.delete", (event) => {
       if (event.elements) {
-
         let reloadTree = false;
 
         for (const elem of event.elements) {
@@ -419,12 +487,14 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
         if (reloadTree) {
           this.eventService.send(Message.TREE_UPDATE_PAGES, {
-            currentPageId: self.pageId
+            currentPageId: self.pageId,
           });
         }
       }
     });
-    eventBus.on('aux.run', script => this.eventService.send(Message.SHAPE_RUN_SCRIPT, script))
+    eventBus.on("aux.run", (script) =>
+      this.eventService.send(Message.SHAPE_RUN_SCRIPT, script)
+    );
 
     // eventBus.on('element.hover', (event) => {
     //   const element = event.element;
@@ -449,30 +519,32 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     //   }
     // });
 
-
-    eventBus.on('bindingsMenu.select', (event) => {
+    eventBus.on("bindingsMenu.select", (event) => {
       self.eventService.send(Message.SIMULATION_SELECT_BINDING, event);
     });
 
     // this._eventBus.fire('bind.port.cancel', {connection: this._createdArc});
 
-    eventBus.on('element.selection.changed', function () {
+    eventBus.on("element.selection.changed", function () {
       const selectedElements = self.selectionProvider.getSelectedElements();
-      console.log('model-editor element.selection.changed, selectedElements = ', selectedElements);
+      console.log(
+        "model-editor element.selection.changed, selectedElements = ",
+        selectedElements
+      );
 
       self.updateAvailableMonitorList(selectedElements);
 
       self.selectedElements = selectedElements;
       self.modelService.selectedElements = selectedElements;
       // self.eventService.send(Message.SHAPE_SELECT, { element: selectedElements });
-
     });
 
-    this.eventService.on('editing.cancel', () => eventBus.fire('editing.cancel'));
+    this.eventService.on("editing.cancel", () =>
+      eventBus.fire("editing.cancel")
+    );
   }
 
   updateAvailableMonitorList(selectedElements) {
-
     this.selectedElementsForMonitors = selectedElements;
 
     this.availableMonitorList = [];
@@ -481,11 +553,11 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     if (selectedElements.length > 0) {
       if (selectedElements.length > 1) {
-        type = 'group';
+        type = "group";
       } else if (is(selectedElements[0], CPN_PLACE)) {
-        type = 'place';
+        type = "place";
       } else if (is(selectedElements[0], CPN_TRANSITION)) {
-        type = 'transition';
+        type = "transition";
       }
     }
 
@@ -493,16 +565,19 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       const monitorTypes = getMonitorTypeList(type);
       this.availableMonitorList = monitorTypes;
     }
-    console.log('model-editor updateAvailableMonitorList(), this.availableMonitorList = ', this.availableMonitorList);
+    console.log(
+      "model-editor updateAvailableMonitorList(), this.availableMonitorList = ",
+      this.availableMonitorList
+    );
   }
 
   showPopup(position, element, popupText, popupClass) {
     const popup: HTMLElement = this.popupElementRef.nativeElement; // document.getElementById('popup');
     if (popupText) {
-      popup.style.left = (position.x) + 'px';
-      popup.style.top = (position.y + 20) + 'px';
-      popup.style.display = 'block';
-      popup.className = 'popup ' + popupClass;
+      popup.style.left = position.x + "px";
+      popup.style.top = position.y + 20 + "px";
+      popup.style.display = "block";
+      popup.className = "popup " + popupClass;
       popup.innerText = popupText;
       return true;
     }
@@ -511,8 +586,8 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   hidePopup() {
     const popup: HTMLElement = this.popupElementRef.nativeElement; // document.getElementById('popup');
-    popup.style.display = 'none';
-    popup.innerText = '';
+    popup.style.display = "none";
+    popup.innerText = "";
   }
 
   reloadPage() {
@@ -525,13 +600,11 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   checkPorts() {
-    this.eventBus.fire('model.check.ports');
+    this.eventBus.fire("model.check.ports");
   }
-
 
   testAnimation() {
     return new Promise((resolve, reject) => {
-
       const speedMs = 500;
       const incomeArcIdList = [];
       const outcomeArcIdList = [];
@@ -554,43 +627,65 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
 
-      console.log(this.constructor.name, 'testAnimation(), incomeArcIdList = ', incomeArcIdList);
-      console.log(this.constructor.name, 'testAnimation(), outcomeArcIdList = ', outcomeArcIdList);
+      console.log(
+        this.constructor.name,
+        "testAnimation(), incomeArcIdList = ",
+        incomeArcIdList
+      );
+      console.log(
+        this.constructor.name,
+        "testAnimation(), outcomeArcIdList = ",
+        outcomeArcIdList
+      );
 
       this.stateProvider.clear();
       this.stateProvider.setFiredState(transIdList);
       this.modeling.repaintElements();
 
-      this.cpnUpdater.animateArcList(incomeArcIdList, speedMs, true).then(() => {
-        console.log(this.constructor.name, 'testAnimation(), Promise complete!, incomeArcIdList = ', incomeArcIdList);
+      this.cpnUpdater
+        .animateArcList(incomeArcIdList, speedMs, true)
+        .then(() => {
+          console.log(
+            this.constructor.name,
+            "testAnimation(), Promise complete!, incomeArcIdList = ",
+            incomeArcIdList
+          );
 
-        this.cpnUpdater.animateArcList(outcomeArcIdList, speedMs, false).then(() => {
-          console.log(this.constructor.name, 'testAnimation(), Promise complete!, outcomeArcIdList = ', outcomeArcIdList);
+          this.cpnUpdater
+            .animateArcList(outcomeArcIdList, speedMs, false)
+            .then(() => {
+              console.log(
+                this.constructor.name,
+                "testAnimation(), Promise complete!, outcomeArcIdList = ",
+                outcomeArcIdList
+              );
 
-          this.stateProvider.clear();
+              this.stateProvider.clear();
 
-          const tokenData = TEST_TOKEN_DATA; // this.accessCpnService.getTokenData();
-          // localStorage.setItem('tokenData', JSON.stringify(tokenData));
+              const tokenData = TEST_TOKEN_DATA; // this.accessCpnService.getTokenData();
+              // localStorage.setItem('tokenData', JSON.stringify(tokenData));
 
-          this.eventBus.fire('model.update.tokens', { data: tokenData });
-          this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
-          this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
-          this.checkPorts();
-          this.modeling.repaintElements();
+              this.eventBus.fire("model.update.tokens", { data: tokenData });
+              this.stateProvider.setReadyState(
+                this.accessCpnService.getReadyData()
+              );
+              this.stateProvider.setErrorState(
+                this.accessCpnService.getErrorData()
+              );
+              this.checkPorts();
+              this.modeling.repaintElements();
 
-          resolve();
+              resolve();
+            });
         });
-      });
     });
   }
-
 
   /**
    * Update element status
    */
   updateElementStatus(animate: boolean = false) {
     return new Promise((resolve, reject) => {
-
       const startTime = new Date().getTime();
 
       if (animate) {
@@ -598,7 +693,10 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.modeling.repaintElements();
       }
 
-      console.log('TOKEN ANIMATION, updateElementStatus(), repaintElements() (1), timeMs = ', new Date().getTime() - startTime);
+      console.log(
+        "TOKEN ANIMATION, updateElementStatus(), repaintElements() (1), timeMs = ",
+        new Date().getTime() - startTime
+      );
 
       const firedData = this.accessCpnService.getFiredData();
       const animatedTransIds = [];
@@ -618,65 +716,108 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
       // if current page has animated transitions
       if (animatedTransIds.length > 0) {
-
         const incomeArcIdList = [];
         const outcomeArcIdList = [];
         for (const transId of animatedTransIds) {
-          for (const arc of this.modelService.getTransitionIncomeArcs(transId)) {
+          for (const arc of this.modelService.getTransitionIncomeArcs(
+            transId
+          )) {
             incomeArcIdList.push(arc._id);
           }
-          for (const arc of this.modelService.getTransitionOutcomeArcs(transId)) {
+          for (const arc of this.modelService.getTransitionOutcomeArcs(
+            transId
+          )) {
             outcomeArcIdList.push(arc._id);
           }
         }
         const speedMs = this.simulationService.getAnimationDelay() / 2;
 
-        console.log('TOKEN ANIMATION, updateElementStatus(), START ANIMATION, timeMs = ', new Date().getTime() - startTime);
+        console.log(
+          "TOKEN ANIMATION, updateElementStatus(), START ANIMATION, timeMs = ",
+          new Date().getTime() - startTime
+        );
 
-        this.cpnUpdater.animateArcList(incomeArcIdList, speedMs, true).then(() => {
-          console.log('TOKEN ANIMATION, updateElementStatus(), Promise complete!, incomeArcIdList = ', incomeArcIdList);
-          console.log('TOKEN ANIMATION, updateElementStatus(), INCOME ANIMATION COMPLETE, timeMs = ', new Date().getTime() - startTime);
+        this.cpnUpdater
+          .animateArcList(incomeArcIdList, speedMs, true)
+          .then(() => {
+            console.log(
+              "TOKEN ANIMATION, updateElementStatus(), Promise complete!, incomeArcIdList = ",
+              incomeArcIdList
+            );
+            console.log(
+              "TOKEN ANIMATION, updateElementStatus(), INCOME ANIMATION COMPLETE, timeMs = ",
+              new Date().getTime() - startTime
+            );
 
-          this.cpnUpdater.animateArcList(outcomeArcIdList, speedMs, false).then(() => {
-            console.log('TOKEN ANIMATION, updateElementStatus(), Promise complete!, outcomeArcIdList = ', outcomeArcIdList);
-            console.log('TOKEN ANIMATION, updateElementStatus(), OUTCOME ANIMATION COMPLETE, timeMs = ', new Date().getTime() - startTime);
+            this.cpnUpdater
+              .animateArcList(outcomeArcIdList, speedMs, false)
+              .then(() => {
+                console.log(
+                  "TOKEN ANIMATION, updateElementStatus(), Promise complete!, outcomeArcIdList = ",
+                  outcomeArcIdList
+                );
+                console.log(
+                  "TOKEN ANIMATION, updateElementStatus(), OUTCOME ANIMATION COMPLETE, timeMs = ",
+                  new Date().getTime() - startTime
+                );
 
+                this.stateProvider.clear();
+                this.eventBus.fire("model.update.tokens", {
+                  data: this.accessCpnService.getTokenData(),
+                });
+                this.stateProvider.setReadyState(
+                  this.accessCpnService.getReadyData()
+                );
+                this.stateProvider.setErrorState(
+                  this.accessCpnService.getErrorData()
+                );
+                this.checkPorts();
+                this.modeling.repaintElements();
+
+                console.log(
+                  "TOKEN ANIMATION, updateElementStatus() (1), COMPLETE, timeMs = ",
+                  new Date().getTime() - startTime
+                );
+
+                resolve();
+              });
+          });
+      } else {
+        setTimeout(
+          () => {
             this.stateProvider.clear();
-            this.eventBus.fire('model.update.tokens', { data: this.accessCpnService.getTokenData() });
-            this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
-            this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
+            this.eventBus.fire("model.update.tokens", {
+              data: this.accessCpnService.getTokenData(),
+            });
+            this.stateProvider.setReadyState(
+              this.accessCpnService.getReadyData()
+            );
+            this.stateProvider.setWarningState(
+              this.accessCpnService.getWarningData()
+            );
+            this.stateProvider.setErrorState(
+              this.accessCpnService.getErrorData()
+            );
             this.checkPorts();
             this.modeling.repaintElements();
 
-            console.log('TOKEN ANIMATION, updateElementStatus() (1), COMPLETE, timeMs = ', new Date().getTime() - startTime);
+            console.log(
+              "TOKEN ANIMATION, updateElementStatus() (2), COMPLETE, timeMs = ",
+              new Date().getTime() - startTime
+            );
 
             resolve();
-          });
-        });
-
-      } else {
-
-        setTimeout(() => {
-          this.stateProvider.clear();
-          this.eventBus.fire('model.update.tokens', { data: this.accessCpnService.getTokenData() });
-          this.stateProvider.setReadyState(this.accessCpnService.getReadyData());
-          this.stateProvider.setWarningState(this.accessCpnService.getWarningData());
-          this.stateProvider.setErrorState(this.accessCpnService.getErrorData());
-          this.checkPorts();
-          this.modeling.repaintElements();
-
-          console.log('TOKEN ANIMATION, updateElementStatus() (2), COMPLETE, timeMs = ', new Date().getTime() - startTime);
-
-          resolve();
-        }, animate ? 100 : 0);
+          },
+          animate ? 100 : 0
+        );
       }
 
-      console.log('updateElementStatus(), COMPLETE');
+      console.log("updateElementStatus(), COMPLETE");
     });
   }
 
   updateAlailableStatus(availableIds) {
-    console.log('updateAlailableStatus(), availableIds = ', availableIds);
+    console.log("updateAlailableStatus(), availableIds = ", availableIds);
 
     this.stateProvider.setReadyState(availableIds);
 
@@ -685,10 +826,13 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   subscripeToAppMessage() {
     this.eventService.on(Message.PAGE_UPDATE_SUBST, (event) => {
-
       const element = this.modeling.getElementByCpnElement(event.cpnElement);
 
-      if (event.subpageName && event.cpnElement.subst && event.cpnElement.subst.subpageinfo) {
+      if (
+        event.subpageName &&
+        event.cpnElement.subst &&
+        event.cpnElement.subst.subpageinfo
+      ) {
         event.cpnElement.subst.subpageinfo._name = event.subpageName;
       }
 
@@ -696,7 +840,11 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     this.eventService.on(Message.MODEL_UPDATE_DIAGRAM, (event) => {
-      console.log(this.constructor.name, 'MODEL_UPDATE_DIAGRAM, event = ', event);
+      console.log(
+        this.constructor.name,
+        "MODEL_UPDATE_DIAGRAM, event = ",
+        event
+      );
 
       if (event.cpnElement) {
         const e = this.modeling.getElementByCpnElement(event.cpnElement);
@@ -704,7 +852,6 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.modeling.updateElement(e, true);
       }
     });
-
   }
 
   openPropPanel(element) {
@@ -725,7 +872,11 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   changeSubPageName(subpage) {
-    this.eventService.send(Message.PAGE_CHANGE_NAME, { id: subpage.subpageid, name: subpage.name, changedElement: 'tran' });
+    this.eventService.send(Message.PAGE_CHANGE_NAME, {
+      id: subpage.subpageid,
+      name: subpage.name,
+      changedElement: "tran",
+    });
   }
 
   /**
@@ -743,7 +894,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   log(obj) {
-    console.log(this.constructor.name, 'log(), text = ' + JSON.stringify(obj));
+    console.log(this.constructor.name, "log(), text = " + JSON.stringify(obj));
   }
 
   /**
@@ -766,7 +917,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           importCpnPage(this.diagram, pageObject, alignToCenter).then(
             (success) => {
               this.loading = false;
-              console.log(this.constructor.name, 'loadPage(), RENDER COMPLETE');
+              console.log(this.constructor.name, "loadPage(), RENDER COMPLETE");
 
               // this.updateElementStatus();
               this.modeling.setEditable(!this.accessCpnService.isSimulation);
@@ -775,13 +926,11 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
               this.modelService.checkPaintElement();
             },
             (error) => {
-
-              console.log(this.constructor.name, 'loadPage(), ERROR = ', error);
+              console.log(this.constructor.name, "loadPage(), ERROR = ", error);
               reject();
             }
           );
         }, 0);
-
       } else {
         this.clearPage();
         resolve();
@@ -796,8 +945,9 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   makeid(length) {
-    let text = '';
-    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let text = "";
+    const possible =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
     for (let i = 0; i < length; i++) {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
@@ -816,10 +966,8 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.updateAvailableMonitorList(this.selectedElements);
   }
 
-  onCopy() {
-  }
-  onPaste() {
-  }
+  onCopy() {}
+  onPaste() {}
 
   onCreateSubst() {
     this.cpnFactory.extractSubpage();
@@ -836,26 +984,28 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   onCopyShapes() {
     this.selectedElements = this.selectionProvider.getSelectedElements();
-    const arcsForCopy =  [];
+    const arcsForCopy = [];
     this.selectedElements.forEach((element) => {
       // let originalElement = this._modeling.getElementById(element.cpnElement._id)
       const elementArcs = this.modeling.getShapeArcs(element);
       elementArcs.forEach((arc) => {
-        if (!arcsForCopy.some(value => value.id === arc.id)) {
+        if (!arcsForCopy.some((value) => value.id === arc.id)) {
           arcsForCopy.push({
             id: arc.id,
             cpnPlaceId: arc.cpnPlace._id,
             cpnTransitionId: arc.cpnTransition._id,
             orient: arc.cpnElement._orientation,
-            label: arc.labels[0]
+            label: arc.labels[0],
           });
         }
       });
     });
-    localStorage.setItem('arcsForCopy',  JSON.stringify(arcsForCopy));
-    localStorage.setItem('clipboardElement',  JSON.stringify(this.selectedElements));
+    localStorage.setItem("arcsForCopy", JSON.stringify(arcsForCopy));
+    localStorage.setItem(
+      "clipboardElement",
+      JSON.stringify(this.selectedElements)
+    );
     this.selectionProvider.deselectAll();
-
   }
 
   onCreateNewMonitor(monitorType: string) {
@@ -865,7 +1015,11 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       selectedElements = this.selectedElementsForMonitors;
     }
 
-    console.log('model-editor onCreateNewMonitor(), monitorType, selectedElements = ', monitorType, selectedElements);
+    console.log(
+      "model-editor onCreateNewMonitor(), monitorType, selectedElements = ",
+      monitorType,
+      selectedElements
+    );
 
     if (selectedElements.length < 1) {
       return;
@@ -880,24 +1034,31 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
 
-
     const options = {
       nodes: nodes,
-      type: getMonitorTypeId(monitorType)
+      type: getMonitorTypeId(monitorType),
     };
     this.accessCpnService.getMonitorDefaults(options).then((result) => {
-
       // console.log(this.constructor.name, 'onCreateNewMonitor(), getMonitorDefaults(), result = ', result);
 
       const monitorDefaults = result;
 
       const monitorsCpnParentElement = this.modelService.getMonitorsRoot();
-      const newMonitorCpnElement = this.modelService.createCpnMonitor(monitorType, cpnElementList, monitorDefaults);
+      const newMonitorCpnElement = this.modelService.createCpnMonitor(
+        monitorType,
+        cpnElementList,
+        monitorDefaults
+      );
       if (newMonitorCpnElement) {
-        addNode(monitorsCpnParentElement, 'monitor', newMonitorCpnElement);
-        this.eventService.send(Message.MONITOR_CREATED, { newMonitorCpnElement: newMonitorCpnElement });
+        addNode(monitorsCpnParentElement, "monitor", newMonitorCpnElement);
+        this.eventService.send(Message.MONITOR_CREATED, {
+          newMonitorCpnElement: newMonitorCpnElement,
+        });
       }
-      console.log('model-editor onCreateNewMonitor(), monitorsCpnParentElement = ', monitorsCpnParentElement);
+      console.log(
+        "model-editor onCreateNewMonitor(), monitorsCpnParentElement = ",
+        monitorsCpnParentElement
+      );
     });
   }
 
@@ -905,38 +1066,42 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     const element = this.modeling.getElementById(id);
     if (element) {
       this.eventService.send(Message.SHAPE_SELECT, { element });
-      this.eventBus.fire('element.click', { element: element });
-      this.eventBus.fire('editing.cancel');
+      this.eventBus.fire("element.click", { element: element });
+      this.eventBus.fire("editing.cancel");
     }
   }
 
-
-
   onOutOfViewboxBounds() {
-    console.log('onOutOfViewboxBounds');
-    const self  = this;
+    console.log("onOutOfViewboxBounds");
+    const self = this;
 
     const canvas = this.canvas;
-    this.mouseMoveWhileConnStartListener = function(evt) {
+    this.mouseMoveWhileConnStartListener = function (evt) {
       const vb = self.canvas.viewbox();
-      console.log('onOutOfViewboxBounds', evt.offsetY);
+      console.log("onOutOfViewboxBounds", evt.offsetY);
 
-      const scrollAreaSize = 100
+      const scrollAreaSize = 100;
 
       if (evt.offsetY < scrollAreaSize) {
-        vb.y =  vb.y - 20;
+        vb.y = vb.y - 20;
         canvas.viewbox(vb);
       }
-      if (evt.offsetY > self.canvas._container.getBoundingClientRect().height - scrollAreaSize) {
-        vb.y =  vb.y + 20;
+      if (
+        evt.offsetY >
+        self.canvas._container.getBoundingClientRect().height - scrollAreaSize
+      ) {
+        vb.y = vb.y + 20;
         canvas.viewbox(vb);
       }
       if (evt.offsetX < scrollAreaSize) {
-        vb.x =  vb.x - 20;
+        vb.x = vb.x - 20;
         canvas.viewbox(vb);
       }
-      if (evt.offsetX > self.canvas._container.getBoundingClientRect().width - scrollAreaSize) {
-        vb.x =  vb.x + 20;
+      if (
+        evt.offsetX >
+        self.canvas._container.getBoundingClientRect().width - scrollAreaSize
+      ) {
+        vb.x = vb.x + 20;
         canvas.viewbox(vb);
       }
       // console.log('change mouse pos', evt);
@@ -945,11 +1110,15 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       //  console.log('VB w,h ' + self.canvas._container.getBoundingClientRect().height + ' ' + self.canvas._container.getBoundingClientRect().width);
     };
 
-    this.canvas._container.addEventListener('mousemove', this.mouseMoveWhileConnStartListener, false);
+    this.canvas._container.addEventListener(
+      "mousemove",
+      this.mouseMoveWhileConnStartListener,
+      false
+    );
   }
 
   getColorsetList() {
-    let list = this.modelService.getStandardDeclarations().map(el => el.id);
+    let list = this.modelService.getStandardDeclarations().map((el) => el.id);
     list = list.sort((a, b) => {
       if (a < b) {
         return -1;

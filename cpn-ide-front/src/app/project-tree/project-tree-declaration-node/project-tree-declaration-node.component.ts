@@ -1,22 +1,33 @@
-import { Component, OnInit, Input, DoCheck, SimpleChanges, OnChanges, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import { ModelService } from '../../services/model.service';
-import { EventService } from '../../services/event.service';
-import { Message } from '../../common/message';
-import { parseUiDeclarartionType } from './declaration-parser';
-import { AccessCpnService } from '../../services/access-cpn.service';
-import { ContextMenuComponent } from '../../context-menu/context-menu.component';
-import { getNextId } from '../../common/utils';
-import { ITreeNode } from '../tree-node/tree-node';
-import { TreeData } from '../project-tree.component';
-import { DataTypes } from '../../common/constants';
-import { BufferService } from '../../services/buffer.service';
+import {
+  Component,
+  OnInit,
+  Input,
+  DoCheck,
+  SimpleChanges,
+  OnChanges,
+  AfterViewInit,
+  ViewChild,
+  ElementRef,
+} from "@angular/core";
+import { ModelService } from "../../services/model.service";
+import { EventService } from "../../services/event.service";
+import { Message } from "../../common/message";
+import { parseUiDeclarartionType } from "./declaration-parser";
+import { AccessCpnService } from "../../services/access-cpn.service";
+import { ContextMenuComponent } from "../../context-menu/context-menu.component";
+import { getNextId } from "../../common/utils";
+import { ITreeNode } from "../tree-node/tree-node";
+import { TreeData } from "../project-tree.component";
+import { DataTypes } from "../../common/constants";
+import { BufferService } from "../../services/buffer.service";
 
 @Component({
-  selector: 'app-project-tree-declaration-node',
-  templateUrl: './project-tree-declaration-node.component.html',
-  styleUrls: ['./project-tree-declaration-node.component.scss']
+  selector: "app-project-tree-declaration-node",
+  templateUrl: "./project-tree-declaration-node.component.html",
+  styleUrls: ["./project-tree-declaration-node.component.scss"],
 })
-export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, ITreeNode {
+export class ProjectTreeDeclarationNodeComponent
+  implements OnInit, OnChanges, ITreeNode {
   @Input() public tree: TreeData;
   @Input() public parentBlock: any;
   @Input() public declaration: any;
@@ -25,11 +36,12 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, I
 
   public focused = false;
 
-  constructor(private eventService: EventService,
+  constructor(
+    private eventService: EventService,
     private modelService: ModelService,
     public accessCpnService: AccessCpnService,
-    private bufferService: BufferService) {
-  }
+    private bufferService: BufferService
+  ) {}
 
   ngOnInit() {
     if (this.tree && this.declaration && this.parentBlock) {
@@ -38,13 +50,12 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, I
     }
 
     this.updateErrors();
-
   }
 
   ngOnChanges(changes: SimpleChanges) {
     for (let propName in changes) {
       // console.log(this.constructor.name, `ngOnChanges(), ${propName}: currentValue = ${cur}, previousValue = ${prev}`);
-      if (propName === 'errorData') {
+      if (propName === "errorData") {
         this.updateErrors();
       }
     }
@@ -55,14 +66,19 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, I
   }
 
   getText() {
-    let layout = this.modelService.cpnDeclarationToString(this.type, this.declaration);
+    let layout = this.modelService.cpnDeclarationToString(
+      this.type,
+      this.declaration
+    );
 
     let declarationType = parseUiDeclarartionType(layout);
 
-    if (this.focused
-      || declarationType === 'ml'
-      || this.accessCpnService.errorIds.includes(this.declaration._id)
-      || layout.startsWith('(*')) {
+    if (
+      this.focused ||
+      declarationType === "ml" ||
+      this.accessCpnService.errorIds.includes(this.declaration._id) ||
+      layout.startsWith("(*")
+    ) {
       return layout;
     }
 
@@ -72,11 +88,14 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, I
   }
 
   isFiltered() {
-    if (!this.tree.filter || this.tree.filter === '') {
+    if (!this.tree.filter || this.tree.filter === "") {
       return true;
     }
 
-    let layout = this.modelService.cpnDeclarationToString(this.type, this.declaration);
+    let layout = this.modelService.cpnDeclarationToString(
+      this.type,
+      this.declaration
+    );
 
     if (layout.toLowerCase().includes(this.tree.filter.toLowerCase())) {
       return true;
@@ -96,29 +115,41 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, I
     this.eventService.send(Message.TREE_SELECT_DECLARATION_NODE_NEW, {
       cpnType: type,
       cpnElement: cpnElement,
-      cpnParentElement: cpnParentElement
+      cpnParentElement: cpnParentElement,
     });
   }
 
   onNewDeclaration() {
-    console.log(this.constructor.name, 'onNewDeclaration(), declaration = ', this.declaration);
+    console.log(
+      this.constructor.name,
+      "onNewDeclaration(), declaration = ",
+      this.declaration
+    );
 
-    const newDeclaration = this.modelService.newDeclaration(this.parentBlock, this.type, this.tree.selected.cpnElement);
+    const newDeclaration = this.modelService.newDeclaration(
+      this.parentBlock,
+      this.type,
+      this.tree.selected.cpnElement
+    );
     if (newDeclaration) {
       this.focus(newDeclaration._id);
     }
   }
 
   onNewBlock() {
-    console.log(this.constructor.name, 'onNewBlock(), declaration = ', this.declaration);
+    console.log(
+      this.constructor.name,
+      "onNewBlock(), declaration = ",
+      this.declaration
+    );
 
     let parentElement = this.parentBlock;
     if (parentElement) {
-      const newBlock = { id: 'New block', _id: getNextId() };
-      this.modelService.addCpnElement(parentElement, newBlock, 'block');
+      const newBlock = { id: "New block", _id: getNextId() };
+      this.modelService.addCpnElement(parentElement, newBlock, "block");
 
       // set selected to new block
-      this.setSelected(parentElement, newBlock, 'block');
+      this.setSelected(parentElement, newBlock, "block");
 
       this.focus(newBlock._id);
     }
@@ -127,13 +158,16 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, I
   focus(id) {
     setTimeout(() => {
       if (this.tree && this.containerId) {
-
-        console.log(this.constructor.name, 'focus(), this.containerId = ', this.containerId);
+        console.log(
+          this.constructor.name,
+          "focus(), this.containerId = ",
+          this.containerId
+        );
 
         const container = document.getElementById(this.containerId);
 
         if (container) {
-          const inputElem: any = container.querySelector('#' + id);
+          const inputElem: any = container.querySelector("#" + id);
           if (inputElem) {
             inputElem.focus();
           }
@@ -141,7 +175,6 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, I
       }
     }, 100);
   }
-
 
   // ITreeNode implements
 
@@ -153,24 +186,27 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, I
     this.setSelected(parentBlock, declaration, type);
   }
 
-
   onClick() {
     this.onSelect();
   }
 
   onExpand() {
-    throw new Error('Method not implemented.');
+    throw new Error("Method not implemented.");
   }
 
   getMoveToSubEntries() {
     const subEntries = [];
     const allBlocks = this.modelService.getAllBlocks();
-    allBlocks.forEach(block => {
-      subEntries.push({ title: block.id, action: () => {
-        // alert('Move to block ' + b.id)
-        this.bufferService.cutObject(this.declaration, this.type);
-        this.bufferService.pasteObject(block);
-      }, iconClass: 'fas fa-cube' });
+    allBlocks.forEach((block) => {
+      subEntries.push({
+        title: block.id,
+        action: () => {
+          // alert('Move to block ' + b.id)
+          this.bufferService.cutObject(this.declaration, this.type);
+          this.bufferService.pasteObject(block);
+        },
+        iconClass: "fas fa-cube",
+      });
     });
     return subEntries;
   }
@@ -181,23 +217,53 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, I
 
       const entries = [];
 
-      entries.push({ title: 'New declaration', action: () => this.onNewDeclaration(), iconClass: 'fas fa-code' });
-      if (this.tree && this.tree.treeType === 'tree') {
-        entries.push({ title: 'New block', action: () => this.onNewBlock(), iconClass: 'fas fa-cube' });
+      entries.push({
+        title: "New declaration",
+        action: () => this.onNewDeclaration(),
+        iconClass: "fas fa-code",
+      });
+      if (this.tree && this.tree.treeType === "tree") {
+        entries.push({
+          title: "New block",
+          action: () => this.onNewBlock(),
+          iconClass: "fas fa-cube",
+        });
       }
-      entries.push({ title: 'separator' });
-      entries.push({ title: 'Cut', action: () => this.bufferService.cutObject(this.declaration, this.type), iconClass: 'fas fa-cut' });
-      entries.push({ title: 'Copy', action: () => this.bufferService.copyObject(this.declaration, this.type), iconClass: 'fas fa-copy' });
-      if (!this.bufferService.isEmpty() && !this.bufferService.isEqualTo(DataTypes.monitor)) {
-        entries.push({ title: 'Paste', action: () => this.bufferService.pasteObject(this.parentBlock), iconClass: 'fas fa-paste' });
+      entries.push({ title: "separator" });
+      entries.push({
+        title: "Cut",
+        action: () => this.bufferService.cutObject(this.declaration, this.type),
+        iconClass: "fas fa-cut",
+      });
+      entries.push({
+        title: "Copy",
+        action: () =>
+          this.bufferService.copyObject(this.declaration, this.type),
+        iconClass: "fas fa-copy",
+      });
+      if (
+        !this.bufferService.isEmpty() &&
+        !this.bufferService.isEqualTo(DataTypes.monitor)
+      ) {
+        entries.push({
+          title: "Paste",
+          action: () => this.bufferService.pasteObject(this.parentBlock),
+          iconClass: "fas fa-paste",
+        });
       }
-      entries.push({ title: 'separator' });
+      entries.push({ title: "separator" });
       // entries.push({title: 'Move to', action: () => this.bufferService.moveToObject(this.declaration, this.type), iconClass: 'fas fa-angle-double-right'});
       entries.push({
-        title: 'Move to', subEntries: this.getMoveToSubEntries(), iconClass: 'fas fa-angle-double-right'
+        title: "Move to",
+        subEntries: this.getMoveToSubEntries(),
+        iconClass: "fas fa-angle-double-right",
       });
-      entries.push({ title: 'separator' });
-      entries.push({ title: 'Delete', action: () => this.onDelete(), iconClass: 'fas fa-minus' });
+      entries.push({ title: "separator" });
+      entries.push({
+        title: "Delete",
+        action: () => this.onDelete(),
+        iconClass: "fas fa-minus",
+      });
 
       this.tree.contextMenu.setEntries(entries);
       this.tree.contextMenu.show({ x: event.clientX, y: event.clientY });
@@ -205,23 +271,23 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, I
   }
 
   onKeydown(event: any = undefined) {
-    console.log(this.constructor.name, 'onKeydown(), event = ', event);
+    console.log(this.constructor.name, "onKeydown(), event = ", event);
 
     if (event.shiftKey) {
       switch (event.code) {
-        case 'Insert':
+        case "Insert":
           event.preventDefault();
           this.onNewDeclaration();
           break;
-        case 'Delete':
+        case "Delete":
           event.preventDefault();
           this.onDelete();
           break;
-        case 'ArrowUp':
+        case "ArrowUp":
           event.preventDefault();
           this.onUp();
           break;
-        case 'ArrowDown':
+        case "ArrowDown":
           event.preventDefault();
           this.onDown();
           break;
@@ -230,8 +296,13 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, I
   }
 
   onUpdate(layout) {
-    if (this.type !== 'monitor') {
-      this.modelService.updateDeclaration(this.declaration, this.type, this.parentBlock, layout);
+    if (this.type !== "monitor") {
+      this.modelService.updateDeclaration(
+        this.declaration,
+        this.type,
+        this.parentBlock,
+        layout
+      );
     } else {
       this.declaration._name = layout;
     }
@@ -242,20 +313,30 @@ export class ProjectTreeDeclarationNodeComponent implements OnInit, OnChanges, I
   }
 
   onDelete(event: any = undefined) {
-    this.modelService.removeCpnElement(this.parentBlock, this.declaration, this.type);
+    this.modelService.removeCpnElement(
+      this.parentBlock,
+      this.declaration,
+      this.type
+    );
   }
 
   onUp(event: any = undefined) {
-    this.modelService.moveCpnElement(this.parentBlock, this.declaration, this.type, 'up');
+    this.modelService.moveCpnElement(
+      this.parentBlock,
+      this.declaration,
+      this.type,
+      "up"
+    );
     this.focus(this.declaration._id);
   }
 
   onDown(event: any = undefined) {
-    this.modelService.moveCpnElement(this.parentBlock, this.declaration, this.type, 'down');
+    this.modelService.moveCpnElement(
+      this.parentBlock,
+      this.declaration,
+      this.type,
+      "down"
+    );
     this.focus(this.declaration._id);
   }
-
-
-
-
 }

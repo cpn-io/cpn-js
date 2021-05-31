@@ -36,7 +36,7 @@
       <div [id]="page._id" class="node" [contentEditable]="!accessCpnService.isSimulation"
         [textContent]="page.pageattr._name"
         [ngClass]="{'selected': tree.selected.id === page._id, 'error': accessCpnService.errorPagesIds.includes(page._id), 'ready': accessCpnService.readyPagesIds.includes(page._id)}"
-        (input)="onUpdate($event)" (mousedown)="onSelect()" (contextmenu)="onSelect(); onContextMenu($event)"
+        (mousedown)="onSelect()" (contextmenu)="onSelect(); onContextMenu($event)"
         (focus)="onSelect(); focused = true;" (focusout)="focused = false; onUpdate($event)"
         (keydown)="onKeydown($event)">
       </div>

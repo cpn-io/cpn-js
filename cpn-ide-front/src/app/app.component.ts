@@ -32,6 +32,21 @@ export class AppComponent implements OnInit, OnDestroy {
     // p._z = 234;
     // console.log('TEST, p = ', p);
     // console.log('TEST, p = ', JSON.stringify(p));
+    // $(window).bind('keydown', function(evt) {
+    //   if((evt.ctrlKey || evt.metaKey) && String.fromCharCode(evt.which).toLowerCase() == 'z') {
+    //     evt.preventDefault();
+    //   }
+    // });
+    // window.addEventListener("keydown", (evt) => {
+    //   if (
+    //     (evt.ctrlKey || evt.metaKey) &&
+    //     String.fromCharCode(evt.which).toLowerCase() == "z"
+    //   ) {
+    //     console.log("CTRL-Z");
+    //     evt.preventDefault();
+    //   }
+    //   // do something
+    // });
   }
 
   ngOnInit(): void {}

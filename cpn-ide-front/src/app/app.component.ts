@@ -3,7 +3,6 @@ import { Component, HostListener, OnDestroy, OnInit } from "@angular/core";
 import { ElectronService } from "ngx-electron";
 import { SettingsService } from "./services/settings.service";
 import { AccessCpnService } from "./services/access-cpn.service";
-import { Hotkey, HotkeysService } from "angular2-hotkeys";
 
 // import { } from 'electron';
 // import Fs from 'fs';
@@ -20,8 +19,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private electronService: ElectronService,
     private settings: SettingsService,
     public accessCpnService: AccessCpnService,
-    public projectService: ProjectService,
-    private hotkeysService: HotkeysService
+    public projectService: ProjectService
   ) {
     // //check if platform is electron
     // let isElectron: boolean = window && window['process'] && window['process'].type;
@@ -34,26 +32,6 @@ export class AppComponent implements OnInit, OnDestroy {
     // p._z = 234;
     // console.log('TEST, p = ', p);
     // console.log('TEST, p = ', JSON.stringify(p));
-
-    // this.hotkeysService.add(new Hotkey('shift+z', (event: KeyboardEvent): boolean => {
-    //   console.log('Typed hotkey shift+z');
-    //   return false; // Prevent bubbling
-    // }));
-    // $(window).bind('keydown', function(evt) {
-    //   if((evt.ctrlKey || evt.metaKey) && String.fromCharCode(evt.which).toLowerCase() == 'z') {
-    //     evt.preventDefault();
-    //   }
-    // });
-    // window.addEventListener("keydown", (evt) => {
-    //   if (
-    //     (evt.ctrlKey || evt.metaKey) &&
-    //     String.fromCharCode(evt.which).toLowerCase() == "z"
-    //   ) {
-    //     console.log("CTRL-Z");
-    //     evt.preventDefault();
-    //   }
-    //   // do something
-    // });
   }
 
   ngOnInit(): void { }

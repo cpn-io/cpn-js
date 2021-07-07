@@ -1,0 +1,15 @@
+
+11:02:48.344 > scriptFilename =  run.bat
+11:02:48.354 > runScriptPath =  C:\INDEV\development\tue\cpn-js\cpn-ide-front\electron\backend\run.bat
+11:02:49.050 > start main window
+11:02:59.202 > APP PATH =  C:\INDEV\development\tue\cpn-js\cpn-ide-front
+11:02:59.202 > isDev =  true
+11:02:59.203 > directory =  C:\INDEV\development\tue\cpn-js\cpn-ide-front/app
+11:02:59.203 > process.cwd() =  C:\INDEV\development\tue\cpn-js\cpn-ide-front
+11:02:59.204 > __dirname =  C:\INDEV\development\tue\cpn-js\cpn-ide-front\electron\dist
+12:55:37.415 > mainWindow, close
+12:55:37.416 > killCpnServer()
+12:55:37.416 > killCpnServer(), findProcess(), shellRunner.pid =  7992
+12:55:37.417 > killCpnServer(), findProcess(), shellRunner.ppid =  undefined
+12:55:38.011 > killCpnServer(), findProcess('cpn-ide-back'), p =  9624 java.exe
+12:55:38.012 > mainWindow, close, killCpnServer() COMPLETE:  CPN Server process KILLED!

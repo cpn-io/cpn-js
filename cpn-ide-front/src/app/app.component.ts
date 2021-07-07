@@ -32,6 +32,17 @@ export class AppComponent implements OnInit, OnDestroy {
     // p._z = 234;
     // console.log('TEST, p = ', p);
     // console.log('TEST, p = ', JSON.stringify(p));
+
+    // document.addEventListener('keydown', (event: any) => {
+    //   console.log('keydown, event = ', event);
+    // });
+
+    // $(window).bind('keydown', function (evt) {
+    //   console.log('keydown, event = ', evt);
+    //   if ((evt.ctrlKey || evt.metaKey) && String.fromCharCode(evt.which).toLowerCase() == 'z') {
+    //     evt.preventDefault();
+    //   }
+    // });
   }
 
   ngOnInit(): void { }
@@ -47,4 +58,13 @@ export class AppComponent implements OnInit, OnDestroy {
 
     e.preventDefault();
   }
+
+  // @HostListener("document:keydown", ["$event"])
+  // onKeyDown(e) {
+  //   console.log("AppComponent.onKeyDown, e = ", e);
+
+  //   // stop bubble
+  //   e.stopPropagation();
+  // }
+
 }

@@ -1,15 +1,11 @@
-import {
-  assign,
-  bind,
-  pick
-} from 'min-dash';
+import { assign, bind, pick } from "min-dash";
 
 import {
   domify,
   query as domQuery,
   event as domEvent,
-  remove as domRemove
-} from 'min-dom';
+  remove as domRemove,
+} from "min-dom";
 import TextUtil from "diagram-js/lib/util/Text";
 
 var min = Math.min,
@@ -51,22 +47,18 @@ export default function TextBox(options) {
 
   this.parent = domify(
     '<div class="djs-direct-editing-parent">' +
-    '<div id="editLabelId" class="djs-direct-editing-content autocomplete" contenteditable="true"></div>' +
-    '</div>'
+      '<div id="editLabelId" class="djs-direct-editing-content autocomplete" contenteditable="true"></div>' +
+      "</div>"
   );
 
-  this.content = domQuery('[contenteditable]', this.parent);
+  this.content = domQuery("[contenteditable]", this.parent);
 
-  this.keyHandler = options.keyHandler || function () {
-  };
-  this.resizeHandler = options.resizeHandler || function () {
-  };
-
+  this.keyHandler = options.keyHandler || function () {};
+  this.resizeHandler = options.resizeHandler || function () {};
 
   this.autoResize = bind(this.autoResize, this);
   this.handlePaste = bind(this.handlePaste, this);
 }
-
 
 /**
  * Create a text box with the given position, size, style and text content
@@ -99,102 +91,122 @@ TextBox.prototype.create = function (bounds, style, value, options, shapeType) {
   style = this.style = style || {};
 
   var parentStyle = pick(style, [
-    'width',
-    'height',
-    'maxWidth',
-    'maxHeight',
-    'minWidth',
-    'minHeight',
-    'left',
-    'top',
-    'backgroundColor',
-    'position',
-    'overflow',
-    'border',
-    'wordWrap',
-    'textAlign',
-    'outline',
-    'transform'
+    "width",
+    "height",
+    "maxWidth",
+    "maxHeight",
+    "minWidth",
+    "minHeight",
+    "left",
+    "top",
+    "backgroundColor",
+    "position",
+    "overflow",
+    "border",
+    "wordWrap",
+    "textAlign",
+    "outline",
+    "transform",
   ]);
 
   var newHeight = bounds.height;
   var newTop = bounds.y;
 
-  if (shapeType === 'cpn:Place' || shapeType === 'cpn:Transition'){
+  if (shapeType === "cpn:Place" || shapeType === "cpn:Transition") {
     newHeight = 1;
-    newTop = bounds.y + bounds.height/2;
+    newTop = bounds.y + bounds.height / 2;
   }
 
-  assign(parent.style, {
-    width: bounds.width + 'px',
-    // height: bounds.height + 'px',
-    height: newHeight + 'px',
-    maxWidth: bounds.maxWidth + 'px',
-    maxHeight: bounds.maxHeight + 'px',
-    minWidth: bounds.minWidth + 'px',
-    minHeight: bounds.minHeight + 'px',
-    left: bounds.x + 'px',
-    // top: bounds.y + 'px',
-    top: newTop + 'px',
-    backgroundColor: '#00000',
-    position: 'absolute',
-    overflow: 'visible',
-    border: '0px solid #ccc',
-    boxSizing: 'border-box',
-    wordWrap: 'normal',
-    textAlign: 'left',
-    outline: 'none'
-  }, parentStyle);
+  assign(
+    parent.style,
+    {
+      width: bounds.width + "px",
+      // height: bounds.height + 'px',
+      height: newHeight + "px",
+      maxWidth: bounds.maxWidth + "px",
+      maxHeight: bounds.maxHeight + "px",
+      minWidth: bounds.minWidth + "px",
+      minHeight: bounds.minHeight + "px",
+      left: bounds.x + "px",
+      // top: bounds.y + 'px',
+      top: newTop + "px",
+      backgroundColor: "#00000",
+      position: "absolute",
+      overflow: "visible",
+      border: "0px solid #ccc",
+      boxSizing: "border-box",
+      wordWrap: "normal",
+      textAlign: "left",
+      outline: "none",
+    },
+    parentStyle
+  );
 
   var contentStyle = pick(style, [
-    'fontFamily',
-    'fontSize',
-    'fontWeight',
-    'lineHeight',
-    'padding',
-    'paddingTop',
-    'paddingRight',
-    'paddingBottom',
-    'paddingLeft'
+    "fontFamily",
+    "fontSize",
+    "fontWeight",
+    "lineHeight",
+    "padding",
+    "paddingTop",
+    "paddingRight",
+    "paddingBottom",
+    "paddingLeft",
   ]);
 
-  assign(content.style, {
-    boxSizing: 'border-box',
-    width: '100%',
-    outline: 'none',
-    wordWrap: 'break-word',
-  }, contentStyle);
+  assign(
+    content.style,
+    {
+      boxSizing: "border-box",
+      width: "100%",
+      outline: "none",
+      wordWrap: "break-word",
+    },
+    contentStyle
+  );
 
   if (options.backgroundColor) {
-    assign(content.style, {
-      backgroundColor: options.backgroundColor,
-    }, contentStyle);
+    assign(
+      content.style,
+      {
+        backgroundColor: options.backgroundColor,
+      },
+      contentStyle
+    );
   }
 
   if (options.centerVertically) {
-    assign(content.style, {
-      position: 'absolute',
-      top: '50%',
-      transform: 'translate(0, -50%)'
-    }, contentStyle);
+    assign(
+      content.style,
+      {
+        position: "absolute",
+        top: "50%",
+        transform: "translate(0, -50%)",
+      },
+      contentStyle
+    );
   }
 
   if (options.centerHorizontally) {
-    assign(content.style, {
-      textAlign: 'center'
-    }, contentStyle);
+    assign(
+      content.style,
+      {
+        textAlign: "center",
+      },
+      contentStyle
+    );
   }
 
   content.innerText = value;
 
-  domEvent.bind(content, 'keydown', this.keyHandler);
+  domEvent.bind(content, "keydown", this.keyHandler);
   // domEvent.bind(content, 'mousedown', stopPropagation);
-  domEvent.bind(content, 'paste', self.handlePaste);
+  domEvent.bind(content, "paste", self.handlePaste);
 
   // console.log('TextBox.prototype.create(), options = ', options);
 
   if (options.autoResize) {
-    domEvent.bind(content, 'input', this.autoResize);
+    domEvent.bind(content, "input", this.autoResize);
   }
 
   if (options.resizable) {
@@ -204,10 +216,12 @@ TextBox.prototype.create = function (bounds, style, value, options, shapeType) {
   container.appendChild(parent);
 
   // set selection to end of text
-  this.setSelection(content.lastChild, content.lastChild && content.lastChild.length);
+  this.setSelection(
+    content.lastChild,
+    content.lastChild && content.lastChild.length
+  );
 
-
-  const domElem = domQuery('[contenteditable]', this.parent);
+  const domElem = domQuery("[contenteditable]", this.parent);
   domElem.shapeType = shapeType;
   autocomplete(domElem, container.parentElement.colorsList || [], this);
 
@@ -228,20 +242,17 @@ TextBox.prototype.handlePaste = function (e) {
   var text;
 
   if (e.clipboardData) {
-
     // Chrome, Firefox, Safari
-    text = e.clipboardData.getData('text/plain');
+    text = e.clipboardData.getData("text/plain");
   } else {
-
     // Internet Explorer
-    text = window.clipboardData.getData('Text');
+    text = window.clipboardData.getData("Text");
   }
 
   // insertHTML command not supported by Internet Explorer
-  var success = document.execCommand('insertHTML', false, text);
+  var success = document.execCommand("insertHTML", false, text);
 
   if (!success) {
-
     // Internet Explorer
     var range = this.getSelection(),
       startContainer = range.startContainer,
@@ -252,21 +263,22 @@ TextBox.prototype.handlePaste = function (e) {
 
     var childNodesArray = toArray(commonAncestorContainer.childNodes);
 
-    var container,
-      offset;
+    var container, offset;
 
     if (isTextNode(commonAncestorContainer)) {
       var containerTextContent = startContainer.textContent;
 
       startContainer.textContent =
-        containerTextContent.substring(0, startOffset)
-        + text
-        + containerTextContent.substring(endOffset);
+        containerTextContent.substring(0, startOffset) +
+        text +
+        containerTextContent.substring(endOffset);
 
       container = startContainer;
       offset = startOffset + text.length;
-
-    } else if (startContainer === this.content && endContainer === this.content) {
+    } else if (
+      startContainer === this.content &&
+      endContainer === this.content
+    ) {
       var textNode = document.createTextNode(text);
 
       this.content.insertBefore(textNode, childNodesArray[startOffset]);
@@ -278,13 +290,15 @@ TextBox.prototype.handlePaste = function (e) {
         endContainerChildIndex = childNodesArray.indexOf(endContainer);
 
       childNodesArray.forEach(function (childNode, index) {
-
         if (index === startContainerChildIndex) {
           childNode.textContent =
             startContainer.textContent.substring(0, startOffset) +
             text +
             endContainer.textContent.substring(endOffset);
-        } else if (index > startContainerChildIndex && index <= endContainerChildIndex) {
+        } else if (
+          index > startContainerChildIndex &&
+          index <= endContainerChildIndex
+        ) {
           domRemove(childNode);
         }
       });
@@ -294,7 +308,6 @@ TextBox.prototype.handlePaste = function (e) {
     }
 
     if (container && offset !== undefined) {
-
       // is necessary in Internet Explorer
       setTimeout(function () {
         self.setSelection(container, offset);
@@ -357,10 +370,10 @@ TextBox.prototype.autoResize = function () {
   // }
 
   var newBounds = this.resizeHandler({
-    newLabel: content.innerText
+    newLabel: content.innerText,
   });
-  parent.style.width = Math.ceil(newBounds.width) + 'px';
-  parent.style.height = Math.ceil(newBounds.height) + 'px';
+  parent.style.width = Math.ceil(newBounds.width) + "px";
+  parent.style.height = Math.ceil(newBounds.height) + "px";
 };
 
 /**
@@ -396,25 +409,31 @@ TextBox.prototype.resizable = function () {
       startWidth = bounds.width;
       startHeight = bounds.height;
 
-      domEvent.bind(document, 'mousemove', onMouseMove);
-      domEvent.bind(document, 'mouseup', onMouseUp);
+      domEvent.bind(document, "mousemove", onMouseMove);
+      domEvent.bind(document, "mouseup", onMouseUp);
     };
 
     var onMouseMove = function (e) {
       preventDefault(e);
       stopPropagation(e);
 
-      var newWidth = min(max(startWidth + e.clientX - startX, minWidth), maxWidth);
-      var newHeight = min(max(startHeight + e.clientY - startY, minHeight), maxHeight);
+      var newWidth = min(
+        max(startWidth + e.clientX - startX, minWidth),
+        maxWidth
+      );
+      var newHeight = min(
+        max(startHeight + e.clientY - startY, minHeight),
+        maxHeight
+      );
 
-      parent.style.width = newWidth + 'px';
-      parent.style.height = newHeight + 'px';
+      parent.style.width = newWidth + "px";
+      parent.style.height = newHeight + "px";
 
       self.resizeHandler({
         width: startWidth,
         height: startHeight,
         dx: e.clientX - startX,
-        dy: e.clientY - startY
+        dy: e.clientY - startY,
       });
     };
 
@@ -422,29 +441,30 @@ TextBox.prototype.resizable = function () {
       preventDefault(e);
       stopPropagation(e);
 
-      domEvent.unbind(document, 'mousemove', onMouseMove, false);
-      domEvent.unbind(document, 'mouseup', onMouseUp, false);
+      domEvent.unbind(document, "mousemove", onMouseMove, false);
+      domEvent.unbind(document, "mouseup", onMouseUp, false);
     };
 
-    domEvent.bind(resizeHandle, 'mousedown', onMouseDown);
+    domEvent.bind(resizeHandle, "mousedown", onMouseDown);
   }
 
   assign(resizeHandle.style, {
-    position: 'absolute',
-    bottom: '0px',
-    right: '0px',
-    cursor: 'nwse-resize',
-    width: '0',
-    height: '0',
-    borderTop: (parseInt(this.style.fontSize) / 4 || 3) + 'px solid transparent',
-    borderRight: (parseInt(this.style.fontSize) / 4 || 3) + 'px solid #ccc',
-    borderBottom: (parseInt(this.style.fontSize) / 4 || 3) + 'px solid #ccc',
-    borderLeft: (parseInt(this.style.fontSize) / 4 || 3) + 'px solid transparent'
+    position: "absolute",
+    bottom: "0px",
+    right: "0px",
+    cursor: "nwse-resize",
+    width: "0",
+    height: "0",
+    borderTop:
+      (parseInt(this.style.fontSize) / 4 || 3) + "px solid transparent",
+    borderRight: (parseInt(this.style.fontSize) / 4 || 3) + "px solid #ccc",
+    borderBottom: (parseInt(this.style.fontSize) / 4 || 3) + "px solid #ccc",
+    borderLeft:
+      (parseInt(this.style.fontSize) / 4 || 3) + "px solid transparent",
   });
 
   parent.appendChild(resizeHandle);
 };
-
 
 /**
  * Clear content and style of the textbox, unbind listeners and
@@ -456,19 +476,19 @@ TextBox.prototype.destroy = function () {
     resizeHandle = this.resizeHandle;
 
   // clear content
-  content.innerText = '';
+  content.innerText = "";
 
   // clear styles
-  parent.removeAttribute('style');
-  content.removeAttribute('style');
+  parent.removeAttribute("style");
+  content.removeAttribute("style");
 
-  domEvent.unbind(content, 'keydown', this.keyHandler);
-  domEvent.unbind(content, 'mousedown', stopPropagation);
-  domEvent.unbind(content, 'input', this.autoResize);
-  domEvent.unbind(content, 'paste', this.handlePaste);
+  domEvent.unbind(content, "keydown", this.keyHandler);
+  domEvent.unbind(content, "mousedown", stopPropagation);
+  domEvent.unbind(content, "input", this.autoResize);
+  domEvent.unbind(content, "paste", this.handlePaste);
 
   if (resizeHandle) {
-    resizeHandle.removeAttribute('style');
+    resizeHandle.removeAttribute("style");
 
     domRemove(resizeHandle);
   }
@@ -476,11 +496,9 @@ TextBox.prototype.destroy = function () {
   domRemove(parent);
 };
 
-
 TextBox.prototype.getValue = function () {
   return this.content.innerText;
 };
-
 
 TextBox.prototype.getSelection = function () {
   var selection = window.getSelection(),
@@ -489,12 +507,11 @@ TextBox.prototype.getSelection = function () {
   return range;
 };
 
-
 TextBox.prototype.setSelection = function (container, offset) {
   var range = document.createRange();
 
   // if (container === null) {
-    range.selectNodeContents(this.content);
+  range.selectNodeContents(this.content);
   // } else {
   //   range.setStart(container, offset);
   //   range.setEnd(container, offset);
@@ -506,18 +523,20 @@ TextBox.prototype.setSelection = function (container, offset) {
   selection.addRange(range);
 };
 
-
-
-
-
 function autocomplete(inp, arr, self) {
   // if (inp.shapeType === 'cpn:Place' || inp.shapeType === 'cpn:Transition') return;
   var currentFocus;
-   inp.addEventListener("input", function(e) {
-    if (this.shapeType === 'cpn:Place' || this.shapeType === 'cpn:Transition') return;
-    var a, b, i, val = e.target.innerText;
+  inp.addEventListener("input", function (e) {
+    if (this.shapeType === "cpn:Place" || this.shapeType === "cpn:Transition")
+      return;
+    var a,
+      b,
+      i,
+      val = e.target.innerText;
     closeAllLists();
-    if (!val) { return false;}
+    if (!val) {
+      return false;
+    }
     currentFocus = -1;
 
     a = document.createElement("DIV");
@@ -532,7 +551,7 @@ function autocomplete(inp, arr, self) {
         b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
         b.innerHTML += arr[i].substr(val.length);
         b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
-        b.addEventListener("click", function(e) {
+        b.addEventListener("click", function (e) {
           inp.textContent = this.getElementsByTagName("input")[0].value;
           self.autoResize();
           closeAllLists();
@@ -542,7 +561,7 @@ function autocomplete(inp, arr, self) {
     }
   });
   /*execute a function presses a key on the keyboard:*/
-  inp.addEventListener("keydown", function(e) {
+  inp.addEventListener("keydown", function (e) {
     var x = document.getElementById(this.id + "autocomplete-list");
     if (x) x = x.getElementsByTagName("div");
     if (e.keyCode == 40) {
@@ -556,7 +575,7 @@ function autocomplete(inp, arr, self) {
       if (currentFocus > -1) {
         if (x) x[currentFocus].click();
       }
-    } else if (e.keyCode == 9){
+    } else if (e.keyCode == 9) {
       closeAllLists();
     }
   });
@@ -564,7 +583,7 @@ function autocomplete(inp, arr, self) {
     if (!x) return false;
     removeActive(x);
     if (currentFocus >= x.length) currentFocus = 0;
-    if (currentFocus < 0) currentFocus = (x.length - 1);
+    if (currentFocus < 0) currentFocus = x.length - 1;
     x[currentFocus].classList.add("autocomplete-active");
   }
   function removeActive(x) {
@@ -585,5 +604,3 @@ function autocomplete(inp, arr, self) {
     closeAllLists(e.target);
   });
 }
-
-

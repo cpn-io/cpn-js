@@ -97,7 +97,7 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
     private accessCpnService: AccessCpnService,
     private settings: SettingsService,
     private bufferService: BufferService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.reset();

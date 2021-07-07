@@ -29,9 +29,9 @@ export class ProjectTreePageNodeComponent implements OnInit, ITreeNode {
     public modelService: ModelService,
     public accessCpnService: AccessCpnService,
     private settings: SettingsService
-  ) {}
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   isFiltered() {
     if (!this.tree.filter || this.tree.filter === "") {
@@ -129,6 +129,16 @@ export class ProjectTreePageNodeComponent implements OnInit, ITreeNode {
   onKeydown(event: any) {
     console.log(this.constructor.name, "onKeydown(), event = ", event);
 
+    // stop bubble
+    event.stopPropagation();
+
+    // document.execCommand('undo');
+    // document.execCommand('redo');
+
+    // if (event.ctrlKey || event.metaKey) { // .ctrlKey tells that ctrl key was pressed.
+    //   return false;
+    // }
+
     if (event.shiftKey) {
       switch (event.code) {
         case "Insert":
@@ -151,6 +161,10 @@ export class ProjectTreePageNodeComponent implements OnInit, ITreeNode {
     }
   }
   onUpdate(event: any) {
+    // console.log('onUpdate(), event.target = ', event.target);
+    // var text = event.originalEvent.clipboardData.getData("text/plain");
+    // console.log('onUpdate(), text = ', text);
+
     this.page.pageattr._name = event.target.textContent;
     const transitionsArray = this.modelService.getTransListBySubpageId(
       this.page._id
@@ -162,6 +176,7 @@ export class ProjectTreePageNodeComponent implements OnInit, ITreeNode {
         cpnElement: elem,
       });
     });
+
   }
   onNew(event: any = undefined) {
     const defValue = this.settings.appSettings["page"];

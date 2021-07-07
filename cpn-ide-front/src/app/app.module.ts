@@ -70,6 +70,8 @@ import { DialogLogComponent } from "./common/dialog-log/dialog-log.component";
 import { BufferService } from "./services/buffer.service";
 import { DragDropModule } from "@angular/cdk/drag-drop";
 
+import { HotkeyModule } from 'angular2-hotkeys';
+
 require("typeface-droid-sans-mono");
 
 // -----------------------------------------------------------------------------
@@ -140,6 +142,9 @@ require("typeface-droid-sans-mono");
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
+
+    // HotKeys
+    HotkeyModule.forRoot(),
   ],
   entryComponents: [DialogComponent, DialogLogComponent],
   providers: [
@@ -155,5 +160,5 @@ require("typeface-droid-sans-mono");
   bootstrap: [AppComponent],
 })
 export class AppModule {
-  constructor() {}
+  constructor() { }
 }

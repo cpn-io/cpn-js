@@ -101,6 +101,7 @@
     "angular-fontawesome": "^1.0.0",
     "angular-split": "^3.0.3",
     "angular-tree-component": "^8.5.6",
+    "angular2-hotkeys": "^2.2.0",
     "circular-json": "^0.5.9",
     "core-js": "^2.6.11",
     "dateformat": "^3.0.3",

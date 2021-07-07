@@ -38,7 +38,7 @@ export class MainToolbarComponent implements OnInit {
     private electronService: ElectronService,
     private ipcService: IpcService,
     public dialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.accessCpnService.setIsSimulation(false);
@@ -89,8 +89,9 @@ export class MainToolbarComponent implements OnInit {
     });
 
     const self = this;
+
     // $(document).on('keypress', function (evt) {
-    //   if ((evt.ctrlKey || evt.metaKey) ) {
+    //   if ((evt.ctrlKey || evt.metaKey)) {
     //     if (evt.key.charCodeAt(0) === 26) {
     //       // evt.preventDefault();
     //       console.log('ctr z');
@@ -103,6 +104,7 @@ export class MainToolbarComponent implements OnInit {
     //   }
     //   return true;
     // });
+
   }
 
   onDoStep() {

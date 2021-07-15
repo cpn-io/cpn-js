@@ -205,10 +205,10 @@ function createWindow() {
       ],
     },
     {
-      label: "Edit (Ctrl+Z)",
+      label: "Edit",
       submenu: [
         {
-          label: "Undo",
+          label: "Undo (Ctrl+Z)",
           click() {
             undo();
           },

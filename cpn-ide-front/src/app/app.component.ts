@@ -92,19 +92,19 @@ export class AppComponent implements OnInit, OnDestroy {
     if ((event.ctrlKey || event.metaKey)) {
 
       if (String.fromCharCode(event.which).toLowerCase() === 'z') {
-        this.eventService.send(Message.DIAGRAM_EDITING_COMPLETE);
-
+        // document.execCommand('undo');
         event.stopPropagation();
         event.preventDefault();
         this.validationService.undo();
+        this.eventService.send(Message.DIAGRAM_EDITING_COMPLETE);
       }
 
       if (String.fromCharCode(event.which).toLowerCase() === 'y') {
-        this.eventService.send(Message.DIAGRAM_EDITING_COMPLETE);
-
+        // document.execCommand('redo');
         event.stopPropagation();
         event.preventDefault();
         this.validationService.redo();
+        this.eventService.send(Message.DIAGRAM_EDITING_COMPLETE);
       }
     }
     // }

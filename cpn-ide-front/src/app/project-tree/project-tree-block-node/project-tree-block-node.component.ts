@@ -30,7 +30,7 @@ export class ProjectTreeBlockNodeComponent implements OnInit, ITreeNode {
     private modelService: ModelService,
     public accessCpnService: AccessCpnService,
     private bufferService: BufferService
-  ) {}
+  ) { }
 
   ngOnInit() {
     if (this.tree && this.block && this.parentBlock) {
@@ -47,11 +47,11 @@ export class ProjectTreeBlockNodeComponent implements OnInit, ITreeNode {
     this.tree.selected.type = type;
     this.tree.selected.cpnElement = cpnElement;
 
-    this.eventService.send(Message.TREE_SELECT_DECLARATION_NODE_NEW, {
-      cpnType: type,
-      cpnElement: cpnElement,
-      cpnParentElement: cpnParentElement,
-    });
+    // this.eventService.send(Message.TREE_SELECT_DECLARATION_NODE_NEW, {
+    //   cpnType: type,
+    //   cpnElement: cpnElement,
+    //   cpnParentElement: cpnParentElement,
+    // });
   }
 
   onNewDeclaration() {

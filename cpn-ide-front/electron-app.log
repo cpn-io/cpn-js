@@ -11,3 +11,11 @@
 11:11:33.478 › directory =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/app
 11:11:33.478 › process.cwd() =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front
 11:11:33.479 › __dirname =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/electron/dist
+11:14:44.511 › mainWindow, close
+11:14:44.513 › killCpnServer()
+11:14:44.514 › killCpnServer(), findProcess(), shellRunner.pid =  126144
+11:14:44.516 › killCpnServer(), findProcess(), shellRunner.ppid =  undefined
+11:14:44.570 › killCpnServer(), findProcess('cpnmld.x86'), p =  126282 run.x86-linux
+11:14:44.572 › killCpnServer(), findProcess('cpnmld.x86'), p =  126285 run.x86-linux
+11:14:44.579 › killCpnServer(), findProcess('cpn-ide-back'), p =  126199 java
+11:14:44.581 › mainWindow, close, killCpnServer() COMPLETE:  CPN Server process KILLED!

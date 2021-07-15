@@ -1,21 +1,15 @@
-11:11:21.159 › scriptFilename =  run.sh
-11:11:21.166 › runScriptPath =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/electron/backend/run.sh
-11:11:21.215 › no server
-11:11:21.216 › wait 29
-11:11:22.389 › no server
-11:11:22.390 › wait 29
-11:11:22.507 › cpn-ide-back SERVER Process has been killed!
-11:11:23.441 › start main window
-11:11:33.476 › APP PATH =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front
-11:11:33.477 › isDev =  true
-11:11:33.478 › directory =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/app
-11:11:33.478 › process.cwd() =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front
-11:11:33.479 › __dirname =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/electron/dist
-11:14:44.511 › mainWindow, close
-11:14:44.513 › killCpnServer()
-11:14:44.514 › killCpnServer(), findProcess(), shellRunner.pid =  126144
-11:14:44.516 › killCpnServer(), findProcess(), shellRunner.ppid =  undefined
-11:14:44.570 › killCpnServer(), findProcess('cpnmld.x86'), p =  126282 run.x86-linux
-11:14:44.572 › killCpnServer(), findProcess('cpnmld.x86'), p =  126285 run.x86-linux
-11:14:44.579 › killCpnServer(), findProcess('cpn-ide-back'), p =  126199 java
-11:14:44.581 › mainWindow, close, killCpnServer() COMPLETE:  CPN Server process KILLED!
+12:30:06.122 › scriptFilename =  run.sh
+12:30:06.129 › runScriptPath =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/electron/backend/run.sh
+12:30:06.235 › no server
+12:30:06.235 › wait 29
+12:30:07.504 › no server
+12:30:07.505 › wait 29
+12:30:08.577 › no server
+12:30:08.577 › wait 29
+12:30:08.931 › cpn-ide-back SERVER Process has been killed!
+12:30:09.651 › start main window
+12:30:19.680 › APP PATH =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front
+12:30:19.682 › isDev =  true
+12:30:19.685 › directory =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/app
+12:30:19.687 › process.cwd() =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front
+12:30:19.688 › __dirname =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/electron/dist

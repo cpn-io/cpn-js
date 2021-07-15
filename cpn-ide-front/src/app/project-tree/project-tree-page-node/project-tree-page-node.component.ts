@@ -130,7 +130,7 @@ export class ProjectTreePageNodeComponent implements OnInit, ITreeNode {
     console.log(this.constructor.name, "onKeydown(), event = ", event);
 
     // stop bubble
-    event.stopPropagation();
+    // event.stopPropagation();
 
     // document.execCommand('undo');
     // document.execCommand('redo');

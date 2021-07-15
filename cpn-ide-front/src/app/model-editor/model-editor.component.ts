@@ -58,7 +58,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     public simulationService: SimulationService,
     public editorPanelService: EditorPanelService,
     public validationService: ValidationService
-  ) {}
+  ) { }
 
   @ViewChild("container") containerElementRef: ElementRef;
   @ViewChild("popup") popupElementRef: ElementRef;
@@ -81,6 +81,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   selectionProvider;
   cpnUpdater;
   lassoTool;
+  directEditing;
 
   // subscription: Subscription;
   placeShapes = [];
@@ -170,6 +171,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.selectionProvider = this.diagram.get("selectionProvider");
     this.cpnUpdater = this.diagram.get("cpnUpdater");
     this.lassoTool = this.diagram.get("lassoTool");
+    this.directEditing = this.diagram.get("directEditing");
 
     const eventBus = this.eventBus;
 
@@ -311,6 +313,11 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.eventService.on(Message.MONITOR_SET_AVAILABLE_NODES, (event) =>
       this.updateAlailableStatus(event.availableNodeIds)
     );
+
+    this.eventService.on(Message.DIAGRAM_EDITING_COMPLETE, (event) => {
+      console.log('DIAGRAM_EDITING_COMPLETE !!!');
+      this.directEditing.complete();
+    });
 
     // ----------------------------------------------------------------------------------
     // Diagram events
@@ -966,8 +973,8 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.updateAvailableMonitorList(this.selectedElements);
   }
 
-  onCopy() {}
-  onPaste() {}
+  onCopy() { }
+  onPaste() { }
 
   onCreateSubst() {
     this.cpnFactory.extractSubpage();

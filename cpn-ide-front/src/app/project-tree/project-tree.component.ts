@@ -224,7 +224,10 @@ export class ProjectTreeComponent implements OnInit, DoCheck {
         inputElem
       );
       if (inputElem) {
-        inputElem.focus();
+        // inputElem.focus();
+        this.eventService.send(Message.PAGE_TAB_OPEN, {
+          pageObject: this.tree.selected.cpnElement,
+        });
       }
     }
   }

@@ -1,33 +1,36 @@
-import {
-  assign
-} from 'min-dash';
+import { assign } from "min-dash";
+
+import { getLabel } from "./LabelEditingUtil";
 
 import {
-  getLabel
-} from './LabelEditingUtil';
-
-import {
-  CPN_PLACE, CPN_TRANSITION,
+  CPN_PLACE,
+  CPN_TRANSITION,
   CPN_CONNECTION,
   CPN_TEXT_ANNOTATION,
   CPN_LABEL,
   CPN_TOKEN_LABEL,
   CPN_MARKING_LABEL,
-  is, isCpn, isAny, isCpnPortOrSubst
-} from '../../util/ModelUtil';
+  is,
+  isCpn,
+  isAny,
+  isCpnPortOrSubst,
+} from "../../util/ModelUtil";
 
 import {
   getExternalLabelMid,
   isLabelExternal,
   hasExternalLabel,
-  isLabel
-} from '../../util/LabelUtil';
-
+  isLabel,
+} from "../../util/LabelUtil";
 
 export default function LabelEditingProvider(
-  eventBus, canvas, directEditing,
-  modeling, resizeHandles, textRenderer) {
-
+  eventBus,
+  canvas,
+  directEditing,
+  modeling,
+  resizeHandles,
+  textRenderer
+) {
   this._canvas = canvas;
   this._modeling = modeling;
   this._textRenderer = textRenderer;
@@ -39,13 +42,13 @@ export default function LabelEditingProvider(
   const self = this;
 
   // listen to edit event
-  eventBus.on('element.edit', function (event) {
+  eventBus.on("element.edit", function (event) {
     activateDirectEdit(event.element, true);
   });
 
   // listen to direct editing event
   // eventBus.on('element.dblclick', function (event) {
-  eventBus.on('element.click', function (event) {
+  eventBus.on("element.click", function (event) {
     // console.log('LabelEditingProvider, element.click, event = ', event);
 
     var element = event.element;
@@ -66,43 +69,43 @@ export default function LabelEditingProvider(
     }
   });
 
-  eventBus.on('element.tab', function (event, context) {
+  eventBus.on("element.tab", function (event, context) {
     if (directEditing.isActive()) {
       directEditing.complete();
-      console.log('tabFlag')
+      console.log("tabFlag");
     }
     activateDirectEdit(context.element, true);
   });
 
-
   // complete on followup canvas operation
-  eventBus.on([
-    'element.mousedown',
-    'drag.init',
-    'canvas.viewbox.changing',
-    'autoPlace',
-    'popupMenu.open'
-  ], function (event) {
-
-    if (directEditing.isActive()) {
-      directEditing.complete();
+  eventBus.on(
+    [
+      "element.mousedown",
+      "drag.init",
+      "canvas.viewbox.changing",
+      "autoPlace",
+      "popupMenu.open",
+    ],
+    function (event) {
+      if (directEditing.isActive()) {
+        directEditing.complete();
+      }
     }
-  });
+  );
 
   // cancel on command stack changes
-  eventBus.on(['commandStack.changed'], function (e) {
+  eventBus.on(["commandStack.changed"], function (e) {
     if (directEditing.isActive()) {
       // directEditing.cancel();
     }
   });
 
-
-  eventBus.on('directEditing.activate', function (event) {
+  eventBus.on("directEditing.activate", function (event) {
     resizeHandles.removeResizers();
   });
 
-  eventBus.on('create.end', 500, function (event) {
-    console.log('create.end, event = ', event);
+  eventBus.on("create.end", 500, function (event) {
+    console.log("create.end, event = ", event);
 
     var element = event.shape,
       canExecute = event.context.canExecute,
@@ -128,8 +131,8 @@ export default function LabelEditingProvider(
     activateDirectEdit(element);
   });
 
-  eventBus.on('shape.editing.activate', 500, function (event) {
-    console.log('shape.editing.activate, event = ', event);
+  eventBus.on("shape.editing.activate", 500, function (event) {
+    console.log("shape.editing.activate, event = ", event);
 
     var element = event.shape;
 
@@ -138,17 +141,23 @@ export default function LabelEditingProvider(
     }
   });
 
-  eventBus.on('autoPlace.end', 500, function (event) {
+  eventBus.on("autoPlace.end", 500, function (event) {
     activateDirectEdit(event.shape);
   });
-
 
   function activateDirectEdit(element, force) {
     if (!self._modeling.isEditable()) {
       return;
     }
 
-    console.log('LabelEditingProvider, activateDirectEdit(), element = ', element);
+    if (element.id && element.id.toString().toLowerCase().includes("root")) {
+      return;
+    }
+
+    console.log(
+      "LabelEditingProvider, activateDirectEdit(), element = ",
+      element
+    );
 
     if (force || isCpn(element)) {
       directEditing.activate(element);
@@ -157,14 +166,13 @@ export default function LabelEditingProvider(
 }
 
 LabelEditingProvider.$inject = [
-  'eventBus',
-  'canvas',
-  'directEditing',
-  'modeling',
-  'resizeHandles',
-  'textRenderer'
+  "eventBus",
+  "canvas",
+  "directEditing",
+  "modeling",
+  "resizeHandles",
+  "textRenderer",
 ];
-
 
 /**
  * Activate direct editing for activities and text annotations.
@@ -174,24 +182,23 @@ LabelEditingProvider.$inject = [
  * @return {Object} an object with properties bounds (position and size), text and options
  */
 LabelEditingProvider.prototype.activate = function (element) {
-  console.log('LabelEditingProvider.activate(), element = ', element);
+  console.log("LabelEditingProvider.activate(), element = ", element);
 
   // disable editing for port and subst labels
-  if (isCpnPortOrSubst(element))
-    return;
+  if (isCpnPortOrSubst(element)) return;
 
   // text
   var text = getLabel(element);
 
   // console.log('LabelEditingProvider.activate(), text = \'' + text + '\'');
 
-  if ((!text || text.trim() === '')) {
-    text = element.defaultValue || '';
+  if (!text || text.trim() === "") {
+    text = element.defaultValue || "";
     // console.log('LabelEditingProvider.activate(), defualt text = ', text);
   }
 
   var context = {
-    text: text
+    text: text,
   };
 
   // bounds
@@ -205,7 +212,7 @@ LabelEditingProvider.prototype.activate = function (element) {
       centerVertically: false,
       centerHorizontally: false,
       autoResize: true,
-      backgroundColor: '#ffffee'
+      backgroundColor: "#ffffee",
     });
   } else if (isCpn(element)) {
     assign(options, {
@@ -217,7 +224,7 @@ LabelEditingProvider.prototype.activate = function (element) {
   // external labels
   if (isLabelExternal(element)) {
     assign(options, {
-      autoResize: true
+      autoResize: true,
     });
   }
 
@@ -225,17 +232,16 @@ LabelEditingProvider.prototype.activate = function (element) {
   if (is(element, CPN_TEXT_ANNOTATION)) {
     assign(options, {
       resizable: true,
-      autoResize: true
+      autoResize: true,
     });
   }
 
   assign(context, {
-    options: options
+    options: options,
   });
 
   return context;
 };
-
 
 /**
  * Get the editing bounding box based on the element's size and position
@@ -248,7 +254,10 @@ LabelEditingProvider.prototype.activate = function (element) {
 LabelEditingProvider.prototype.getEditingBBox = function (element) {
   var canvas = this._canvas;
 
-  console.log('LabelEditingProvider.prototype.getEditingBBox, element = ', element);
+  console.log(
+    "LabelEditingProvider.prototype.getEditingBBox, element = ",
+    element
+  );
 
   // var target = element.label || element;
   var target = element;
@@ -256,7 +265,7 @@ LabelEditingProvider.prototype.getEditingBBox = function (element) {
 
   var mid = {
     x: bbox.x + bbox.width / 2,
-    y: bbox.y + bbox.height / 2
+    y: bbox.y + bbox.height / 2,
   };
 
   // default position
@@ -275,16 +284,16 @@ LabelEditingProvider.prototype.getEditingBBox = function (element) {
 
   var style = {
     fontFamily: this._textRenderer.getDefaultStyle().fontFamily,
-    fontWeight: this._textRenderer.getDefaultStyle().fontWeight
+    fontWeight: this._textRenderer.getDefaultStyle().fontWeight,
   };
 
   assign(bounds, {
     width: bbox.width,
-    height: bbox.height
+    height: bbox.height,
   });
 
   assign(style, {
-    fontSize: defaultFontSize + 'px',
+    fontSize: defaultFontSize + "px",
     lineHeight: defaultLineHeight,
     // paddingTop: (7 * zoom) + 'px',
     // paddingBottom: (7 * zoom) + 'px',
@@ -295,27 +304,35 @@ LabelEditingProvider.prototype.getEditingBBox = function (element) {
   return { bounds: bounds, style: style };
 };
 
+LabelEditingProvider.prototype.update = function (
+  element,
+  newLabel,
+  activeContextText,
+  bounds
+) {
+  console.log("LabelEditingProvider.prototype.update(), element = ", element);
+  console.log("LabelEditingProvider.prototype.update(), newLabel = ", newLabel);
+  console.log(
+    "LabelEditingProvider.prototype.update(), activeContextText = ",
+    activeContextText
+  );
 
-LabelEditingProvider.prototype.update = function (element, newLabel, activeContextText, bounds) {
-
-  console.log('LabelEditingProvider.prototype.update(), element = ', element);
-  console.log('LabelEditingProvider.prototype.update(), newLabel = ', newLabel);
-  console.log('LabelEditingProvider.prototype.update(), activeContextText = ', activeContextText);
-
-  if (newLabel.trim() === '' && element.defaultValue)
+  if (newLabel.trim() === "" && element.defaultValue)
     newLabel = element.defaultValue;
 
-  var newBounds,
-    bbox;
+  var newBounds, bbox;
 
   element.name = element.text = newLabel;
 
-  this._eventBus.fire('element.changed', { element: element });
+  this._eventBus.fire("element.changed", { element: element });
 
   if (is(element, CPN_LABEL) || is(element, CPN_MARKING_LABEL)) {
     newBounds = this._textRenderer.getExternalLabelBounds(element, newLabel);
 
-    console.log('LabelEditingProvider.prototype.update(), newBounds = ', newBounds);
+    console.log(
+      "LabelEditingProvider.prototype.update(), newBounds = ",
+      newBounds
+    );
 
     this._modeling.updateLabel(element, newLabel, newBounds);
     // this._modeling.resizeShape(element, newBounds, {width: 0, height: 0});
@@ -323,7 +340,6 @@ LabelEditingProvider.prototype.update = function (element, newLabel, activeConte
 };
 
 LabelEditingProvider.prototype.getTextBounds = function (element, newLabel) {
-
   var zoom = this._canvas.zoom();
 
   var bounds = this._textRenderer.getExternalLabelBounds(element, newLabel);
@@ -332,12 +348,12 @@ LabelEditingProvider.prototype.getTextBounds = function (element, newLabel) {
     x: Math.ceil(bounds.x * zoom),
     y: Math.ceil(bounds.y * zoom),
     width: Math.ceil(bounds.width * zoom),
-    height: Math.ceil(bounds.height * zoom)
+    height: Math.ceil(bounds.height * zoom),
   };
-}
+};
 
 LabelEditingProvider.prototype.gotoNext = function (element) {
-  console.log('LabelEditingProvider.prototype.gotoNext(), element = ', element);
+  console.log("LabelEditingProvider.prototype.gotoNext(), element = ", element);
 
   if (!element) {
     return;
@@ -351,16 +367,18 @@ LabelEditingProvider.prototype.gotoNext = function (element) {
     shapeElement = element.labelTarget;
   }
 
-  if (!shapeElement)
-    return;
+  if (!shapeElement) return;
 
   tabElementsList.push(shapeElement);
-  for (var l of shapeElement.labels.filter(e => !isCpnPortOrSubst(e))) {
+  for (var l of shapeElement.labels.filter((e) => !isCpnPortOrSubst(e))) {
     if (!is(l, CPN_TOKEN_LABEL) && !is(l, CPN_MARKING_LABEL))
       tabElementsList.push(l);
   }
 
-  console.log('LabelEditingProvider.prototype.gotoNext(), tabElementsList = ', tabElementsList);
+  console.log(
+    "LabelEditingProvider.prototype.gotoNext(), tabElementsList = ",
+    tabElementsList
+  );
 
   let nextElement;
 
@@ -373,15 +391,21 @@ LabelEditingProvider.prototype.gotoNext = function (element) {
         break;
       }
     }
-    nextElement = n < tabElementsList.length - 1 ? tabElementsList[n + 1] : tabElementsList[0];
+    nextElement =
+      n < tabElementsList.length - 1
+        ? tabElementsList[n + 1]
+        : tabElementsList[0];
   }
 
-  console.log('LabelEditingProvider.prototype.gotoNext(), nextElement = ', nextElement);
+  console.log(
+    "LabelEditingProvider.prototype.gotoNext(), nextElement = ",
+    nextElement
+  );
 
   if (nextElement) {
     this._directEditing.activate(nextElement);
   }
-}
+};
 
 // helpers //////////////////////
 

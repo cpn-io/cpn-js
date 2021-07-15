@@ -205,21 +205,21 @@ function createWindow() {
       ],
     },
     {
-      label: "Edit",
+      label: "Edit (Ctrl+Z)",
       submenu: [
         {
           label: "Undo",
           click() {
             undo();
           },
-          accelerator: "Ctrl+Z",
+          // accelerator: "Ctrl+Z",
         },
         {
-          label: "Redo",
+          label: "Redo (Ctrl+Y)",
           click() {
             redo();
           },
-          accelerator: "Ctrl+Y",
+          // accelerator: "Ctrl+Y",
         },
       ],
     },
@@ -285,13 +285,13 @@ function runCpnServer() {
 
   const jarPath = isDev
     ? path.join(
-        process.cwd(),
-        "./electron/backend/cpn-ide-back-1.24-SNAPSHOT.jar"
-      )
+      process.cwd(),
+      "./electron/backend/cpn-ide-back-1.24-SNAPSHOT.jar"
+    )
     : path.join(
-        process.cwd(),
-        "./resources/backend/cpn-ide-back-1.24-SNAPSHOT.jar"
-      );
+      process.cwd(),
+      "./resources/backend/cpn-ide-back-1.24-SNAPSHOT.jar"
+    );
 
   log.info("runScriptPath = ", runScriptPath);
 

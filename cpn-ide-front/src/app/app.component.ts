@@ -3,6 +3,9 @@ import { Component, HostListener, OnDestroy, OnInit } from "@angular/core";
 import { ElectronService } from "ngx-electron";
 import { SettingsService } from "./services/settings.service";
 import { AccessCpnService } from "./services/access-cpn.service";
+import { ValidationService } from "./services/validation.service";
+import { EventService } from "./services/event.service";
+import { Message } from "./common/message";
 
 // import { } from 'electron';
 // import Fs from 'fs';
@@ -19,7 +22,9 @@ export class AppComponent implements OnInit, OnDestroy {
     private electronService: ElectronService,
     private settings: SettingsService,
     public accessCpnService: AccessCpnService,
-    public projectService: ProjectService
+    public projectService: ProjectService,
+    public validationService: ValidationService,
+    private eventService: EventService,
   ) {
     // //check if platform is electron
     // let isElectron: boolean = window && window['process'] && window['process'].type;
@@ -33,8 +38,12 @@ export class AppComponent implements OnInit, OnDestroy {
     // console.log('TEST, p = ', p);
     // console.log('TEST, p = ', JSON.stringify(p));
 
-    // document.addEventListener('keydown', (event: any) => {
-    //   console.log('keydown, event = ', event);
+    // window.addEventListener('keydown', (event: any) => {
+    //   console.log('KEYDOWN !!!, event = ', event);
+    //   // if ((event.ctrlKey || event.metaKey) && String.fromCharCode(event.which).toLowerCase() == 'z') {
+    //   //   event.stopPropagation();
+    //   //   event.preventDefault();
+    //   // }
     // });
 
     // $(window).bind('keydown', function (evt) {
@@ -66,5 +75,39 @@ export class AppComponent implements OnInit, OnDestroy {
   //   // stop bubble
   //   e.stopPropagation();
   // }
+
+  @HostListener('window:keydown', ['$event'])
+  onKeyDown(event) {
+
+    const srcHtml = event.target.outerHTML || "";
+    const isEditable = event.target.isContentEditable;
+    const isFocused = (document.activeElement === event.target);
+
+    console.log('KEYDOWN !!!, event = ', event);
+    console.log('KEYDOWN !!!, isEditable = ', isEditable);
+    console.log('KEYDOWN !!!, isFocused = ', isFocused);
+    console.log('KEYDOWN !!!, srcHtml = ', srcHtml);
+
+    // if (!(isEditable && isFocused)) {
+    if ((event.ctrlKey || event.metaKey)) {
+
+      if (String.fromCharCode(event.which).toLowerCase() === 'z') {
+        this.eventService.send(Message.DIAGRAM_EDITING_COMPLETE);
+
+        event.stopPropagation();
+        event.preventDefault();
+        this.validationService.undo();
+      }
+
+      if (String.fromCharCode(event.which).toLowerCase() === 'y') {
+        this.eventService.send(Message.DIAGRAM_EDITING_COMPLETE);
+
+        event.stopPropagation();
+        event.preventDefault();
+        this.validationService.redo();
+      }
+    }
+    // }
+  }
 
 }

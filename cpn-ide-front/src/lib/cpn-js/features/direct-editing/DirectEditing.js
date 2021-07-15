@@ -1,10 +1,14 @@
-import {
-  bind,
-  find
-} from 'min-dash';
+import { bind, find } from "min-dash";
 
-import TextBox from './TextBox';
-import { is, CPN_PLACE, CPN_TRANSITION, CPN_LABEL, CPN_TOKEN_LABEL, CPN_MARKING_LABEL } from '../../util/ModelUtil';
+import TextBox from "./TextBox";
+import {
+  is,
+  CPN_PLACE,
+  CPN_TRANSITION,
+  CPN_LABEL,
+  CPN_TOKEN_LABEL,
+  CPN_MARKING_LABEL,
+} from "../../util/ModelUtil";
 
 /**
  * A direct editing component that allows users
@@ -13,21 +17,18 @@ import { is, CPN_PLACE, CPN_TRANSITION, CPN_LABEL, CPN_TOKEN_LABEL, CPN_MARKING_
  * @param {EventBus} eventBus the event bus
  */
 export default function DirectEditing(eventBus, canvas) {
-
   this._eventBus = eventBus;
 
   this._providers = [];
   this._textbox = new TextBox({
     container: canvas.getContainer(),
     keyHandler: bind(this._handleKey, this),
-    resizeHandler: bind(this._handleResize, this)
+    resizeHandler: bind(this._handleResize, this),
   });
-  this._eventBus.on('editing.cancel', ()=> this.cancel())
-
+  this._eventBus.on("editing.cancel", () => this.cancel());
 }
 
-DirectEditing.$inject = ['eventBus', 'canvas'];
-
+DirectEditing.$inject = ["eventBus", "canvas"];
 
 /**
  * Register a direct editing provider
@@ -42,7 +43,6 @@ DirectEditing.prototype.registerProvider = function (provider) {
   this._providers.push(provider);
 };
 
-
 /**
  * Returns true if direct editing is currently active
  *
@@ -52,7 +52,6 @@ DirectEditing.prototype.isActive = function () {
   return !!this._active;
 };
 
-
 /**
  * Cancel direct editing, if it is currently active
  */
@@ -61,7 +60,7 @@ DirectEditing.prototype.cancel = function () {
     return;
   }
 
-  this._fire('cancel');
+  this._fire("cancel");
   this.close();
 };
 
@@ -81,28 +80,28 @@ DirectEditing.prototype.gotoNext = function () {
 
   this.complete();
 
-  if (provider && element)
-    provider.gotoNext(element);
+  if (provider && element) provider.gotoNext(element);
 };
 
 DirectEditing.prototype._fire = function (event, context) {
   // console.log('DirectEditing.fire event -', event);
-  this._eventBus.fire('directEditing.' + event, context || { active: this._active });
+  this._eventBus.fire(
+    "directEditing." + event,
+    context || { active: this._active }
+  );
 };
 
 DirectEditing.prototype.close = function () {
   this._textbox.destroy();
 
-  this._fire('deactivate');
+  this._fire("deactivate");
 
   this._active = null;
 
   this.resizable = undefined;
 };
 
-
 DirectEditing.prototype.complete = function () {
-
   var active = this._active;
 
   if (!active) {
@@ -118,25 +117,22 @@ DirectEditing.prototype.complete = function () {
       x: bounds.top,
       y: bounds.left,
       width: bounds.width,
-      height: bounds.height
+      height: bounds.height,
     });
   }
 
-  this._fire('complete');
+  this._fire("complete");
 
   this.close();
 };
-
 
 DirectEditing.prototype.getValue = function () {
   return this._textbox.getValue();
 };
 
-
 DirectEditing.prototype._handleKey = function (e) {
-
   // stop bubble
-  e.stopPropagation();
+  // e.stopPropagation();
 
   var key = e.keyCode || e.charCode;
 
@@ -159,7 +155,6 @@ DirectEditing.prototype._handleKey = function (e) {
   // }*/
 };
 
-
 DirectEditing.prototype._handleResize = function (event) {
   // console.log('_handleResize(), event = ', event);
   // console.log('_handleResize(), event = ', event);
@@ -181,11 +176,10 @@ DirectEditing.prototype._handleResize = function (event) {
 
   // console.log('_handleResize(), newBounds = ', newBounds);
 
-  this._fire('resize', { newBounds: newBounds });
+  this._fire("resize", { newBounds: newBounds });
 
   return newBounds;
 };
-
 
 /**
  * Activate direct editing on the given element
@@ -212,7 +206,6 @@ DirectEditing.prototype.activate = function (element) {
 
   // check if activation took place
   if (context) {
-
     this.$textbox = this._textbox.create(
       context.bounds,
       context.style,
@@ -221,18 +214,17 @@ DirectEditing.prototype.activate = function (element) {
       element.type
     );
 
-
     this._active = {
       element: element,
       context: context,
-      provider: provider
+      provider: provider,
     };
 
     if (context.options && context.options.resizable) {
       this.resizable = true;
     }
 
-    this._fire('activate');
+    this._fire("activate");
   }
 
   return !!context;

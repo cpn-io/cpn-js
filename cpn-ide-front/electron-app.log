@@ -1,15 +1,13 @@
-
-11:02:48.344 > scriptFilename =  run.bat
-11:02:48.354 > runScriptPath =  C:\INDEV\development\tue\cpn-js\cpn-ide-front\electron\backend\run.bat
-11:02:49.050 > start main window
-11:02:59.202 > APP PATH =  C:\INDEV\development\tue\cpn-js\cpn-ide-front
-11:02:59.202 > isDev =  true
-11:02:59.203 > directory =  C:\INDEV\development\tue\cpn-js\cpn-ide-front/app
-11:02:59.203 > process.cwd() =  C:\INDEV\development\tue\cpn-js\cpn-ide-front
-11:02:59.204 > __dirname =  C:\INDEV\development\tue\cpn-js\cpn-ide-front\electron\dist
-12:55:37.415 > mainWindow, close
-12:55:37.416 > killCpnServer()
-12:55:37.416 > killCpnServer(), findProcess(), shellRunner.pid =  7992
-12:55:37.417 > killCpnServer(), findProcess(), shellRunner.ppid =  undefined
-12:55:38.011 > killCpnServer(), findProcess('cpn-ide-back'), p =  9624 java.exe
-12:55:38.012 > mainWindow, close, killCpnServer() COMPLETE:  CPN Server process KILLED!
+11:11:21.159 › scriptFilename =  run.sh
+11:11:21.166 › runScriptPath =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/electron/backend/run.sh
+11:11:21.215 › no server
+11:11:21.216 › wait 29
+11:11:22.389 › no server
+11:11:22.390 › wait 29
+11:11:22.507 › cpn-ide-back SERVER Process has been killed!
+11:11:23.441 › start main window
+11:11:33.476 › APP PATH =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front
+11:11:33.477 › isDev =  true
+11:11:33.478 › directory =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/app
+11:11:33.478 › process.cwd() =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front
+11:11:33.479 › __dirname =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/electron/dist

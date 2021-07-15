@@ -249,7 +249,7 @@ export class AccessCpnService {
    * Access/CPN API
    */
   initNet(cpnJson, complexVerify = false, restartSimulator = false) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       this.simulationReport = "";
 
       this.complexVerify = complexVerify;
@@ -600,7 +600,7 @@ export class AccessCpnService {
    * @param transId - transition id
    */
   doStep(transId) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       if (!this.simInitialized || !this.sessionId) {
         resolve();
         return;
@@ -640,7 +640,7 @@ export class AccessCpnService {
   }
 
   doStepWithBinding(transId, bindId) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       if (!this.simInitialized || !this.sessionId) {
         resolve();
         return;
@@ -712,7 +712,7 @@ export class AccessCpnService {
   doMultiStepFF(options) {
     this.simulationReport = "";
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       if (!this.simInitialized || !this.sessionId) {
         resolve();
         return;
@@ -773,7 +773,7 @@ export class AccessCpnService {
   doReplication(options) {
     this.simulationReport = "";
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       if (!this.simInitialized || !this.sessionId) {
         resolve();
         return;
@@ -812,10 +812,10 @@ export class AccessCpnService {
                 this.simulationReport = this.simulationReport.replace(
                   path.substr(2),
                   '<a id="hrefOntResult' +
-                    count +
-                    '" href="#">' +
-                    path.substr(2) +
-                    "</a>"
+                  count +
+                  '" href="#">' +
+                  path.substr(2) +
+                  "</a>"
                 );
                 count++;
               }
@@ -910,7 +910,7 @@ export class AccessCpnService {
    * @param transId - transition id
    */
   getBindings(transId) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       if (!this.simInitialized || !this.sessionId) {
         resolve();
         return;
@@ -1045,7 +1045,7 @@ export class AccessCpnService {
    * @param transId
    */
   getMonitorDefaults(options) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       if (!this.sessionId) {
         resolve();
         return;
@@ -1086,7 +1086,7 @@ export class AccessCpnService {
   runScriptOnServer(script) {
     this.simulationReport = "";
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       if (!this.simInitialized || !this.sessionId) {
         resolve();
         return;

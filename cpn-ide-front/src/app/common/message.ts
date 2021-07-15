@@ -64,6 +64,8 @@ export class Message {
   static MAIN_MENU_UNDO = "main.menu.undo";
   static MAIN_MENU_REDO = "main.menu.redo";
 
+  static DIAGRAM_EDITING_COMPLETE = "diagram.editing.complete";
+
   id: string;
   data: object;
 }

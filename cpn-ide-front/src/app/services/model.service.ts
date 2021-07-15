@@ -577,7 +577,7 @@ export class ModelService {
     }
   }
 
-  deleteMonitorInBlock(_block, _id) {}
+  deleteMonitorInBlock(_block, _id) { }
 
   /**
    * Getters for new cpnElement
@@ -1941,7 +1941,7 @@ export class ModelService {
             place.port &&
             (place.port._type === "I/O" ||
               place.port._type ===
-                (cpnElement._orientation === "TtoP" ? "Out" : "In"))
+              (cpnElement._orientation === "TtoP" ? "Out" : "In"))
           ) {
             ports.push(place);
           }

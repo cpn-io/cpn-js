@@ -125,14 +125,13 @@ Modeling.prototype.updateLabel = function (
   }
 };
 
+Modeling.prototype.addElementToClipboard = function (element) {
+  this._clipboardElement = element;
+};
 
-Modeling.prototype.addElementToClipboard = function (element){
-    this._clipboardElement = element;
-}
-
-Modeling.prototype.getElementFromClipboard = function (element){
-    return this._clipboardElement
-}
+Modeling.prototype.getElementFromClipboard = function (element) {
+  return this._clipboardElement;
+};
 
 Modeling.prototype.updateElement = function (element, repaint = false) {
   // console.log('Modeling().updateElement(), element = ', element);
@@ -451,7 +450,7 @@ Modeling.prototype.connect = function (source, target, attrs, hints) {
 
       if (conElem) {
         this._eventBus.fire("shape.create.end", { elements: [conElem] });
-        this._eventBus.fire('create.connection.edit', {element: conElem});
+        this._eventBus.fire("create.connection.edit", { element: conElem });
       }
 
       // this._eventBus.fire('shape.editing.activate', {shape: conElem});
@@ -649,7 +648,6 @@ Modeling.prototype.clearHilight = function () {
   }
 };
 
-
 Modeling.prototype.setDefaultValue = function (key, value) {
   // console.log('Modeling.prototype.setDefaultValue(), defaultValues = ', defaultValues);
   setDefaultValue(key, value);
@@ -759,7 +757,7 @@ Modeling.prototype.getLabelAttrs = function (
     attrs.defaultValue = defaultValue;
   }
 
-  console.log('###mark');
+  // console.log('###mark');
   attrs.hidden = ["", defaultValue].includes(text.trim());
 
   return attrs;
@@ -800,7 +798,7 @@ Modeling.prototype.getTokenLabelAttrs = function (
     width: bounds.width,
     height: bounds.height,
 
-    hidden: true
+    hidden: true,
   };
 
   if (labelTarget) {
@@ -830,7 +828,7 @@ Modeling.prototype.getMarkingLabelAttrs = function (
   bounds = this._textRenderer.getExternalLabelBounds(bounds, text || "00000");
 
   x += 1 * (labelTarget.x + labelTarget.width + 15);
-  y += 1 * (labelTarget.y);
+  y += 1 * labelTarget.y;
 
   const hidden =
     cpnMarkingLabelElement._hidden !== "false" || ["", "empty"].includes(text);
@@ -846,7 +844,7 @@ Modeling.prototype.getMarkingLabelAttrs = function (
     width: bounds.width,
     height: bounds.height,
 
-    hidden: true
+    hidden: true,
   };
 
   if (labelTarget) {

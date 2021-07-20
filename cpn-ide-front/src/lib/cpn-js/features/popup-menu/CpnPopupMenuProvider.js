@@ -8,9 +8,7 @@ import {
 } from "../../util/ModelUtil";
 import { getNextId } from "../modeling/CpnElementFactory";
 
-import {
-  domify as domify,
-  event as domEvent } from "min-dom";
+import { domify as domify, event as domEvent } from "min-dom";
 
 CpnPopupMenuProvider.$inject = [
   "create",
@@ -258,7 +256,10 @@ CpnPopupMenuProvider.prototype.getHeaderEntries = function (element) {
 };
 
 CpnPopupMenuProvider.prototype._createShape = function (event, type) {
-  console.log('CpnPopupMenuProvider.prototype._createPlace, this.position = ', this._position);
+  console.log(
+    "CpnPopupMenuProvider.prototype._createPlace, this.position = ",
+    this._position
+  );
   this._popupMenu.close();
   const position = toLocalPoint(this._canvas, this._position);
   position.y -= this._offsetY;
@@ -381,7 +382,7 @@ CpnPopupMenuProvider.prototype._paste = function (event, elementToPast) {
       x: position.x - Number.parseFloat(newCpnElement["posattr"]["_x"]),
       y: -position.y - Number.parseFloat(newCpnElement["posattr"]["_y"]),
     };
-    console.log('test11 create', newCpnElement)
+    // console.log('test11 create', newCpnElement)
     changePositionForCopiedElement(newCpnElement, deltaPosition);
     console.log("paste, newCpnElement = ", newCpnElement);
     const newElement = this._cpnFactory.createShape(

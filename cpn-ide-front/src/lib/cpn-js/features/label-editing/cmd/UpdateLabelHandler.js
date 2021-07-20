@@ -142,8 +142,8 @@ export default function UpdateLabelHandler(modeling, textRenderer) {
 
     // update visibility
     var hidden = element.hidden;
-    console.log('###mark');
-    if(element.defaultValue)
+    // console.log('###mark');
+    if (element.defaultValue)
       element.hidden = ["", element.defaultValue].includes(text.trim());
 
     if (hidden !== element.hidden) {

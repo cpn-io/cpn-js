@@ -7,11 +7,11 @@ let lastId = 0;
 export function getNextId() {
   let id = new Date().getTime();
   while (id <= lastId) {
-    id ++;
+    id++;
   }
   lastId = id;
-  console.log('test11: ' + "ID" + (id).toString().substr((id).toString().length - 10));
-  return "ID" + (id).toString().substr((id).toString().length - 10);
+  // console.log('test11: ' + "ID" + (id).toString().substr((id).toString().length - 10));
+  return "ID" + id.toString().substr(id.toString().length - 10);
 }
 
 export function setDefaultValue(key, value) {
@@ -25,32 +25,32 @@ export function getDefaultValue(key) {
 export function getDefPosattr(position = undefined) {
   return position
     ? {
-      _x: (position.x).toString(),
-      _y: (-1 * position.y).toString()
-    }
+        _x: position.x.toString(),
+        _y: (-1 * position.y).toString(),
+      }
     : {
-      _x: (0).toString(),
-      _y: (0).toString()
-    };
+        _x: (0).toString(),
+        _y: (0).toString(),
+      };
 }
 
 export function getDefSizeAttr(size = undefined) {
   return size
     ? {
-      _w: (size.w || size.width).toString(),
-      _h: (size.h || size.height).toString()
-    }
+        _w: (size.w || size.width).toString(),
+        _h: (size.h || size.height).toString(),
+      }
     : {
-      _w: (70).toString(),
-      _h: (40).toString()
-    };
+        _w: (70).toString(),
+        _h: (40).toString(),
+      };
 }
 
 export function getDefFillattr() {
   return {
     _colour: "White",
     _pattern: "Solid",
-    _filled: "false"
+    _filled: "false",
   };
 }
 
@@ -58,40 +58,43 @@ export function getDefLineattr() {
   return {
     _colour: "Black",
     _thick: "1",
-    _type: "Solid"
+    _type: "Solid",
   };
 }
 
 export function getDefTextattr() {
   return {
     _colour: "Black",
-    _bold: "false"
+    _bold: "false",
   };
 }
 
-export function getDefText(text = '') {
+export function getDefText(text = "") {
   return {
     _tool: "CPN Tools",
     _version: "4.0.1",
-    __text: (text || '')
+    __text: text || "",
   };
 }
 
 export function getDefMarking() {
   return {
-    "snap": {
-      "_snap_id": "0",
+    snap: {
+      _snap_id: "0",
       "_anchor.horizontal": "0",
-      "_anchor.vertical": "0"
+      "_anchor.vertical": "0",
     },
-    "_x": "0.000000",
-    "_y": "0.000000",
-    "_hidden": "false"
+    _x: "0.000000",
+    _y: "0.000000",
+    _hidden: "false",
   };
 }
 
-
-export function getDefPlace(name = undefined, position = undefined, size = undefined) {
+export function getDefPlace(
+  name = undefined,
+  position = undefined,
+  size = undefined
+) {
   let id = getNextId();
 
   let attrs = {
@@ -99,24 +102,24 @@ export function getDefPlace(name = undefined, position = undefined, size = undef
     fillattr: getDefFillattr(),
     lineattr: getDefLineattr(),
     textattr: getDefTextattr(),
-    text: name || 'P',
+    text: name || "P",
     ellipse: getDefSizeAttr(size),
     token: getDefPosattr(),
     marking: getDefMarking(),
   };
 
-  const idPostfix = { 'type': 'a', 'initmark': 'b' };
-  for (const type of ['type', 'initmark']) {
+  const idPostfix = { type: "a", initmark: "b" };
+  for (const type of ["type", "initmark"]) {
     attrs[type] = {
       posattr: getDefPosattr(position),
       fillattr: getDefFillattr(),
       lineattr: getDefLineattr(),
       textattr: getDefTextattr(),
       // text: getDefText(getDefaultValue(type) || type),
-      text: getDefText(''),
-      _id: id + idPostfix[type]
+      text: getDefText(""),
+      _id: id + idPostfix[type],
     };
-    if (type === 'type') {
+    if (type === "type") {
       attrs[type].text = getDefText(getDefaultValue(type));
     }
   }
@@ -124,10 +127,13 @@ export function getDefPlace(name = undefined, position = undefined, size = undef
   attrs._id = id;
 
   return attrs;
-};
+}
 
-
-export function getDefTransition(name = undefined, position = undefined, size = undefined) {
+export function getDefTransition(
+  name = undefined,
+  position = undefined,
+  size = undefined
+) {
   let id = getNextId();
 
   let attrs = {
@@ -135,27 +141,27 @@ export function getDefTransition(name = undefined, position = undefined, size = 
     fillattr: getDefFillattr(),
     lineattr: getDefLineattr(),
     textattr: getDefTextattr(),
-    text: name || 'T',
-    box: getDefSizeAttr(size)
+    text: name || "T",
+    box: getDefSizeAttr(size),
   };
 
-  const idPostfix = { 'cond': 'a', 'time': 'b', 'code': 'c', 'priority': 'd' };
-  for (const type of ['cond', 'time', 'code', 'priority']) {
+  const idPostfix = { cond: "a", time: "b", code: "c", priority: "d" };
+  for (const type of ["cond", "time", "code", "priority"]) {
     attrs[type] = {
       posattr: getDefPosattr(position),
       fillattr: getDefFillattr(),
       lineattr: getDefLineattr(),
       textattr: getDefTextattr(),
       // text: getDefText(getDefaultValue(type) || type),
-      text: getDefText(''),
-      _id: id + idPostfix[type]
+      text: getDefText(""),
+      _id: id + idPostfix[type],
     };
   }
 
   attrs._id = id;
 
   return attrs;
-};
+}
 
 export function getDefAux(text = undefined, position = undefined) {
   let id = getNextId();
@@ -165,35 +171,79 @@ export function getDefAux(text = undefined, position = undefined) {
     fillattr: getDefFillattr(),
     lineattr: getDefLineattr(),
     textattr: getDefTextattr(),
-    label: '',
+    label: "",
     text: text,
-    _id: id
+    _id: id,
   };
 }
 
 export function updateLabelsPosition(textRenderer, cpnElement) {
   var x = Number(cpnElement.posattr._x);
   var y = Number(cpnElement.posattr._y);
-  var w = Number(cpnElement.ellipse ? cpnElement.ellipse._w : cpnElement.ellipse? cpnElement.box._w: 10);
-  var h = Number(cpnElement.ellipse ? cpnElement.ellipse._h : cpnElement.box?  cpnElement.box._h: 10);
+  var w = Number(
+    cpnElement.ellipse
+      ? cpnElement.ellipse._w
+      : cpnElement.ellipse
+      ? cpnElement.box._w
+      : 10
+  );
+  var h = Number(
+    cpnElement.ellipse
+      ? cpnElement.ellipse._h
+      : cpnElement.box
+      ? cpnElement.box._h
+      : 10
+  );
 
   let pos = [];
 
   // for places
-  pos['initmark'] = (tw, th) => { return { _x: (x + w / 2 + tw / 2).toString(), _y: (y + h / 2 + th / 2).toString() } };
-  pos['type'] = (tw, th) => { return { _x: (x + w / 2 + tw / 2).toString(), _y: (y - h / 2 - th / 2).toString() } };
+  pos["initmark"] = (tw, th) => {
+    return {
+      _x: (x + w / 2 + tw / 2).toString(),
+      _y: (y + h / 2 + th / 2).toString(),
+    };
+  };
+  pos["type"] = (tw, th) => {
+    return {
+      _x: (x + w / 2 + tw / 2).toString(),
+      _y: (y - h / 2 - th / 2).toString(),
+    };
+  };
 
   // for transitions
-  pos['time'] = (tw, th) => { return { _x: (x + w / 2 + tw / 2 + 5).toString(), _y: (y + h / 2 + th / 2).toString() } };
-  pos['code'] = (tw, th) => { return { _x: (x + w / 2 + tw / 2 + 5).toString(), _y: (y - h / 2 - th / 2).toString() } };
-  pos['cond'] = (tw, th) => { return { _x: (x - w / 2 - tw / 2 - 5).toString(), _y: (y + h / 2 + th / 2).toString() } };
-  pos['priority'] = (tw, th) => { return { _x: (x - w / 2 - tw / 2 - 5).toString(), _y: (y - h / 2 - th / 2).toString() } };
+  pos["time"] = (tw, th) => {
+    return {
+      _x: (x + w / 2 + tw / 2 + 5).toString(),
+      _y: (y + h / 2 + th / 2).toString(),
+    };
+  };
+  pos["code"] = (tw, th) => {
+    return {
+      _x: (x + w / 2 + tw / 2 + 5).toString(),
+      _y: (y - h / 2 - th / 2).toString(),
+    };
+  };
+  pos["cond"] = (tw, th) => {
+    return {
+      _x: (x - w / 2 - tw / 2 - 5).toString(),
+      _y: (y + h / 2 + th / 2).toString(),
+    };
+  };
+  pos["priority"] = (tw, th) => {
+    return {
+      _x: (x - w / 2 - tw / 2 - 5).toString(),
+      _y: (y - h / 2 - th / 2).toString(),
+    };
+  };
 
-  pos['subst'] = (tw, th) => { return { _x: (x + w / 2).toString(), _y: (y + h).toString() } };
+  pos["subst"] = (tw, th) => {
+    return { _x: (x + w / 2).toString(), _y: (y + h).toString() };
+  };
 
   for (const key of Object.keys(pos)) {
     if (cpnElement[key] && pos[key]) {
-      let text = 'empty';
+      let text = "empty";
       if (cpnElement[key].text && cpnElement[key].text.__text) {
         text = cpnElement[key].text.__text;
       }
@@ -206,7 +256,6 @@ export function updateLabelsPosition(textRenderer, cpnElement) {
   }
 }
 
-
 export function getDefArc(placeCpnElement, transCpnElement, orientation) {
   let id = getNextId();
 
@@ -218,7 +267,7 @@ export function getDefArc(placeCpnElement, transCpnElement, orientation) {
     position.y = p1.y + (p2.y - p1.y) / 2;
     position.y *= -1;
 
-    console.log('getDefArc(), p1, p2, position = ', p1, p2, position);
+    console.log("getDefArc(), p1, p2, position = ", p1, p2, position);
   }
 
   let attrs = {
@@ -228,13 +277,13 @@ export function getDefArc(placeCpnElement, transCpnElement, orientation) {
     textattr: getDefTextattr(),
     arrowattr: {
       _headsize: 1,
-      _currentcyckle: 2
+      _currentcyckle: 2,
     },
     transend: {
-      _idref: transCpnElement._id
+      _idref: transCpnElement._id,
     },
     placeend: {
-      _idref: placeCpnElement._id
+      _idref: placeCpnElement._id,
     },
   };
 
@@ -244,7 +293,7 @@ export function getDefArc(placeCpnElement, transCpnElement, orientation) {
     lineattr: getDefLineattr(),
     textattr: getDefTextattr(),
     text: getDefText(),
-    _id: id + 'a'
+    _id: id + "a",
   };
 
   attrs._id = id;
@@ -252,20 +301,26 @@ export function getDefArc(placeCpnElement, transCpnElement, orientation) {
   attrs._order = "1";
 
   return attrs;
-};
+}
 
 function getMid(cpnElement) {
   var x = Number(cpnElement.posattr._x);
   var y = Number(cpnElement.posattr._y);
-  var w = Number(cpnElement.ellipse ? cpnElement.ellipse._w : cpnElement.box._w);
-  var h = Number(cpnElement.ellipse ? cpnElement.ellipse._h : cpnElement.box._h);
+  var w = Number(
+    cpnElement.ellipse ? cpnElement.ellipse._w : cpnElement.box._w
+  );
+  var h = Number(
+    cpnElement.ellipse ? cpnElement.ellipse._h : cpnElement.box._h
+  );
 
   return { x: x + w / 2, y: y + h / 2 };
 }
 
 export function getDefSubst(transCpnElement, subPageName, subPageId) {
-
-  let position = { x: transCpnElement.posattr._x, y: - transCpnElement.posattr._y + transCpnElement.box._h / 2 };
+  let position = {
+    x: transCpnElement.posattr._x,
+    y: -transCpnElement.posattr._y + transCpnElement.box._h / 2,
+  };
 
   let attrs = {
     subpageinfo: {
@@ -273,11 +328,11 @@ export function getDefSubst(transCpnElement, subPageName, subPageId) {
       lineattr: getDefLineattr(),
       posattr: getDefPosattr(position),
       textattr: getDefText(),
-      _id: transCpnElement._id + 'e',
-      _name: subPageName
+      _id: transCpnElement._id + "e",
+      _name: subPageName,
     },
-    _portsock: '',
-    _subpage: subPageId
+    _portsock: "",
+    _subpage: subPageId,
   };
 
   return attrs;

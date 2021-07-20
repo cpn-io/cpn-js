@@ -18,7 +18,7 @@ import { ModelService } from "../services/model.service";
 import { SettingsService } from "../services/settings.service";
 import { ValidationService } from "../services/validation.service";
 
-import { importCpnPage } from "../../lib/cpn-js/import/Importer";
+import { importCpnPage, fitToView } from "../../lib/cpn-js/import/Importer";
 
 import { getNextId } from "../../lib/cpn-js/features/modeling/CpnElementFactory";
 
@@ -911,7 +911,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
    * @param alignToCenter
    */
   loadPage(pageObject, alignToCenter = true) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       this.loading = true;
 
       this.pageId = undefined;
@@ -922,7 +922,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
         setTimeout(() => {
           importCpnPage(this.diagram, pageObject, alignToCenter).then(
-            (success) => {
+            () => {
               this.loading = false;
               console.log(this.constructor.name, "loadPage(), RENDER COMPLETE");
 
@@ -961,6 +961,11 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     return text;
+  }
+
+  onFitToView() {
+    // alert("Fit to view");
+    fitToView(this.diagram);
   }
 
   onSelectShapes() {

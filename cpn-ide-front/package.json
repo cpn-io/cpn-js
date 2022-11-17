@@ -1,7 +1,7 @@
 {
   "name": "cpn-ide",
-  "version": "1.20.0618",
-  "author": "INDEV",
+  "version": "1.22.1117",
+  "author": "TU/e",
   "main": "electron/dist/main.js",
   "scripts": {
     "ng": "ng",

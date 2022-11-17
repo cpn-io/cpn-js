@@ -1957,9 +1957,17 @@ export class ModelService {
   getPortNameById(pageId, id) {
     const page = this.getPageById(pageId);
     if (page) {
-      const port = page.place.find((e) => e._id === id);
-      return port.text;
+      for (const place of nodeToArray(page.place)) { // Fixes #254
+        if (place._id === id) {
+          return place.text;
+        }
+      }
     }
+    return undefined;
+    // if (page) {
+    //   const port = page.place.find((e) => e._id === id); // It seems this fails if there is only one place.
+    //   return port.text;
+    // }
   }
 
   /**
@@ -1971,16 +1979,28 @@ export class ModelService {
   getPortIdByName(pageId, text, orient) {
     const page = this.getPageById(pageId);
     if (page && text !== "") {
-      const port = page.place.find(
-        (e) =>
-          e.text === text &&
-          (e.port._type === "I/O" ||
-            e.port._type === (orient === "TtoP" ? "Out" : "In"))
-      );
-      return port._id;
-    } else {
-      return undefined;
+      for (const place of nodeToArray(page.place)) { // Fixes #254
+        if (
+          place.text === text &&
+          (place.port._type === "I/O" ||
+            place.port._type === (orient === "TtoP" ? "Out" : "In"))
+        ) {
+          return place._id;
+        }
+      }
     }
+    return undefined;
+    // if (page && text !== "") {
+    //   const port = page.place.find( // It seems this fails if there is only one place.
+    //     (e) =>
+    //       e.text === text &&
+    //       (e.port._type === "I/O" ||
+    //         e.port._type === (orient === "TtoP" ? "Out" : "In"))
+    //   );
+    //   return port._id;
+    // } else {
+    //   return undefined;
+    // }
   }
 
   /**

@@ -14,6 +14,10 @@ import { ElectronService } from "ngx-electron";
 export class AccessCpnService {
   public isSimulation = false;
 
+  // Added for the play-out.
+  public isRecordEvents = false;
+  public isRecordEventTimes = true;
+
   public errorData = [];
   public errorIds = [];
   public errorPagesIds = [];
@@ -900,7 +904,7 @@ export class AccessCpnService {
       "file://" + path,
       "windowName",
       "width=900,height=700",
-      false
+      // false
     );
     win.focus();
   }
@@ -1126,4 +1130,129 @@ export class AccessCpnService {
         );
     });
   }
+
+  doPlayOutEvents(options) {
+    console.log("start doPlayOutEvents")
+    return new Promise<any>((resolve,reject)=> {
+      if(!this.simInitialized || !this.sessionId){
+        resolve(null);
+        return;
+      }
+
+      const postData = options
+
+      console.log("AccessCpnService, doPlayOutEvents(), postData =", postData);
+      const url =
+        this.settingsService.getServerUrl() + "/api/v2/cpn/play_out/apply";
+      this.http
+        .post(url, postData, {headers: {"X-SessionId": this.sessionId} })
+        .subscribe(
+          (data:any)=> {
+            console.log(
+              "AccessCpnService, doPlayOutEvents, SUCCESS, data = ",
+              data
+            );
+            if(data) {
+              resolve(data);
+            }
+          }, 
+          (error) => {
+            console.error(
+              "AccessCpnService, doPlayOutEvents(), ERROR, data = ",
+              error
+            );
+            this.eventService.send(Message.PLAY_OUT_UNKWOWN_CASE_ID, { data: error });
+            reject(error);
+          }
+        );
+    });
+  }
+
+  doClearEvents(){
+    return new Promise<void>((resolve,reject)=> {
+      if(!this.simInitialized || !this.sessionId){
+        resolve();
+        return;
+      }
+
+      console.log("AccessCPNService, doClearEvents()");
+      const url =
+        this.settingsService.getServerUrl() + "/api/v2/cpn/play_out/clear";
+      this.http
+        .get(url, {headers: {"X-SessionId": this.sessionId} })
+        .subscribe(
+          (data:any)=> {
+            resolve();
+          },
+            (error) => {
+            console.error(
+              "AccessCPNService, DoCreateEvents(), ERROR, data = ",
+              + error + 
+              "URL = " +
+              url
+            );
+
+            this.eventService.send(Message.SERVER_ERROR, { data: error});
+            reject(error);
+          }
+        );
+    });
+  }
+
+  setRecordEvents(bool){
+    this.isRecordEventTimes = false;
+    this.isRecordEvents = bool
+    return new Promise<void>((resolve, reject) => {
+      if (!this.simInitialized || !this.sessionId) {
+        resolve();
+        return;
+      }
+
+      console.log("AccessCpnService, setRecordEvents(), " + bool);
+
+      const url =
+        this.settingsService.getServerUrl() + "/api/v2/cpn/play_out/events/" + bool; // ID1412328496
+      this.http
+        .get(url, { headers: { "X-SessionId": this.sessionId } })
+        .subscribe(
+          (data: any) => {
+            resolve();
+          },
+          (error) => {
+            console.error("AccessCpnService, setRecordEvents(), ERROR, data = ", error);
+
+            this.eventService.send(Message.SERVER_ERROR, { data: error });
+            reject(error);
+          }
+        );
+    });
+  }
+
+  setRecordEventTimes(bool){
+    this.isRecordEventTimes = bool
+    return new Promise<void>((resolve, reject) => {
+      if (!this.simInitialized || !this.sessionId) {
+        resolve();
+        return;
+      }
+      console.log("AccessCpnService, setRecordEventTimes(), " + bool);
+
+      const url =
+        this.settingsService.getServerUrl() + "/api/v2/cpn/play_out/times/" + bool; // ID1412328496
+      this.http
+        .get(url, { headers: { "X-SessionId": this.sessionId } })
+        .subscribe(
+          (data: any) => {
+            resolve();
+          },
+          (error) => {
+            console.error("AccessCpnService, setRecordEventTimes()), ERROR, data = ", error);
+
+            this.eventService.send(Message.SERVER_ERROR, { data: error });
+            reject(error);
+          }
+        );
+    });
+  }
+
 }

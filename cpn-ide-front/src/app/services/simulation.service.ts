@@ -4,6 +4,7 @@ import { AccessCpnService } from "./access-cpn.service";
 import { ModelService } from "./model.service";
 import { Message } from "../common/message";
 import { EditorPanelService } from "./editor-panel.service";
+import { FileService } from "./file.service";
 
 @Injectable({
   providedIn: "root",
@@ -14,6 +15,7 @@ export class SimulationService {
   MULTI_STEP = 3;
   MULTI_STEP_FF = 4;
   REPLICATION = 5;
+  PLAY_OUT = 6;
 
   mode = this.SINGLE_STEP;
 
@@ -40,6 +42,15 @@ export class SimulationService {
     replication: {
       repeat: 30,
     },
+
+    playOut:{
+      caseId: "i",
+      startDateTime: "2022-01-01T00:00",
+      timeUnit: "hours",
+      recordedEvents:"start+complete",
+      informationLevelIsEvent: true,
+      exportType: "xes",
+    }
   };
 
   public isAnimation = true;
@@ -49,7 +60,8 @@ export class SimulationService {
     private eventService: EventService,
     public accessCpnService: AccessCpnService,
     public modelService: ModelService,
-    private editorPanelService: EditorPanelService
+    private editorPanelService: EditorPanelService,
+    private fileService: FileService,
   ) {
     this.initEvents();
   }
@@ -401,6 +413,37 @@ export class SimulationService {
         modelEditor.updateElementStatus(false);
       }
     });
+  }
+
+  runPlayOut(fileName) {
+    const config = this.simulationConfig.playOut; 
+
+    const options = {
+      caseId: config.caseId,
+      startDateTime: config.startDateTime,
+      timeUnit: config.timeUnit,
+      recordedEvents: config.recordedEvents,
+      informationLevelIsEvent: config.informationLevelIsEvent,
+      exportType: config.exportType,
+      // Have the log exported into a subfolder of the subfolder where the model resides.
+      path: this.accessCpnService.getFs().path,
+      // The name for the log file, without any extension (will be added by exporter)).
+      fileName: fileName,
+    };
+
+    this.accessCpnService.doPlayOutEvents(options)
+      .then((data : any) => {
+        console.log("PlayOutResp", data);
+        if (data.nofLogEvents === 0) {
+          this.eventService.send(Message.PLAY_OUT_EMPTY_LOG);
+        } else {
+          this.eventService.send(Message.PLAY_OUT_SAVED, {path: data.absoluteFileName});
+        }
+        if (data.nofPlayOutEvents === 0) {
+          this.eventService.send(Message.PLAY_OUT_NO_RECORDED_EVENTS)
+        }
+      })
+
   }
 
   runscript(script) {

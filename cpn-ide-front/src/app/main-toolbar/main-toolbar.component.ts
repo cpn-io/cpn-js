@@ -327,12 +327,12 @@ export class MainToolbarComponent implements OnInit {
               // this.projectService.saveToFile(data.input[0].value);
               this.projectService.saveToFile(this.modelService.projectName);
 
-              resolve();
+              resolve(null);
               return;
               break;
 
             case DialogComponent.NO:
-              resolve();
+              resolve(null);
               return;
               break;
           }
@@ -374,4 +374,74 @@ export class MainToolbarComponent implements OnInit {
       1 -
       this.validationService.history.currentModelIndex;
   }
+
+  onStartRecordEvents(){
+    this.accessCpnService.setRecordEvents(true);
+  }
+
+  onStopRecordEvents(){
+    this.accessCpnService.setRecordEvents(false);
+  }
+
+  onRecordEventTimes(){
+    this.accessCpnService.isRecordEventTimes = this.accessCpnService.isRecordEventTimes
+      ? false
+      : true;
+      this.accessCpnService.setRecordEventTimes(this.accessCpnService.isRecordEventTimes);
+  }
+
+  onClearEvents(){
+    this.accessCpnService.doClearEvents();
+  }
+
+  // onPlaceCaseId(){
+  //     const dialogRef = this.saveDialog.open(DialogComponent, {
+  //       width: "500px",
+  //       data: {
+  //         title: "set caseId",
+  //         input: [
+  //           { title: "caseId", value: "x" },
+  //         ],
+  //       },
+  //     });
+  //     dialogRef.afterClosed().subscribe((data) => {
+  //       if (data && data.result === DialogComponent.YES) {
+  //         console.log(
+  //           this.constructor.name,
+  //           "onPlaceCaseId(), YES clicked, data = ",
+  //           data
+  //         );
+
+  //         // Save to file
+  //         this.modelService.doPlaceCaseId(data.input[0].value);
+  //       }
+  //     });
+  // }
+
+  // onSetInitialMarking(){
+  //     const dialogRef = this.saveDialog.open(DialogComponent, {
+  //       width: "500px",
+  //       data: {
+  //         title: "Initial marking settings",
+  //         input: [
+  //           { title: "Source", value: "source" },
+  //           { title: "Amount of tokens", value: 10},
+  //         ],
+  //       },
+  //     });
+  //     dialogRef.afterClosed().subscribe((data) => {
+  //       if (data && data.result === DialogComponent.YES) {
+  //         console.log(
+  //           this.constructor.name,
+  //           "onSetInitialMarking(), YES clicked, data = ",
+  //           data
+  //         );
+
+  //         // Save to file
+  //         this.modelService.setInitialMarking(data.input[0].value, data.input[1].value);
+  //       }
+  //     });
+    
+  // }
+
 }

@@ -37,7 +37,6 @@ public class PlayOutExporterXES extends PlayOutExporter {
 
     public PlayOutExporterXES() {
         factory = XFactoryRegistry.instance().currentDefault();
-        log = factory.createLog(factory.createAttributeMap());
     }
 
     @Override
@@ -52,6 +51,7 @@ public class PlayOutExporterXES extends PlayOutExporter {
 
     @Override
     public int createLog(PriorityQueue<PlayOutEvent> events, PlayOutConfig config) {
+        log = factory.createLog(factory.createAttributeMap());
         Map<String, XTrace> traces = new HashMap<String, XTrace>();
 
         // Use the CSV log as base.

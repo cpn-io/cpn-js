@@ -85,7 +85,7 @@ public class PlayOutContainer {
     /*
      * Sets whether we need to record time,
      */
-    public void setRecordTime(String sessionId, Boolean bool) {
+    public void setRecordEventTimes(String sessionId, Boolean bool) {
         if (bool) {
             // Yes
             markings.put(sessionId, new ArrayList<PlaceMark>());
@@ -98,44 +98,24 @@ public class PlayOutContainer {
     /*
      * Whether we are recording time.
      */
-    public Boolean isRecordingTime(String sessionId) {
+    public Boolean isRecordingEventTimes(String sessionId) {
         return markings.containsKey(sessionId);
     }
 
     /*
-     * Sets the folder and path for the given session id.
-     */
-//    public void setFileName(String sessionId, String fileName) {
-//        String outputPath = FilenameUtils.concat(System.getProperty("user.home"), "CPN_IDE");
-//        outputPath = FilenameUtils.concat(outputPath, "log_out");
-//        outputPath = FilenameUtils.concat(outputPath, sessionId);
-//        folders.put(sessionId, Paths.get(outputPath).toAbsolutePath().toString());
-//        fileNames.put(sessionId, fileName);
-//    }
-
-    /*
      * Clears all events for the given session id.
      */
-    public void clear(String sessionId) {
+    public void clearEvents(String sessionId) {
         if (events.containsKey(sessionId)) {
             events.get(sessionId).clear();
         }
     }
 
     /*
-     * Whether some evens were recorded for the given session id.
-     */
-//    public Boolean existRecordedEvents(String sessionId) {
-//        return events.containsKey(sessionId) && !events.get(sessionId).isEmpty();
-//    }
-
-    /*
      * Creates a log for the given session id using the given config, and exports it to file.
      * The log is not kept in memory.
      */
-    public PlayOutResp create(String sessionId, PlayOutConfig config) {
-        System.out.println("[PlayOutContainer] path " + config.getPath());
-        System.out.println("[PlayOutContainer] fileName " + config.getFileName());
+    public PlayOutResp playOutEvents(String sessionId, PlayOutConfig config) {
         String fileName = "";
         int nofPlayOutEvents = 0;
         int nofLogEvents = 0;
@@ -198,32 +178,6 @@ public class PlayOutContainer {
         resp.setNofLogEvents(nofLogEvents);
         return resp;
     }
-
-    /*
-     * Whether the last exported log for the session id is empty.
-     */
-//    public Boolean isLogEmpty(String sessionId) {
-//        return isEmpty.contains(sessionId);
-//    }
-
-    /*
-     * Gets progress. Not sure whether this is used, hence always "0" for the time being.
-     */
-    public PlayOutProgress getProgress(String sessionId, PlayOutConfig config) throws Exception{
-        PlayOutProgress progress = new PlayOutProgress();
-        progress.setProgress("0");
-        return progress;
-    }
-
-    /*
-     * Returns the path to the export file. THis path contains the filename but does not contain the suffix (csv, xes).
-     */
-//    public String getPath(String sessionId) {
-//        if (fileNames.containsKey(sessionId)) {
-//            return folders.get(sessionId) + "/" + fileNames.get(sessionId);
-//        }
-//        return null;
-//    }
 
     /*
      * Adds events for the given session id, using the given binding, info and time.

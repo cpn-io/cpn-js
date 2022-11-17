@@ -35,7 +35,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Component
@@ -79,8 +78,13 @@ public class PetriNetContainer {
                     _sim.destroy();
                 CleanOutputPathContent(sessionId);
                 _sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
-            } else if (_sim == null)
+            } else if (_sim == null) {
                 _sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
+            }
+            /*
+             * Sets the variable declarations to be used when creating a log from the events.
+             */
+            PlayOutContainer.getInstance().setVarDeclarations(sessionId, net);
 
             Checker checker = new Checker(net, null, _sim);
 
@@ -596,7 +600,7 @@ public class PetriNetContainer {
     private void addEvents(String sessionId, Binding b) throws Exception{
         Double minimalTime = 0.0;
         PlayOutContainer playOutContainer = PlayOutContainer.getInstance();
-        if (playOutContainer.isRecordingTime(sessionId)) {
+        if (playOutContainer.isRecordingEventTimes(sessionId)) {
             minimalTime = playOutContainer.getMinimalTime(sessionId, returnTokensAndMarking(sessionId));
         }
         playOutContainer.addEvents(sessionId, b, getState(sessionId), minimalTime);

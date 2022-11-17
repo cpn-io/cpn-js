@@ -140,5 +140,8 @@
       }
     }
   },
-  "defaultProject": "cpn-ide"
+  "defaultProject": "cpn-ide",
+  "cli": {
+    "analytics": false
+  }
 }

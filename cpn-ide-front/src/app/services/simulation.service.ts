@@ -276,7 +276,7 @@ export class SimulationService {
   }
 
   onSimulationStepDone() {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       const firedData = this.accessCpnService.getFiredData();
 
       const readyData = this.accessCpnService.getReadyData();

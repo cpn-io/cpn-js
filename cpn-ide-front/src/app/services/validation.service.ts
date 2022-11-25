@@ -76,10 +76,15 @@ export class ValidationService implements OnDestroy {
       this.clearHistory()
     );
 
-    this.timeTimer = timer(this.VALIDATION_TIMEOUT, this.VALIDATION_TIMEOUT);
-    this.timeTimerSubscribtion = this.timeTimer.subscribe(() =>
-      this.checkValidation()
-    );
+    // Check validation after 200 ms.
+    // Any check will at the end check the validation again after 200 ms, which keeps the checking alive.
+    // In this scheme, the time needed by the check is not part of the 200 ms.
+    this.checkValidationLater();
+    // This scheme checks validation every 200 ms. If the check takes more than 200 ms, the tool may become unresponsive.
+    // this.timeTimer = timer(this.VALIDATION_TIMEOUT, this.VALIDATION_TIMEOUT);
+    // this.timeTimerSubscribtion = this.timeTimer.subscribe(() =>
+    //   this.checkValidation()
+    // );
   }
 
   ngOnDestroy() {
@@ -115,8 +120,17 @@ export class ValidationService implements OnDestroy {
     });
   }
 
+  // Check the validation after 200 ms.
+  checkValidationLater() {
+    this.timeTimer = timer(this.VALIDATION_TIMEOUT);
+    this.timeTimerSubscribtion = this.timeTimer.subscribe(() =>
+      this.checkValidation()
+    );
+  }
+
   checkValidation() {
     if (this.accessCpnService.isSimulation) {
+      this.checkValidationLater();
       return;
     }
 
@@ -203,6 +217,8 @@ export class ValidationService implements OnDestroy {
     }
 
     this.checkValidationBusy = false;
+    // Check the validation again after 200 ms.
+    this.checkValidationLater();
   }
 
   archiveModelToHistory(model: any, hiddenPush?) {

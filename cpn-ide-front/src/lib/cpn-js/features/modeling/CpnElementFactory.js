@@ -23,26 +23,46 @@ export function getDefaultValue(key) {
 }
 
 export function getDefPosattr(position = undefined) {
+  // Use the same format as the updater (CpnUpdater.js) does.
+  // This prevents unnecessary differences due to updates.
   return position
     ? {
-        _x: position.x.toString(),
-        _y: (-1 * position.y).toString(),
+        _x: Math.round(position.x).toFixed(6),
+        _y: Math.round(-1 * position.y).toFixed(6),
       }
     : {
-        _x: (0).toString(),
-        _y: (0).toString(),
+        _x: (0).toFixed(6),
+        _y: (0).toFixed(6),
+      };
+}
+
+export function getDefTokenattr(position = undefined) {
+  // Use the same format as the updater (CpnUpdater.js) does, and add an empty text.
+  // This prevents unnecessary differences due to updates.
+  return position
+    ? {
+        _x: Math.round(position.x).toFixed(6),
+        _y: Math.round(-1 * position.y).toFixed(6),
+        text: "",
+      }
+    : {
+        _x: (0).toFixed(6),
+        _y: (0).toFixed(6),
+        text: "",
       };
 }
 
 export function getDefSizeAttr(size = undefined) {
+  // Use the same format as the updater (CpnUpdater.js) does.
+  // This prevents unnecessary differences due to updates.
   return size
     ? {
-        _w: (size.w || size.width).toString(),
-        _h: (size.h || size.height).toString(),
+        _w: Math.round(size.w || size.width).toFixed(6),
+        _h: Math.round(size.h || size.height).toFixed(6),
       }
     : {
-        _w: (70).toString(),
-        _h: (40).toString(),
+        _w: (70).toFixed(6),
+        _h: (40).toFixed(6),
       };
 }
 
@@ -78,15 +98,18 @@ export function getDefText(text = "") {
 }
 
 export function getDefMarking() {
+  // Use the same format as the updater (CpnUpdater.js) does, and add an empty text.
+  // This prevents unnecessary differences due to updates.
   return {
     snap: {
       _snap_id: "0",
       "_anchor.horizontal": "0",
       "_anchor.vertical": "0",
     },
-    _x: "0.000000",
-    _y: "0.000000",
+    _x: (0).toFixed(6),
+    _y: (0).toFixed(6),
     _hidden: "false",
+    text: "",
   };
 }
 
@@ -97,6 +120,7 @@ export function getDefPlace(
 ) {
   let id = getNextId();
 
+  // Use getDefTokenattr for tokens, as this will add an empty text..
   let attrs = {
     posattr: getDefPosattr(position),
     fillattr: getDefFillattr(),
@@ -104,7 +128,7 @@ export function getDefPlace(
     textattr: getDefTextattr(),
     text: name || "P",
     ellipse: getDefSizeAttr(size),
-    token: getDefPosattr(),
+    token: getDefTokenattr(),
     marking: getDefMarking(),
   };
 
@@ -198,47 +222,52 @@ export function updateLabelsPosition(textRenderer, cpnElement) {
   let pos = [];
 
   // for places
+  // Use the same format as the updater (CpnUpdater.js) does.
+  // This prevents unnecessary differences due to updates.
   pos["initmark"] = (tw, th) => {
     return {
-      _x: (x + w / 2 + tw / 2).toString(),
-      _y: (y + h / 2 + th / 2).toString(),
+      _x: Math.round(x + w / 2 + tw / 2).toFixed(6),
+      _y: Math.round(y + h / 2 + th / 2).toFixed(6),
     };
   };
   pos["type"] = (tw, th) => {
     return {
-      _x: (x + w / 2 + tw / 2).toString(),
-      _y: (y - h / 2 - th / 2).toString(),
+      _x: Math.round(x + w / 2 + tw / 2).toFixed(6),
+      _y: Math.round(y - h / 2 - th / 2).toFixed(6),
     };
   };
 
   // for transitions
   pos["time"] = (tw, th) => {
     return {
-      _x: (x + w / 2 + tw / 2 + 5).toString(),
-      _y: (y + h / 2 + th / 2).toString(),
+      _x: Math.round(x + w / 2 + tw / 2 + 5).toFixed(6),
+      _y: Math.round(y + h / 2 + th / 2).toFixed(6),
     };
   };
   pos["code"] = (tw, th) => {
     return {
-      _x: (x + w / 2 + tw / 2 + 5).toString(),
-      _y: (y - h / 2 - th / 2).toString(),
+      _x: Math.round(x + w / 2 + tw / 2 + 5).toFixed(6),
+      _y: Math.round(y - h / 2 - th / 2).toFixed(6),
     };
   };
   pos["cond"] = (tw, th) => {
     return {
-      _x: (x - w / 2 - tw / 2 - 5).toString(),
-      _y: (y + h / 2 + th / 2).toString(),
+      _x: Math.round(x - w / 2 - tw / 2 - 5).toFixed(6),
+      _y: Math.round(y + h / 2 + th / 2).toFixed(6),
     };
   };
   pos["priority"] = (tw, th) => {
     return {
-      _x: (x - w / 2 - tw / 2 - 5).toString(),
-      _y: (y - h / 2 - th / 2).toString(),
+      _x: Math.round(x - w / 2 - tw / 2 - 5).toFixed(6),
+      _y: Math.round(y - h / 2 - th / 2).toFixed(6),
     };
   };
 
   pos["subst"] = (tw, th) => {
-    return { _x: (x + w / 2).toString(), _y: (y + h).toString() };
+    return { 
+      _x: Math.round(x + w / 2).toFixed(6), 
+      _y: Math.round(y + h).toFixed(6),
+    };
   };
 
   for (const key of Object.keys(pos)) {

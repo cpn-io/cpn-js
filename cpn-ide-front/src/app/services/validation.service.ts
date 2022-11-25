@@ -120,7 +120,7 @@ export class ValidationService implements OnDestroy {
       return;
     }
 
-    console.log("checkValidation()");
+    // console.log("checkValidation()");
 
     if (this.history.undoRedoBusy) {
       return;
@@ -208,6 +208,7 @@ export class ValidationService implements OnDestroy {
   archiveModelToHistory(model: any, hiddenPush?) {
     if (hiddenPush) {
       this.history.models.push(model);
+      // console.log("[validation.services.ts] History after undo", cloneObject(this.history));
       return;
     }
 
@@ -233,6 +234,7 @@ export class ValidationService implements OnDestroy {
     }
     this.ipcService.send(Message.MODEL_SAVE_BACKUP);
     this.history.backupBusy = false;
+    // console.log("[validation.services.ts] History after push", cloneObject(this.history));
   }
 
   undo() {
@@ -241,21 +243,25 @@ export class ValidationService implements OnDestroy {
     }
     if (this.history.currentModelIndex === this.history.models.length) {
       if (Object.keys(this.lastProjectData).length !== 0) {
-        this.archiveModelToHistory(cloneObject(this.lastProjectData), true);
+        // No need to clone the lastProjectData, as it is cold (does not change). 
+        this.archiveModelToHistory(this.lastProjectData, true);
       }
     }
     this.history.undoRedoBusy = true;
     const model = this.getPreviousModelFromHistory();
     // console.log('HISTORY UNDO', model);
     if (model) {
-      this.modelService.projectData = model;
+      // Clone the model, as it is hot (may change).
+      const clonedModel = cloneObject(model);
+      this.modelService.projectData = clonedModel;
       this.modelService.project = {
-        data: model,
+        data: clonedModel,
         name: this.modelService.projectName,
       };
       this.eventService.send(Message.MODEL_RELOAD);
     }
     this.history.undoRedoBusy = false;
+    // console.log("[validation.services.ts] History after undo", cloneObject(this.history));
   }
 
   redo() {
@@ -267,27 +273,32 @@ export class ValidationService implements OnDestroy {
     const model = this.getNextModelFromHistory();
     // console.log('HISTORY REDO', model);
     if (model) {
-      this.modelService.projectData = model;
+      // Clone the model, as it is hot (may change).
+      const clonedModel = cloneObject(model);
+      this.modelService.projectData = clonedModel;
       this.modelService.project = {
-        data: model,
+        data: clonedModel,
         name: this.modelService.projectName,
       };
       this.eventService.send(Message.MODEL_RELOAD);
     }
     this.history.undoRedoBusy = false;
+    // console.log("[validation.services.ts] History after redo", cloneObject(this.history));
   }
 
   getPreviousModelFromHistory() {
     if (this.history.models[this.history.currentModelIndex - 1]) {
-      if (this.history.models[this.history.currentModelIndex - 2]) {
-        this.lastProjectData = this.history.models[
-          this.history.currentModelIndex - 2
-        ];
-      } else {
-        this.lastProjectData = this.history.models[
-          this.history.currentModelIndex - 1
-        ];
-      }
+      // Unclear why we're setting this.lastPorjectData here.
+      // A MODEL_RELOAD will follow, which will set it to {} anyway.
+      // if (this.history.models[this.history.currentModelIndex - 2]) {
+      //   this.lastProjectData = this.history.models[
+      //     this.history.currentModelIndex - 2
+      //   ];
+      // } else {
+      //   this.lastProjectData = this.history.models[
+      //     this.history.currentModelIndex - 1
+      //   ];
+      // }
       return this.history.models[--this.history.currentModelIndex];
     }
     return null;
@@ -295,9 +306,11 @@ export class ValidationService implements OnDestroy {
 
   getNextModelFromHistory() {
     if (this.history.models[this.history.currentModelIndex + 1]) {
-      this.lastProjectData = this.history.models[
-        this.history.currentModelIndex
-      ];
+      // Unclear why we're setting this.lastPorjectData here.
+      // A MODEL_RELOAD will follow, which will set it to {} anyway.
+      // this.lastProjectData = this.history.models[
+      //   this.history.currentModelIndex
+      // ];
       return this.history.models[++this.history.currentModelIndex];
     }
     return null;

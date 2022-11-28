@@ -134,7 +134,7 @@
     "typeface-droid-sans-mono": "0.0.44",
     "typescript": "^3.8.3",
     "xml-js": "^1.6.11",
-    "xmldom": "^0.1.31",
+    "xmldom": "^0.6.0",
     "zone.js": "~0.10.2"
   }
 }

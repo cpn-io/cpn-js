@@ -188,4 +188,77 @@
     </table>
   </div>
 
+  <div class="blockHeader" (click)="simulationService.setMode(simulationService.PLAY_OUT)"
+  [ngClass]="simulationService.mode === simulationService.PLAY_OUT ? 'enabled' : 'disabled'">
+  <i class="fas fa-copy"></i>
+  <span>Play Out Recorded Events</span>
+</div>
+<div class="note" [ngClass]="{'expanded': simulationService.mode === simulationService.PLAY_OUT }">
+  <table>
+    <tr>
+      <td>Case Id</td>
+      <td>
+        <input type="text" class="full-width"
+          [(ngModel)]="simulationService.simulationConfig.playOut.caseId">
+      </td>
+    </tr>
+    <tr>
+      <td>Starting Moment</td>
+      <td>
+        <input type="datetime-local" class = "full-width"
+          [(ngModel)]="simulationService.simulationConfig.playOut.startDateTime">
+      </td>
+    </tr>
+    <tr>
+      <td>Time Unit</td>
+      <td>
+        <select name="timeUnit" id="timeUnit" [(ngModel)]="simulationService.simulationConfig.playOut.timeUnit">
+          <option value="years">years</option>
+          <option value="months">months</option>
+          <option value="weeks">weeks</option>
+          <option value="days">days</option>
+          <option value="hours">hours</option>
+          <option value="minutes">minutes</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td>Lifecycle Transition Attribute</td>
+      <td>
+        <select name="recordedEvents" id="recordedEvents" [(ngModel)]="simulationService.simulationConfig.playOut.recordedEvents">
+          <option value="start">start</option>
+          <option value="complete">complete</option>
+          <option value="start+complete">start+complete</option>
+          <option value="in transition name">in transition name</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td>Keep Information on Event Level</td>
+      <td>
+        <input type = "checkbox" id="informationLevelIsEvent" [(ngModel)]="simulationService.simulationConfig.playOut.informationLevelIsEvent"> 
+      </td>
+    </tr>
+    <tr>
+      <td>Log Format</td>
+      <td>
+        <select name="exportType" id="exportType" [(ngModel)]="simulationService.simulationConfig.playOut.exportType">
+          <option value="csv">csv</option>
+          <option value="xes">xes</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td class="full-width text-right">
+        <button type="button" class="btn btn-primary" (click)="onRunPlayOut()">
+          <i class="fas fa-play"></i>
+          <span>Run</span>
+        </button>
+      </td>
+    </tr>
+    
+  </table>
+</div>
+
 </div>

@@ -4,6 +4,7 @@ import com.indevstudio.cpnide.server.model.*;
 import com.indevstudio.cpnide.server.model.monitors.MonitorTemplate;
 import com.indevstudio.cpnide.server.model.monitors.MonitorTemplateFactory;
 import com.indevstudio.cpnide.server.model.monitors.MonitorTypes;
+import com.indevstudio.cpnide.server.playout.PlayOutContainer;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -34,7 +35,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Component
@@ -78,8 +78,13 @@ public class PetriNetContainer {
                     _sim.destroy();
                 CleanOutputPathContent(sessionId);
                 _sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
-            } else if (_sim == null)
+            } else if (_sim == null) {
                 _sim = HighLevelSimulator.getHighLevelSimulator(SimulatorService.getInstance().getNewSimulator());
+            }
+            /*
+             * Sets the variable declarations to be used when creating a log from the events.
+             */
+            PlayOutContainer.getInstance().setVarDeclarations(sessionId, net);
 
             Checker checker = new Checker(net, null, _sim);
 
@@ -589,6 +594,17 @@ public class PetriNetContainer {
     }
 
 
+    /*
+     * Adds events for the given binding.
+     */
+    private void addEvents(String sessionId, Binding b) throws Exception{
+        Double minimalTime = 0.0;
+        PlayOutContainer playOutContainer = PlayOutContainer.getInstance();
+        if (playOutContainer.isRecordingEventTimes(sessionId)) {
+            minimalTime = playOutContainer.getMinimalTime(sessionId, returnTokensAndMarking(sessionId));
+        }
+        playOutContainer.addEvents(sessionId, b, getState(sessionId), minimalTime);
+    }
 
 
     public String makeStep(String sessionId, String transId) throws Exception {
@@ -601,6 +617,10 @@ public class PetriNetContainer {
             HighLevelSimulator s = usersSimulator.get(sessionId);
             b = s.executeAndGet(getTargetTransition(s, transId));
         }
+        /*
+         * Add events, if needed.
+         */
+        addEvents(sessionId, b);
         return b.getTransitionInstance().getNode().getId();
     }
 
@@ -615,6 +635,10 @@ public class PetriNetContainer {
         HighLevelSimulator s = usersSimulator.get(sessionId);
         Map<String, Binding> binds = getBindingForTransiton(s, transId);
         s.execute(binds.get(bindingId));
+        /*
+         * Add events, if needed.
+         */
+        addEvents(sessionId, binds.get(bindingId));
     }
 
     public ReplicationResp makeReplication(String sessionId, Replication stepParam) throws Exception {
@@ -638,37 +662,38 @@ public class PetriNetContainer {
     }
 
     public String makeStepFastForward(String sessionId, MultiStep stepParam) throws Exception {
-        // String type = requestBody.get(0).get("type").toString();
-//        HighLevelSimulator sim = usersSimulator.get(sessionId);
-//        int i = 0;
-//        String simulationEnded = "";
-//        int maxSteps = stepParam.getAmount();
-//        while (i < maxSteps) {
-//            List<Instance<Transition>> enabled = new ArrayList<>();
-//            List<Instance<Transition>> all = sim.getAllTransitionInstances();
-//
-//            for (Instance<Transition> ti : all) {
-//
-//                if (sim.isEnabled(ti))
-//                    enabled.add(ti);
-//            }
-//
-//            if (enabled.isEmpty()) {
-//                String result = sim.increaseTime();
-//                if (result == null) {
-//                    continue; // --> go back and check for enabled transitions
-//                } else {
-//                    simulationEnded = result;
-//                    break; // end/stop simulation, report result to user
-//                }
-//            }
-//
-//            // fire the first enabled transition
-//            Instance<Transition> ti = enabled.get(0);
-//            sim.execute(ti);
-//            i++;
-//        }
-        _sim.execute(stepParam.getAmount());
+        HighLevelSimulator sim = usersSimulator.get(sessionId);
+        int i = 0;
+        String simulationEnded = "";
+        int maxSteps = stepParam.getAmount();
+        while (i < maxSteps) {
+            List<Instance<Transition>> enabled = new ArrayList<>();
+            List<Instance<Transition>> all = sim.getAllTransitionInstances();
+            for (Instance<Transition> ti : all) {
+                if (sim.isEnabled(ti))
+                    enabled.add(ti);
+            }
+
+            if (enabled.isEmpty()) {
+                String result = sim.increaseTime();
+                if (result == null) {
+                    continue; // --> go back and check for enabled transitions
+                } else {
+                    simulationEnded = result;
+                    break; // end/stop simulation, report result to user
+                }
+            }
+
+            Binding b = sim.executeAndGet();
+            List<PlaceMark> marking = getTokensAndMarking(sessionId);
+
+            /*
+             * Add events, if needed.
+             */
+            addEvents(sessionId, b);
+            i++;
+        }
+        //_sim.execute(stepParam.getAmount());
 
         return getOutputPathContent(sessionId).getExtraInfo();
     }

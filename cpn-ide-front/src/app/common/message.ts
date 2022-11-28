@@ -39,6 +39,14 @@ export class Message {
   static SERVER_INIT_SIM_START = "server.init.sim.start";
   static SERVER_INIT_SIM_DONE = "server.init.sim.done";
 
+  static SERVER_INIT_PLAY_OUT = "server.init.play.out"
+  static SERVER_INIT_PLAY_OUT_START = "server.init.play.out.start";
+  static SERVER_INIT_PLAY_OUT_DONE = "server.init.play.out.done";
+  static PLAY_OUT_EMPTY_LOG = "play.out.empty.log";
+  static PLAY_OUT_UNKWOWN_CASE_ID = "play.out.unknown.case.id";
+  static PLAY_OUT_SAVED = "play.out.saved"
+  static PLAY_OUT_NO_RECORDED_EVENTS = "play.out.no.recorded.events"
+
   static SERVER_GET_BINDINGS = "server.get.bindings";
   static SERVER_GET_SIM_STATE = "server.get.sim.state";
 

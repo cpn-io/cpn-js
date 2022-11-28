@@ -150,6 +150,78 @@
       </ng-container>
     </li>
 
+    <div class="divider"></div>
+
+    <!-- Record events -->
+
+    <li class="nav-item">
+      <ng-container *ngIf="accessCpnService.isSimulation">
+        <ng-container *ngIf="!accessCpnService.isRecordEvents">
+        <div (click)="onStartRecordEvents()" class="nav-link mb-0 green"
+          [ngClass]="{'disabled': accessCpnService.initNetProcessing || accessCpnService.initSimProcessing}">
+          <i class="fas fa-play"></i>
+          <span>Record events</span>
+        </div>
+        </ng-container>
+        <ng-container *ngIf="accessCpnService.isRecordEvents">
+          <div (click)="onStopRecordEvents()" class="nav-link mb-0 red"
+            [ngClass]="{'disabled': accessCpnService.initNetProcessing || accessCpnService.initSimProcessing}">
+            <i class="fas fa-stop"></i>
+            <span>Record events</span>
+          </div>
+        </ng-container>
+      </ng-container>
+    </li>
+
+    <!-- Record Time of events -->
+
+    <!-- Auto -->
+    <li class="nav-item">
+      <ng-container *ngIf="accessCpnService.isRecordEvents">
+        <ng-container *ngIf="accessCpnService.isSimulation">
+          <li class="nav-item">
+            <a (click)="onRecordEventTimes()" class="nav-link" [ngClass]="accessCpnService.isRecordEventTimes ? 'red' : 'grey'"
+            href="#">
+              <i [ngClass]="accessCpnService.isRecordEventTimes ? 'far fa-check-square' : 'far fa-square'"></i>
+              <span> Record event times </span>
+           </a>
+          </li>
+        </ng-container>
+      </ng-container>
+    </li>
+
+    <!-- Clear log -->
+
+    <li class="nav-item">
+      <ng-container *ngIf="accessCpnService.isSimulation">
+        <div (click)="onClearEvents()" class="nav-link mb-0">
+          <i class="fas fa-check-double"></i>
+          <span>clear events</span>
+        </div>
+      </ng-container>
+    </li>
+
+    <!-- Place caseIds -->
+
+    <!--li class="nav-item">
+      <ng-container *ngIf="!accessCpnService.isSimulation">
+        <div (click)="onPlaceCaseId()" class="nav-link mb-0">
+          <i class="fas fa-check-double"></i>
+          <span>place caseId's</span>
+        </div>
+      </ng-container>
+    </li-->
+
+    <!-- Set initial marking -->
+
+    <!--li class="nav-item">
+      <ng-container *ngIf="!accessCpnService.isSimulation">
+        <div (click)="onSetInitialMarking()" class="nav-link mb-0">
+          <i class="fas fa-check-double"></i>
+          <span>set initial marking</span>
+        </div>
+      </ng-container>
+    </li-->
 
   </ul>
 

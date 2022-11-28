@@ -1,15 +1,15 @@
-12:30:06.122 › scriptFilename =  run.sh
-12:30:06.129 › runScriptPath =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/electron/backend/run.sh
-12:30:06.235 › no server
-12:30:06.235 › wait 29
-12:30:07.504 › no server
-12:30:07.505 › wait 29
-12:30:08.577 › no server
-12:30:08.577 › wait 29
-12:30:08.931 › cpn-ide-back SERVER Process has been killed!
-12:30:09.651 › start main window
-12:30:19.680 › APP PATH =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front
-12:30:19.682 › isDev =  true
-12:30:19.685 › directory =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/app
-12:30:19.687 › process.cwd() =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front
-12:30:19.688 › __dirname =  /home/s-egorov/INDEV/development/tue/cpn-js/cpn-ide-front/electron/dist
+
+14:58:47.612 > scriptFilename =  run.bat
+14:58:47.620 > runScriptPath =  D:\gitspace\cpn-js\cpn-ide-front\electron\backend\run.bat
+14:58:47.651 > cpn-ide-back SERVER Process has been killed!
+14:58:56.304 > start main window
+14:59:06.335 > APP PATH =  D:\gitspace\cpn-js\cpn-ide-front
+14:59:06.336 > isDev =  true
+14:59:06.336 > directory =  D:\gitspace\cpn-js\cpn-ide-front/app
+14:59:06.337 > process.cwd() =  D:\gitspace\cpn-js\cpn-ide-front
+14:59:06.338 > __dirname =  D:\gitspace\cpn-js\cpn-ide-front\electron\dist
+15:00:33.815 > mainWindow, close
+15:00:33.816 > killCpnServer()
+15:00:33.818 > killCpnServer(), findProcess(), shellRunner.pid =  19792
+15:00:33.820 > killCpnServer(), findProcess(), shellRunner.ppid =  undefined
+15:00:43.905 > mainWindow, close, killCpnServer() COMPLETE:  CPN Server process KILLED!

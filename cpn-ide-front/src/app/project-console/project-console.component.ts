@@ -160,6 +160,27 @@ export class ProjectConsoleComponent implements OnInit {
         this.logChanges(event.changesPath);
       }
     });
+
+    this.eventService.on(Message.PLAY_OUT_EMPTY_LOG, () => {
+      this.logError("The log created from the recorded events using the given configuration is empty");
+    })
+  
+    this.eventService.on(Message.PLAY_OUT_NO_RECORDED_EVENTS, () => {
+      this.logError("There are currently no recorded events");
+    })
+  
+    this.eventService.on(Message.PLAY_OUT_UNKWOWN_CASE_ID, (error) => {
+      console.log("there is an error here");
+      console.log(error.data.error.message);
+      console.log(error.data);
+      
+      this.logError(error.data.error.message);
+      console.log("end error");
+    })
+  
+    this.eventService.on(Message.PLAY_OUT_SAVED, (data) => {
+      this.logSuccess("Log saved at: " + data.path)
+    });
   }
 
   logColor(text, className, id?) {

@@ -19,7 +19,7 @@
     "load-grunt-tasks": "~3.5.0"
   },
   "dependencies": {
-    "diagram-js": "^3.0.1",
+    "diagram-js": "^3.3.1",
     "inherits": "^2.0.3"
   }
 }

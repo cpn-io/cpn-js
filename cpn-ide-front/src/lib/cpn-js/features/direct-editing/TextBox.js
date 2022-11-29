@@ -77,7 +77,7 @@ export default function TextBox(options) {
  *
  * @return {DOMElement} The created content DOM element
  */
-TextBox.prototype.create = function (bounds, style, value, options, shapeType) {
+TextBox.prototype.create = function (bounds, style, value, options, shapeType, labelType) {
   var self = this;
 
   // console.log('TextBox.prototype.create(), options = ', options);
@@ -223,7 +223,10 @@ TextBox.prototype.create = function (bounds, style, value, options, shapeType) {
 
   const domElem = domQuery("[contenteditable]", this.parent);
   domElem.shapeType = shapeType;
-  autocomplete(domElem, container.parentElement.colorsList || [], this);
+  // Only add autocomplete if it is a type label.
+  if (labelType === "type") {
+    autocomplete(domElem, container.parentElement.colorsList, this);
+  }
 
   return parent;
 };
@@ -493,6 +496,7 @@ TextBox.prototype.destroy = function () {
     domRemove(resizeHandle);
   }
 
+  this.container.removeChild(parent);
   domRemove(parent);
 };
 
@@ -555,6 +559,7 @@ function autocomplete(inp, arr, self) {
           inp.textContent = this.getElementsByTagName("input")[0].value;
           self.autoResize();
           closeAllLists();
+          this.parentNode.removeChild(a);
         });
         a.appendChild(b);
       }

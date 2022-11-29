@@ -211,7 +211,8 @@ DirectEditing.prototype.activate = function (element) {
       context.style,
       context.text,
       context.options,
-      element.type
+      element.type,
+      element.labelType || "",
     );
 
     this._active = {

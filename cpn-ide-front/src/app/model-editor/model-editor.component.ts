@@ -329,7 +329,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       ) {
         this.eventService.send(Message.SHAPE_HOVER, { element: event.element });
       }
-      // console.log('element.hover', event.element);
+      console.log('element.hover', event.element);
     });
     eventBus.on("element.out", (event) => {
       if (
@@ -611,7 +611,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   testAnimation() {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       const speedMs = 500;
       const incomeArcIdList = [];
       const outcomeArcIdList = [];
@@ -692,7 +692,7 @@ export class ModelEditorComponent implements OnInit, OnDestroy, AfterViewInit {
    * Update element status
    */
   updateElementStatus(animate: boolean = false) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       const startTime = new Date().getTime();
 
       if (animate) {

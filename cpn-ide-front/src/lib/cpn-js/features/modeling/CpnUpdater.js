@@ -190,6 +190,9 @@ export default function CpnUpdater(
     // updateCpnElement(event.element);
   });
 
+  // The element that is currently highlighted.
+  var highlightedElement = null;
+
   eventBus.on("element.hover", function (event) {
     var element = event.element;
     // console.log('CpnUpdater(), element.hover, element = ', element);
@@ -208,12 +211,17 @@ export default function CpnUpdater(
     if (stateProvider.isHilighted()) {
       modeling.clearHilight();
       stateProvider.setHilightedState([]);
-      modeling.repaintElements();
+      if (highlightedElement !== null) {}
+      // Repaint the element highlighted until now.
+      modeling.repaintElement(highlightedElement);
+        highlightedElement = null;
     }
 
     if (element.labelTarget) {
       stateProvider.setHilightedState([element.id, element.labelTarget.id]);
-      modeling.repaintElements();
+      highlightedElement = element;
+      // Repaint the element highlighted as from now.
+      modeling.repaintElement(element);
     }
   });
 

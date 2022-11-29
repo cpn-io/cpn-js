@@ -206,9 +206,14 @@ export class ValidationService implements OnDestroy {
     // ------------------------------------------------------------------------------------------------------------
 
     const validationTime = new Date().getTime() - startTime;
-    if (validationTime > 10) {
+    if (validationTime > 500) {
+      console.error("END checkValidation(), validationTime = ", validationTime);
+    } else if (validationTime > 200) {
+      console.warn("END checkValidation(), validationTime = ", validationTime);
+    } else if (validationTime > 100) {
       console.log("END checkValidation(), validationTime = ", validationTime);
     }
+
 
     if (this.needValidation && this.isAutoValidation) {
       this.needValidation = false;

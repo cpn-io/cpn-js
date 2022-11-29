@@ -79,14 +79,14 @@ export class AppComponent implements OnInit, OnDestroy {
   @HostListener('window:keydown', ['$event'])
   onKeyDown(event) {
 
-    const srcHtml = event.target.outerHTML || "";
-    const isEditable = event.target.isContentEditable;
-    const isFocused = (document.activeElement === event.target);
+    // const srcHtml = event.target.outerHTML || "";
+    // const isEditable = event.target.isContentEditable;
+    // const isFocused = (document.activeElement === event.target);
 
-    console.log('KEYDOWN !!!, event = ', event);
-    console.log('KEYDOWN !!!, isEditable = ', isEditable);
-    console.log('KEYDOWN !!!, isFocused = ', isFocused);
-    console.log('KEYDOWN !!!, srcHtml = ', srcHtml);
+    // console.log('KEYDOWN !!!, event = ', event);
+    // console.log('KEYDOWN !!!, isEditable = ', isEditable);
+    // console.log('KEYDOWN !!!, isFocused = ', isFocused);
+    // console.log('KEYDOWN !!!, srcHtml = ', srcHtml);
 
     // if (!(isEditable && isFocused)) {
     if ((event.ctrlKey || event.metaKey)) {

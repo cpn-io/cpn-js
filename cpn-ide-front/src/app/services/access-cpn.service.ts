@@ -134,7 +134,9 @@ export class AccessCpnService {
 
   getFs() {
     console.log("electronTest get", this.fs);
-    return this.fs;
+    // If no path has been defined, use null as the path. 
+    // The backend will then use a default folder in the user's home folder.
+    return this.fs || { path: null };
   }
 
   setFc(fs) {

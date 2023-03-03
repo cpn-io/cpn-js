@@ -15,7 +15,7 @@ import static org.junit.Assert.assertTrue;
 
 public class PlayOutExporterCSV extends PlayOutExporter {
 
-    private List<String[]> log;
+    private final List<String[]> log;
     private int caseCol;
 
     public PlayOutExporterCSV() {
@@ -79,6 +79,11 @@ public class PlayOutExporterCSV extends PlayOutExporter {
                 break;
             }
         }
+        /*
+         * As this is the header row, the existing log should now be cleared first.
+         * Thanks to Philipp Heisenberger for pointing it out.
+         */
+        log.clear();
         log.add(firstRow);
     }
 

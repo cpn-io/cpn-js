@@ -146,7 +146,7 @@ export class EditorPanelComponent implements OnInit, OnDestroy, AfterViewInit {
   openModelEditor(pageObject) {
     this.applicationService.isShowDocumentation = false;
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       console.log("openPage(), pageObject = ", pageObject);
 
       const tab = this.tabsComponent.getTabByID(pageObject._id);

@@ -2394,6 +2394,14 @@ export class ModelService {
     return false;
   }
 
+  /*
+   * HV20230307
+   * By setting a height in the style attribute the height of the SVG gets fixed.
+   * As a result, if the model editor grows vertically due to resizing, the SVG does not grow with it :-(.
+   * I have no clue what the benefit of this function is. It sonly effect seems to be to set the
+   * height of the SVG in the style attribute, but why is this needed?
+   * For now, I've just disabled setting the height in the style attribute to solve the resize issue.
+   */
   checkPaintElement() {
     const self = this;
     setTimeout(function () {
@@ -2408,7 +2416,7 @@ export class ModelService {
       for (let i = 0; i < containerParent.length; i++) {
         const elements = containerParent[i].getElementsByTagName("svg");
         for (let k = 0; k < elements.length; k++) {
-          elements[k]["style"].height = parentHeight + "px";
+          // elements[k]["style"].height = parentHeight + "px";
         }
       }
       // const elements = document.querySelectorAll('[data-element-id="__implicitroot"]');

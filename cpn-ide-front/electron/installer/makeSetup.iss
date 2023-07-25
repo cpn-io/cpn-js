@@ -2,7 +2,7 @@
 AppPublisher=INDEV, Ltd.
 AppPublisherURL=http://www.indevstudio.com/
 AppName=CPN IDE
-AppVersion=1.22.1117
+AppVersion=1.23.0725
 WizardStyle=modern
 DefaultDirName={autopf}\CPN IDE
 DefaultGroupName=CPN IDE

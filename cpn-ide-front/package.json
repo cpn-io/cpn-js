@@ -1,6 +1,6 @@
 {
   "name": "cpn-ide",
-  "version": "1.22.1117",
+  "version": "1.23.0725",
   "author": "TU/e",
   "main": "electron/dist/main.js",
   "scripts": {
@@ -122,6 +122,7 @@
     "moddle-xml": "^7.5.0",
     "ngx-electron": "^1.0.4",
     "ngx-xml2json": "^1.0.2",
+    "path": "^0.12.7",
     "popper.js": "^1.16.1",
     "prettier": "^2.2.1",
     "ps-node": "^0.1.6",

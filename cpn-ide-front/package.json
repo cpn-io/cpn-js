@@ -1,6 +1,6 @@
 {
   "name": "cpn-ide",
-  "version": "1.23.0725",
+  "version": "1.24.1031",
   "author": "TU/e",
   "main": "electron/dist/main.js",
   "scripts": {

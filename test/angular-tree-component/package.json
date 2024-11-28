@@ -92,7 +92,7 @@
     "hoek": "~> 5.0.3",
     "html-dnd": "1.2.0",
     "http-server": "0.9.0",
-    "nightwatch": "0.9.12",
+    "nightwatch": "2.6.10",
     "protractor": "5.1.1",
     "protractor-jasmine2-html-reporter": "0.0.7",
     "rimraf": "^2.5.1",
